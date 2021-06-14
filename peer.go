@@ -14,7 +14,7 @@ import (
 //
 // architecture: Master Database.
 type DB interface {
-	// Users provided access to users db.
+	// Users provides access to users db.
 	Users() users.DB
 
 	// Close closes underlying db connection.
@@ -39,8 +39,8 @@ type Peer struct {
 		Service *users.Service
 	}
 }
-
-func New(logger logger.Logger, config Config, db DB) (*Peer, error) {
+// NewPeer is a constructor for ultimatedivision Peer.
+func New(logger logger.Logger, config Config, db DB, ctx context.Context) (*Peer, error) {
 	peer := &Peer{
 		Log:      logger,
 		Database: db,

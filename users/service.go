@@ -5,34 +5,35 @@ package users
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 )
 
-//Service struct gives access to DB interface methods
+// Service is handling users related logic.
+//
+// architecture: Service
 type Service struct {
 	users DB
-	ctx   context.Context
 }
 
-//returns service with db interface
-func NewService(users DB, ctx context.Context) *Service {
+// NewService is a constructor for users service.
+func NewService(users DB) *Service {
 	return &Service{
 		users: users,
-		ctx:   ctx,
 	}
 }
 
-// GetUser return user from DB
-func (service *Service) GetUser(userID uuid.UUID) (User, error) {
-	return service.users.Get(userID)
+// Get returns user from DB.
+func (service *Service) Get(ctx context.Context, userID uuid.UUID) (User, error) {
+	return service.users.Get(ctx, userID)
 }
 
-// GetUser return user by email from DB
-func (service *Service) GetUserByEmail(email string) (User, error) {
-	return service.users.GetByEmail(email)
+// GetByEmail returns user by email from DB.
+func (service *Service) GetByEmail(ctx context.Context, email string) (User, error) {
+	return service.users.GetByEmail(ctx, email)
 }
 
-// GetUser return all users from DB
-func (service *Service) GetListOfUsers() ([]User, error) {
-	return service.users.List(service.ctx)
+// List returns all users from DB.
+func (service *Service) List(ctx context.Context) ([]User, error) {
+	return service.users.List(ctx)
 }

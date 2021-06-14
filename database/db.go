@@ -43,18 +43,16 @@ func New(databaseURL string) (ultimatedivision.DB, error) {
 // CreateSchema create schema for all tables and databases.
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
-		`CREATE TYPE user_status_t AS ENUM ('active', 'suspended');
-
-		CREATE TABLE IF NOT EXISTS users (
-            id 			uuid 		PRIMARY KEY 	NOT NULL,
-            email 		varchar 					NOT NULL,
-            password 	varchar 					NOT NULL,
-            nick_name 	varchar 					NOT NULL,
-            first_name 	varchar 					NOT NULL,
-            last_name 	varchar 					NOT NULL,
-            las_login 	TIMESTAMP WITH TIME ZONE 	NOT NULL,
-            status 		user_status_t 				NOT NULL,
-            created_at 	TIMESTAMP WITH TIME ZONE 	NOT NULL
+		`CREATE TABLE IF NOT EXISTS users (
+            id         BYTEA PRIMARY KEY 	    NOT NULL,
+            email      VARCHAR                  NOT NULL,
+            password   BYTEA                    NOT NULL,
+            nick_name  VARCHAR                  NOT NULL,
+            first_name VARCHAR                  NOT NULL,
+            last_name  VARCHAR                  NOT NULL,
+            las_login  TIMESTAMP WITH TIME ZONE NOT NULL,
+            status     INTEGER                  NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE NOT NULL
 		);
 		`
 
@@ -71,7 +69,7 @@ func (db *database) Close() error {
 	return Error.Wrap(db.conn.Close())
 }
 
-// repo provided access to accounts db.
+// usersDB provided access to accounts db.
 func (db *database) Users() users.DB {
-	return &repo{conn: db.conn}
+	return &usersDB{conn: db.conn}
 }

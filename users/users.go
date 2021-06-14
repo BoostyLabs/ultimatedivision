@@ -11,31 +11,38 @@ import (
 	"github.com/zeebo/errs"
 )
 
+// ErrNoUser indicated that user does not exist.
 var ErrNoUser = errs.Class("user does not exist")
 
+// DB exposes access to users db.
 type DB interface {
+	// List returns all users from the data base.
 	List(ctx context.Context) ([]User, error)
-	Get(id uuid.UUID) (User, error)
-	GetByEmail(email string) (User, error)
+	// Get returns user by id from the data base.
+	Get(ctx context.Context, id uuid.UUID) (User, error)
+	// GetByEmail returns user by email from the data base.
+	GetByEmail(ctx context.Context, email string) (User, error)
 }
 
-// UserStatus defined the list of possible user statuses
-type userStatus string
+// Status defined the list of possible user statuses.
+type Status int
 
 const (
-	userStatus_active    userStatus = "active"
-	userStatus_suspended userStatus = "suspended"
+	// StatusActive indicates that user can login to the account.
+	StatusActive Status = 0
+	// StatusActive indicates that user cannot login to the account.
+	StatusSuspended Status = 1
 )
 
-// User structure
+// User describes user entity.
 type User struct {
-	ID        uuid.UUID  `json:"id"`
-	Email     string     `json:"email"`
-	Password  string     `json:"password"`
-	NickName  string     `json:"nick_name"`
-	FirstName string     `json:"first_name"`
-	LastName  string     `json:"last_name"`
-	LastLogin time.Time  `json:"last_login"`
-	Status    userStatus `json:"status"`
-	CreatedAt time.Time  `json:"created_at"`
+	ID           uuid.UUID `json:"id"`
+	Email        string    `json:"email"`
+	PasswordHash []byte    `json:"passwordHash"`
+	NickName     string    `json:"nickName"`
+	FirstName    string    `json:"firstName"`
+	LastName     string    `json:"lastName"`
+	LastLogin    time.Time `json:"lastLogin"`
+	Status       Status    `json:"status"`
+	CreatedAt    time.Time `json:"createdAt"`
 }

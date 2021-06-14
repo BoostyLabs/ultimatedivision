@@ -6,19 +6,23 @@ package database
 import (
 	"context"
 	"database/sql"
+
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
 	"ultimatedivision/users"
 )
 
-// Repo structure for connect to postgres data base
-type repo struct {
+// usersDB provides access to users db.
+//
+// architecture: Database
+type usersDB struct {
 	conn *sql.DB
 }
 
-// get all users from the data base
-func (r *repo) List(ctx context.Context) ([]users.User, error) {
-	rows, err := r.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users")
+// List returns all users from the data base.
+func (usersDB *usersDB) List(ctx context.Context) ([]users.User, error) {
+	rows, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users")
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +34,7 @@ func (r *repo) List(ctx context.Context) ([]users.User, error) {
 	var data []users.User
 	for rows.Next() {
 		var user users.User
-		err := rows.Scan(&user.ID, &user.Email, &user.Password, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
+		err := rows.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -44,12 +48,16 @@ func (r *repo) List(ctx context.Context) ([]users.User, error) {
 	return data, nil
 }
 
-//get user by id from the data base
-func (r *repo) Get(id uuid.UUID) (users.User, error) {
+// Get returns user by id from the data base.
+func (usersDB *usersDB) Get(ctx context.Context, id uuid.UUID) (users.User, error) {
 	var user users.User
 
-	row := r.conn.QueryRow("SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users WHERE id=$1", id)
-	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
+	row, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users WHERE id=$1", id)
+	if err != nil {
+		return user, err
+	}
+
+	err = row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return user, users.ErrNoUser.Wrap(err)
@@ -61,12 +69,16 @@ func (r *repo) Get(id uuid.UUID) (users.User, error) {
 	return user, nil
 }
 
-//get user by email from the data base
-func (r *repo) GetByEmail(email string) (users.User, error) {
+// GetByEmail returns user by email from the data base.
+func (usersDB *usersDB) GetByEmail(ctx context.Context, email string) (users.User, error) {
 	var user users.User
 
-	row := r.conn.QueryRow("SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users WHERE email=$1", email)
-	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
+	row, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users WHERE email=$1", email)
+	if err != nil {
+		return user, err
+	}
+
+	err = row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return user, users.ErrNoUser.Wrap(err)
