@@ -3,18 +3,36 @@
 
 package users
 
-import "ultimatedivision/database"
+import (
+	"context"
+	"github.com/google/uuid"
+)
 
+//Service struct gives access to DB interface methods
 type Service struct {
-	db *database.UsersRepository
+	users DB
+	ctx   context.Context
 }
 
-func(service *Service) GetUserByID(userID string) (*User, error){
-	user, err := service.db.GetById(userID)
-
-	if err != nil {
-		return nil, err
+//returns service with db interface
+func NewService(users DB, ctx context.Context) *Service {
+	return &Service{
+		users: users,
+		ctx:   ctx,
 	}
+}
 
-	return user, nil
+// GetUser return user from DB
+func (service *Service) GetUser(userID uuid.UUID) (User, error) {
+	return service.users.Get(userID)
+}
+
+// GetUser return user by email from DB
+func (service *Service) GetUserByEmail(email string) (User, error) {
+	return service.users.GetByEmail(email)
+}
+
+// GetUser return all users from DB
+func (service *Service) GetListOfUsers() ([]User, error) {
+	return service.users.List(service.ctx)
 }

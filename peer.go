@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/users"
 )
 
 // DB provides access to all databases and database related functionality.
@@ -14,7 +15,7 @@ import (
 // architecture: Master Database.
 type DB interface {
 	// Users provided access to users db.
-	// Users() users.DB
+	Users() users.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -32,4 +33,24 @@ type Peer struct {
 	Config   Config
 	Log      logger.Logger
 	Database DB
+
+	// exposes users related logic.
+	Users struct {
+		Service *users.Service
+	}
+}
+
+func New(logger logger.Logger, config Config, db DB) (*Peer, error) {
+	peer := &Peer{
+		Log:      logger,
+		Database: db,
+	}
+
+	{ // users setup
+		peer.Users.Service = users.NewService(
+			peer.Database.Users(),
+		)
+	}
+
+	return peer, nil
 }

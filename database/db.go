@@ -11,6 +11,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision"
+	"ultimatedivision/users"
 )
 
 // ensures that database implements ultimatedivision.DB.
@@ -42,14 +43,18 @@ func New(databaseURL string) (ultimatedivision.DB, error) {
 // CreateSchema create schema for all tables and databases.
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
-		`
+		`CREATE TYPE user_status_t AS ENUM ('active', 'suspended');
+
 		CREATE TABLE IF NOT EXISTS users (
-            id                  BYTEA NOT NULL,
-            email               TEXT NOT NULL,
-            email_normalized    TEXT NOT NULL,
-            status              INTEGER NOT NULL,
-            created_at          TIMESTAMP WITH TIME ZONE NOT NULL,
-            PRIMARY KEY(id) 
+            id 			uuid 		PRIMARY KEY 	NOT NULL,
+            email 		varchar 					NOT NULL,
+            password 	varchar 					NOT NULL,
+            nick_name 	varchar 					NOT NULL,
+            first_name 	varchar 					NOT NULL,
+            last_name 	varchar 					NOT NULL,
+            las_login 	TIMESTAMP WITH TIME ZONE 	NOT NULL,
+            status 		user_status_t 				NOT NULL,
+            created_at 	TIMESTAMP WITH TIME ZONE 	NOT NULL
 		);
 		`
 
@@ -66,7 +71,7 @@ func (db *database) Close() error {
 	return Error.Wrap(db.conn.Close())
 }
 
-// Users provided access to accounts db.
-//func (db *database) Users() users.DB {
-//	return &users{conn: db.conn}
-//}
+// repo provided access to accounts db.
+func (db *database) Users() users.DB {
+	return &repo{conn: db.conn}
+}
