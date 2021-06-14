@@ -8,12 +8,17 @@ import (
 
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/users"
 )
 
-// DB exposed
+// DB provides access to all databases and database related functionality.
+//
+// architecture: Master Database.
 type DB interface {
 	//Admins provides access to admins db.
 	Admins() admins.DB
+	// Users provides access to users db.
+	Users() users.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -31,15 +36,29 @@ type Peer struct {
 	Config   Config
 	Log      logger.Logger
 	Database DB
+
+	// exposes admins relates logic.
 	Admins struct {
 		Service *admins.Service
 	}
+
+	// exposes users related logic.
+	Users struct {
+		Service *users.Service
+	}
 }
 
-func New(logger logger.Logger, config Config, db DB) (*Peer, error) {
+// NewPeer is a constructor for ultimatedivision Peer.
+func New(logger logger.Logger, config Config, db DB, ctx context.Context) (*Peer, error) {
 	peer := &Peer{
 		Log:      logger,
 		Database: db,
+	}
+
+	{ // users setup
+		peer.Users.Service = users.NewService(
+			peer.Database.Users(),
+		)
 	}
 
 	{ // admins setup
@@ -49,5 +68,4 @@ func New(logger logger.Logger, config Config, db DB) (*Peer, error) {
 	}
 
 	return peer, nil
-
 }

@@ -12,6 +12,7 @@ import (
 
 	"ultimatedivision"
 	"ultimatedivision/admin/admins"
+	"ultimatedivision/users"
 )
 
 // ensures that database implements ultimatedivision.DB.
@@ -47,7 +48,18 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             id               bytea PRIMARY KEY NOT NULL,
             email            varchar(255) NOT NULL,
             password_hash    bytea NOT NULL,
-            created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+            created_at       TIMESTAMP WITH TIME ZONE NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS users (
+            id         BYTEA     PRIMARY KEY 	NOT NULL,
+            email      VARCHAR                  NOT NULL,
+            password   BYTEA                    NOT NULL,
+            nick_name  VARCHAR                  NOT NULL,
+            first_name VARCHAR                  NOT NULL,
+            last_name  VARCHAR                  NOT NULL,
+            last_login TIMESTAMP WITH TIME ZONE NOT NULL,
+            status     INTEGER                  NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE NOT NULL
 		);`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -66,4 +78,8 @@ func (db *database) Close() error {
 // AdminRepository provided access to accounts db.
 func (db *database) Admins() admins.DB {
 	return &AdminRepository{conn: db.conn}
+}
+// usersDB provided access to accounts db.
+func (db *database) Users() users.DB {
+	return &usersDB{conn: db.conn}
 }
