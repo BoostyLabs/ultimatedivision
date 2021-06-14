@@ -44,9 +44,9 @@ func New(databaseURL string) (ultimatedivision.DB, error) {
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
 		`CREATE TABLE IF NOT EXISTS admins (
-            id                  uuid PRIMARY KEY NOT NULL,
+            id                  bytea PRIMARY KEY NOT NULL,
             email               varchar(255) NOT NULL,
-            password_hash 		varchar(255) NOT NULL,
+            password_hash 		bytea NOT NULL,
             created_at          TIMESTAMP WITH TIME ZONE NOT NULL,
 		);`
 
