@@ -17,6 +17,9 @@ type DB interface {
 	// Users provides access to users db.
 	Users() users.DB
 
+	// Cards provides access to cards db.
+	Cards() cards.DB
+
 	// Close closes underlying db connection.
 	Close() error
 
@@ -38,6 +41,10 @@ type Peer struct {
 	Users struct {
 		Service *users.Service
 	}
+	// exposes cards related logic.
+	Cards struct {
+		Service *cards.Service
+	}
 }
 
 // NewPeer is a constructor for ultimatedivision Peer.
@@ -50,6 +57,12 @@ func New(logger logger.Logger, config Config, db DB, ctx context.Context) (*Peer
 	{ // users setup
 		peer.Users.Service = users.NewService(
 			peer.Database.Users(),
+		)
+	}
+
+	{ // cards setup
+		peer.Cards.Service = cards.NewService(
+			peer.Database.Cards(),
 		)
 	}
 
