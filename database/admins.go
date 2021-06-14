@@ -13,7 +13,9 @@ import (
 	"ultimatedivision/admin/admins"
 )
 
-// AdminRepository provide access to DB.
+// AdminRepository provide access to admin DB.
+//
+// Architecture: Database
 type AdminRepository struct{
 	conn *sql.DB
 }

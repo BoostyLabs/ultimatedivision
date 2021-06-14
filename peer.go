@@ -12,7 +12,7 @@ import (
 
 // DB exposed
 type DB interface {
-	//Admins provided access to admins db.
+	//Admins provides access to admins db.
 	Admins() admins.DB
 
 	// Close closes underlying db connection.

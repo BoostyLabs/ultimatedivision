@@ -13,30 +13,34 @@ import (
 // ErrNoAdmin indicates that user does not exist.
 var ErrNoAdmin = errs.Class("admin does not exist")
 
-// DB exposes access to admin db.
+// DB is exposing access to admins db.
+//
+// architecture: DB
 type DB interface {
 	List(ctx context.Context) ([]Admin, error)
 	Get(ctx context.Context,id uuid.UUID) (Admin, error)
 }
 
-//Service struct gives access to database lvl
+// Service is handling admins related logic.
+//
+// architecture: Service
 type Service struct {
 	admins DB
 }
 
-// NewService is constructor for Service
+// NewService is constructor for Service.
 func NewService(admins DB) *Service {
 	return &Service{
 		admins: admins,
 	}
 }
 
-// GetAll return all admins from db
+// GetAll returns all admins from DB.
 func(service *Service) GetAll(ctx context.Context) ([]Admin,error){
 	return service.admins.List(ctx)
 }
 
-// Get return admin by id
+// Get returns admin from DB.
 func(service *Service) Get(ctx context.Context,id uuid.UUID) (Admin,error){
 	return service.admins.Get(ctx,id)
 }
