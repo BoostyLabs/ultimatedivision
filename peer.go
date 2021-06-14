@@ -39,6 +39,7 @@ type Peer struct {
 		Service *users.Service
 	}
 }
+
 // NewPeer is a constructor for ultimatedivision Peer.
 func New(logger logger.Logger, config Config, db DB, ctx context.Context) (*Peer, error) {
 	peer := &Peer{

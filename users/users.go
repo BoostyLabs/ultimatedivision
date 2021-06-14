@@ -15,6 +15,8 @@ import (
 var ErrNoUser = errs.Class("user does not exist")
 
 // DB exposes access to users db.
+//
+// architecture: DB
 type DB interface {
 	// List returns all users from the data base.
 	List(ctx context.Context) ([]User, error)
@@ -24,7 +26,7 @@ type DB interface {
 	GetByEmail(ctx context.Context, email string) (User, error)
 }
 
-// Status defined the list of possible user statuses.
+// Status defines the list of possible user statuses.
 type Status int
 
 const (
