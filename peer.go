@@ -10,9 +10,7 @@ import (
 	"ultimatedivision/internal/logger"
 )
 
-// DB provides access to all databases and database related functionality.
-//
-// architecture: Master Database.
+// DB exposed
 type DB interface {
 	//Admins provided access to admins db.
 	Admins() admins.DB
@@ -38,7 +36,7 @@ type Peer struct {
 	}
 }
 
-func New(logger logger.Logger, config Config,ctx context.Context, db DB) (*Peer, error) {
+func New(logger logger.Logger, config Config, db DB) (*Peer, error) {
 	peer := &Peer{
 		Log:      logger,
 		Database: db,
@@ -47,7 +45,6 @@ func New(logger logger.Logger, config Config,ctx context.Context, db DB) (*Peer,
 	{ // admins setup
 		peer.Admins.Service = admins.NewService(
 			peer.Database.Admins(),
-			ctx,
 		)
 	}
 

@@ -13,14 +13,14 @@ import (
 	"ultimatedivision/admin/admins"
 )
 
-//AdminRepository provide access to DB
+// AdminRepository provide access to DB.
 type AdminRepository struct{
 	conn *sql.DB
 }
 
-//List helps get all admins from db
-func(a *AdminRepository) List(ctx context.Context) ([]admins.Admin,error){
-	rows, err := a.conn.QueryContext(ctx, "SELECT id, email, password, creaed_at FROM admins")
+// List returns all admins from db.
+func(adminRepository *AdminRepository) List(ctx context.Context) ([]admins.Admin,error){
+	rows, err := adminRepository.conn.QueryContext(ctx, "SELECT id, email, password, creaed_at FROM admins")
 	if err != nil {
 		return nil, err
 	}
@@ -48,12 +48,16 @@ func(a *AdminRepository) List(ctx context.Context) ([]admins.Admin,error){
 
 }
 
-//Get helps get admin from db by id
-func(a *AdminRepository) Get(id uuid.UUID) (admins.Admin, error){
+// Get returns admin from db by id.
+func(adminRepository *AdminRepository) Get(ctx context.Context,id uuid.UUID) (admins.Admin, error){
 	var admin admins.Admin
 
-	row := a.conn.QueryRow("SELECT id, email, password, creaed_at FROM admins WHERE id=$1", id)
-	err := row.Scan(&admin.ID, &admin.Email, &admin.PasswordHash, &admin.CreatedAt)
+	row,err := adminRepository.conn.QueryContext(ctx,"SELECT id, email, password, creaed_at FROM admins WHERE id=$1", id)
+	if err != nil {
+		return admins.Admin{}, err
+	}
+
+	err = row.Scan(&admin.ID, &admin.Email, &admin.PasswordHash, &admin.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return admin, admins.ErrNoAdmin.Wrap(err)
@@ -61,6 +65,5 @@ func(a *AdminRepository) Get(id uuid.UUID) (admins.Admin, error){
 
 		return admin, err
 	}
-
 	return admin, nil
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-//Admin represent table admins from DB
+// Admin describes user entity.
 type Admin struct {
 	ID           uuid.UUID
 	Email        string
@@ -17,7 +17,7 @@ type Admin struct {
 	CreatedAt    time.Time
 }
 
-//NewAdmin is constructor for Admin
+// NewAdmin is constructor for Admin.
 func NewAdmin(email, password string) *Admin {
 	return &Admin{
 		ID:           uuid.New(),

@@ -10,36 +10,35 @@ import (
 	"github.com/zeebo/errs"
 )
 
-//ErrNoAdmin represent new class of errors for nil rows in admin table
+// ErrNoAdmin indicates that user does not exist.
 var ErrNoAdmin = errs.Class("admin does not exist")
 
+// DB exposes access to admin db.
 type DB interface {
 	List(ctx context.Context) ([]Admin, error)
-	Get(id uuid.UUID) (Admin, error)
+	Get(ctx context.Context,id uuid.UUID) (Admin, error)
 }
 
 //Service struct gives access to database lvl
 type Service struct {
 	admins DB
-	ctx   context.Context
 }
 
-//NewService is constructor for Service
-func NewService(admins DB, ctx context.Context) *Service {
+// NewService is constructor for Service
+func NewService(admins DB) *Service {
 	return &Service{
 		admins: admins,
-		ctx:   ctx,
 	}
 }
 
-//GetAll return all admins from db
-func(s *Service) GetAll() ([]Admin,error){
-	return s.admins.List(s.ctx)
+// GetAll return all admins from db
+func(service *Service) GetAll(ctx context.Context) ([]Admin,error){
+	return service.admins.List(ctx)
 }
 
-//Get return admin by id
-func(s *Service) Get(id uuid.UUID) (Admin,error){
-	return s.admins.Get(id)
+// Get return admin by id
+func(service *Service) Get(ctx context.Context,id uuid.UUID) (Admin,error){
+	return service.admins.Get(ctx,id)
 }
 
 
