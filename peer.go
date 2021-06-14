@@ -6,6 +6,7 @@ package ultimatedivision
 import (
 	"context"
 
+	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/logger"
 )
 
@@ -13,8 +14,8 @@ import (
 //
 // architecture: Master Database.
 type DB interface {
-	// Users provided access to users db.
-	// Users() users.DB
+	//Admins provided access to admins db.
+	Admins() admins.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -32,4 +33,24 @@ type Peer struct {
 	Config   Config
 	Log      logger.Logger
 	Database DB
+	Admins struct {
+		Service *admins.Service
+	}
+}
+
+func New(logger logger.Logger, config Config,ctx context.Context, db DB) (*Peer, error) {
+	peer := &Peer{
+		Log:      logger,
+		Database: db,
+	}
+
+	{ // admins setup
+		peer.Admins.Service = admins.NewService(
+			peer.Database.Admins(),
+			ctx,
+		)
+	}
+
+	return peer, nil
+
 }
