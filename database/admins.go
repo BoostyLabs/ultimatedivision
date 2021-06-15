@@ -22,7 +22,7 @@ type AdminRepository struct{
 
 // List returns all admins from db.
 func(adminRepository *AdminRepository) List(ctx context.Context) ([]admins.Admin,error){
-	rows, err := adminRepository.conn.QueryContext(ctx, "SELECT id, email, password, creaed_at FROM admins")
+	rows, err := adminRepository.conn.QueryContext(ctx, "SELECT id, email, password_hash, creaed_at FROM admins")
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func(adminRepository *AdminRepository) List(ctx context.Context) ([]admins.Admin
 func(adminRepository *AdminRepository) Get(ctx context.Context,id uuid.UUID) (admins.Admin, error){
 	var admin admins.Admin
 
-	row,err := adminRepository.conn.QueryContext(ctx,"SELECT id, email, password, creaed_at FROM admins WHERE id=$1", id)
+	row,err := adminRepository.conn.QueryContext(ctx,"SELECT id, email, password_hash, creaed_at FROM admins WHERE id=$1", id)
 	if err != nil {
 		return admins.Admin{}, err
 	}
@@ -68,4 +68,11 @@ func(adminRepository *AdminRepository) Get(ctx context.Context,id uuid.UUID) (ad
 		return admin, err
 	}
 	return admin, nil
+}
+
+func(adminRepository *AdminRepository) Create(ctx context.Context,admin admins.Admin) error{
+	_,err := adminRepository.conn.QueryContext(ctx,
+		"INSERT INTO admins(id,email,password_hash,created_at)" +
+		"VALUES($1,$2,$3,$4)",admin.ID,admin.Email,admin.PasswordHash,admin.CreatedAt)
+	return err
 }

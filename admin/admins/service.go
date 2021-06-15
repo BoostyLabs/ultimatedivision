@@ -19,6 +19,7 @@ var ErrNoAdmin = errs.Class("admin does not exist")
 type DB interface {
 	List(ctx context.Context) ([]Admin, error)
 	Get(ctx context.Context,id uuid.UUID) (Admin, error)
+	Create(ctx context.Context,admin Admin) error
 }
 
 // Service is handling admins related logic.
@@ -43,6 +44,10 @@ func(service *Service) GetAll(ctx context.Context) ([]Admin,error){
 // Get returns admin from DB.
 func(service *Service) Get(ctx context.Context,id uuid.UUID) (Admin,error){
 	return service.admins.Get(ctx,id)
+}
+
+func(service *Service) Create(ctx context.Context,admin Admin) error{
+	return service.admins.Create(ctx,admin)
 }
 
 
