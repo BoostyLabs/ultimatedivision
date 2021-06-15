@@ -38,7 +38,7 @@ func (service *Service) List(ctx context.Context) ([]User, error) {
 	return service.users.List(ctx)
 }
 
-// Create, creates a user and returns user email.
-func (service *Service) Create(ctx context.Context, user User) (string, error) {
+// Create creates a user and returns user email.
+func (service *Service) Create(ctx context.Context, user User) error {
 	return service.users.Create(ctx, user)
 }
