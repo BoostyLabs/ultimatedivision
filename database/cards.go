@@ -58,39 +58,41 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card *cards.Card) error {
 }
 
 // Get returns card by id from the data base.
-func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) ([]*cards.Card, error) {
+func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (*cards.Card, error) {
+
+	card := &cards.Card{}
+
 	query := "SELECT " + allFields + " FROM cards WHERE id=$1"
-	rows, err := cardsDB.conn.QueryContext(ctx, query, id)
+	row, err := cardsDB.conn.QueryContext(ctx, query, id)
 	if err != nil {
-		return nil, err
+		return card, err
 	}
 
 	defer func() {
-		err = errs.Combine(err, rows.Close())
+		err = errs.Combine(err, row.Close())
 	}()
 
-	data := []*cards.Card{}
-	for rows.Next() {
-		card := &cards.Card{}
-		if err = rows.Scan(
-			&card.Id, &card.PlayerName, &card.Quality, &card.PictureType, &card.Height, &card.Weight, &card.SkinColor, &card.HairStyle, &card.HairColor, &card.Accessories, &card.DominantFoot,
-			&card.Positioning, &card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses,
-			&card.Acceleration, &card.RunningSpeed, &card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance,
-			&card.Dribbling, &card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing, &card.ForwardPass,
-			&card.FinishingAbility, &card.ShotPower, &card.Accuracy, &card.Distance, &card.Penalty, &card.FreeKicks, &card.Corners, &card.HeadingAccuracy,
-			&card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus, &card.Interceptions, &card.Vigilance,
-			&card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
-		); err != nil {
-			return nil, err
+	err = row.Scan(
+		&card.Id, &card.PlayerName, &card.Quality, &card.PictureType, &card.Height, &card.Weight, &card.SkinColor, &card.HairStyle, &card.HairColor, &card.Accessories, &card.DominantFoot,
+		&card.Positioning, &card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses,
+		&card.Acceleration, &card.RunningSpeed, &card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance,
+		&card.Dribbling, &card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing, &card.ForwardPass,
+		&card.FinishingAbility, &card.ShotPower, &card.Accuracy, &card.Distance, &card.Penalty, &card.FreeKicks, &card.Corners, &card.HeadingAccuracy,
+		&card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus, &card.Interceptions, &card.Vigilance,
+		&card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return card, cards.ErrNoCard.Wrap(err)
 		}
-		data = append(data, card)
-	}
 
-	if err = rows.Err(); err != nil {
+		return card, err
+	}
+	if err = row.Err(); err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return card, nil
 }
 
 // List returns all cards from the data base.
