@@ -70,6 +70,7 @@ func(adminRepository *AdminRepository) Get(ctx context.Context,id uuid.UUID) (ad
 	return admin, nil
 }
 
+// Create inserts admin to DB.
 func(adminRepository *AdminRepository) Create(ctx context.Context,admin admins.Admin) error{
 	_,err := adminRepository.conn.QueryContext(ctx,
 		"INSERT INTO admins(id,email,password_hash,created_at)" +
