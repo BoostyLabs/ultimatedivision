@@ -13,11 +13,8 @@ import (
 	"ultimatedivision/users"
 )
 
-// ErrorUnableToFind indicates that the user is not in the database.
-var errorFindUser = errs.Class("unable to find user in database")
-
-// ErrorUnableToFind indicates that the user cannot writes to the database.
-var errorWriteUser = errs.Class("unable to write user to the database")
+// ErrorUser indicates that there was an error in the database.
+var ErrorUser = errs.Class("users repository error")
 
 // usersDB provides access to users db.
 //
@@ -30,7 +27,7 @@ type usersDB struct {
 func (usersDB *usersDB) List(ctx context.Context) ([]users.User, error) {
 	rows, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users")
 	if err != nil {
-		return nil, errorFindUser.Wrap(err)
+		return nil, ErrorUser.Wrap(err)
 	}
 
 	defer func() {
@@ -60,7 +57,7 @@ func (usersDB *usersDB) Get(ctx context.Context, id uuid.UUID) (users.User, erro
 
 	row, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users WHERE id=$1", id)
 	if err != nil {
-		return user, errorFindUser.Wrap(err)
+		return user, ErrorUser.Wrap(err)
 	}
 
 	err = row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
@@ -81,7 +78,7 @@ func (usersDB *usersDB) GetByEmail(ctx context.Context, email string) (users.Use
 
 	row, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users WHERE email=$1", email)
 	if err != nil {
-		return user, errorFindUser.Wrap(err)
+		return user, ErrorUser.Wrap(err)
 	}
 
 	err = row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
@@ -103,7 +100,7 @@ func (usersDB *usersDB) Create(ctx context.Context, user users.User) error {
 			"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)", user.ID, user.Email, user.PasswordHash,
 		user.NickName, user.FirstName, user.LastName, user.LastLogin, user.Status, user.CreatedAt)
 	if err != nil {
-		return errorWriteUser.Wrap(err)
+		return ErrorUser.Wrap(err)
 	}
 
 	return nil
