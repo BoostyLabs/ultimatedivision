@@ -36,8 +36,8 @@ func NewService(admins DB) *Service {
 	}
 }
 
-// GetAll returns all admins from DB.
-func(service *Service) GetAll(ctx context.Context) ([]Admin,error){
+// List returns all admins from DB.
+func(service *Service) List(ctx context.Context) ([]Admin,error){
 	return service.admins.List(ctx)
 }
 
@@ -46,10 +46,7 @@ func(service *Service) Get(ctx context.Context,id uuid.UUID) (Admin,error){
 	return service.admins.Get(ctx,id)
 }
 
-//Create insert admin to DB and returns error.
+// Create insert admin to DB and returns error.
 func(service *Service) Create(ctx context.Context,admin Admin) error{
 	return service.admins.Create(ctx,admin)
 }
-
-
-

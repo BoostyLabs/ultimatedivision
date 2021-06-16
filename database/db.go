@@ -45,10 +45,10 @@ func New(databaseURL string) (ultimatedivision.DB, error) {
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
 		`CREATE TABLE IF NOT EXISTS admins (
-            id               BYTEA         PRIMARY KEY      NOT NULL,
-            email            varchar(255)                   NOT NULL,
-            password_hash    BYTEA                          NOT NULL,
-            created_at       TIMESTAMP     WITH TIME ZONE   NOT NULL
+            id            BYTEA     PRIMARY KEY    NOT NULL,
+            email         VARCHAR                  NOT NULL,
+            password_hash BYTEA                    NOT NULL,
+            created_at    TIMESTAMP WITH TIME ZONE NOT NULL
 		);
 		CREATE TABLE IF NOT EXISTS users (
             id         BYTEA     PRIMARY KEY 	NOT NULL,
@@ -75,9 +75,9 @@ func (db *database) Close() error {
 	return Error.Wrap(db.conn.Close())
 }
 
-// AdminRepository provided access to accounts db.
+// adminRepository provided access to accounts db.
 func (db *database) Admins() admins.DB {
-	return &AdminRepository{conn: db.conn}
+	return &adminRepository{conn: db.conn}
 }
 // usersDB provided access to accounts db.
 func (db *database) Users() users.DB {
