@@ -56,9 +56,6 @@ func (usersDB *usersDB) Get(ctx context.Context, id uuid.UUID) (users.User, erro
 	var user users.User
 
 	row := usersDB.conn.QueryRowContext(ctx, "SELECT id, email, password_hash, nick_name, first_name, last_name, last_login, status, created_at FROM users WHERE id=$1", id)
-	if row.Err() != nil {
-		return user, ErrUsers.Wrap(row.Err())
-	}
 
 	err := row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
 	if err != nil {
@@ -78,9 +75,6 @@ func (usersDB *usersDB) GetByEmail(ctx context.Context, email string) (users.Use
 	emailNormalized := normalizeEmail(email)
 
 	row := usersDB.conn.QueryRowContext(ctx, "SELECT id, email, password_hash, nick_name, first_name, last_name, last_login, status, created_at FROM users WHERE email_normalized=$1", emailNormalized)
-	if row.Err() != nil {
-		return user, ErrUsers.Wrap(row.Err())
-	}
 
 	err := row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
 	if err != nil {
