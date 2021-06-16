@@ -51,7 +51,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             created_at    TIMESTAMP WITH TIME ZONE NOT NULL
 		);
 		CREATE TABLE IF NOT EXISTS users (
-            id         BYTEA     PRIMARY KEY 	NOT NULL,
+            id         BYTEA     PRIMARY KEY    NOT NULL,
             email      VARCHAR                  NOT NULL,
             password   BYTEA                    NOT NULL,
             nick_name  VARCHAR                  NOT NULL,
