@@ -97,9 +97,20 @@ func (usersDB *usersDB) GetByEmail(ctx context.Context, email string) (users.Use
 // Create creates a user and writes to the database.
 func (usersDB *usersDB) Create(ctx context.Context, user users.User) error {
 	emailNormalized := normalizeEmail(user.Email)
-	_, err := usersDB.conn.QueryContext(ctx,
-		"INSERT INTO users(id, email, email_normalized, password_hash, nick_name, first_name, last_name, last_login, status, created_at) "+
-			"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", user.ID, user.Email, emailNormalized, user.PasswordHash,
+	query := `INSERT INTO users(
+                  id, 
+                  email, 
+                  email_normalized, 
+                  password_hash, 
+                  nick_name, 
+                  first_name, 
+                  last_name, 
+                  last_login, 
+                  status, 
+                  created_at) 
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
+
+	_, err := usersDB.conn.QueryContext(ctx, query, user.ID, user.Email, emailNormalized, user.PasswordHash,
 		user.NickName, user.FirstName, user.LastName, user.LastLogin, user.Status, user.CreatedAt)
 	if err != nil {
 		return ErrUsers.Wrap(err)
