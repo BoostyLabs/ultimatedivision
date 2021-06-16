@@ -13,8 +13,8 @@ import (
 	"ultimatedivision/users"
 )
 
-// ErrUser indicates that there was an error in the database.
-var ErrUser = errs.Class("users repository error")
+// ErrUsers indicates that there was an error in the database.
+var ErrUsers = errs.Class("users repository error")
 
 // usersDB provides access to users db.
 //
@@ -25,9 +25,9 @@ type usersDB struct {
 
 // List returns all users from the data base.
 func (usersDB *usersDB) List(ctx context.Context) ([]users.User, error) {
-	rows, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users")
+	rows, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password_hash, nick_name, first_name, last_name, last_login, status, creaed_at FROM users")
 	if err != nil {
-		return nil, ErrUser.Wrap(err)
+		return nil, ErrUsers.Wrap(err)
 	}
 
 	defer func() {
@@ -57,7 +57,7 @@ func (usersDB *usersDB) Get(ctx context.Context, id uuid.UUID) (users.User, erro
 
 	row, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users WHERE id=$1", id)
 	if err != nil {
-		return user, ErrUser.Wrap(err)
+		return user, ErrUsers.Wrap(err)
 	}
 
 	err = row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
@@ -75,10 +75,11 @@ func (usersDB *usersDB) Get(ctx context.Context, id uuid.UUID) (users.User, erro
 // GetByEmail returns user by email from the data base.
 func (usersDB *usersDB) GetByEmail(ctx context.Context, email string) (users.User, error) {
 	var user users.User
+	emailNormalized := normalizeEmail(email)
 
-	row, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users WHERE email=$1", email)
+	row, err := usersDB.conn.QueryContext(ctx, "SELECT id, email, password, nick_name, first_name, last_name, last_login, status, creaed_at FROM users WHERE email_normalized=$1", emailNormalized)
 	if err != nil {
-		return user, ErrUser.Wrap(err)
+		return user, ErrUsers.Wrap(err)
 	}
 
 	err = row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
@@ -95,12 +96,13 @@ func (usersDB *usersDB) GetByEmail(ctx context.Context, email string) (users.Use
 
 // Create creates a user and writes to the database.
 func (usersDB *usersDB) Create(ctx context.Context, user users.User) error {
+	emailNormalized := normalizeEmail(user.Email)
 	_, err := usersDB.conn.QueryContext(ctx,
-		"INSERT INTO users(id, email, password_hash, nick_name, first_name, last_name, last_login, status, created_at) "+
-			"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)", user.ID, user.Email, user.PasswordHash,
+		"INSERT INTO users(id, email, email_normalized, password_hash, nick_name, first_name, last_name, last_login, status, created_at) "+
+			"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", user.ID, user.Email, emailNormalized, user.PasswordHash,
 		user.NickName, user.FirstName, user.LastName, user.LastLogin, user.Status, user.CreatedAt)
 	if err != nil {
-		return ErrUser.Wrap(err)
+		return ErrUsers.Wrap(err)
 	}
 
 	return nil
