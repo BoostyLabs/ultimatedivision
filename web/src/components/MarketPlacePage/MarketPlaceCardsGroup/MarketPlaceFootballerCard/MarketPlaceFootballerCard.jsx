@@ -14,11 +14,11 @@ export const MarketPlaceFootballerCard = ({ player }) => {
     return (
         <div className="marketplace-playerCard">
             <img className="marketplace-playerCard__background-type"
-                src={player['mainInfo'].backgroundType}
-                alt={player['mainInfo'].backgroundType} />
+                src={player.mainInfo.backgroundType}
+                alt={player.mainInfo.backgroundType} />
             <img className="marketplace-playerCard__face-picture"
-                src={player['mainInfo'].facePicture}
-                alt={player['mainInfo'].facePicture} />
+                src={player.mainInfo.facePicture}
+                alt={player.mainInfo.facePicture} />
             <NavLink to="/marketplace/card">
                 <span className="marketplace-playerCard__name">
                     {player.overalInfo['name']}
@@ -26,11 +26,11 @@ export const MarketPlaceFootballerCard = ({ player }) => {
             </NavLink>
             <ul className="marketplace-playerCard__list">
                 {keysOfPlayer.map(
-                    playerKey => {
+                    (playerKey, index) => {
                         return (
                             <li
                                 className="marketplace-playerCard__list__item"
-                                key={keysOfPlayer.indexOf(playerKey)}>
+                                key={index}>
                                 {
                                     /**
                                     * get only general value of player's game property
@@ -44,10 +44,10 @@ export const MarketPlaceFootballerCard = ({ player }) => {
             </ul>
             <div className="marketplace-playerCard__price">
                 <img className="marketplace-playerCard__price__picture"
-                    src={player['mainInfo'].pricePicture}
-                    alt={player['mainInfo'].pricePicture} />
+                    src={player.mainInfo.pricePicture}
+                    alt={player.mainInfo.pricePicture} />
                 <span className="marketplace-playerCard__price__current">
-                    {player['mainInfo'].price}
+                    {player.mainInfo.price}
                 </span>
             </div>
         </div>

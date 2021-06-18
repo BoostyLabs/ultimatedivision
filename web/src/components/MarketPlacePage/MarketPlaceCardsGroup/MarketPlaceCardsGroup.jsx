@@ -9,10 +9,10 @@ export const MarketPlaceCardsGroup = ({ listOfFootballerCards }) => {
 
     return (
         <div className="marketplace-cards">
-            {listOfFootballerCards.map(player =>
+            {listOfFootballerCards.map((player, index) =>
                 <MarketPlaceFootballerCard
                     player={player}
-                    key={listOfFootballerCards.indexOf(player)}
+                    key={index}
                 />
             )}
         </div>
@@ -23,3 +23,4 @@ export const MarketPlaceCardsGroup = ({ listOfFootballerCards }) => {
 MarketPlaceCardsGroup.propTypes = {
     listOfFootballerCards: PropTypes.array.isRequired
 };
+
