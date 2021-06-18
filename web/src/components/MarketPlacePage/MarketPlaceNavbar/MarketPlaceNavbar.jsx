@@ -10,8 +10,11 @@ export const MarketPlaceNavbar = () => {
 
     return (
         <div className="marketplace-navbar">
-            <img className="marketplace-navbar__logo"
-                src={ultimate} />
+            <img
+                className="marketplace-navbar__logo"
+                alt="marketplace logo"
+                src={ultimate}
+            />
             <ul className="marketplace-navbar__list">
                 <li className="marketplace-navbar__item">
                     <NavLink to="/ud"

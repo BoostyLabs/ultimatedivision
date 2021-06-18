@@ -5,6 +5,8 @@ import { MarketPlace } from './components/MarketPlacePage/MarketPlace/MarketPlac
 
 import './App.scss';
 
+import { FootballerCard } from
+    './components/FootballerCardPage/FootballerCard/FootballerCard';
 
 export function App() {
     return (
@@ -13,9 +15,11 @@ export function App() {
                 <Route exact path="/ud/marketplace/">
                     <MarketPlace />
                 </Route>
+                <Route exact path="/ud/marketplace/card">
+                    <FootballerCard />
+                </Route>
             </Switch>
         </>
     );
 };
 
-export default App;
