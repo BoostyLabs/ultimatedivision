@@ -6,10 +6,13 @@ package database
 import (
 	"context"
 	"database/sql"
-	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
+	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/cards"
 )
 
 // ensures that cardsDB implements cards.DB
@@ -44,7 +47,7 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 		`
 	_, err := cardsDB.conn.ExecContext(ctx, query,
 		card.Id, card.PlayerName, card.Quality, card.PictureType, card.Height, card.Weight, card.SkinColor, card.HairStyle, card.HairColor,
-		card.Accessories, card.DominantFoot, card.UserId, card.Positioning, card.Composure, card.Aggression, card.Vision, card.Awareness,
+		pq.Array(card.Accessories), card.DominantFoot, card.UserId, card.Positioning, card.Composure, card.Aggression, card.Vision, card.Awareness,
 		card.Crosses, card.Acceleration, card.RunningSpeed, card.ReactionSpeed, card.Agility, card.Stamina, card.Strength, card.Jumping, card.Balance,
 		card.Dribbling, card.BallControl, card.WeakFoot, card.SkillMoves, card.Finesse, card.Curve, card.Volleys, card.ShortPassing, card.LongPassing,
 		card.ForwardPass, card.FinishingAbility, card.ShotPower, card.Accuracy, card.Distance, card.Penalty, card.FreeKicks, card.Corners,
