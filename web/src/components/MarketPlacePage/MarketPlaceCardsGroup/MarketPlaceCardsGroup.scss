@@ -1,0 +1,9 @@
+@import '../../../index.scss';
+
+.marketplace-cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 70%;
+    margin: auto;
+}
