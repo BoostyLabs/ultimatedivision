@@ -6,6 +6,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -64,17 +65,24 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 
 // Get returns card by id from the data base.
 func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, error) {
+	fmt.Println(id)
+
 	card := cards.Card{}
+	var accessoriesArray pq.Int64Array
 	query := "SELECT " + allFields + " FROM cards WHERE id=$1"
 	err := cardsDB.conn.QueryRowContext(ctx, query, id).Scan(
 		&card.Id, &card.PlayerName, &card.Quality, &card.PictureType, &card.Height, &card.Weight, &card.SkinColor, &card.HairStyle, &card.HairColor,
-		&card.Accessories, &card.DominantFoot, card.UserId, &card.Positioning, &card.Composure, &card.Aggression, &card.Vision, &card.Awareness,
+		&accessoriesArray, &card.DominantFoot, &card.UserId, &card.Positioning, &card.Composure, &card.Aggression, &card.Vision, &card.Awareness,
 		&card.Crosses, &card.Acceleration, &card.RunningSpeed, &card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping,
 		&card.Balance, &card.Dribbling, &card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys,
 		&card.ShortPassing, &card.LongPassing, &card.ForwardPass, &card.FinishingAbility, &card.ShotPower, &card.Accuracy, &card.Distance,
 		&card.Penalty, &card.FreeKicks, &card.Corners, &card.HeadingAccuracy, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus,
 		&card.Interceptions, &card.Vigilance, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
 	)
+
+	for _, v := range accessoriesArray {
+		card.Accessories = append(card.Accessories, cards.Accessories(v))
+	}
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -101,9 +109,10 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 	data := []cards.Card{}
 	for rows.Next() {
 		card := cards.Card{}
+		var accessoriesArray pq.Int64Array
 		if err = rows.Scan(
 			&card.Id, &card.PlayerName, &card.Quality, &card.PictureType, &card.Height, &card.Weight, &card.SkinColor, &card.HairStyle, &card.HairColor,
-			&card.Accessories, &card.DominantFoot, card.UserId, &card.Positioning, &card.Composure, &card.Aggression, &card.Vision, &card.Awareness,
+			&accessoriesArray, &card.DominantFoot, &card.UserId, &card.Positioning, &card.Composure, &card.Aggression, &card.Vision, &card.Awareness,
 			&card.Crosses, &card.Acceleration, &card.RunningSpeed, &card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping,
 			&card.Balance, &card.Dribbling, &card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys,
 			&card.ShortPassing, &card.LongPassing, &card.ForwardPass, &card.FinishingAbility, &card.ShotPower, &card.Accuracy, &card.Distance,
@@ -111,6 +120,10 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 			&card.Interceptions, &card.Vigilance, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
 		); err != nil {
 			return nil, err
+		}
+
+		for _, v := range accessoriesArray {
+			card.Accessories = append(card.Accessories, cards.Accessories(v))
 		}
 		data = append(data, card)
 	}
