@@ -1,27 +1,31 @@
-package admins
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
+package admins_test
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"ultimatedivision"
+	"ultimatedivision/admin/admins"
 	"ultimatedivision/database/dbtesting"
 )
 
 func TestAdmin(t *testing.T) {
-	admin1 := Admin{
+	admin1 := admins.Admin{
 		ID:           uuid.New(),
 		Email:        "admin1@gmail.com",
-		PasswordHash: []byte{1},
+		PasswordHash: []byte{0},
 		CreatedAt:    time.Now(),
 	}
 
-	admin2 := Admin{
+	admin2 := admins.Admin{
 		ID:           uuid.New(),
 		Email:        "admin2@gmail.com",
 		PasswordHash: []byte{1},
@@ -34,7 +38,7 @@ func TestAdmin(t *testing.T) {
 		t.Run("Get sql no rows", func(t *testing.T) {
 			_, err := repository.Get(ctx, id)
 			require.Error(t, err)
-			assert.Equal(t, true, ErrNoAdmin.Has(err))
+			assert.Equal(t, true, admins.ErrNoAdmin.Has(err))
 		})
 		t.Run("Get", func(t *testing.T) {
 			err := repository.Create(ctx, admin1)
@@ -56,7 +60,7 @@ func TestAdmin(t *testing.T) {
 	})
 }
 
-func compareAdmins(t *testing.T, adminFromDB Admin, testAdmin Admin) {
+func compareAdmins(t *testing.T, adminFromDB admins.Admin, testAdmin admins.Admin) {
 	assert.Equal(t, adminFromDB.ID, testAdmin.ID)
 	assert.Equal(t, adminFromDB.Email, testAdmin.Email)
 	assert.Equal(t, adminFromDB.PasswordHash, testAdmin.PasswordHash)
