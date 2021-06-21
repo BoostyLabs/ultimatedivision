@@ -77,7 +77,7 @@ func (db *database) Close() error {
 
 // adminRepository provided access to accounts db.
 func (db *database) Admins() admins.DB {
-	return &adminRepository{conn: db.conn}
+	return &adminsDB{conn: db.conn}
 }
 // usersDB provided access to accounts db.
 func (db *database) Users() users.DB {
