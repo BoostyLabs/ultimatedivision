@@ -1,3 +1,8 @@
+/*
+Copyright (C) 2021 Creditor Corp. Group.
+See LICENSE for copying information.
+ */
+
 import React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -22,7 +27,7 @@ export const MarketPlaceFilterField = () => {
                                 className="marketplace-filter__list__item">
                                 {item.title}
                                 <img src={item.src}
-                                    alt={item.src}
+                                    alt="Filter icon"
                                     className="marketplace-filter__list__item__picture" />
                             </li>
                         );

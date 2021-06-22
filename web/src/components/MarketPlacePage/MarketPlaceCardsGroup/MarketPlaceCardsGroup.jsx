@@ -1,3 +1,8 @@
+/*
+Copyright (C) 2021 Creditor Corp. Group.
+See LICENSE for copying information.
+ */
+
 import React from 'react';
 import { PropTypes } from 'prop-types';
 
@@ -5,13 +10,13 @@ import './MarketPlaceCardsGroup.scss';
 import { MarketPlaceFootballerCard }
     from './MarketPlaceFootballerCard/MarketPlaceFootballerCard';
 
-export const MarketPlaceCardsGroup = ({ listOfFootballerCards }) => {
+export const MarketPlaceCardsGroup = ({ cards }) => {
 
     return (
         <div className="marketplace-cards">
-            {listOfFootballerCards.map((player, index) =>
+            {cards.map((card, index) =>
                 <MarketPlaceFootballerCard
-                    player={player}
+                    card={card}
                     key={index}
                 />
             )}
@@ -21,6 +26,6 @@ export const MarketPlaceCardsGroup = ({ listOfFootballerCards }) => {
 };
 
 MarketPlaceCardsGroup.propTypes = {
-    listOfFootballerCards: PropTypes.array.isRequired
+    cards: PropTypes.array.isRequired
 };
 

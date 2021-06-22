@@ -1,41 +1,63 @@
-import React from 'react';
+/*
+Copyright (C) 2021 Creditor Corp. Group.
+See LICENSE for copying information.
+ */
+
+import React, { useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
 import './MarketPlaceFootballerCard.scss';
 
-export const MarketPlaceFootballerCard = ({ player }) => {
+export const MarketPlaceFootballerCard = ({ card }) => {
 
+    let [mainCardProperties, setMainCardProperties] = useState([]);
     /**
-    * get only player's game propertys
+    * get only card's stats properties
     */
-    let keysOfPlayer = Object.keys(player).slice(2);
+    let getCardStatsProperties = () => {
+        let statsProperties = [];
+        Object.keys(card).forEach(field => {
+            /* only stats data has property 'fields' */
+            if (card[field].hasOwnProperty('fields')) {
+                statsProperties.push({
+                    field,
+                    abbreviated: field.slice(0, 3)
+                });
+            }
+        });
+        setMainCardProperties(statsProperties);
+    };
+
+    useEffect(() => {
+        getCardStatsProperties();
+    }, []);
 
     return (
         <div className="marketplace-playerCard">
             <img className="marketplace-playerCard__background-type"
-                src={player.mainInfo.backgroundType}
-                alt={player.mainInfo.backgroundType} />
+                src={card.mainInfo.backgroundType}
+                alt="Player background type" />
             <img className="marketplace-playerCard__face-picture"
-                src={player.mainInfo.facePicture}
-                alt={player.mainInfo.facePicture} />
+                src={card.mainInfo.facePicture}
+                alt="Player face" />
             <NavLink to="/marketplace/card">
                 <span className="marketplace-playerCard__name">
-                    {player.overalInfo['name']}
+                    {card.overalInfo.name}
                 </span>
             </NavLink>
             <ul className="marketplace-playerCard__list">
-                {keysOfPlayer.map(
-                    (playerKey, index) => {
+                {mainCardProperties.map(
+                    (property, index) => {
                         return (
                             <li
                                 className="marketplace-playerCard__list__item"
                                 key={index}>
                                 {
                                     /**
-                                    * get only general value of player's game property
+                                    * get only average value of player's game property
                                     */
-                                    `${Object.values(player[playerKey])[0]} ${playerKey.slice(0, 3)}`
+                                    `${card[property.field].average} ${property.abbreviated}`
                                 }
                             </li>
                         )
@@ -44,10 +66,10 @@ export const MarketPlaceFootballerCard = ({ player }) => {
             </ul>
             <div className="marketplace-playerCard__price">
                 <img className="marketplace-playerCard__price__picture"
-                    src={player.mainInfo.pricePicture}
-                    alt={player.mainInfo.pricePicture} />
+                    src={card.mainInfo.pricePicture}
+                    alt="Player price" />
                 <span className="marketplace-playerCard__price__current">
-                    {player.mainInfo.price}
+                    {card.mainInfo.price}
                 </span>
             </div>
         </div>
@@ -55,5 +77,5 @@ export const MarketPlaceFootballerCard = ({ player }) => {
 };
 
 MarketPlaceFootballerCard.propTypes = {
-    player: PropTypes.object.isRequired
+    card: PropTypes.object.isRequired
 };

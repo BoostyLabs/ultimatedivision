@@ -1,3 +1,8 @@
+/*
+Copyright (C) 2021 Creditor Corp. Group.
+See LICENSE for copying information.
+ */
+
 import React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -6,17 +11,16 @@ import { MarketPlaceFilterField } from '../MarketPlaceFilterField/MarketPlaceFil
 import { MarketPlaceCardsGroup } from '../MarketPlaceCardsGroup/MarketPlaceCardsGroup';
 import './MarketPlace.scss';
 
-
 export const MarketPlace = () => {
 
-    const listOfFootballerCards = useSelector(state => state.footballerCard);
+    const cards = useSelector(state => state.footballerCard);
 
     return (
         <section className="marketplace">
             <MarketPlaceNavbar />
             <MarketPlaceFilterField />
             <MarketPlaceCardsGroup
-                listOfFootballerCards={listOfFootballerCards} />
+                cards={cards} />
         </section>
     );
 
