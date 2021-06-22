@@ -22,7 +22,7 @@ type adminsDB struct{
 
 // List returns all admins from db.
 func(adminsDB *adminsDB) List(ctx context.Context) ([]admins.Admin,error){
-	rows, err := adminsDB.conn.QueryContext(ctx, "SELECT id, email, password_hash, creaed_at FROM admins")
+	rows, err := adminsDB.conn.QueryContext(ctx, "SELECT id, email, password_hash, created_at FROM admins")
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func(adminsDB *adminsDB) List(ctx context.Context) ([]admins.Admin,error){
 func(adminsDB *adminsDB) Get(ctx context.Context,id uuid.UUID) (admins.Admin, error){
 	var admin admins.Admin
 
-	row,err := adminsDB.conn.QueryContext(ctx,"SELECT id, email, password_hash, creaed_at FROM admins WHERE id=$1", id)
+	row,err := adminsDB.conn.QueryContext(ctx,"SELECT id, email, password_hash, created_at FROM admins WHERE id=$1", id)
 	if err != nil {
 		return admins.Admin{}, err
 	}
