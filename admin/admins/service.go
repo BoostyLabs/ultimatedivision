@@ -7,20 +7,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/zeebo/errs"
 )
-
-// ErrNoAdmin indicates that user does not exist.
-var ErrNoAdmin = errs.Class("admin does not exist")
-
-// DB is exposing access to admins db.
-//
-// architecture: DB
-type DB interface {
-	List(ctx context.Context) ([]Admin, error)
-	Get(ctx context.Context,id uuid.UUID) (Admin, error)
-	Create(ctx context.Context,admin Admin) error
-}
 
 // Service is handling admins related logic.
 //

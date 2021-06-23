@@ -46,16 +46,17 @@ func TestAdmin(t *testing.T) {
 
 			adminFromDB, err := repository.Get(ctx, admin1.ID)
 			require.NoError(t, err)
-			compareAdmins(t,adminFromDB,admin1)
+			compareAdmins(t, adminFromDB, admin1)
 		})
+
 		t.Run("List", func(t *testing.T) {
-			err := repository.Create(ctx,admin2)
+			err := repository.Create(ctx, admin2)
 			require.NoError(t, err)
 
-			allAdmins,err := repository.List(ctx)
+			allAdmins, err := repository.List(ctx)
 			require.NoError(t, err)
-			compareAdmins(t,allAdmins[0],admin1)
-			compareAdmins(t,allAdmins[1],admin2)
+			compareAdmins(t, allAdmins[0], admin1)
+			compareAdmins(t, allAdmins[1], admin2)
 		})
 	})
 }

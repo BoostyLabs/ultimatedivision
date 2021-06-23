@@ -13,6 +13,9 @@ import (
 	"ultimatedivision/admin/admins"
 )
 
+// ErrAdmins indicates that there was an error in the database.
+var ErrAdmins = errs.Class("admins repository error")
+
 // adminsDB provide access to admin DB.
 //
 // Architecture: Database
@@ -24,7 +27,7 @@ type adminsDB struct{
 func(adminsDB *adminsDB) List(ctx context.Context) ([]admins.Admin,error){
 	rows, err := adminsDB.conn.QueryContext(ctx, "SELECT id, email, password_hash, created_at FROM admins")
 	if err != nil {
-		return nil, err
+		return nil, ErrAdmins.Wrap(err)
 	}
 
 	defer func() {
@@ -36,13 +39,13 @@ func(adminsDB *adminsDB) List(ctx context.Context) ([]admins.Admin,error){
 		var admin admins.Admin
 		err = rows.Scan(&admin.ID, &admin.Email, &admin.PasswordHash,&admin.CreatedAt)
 		if err != nil {
-			return nil, err
+			return nil, ErrAdmins.Wrap(err)
 		}
 
 		data = append(data, admin)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, ErrAdmins.Wrap(err)
 	}
 	return data, nil
 }
@@ -51,18 +54,15 @@ func(adminsDB *adminsDB) List(ctx context.Context) ([]admins.Admin,error){
 func(adminsDB *adminsDB) Get(ctx context.Context,id uuid.UUID) (admins.Admin, error){
 	var admin admins.Admin
 
-	row,err := adminsDB.conn.QueryContext(ctx,"SELECT id, email, password_hash, created_at FROM admins WHERE id=$1", id)
-	if err != nil {
-		return admins.Admin{}, err
-	}
+	row:= adminsDB.conn.QueryRowContext(ctx,"SELECT id, email, password_hash, created_at FROM admins WHERE id=$1", id)
 
-	err = row.Scan(&admin.ID, &admin.Email, &admin.PasswordHash, &admin.CreatedAt)
+	err := row.Scan(&admin.ID, &admin.Email, &admin.PasswordHash, &admin.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return admin, admins.ErrNoAdmin.Wrap(err)
 		}
 
-		return admin, err
+		return admin, ErrAdmins.Wrap(err)
 	}
 	return admin, nil
 }
@@ -72,5 +72,5 @@ func(adminsDB *adminsDB) Create(ctx context.Context,admin admins.Admin) error{
 	_,err := adminsDB.conn.QueryContext(ctx,
 		`INSERT INTO admins(id,email,password_hash,created_at)
 		VALUES($1,$2,$3,$4)`,admin.ID,admin.Email,admin.PasswordHash,admin.CreatedAt)
-	return err
+	return ErrAdmins.Wrap(err)
 }

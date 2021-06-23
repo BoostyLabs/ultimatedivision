@@ -44,13 +44,14 @@ func New(databaseURL string) (ultimatedivision.DB, error) {
 // CreateSchema create schema for all tables and databases.
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
-		`CREATE TABLE IF NOT EXISTS admins (
+		`
+        CREATE TABLE IF NOT EXISTS admins (
             id            BYTEA     PRIMARY KEY    NOT NULL,
             email         VARCHAR                  NOT NULL,
             password_hash BYTEA                    NOT NULL,
             created_at    TIMESTAMP WITH TIME ZONE NOT NULL
-		);
-		CREATE TABLE IF NOT EXISTS users (
+        );
+        CREATE TABLE IF NOT EXISTS users (
             id         BYTEA     PRIMARY KEY    NOT NULL,
             email      VARCHAR                  NOT NULL,
             password   BYTEA                    NOT NULL,
@@ -60,7 +61,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             last_login TIMESTAMP WITH TIME ZONE NOT NULL,
             status     INTEGER                  NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE NOT NULL
-		);`
+        );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
 	if err != nil {
