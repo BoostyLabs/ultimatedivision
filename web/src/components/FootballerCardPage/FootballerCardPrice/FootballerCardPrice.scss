@@ -34,6 +34,8 @@
         position: relative;
     }
     &__price {
+        display: flex;
+        align-items: center;
         font-size: 64px;
         font-weight: lighter;
         margin-bottom: 30px;

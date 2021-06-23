@@ -6,6 +6,8 @@ import './FootballerCardPrice.scss';
 import { Doughnut } from 'react-chartjs-2';
 import { useSelector } from 'react-redux';
 
+import currency from '../../../img/FootballerCardPage/currency.png'
+
 /* eslint-disable */
 export const FootballerCardPrice = () => {
 
@@ -37,7 +39,11 @@ export const FootballerCardPrice = () => {
                 />
             </div>
             <div className="footballer-card-price__info-area">
-                <h2 className="footballer-card-price__price">{fields.price.value}</h2>
+                <h2 className="footballer-card-price__price">
+                    <>
+                        {fields.price.value} <img src={currency} alt="currency img" />
+                    </>
+                </h2>
                 <div className="footballer-card-price__additional-info">
                     <div>
                         Price updated: <span

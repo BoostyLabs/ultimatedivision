@@ -17,14 +17,15 @@ import './FootballerCard.scss';
 
 export const FootballerCard = () => {
 
-    const cardData = useSelector(state => state.footballerCardStats[0].overalInfo);
+    const cardData = useSelector(state => state.footballerCardStats[0].overalInfo[0].value);
+    console.log(cardData)
 
     return (
         <div className="footballer-card">
             <div className="footballer-card__wrapper">
                 <div className="footballer-card__name-wrapper">
                     <h1 className="footballer-card__name">
-                        {cardData.name}
+                        {cardData}
                     </h1>
                 </div>
                 <FootballerCardIllustrations />
