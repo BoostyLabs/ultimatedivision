@@ -20,9 +20,9 @@ var ErrNoAdmin = errs.Class("admin does not exist")
 type DB interface {
 	// List returns all admins from database.
 	List(ctx context.Context) ([]Admin, error)
-	// Get return admin y id from database.
+	// Get return admin by id from database.
 	Get(ctx context.Context,id uuid.UUID) (Admin, error)
-	// Create creates a admin and write it to database.
+	// Create creates an admin and write it to database.
 	Create(ctx context.Context,admin Admin) error
 }
 
