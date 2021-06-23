@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"ultimatedivision/admin/admins"
+	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
 )
@@ -19,6 +20,9 @@ type DB interface {
 	Admins() admins.DB
 	// Users provides access to users db.
 	Users() users.DB
+
+	// Cards provides access to cards db.
+	Cards() cards.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -46,6 +50,11 @@ type Peer struct {
 	Users struct {
 		Service *users.Service
 	}
+
+	// exposes cards related logic.
+	Cards struct {
+		Service *cards.Service
+	}
 }
 
 // New is a constructor for ultimatedivision Peer.
@@ -64,6 +73,12 @@ func New(logger logger.Logger, config Config, db DB, ctx context.Context) (*Peer
 	{ // admins setup
 		peer.Admins.Service = admins.NewService(
 			peer.Database.Admins(),
+		)
+	}
+
+	{ // cards setup
+		peer.Cards.Service = cards.NewService(
+			peer.Database.Cards(),
 		)
 	}
 
