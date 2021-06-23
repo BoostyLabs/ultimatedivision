@@ -1,10 +1,12 @@
 import { createStore, combineReducers } from 'redux';
 
-import { cardReducer } from './reducers/footballerCard';
+import { cardStatsReducer } from './reducers/footballerCard';
+import { cardPriceReducer } from './reducers/footballerCardPrice';
 import { filterFieldTitlesReducer } from './reducers/filterFieldTitles';
 
 const reducer = combineReducers({
-    footballerCard: cardReducer,
+    fotballerCardPrice: cardPriceReducer,
+    footballerCardStats: cardStatsReducer,
     filterFieldTitles: filterFieldTitlesReducer
 });
 

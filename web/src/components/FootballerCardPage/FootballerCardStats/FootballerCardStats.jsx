@@ -1,10 +1,13 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 import React from 'react';
 import './FootballerCardStats.scss';
 
 /* eslint-disable */
-export const FootballerCardStats = ({ props }) => {
+export const FootballerCardStats = ({ props, title }) => {
 
-    const data = Object.entries(props).slice(0, -1)
+    const fields = props.fields;
 
     return (
         <div className="footballer-card-stats-item">
@@ -13,34 +16,34 @@ export const FootballerCardStats = ({ props }) => {
             >
                 <span className="footballer-card-stats-item__heading-name"
                 >
-                    {data[0][0]}
+                    {title}
                 </span>
                 <span
                     className="footballer-card-stats-item__heading-value"
-                    style={{ color: props.color}}
+                    style={{ color: props.color }}
                 >
-                    {data[0][1]}
+                    {props.average}
                 </span>
             </div>
             <div className="footballer-card-stats-item__diagram">
                 <div
                     className="footballer-card-stats-item__diagram-value"
-                    style={{background: props.color, width: `${data[0][1]}%`}}
+                    style={{ background: props.color, width: `${props.average}%` }}
                 ></div>
             </div>
-            {data.slice(1).map(item => (
+            {fields.map((item, index )=> (
                 <div
-                    key={data.indexOf(item)}
+                    key={index}
                     className="footballer-card-stats-item__row"
                 >
                     <span className="footballer-card-stats-item__row-name"
                     >
-                        {item[0]}
+                        {item.label}
                     </span>
                     <span
                         className="footballer-card-stats-item__row-value"
                     >
-                        {item[1]}
+                        {item.value}
                     </span>
                 </div>
             ))}

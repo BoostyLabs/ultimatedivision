@@ -1,35 +1,20 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 @import '../../../index.scss';
 
 .footballer-card-price {
-    min-width: 200px;
-    border-radius: 5px;
-    display: flex;
+    min-width: 700px;
+    margin: 0 auto;
+    border-radius: 15px;
     position: relative;
+    display: flex;
+    align-items: center;
     padding: 24px;
-    flex-direction: column;
     background: #33335A;
-    &__main-price {
-        margin-bottom: 16px;
-    }
-    &__logo {
-        position: absolute;
-        top: 0;
-        right: 8px;
-    }
-    &__price-area {
-        margin-bottom: 32px;
-        display: grid;
-        position: relative;
-        grid-template-columns: repeat(2, 1fr);
-        color: $footballerCardTextColor;
-        &::after {
-            @extend %pseudoelementsInFootballerCard;
-            bottom: -16px;
-        }
-    }
     &__diagram {
-        width: 140px;
-        height: 140px;
+        width: 160px;
+        height: 160px;
         display: flex;
         position: relative;
         margin: 0;
@@ -39,13 +24,31 @@
         margin-bottom: 16px;
     }
     &__diagram-value {
+        font-size: 24px;
         position: absolute;
-        top: 66px;
-        left: 0;
-        right: 0;
         text-align: center;
     }
-    &__info-value {
+    &__info-area {
+        margin-left: 40px;
+        width: 500px;
+        position: relative;
+    }
+    &__price {
+        font-size: 64px;
+        font-weight: lighter;
+        margin-bottom: 30px;
+        &::after {
+            @extend %pseudoelementsInFootballerCard;
+            top: 65%;
+        }
+    }
+    &__additional-info {
+        font-size: 24px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+    &__value {
         color: $footballerCardTextColor;
     }
 

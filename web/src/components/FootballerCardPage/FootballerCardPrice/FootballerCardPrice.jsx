@@ -1,29 +1,28 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 import React from 'react';
 import './FootballerCardPrice.scss';
 import { Doughnut } from 'react-chartjs-2';
-import { diagramColor } from '../../../utils/fotballerCard';
+import { useSelector } from 'react-redux';
 
 /* eslint-disable */
-export const FootballerCardPrice = ({
-    mainPrice, priceArea, PRP, updated, PR, logo
-}) => {
+export const FootballerCardPrice = () => {
+
+    const priceData = useSelector(state => state.fotballerCardPrice);
+    const fields = priceData.fields;
+    const prpValue = priceData.fields.prp.value;
+
     return (
         <div className="footballer-card-price">
-            <img src={logo} alt="" className="footballer-card-price__logo" />
-            <h2 className="footballer-card-price__main-price">{mainPrice}</h2>
-            <div className="footballer-card-price__price-area">
-                {priceArea.map(item => (
-                    <span key={priceArea.indexOf(item)}>{item}</span>
-                ))}
-            </div>
             <div className="footballer-card-price__diagram">
-                <p className="footballer-card-price__diagram-value">{`PRP: ${PRP}%`}</p>
+                <p className="footballer-card-price__diagram-value">{`PRP: ${prpValue}%`}</p>
                 <Doughnut
                     data={{
                         datasets: [{
-                            data: [+PRP, (100 - PRP)],
+                            data: [prpValue, (100 - prpValue)],
                             backgroundColor: [
-                                `${diagramColor(+PRP, 'priceArea')}`,
+                                `${priceData.color}`,
                                 '#5E5EAA'
                             ],
                             borderColor: [
@@ -37,23 +36,25 @@ export const FootballerCardPrice = ({
                     }}
                 />
             </div>
-            <div className="footballer-card-price__info">
-                <div className="footballer-card-price__info-line">
-                    <span className="footballer-card-price__info-title">
-                        {'Price updated: '}
-                    </span>
-                    <span className="footballer-card-price__info-value">
-                        {updated} mins ago
-                    </span>
+            <div className="footballer-card-price__info-area">
+                <h2 className="footballer-card-price__price">{fields.price.value}</h2>
+                <div className="footballer-card-price__additional-info">
+                    <div>
+                        Price updated: <span
+                            className="footballer-card-price__value"
+                        >
+                            {fields.updated.value} mins ago
+                        </span>
+                    </div>
+                    <div>
+                        PR: <span
+                            className="footballer-card-price__value"
+                        >
+                            {fields.pr.value}
+                        </span>
+                    </div>
                 </div>
-                <div className="footballer-card-price__info-line">
-                    <span className="footballer-card-price__info-title">
-                        {'PR: '}
-                    </span>
-                    <span className="footballer-card-price__info-value">
-                        {PR}
-                    </span>
-                </div>
+
             </div>
         </div>
     );
