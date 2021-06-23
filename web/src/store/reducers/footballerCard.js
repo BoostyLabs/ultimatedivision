@@ -19,13 +19,20 @@ class CardStats {
             .reduce((prev, current) => prev + current) / fields.length;
     }
     get color() {
+        let upperBreakPoint = 90;
+        let lowerBreakPoint = 50;
+
+        let upperPointColor = '#3CCF5D';
+        let lowerPointColor = '#E8EC16';
+        let defaultPointColor = '#FF4200';
+
         switch (true) {
-            case (this.average >= 90):
-                return '#3CCF5D';
-            case (this.average >= 50):
-                return '#E8EC16';
+            case (this.average >= upperBreakPoint):
+                return upperPointColor;
+            case (this.average >= lowerBreakPoint):
+                return lowerPointColor;
             default:
-                return '#FF4200';
+                return defaultPointColor;
         }
     }
 }
