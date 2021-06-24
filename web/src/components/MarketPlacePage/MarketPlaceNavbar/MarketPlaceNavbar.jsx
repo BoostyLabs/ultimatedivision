@@ -12,7 +12,6 @@ import ultimate
     from '../../../img/MarketPlacePage/MarketPlaceNavbar/ultimate.png';
 
 export const MarketPlaceNavbar = () => {
-
     return (
         <div className="marketplace-navbar">
             <img className="marketplace-navbar__logo"
@@ -40,5 +39,4 @@ export const MarketPlaceNavbar = () => {
             </ul >
         </div>
     );
-
 };

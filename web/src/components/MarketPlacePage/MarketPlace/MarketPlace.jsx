@@ -12,7 +12,6 @@ import { MarketPlaceCardsGroup } from '../MarketPlaceCardsGroup/MarketPlaceCards
 import './MarketPlace.scss';
 
 export const MarketPlace = () => {
-
     const cards = useSelector(state => state.footballerCard);
 
     return (
@@ -23,5 +22,4 @@ export const MarketPlace = () => {
                 cards={cards} />
         </section>
     );
-
 };

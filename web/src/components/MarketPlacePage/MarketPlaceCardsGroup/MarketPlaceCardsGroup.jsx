@@ -11,7 +11,6 @@ import { MarketPlaceFootballerCard }
     from './MarketPlaceFootballerCard/MarketPlaceFootballerCard';
 
 export const MarketPlaceCardsGroup = ({ cards }) => {
-
     return (
         <div className="marketplace-cards">
             {cards.map((card, index) =>
@@ -22,7 +21,6 @@ export const MarketPlaceCardsGroup = ({ cards }) => {
             )}
         </div>
     );
-
 };
 
 MarketPlaceCardsGroup.propTypes = {

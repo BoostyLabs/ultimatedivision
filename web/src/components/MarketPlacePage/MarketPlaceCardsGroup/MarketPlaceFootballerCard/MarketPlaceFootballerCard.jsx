@@ -10,7 +10,6 @@ import { NavLink } from 'react-router-dom';
 import './MarketPlaceFootballerCard.scss';
 
 export const MarketPlaceFootballerCard = ({ card }) => {
-
     let [mainCardProperties, setMainCardProperties] = useState([]);
     /**
     * get only card's stats properties
@@ -60,7 +59,7 @@ export const MarketPlaceFootballerCard = ({ card }) => {
                                     `${card[property.field].average} ${property.abbreviated}`
                                 }
                             </li>
-                        )
+                        );
                     }
                 )}
             </ul>

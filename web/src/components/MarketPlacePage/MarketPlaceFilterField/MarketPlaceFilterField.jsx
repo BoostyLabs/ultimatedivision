@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import './marketPlaceFilterField.scss';
 
 export const MarketPlaceFilterField = () => {
-
     const filterFieldTitles = useSelector(
         (state) => state.filterFieldTitles
     );
