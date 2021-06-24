@@ -57,62 +57,91 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             status           INTEGER                  NOT NULL,
             created_at       TIMESTAMP WITH TIME ZONE NOT NULL
 		);
+		CREATE TABLE IF NOT EXISTS picture_types (
+			id    INTEGER  PRIMARY KEY  NOT NULL,
+			name  VARCHAR               NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS skin_colors (
+			id    INTEGER  PRIMARY KEY  NOT NULL,
+			name  VARCHAR               NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS hair_styles (
+			id    INTEGER  PRIMARY KEY  NOT NULL,
+			name  VARCHAR               NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS hair_colors (
+			id    INTEGER  PRIMARY KEY  NOT NULL,
+			name  VARCHAR               NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS accessories (
+			id    INTEGER  PRIMARY KEY  NOT NULL,
+			name  VARCHAR               NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS images (
+			img   BYTEA    PRIMARY KEY  NOT NULL,
+			name  VARCHAR               NOT NULL
+		);
 		CREATE TABLE IF NOT EXISTS cards (
-            id                BYTEA    PRIMARY KEY           NOT NULL,
-            player_name       VARCHAR                        NOT NULL,
-            quality           VARCHAR                        NOT NULL,
-            picture_type      VARCHAR                        NOT NULL,
-            height            DECIMAL                        NOT NULL,
-            weight            DECIMAL                        NOT NULL,
-            skin_color        INTEGER                        NOT NULL,
-			hair_style        INTEGER                        NOT NULL,
-			hair_color        INTEGER                        NOT NULL,
-			accessories       INTEGER[]                      NOT NULL,
-			dominant_foot     VARCHAR                        NOT NULL,
-			user_id           BYTEA  REFERENCES users(id)    NOT NULL,
-			positioning       INTEGER                        NOT NULL,
-			composure         INTEGER                        NOT NULL,
-			aggression        INTEGER                        NOT NULL,
-			vision            INTEGER                        NOT NULL,
-			awareness         INTEGER                        NOT NULL,
-			crosses           INTEGER                        NOT NULL,
-			acceleration      INTEGER                        NOT NULL,
-			running_speed     INTEGER                        NOT NULL,
-			reaction_speed    INTEGER                        NOT NULL,
-			agility           INTEGER                        NOT NULL,
-			stamina           INTEGER                        NOT NULL,
-			strength          INTEGER                        NOT NULL,
-			jumping           INTEGER                        NOT NULL,
-			balance           INTEGER                        NOT NULL,
-			dribbling         INTEGER                        NOT NULL,
-			ball_control      INTEGER                        NOT NULL,
-			weak_foot         INTEGER                        NOT NULL,
-			skill_moves       INTEGER                        NOT NULL,
-			finesse           INTEGER                        NOT NULL,
-			curve             INTEGER                        NOT NULL,
-			volleys           INTEGER                        NOT NULL,
-			short_passing     INTEGER                        NOT NULL,
-			long_passing      INTEGER                        NOT NULL,
-			forward_pass      INTEGER                        NOT NULL,
-			finishing_ability INTEGER                        NOT NULL,
-			shot_power        INTEGER                        NOT NULL,
-			accuracy          INTEGER                        NOT NULL,
-			distance          INTEGER                        NOT NULL,
-			penalty           INTEGER                        NOT NULL,
-			free_kicks        INTEGER                        NOT NULL,
-			corners           INTEGER                        NOT NULL,
-			heading_accuracy  INTEGER                        NOT NULL,
-			offside_trap      INTEGER                        NOT NULL,
-			sliding           INTEGER                        NOT NULL,
-			tackles           INTEGER                        NOT NULL,
-			ball_focus        INTEGER                        NOT NULL,
-			interceptions     INTEGER                        NOT NULL,
-			vigilance         INTEGER                        NOT NULL,
-			reflexes          INTEGER                        NOT NULL,
-			diving            INTEGER                        NOT NULL,
-			handling          INTEGER                        NOT NULL,
-			sweeping          INTEGER                        NOT NULL,
-			throwing          INTEGER                        NOT NULL
+			id                BYTEA    PRIMARY KEY                   NOT NULL,
+			player_name       VARCHAR                                NOT NULL,
+			quality           VARCHAR                                NOT NULL,
+			picture_type      INTEGER  REFERENCES picture_types(id)  NOT NULL,
+			height            DECIMAL                                NOT NULL,
+			weight            DECIMAL                                NOT NULL,
+			skin_color        INTEGER  REFERENCES skin_colors(id)    NOT NULL,
+			hair_style        INTEGER  REFERENCES hair_styles(id)    NOT NULL,
+			hair_color        INTEGER  REFERENCES hair_colors(id)    NOT NULL,
+			dominant_foot     VARCHAR                                NOT NULL,
+			user_id           BYTEA    REFERENCES users(id)          NOT NULL,
+			image_id          BYTEA    REFERENCES images(img)        NOT NULL,
+			positioning       INTEGER                                NOT NULL,
+			composure         INTEGER                                NOT NULL,
+			aggression        INTEGER                                NOT NULL,
+			vision            INTEGER                                NOT NULL,
+			awareness         INTEGER                                NOT NULL,
+			crosses           INTEGER                                NOT NULL,
+			acceleration      INTEGER                                NOT NULL,
+			running_speed     INTEGER                                NOT NULL,
+			reaction_speed    INTEGER                                NOT NULL,
+			agility           INTEGER                                NOT NULL,
+			stamina           INTEGER                                NOT NULL,
+			strength          INTEGER                                NOT NULL,
+			jumping           INTEGER                                NOT NULL,
+			balance           INTEGER                                NOT NULL,
+			dribbling         INTEGER                                NOT NULL,
+			ball_control      INTEGER                                NOT NULL,
+			weak_foot         INTEGER                                NOT NULL,
+			skill_moves       INTEGER                                NOT NULL,
+			finesse           INTEGER                                NOT NULL,
+			curve             INTEGER                                NOT NULL,
+			volleys           INTEGER                                NOT NULL,
+			short_passing     INTEGER                                NOT NULL,
+			long_passing      INTEGER                                NOT NULL,
+			forward_pass      INTEGER                                NOT NULL,
+			finishing_ability INTEGER                                NOT NULL,
+			shot_power        INTEGER                                NOT NULL,
+			accuracy          INTEGER                                NOT NULL,
+			distance          INTEGER                                NOT NULL,
+			penalty           INTEGER                                NOT NULL,
+			free_kicks        INTEGER                                NOT NULL,
+			corners           INTEGER                                NOT NULL,
+			heading_accuracy  INTEGER                                NOT NULL,
+			offside_trap      INTEGER                                NOT NULL,
+			sliding           INTEGER                                NOT NULL,
+			tackles           INTEGER                                NOT NULL,
+			ball_focus        INTEGER                                NOT NULL,
+			interceptions     INTEGER                                NOT NULL,
+			vigilance         INTEGER                                NOT NULL,
+			reflexes          INTEGER                                NOT NULL,
+			diving            INTEGER                                NOT NULL,
+			handling          INTEGER                                NOT NULL,
+			sweeping          INTEGER                                NOT NULL,
+			throwing          INTEGER                                NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS cards_accessories (
+			card_id       BYTEA    REFERENCES cards(id)         NOT NULL,
+			accessory_id  BYTEA    REFERENCES accessories(img)  NOT NULL,
+			PRIMARY KEY(accessory_id, card_id)
 		);
         CREATE TABLE IF NOT EXISTS admins (
             id            BYTEA     PRIMARY KEY    NOT NULL,
@@ -138,6 +167,7 @@ func (db *database) Close() error {
 func (db *database) Admins() admins.DB {
 	return &adminsDB{conn: db.conn}
 }
+
 // usersDB provided access to accounts db.
 func (db *database) Users() users.DB {
 	return &usersDB{conn: db.conn}
