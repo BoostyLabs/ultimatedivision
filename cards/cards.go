@@ -24,61 +24,62 @@ type DB interface {
 
 // Card describes card entity.
 type Card struct {
-	Id               uuid.UUID     `json:"id"`
-	PlayerName       string        `json:"playerName"`
-	Quality          Quality       `json:"quality"`
-	PictureType      PictureType   `json:"pictureType"`
-	Height           float32       `json:"height"`
-	Weight           float32       `json:"weight"`
-	SkinColor        SkinColor     `json:"skinColor"`
-	HairStyle        HairStyle     `json:"hairStyle"`
-	HairColor        HairColor     `json:"hairColor"`
-	Accessories      []Accessories `json:"accessories"`
-	DominantFoot     DominantFoot  `json:"dominantFoot"`
-	UserId           uuid.UUID     `json:"userId"`
-	Positioning      int           `json:"positioning"`
-	Composure        int           `json:"composure"`
-	Aggression       int           `json:"aggression"`
-	Vision           int           `json:"vision"`
-	Awareness        int           `json:"awareness"`
-	Crosses          int           `json:"crosses"`
-	Acceleration     int           `json:"acceleration"`
-	RunningSpeed     int           `json:"runningSpeed"`
-	ReactionSpeed    int           `json:"reactionSpeed"`
-	Agility          int           `json:"agility"`
-	Stamina          int           `json:"stamina"`
-	Strength         int           `json:"strength"`
-	Jumping          int           `json:"jumping"`
-	Balance          int           `json:"balance"`
-	Dribbling        int           `json:"dribbling"`
-	BallControl      int           `json:"ballControl"`
-	WeakFoot         int           `json:"weakFoot"`
-	SkillMoves       int           `json:"skillMoves"`
-	Finesse          int           `json:"finesse"`
-	Curve            int           `json:"curve"`
-	Volleys          int           `json:"volleys"`
-	ShortPassing     int           `json:"shortPassing"`
-	LongPassing      int           `json:"longPassing"`
-	ForwardPass      int           `json:"forwardPass"`
-	FinishingAbility int           `json:"finishingAbility"`
-	ShotPower        int           `json:"shotPower"`
-	Accuracy         int           `json:"accuracy"`
-	Distance         int           `json:"distance"`
-	Penalty          int           `json:"penalty"`
-	FreeKicks        int           `json:"freeKicks"`
-	Corners          int           `json:"corners"`
-	HeadingAccuracy  int           `json:"headingAccuracy"`
-	OffsideTrap      int           `json:"offsideTrap"`
-	Sliding          int           `json:"sliding"`
-	Tackles          int           `json:"tackles"`
-	BallFocus        int           `json:"ballFocus"`
-	Interceptions    int           `json:"interceptions"`
-	Vigilance        int           `json:"vigilance"`
-	Reflexes         int           `json:"reflexes"`
-	Diving           int           `json:"diving"`
-	Handling         int           `json:"handling"`
-	Sweeping         int           `json:"sweeping"`
-	Throwing         int           `json:"throwing"`
+	ID               uuid.UUID    `json:"id"`
+	PlayerName       string       `json:"playerName"`
+	Quality          Quality      `json:"quality"`
+	PictureType      int          `json:"pictureType"`
+	Height           float32      `json:"height"`
+	Weight           float32      `json:"weight"`
+	SkinColor        int          `json:"skinColor"`
+	HairStyle        int          `json:"hairStyle"`
+	HairColor        int          `json:"hairColor"`
+	Accessories      []int        `json:"accessories"`
+	DominantFoot     DominantFoot `json:"dominantFoot"`
+	UserId           uuid.UUID    `json:"userId"`
+	ImageId          []byte       `json:"imageId"`
+	Positioning      int          `json:"positioning"`
+	Composure        int          `json:"composure"`
+	Aggression       int          `json:"aggression"`
+	Vision           int          `json:"vision"`
+	Awareness        int          `json:"awareness"`
+	Crosses          int          `json:"crosses"`
+	Acceleration     int          `json:"acceleration"`
+	RunningSpeed     int          `json:"runningSpeed"`
+	ReactionSpeed    int          `json:"reactionSpeed"`
+	Agility          int          `json:"agility"`
+	Stamina          int          `json:"stamina"`
+	Strength         int          `json:"strength"`
+	Jumping          int          `json:"jumping"`
+	Balance          int          `json:"balance"`
+	Dribbling        int          `json:"dribbling"`
+	BallControl      int          `json:"ballControl"`
+	WeakFoot         int          `json:"weakFoot"`
+	SkillMoves       int          `json:"skillMoves"`
+	Finesse          int          `json:"finesse"`
+	Curve            int          `json:"curve"`
+	Volleys          int          `json:"volleys"`
+	ShortPassing     int          `json:"shortPassing"`
+	LongPassing      int          `json:"longPassing"`
+	ForwardPass      int          `json:"forwardPass"`
+	FinishingAbility int          `json:"finishingAbility"`
+	ShotPower        int          `json:"shotPower"`
+	Accuracy         int          `json:"accuracy"`
+	Distance         int          `json:"distance"`
+	Penalty          int          `json:"penalty"`
+	FreeKicks        int          `json:"freeKicks"`
+	Corners          int          `json:"corners"`
+	HeadingAccuracy  int          `json:"headingAccuracy"`
+	OffsideTrap      int          `json:"offsideTrap"`
+	Sliding          int          `json:"sliding"`
+	Tackles          int          `json:"tackles"`
+	BallFocus        int          `json:"ballFocus"`
+	Interceptions    int          `json:"interceptions"`
+	Vigilance        int          `json:"vigilance"`
+	Reflexes         int          `json:"reflexes"`
+	Diving           int          `json:"diving"`
+	Handling         int          `json:"handling"`
+	Sweeping         int          `json:"sweeping"`
+	Throwing         int          `json:"throwing"`
 }
 
 // Quality defines the list of possible card qualities.
@@ -92,20 +93,41 @@ const (
 	QualityDiamond Quality = "diamond"
 )
 
-// PictureType defines the list of possible card picture types.
-type PictureType string
+// PictureType describes picture typy entity.
+type PictureType struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
 
-// SkinColor defines the list of possible card skin colors.
-type SkinColor int
+// SkinColor describes skin color entity.
+type SkinColor struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
 
-// HairStyle defines the list of possible card hairstyles.
-type HairStyle int
+// HairStyle describes hairstyle entity.
+type HairStyle struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
 
-// HairColor defines the list of possible card hair colors.
-type HairColor int
+// HairColor describes hair color entity.
+type HairColor struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
 
-// Accessories defines the list of possible card accessories.
-type Accessories int
+// Accessory describes accessory entity.
+type Accessory struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+// Accessory describes accessory entity.
+type Image struct {
+	Img  []byte `json:"img"`
+	Name string `json:"name"`
+}
 
 // DominantFoot defines the list of possible card dominant foots.
 type DominantFoot string
