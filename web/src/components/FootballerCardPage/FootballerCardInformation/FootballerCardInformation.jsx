@@ -7,7 +7,7 @@ import './FootballerCardInformation.scss'
 
 export const FootballerCardInformation = () => {
 
-    const overalInfo = useSelector(state => state.footballerCardStats[0].overalInfo);
+    const overalInfo = useSelector(state => state.footballerCard[0].overalInfo);
 
     return (
         <div className='footballer-card-information'>

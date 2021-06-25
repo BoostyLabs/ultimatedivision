@@ -11,9 +11,8 @@ import currency from '../../../img/FootballerCardPage/currency.png'
 /* eslint-disable */
 export const FootballerCardPrice = () => {
 
-    const priceData = useSelector(state => state.fotballerCardPrice);
-    const fields = priceData.fields;
-    const prpValue = priceData.fields.prp.value;
+    const priceData = useSelector(state => state.footballerCard[0].price);
+    const prpValue = priceData.prp.value;
 
     return (
         <div className="footballer-card-price">
@@ -42,7 +41,7 @@ export const FootballerCardPrice = () => {
                 <div className="footballer-card-price__info-area">
                     <h2 className="footballer-card-price__price">
                         <>
-                            {fields.price.value} <img src={currency} alt="currency img" />
+                            {priceData.price.value} <img src={currency} alt="currency img" />
                         </>
                     </h2>
                     <div className="footballer-card-price__additional-info">
@@ -50,14 +49,14 @@ export const FootballerCardPrice = () => {
                             Price updated: <span
                                 className="footballer-card-price__value"
                             >
-                                {fields.updated.value} mins ago
+                                {priceData.updated.value} mins ago
                             </span>
                         </div>
                         <div>
                             PR: <span
                                 className="footballer-card-price__value"
                             >
-                                {fields.pr.value}
+                                {priceData.pr.value}
                             </span>
                         </div>
                     </div>

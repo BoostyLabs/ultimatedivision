@@ -77,6 +77,6 @@ const filterFieldTitles = [
     }
 ];
 
-export const filterFieldTitlesReducer = (filterFieldTitlesState = filterFieldTitles, action) => {
+export const filterFieldTitlesReducer = (filterFieldTitlesState = filterFieldTitles) => {
     return filterFieldTitlesState;
 };

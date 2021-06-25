@@ -10,32 +10,16 @@ import { Radar } from 'react-chartjs-2';
 
 export const FootballerCardIllustrationsRadar = () => {
 
-    const stats = useSelector(state => state.footballerCardStats[0]);
-
-    const {
-        tactics,
-        physique,
-        technique,
-        offence,
-        defence,
-        goalkeeping
-    } = stats;
+    const stats = useSelector(state => state.footballerCard[0].stats);
 
     return (
         <div className="footballer-card-illustrations-radar">
                 <Radar
                     data={{
-                        labels: ['TAC', 'PHY', 'GK', 'DEF', 'OFF', 'TEC'],
+                        labels: ['TAC', 'PHY', 'TEC', 'OFF', 'DEF', 'GK'],
                         datasets: [{
                             backgroundColor: '#66FF8866',
-                            data: [
-                                tactics.average,
-                                physique.average,
-                                goalkeeping.average,
-                                defence.average,
-                                offence.average,
-                                technique.average,
-                            ],
+                            data: stats.map(item => item.average),
                         }],
                     }}
                     options={{

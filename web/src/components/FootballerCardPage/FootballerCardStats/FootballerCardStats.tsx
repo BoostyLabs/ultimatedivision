@@ -2,10 +2,11 @@
 // See LICENSE for copying information.
 
 import React from 'react';
+import { CardStats } from '../../../types/fotballerCard';
 import './FootballerCardStats.scss';
 
 /* eslint-disable */
-export const FootballerCardStats = ({ props, title }) => {
+export const FootballerCardStats: React.FC<{props: CardStats}>  = ({ props }) => {
 
     const fields = props.fields;
 
@@ -16,7 +17,7 @@ export const FootballerCardStats = ({ props, title }) => {
             >
                 <span className="footballer-card-stats-item__heading-name"
                 >
-                    {title}
+                    {props.title}
                 </span>
                 <span
                     className="footballer-card-stats-item__heading-value"

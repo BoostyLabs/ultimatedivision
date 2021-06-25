@@ -17,7 +17,7 @@ import './FootballerCard.scss';
 
 export const FootballerCard = () => {
 
-    const cardData = useSelector(state => state.footballerCardStats[0].overalInfo[0].value);
+    const cardData = useSelector(state => state.footballerCard[0].overalInfo[0].value);
     console.log(cardData)
 
     return (
