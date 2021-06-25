@@ -5,6 +5,8 @@ import { CardStatsField } from '../../types/fotballerCard';
 import { CardInfoField } from '../../types/fotballerCard';
 import { CardPrice } from "../../types/fotballerCard";
 import { CardPriceField } from '../../types/fotballerCard';
+import { CardPricePRP } from '../../types/fotballerCard';
+import { Diagram } from '../../types/fotballerCard';
 
 
 class Card {
@@ -84,10 +86,18 @@ class Card {
     price = new CardPrice(
         new CardPriceField('id', 1),
         new CardPriceField('Price', '11,400,00'),
-        new CardPriceField('PRP', 75),
+        new CardPricePRP('PRP', 75),
         new CardPriceField('updated', 16),
         new CardPriceField('PR', '1,142,000 - 15,000,000'),
     )
+    diagram = [
+        new Diagram('1', 'physical', 100, 800, 688),
+        new Diagram('2', 'mental', 100, 800, 688),
+        new Diagram('3', 'skill', 100, 800, 688),
+        new Diagram('4', 'chem. style', 100, 800, 688),
+        new Diagram('5', 'base stats', 100, 800, 688),
+        new Diagram('6', 'in game stats', 100, 800, 688),
+    ]
 }
 
 function cardlist(count: number) {

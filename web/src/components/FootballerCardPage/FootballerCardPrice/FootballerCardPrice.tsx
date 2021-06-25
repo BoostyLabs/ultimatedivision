@@ -5,14 +5,16 @@ import React from 'react';
 import './FootballerCardPrice.scss';
 import { Doughnut } from 'react-chartjs-2';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 
 import currency from '../../../img/FootballerCardPage/currency.png'
 
-/* eslint-disable */
-export const FootballerCardPrice = () => {
 
-    const priceData = useSelector(state => state.footballerCard[0].price);
-    const prpValue = priceData.prp.value;
+
+/* eslint-disable */
+export const FootballerCardPrice: React.FC = () => {
+    const priceData = useSelector((state: RootState) => state.footballerCard[0].price);
+    const prpValue: number = priceData.prp.value;
 
     return (
         <div className="footballer-card-price">
@@ -20,6 +22,7 @@ export const FootballerCardPrice = () => {
                 <div className="footballer-card-price__diagram">
                     <p className="footballer-card-price__diagram-value">{`PRP: ${prpValue}%`}</p>
                     <Doughnut
+                        type={Doughnut}
                         data={{
                             datasets: [{
                                 data: [prpValue, (100 - prpValue)],

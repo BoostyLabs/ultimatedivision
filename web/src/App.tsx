@@ -8,7 +8,7 @@ import './App.scss';
 import { FootballerCard } from
     './components/FootballerCardPage/FootballerCard/FootballerCard';
 
-export function App() {
+export const App: React.FC = () => {
     return (
         <>
             <Switch>

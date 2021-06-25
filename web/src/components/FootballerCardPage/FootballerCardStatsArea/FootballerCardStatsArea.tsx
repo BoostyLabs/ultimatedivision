@@ -3,13 +3,13 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 import './FootballerCardStatsArea.scss';
 import { FootballerCardStats }
     from '../FootballerCardStats/FootballerCardStats';
 
-import { RootState } from '../../../store';
 
-export const FootballerCardStatsArea = () => {
+export const FootballerCardStatsArea: React.FC = () => {
     const stats = useSelector((state: RootState )=> state.footballerCard[0].stats);
 
     return (

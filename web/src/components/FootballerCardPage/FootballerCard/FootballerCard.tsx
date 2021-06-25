@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 
 import { FootballerCardIllustrations} from
     '../FootballerCardIllustrations/FootballerCardIllustrations';
@@ -15,10 +16,8 @@ import { FootballerCardInformation } from
 
 import './FootballerCard.scss';
 
-export const FootballerCard = () => {
-
-    const cardData = useSelector(state => state.footballerCard[0].overalInfo[0].value);
-    console.log(cardData)
+export const FootballerCard: React.FC = () => {
+    const cardData = useSelector((state: RootState) => state.footballerCard[0].overalInfo[0].value);
 
     return (
         <div className="footballer-card">

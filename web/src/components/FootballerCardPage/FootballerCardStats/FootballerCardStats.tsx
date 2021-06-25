@@ -7,7 +7,6 @@ import './FootballerCardStats.scss';
 
 /* eslint-disable */
 export const FootballerCardStats: React.FC<{props: CardStats}>  = ({ props }) => {
-
     const fields = props.fields;
 
     return (

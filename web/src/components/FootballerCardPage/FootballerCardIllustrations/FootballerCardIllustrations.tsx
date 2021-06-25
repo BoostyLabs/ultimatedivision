@@ -10,7 +10,7 @@ import  { FootballerCardIllustrationsDiagramsArea }
 
 import icon from '../../../img/FootballerCardPage/diamond2.png';
 
-export const FootballerCardIllustrations = () => {
+export const FootballerCardIllustrations: React.FC = () => {
 
     return (
         <div className="footballer-card-illustrations">

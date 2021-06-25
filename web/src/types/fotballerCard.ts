@@ -2,7 +2,7 @@ export class CardStats {
     average: number = this.fields
         .map(item => item.value)
         .reduce((prev, current) => prev + current) / this.fields.length;
-    constructor(public title: string,  public fields: CardStatsField[]) {
+    constructor(public title: string, public fields: CardStatsField[]) {
     }
     get color(): string {
         switch (true) {
@@ -24,7 +24,7 @@ export class CardInfoField {
     constructor(
         public label: string,
         public value: string | number | boolean,
-        public icon?: string | boolean
+        public icon?: string | undefined
     ) { }
 }
 export class CardPriceField {
@@ -33,12 +33,18 @@ export class CardPriceField {
         public value: number | string
     ) { }
 }
+export class CardPricePRP {
+    constructor(
+        public label: string,
+        public value: number
+    ) { }
+}
 
 export class CardPrice {
     constructor(
         public id: CardPriceField,
         public price: CardPriceField,
-        public prp: CardPriceField,
+        public prp: CardPricePRP,
         public updated: CardPriceField,
         public pr: CardPriceField,
     ) { }
@@ -55,4 +61,14 @@ export class CardPrice {
                 return '#FF4200';
         }
     }
+}
+
+export class Diagram {
+    constructor(
+        public id: string,
+        public name: string,
+        public min: number,
+        public max: number,
+        public value: number,
+    ) { }
 }
