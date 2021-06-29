@@ -33,3 +33,12 @@ type Admin struct {
 	PasswordHash []byte
 	CreatedAt    time.Time
 }
+
+func NewAdmin(email string,passwordHash []byte) Admin{
+	return Admin{
+		ID: uuid.New(),
+		Email: email,
+		PasswordHash: passwordHash,
+		CreatedAt: time.Now(),
+	}
+}
