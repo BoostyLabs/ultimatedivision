@@ -6,7 +6,9 @@ package controllers
 import (
 	"html/template"
 	"net/http"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/admin/admins"
@@ -20,7 +22,8 @@ var (
 
 // AdminTemplates holds all admins related templates.
 type AdminTemplates struct {
-	List *template.Template
+	List   *template.Template
+	Create *template.Template
 }
 
 // Admins is a mvc controller that handles all admins related views.
@@ -57,6 +60,58 @@ func (controller *Admins) List(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		controller.log.Error("can not execute list admins template", ErrAdmins.Wrap(err))
 		http.Error(w, "can not execute list admins template", http.StatusInternalServerError)
+		return
+	}
+}
+
+// Add is an endpoint that will provide a web page with form create admin.
+func (controller *Admins) Add(w http.ResponseWriter, r *http.Request) {
+	if err := controller.templates.Create.Execute(w, nil); err != nil {
+		controller.log.Error("can not execute add admin template", ErrAdmins.Wrap(err))
+		http.Error(w, "can not execute add admin template", http.StatusInternalServerError)
+		return
+	}
+}
+
+// Create is an endpoint that will provide a create admin.
+func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	err := r.ParseForm()
+	if err != nil {
+		controller.log.Error("error parse value with form", ErrAdmins.Wrap(err))
+		http.Error(w, "error parse value with form", http.StatusBadRequest)
+		return
+	}
+
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	// TODO: validate value
+
+	passwordHash, err := controller.admins.GeneratePasswordHash(password)
+	if err != nil {
+		controller.log.Error("error generate password hash", ErrAdmins.Wrap(err))
+		http.Error(w, "error generate password hash", http.StatusInternalServerError)
+		return
+	}
+
+	admin := admins.Admin{
+		ID:           uuid.New(),
+		Email:        email,
+		PasswordHash: passwordHash,
+		CreatedAt:    time.Now().UTC(),
+	}
+
+	err = controller.admins.Create(ctx, admin)
+	if err != nil {
+		controller.log.Error("could not create admin", ErrAdmins.Wrap(err))
+		http.Error(w, "could not create admin", http.StatusInternalServerError)
+		return
+	}
+
+	if err := controller.templates.Create.Execute(w, nil); err != nil {
+		controller.log.Error("can not execute add admin template", ErrAdmins.Wrap(err))
+		http.Error(w, "can not execute add admin template", http.StatusInternalServerError)
 		return
 	}
 }
