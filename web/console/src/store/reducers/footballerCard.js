@@ -4,12 +4,20 @@ See LICENSE for copying information.
  */
 
 import player from '../../img/MarketPlacePage/marketPlaceCardsGroup/player.png';
-import price from '../../img/MarketPlacePage/marketPlaceCardsGroup/price.png';
+import price
+    from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.png';
 
 import diamond from '../../img/MarketPlacePage/marketPlaceCardsGroup/diamond2.png';
 import gold from '../../img/MarketPlacePage/marketPlaceCardsGroup/gold2.png';
 import silver from '../../img/MarketPlacePage/marketPlaceCardsGroup/silver2.png';
 import wood from '../../img/MarketPlacePage/marketPlaceCardsGroup/wood2.png';
+
+import currentBid
+    from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/bid.png';
+import minimumPrice
+    from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/minimum.png';
+import purchased
+    from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/purchased.png';
 
 class CardStats {
     constructor(fields) {
@@ -19,20 +27,20 @@ class CardStats {
             .reduce((prev, current) => prev + current) / fields.length;
     }
     get color() {
-        let upperBreakPoint = 90;
-        let lowerBreakPoint = 50;
+        const STATISTIC_UPPER_BOUND = 90;
+        const STATISTIC_LOWER_BOUND = 50;
 
-        let upperPointColor = '#3CCF5D';
-        let lowerPointColor = '#E8EC16';
-        let defaultPointColor = '#FF4200';
+        const STATISTIC_UPPER_BOUND_COLOR = '#3CCF5D';
+        const STATISTIC_LOWER_BOUND_COLOR = '#E8EC16';
+        const STATISTIC_MEDIUM_BOUND_COLOR = '#FF4200';
 
         switch (true) {
-            case (this.average >= upperBreakPoint):
-                return upperPointColor;
-            case (this.average >= lowerBreakPoint):
-                return lowerPointColor;
+            case (this.average >= STATISTIC_UPPER_BOUND):
+                return STATISTIC_UPPER_BOUND_COLOR;
+            case (this.average >= STATISTIC_LOWER_BOUND):
+                return STATISTIC_LOWER_BOUND_COLOR;
             default:
-                return defaultPointColor;
+                return STATISTIC_MEDIUM_BOUND_COLOR;
         }
     }
 }
@@ -49,15 +57,26 @@ class Card {
             /*
             * bakgroundtype picture that depend on quality
             */
-            const listOfQualities = [
+            const qualities = [
                 diamond, gold, silver, wood
             ];
-            let background = listOfQualities[Math.floor(Math.random()
-                * listOfQualities.length)];
+            let background = qualities[Math.floor(Math.random()
+                * qualities.length)];
             return background;
         },
+        get priceStatus() {
+            /*
+            * get image with price status depend on price status
+            */
+            const statuses = [
+                currentBid, minimumPrice, purchased
+            ];
+            let status = statuses[Math.floor(Math.random()
+                * statuses.length)];
+            return status;
+        },
         facePicture: player,
-        pricePicture: price
+        pricePicture: price,
     };
     overalInfo = {
         'name': 'Albert Ronalculus',
