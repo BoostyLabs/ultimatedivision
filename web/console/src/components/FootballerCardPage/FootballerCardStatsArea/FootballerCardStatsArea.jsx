@@ -10,7 +10,7 @@ import { FootballerCardStats }
     from '../FootballerCardStats/FootballerCardStats';
 
 export const FootballerCardStatsArea = () => {
-    const stats = useSelector(state => state.footballerCardStats[0]);
+    const stats = useSelector(state => state.footballerCard[0].stats);
 
     return (
         <div className="footballer-card-stats">

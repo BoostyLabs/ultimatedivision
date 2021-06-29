@@ -1,7 +1,7 @@
 /*
 Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
-*/
+ */
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -12,14 +12,11 @@ import ultimate
     from '../../../img/MarketPlacePage/MarketPlaceNavbar/ultimate.png';
 
 export const MarketPlaceNavbar = () => {
-
     return (
         <div className="marketplace-navbar">
-            <img
-                className="marketplace-navbar__logo"
-                alt="marketplace logo"
+            <img className="marketplace-navbar__logo"
                 src={ultimate}
-            />
+                alt={ultimate} />
             <ul className="marketplace-navbar__list">
                 <li className="marketplace-navbar__item">
                     <NavLink to="/ud"
@@ -42,5 +39,4 @@ export const MarketPlaceNavbar = () => {
             </ul >
         </div>
     );
-
 };

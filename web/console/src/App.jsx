@@ -1,18 +1,13 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
-*/
-
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import { MarketPlace }
     from './components/MarketPlacePage/MarketPlace/MarketPlace';
 
-import './App.scss';
+import { FootballerCard }
+    from './components/FootballerCardPage/FootballerCard/FootballerCard';
 
-import { FootballerCard } from
-    './components/FootballerCardPage/FootballerCard/FootballerCard';
+import './App.scss';
 
 export function App() {
     return (
@@ -22,10 +17,11 @@ export function App() {
                     <MarketPlace />
                 </Route>
                 <Route exact path="/ud/marketplace/card">
-                    <FootballerCard />
+                    <FootballerCard/>
                 </Route>
             </Switch>
         </>
     );
 }
 
+export default App;
