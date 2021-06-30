@@ -1,21 +1,19 @@
-// Copyright (C) 2021 Creditor Corp. Group.
-// See LICENSE for copying information.
+/*
+Copyright (C) 2021 Creditor Corp. Group.
+See LICENSE for copying information.
+*/
 
 import React from 'react';
 import './FootballerCardStats.scss';
 
 /* eslint-disable */
 export const FootballerCardStats = ({ props, title }) => {
-
     const fields = props.fields;
 
     return (
         <div className="footballer-card-stats-item">
-            <div
-                className="footballer-card-stats-item__heading"
-            >
-                <span className="footballer-card-stats-item__heading-name"
-                >
+            <div className="footballer-card-stats-item__heading">
+                <span className="footballer-card-stats-item__heading-name">
                     {title}
                 </span>
                 <span
