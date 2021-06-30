@@ -4,7 +4,6 @@
 package controllers
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"html/template"
 	"net/http"
 
@@ -63,43 +62,21 @@ func (controller *Admins) List(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// AdminsInput is struct for form.
-type AdminsInput struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-// NewAdminInput is constructor for AdminsInput.
-func NewAdminInput() *AdminsInput {
-	return &AdminsInput{}
-}
-
-// Encode is method to encode password.
-func (adminInput *AdminsInput) Encode() error {
-	hash, err := bcrypt.GenerateFromPassword([]byte(adminInput.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	adminInput.Password = string(hash)
-	return nil
-}
-
 // Create is an endpoint that creates new admin.
 func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	adminInput := NewAdminInput()
-	adminInput.Email = r.FormValue("name")
-	adminInput.Password = r.FormValue("password")
+	email := r.FormValue("name")
+	password := r.FormValue("password")
 
-	err := adminInput.Encode()
+	admin := admins.NewAdmin(email, []byte(password))
+
+	err := admin.EncodePassword()
 	if err != nil {
-		controller.log.Error("could not encode admins password", ErrAdmins.Wrap(err))
-		http.Error(w, "could not encode admins password", http.StatusInternalServerError)
+		controller.log.Error("could not encode admin password", ErrAdmins.Wrap(err))
+		http.Error(w, "could not encode admin password", http.StatusInternalServerError) // status code should depends on error type.
 		return
 	}
-
-	admin := admins.NewAdmin(adminInput.Email, []byte(adminInput.Password))
 
 	err = controller.admins.Create(ctx, admin)
 	if err != nil {
@@ -111,7 +88,7 @@ func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 
 // GenerateForm is endpoint to generate create admin form.
 func (controller *Admins) GenerateForm(w http.ResponseWriter, r *http.Request) {
-	err := controller.templates.List.Execute(w, nil)
+	err := controller.templates.Create.Execute(w, nil)
 	if err != nil {
 		controller.log.Error("could not execute list admins template", ErrAdmins.Wrap(err))
 		http.Error(w, "could not execute list admins template", http.StatusInternalServerError)
