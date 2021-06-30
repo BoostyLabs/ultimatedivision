@@ -57,6 +57,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, admins *
 	// managersRouter.Use(server.withAuth) // TODO: implement cookie auth and auth service.
 	adminsController := controllers.NewAdmins(log, admins)
 	adminsRouter.HandleFunc("", adminsController.List).Methods(http.MethodGet)
+	adminsRouter.HandleFunc("create", adminsController.Create).Methods(http.MethodPost)
+	adminsRouter.HandleFunc("create", adminsController.CreateAdminForm).Methods(http.MethodGet)
 
 	return server, nil
 }
@@ -93,6 +95,9 @@ func (server *Server) initializeTemplates() (err error) {
 	if err != nil {
 		return err
 	}
-
+	server.adminTemplates.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "create.html"))
+	if err != nil {
+		return err
+	}
 	return err
 }

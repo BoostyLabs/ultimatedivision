@@ -7,6 +7,8 @@ import (
 	"context"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 )
@@ -32,4 +34,24 @@ type Admin struct {
 	Email        string
 	PasswordHash []byte
 	CreatedAt    time.Time
+}
+
+// NewAdmin creates a new admin structure
+func NewAdmin(email string, password []byte) *Admin {
+	return &Admin{
+		ID:           uuid.New(),
+		Email:        email,
+		PasswordHash: password,
+		CreatedAt:    time.Now(),
+	}
+}
+
+// EncodePass encode the password and generate "hash" to store from admin password
+func (admin *Admin) EncodePass() error {
+	hash, err := bcrypt.GenerateFromPassword(admin.PasswordHash, bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	admin.PasswordHash = hash
+	return nil
 }
