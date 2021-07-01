@@ -2,7 +2,6 @@
 Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
-
 import React, { useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import { NavLink } from 'react-router-dom';
