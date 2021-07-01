@@ -3,12 +3,42 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
+import React, { useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
 import './MarketPlaceFootballerCard.scss';
 
 export const MarketPlaceFootballerCard = ({ card }) => {
+    let [mainCardProperties, setMainCardProperties] = useState([]);
+    useEffect(() => {
+        getCardStatsProperties();
+    }, []);
+    /**
+    * get only card's stats properties
+    */
+    const getCardStatsProperties = () => {
+        const statsProperties = [];
+
+        Object.keys(card.stats).forEach(field => {
+            /* only stats data has property 'fields' */
+            // eslint-disable-next-line no-prototype-builtins
+
+            statsProperties.push({
+                field,
+                abbreviated: field.slice(0, 3)
+            });
+        });
+        setMainCardProperties(statsProperties);
+    };
+    const getPlayerName = () => {
+        let playerName;
+        card.overalInfo.forEach(element => {
+            return element.label === 'name' ? playerName = element.value
+                : null;
+        });
+        return playerName;
+    };
 
     return (
         <div className="marketplace-playerCard">
@@ -18,13 +48,13 @@ export const MarketPlaceFootballerCard = ({ card }) => {
             <img className="marketplace-playerCard__face-picture"
                 src={card.mainInfo.facePicture}
                 alt="Player face" />
-            <NavLink to="/marketplace/card">
+            <NavLink to="/ud/marketplace/card">
                 <span className="marketplace-playerCard__name">
-                    {card.overalInfo.name}
+                    {getPlayerName()}
                 </span>
             </NavLink>
             <ul className="marketplace-playerCard__list">
-                {card.stats.map(
+                {mainCardProperties.map(
                     (property, index) => {
                         return (
                             <li
@@ -34,7 +64,7 @@ export const MarketPlaceFootballerCard = ({ card }) => {
                                     /**
                                     * get only average value of player's game property
                                     */
-                                    `${property.average} ${property.title.slice(0,3)}`
+                                    `${card.stats[property.field].average} ${property.abbreviated}`
                                 }
                             </li>
                         );
