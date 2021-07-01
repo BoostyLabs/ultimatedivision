@@ -3,34 +3,12 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
-import React, { useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
 import './MarketPlaceFootballerCard.scss';
 
 export const MarketPlaceFootballerCard = ({ card }) => {
-    let [mainCardProperties, setMainCardProperties] = useState([]);
-    /**
-    * get only card's stats properties
-    */
-    let getCardStatsProperties = () => {
-        let statsProperties = [];
-        Object.keys(card).forEach(field => {
-            /* only stats data has property 'fields' */
-            if (card[field].hasOwnProperty('fields')) {
-                statsProperties.push({
-                    field,
-                    abbreviated: field.slice(0, 3)
-                });
-            }
-        });
-        setMainCardProperties(statsProperties);
-    };
-
-    useEffect(() => {
-        getCardStatsProperties();
-    }, []);
 
     return (
         <div className="marketplace-playerCard">
@@ -46,7 +24,7 @@ export const MarketPlaceFootballerCard = ({ card }) => {
                 </span>
             </NavLink>
             <ul className="marketplace-playerCard__list">
-                {mainCardProperties.map(
+                {card.stats.map(
                     (property, index) => {
                         return (
                             <li
@@ -56,7 +34,7 @@ export const MarketPlaceFootballerCard = ({ card }) => {
                                     /**
                                     * get only average value of player's game property
                                     */
-                                    `${card[property.field].average} ${property.abbreviated}`
+                                    `${property.average} ${property.title.slice(0,3)}`
                                 }
                             </li>
                         );
@@ -70,6 +48,9 @@ export const MarketPlaceFootballerCard = ({ card }) => {
                 <span className="marketplace-playerCard__price__current">
                     {card.mainInfo.price}
                 </span>
+                <img className="marketplace-playerCard__price__status"
+                    src={card.mainInfo.priceStatus}
+                    alt="Price status" />
             </div>
         </div>
     );
