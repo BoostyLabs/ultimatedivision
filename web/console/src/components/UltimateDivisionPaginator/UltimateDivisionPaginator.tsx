@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 
-import { MarketPlacePaginatorBlockPages }
-    from './MarketPlacePaginatorBlockPages/MarketPlacePaginatorBlockPages';
+import { UltimateDivsionPaginatorBlockPages }
+    from './UltimateDivisionPaginatorBlockPages/UltimateDivisionPaginatorBlockPages';
 
-import './MarketPlacePaginator.scss';
+import './UltimateDivisionPaginator.scss';
 
 import next
-    from '../../../img/MarketPlacePage/MarketPlacePaginator/next.png';
+    from '../../img/UltimateDivisionPaginator/next.png';
 import previous
-    from '../../../img/MarketPlacePage/MarketPlacePaginator/previous.png';
+    from '../../img/UltimateDivisionPaginator/previous.png';
 
-export const MarketPlacePaginator: React.FC<{ countCards: number }> = ({ countCards }) => {
+export const UltimateDivisionPaginator: React.FC<{ countCards: number }> = ({ countCards }) => {
     let [currentPage, setCurrentPage] = useState<number>(1);
     /**
     * split the page into 3 blocks that can be needed
@@ -122,35 +122,35 @@ export const MarketPlacePaginator: React.FC<{ countCards: number }> = ({ countCa
     };
 
     return (
-        <section className="marketplace-paginator">
-            <div className="marketplace-paginator__wrapper">
-                <a className="marketplace-paginator__previous"
+        <section className="ultimatedivision-paginator">
+            <div className="ultimatedivision-paginator__wrapper">
+                <a className="ultimatedivision-paginator__previous"
                     onClick={() => onPageChange('previous page')}>
-                    <img className="marketplace-paginator__previous__arrow"
+                    <img className="ultimatedivision-paginator__previous__arrow"
                         src={previous}
                         alt="Previous page" />
-                    <p className="marketplace-paginator__previous__title">
+                    <p className="ultimatedivision-paginator__previous__title">
                         Previous page
                     </p>
                 </a>
-                <MarketPlacePaginatorBlockPages blockPages={firstBlockPages}
+                <UltimateDivsionPaginatorBlockPages blockPages={firstBlockPages}
                     onPageChange={onPageChange} />
                 {isFirstDotsShown
-                    && <span className="marketplace-paginator__pages__dots">
+                    && <span className="ultimatedivision-paginator__pages__dots">
                         ...</span>}
-                <MarketPlacePaginatorBlockPages blockPages={middleBlockPages}
+                <UltimateDivsionPaginatorBlockPages blockPages={middleBlockPages}
                     onPageChange={onPageChange} />
                 {isSecondDotsShown
-                    && <span className="marketplace-paginator__pages__dots">
+                    && <span className="ultimatedivision-paginator__pages__dots">
                         ...</span>}
-                <MarketPlacePaginatorBlockPages blockPages={lastBlockPages}
+                <UltimateDivsionPaginatorBlockPages blockPages={lastBlockPages}
                     onPageChange={onPageChange} />
-                <a className="marketplace-paginator__next"
+                <a className="ultimatedivision-paginator__next"
                     onClick={() => onPageChange('next page')}>
-                    <p className="marketplace-paginator__next__title">
+                    <p className="ultimatedivision-paginator__next__title">
                         Next page
                     </p>
-                    <img className="marketplace-paginator__next__arrow"
+                    <img className="ultimatedivision-paginator__next__arrow"
                         src={next}
                         alt="Next page" />
                 </a>

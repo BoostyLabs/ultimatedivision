@@ -12,9 +12,10 @@ import { MarketPlaceFilterField }
     from '../MarketPlaceFilterField/MarketPlaceFilterField';
 import { MarketPlaceCardsGroup }
     from '../MarketPlaceCardsGroup/MarketPlaceCardsGroup';
+import { UltimateDivisionPaginator }
+    from '../../UltimateDivisionPaginator/UltimateDivisionPaginator';
+
 import './MarketPlace.scss';
-import { MarketPlacePaginator }
-    from '../MarketPlacePaginator/MarketPlacePaginator';
 
 export const MarketPlace: React.FC = () => {
     const cards = useSelector((state: RootState) => state.footballerCard);
@@ -25,7 +26,7 @@ export const MarketPlace: React.FC = () => {
             <MarketPlaceFilterField />
             <MarketPlaceCardsGroup
                 cards={cards} />
-            <MarketPlacePaginator
+            <UltimateDivisionPaginator
                 countCards={cards.length} />
         </section>
     );
