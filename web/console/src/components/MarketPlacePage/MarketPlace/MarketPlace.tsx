@@ -5,6 +5,7 @@ See LICENSE for copying information.
 
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 
 import { MarketPlaceNavbar } from '../MarketPlaceNavbar/MarketPlaceNavbar';
 import { MarketPlaceFilterField }
@@ -12,9 +13,11 @@ import { MarketPlaceFilterField }
 import { MarketPlaceCardsGroup }
     from '../MarketPlaceCardsGroup/MarketPlaceCardsGroup';
 import './MarketPlace.scss';
+import { MarketPlacePaginator }
+    from '../MarketPlacePaginator/MarketPlacePaginator';
 
-export const MarketPlace = () => {
-    const cards = useSelector(state => state.footballerCard);
+export const MarketPlace: React.FC = () => {
+    const cards = useSelector((state: RootState) => state.footballerCard);
 
     return (
         <section className="marketplace">
@@ -22,6 +25,8 @@ export const MarketPlace = () => {
             <MarketPlaceFilterField />
             <MarketPlaceCardsGroup
                 cards={cards} />
+            <MarketPlacePaginator
+                countCards={cards.length} />
         </section>
     );
 };
