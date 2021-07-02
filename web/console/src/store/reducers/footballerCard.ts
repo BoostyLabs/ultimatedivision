@@ -3,26 +3,14 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
-import player from '../../img/MarketPlacePage/marketPlaceCardsGroup/player.png';
-import price
+import playerFace from '../../img/MarketPlacePage/marketPlaceCardsGroup/player.png';
+import priceIcon
     from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.png';
-
-import diamond from '../../img/MarketPlacePage/marketPlaceCardsGroup/diamond2.png';
-import gold from '../../img/MarketPlacePage/marketPlaceCardsGroup/gold2.png';
-import silver from '../../img/MarketPlacePage/marketPlaceCardsGroup/silver2.png';
-import wood from '../../img/MarketPlacePage/marketPlaceCardsGroup/wood2.png';
-
-import currentBid
-    from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/bid.png';
-import minimumPrice
-    from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/minimum.png';
-import purchased
-    from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/purchased.png';
 
 import star from '../../img/FootballerCardPage/star.png';
 import checked from '../../img/FootballerCardPage/checked.png';
 
-import { CardStats } from '../../types/fotballerCard';
+import { CardMainInfo, CardStats } from '../../types/fotballerCard';
 import { CardStatsField } from '../../types/fotballerCard';
 import { CardInfoField } from '../../types/fotballerCard';
 import { CardPrice } from "../../types/fotballerCard";
@@ -32,33 +20,12 @@ import { CardPricePRP } from '../../types/fotballerCard';
 import { Diagram } from '../../types/fotballerCard';
 
 export class Card {
-    mainInfo = {
-        price: 1000000,
-        get backgroundType() {
-            /*
-            * bakgroundtype picture that depend on quality
-            */
-            const qualities = [
-                diamond, gold, silver, wood
-            ];
-            let background = qualities[Math.floor(Math.random()
-                * qualities.length)];
-            return background;
-        },
-        get priceStatus() {
-            /*
-            * get image with price status depend on price status
-            */
-            const statuses = [
-                currentBid, minimumPrice, purchased
-            ];
-            let status = statuses[Math.floor(Math.random()
-                * statuses.length)];
-            return status;
-        },
-        facePicture: player,
-        pricePicture: price,
-    };
+    mainInfo = new CardMainInfo(
+        'Ronalculus',
+        1000000,
+        playerFace,
+        priceIcon
+    )
     overalInfo = [
         new CardInfoField('name', 'Albert Ronalculus'),
         new CardInfoField('nation', 'Portugal 🇵🇹'),

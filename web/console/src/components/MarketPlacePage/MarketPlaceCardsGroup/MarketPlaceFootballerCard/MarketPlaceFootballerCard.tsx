@@ -11,26 +11,17 @@ import { Card } from '../../../../store/reducers/footballerCard';
 import './MarketPlaceFootballerCard.scss';
 
 export const MarketPlaceFootballerCard: React.FC<{ card: Card }> = ({ card }) => {
-    /* get player card name */
-    const getPlayerName = () => {
-        let playerName;
-        card.overalInfo.forEach(element => {
-            return element.label === 'name' ? playerName = element.value
-                : null;
-        });
-        return playerName;
-    };
     return (
         <div className="marketplace-playerCard">
             <img className="marketplace-playerCard__background-type"
                 src={card.mainInfo.backgroundType}
                 alt="Player background type" />
             <img className="marketplace-playerCard__face-picture"
-                src={card.mainInfo.facePicture}
+                src={card.mainInfo.playerFace}
                 alt="Player face" />
             <NavLink to="/ud/marketplace/card">
                 <span className="marketplace-playerCard__name">
-                    {getPlayerName()}
+                    {card.mainInfo.lastName}
                 </span>
             </NavLink>
             <ul className="marketplace-playerCard__list">
@@ -53,7 +44,7 @@ export const MarketPlaceFootballerCard: React.FC<{ card: Card }> = ({ card }) =>
             </ul>
             <div className="marketplace-playerCard__price">
                 <img className="marketplace-playerCard__price__picture"
-                    src={card.mainInfo.pricePicture}
+                    src={card.mainInfo.priceIcon}
                     alt="Player price" />
                 <span className="marketplace-playerCard__price__current">
                     {card.mainInfo.price}
