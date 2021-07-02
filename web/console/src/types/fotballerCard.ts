@@ -9,6 +9,7 @@ export class CardStats {
         .reduce((prev, current) => prev + current) / this.fields.length;
     constructor(
         public title: string = '',
+        public abbreviated: string = '',
         public fields: CardStatsField[] = []
     ) {
     }

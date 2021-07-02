@@ -31,7 +31,7 @@ import { CardPriceId } from '../../types/fotballerCard';
 import { CardPricePRP } from '../../types/fotballerCard';
 import { Diagram } from '../../types/fotballerCard';
 
-class Card {
+export class Card {
     mainInfo = {
         price: 1000000,
         get backgroundType() {
@@ -78,7 +78,7 @@ class Card {
         new CardInfoField('age', '36 years old')
     ]
     stats = [
-        new CardStats('tactics', [
+        new CardStats('tactics', 'tac', [
             new CardStatsField('positioning', 100),
             new CardStatsField('composure', 95,),
             new CardStatsField('aggression', 98),
@@ -86,7 +86,7 @@ class Card {
             new CardStatsField('awareness', 99),
             new CardStatsField('crosses', 98),
         ]),
-        new CardStats('physique', [
+        new CardStats('physique', 'phy', [
             new CardStatsField('acceleration', 26),
             new CardStatsField('running speed', 25),
             new CardStatsField('reaction speed', 45),
@@ -96,7 +96,7 @@ class Card {
             new CardStatsField('jumping', 28),
             new CardStatsField('balance', 42),
         ]),
-        new CardStats('technique', [
+        new CardStats('technique', 'tec', [
             new CardStatsField('dribbing', 26),
             new CardStatsField('ball fontrol', 26),
             new CardStatsField('weak foot', 26),
@@ -108,7 +108,7 @@ class Card {
             new CardStatsField('long passing', 26),
             new CardStatsField('forward pass', 26),
         ]),
-        new CardStats('offence', [
+        new CardStats('offence', 'off', [
             new CardStatsField('finishing ability', 42),
             new CardStatsField('shot power', 42),
             new CardStatsField('accuracy', 42),
@@ -118,14 +118,14 @@ class Card {
             new CardStatsField('corners', 42),
             new CardStatsField('heading accuracy', 42),
         ]),
-        new CardStats('defence', [
+        new CardStats('defence', 'def', [
             new CardStatsField('offside trap', 74),
             new CardStatsField('tackles', 74),
             new CardStatsField('ball focus', 74),
             new CardStatsField('interceptions', 74),
             new CardStatsField('vigilance', 74),
         ]),
-        new CardStats('goalkeeping', [
+        new CardStats('goalkeeping', 'gk', [
             new CardStatsField('diving', 84),
             new CardStatsField('handling', 84),
             new CardStatsField('sweeping', 84),
@@ -159,6 +159,6 @@ function cardlist(count: number) {
     return list;
 }
 
-export const cardReducer = (cardState = cardlist(24)) => {
+export const cardReducer = (cardState = cardlist(100)) => {
     return cardState;
 };

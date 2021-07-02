@@ -11,7 +11,7 @@ import './MarketPlaceNavbar.scss';
 import ultimate
     from '../../../img/MarketPlacePage/MarketPlaceNavbar/ultimate.png';
 
-export const MarketPlaceNavbar = () => {
+export const MarketPlaceNavbar: React.FC = () => {
     return (
         <div className="marketplace-navbar">
             <img className="marketplace-navbar__logo"

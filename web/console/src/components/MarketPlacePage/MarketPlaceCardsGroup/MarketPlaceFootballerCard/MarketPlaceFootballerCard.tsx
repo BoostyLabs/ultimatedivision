@@ -4,13 +4,22 @@ See LICENSE for copying information.
  */
 
 import React from 'react';
-import { PropTypes } from 'prop-types';
 import { NavLink } from 'react-router-dom';
+
+import { Card } from '../../../../store/reducers/footballerCard';
 
 import './MarketPlaceFootballerCard.scss';
 
-export const MarketPlaceFootballerCard = ({ card }) => {
-
+export const MarketPlaceFootballerCard: React.FC<{ card: Card }> = ({ card }) => {
+    /* get player card name */
+    const getPlayerName = () => {
+        let playerName;
+        card.overalInfo.forEach(element => {
+            return element.label === 'name' ? playerName = element.value
+                : null;
+        });
+        return playerName;
+    };
     return (
         <div className="marketplace-playerCard">
             <img className="marketplace-playerCard__background-type"
@@ -19,14 +28,14 @@ export const MarketPlaceFootballerCard = ({ card }) => {
             <img className="marketplace-playerCard__face-picture"
                 src={card.mainInfo.facePicture}
                 alt="Player face" />
-            <NavLink to="/marketplace/card">
+            <NavLink to="/ud/marketplace/card">
                 <span className="marketplace-playerCard__name">
-                    {card.overalInfo.name}
+                    {getPlayerName()}
                 </span>
             </NavLink>
             <ul className="marketplace-playerCard__list">
                 {card.stats.map(
-                    (property, index) => {
+                    (stat, index) => {
                         return (
                             <li
                                 className="marketplace-playerCard__list__item"
@@ -35,7 +44,7 @@ export const MarketPlaceFootballerCard = ({ card }) => {
                                     /**
                                     * get only average value of player's game property
                                     */
-                                    `${property.average} ${property.title.slice(0,3)}`
+                                    `${stat.abbreviated} ${stat.average}`
                                 }
                             </li>
                         );
@@ -55,8 +64,4 @@ export const MarketPlaceFootballerCard = ({ card }) => {
             </div>
         </div>
     );
-};
-
-MarketPlaceFootballerCard.propTypes = {
-    card: PropTypes.object.isRequired
 };
