@@ -17,6 +17,8 @@ export const FootballFieldInformationOption: React.FC<{ props: FotballFieldInfor
 
     const styles = new Styles(state)
 
+    console.log(props)
+
     return (
         <div className="football-field-information-option">
             <div

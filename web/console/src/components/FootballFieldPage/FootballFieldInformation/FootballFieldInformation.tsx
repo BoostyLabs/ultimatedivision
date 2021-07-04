@@ -9,14 +9,17 @@ import './FootballFieldInformation.scss'
 import { FootballFieldInformationOption }
     from '../FootballFieldInformationOption/FootballFieldInformationOption';
 
-import { FotballFieldInformationLine } from '../../../types/fotballerCard';
+import { FootballFieldInformationLine } from '../../../types/footballField';
+import { handleFormations } from '../../../store/reducers/footballField';
+import { handleTactics } from '../../../store/reducers/footballField';
+import { handleCaptain } from '../../../store/reducers/footballField';
 
-export const FootballFieldInformation = () => {
+export const FootballFieldInformation: React.FC = () => {
 
-    const InformationField: FotballFieldInformationLine[] = [
-        new FotballFieldInformationLine('0', 'formation', ['4-4-2', '4-2-4', '4-3-3']),
-        new FotballFieldInformationLine('1', 'tactics', ['4-4-2', '4-2-4', '4-3-3']),
-        new FotballFieldInformationLine('2', 'captain', ['4-4-2', '4-2-4', '4-3-3']),
+    const InformationFIelds: FootballFieldInformationLine[] = [
+        new FootballFieldInformationLine('0', 'formation', ['4-4-2', '4-2-4', '4-3-3'], handleFormations),
+        new FootballFieldInformationLine('1', 'tactics', ['4-4-2', '4-2-4', '4-3-3'], handleTactics),
+        new FootballFieldInformationLine('2', 'captain', ['4-4-2', '4-2-4', '4-3-3'], handleCaptain),
     ]
 
     return (
@@ -25,7 +28,7 @@ export const FootballFieldInformation = () => {
                 information
             </h2>
             {
-                InformationField.map(item => (
+                InformationFIelds.map(item => (
                     <FootballFieldInformationOption
                         key={item.id}
                         props={item}
