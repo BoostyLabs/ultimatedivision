@@ -6,16 +6,25 @@ See LICENSE for copying information.
 import React from 'react';
 import './PlayingFormation_442.scss';
 import { FootballField } from '../../../../../types/footballField';
+import { useDispatch } from 'react-redux';
+import { ChoseCardPosition }
+    from '../../../../../store/reducers/footballField';
+import { MarketPlaceFootballerCard }
+    from '../../../../MarketPlacePage/MarketPlaceCardsGroup/MarketPlaceFootballerCard/MarketPlaceFootballerCard';
+
 
 export const PlayingFormation_442: React.FC<{ props: FootballField }> = ({ props }) => {
+    const Dispatch = useDispatch();
 
     return (
         <div className="playing-formation-442">
-            {props.cardsList.map(card => (
+            {props.cardsList.map((card, index) => (
                 <div
-                    key={card.id}
+                    onClick={() => Dispatch(ChoseCardPosition(index.toString()))}
+                    key={index}
                     className="playing-formation-442__card"
                 >
+                    {card.cardData ? <MarketPlaceFootballerCard card={card.cardData} place={'PlayArea'}/> : null}
                 </div>
             ))}
         </div>
