@@ -12,8 +12,6 @@ import { MarketPlaceFootballerCard }
 import { useSelector } from 'react-redux';
 
 export const MarketPlaceCardsGroup = ({ cards, place }) => {
-    const cardsf = useSelector(state => state.footballField)
-    console.log(cardsf)
     return (
         <div className="marketplace-cards">
             <div className="marketplace-cards__wrapper">
