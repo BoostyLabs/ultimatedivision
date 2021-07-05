@@ -14,7 +14,7 @@ import { MarketPlaceCardsGroup }
 import './MarketPlace.scss';
 
 export const MarketPlace = () => {
-    const cards = useSelector(state => state.footballerCard);
+    const cards = useSelector(state => state.cardReducer);
 
     return (
         <section className="marketplace">

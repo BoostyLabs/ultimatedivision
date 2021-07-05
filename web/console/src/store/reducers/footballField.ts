@@ -34,7 +34,7 @@ export const handleCaptain = (option: string) => {
 };
 
 
-export const footballField = (cardState = FieldSetup, action: {
+export const fieldReducer = (cardState = FieldSetup, action: {
     type: string,
     action: string
 }) => {

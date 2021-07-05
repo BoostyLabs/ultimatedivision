@@ -11,11 +11,11 @@ import { FootballerCardIllustrationsDiagram }
     from '../FootballerCardIllustrationsDiagram/FootballerCardIllustrationsDiagram'
 
 export const FootballerCardIllustrationsDiagramsArea: React.FC = () => {
-    const diagramData = useSelector((state: RootState) => state.footballerCard[0].diagram)
+    const DIAGRAM_DATA = useSelector((state: RootState) => state.cardReducer[0].diagram)
 
     return (
         <div className="footballer-card-illustrations-diagram-area">
-            {diagramData.map(item => (
+            {DIAGRAM_DATA.map(item => (
                 <FootballerCardIllustrationsDiagram
                     key={item.id}
                     props={item}
