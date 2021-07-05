@@ -27,7 +27,7 @@ export const MarketPlace: React.FC = () => {
             <MarketPlaceCardsGroup
                 cards={cards} />
             <UltimateDivisionPaginator
-                countCards={cards.length} />
+                itemCount={cards.length} />
         </section>
     );
 };

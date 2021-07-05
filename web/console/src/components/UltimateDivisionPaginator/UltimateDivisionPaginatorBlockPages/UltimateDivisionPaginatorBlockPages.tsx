@@ -10,7 +10,8 @@ export const UltimateDivsionPaginatorBlockPages: React.FC<{
                 <li
                     className="ultimatedivision-paginator__pages__item"
                     key={index}
-                    onClick={() => onPageChange('change page', page)}>
+                    onClick={() => onPageChange('change page', page)}
+                >
                     {page}
                 </li>
             )}

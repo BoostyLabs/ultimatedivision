@@ -10,7 +10,7 @@ import next
 import previous
     from '../../img/UltimateDivisionPaginator/previous.png';
 
-export const UltimateDivisionPaginator: React.FC<{ countCards: number }> = ({ countCards }) => {
+export const UltimateDivisionPaginator: React.FC<{ itemCount: number }> = ({ itemCount }) => {
     let [currentPage, setCurrentPage] = useState<number>(1);
     /**
     * split the page into 3 blocks that can be needed
@@ -28,7 +28,7 @@ export const UltimateDivisionPaginator: React.FC<{ countCards: number }> = ({ co
     const MAX_PAGES_PER_BLOCK: number = 5;
     const MAX_PAGES_OFF_BLOCKS: number = 10;
     let pages: number[] = [];
-    for (let i = 1; i <= Math.ceil(countCards / CARDS_ON_PAGE); i++) {
+    for (let i = 1; i <= Math.ceil(itemCount / CARDS_ON_PAGE); i++) {
         pages.push(i);
     }
     /**
