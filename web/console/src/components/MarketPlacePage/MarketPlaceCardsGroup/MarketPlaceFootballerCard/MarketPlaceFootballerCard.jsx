@@ -4,15 +4,22 @@ See LICENSE for copying information.
  */
 
 import React from 'react';
-import { PropTypes } from 'prop-types';
 import { NavLink } from 'react-router-dom';
-
 import './MarketPlaceFootballerCard.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { HandleCard }
+    from '../../../../store/reducers/footballField';
 
-export const MarketPlaceFootballerCard = ({ card }) => {
+export const MarketPlaceFootballerCard = ({ card, place }) => {
+    const Dispatch = useDispatch();
+    const ChosedCard = useSelector((state) => state.footballField.options.chosedCard);
+    console.log(ChosedCard)
 
     return (
-        <div className="marketplace-playerCard">
+        <div
+            className="marketplace-playerCard"
+            onClick={() => Dispatch(HandleCard(card, ChosedCard))}
+        >
             <img className="marketplace-playerCard__background-type"
                 src={card.mainInfo.backgroundType}
                 alt="Player background type" />
@@ -21,7 +28,7 @@ export const MarketPlaceFootballerCard = ({ card }) => {
                 alt="Player face" />
             <NavLink to="/marketplace/card">
                 <span className="marketplace-playerCard__name">
-                    {card.overalInfo.name}
+                    {card.overalInfo[0].value}
                 </span>
             </NavLink>
             <ul className="marketplace-playerCard__list">
@@ -35,7 +42,7 @@ export const MarketPlaceFootballerCard = ({ card }) => {
                                     /**
                                     * get only average value of player's game property
                                     */
-                                    `${property.average} ${property.title.slice(0,3)}`
+                                    `${property.average} ${property.title.slice(0, 3)}`
                                 }
                             </li>
                         );
@@ -57,6 +64,3 @@ export const MarketPlaceFootballerCard = ({ card }) => {
     );
 };
 
-MarketPlaceFootballerCard.propTypes = {
-    card: PropTypes.object.isRequired
-};
