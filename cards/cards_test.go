@@ -212,6 +212,16 @@ func TestCards(t *testing.T) {
 			compareCards(t, card1, allCards[0])
 			compareCards(t, card2, allCards[1])
 		})
+
+		t.Run("delete", func(t *testing.T) {
+			err := repositoryCards.Delete(ctx, card1.ID)
+			require.NoError(t, err)
+
+			allCards, err := repositoryCards.List(ctx)
+			assert.NoError(t, err)
+			assert.Equal(t, len(allCards), 1)
+			compareCards(t, card2, allCards[0])
+		})
 	})
 }
 

@@ -23,6 +23,8 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Card, error)
 	// List returns all cards from the data base.
 	List(ctx context.Context) ([]Card, error)
+	// Create destroy card record in the data base.
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 // Card describes card entity.

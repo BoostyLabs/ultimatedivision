@@ -71,6 +71,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, admins *
 	cardsController := controllers.NewCards(log, cards, server.templates.card)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 	cardsRouter.HandleFunc("/create", cardsController.Create).Methods(http.MethodGet)
+	cardsRouter.HandleFunc("/delete/{id}", cardsController.Delete).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
