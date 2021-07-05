@@ -10,16 +10,17 @@ import './MarketPlaceCardsGroup.scss';
 import { MarketPlaceFootballerCard }
     from './MarketPlaceFootballerCard/MarketPlaceFootballerCard';
 
-export const MarketPlaceCardsGroup = ({ cards }) => {
+export const MarketPlaceCardsGroup = ({ cards, place }) => {
     return (
         <div className="marketplace-cards">
             <div className="marketplace-cards__wrapper">
-                {cards.map((card, index) =>
+                {cards.map((card, index) => (
                     <MarketPlaceFootballerCard
                         card={card}
                         key={index}
+                        place={place}
                     />
-                )}
+                ))}
             </div>
         </div>
     );
