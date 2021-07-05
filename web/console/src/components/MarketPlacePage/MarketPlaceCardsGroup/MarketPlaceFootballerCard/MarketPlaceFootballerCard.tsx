@@ -5,12 +5,14 @@ See LICENSE for copying information.
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { RouteConfig } from '../../../../routes';
 
 import { Card } from '../../../../store/reducers/footballerCard';
 
 import './MarketPlaceFootballerCard.scss';
 
 export const MarketPlaceFootballerCard: React.FC<{ card: Card }> = ({ card }) => {
+
     return (
         <div className="marketplace-playerCard">
             <img className="marketplace-playerCard__background-type"
@@ -19,7 +21,7 @@ export const MarketPlaceFootballerCard: React.FC<{ card: Card }> = ({ card }) =>
             <img className="marketplace-playerCard__face-picture"
                 src={card.mainInfo.playerFace}
                 alt="Player face" />
-            <NavLink to="/ud/marketplace/card">
+            <NavLink to={RouteConfig.Club.path} >
                 <span className="marketplace-playerCard__name">
                     {card.mainInfo.lastName}
                 </span>
