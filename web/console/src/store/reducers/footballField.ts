@@ -5,6 +5,8 @@ See LICENSE for copying information.
 
 import { FootballField } from '../../types/footballField';
 
+const FieldSetup = new FootballField()
+
 const Formation = 'Formation';
 const Tactics = 'Cactics';
 const Captain = 'Captain';
@@ -31,9 +33,8 @@ export const handleCaptain = (option: string) => {
     }
 };
 
-const fieldSetup = new FootballField()
 
-export const footballField = (cardState = fieldSetup, action: {
+export const footballField = (cardState = FieldSetup, action: {
     type: string,
     action: string
 }) => {

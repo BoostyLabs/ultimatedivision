@@ -9,6 +9,52 @@ export class FootballField {
         captain: '',
         tactics: '',
     };
+    public cardsList = [
+        {
+            id: 0,
+            props: ''
+        },
+        {
+            id: 1,
+            props: ''
+        },
+        {
+            id: 2,
+            props: ''
+        },
+        {
+            id: 3,
+            props: ''
+        },
+        {
+            id: 4,
+            props: ''
+        },
+        {
+            id: 5,
+            props: ''
+        },
+        {
+            id: 6,
+            props: ''
+        },
+        {
+            id: 7,
+            props: ''
+        },
+        {
+            id: 8,
+            props: ''
+        },
+        {
+            id: 9,
+            props: ''
+        },
+        {
+            id: 10,
+            props: ''
+        },
+    ]
 }
 
 export class FootballFieldInformationLine {
@@ -16,9 +62,5 @@ export class FootballFieldInformationLine {
         public id: string ='',
         public title: string = '',
         public options: string[] = [],
-        public action: (option: string) => {
-            type: string,
-            action: string
-        }
     ) { }
 }

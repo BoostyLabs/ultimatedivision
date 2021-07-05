@@ -4,20 +4,24 @@ See LICENSE for copying information.
  */
 
 import React from 'react';
-import './FootballFieldInformationOption.scss';
+import './FootballFieldInformationTactic.scss';
 
-import { FotballFieldInformationLine } from '../../../types/fotballerCard';
+import { FotballFieldInformationLine } from '../../../../types/fotballerCard';
 
-import triangle from '../../../img/FootballFieldPage/triangle.png'
+import triangle from '../../../../img/FootballFieldPage/triangle.png'
 import { useState } from 'react';
-import { Styles } from '../../../utils/footballField';
+import { ListStyle } from '../../../../utils/footballField';
+import { TriangleStyle } from '../../../../utils/footballField';
+import { handleTactics } from '../../../../store/reducers/footballField';
+import { useDispatch } from 'react-redux';
 
-export const FootballFieldInformationOption: React.FC<{ props: FotballFieldInformationLine }> = ({ props }) => {
+export const FootballFieldInformationTactic: React.FC<{ props: FotballFieldInformationLine }> = ({ props }) => {
     const [state, changeState] = useState(true);
 
-    const styles = new Styles(state)
+    const ListHeight = new ListStyle(state);
+    const TriangleRotate = new TriangleStyle(state);
 
-    console.log(props)
+    const dispatch = useDispatch();
 
     return (
         <div className="football-field-information-option">
@@ -31,13 +35,13 @@ export const FootballFieldInformationOption: React.FC<{ props: FotballFieldInfor
                 <img
                     className="football-field-information-option__image"
                     src={triangle}
-                    style={{ transform: styles.triangleStyle }}
+                    style={{ transform: TriangleRotate.style }}
                     alt="triangle img"
                     id={`triangle-${props.id}`}
                 />
             </div>
             <ul
-                style={{ height: styles.listStyle }}
+                style={{ height: ListHeight.style }}
                 className="football-field-information-option__list"
                 id={props.id}
             >
@@ -45,7 +49,7 @@ export const FootballFieldInformationOption: React.FC<{ props: FotballFieldInfor
                     <li
                         key={index}
                         className="football-field-information-option__item"
-                        onClick={() => { }}
+                        onClick={() => dispatch(handleTactics)}
                     >
                         {item}
                     </li>
