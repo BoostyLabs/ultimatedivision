@@ -8,7 +8,7 @@ import { Diagram } from '../../../types/fotballerCard';
 
 export const FootballerCardIllustrationsDiagram: React.FC<{props: Diagram}> = ({ props }) => {
     const { name, min, max, value } = props
-    const percent = (Math.round((value - min) / max * 100))
+    const PERCENT = (Math.round((value - min) / max * 100))
 
     return (
         <div className="footballer-card-illustrations-diagram">
@@ -16,7 +16,7 @@ export const FootballerCardIllustrationsDiagram: React.FC<{props: Diagram}> = ({
                 type={Doughnut}
                 data={{
                     datasets: [{
-                        data: [percent, (100 - percent)],
+                        data: [PERCENT, (100 - PERCENT)],
                         backgroundColor: ['#3CCF5D', '#5E5EAA'],
                         borderColor: [
                             'transparent'
