@@ -2,29 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Portal | Create Admin</title>
+    <title>Admin Portal | Update Password</title>
 </head>
 <body>
-<form action="/admins/create" method="post">
+<form action="/admins/update/{{.ID}}" method="post">
     <table>
         <tr>
             <td>
-                Email:
-            </td>
-            <td>
-                <input type="email" name="email">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Password:
+                New Password :
             </td>
             <td>
                 <input type="text" name="password">
             </td>
         </tr>
+        <tr>
+            <td>
+                New Password(again) :
+            </td>
+            <td>
+                <input type="text" name="password-again">
+            </td>
+        </tr>
     </table>
-    <input type="submit" value="Create">
+    <input type="submit" value="Update">
 </form>
 </body>
 </html>

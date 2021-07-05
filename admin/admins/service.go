@@ -37,3 +37,8 @@ func (service *Service) Get(ctx context.Context, id uuid.UUID) (Admin, error) {
 func (service *Service) Create(ctx context.Context, admin Admin) error {
 	return service.admins.Create(ctx, admin)
 }
+
+// Update updates admin from DB.
+func (service *Service) Update(ctx context.Context, admin Admin) error {
+	return service.admins.Update(ctx, admin)
+}

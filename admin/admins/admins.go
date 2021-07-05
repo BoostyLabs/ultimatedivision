@@ -7,10 +7,9 @@ import (
 	"context"
 	"time"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // ErrNoAdmin indicates that user does not exist.
@@ -26,6 +25,13 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Admin, error)
 	// Create creates an admin and write it to database.
 	Create(ctx context.Context, admin Admin) error
+	// Update updates an admins password.
+	Update(ctx context.Context, admin Admin) error
+}
+
+// Config is configuration for Admin.
+type Config struct {
+	Cost int `json:"cost"`
 }
 
 // Admin describes admin entity.
@@ -36,22 +42,18 @@ type Admin struct {
 	CreatedAt    time.Time
 }
 
-// NewAdmin is constructor for Admin
-func NewAdmin(email string,passwordHash []byte) Admin{
-	return Admin{
-		ID: uuid.New(),
-		Email: email,
-		PasswordHash: passwordHash,
-		CreatedAt: time.Now(),
-	}
+// Admins includes Admin entity and Config for it.
+type Admins struct {
+	Admin  Admin
+	Config Config
 }
 
 // EncodePassword is method to encode password.
-func (admin *Admin) EncodePassword() error {
-	hash, err := bcrypt.GenerateFromPassword([]byte(admin.PasswordHash), bcrypt.DefaultCost)
+func (admins *Admins) EncodePassword() error {
+	hash, err := bcrypt.GenerateFromPassword(admins.Admin.PasswordHash, admins.Config.Cost)
 	if err != nil {
 		return err
 	}
-	admin.PasswordHash = hash
+	admins.Admin.PasswordHash = hash
 	return nil
 }

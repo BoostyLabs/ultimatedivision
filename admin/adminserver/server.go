@@ -65,8 +65,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, admins *
 	adminsController := controllers.NewAdmins(log, admins, server.templates.admin)
 
 	adminsRouter.HandleFunc("", adminsController.List).Methods(http.MethodGet)
-	adminsRouter.HandleFunc("/create", adminsController.GenerateForm).Methods(http.MethodGet)
-	adminsRouter.HandleFunc("/create", adminsController.Create).Methods(http.MethodPost)
+	adminsRouter.HandleFunc("/create", adminsController.Create).Methods(http.MethodGet, http.MethodPost)
+	adminsRouter.HandleFunc("/update/{id}", adminsController.Update).Methods(http.MethodGet, http.MethodPost)
 
 	server.server = http.Server{
 		Handler: router,
@@ -101,7 +101,7 @@ func (server *Server) Close() error {
 	return server.server.Close()
 }
 
-// initializeTemplates initializes and caches templates for managers controller.
+// initializeTemplates initializes and caches templates for admins controller.
 func (server *Server) initializeTemplates() (err error) {
 	server.templates.admin.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
 	if err != nil {
@@ -109,6 +109,11 @@ func (server *Server) initializeTemplates() (err error) {
 	}
 
 	server.templates.admin.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "create.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.admin.Update, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "update.html"))
 	if err != nil {
 		return err
 	}
