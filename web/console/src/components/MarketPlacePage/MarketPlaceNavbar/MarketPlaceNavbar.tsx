@@ -10,6 +10,7 @@ import './MarketPlaceNavbar.scss';
 
 import ultimate
     from '../../../img/MarketPlacePage/MarketPlaceNavbar/ultimate.png';
+import { RouteConfig } from '../../../routes';
 
 export const MarketPlaceNavbar: React.FC = () => {
     return (
@@ -25,14 +26,19 @@ export const MarketPlaceNavbar: React.FC = () => {
                     </NavLink>
                 </li>
                 <li className="marketplace-navbar__item">
-                    <NavLink to="/ud/marketplace"
-                        className="marketplace-navbar__item__active">
+                    <NavLink
+                        to={RouteConfig.MarketPlace.path}
+                        exact={RouteConfig.MarketPlace.exact}
+                        className="marketplace-navbar__item__active"
+                    >
                         MARKETPLACE
                     </NavLink>
                 </li>
                 <li className="marketplace-navbar__item">
-                    <NavLink className="marketplace-navbar__item__active"
-                        to="/ud/club">
+                    <NavLink
+                        to={RouteConfig.Club.path}
+                        className="marketplace-navbar__item__active"
+                    >
                         CLUB
                     </NavLink>
                 </li>
