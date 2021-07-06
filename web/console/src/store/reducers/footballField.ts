@@ -56,7 +56,7 @@ export const handleCaptain = (option: string) => {
 };
 
 
-export const footballField = (cardState = FieldSetup, action: any) => {
+export const fieldReducer = (cardState = FieldSetup, action: any) => {
 
     switch (action.type) {
         case Formation:

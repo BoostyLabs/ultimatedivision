@@ -16,12 +16,11 @@ import { FootballFieldInformationCaptain }
 import { FootballFieldInformationLine } from '../../../types/footballField';
 
 export const FootballFieldInformation: React.FC = () => {
-
-    const InformationFIelds: FootballFieldInformationLine[] = [
-        new FootballFieldInformationLine('0', 'formation', ['4-4-2', '4-2-4', '4-3-3']),
-        new FootballFieldInformationLine('1', 'tactics', ['attack', 'defence', 'regular']),
-        new FootballFieldInformationLine('2', 'captain', ['4-4-2', '4-2-4', '4-3-3']),
-    ]
+    const INFORMATION_FIELDS = {
+        formation: new FootballFieldInformationLine('0', 'formation', ['4-4-2', '4-2-4', '4-3-3']),
+        tactics: new FootballFieldInformationLine('1', 'tactics', ['attack', 'defence', 'regular']),
+        captain: new FootballFieldInformationLine('2', 'captain', ['4-4-2', '4-2-4', '4-3-3']),
+    }
 
     return (
         <div className="football-field-information">
@@ -29,16 +28,13 @@ export const FootballFieldInformation: React.FC = () => {
                 information
             </h2>
             <FootballFieldInformationFormation
-                key={InformationFIelds[0].id}
-                props={InformationFIelds[0]}
+                props={INFORMATION_FIELDS.formation}
             />
             <FootballFieldInformationTactic
-                key={InformationFIelds[1].id}
-                props={InformationFIelds[1]}
+                props={INFORMATION_FIELDS.tactics}
             />
             <FootballFieldInformationCaptain
-                key={InformationFIelds[2].id}
-                props={InformationFIelds[2]}
+                props={INFORMATION_FIELDS.captain}
             />
         </div>
     )

@@ -7,11 +7,11 @@ import { RootState } from '../../../store';
 import './FootballerCardInformation.scss';
 
 export const FootballerCardInformation: React.FC = () => {
-    const overalInfo = useSelector((state: RootState )=> state.footballerCard[0].overalInfo);
+    const OVERAL_INFO = useSelector((state: RootState )=> state.cardReducer[0].overalInfo);
 
     return (
         <div className="footballer-card-information">
-            {overalInfo.map((item, index) => (
+            {OVERAL_INFO.map((item, index) => (
                 <div className="footballer-card-information__item"
                     key={index}
                 >
@@ -22,7 +22,7 @@ export const FootballerCardInformation: React.FC = () => {
                             <img
                                 className="footballer-card-information__item-icon"
                                 src={item.icon}
-                                alt={(item.icon) && 'item icon'}
+                                alt={item.icon && 'item icon'}
                             />
                         </>
                     </div>

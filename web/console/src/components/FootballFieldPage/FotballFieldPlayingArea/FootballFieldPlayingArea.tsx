@@ -17,17 +17,17 @@ import { PlayingFormation_433 }
     from './PlayingAreaFormations/PlayingFormation_433/PlayingFormation_433';
 
 export const FootballFieldPlayingArea: React.FC = () => {
-    const Formation = useSelector((state: RootState) => state.footballField.options.formation);
-    const CardData = useSelector((state: RootState) => state.footballField);
+    const FORMATION = useSelector((state: RootState) => state.fieldReducer.options.formation);
+    const CARD_DATA = useSelector((state: RootState) => state.fieldReducer);
 
     const formation = () => {
-        switch (Formation) {
+        switch (FORMATION) {
             case '4-4-2':
-                return <PlayingFormation_442 props={CardData} />
+                return <PlayingFormation_442 props={CARD_DATA} />
             case '4-2-4':
-                return <PlayingFormation_424 props={CardData} />;
+                return <PlayingFormation_424 props={CARD_DATA} />;
             case '4-3-3':
-                return <PlayingFormation_433 props={CardData} />
+                return <PlayingFormation_433 props={CARD_DATA} />
         };
     }
 
