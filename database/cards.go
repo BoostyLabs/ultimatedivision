@@ -23,9 +23,6 @@ var _ cards.DB = (*cardsDB)(nil)
 // ErrCard indicates that there was an error in the database.
 var ErrCard = errs.Class("cards repository error")
 
-// ErrAccessory indicates that there was an error in the database.
-var ErrAccessory = errs.Class("accessories repository error")
-
 // cardsDB provides access to cards db.
 //
 // architecture: Database
@@ -82,7 +79,7 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 		if err != nil {
 			return err
 		}
-		return ErrAccessory.Wrap(err)
+		return err
 	}
 
 	err = tx.Commit()
@@ -170,7 +167,7 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
         `
 	rows, err := cardsDB.conn.QueryContext(ctx, query, cardID)
 	if err != nil {
-		return nil, ErrAccessory.Wrap(err)
+		return nil, err
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
