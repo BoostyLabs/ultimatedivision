@@ -5,21 +5,27 @@ See LICENSE for copying information.
 
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 
 import { MarketPlaceFilterField }
     from '../MarketPlaceFilterField/MarketPlaceFilterField';
 import { MarketPlaceCardsGroup }
     from '../MarketPlaceCardsGroup/MarketPlaceCardsGroup';
+import { UltimateDivisionPaginator }
+    from '../../UltimateDivisionPaginator/UltimateDivisionPaginator';
+
 import './MarketPlace.scss';
 
 export const MarketPlace = () => {
-    const cards = useSelector(state => state.footballerCard);
+    const cards = useSelector((state: RootState) => state.cardReducer);
 
     return (
         <section className="marketplace">
             <MarketPlaceFilterField />
             <MarketPlaceCardsGroup
                 cards={cards} />
+            <UltimateDivisionPaginator
+                itemCount={cards.length} />
         </section>
     );
 };
