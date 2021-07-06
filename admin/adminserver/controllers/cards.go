@@ -9,6 +9,7 @@ import (
 	"net/url"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
@@ -140,6 +141,21 @@ func (controller *Cards) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	controller.Redirect(w, r, "", "GET")
+}
+
+// Delete is an endpoint that will destroy record card to database.
+func (controller *Cards) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := uuid.MustParse(vars["id"])
+	ctx := r.Context()
+
+	if err := controller.cards.Delete(ctx, id); err != nil {
+		controller.log.Error("could not delete card", ErrCards.Wrap(err))
+		http.Error(w, "could not delete card", http.StatusInternalServerError)
+		return
+	}
+
+	controller.Redirect(w, r, "/cards", "GET")
 }
 
 // Redirect redirects to specific url.
