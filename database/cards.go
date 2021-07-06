@@ -234,3 +234,19 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 
 	return data, nil
 }
+
+// Delete deletes record card in the data base.
+func (cardsDB *cardsDB) Delete(ctx context.Context, id uuid.UUID) error {
+	query :=
+		`DELETE FROM
+            cards
+        WHERE 
+            id = $1
+        `
+	_, err := cardsDB.conn.ExecContext(ctx, query, id)
+	if err != nil {
+		return ErrCard.Wrap(err)
+	}
+
+	return nil
+}
