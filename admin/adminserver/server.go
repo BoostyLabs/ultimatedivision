@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"ultimatedivision/users"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -43,11 +44,12 @@ type Server struct {
 
 	templates struct {
 		admin controllers.AdminTemplates
+		user  controllers.UserTemplates
 	}
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, admins *admins.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, admins *admins.Service, users *users.Service) (*Server, error) {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -64,6 +66,15 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, admins *
 	// managersRouter.Use(server.withAuth) // TODO: implement cookie auth and auth service.
 	adminsController := controllers.NewAdmins(log, admins, server.templates.admin)
 	adminsRouter.HandleFunc("", adminsController.List).Methods(http.MethodGet)
+
+	userRouter := router.PathPrefix("/users").Subrouter().StrictSlash(true)
+	// managersRouter.Use(server.withAuth) // TODO: implement cookie auth and auth service.
+	userController := controllers.NewUsers(log, users, server.templates.user)
+	userRouter.HandleFunc("/list", userController.List).Methods(http.MethodGet)
+	userRouter.HandleFunc("/create", userController.Create).Methods(http.MethodPost)
+	userRouter.HandleFunc("/create", userController.CreateUserForm).Methods(http.MethodGet)
+	userRouter.HandleFunc("/get", userController.Get).Methods(http.MethodGet)
+	userRouter.HandleFunc("/get_by_email", userController.GetByEmail).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -101,6 +112,26 @@ func (server *Server) Close() error {
 // initializeTemplates initializes and caches templates for managers controller.
 func (server *Server) initializeTemplates() (err error) {
 	server.templates.admin.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.user.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.user.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.user.Get, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.user.GetByEmail, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
 	if err != nil {
 		return err
 	}

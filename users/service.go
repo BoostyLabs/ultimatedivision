@@ -42,3 +42,13 @@ func (service *Service) List(ctx context.Context) ([]User, error) {
 func (service *Service) Create(ctx context.Context, user User) error {
 	return service.users.Create(ctx, user)
 }
+
+// Delete deletes a user.
+func (service *Service) Delete(ctx context.Context, email string) error {
+	return service.users.Delete(ctx, email)
+}
+
+// Update updates a users status.
+func (service *Service) Update(ctx context.Context, status int, email string) error {
+	return service.users.Update(ctx, status, email)
+}

@@ -112,3 +112,15 @@ func (usersDB *usersDB) Create(ctx context.Context, user users.User) error {
 
 	return nil
 }
+
+// Delete deletes a user in the database.
+func (usersDB *usersDB) Delete(ctx context.Context, email string) error {
+	_, err := usersDB.conn.QueryContext(ctx,"DELETE FROM users WHERE email=$1", email)
+	return err
+}
+
+// Update updates a status in the database.
+func (usersDB *usersDB) Update(ctx context.Context, status int, email string) error {
+	_, err := usersDB.conn.QueryContext(ctx,"UPDATE users SET status=$1 WHERE email=$2", status, email)
+	return err
+}
