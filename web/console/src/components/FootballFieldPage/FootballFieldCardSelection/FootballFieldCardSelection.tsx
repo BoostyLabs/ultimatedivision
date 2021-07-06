@@ -7,7 +7,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 
 export const FootballFieldCardSelection = () => {
-    const Cards = useSelector((state: RootState) => state.footballerCard)
+    const Cards = useSelector((state: RootState) => state.cardReducer);
+
     return (
         <div>
             <MarketPlaceCardsGroup cards={Cards} place={'FootballField'} />

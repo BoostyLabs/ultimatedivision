@@ -4,14 +4,15 @@ See LICENSE for copying information.
  */
 
 import React from 'react';
-import { PropTypes } from 'prop-types';
 
 import './MarketPlaceCardsGroup.scss';
 import { MarketPlaceFootballerCard }
     from './MarketPlaceFootballerCard/MarketPlaceFootballerCard';
 import { useSelector } from 'react-redux';
+import { Card }
+    from '../../../store/reducers/footballerCard';
 
-export const MarketPlaceCardsGroup = ({ cards, place }) => {
+export const MarketPlaceCardsGroup: React.FC<{ cards:Card[], place?: string }> = ({ cards, place }) => {
     return (
         <div className="marketplace-cards">
             <div className="marketplace-cards__wrapper">
@@ -27,6 +28,3 @@ export const MarketPlaceCardsGroup = ({ cards, place }) => {
     );
 };
 
-MarketPlaceCardsGroup.propTypes = {
-    cards: PropTypes.array.isRequired
-};

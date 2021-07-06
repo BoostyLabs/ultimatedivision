@@ -12,8 +12,7 @@ import { HandleCard }
 
 export const MarketPlaceFootballerCard = ({ card, place }) => {
     const Dispatch = useDispatch();
-    const ChosedCard = useSelector((state) => state.footballField.options.chosedCard);
-    console.log(ChosedCard)
+    const ChosedCard = useSelector((state) => state.fieldReducer.options.chosedCard);
 
     return (
         <div
