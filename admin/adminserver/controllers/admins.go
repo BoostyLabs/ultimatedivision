@@ -107,12 +107,12 @@ func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		admin := admins.Admins{
-			Admin : admins.Admin{
-			ID:           uuid.New(),
-			Email:        email,
-			PasswordHash: []byte(password),
-			CreatedAt:    time.Now(),
-		}}
+			Admin: admins.Admin{
+				ID:           uuid.New(),
+				Email:        email,
+				PasswordHash: []byte(password),
+				CreatedAt:    time.Now(),
+			}}
 
 		err = controller.admins.Create(ctx, admin)
 		if err != nil {
@@ -142,7 +142,7 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		admin, err := controller.admins.Get(ctx, id)
 		if err != nil {
-			if admins.ErrNoAdmin.Has(err){
+			if admins.ErrNoAdmin.Has(err) {
 				http.Error(w, "no admins with such id", http.StatusNotFound) // status code should depends on error t
 				return
 			}
@@ -190,6 +190,6 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		controller.Redirect(w,r,"/admins",http.MethodGet)
+		controller.Redirect(w, r, "/admins", http.MethodGet)
 	}
 }
