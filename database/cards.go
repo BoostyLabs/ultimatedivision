@@ -68,13 +68,19 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 		card.Handling, card.Sweeping, card.Throwing,
 	)
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			return err
+		}
 		return ErrCard.Wrap(err)
 	}
 
 	err = createCardsAccessories(ctx, cardsDB, card)
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			return err
+		}
 		return ErrAccessory.Wrap(err)
 	}
 
