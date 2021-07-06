@@ -7,7 +7,10 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/zeebo/errs"
 )
+
+var ErrAdminsService = errs.Class("admins service error")
 
 // Service is handling admins related logic.
 //
@@ -34,11 +37,21 @@ func (service *Service) Get(ctx context.Context, id uuid.UUID) (Admin, error) {
 }
 
 // Create insert admin to DB.
-func (service *Service) Create(ctx context.Context, admin Admin) error {
-	return service.admins.Create(ctx, admin)
+func (service *Service) Create(ctx context.Context, admin Admins) error {
+	err := admin.EncodePassword()
+	if err != nil {
+		return ErrAdminsService.Wrap(err)
+	}
+
+	return service.admins.Create(ctx, admin.Admin)
 }
 
 // Update updates admin from DB.
-func (service *Service) Update(ctx context.Context, admin Admin) error {
-	return service.admins.Update(ctx, admin)
+func (service *Service) Update(ctx context.Context, admin Admins) error {
+	err := admin.EncodePassword()
+	if err != nil {
+		return ErrAdminsService.Wrap(err)
+	}
+
+	return service.admins.Update(ctx, admin.Admin)
 }

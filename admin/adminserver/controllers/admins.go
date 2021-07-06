@@ -106,21 +106,15 @@ func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		admin := admins.Admins{Admin: admins.Admin{
+		admin := admins.Admins{
+			Admin : admins.Admin{
 			ID:           uuid.New(),
 			Email:        email,
 			PasswordHash: []byte(password),
 			CreatedAt:    time.Now(),
 		}}
 
-		err = admin.EncodePassword()
-		if err != nil {
-			controller.log.Error("could not encode admin password", ErrAdmins.Wrap(err))
-			http.Error(w, "could not encode admin password", http.StatusInternalServerError) // status code should depends on error type.
-			return
-		}
-
-		err = controller.admins.Create(ctx, admin.Admin)
+		err = controller.admins.Create(ctx, admin)
 		if err != nil {
 			controller.log.Error("could not create admin", ErrAdmins.Wrap(err))
 			http.Error(w, "could not create admin", http.StatusInternalServerError) // status code should depends on error type.
@@ -136,19 +130,23 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	params := mux.Vars(r)
+	idParam := params["id"]
 
-	idOfAdmin := params["id"]
-	uuidOfAdmin, err := uuid.Parse(idOfAdmin)
+	id, err := uuid.Parse(idParam)
 	if err != nil {
-		controller.log.Error("could not parse uuid", ErrAdmins.Wrap(err))
-		http.Error(w, "could not parse uuid", http.StatusInternalServerError)
+		http.Error(w, "could not parse uuid", http.StatusBadRequest)
 		return
 	}
 
 	switch r.Method {
 	case http.MethodGet:
-		admin, err := controller.admins.Get(ctx, uuidOfAdmin)
+		admin, err := controller.admins.Get(ctx, id)
 		if err != nil {
+			if admins.ErrNoAdmin.Has(err){
+				http.Error(w, "no admins with such id", http.StatusNotFound) // status code should depends on error t
+				return
+			}
+
 			controller.log.Error("could not get admins list", ErrAdmins.Wrap(err))
 			http.Error(w, "could not get admins list", http.StatusInternalServerError) // status code should depends on error type.
 			return
@@ -181,11 +179,11 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 		}
 
 		updatedAdmin := admins.Admins{Admin: admins.Admin{
-			ID:           uuidOfAdmin,
+			ID:           id,
 			PasswordHash: []byte(password),
 		}}
 
-		err = controller.admins.Update(ctx, updatedAdmin.Admin)
+		err = controller.admins.Update(ctx, updatedAdmin)
 		if err != nil {
 			controller.log.Error("could not update admin", ErrAdmins.Wrap(err))
 			http.Error(w, "could not update admin", http.StatusInternalServerError) // status code should depends on error type.

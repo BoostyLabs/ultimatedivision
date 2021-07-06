@@ -31,7 +31,7 @@ type DB interface {
 
 // Config is configuration for Admin.
 type Config struct {
-	Cost int `json:"cost"`
+	PasswordHashCost int `json:"password_hash_cost"`
 }
 
 // Admin describes admin entity.
@@ -50,7 +50,7 @@ type Admins struct {
 
 // EncodePassword is method to encode password.
 func (admins *Admins) EncodePassword() error {
-	hash, err := bcrypt.GenerateFromPassword(admins.Admin.PasswordHash, admins.Config.Cost)
+	hash, err := bcrypt.GenerateFromPassword(admins.Admin.PasswordHash, admins.Config.PasswordHashCost)
 	if err != nil {
 		return err
 	}
