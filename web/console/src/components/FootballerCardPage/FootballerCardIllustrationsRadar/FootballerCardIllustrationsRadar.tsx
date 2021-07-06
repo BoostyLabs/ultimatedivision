@@ -10,7 +10,7 @@ import './FootballerCardIllustrationsRadar.scss';
 import { Radar } from 'react-chartjs-2';
 
 export const FootballerCardIllustrationsRadar: React.FC = () => {
-    const STATS = useSelector((state: RootState) => state.cardReducer[0].stats);
+    const stats = useSelector((state: RootState) => state.cardReducer[0].stats);
 
     return (
         <div className="footballer-card-illustrations-radar">
@@ -20,7 +20,7 @@ export const FootballerCardIllustrationsRadar: React.FC = () => {
                     labels: ['TAC', 'PHY', 'TEC', 'OFF', 'DEF', 'GK'],
                     datasets: [{
                         backgroundColor: '#66FF8866',
-                        data: STATS.map(item => item.average),
+                        data: stats.map(item => item.average),
                     }],
                 }}
             options={{

@@ -16,18 +16,18 @@ import { handleTactics } from '../../../../store/reducers/footballField';
 import { useDispatch } from 'react-redux';
 
 export const FootballFieldInformationTactic: React.FC<{ props: FotballFieldInformationLine }> = ({ props }) => {
-    const [OPTION_VISIBILITY, changeState] = useState(true);
+    const [optionVisibility, changeVisibility] = useState(true);
 
-    const LIST_HEIGHT = new ListStyle(OPTION_VISIBILITY);
-    const TRIANGLE_ROTATE = new TriangleStyle(OPTION_VISIBILITY);
+    const LIST_HEIGHT = new ListStyle(optionVisibility);
+    const TRIANGLE_ROTATE = new TriangleStyle(optionVisibility);
 
-    const DISPATCH = useDispatch();
+    const dispatch = useDispatch();
 
     return (
         <div className="football-field-information-option">
             <div
                 className="football-field-information-option__heading"
-                onClick={() => changeState(prev => !prev)}
+                onClick={() => changeVisibility(prev => !prev)}
             >
                 <h4 className="football-field-information-option__title">
                     {props.title}
@@ -49,7 +49,7 @@ export const FootballFieldInformationTactic: React.FC<{ props: FotballFieldInfor
                     <li
                         key={index}
                         className="football-field-information-option__item"
-                        onClick={() => DISPATCH(handleTactics)}
+                        onClick={() => dispatch(handleTactics)}
                     >
                         {item}
                     </li>
