@@ -9,7 +9,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // ErrNoAdmin indicates that user does not exist.
@@ -31,31 +30,10 @@ type DB interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
-// Config is configuration for Admin.
-type Config struct {
-	PasswordHashCost int `json:"password_hash_cost"`
-}
-
 // Admin describes admin entity.
 type Admin struct {
 	ID           uuid.UUID
 	Email        string
 	PasswordHash []byte
 	CreatedAt    time.Time
-}
-
-// Admins includes Admin entity and Config for it.
-type Admins struct {
-	Admin  Admin
-	Config Config
-}
-
-// EncodePassword is method to encode password.
-func (admins *Admins) EncodePassword() error {
-	hash, err := bcrypt.GenerateFromPassword(admins.Admin.PasswordHash, admins.Config.PasswordHashCost)
-	if err != nil {
-		return err
-	}
-	admins.Admin.PasswordHash = hash
-	return nil
 }

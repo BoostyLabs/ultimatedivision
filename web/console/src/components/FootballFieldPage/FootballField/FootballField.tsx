@@ -1,0 +1,27 @@
+/*
+Copyright (C) 2021 Creditor Corp. Group.
+See LICENSE for copying information.
+ */
+
+import React from 'react';
+import './FootballField.scss';
+
+import { FootballFieldPlayingArea }
+    from '../FotballFieldPlayingArea/FootballFieldPlayingArea';
+import { FootballFieldInformation }
+    from '../FootballFieldInformation/FootballFieldInformation';
+import { FootballFieldCardSelection }
+    from '../FootballFieldCardSelection/FootballFieldCardSelection';
+
+export const FootballField: React.FC = () => {
+    return (
+        <div className="football-field">
+            <h1 className="football-field__title">Football Field</h1>
+            <div className="football-field__wrapper">
+                <FootballFieldPlayingArea />
+                <FootballFieldInformation />
+            </div>
+            <FootballFieldCardSelection />
+        </div>
+    )
+}
