@@ -7,7 +7,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 
-import { MarketPlaceNavbar } from '../MarketPlaceNavbar/MarketPlaceNavbar';
 import { MarketPlaceFilterField }
     from '../MarketPlaceFilterField/MarketPlaceFilterField';
 import { MarketPlaceCardsGroup }
@@ -17,12 +16,11 @@ import { UltimateDivisionPaginator }
 
 import './MarketPlace.scss';
 
-export const MarketPlace: React.FC = () => {
-    const cards = useSelector((state: RootState) => state.footballerCard);
+export const MarketPlace = () => {
+    const cards = useSelector((state: RootState) => state.cardReducer);
 
     return (
         <section className="marketplace">
-            <MarketPlaceNavbar />
             <MarketPlaceFilterField />
             <MarketPlaceCardsGroup
                 cards={cards} />
