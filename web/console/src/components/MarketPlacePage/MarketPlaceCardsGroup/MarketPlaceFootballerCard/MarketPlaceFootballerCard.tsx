@@ -12,10 +12,12 @@ import { RouteConfig } from '../../../../routes';
 
 import './MarketPlaceFootballerCard.scss';
 
-export const MarketPlaceFootballerCard: React.FC<{ card: Card }> = ({ card }) => {
+export const MarketPlaceFootballerCard: React.FC<{ card: Card, place?: string }> = ({ card, place }) => {
 
     return (
-        <div className="marketplace-playerCard">
+        <div
+            className="marketplace-playerCard"
+        >
             <img className="marketplace-playerCard__background-type"
                 src={card.mainInfo.backgroundType}
                 alt="Player background type" />

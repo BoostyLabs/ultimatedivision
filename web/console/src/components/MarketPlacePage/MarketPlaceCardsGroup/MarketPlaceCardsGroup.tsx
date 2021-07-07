@@ -14,12 +14,12 @@ export const MarketPlaceCardsGroup: React.FC<{ cards: Card[] }> = ({ cards }) =>
     return (
         <div className="marketplace-cards">
             <div className="marketplace-cards__wrapper">
-                {cards.map((card, index) =>
+                {cards.map((card, index) => (
                     <MarketPlaceFootballerCard
                         card={card}
                         key={index}
                     />
-                )}
+                ))}
             </div>
         </div>
     );
