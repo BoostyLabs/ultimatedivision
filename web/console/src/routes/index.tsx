@@ -22,20 +22,14 @@ export class RouteConfig {
         FootballerCard,
         true,
     );
-    public static Club: ComponentRoutes = new ComponentRoutes(
-        "/ud/club",
-        React.Fragment,
-        true,
-    );
     public static Default: ComponentRoutes = new ComponentRoutes(
-        "/",
-        React.Fragment,
+        "/ud/",
+        MarketPlace,
         true,
     );
     public static routes: ComponentRoutes[] = [
         RouteConfig.MarketPlace,
         RouteConfig.FootballerCard,
-        RouteConfig.Club,
         RouteConfig.Default
     ]
 };
@@ -44,7 +38,11 @@ type RoutesProps = { component: React.FC } & RouteProps;
 
 const Route: React.FC<RoutesProps> = ({
     component: Component, ...children
-}) => <Component {...children} />;
+}) => {
+    return (
+        <Component {...children} />
+    )
+};
 
 export const Routes = () => {
     return (
