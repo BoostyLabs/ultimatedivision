@@ -4,18 +4,16 @@ See LICENSE for copying information.
  */
 
 import { FootballField } from '../../types/footballField';
-import { Card } from '../../store/reducers/footballerCard'
+import { Card } from '../../store/reducers/footballerCard';
 
-const FieldSetup = new FootballField()
-
+const FieldSetup = new FootballField();
 const FORMATION_TYPE = 'Formation';
 const TACTICS_TYPE = 'Cactics';
 const CAPTAIN_TYPE = 'Captain';
 const CHOSE_CARD_POSITION = 'ChoseCard';
 const ADD_CARD = 'AddCard';
 const REMOVE_CARD = 'RemoveCard';
-
-
+const EXCHANGE_CARDS = 'ReplaceCard'
 
 //Chose type of cards positioning on football field
 export const handleFormations = (option: string) => {
@@ -48,6 +46,13 @@ export const choseCardPosition = (index: number) => {
     }
 }
 
+export const exchangeCards = (prevPosition: number, currentPosition: number) => {
+    return {
+        type: EXCHANGE_CARDS,
+        action: [prevPosition, currentPosition]
+    }
+}
+
 export const handleTactics = (option: string) => {
     return {
         type: TACTICS_TYPE,
@@ -61,7 +66,6 @@ export const handleCaptain = (option: string) => {
         action: option
     }
 };
-
 
 export const fieldReducer = (cardState = FieldSetup, action: any) => {
 
@@ -78,7 +82,11 @@ export const fieldReducer = (cardState = FieldSetup, action: any) => {
         case REMOVE_CARD:
             cardState.cardsList[action.action].cardData = null;
             break;
+            case EXCHANGE_CARDS:
+            const prevValue = cardState.cardsList[action.action[0]];
+            cardState.cardsList[action.action[0]] = cardState.cardsList[action.action[1]];
+            cardState.cardsList[action.action[1]] = prevValue;
+            break;
     }
     return {...cardState}
-
 };

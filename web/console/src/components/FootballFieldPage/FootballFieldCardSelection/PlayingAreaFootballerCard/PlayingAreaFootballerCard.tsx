@@ -24,17 +24,19 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, index?: number, p
 
     return (
         <div
+            id={index?.toString()}
             onClick={place ? () => changeVisibility(prev => !prev) : () => dispatch(addCard(card, chosenCard))}
             className="football-field-card"
-            data-background={card.mainInfo.backgroundType}
         >
             <img
                 className="football-field-card__background"
                 src={card.mainInfo.backgroundType}
                 alt='background img'
+                draggable={false}
             />
             <img className="football-field-card__face-picture"
                 src={card.mainInfo.playerFace}
+                draggable={false}
                 alt="Player face" />
             <span className="football-field-card__name">
                 {card.mainInfo.lastName}
@@ -58,7 +60,7 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, index?: number, p
                 )}
             </ul>
             <div
-                style={{display: style}}
+                style={{ display: style }}
                 onClick={() => dispatch(removeCard(index))}
                 className="football-field-card__control">
                 &#10006; delete a player

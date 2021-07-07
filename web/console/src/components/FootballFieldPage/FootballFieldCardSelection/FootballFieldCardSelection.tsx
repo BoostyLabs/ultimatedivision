@@ -11,8 +11,8 @@ export const FootballFieldCardSelection = () => {
 
     return (
         <div id="cardList" className="card-selection">
-            {cardList.map(card => (
-                <a href="#playingArea" className="card-selection__card">
+            {cardList.map((card, index) => (
+                <a key={index} href="#playingArea" className="card-selection__card">
                     <PlayingAreaFootballerCard card={card} />
                 </a>
             ))}
