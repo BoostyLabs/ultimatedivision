@@ -106,13 +106,12 @@ func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		admin := admins.Admins{
-			Admin: admins.Admin{
-				ID:           uuid.New(),
-				Email:        email,
-				PasswordHash: []byte(password),
-				CreatedAt:    time.Now(),
-			}}
+		admin := admins.Admin{
+			ID:           uuid.New(),
+			Email:        email,
+			PasswordHash: []byte(password),
+			CreatedAt:    time.Now(),
+		}
 
 		err = controller.admins.Create(ctx, admin)
 		if err != nil {
@@ -178,10 +177,10 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		updatedAdmin := admins.Admins{Admin: admins.Admin{
+		updatedAdmin := admins.Admin{
 			ID:           id,
 			PasswordHash: []byte(password),
-		}}
+		}
 
 		err = controller.admins.Update(ctx, updatedAdmin)
 		if err != nil {
