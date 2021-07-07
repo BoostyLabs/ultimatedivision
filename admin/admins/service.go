@@ -55,3 +55,8 @@ func (service *Service) Update(ctx context.Context, admin Admins) error {
 
 	return service.admins.Update(ctx, admin.Admin)
 }
+
+// Delete deletes admin from DB.
+func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
+	return service.admins.Delete(ctx, id)
+}

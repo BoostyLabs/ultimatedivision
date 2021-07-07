@@ -77,6 +77,11 @@ func TestAdmin(t *testing.T) {
 
 			compareAdmins(t, adminFromDB, updatedAdmin)
 		})
+
+		t.Run("delete", func(t *testing.T){
+			err := repository.Delete(ctx, admin1.ID)
+			require.NoError(t, err)
+		})
 	})
 }
 

@@ -83,3 +83,10 @@ func (adminsDB *adminsDB) Update(ctx context.Context, admin admins.Admin) error 
 		admin.PasswordHash, admin.ID)
 	return ErrAdmins.Wrap(err)
 }
+
+// Delete deletes admin in DB.
+func (adminsDB *adminsDB) Delete(ctx context.Context, id uuid.UUID) error{
+	_, err := adminsDB.conn.QueryContext(ctx,
+		"Delete FROM admins WHERE id = $1",id)
+	return ErrAdmins.Wrap(err)
+}

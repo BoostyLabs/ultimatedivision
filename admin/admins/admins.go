@@ -27,6 +27,8 @@ type DB interface {
 	Create(ctx context.Context, admin Admin) error
 	// Update updates an admins password.
 	Update(ctx context.Context, admin Admin) error
+	// Delete deletes an admin from DB.
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 // Config is configuration for Admin.
