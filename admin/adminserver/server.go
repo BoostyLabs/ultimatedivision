@@ -112,17 +112,17 @@ func (server *Server) Close() error {
 
 // initializeTemplates initializes and caches templates for managers controller.
 func (server *Server) initializeTemplates() (err error) {
-	server.templates.user.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	server.templates.user.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "users", "list.html"))
 	if err != nil {
 		return err
 	}
 
-	server.templates.user.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "create.html"))
+	server.templates.user.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "users", "create.html"))
 	if err != nil {
 		return err
 	}
 
-	server.templates.user.Update, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "update.html"))
+	server.templates.user.Update, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "users", "update.html"))
 	if err != nil {
 		return err
 	}
