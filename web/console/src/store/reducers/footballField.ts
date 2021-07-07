@@ -8,49 +8,56 @@ import { Card } from '../../store/reducers/footballerCard'
 
 const FieldSetup = new FootballField()
 
-const Formation = 'Formation';
-const Tactics = 'Cactics';
-const Captain = 'Captain';
-const ChoseCard = 'ChoseCard';
-const AddCard = 'AddCard';
-const RemoveCard = 'RemoveCard';
+const FORMATION = 'Formation';
+const TACTICS = 'Cactics';
+const CAPTAIN = 'Captain';
+const CHOSE = 'ChoseCard';
+const ADD = 'AddCard';
+const REMOVE = 'RemoveCard';
 
 
 
 //Chose type of cards positioning on football field
 export const handleFormations = (option: string) => {
     return {
-        type: Formation,
+        type: FORMATION,
         action: option
     }
 };
 
 //Adding into cardList in reducer
-export const handleCard = (card: Card, index: string | null) => {
+export const addCard = (card: Card, index: string | null) => {
     return {
-        type: AddCard,
+        type: ADD,
         action: [card, index]
     }
 }
 
-//Selection position of card which should be added
-export const choseCardPosition = (index: string) => {
+export const removeCard = (index: number = -1) => {
     return {
-        type: ChoseCard,
+        type: REMOVE,
+        action: index
+    }
+}
+
+//Selection position of card which should be added
+export const choseCardPosition = (index: number) => {
+    return {
+        type: CHOSE,
         action: index
     }
 }
 
 export const handleTactics = (option: string) => {
     return {
-        type: Tactics,
+        type: TACTICS,
         action: option
     }
 };
 
 export const handleCaptain = (option: string) => {
     return {
-        type: Captain,
+        type: CAPTAIN,
         action: option
     }
 };
@@ -59,18 +66,18 @@ export const handleCaptain = (option: string) => {
 export const fieldReducer = (cardState = FieldSetup, action: any) => {
 
     switch (action.type) {
-        case Formation:
+        case FORMATION:
             cardState.options.formation = action.action;
             return cardState;
-        case ChoseCard:
+        case CHOSE:
             cardState.options.chosedCard = action.action
             return cardState;
-        case AddCard:
-            const ListOfCards = {
-                ...cardState,
-            }
-            ListOfCards.cardsList[action.action[1]].cardData = action.action[0];
-            return ListOfCards;
+        case ADD:
+            cardState.cardsList[action.action[1]].cardData = action.action[0];
+            return {...cardState}
+        case REMOVE:
+            cardState.cardsList[action.action].cardData = null;
+            return {...cardState}
         default:
             return cardState;
     }

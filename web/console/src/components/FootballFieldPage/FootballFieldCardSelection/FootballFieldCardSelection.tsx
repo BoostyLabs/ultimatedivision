@@ -4,7 +4,7 @@ import './FootballFieldCardSelection.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { PlayingAreaFootballerCard }
-    from '../FotballFieldPlayingArea/PlayingAreaFootballerCard/PlayingAreaFootballerCard';
+    from './PlayingAreaFootballerCard/PlayingAreaFootballerCard';
 
 export const FootballFieldCardSelection = () => {
     const cardList = useSelector((state: RootState) => state.cardReducer);
