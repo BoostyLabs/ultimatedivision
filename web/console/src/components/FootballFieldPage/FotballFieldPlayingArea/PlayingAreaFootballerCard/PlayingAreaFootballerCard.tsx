@@ -4,7 +4,8 @@ See LICENSE for copying information.
  */
 
 import React from 'react';
-import './PlayingAreaFootballerCard.scss';
+
+import { UltimateDIvisionPlayerCard } from '../../../UltimateDIvisionPlayerCard/UltimateDIvisionPlayerCard';
 
 import { Card }
     from '../../../../store/reducers/footballerCard';
@@ -12,6 +13,8 @@ import { RootState } from '../../../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { handleCard }
     from '../../../../store/reducers/footballField';
+
+import './PlayingAreaFootballerCard.scss';
 
 export const PlayingAreaFootballerCard: React.FC<{ card: Card, place?: string }> = ({ card, place }) => {
 
@@ -24,35 +27,10 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, place?: string }>
             className="football-field-card"
             data-background={card.mainInfo.backgroundType}
         >
-            <img
-                className="football-field-card__background"
-                src={card.mainInfo.backgroundType}
-                alt='background img'
+            <UltimateDIvisionPlayerCard
+                card={card}
+                parentClassName={"football-field-card"}
             />
-            <img className="football-field-card__face-picture"
-                src={card.mainInfo.playerFace}
-                alt="Player face" />
-            <span className="football-field-card__name">
-                {card.mainInfo.lastName}
-            </span>
-            <ul className="football-field-card__list">
-                {card.stats.map(
-                    (property, index) => {
-                        return (
-                            <li
-                                className="football-field-card__list__item"
-                                key={index}>
-                                {
-                                    /**
-                                    * get only average value of player's game property
-                                    */
-                                    `${property.abbreviated} ${property.average} `
-                                }
-                            </li>
-                        );
-                    }
-                )}
-            </ul>
         </div>
     );
 };
