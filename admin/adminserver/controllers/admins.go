@@ -102,7 +102,7 @@ func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 		if email == "" || password == "" {
-			http.Error(w, "login or password input is empty", http.StatusBadRequest) // status code should depends on error type.
+			http.Error(w, "email or password input is empty", http.StatusBadRequest) // status code should depends on error type.
 			return
 		}
 
