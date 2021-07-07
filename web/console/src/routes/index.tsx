@@ -2,6 +2,7 @@ import React from "react";
 import { Switch, RouteProps } from "react-router-dom";
 import { FootballerCard } from "../components/FootballerCardPage/FootballerCard/FootballerCard";
 import { MarketPlace } from "../components/MarketPlacePage/MarketPlace/MarketPlace";
+import { FootballField } from "../components/FootballFieldPage/FootballField/FootballField";
 
 export class ComponentRoutes {
     constructor(
@@ -22,6 +23,11 @@ export class RouteConfig {
         FootballerCard,
         true,
     );
+    public static FootballField: ComponentRoutes = new ComponentRoutes(
+        "/ud/field",
+        FootballField,
+        true,
+    );
     public static Default: ComponentRoutes = new ComponentRoutes(
         "/ud/",
         MarketPlace,
@@ -30,6 +36,7 @@ export class RouteConfig {
     public static routes: ComponentRoutes[] = [
         RouteConfig.MarketPlace,
         RouteConfig.FootballerCard,
+        RouteConfig.FootballField,
         RouteConfig.Default
     ]
 };

@@ -43,6 +43,14 @@ export const UltimateDivisionNavbar: React.FC = () => {
                         CLUB
                     </NavLink>
                 </li>
+                <li className="ultimatedivision-navbar__item">
+                    <NavLink
+                        to={RouteConfig.FootballField.path}
+                        className="ultimatedivision-navbar__item__active"
+                    >
+                        FIELD
+                    </NavLink>
+                </li>
             </ul >
         </div >
     );
