@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
@@ -57,7 +58,7 @@ func (controller *Users) List(w http.ResponseWriter, r *http.Request) {
 	users, err := controller.users.List(ctx)
 	if err != nil {
 		controller.log.Error("could not get users list", ErrUsers.Wrap(err))
-		http.Error(w, "could not get users list", http.StatusInternalServerError) // status code should depends on error type.
+		http.Error(w, err.Error(), http.StatusInternalServerError) // status code should depends on error type.
 		return
 	}
 
@@ -71,73 +72,77 @@ func (controller *Users) List(w http.ResponseWriter, r *http.Request) {
 
 // Create is an endpoint that will create a new user.
 func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	err := r.ParseForm()
-	if err != nil {
-		controller.log.Error("could not get users form", ErrUsers.Wrap(err))
-		http.Error(w, "could not get users form", http.StatusInternalServerError)
-		return
-	}
-	email := r.FormValue("email")
-	if email == "" {
-		http.Error(w, "email is empty", http.StatusBadRequest)
-		return
-	}
-	password := r.FormValue("password")
-	if password == "" {
-		http.Error(w, "email is empty", http.StatusBadRequest)
-		return
-	}
-	nickName := r.FormValue("nickName")
-	if nickName == "" {
-		http.Error(w, "nick name is empty", http.StatusBadRequest)
-		return
-	}
-	firstName := r.FormValue("firstName")
-	if firstName == "" {
-		http.Error(w, "first name is empty", http.StatusBadRequest)
-		return
-	}
-	lastName := r.FormValue("lastName")
-	if lastName == "" {
-		http.Error(w, "last name is empty", http.StatusBadRequest)
-		return
-	}
+	switch r.Method {
+	case http.MethodGet:
+		err := controller.templates.Create.Execute(w, nil)
+		if err != nil {
+			controller.log.Error("could not execute create users template", ErrUsers.Wrap(err))
+			http.Error(w, "could not execute create users template", http.StatusInternalServerError)
+			return
+		}
+	case http.MethodPost:
+		ctx := r.Context()
+		err := r.ParseForm()
+		if err != nil {
+			controller.log.Error("could not get users form", ErrUsers.Wrap(err))
+			http.Error(w, "could not get users form", http.StatusInternalServerError)
+			return
+		}
+		email := r.FormValue("email")
+		if email == "" {
+			http.Error(w, "email is empty", http.StatusBadRequest)
+			return
+		}
+		password := r.FormValue("password")
+		if password == "" {
+			http.Error(w, "email is empty", http.StatusBadRequest)
+			return
+		}
+		nickName := r.FormValue("nickName")
+		if nickName == "" {
+			http.Error(w, "nick name is empty", http.StatusBadRequest)
+			return
+		}
+		firstName := r.FormValue("firstName")
+		if firstName == "" {
+			http.Error(w, "first name is empty", http.StatusBadRequest)
+			return
+		}
+		lastName := r.FormValue("lastName")
+		if lastName == "" {
+			http.Error(w, "last name is empty", http.StatusBadRequest)
+			return
+		}
 
-	user := users.User{
-		ID:           uuid.UUID{},
-		Email:        email,
-		PasswordHash: []byte(password),
-		NickName:     nickName,
-		FirstName:    firstName,
-		LastName:     lastName,
-		LastLogin:    time.Time{},
-		Status:       0,
-		CreatedAt:    time.Now(),
-	}
+		user := users.User{
+			ID:           uuid.New(),
+			Email:        email,
+			PasswordHash: []byte(password),
+			NickName:     nickName,
+			FirstName:    firstName,
+			LastName:     lastName,
+			LastLogin:    time.Time{},
+			Status:       0,
+			CreatedAt:    time.Now(),
+		}
 
-	err = controller.users.Create(ctx, user)
-	if err != nil {
-		controller.log.Error("could not get users list", ErrUsers.Wrap(err))
-		http.Error(w, "could not get users list", http.StatusInternalServerError)
-		return
-	}
-
-	err = controller.templates.Create.Execute(w, nil)
-	if err != nil {
-		controller.log.Error("can not execute list users template", ErrUsers.Wrap(err))
-		http.Error(w, "can not execute list users template", http.StatusInternalServerError)
-		return
+		err = controller.users.Create(ctx, user)
+		if err != nil {
+			controller.log.Error("could not get users list", ErrUsers.Wrap(err))
+			http.Error(w, "could not get users list", http.StatusInternalServerError)
+			return
+		}
+		controller.Redirect(w, r, "/users/list", http.MethodGet)
 	}
 }
 
-// CreateUserForm is an endpoint that will provide a web page with create user form.
-func (controller *Users) CreateUserForm(w http.ResponseWriter, r *http.Request) {
-	if err := controller.templates.Create.Execute(w, nil); err != nil {
-		controller.log.Error("cannot execute add user template", ErrAdmins.Wrap(err))
-		http.Error(w, "cannot execute add user template", http.StatusInternalServerError)
-		return
-	}
+// Redirect redirects to specific url.
+func (controller *Users) Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) {
+	newRequest := r
+	newRequest.URL = r.URL
+	newRequest.Method = method
+
+	http.Redirect(w, newRequest, urlString, http.StatusMovedPermanently)
 }
 
 // Get is an endpoint that will provide a web page with user by id.
@@ -173,42 +178,53 @@ func (controller *Users) Get(w http.ResponseWriter, r *http.Request) {
 // Update is an endpoint that will update users status.
 func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	err := r.ParseForm()
-	if err != nil {
-		controller.log.Error("could not get users form", ErrUsers.Wrap(err))
-		http.Error(w, "could not get users form", http.StatusInternalServerError)
-		return
-	}
-	email := r.FormValue("email")
-	if email == "" {
-		http.Error(w, "email is empty", http.StatusBadRequest)
-		return
-	}
+	params := mux.Vars(r)
+	w.WriteHeader(http.StatusOK)
+	email := params["email"]
 
-	status := r.FormValue("status")
-	if status == "" {
-		http.Error(w, "status is empty", http.StatusBadRequest)
-		return
-	}
-	s, err := strconv.Atoi(status)
-	if err != nil {
-		controller.log.Error("could not converted to type int", ErrUsers.Wrap(err))
-		http.Error(w, "could not converted to type int", http.StatusInternalServerError)
-		return
-	}
+	switch r.Method {
+	case http.MethodGet:
+		user, err := controller.users.GetByEmail(ctx, email)
+		if err != nil {
+			controller.log.Error("could not get user", ErrUsers.Wrap(err))
+			http.Error(w, "could not get user", http.StatusNotFound)
+			return
+		}
 
-	err = controller.users.Update(ctx, s, email)
-	if err != nil {
-		controller.log.Error("could not update users status", ErrUsers.Wrap(err))
-		http.Error(w, "could not update users status", http.StatusInternalServerError)
-		return
-	}
+		err = controller.templates.Update.Execute(w, user)
+		if err != nil {
+			controller.log.Error("could not execute update users template", ErrUsers.Wrap(err))
+			http.Error(w, "could not execute update users template", http.StatusInternalServerError)
+			return
+		}
+	case http.MethodPost:
+		ctx := r.Context()
+		err := r.ParseForm()
+		if err != nil {
+			controller.log.Error("could not get users form", ErrUsers.Wrap(err))
+			http.Error(w, "could not get users form", http.StatusInternalServerError)
+			return
+		}
 
-	err = controller.templates.Update.Execute(w, nil)
-	if err != nil {
-		controller.log.Error("can not execute get user template", ErrUsers.Wrap(err))
-		http.Error(w, "can not execute get user template", http.StatusInternalServerError)
-		return
+		status := r.FormValue("status")
+		if status == "" {
+			http.Error(w, "status is empty", http.StatusBadRequest)
+			return
+		}
+		s, err := strconv.Atoi(status)
+		if err != nil {
+			controller.log.Error("could not converted to type int", ErrUsers.Wrap(err))
+			http.Error(w, "could not converted to type int", http.StatusInternalServerError)
+			return
+		}
+
+		err = controller.users.Update(ctx, s, email)
+		if err != nil {
+			controller.log.Error("could not update users status", ErrUsers.Wrap(err))
+			http.Error(w, "could not update users status", http.StatusInternalServerError)
+			return
+		}
+		controller.Redirect(w, r, "/users/list", http.MethodGet)
 	}
 }
 
@@ -245,22 +261,15 @@ func (controller *Users) GetByEmail(w http.ResponseWriter, r *http.Request) {
 // Delete is an endpoint that will delete a user by email.
 func (controller *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	err := r.ParseForm()
-	if err != nil {
-		controller.log.Error("could not get users form", ErrUsers.Wrap(err))
-		http.Error(w, "could not get users form", http.StatusInternalServerError)
-		return
-	}
-	email := r.FormValue("email")
-	if email == "" {
-		http.Error(w, "email is empty", http.StatusBadRequest)
-		return
-	}
+	params := mux.Vars(r)
+	w.WriteHeader(http.StatusOK)
+	email := params["email"]
 
-	err = controller.users.Delete(ctx, email)
+	err := controller.users.Delete(ctx, email)
 	if err != nil {
 		controller.log.Error("could not delete user", ErrUsers.Wrap(err))
 		http.Error(w, "could not delete user", http.StatusInternalServerError)
 		return
 	}
+	controller.Redirect(w, r, "/users/list", http.MethodGet)
 }

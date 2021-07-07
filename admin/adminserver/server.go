@@ -71,8 +71,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, admins *
 	// managersRouter.Use(server.withAuth) // TODO: implement cookie auth and auth service.
 	userController := controllers.NewUsers(log, users, server.templates.user)
 	userRouter.HandleFunc("/list", userController.List).Methods(http.MethodGet)
-	userRouter.HandleFunc("/create", userController.Create).Methods(http.MethodPost)
-	userRouter.HandleFunc("/create", userController.CreateUserForm).Methods(http.MethodGet)
+	userRouter.HandleFunc("/create", userController.Create).Methods(http.MethodGet, http.MethodPost)
+	userRouter.HandleFunc("/update/status/{email}", userController.Update).Methods(http.MethodGet, http.MethodPost)
+	userRouter.HandleFunc("/delete/{email}", userController.Delete).Methods(http.MethodGet, http.MethodPost)
 	userRouter.HandleFunc("/get", userController.Get).Methods(http.MethodGet)
 	userRouter.HandleFunc("/get_by_email", userController.GetByEmail).Methods(http.MethodGet)
 
@@ -111,27 +112,17 @@ func (server *Server) Close() error {
 
 // initializeTemplates initializes and caches templates for managers controller.
 func (server *Server) initializeTemplates() (err error) {
-	server.templates.admin.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
-	if err != nil {
-		return err
-	}
-
 	server.templates.user.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
 	if err != nil {
 		return err
 	}
 
-	server.templates.user.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	server.templates.user.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "create.html"))
 	if err != nil {
 		return err
 	}
 
-	server.templates.user.Get, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
-	if err != nil {
-		return err
-	}
-
-	server.templates.user.GetByEmail, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	server.templates.user.Update, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "update.html"))
 	if err != nil {
 		return err
 	}

@@ -40,6 +40,11 @@ func (service *Service) List(ctx context.Context) ([]User, error) {
 
 // Create creates a user and returns user email.
 func (service *Service) Create(ctx context.Context, user User) error {
+	err := user.EncodePass()
+	if err != nil {
+		return err
+	}
+
 	return service.users.Create(ctx, user)
 }
 

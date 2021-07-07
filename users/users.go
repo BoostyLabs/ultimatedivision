@@ -58,11 +58,11 @@ type User struct {
 }
 
 // EncodePass encode the password and generate "hash" to store from users password
-func (admin *User) EncodePass() error {
-	hash, err := bcrypt.GenerateFromPassword(admin.PasswordHash, bcrypt.DefaultCost)
+func (user *User) EncodePass() error {
+	hash, err := bcrypt.GenerateFromPassword(user.PasswordHash, bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
-	admin.PasswordHash = hash
+	user.PasswordHash = hash
 	return nil
 }

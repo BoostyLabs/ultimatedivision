@@ -2,15 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Portal | Managers</title>
+  <title>Admin Portal | Users</title>
 </head>
 <body>
+<nav>
+  <div>
+    <ul>
+      <li><a href="/users/create">Add user</a></li>
+    </ul>
+  </div>
+</nav>
 <table style="width:100%">
   <thead>
   <tr>
     <th>Email</th>
+    <th>Nick name</th>
     <th>First name</th>
     <th>Last name</th>
+    <th>Last login</th>
+    <th>Status</th>
     <th>Created at</th>
     <td>Actions</td>
   </tr>
@@ -21,17 +31,26 @@
       {{.Email}}
     </td>
     <td>
+      {{.NickName}}
+    </td>
+    <td>
       {{.FirstName}}
     </td>
     <td>
       {{.LastName}}
     </td>
     <td>
+      {{.LastLogin}}
+    </td>
+    <td>
+      {{.Status}}
+    </td>
+    <td>
       {{.CreatedAt}}
     </td>
     <td>
-      <a href="/managers/{{.ID}}/delete">Delete</a>
-      <a href="/managers/{{.ID}}/update">Update</a>
+      <a href="/users/delete/{{.Email}}">Delete</a>
+      <a href="/users/update/status/{{.Email}}">Update</a>
     </td>
   </tr>
   {{end}}
