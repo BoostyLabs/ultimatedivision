@@ -24,7 +24,6 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, index?: number, p
 
     return (
         <div
-            id={index?.toString()}
             onClick={place ? () => changeVisibility(prev => !prev) : () => dispatch(addCard(card, chosenCard))}
             className="football-field-card"
         >
