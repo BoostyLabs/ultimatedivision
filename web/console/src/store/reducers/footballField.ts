@@ -8,19 +8,19 @@ import { Card } from '../../store/reducers/footballerCard'
 
 const FieldSetup = new FootballField()
 
-const FORMATION = 'Formation';
-const TACTICS = 'Cactics';
-const CAPTAIN = 'Captain';
-const CHOSE = 'ChoseCard';
-const ADD = 'AddCard';
-const REMOVE = 'RemoveCard';
+const FORMATION_TYPE = 'Formation';
+const TACTICS_TYPE = 'Cactics';
+const CAPTAIN_TYPE = 'Captain';
+const CHOSE_CARD_POSITION = 'ChoseCard';
+const ADD_CARD = 'AddCard';
+const REMOVE_CARD = 'RemoveCard';
 
 
 
 //Chose type of cards positioning on football field
 export const handleFormations = (option: string) => {
     return {
-        type: FORMATION,
+        type: FORMATION_TYPE,
         action: option
     }
 };
@@ -28,14 +28,14 @@ export const handleFormations = (option: string) => {
 //Adding into cardList in reducer
 export const addCard = (card: Card, index: string | null) => {
     return {
-        type: ADD,
+        type: ADD_CARD,
         action: [card, index]
     }
 }
 
 export const removeCard = (index: number = -1) => {
     return {
-        type: REMOVE,
+        type: REMOVE_CARD,
         action: index
     }
 }
@@ -43,21 +43,21 @@ export const removeCard = (index: number = -1) => {
 //Selection position of card which should be added
 export const choseCardPosition = (index: number) => {
     return {
-        type: CHOSE,
+        type: CHOSE_CARD_POSITION,
         action: index
     }
 }
 
 export const handleTactics = (option: string) => {
     return {
-        type: TACTICS,
+        type: TACTICS_TYPE,
         action: option
     }
 };
 
 export const handleCaptain = (option: string) => {
     return {
-        type: CAPTAIN,
+        type: CAPTAIN_TYPE,
         action: option
     }
 };
@@ -66,19 +66,19 @@ export const handleCaptain = (option: string) => {
 export const fieldReducer = (cardState = FieldSetup, action: any) => {
 
     switch (action.type) {
-        case FORMATION:
+        case FORMATION_TYPE:
             cardState.options.formation = action.action;
-            return cardState;
-        case CHOSE:
+            break;
+        case CHOSE_CARD_POSITION:
             cardState.options.chosedCard = action.action
-            return cardState;
-        case ADD:
+            break;
+        case ADD_CARD:
             cardState.cardsList[action.action[1]].cardData = action.action[0];
-            return {...cardState}
-        case REMOVE:
+            break;
+        case REMOVE_CARD:
             cardState.cardsList[action.action].cardData = null;
-            return {...cardState}
-        default:
-            return cardState;
+            break;
     }
+    return {...cardState}
+
 };

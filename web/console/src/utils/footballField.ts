@@ -1,29 +1,29 @@
-export interface DropDownStyles {
-    state: boolean;
+export interface VisibilityStyles {
+    visible: boolean;
     get style(): string;
 }
-export class TriangleStyle implements DropDownStyles {
+export class TriangleStyle implements VisibilityStyles {
     constructor(
-        public state: boolean = false
+        public visible: boolean = false
     ) { }
-    get style() {
-        return this.state ? 'rotate(-90deg)' : 'rotate(0deg)';
+    get style(): string {
+        return this.visible ? 'rotate(-90deg)' : 'rotate(0deg)';
     }
 }
-export class ListStyle implements DropDownStyles {
+export class ListStyle implements VisibilityStyles {
     constructor(
-        public state: boolean = false
+        public visible: boolean = false
     ) { }
-    get style() {
-        return this.state ? '0' : '90px';
+    get style(): string {
+        return this.visible ? '0' : '90px';
     }
 }
 
-export class FootballCardStyle implements DropDownStyles {
+export class FootballCardStyle implements VisibilityStyles {
     constructor (
-        public state: boolean
+        public visible: boolean
         ) { }
-        get style() {
-            return this.state ? 'block' : 'none';
+        get style(): string {
+            return this.visible ? 'block' : 'none';
         }
 }
