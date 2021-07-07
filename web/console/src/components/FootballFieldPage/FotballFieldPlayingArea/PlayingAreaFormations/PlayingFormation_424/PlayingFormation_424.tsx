@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { choseCardPosition }
     from '../../../../../store/reducers/footballField';
 import { PlayingAreaFootballerCard }
-    from '../../PlayingAreaFootballerCard/PlayingAreaFootballerCard';
+    from '../../../FootballFieldCardSelection/PlayingAreaFootballerCard/PlayingAreaFootballerCard';
 
 export const PlayingFormation_424: React.FC<{ props: FootballField }> = ({ props }) => {
     const dispatch = useDispatch();
@@ -21,14 +21,14 @@ export const PlayingFormation_424: React.FC<{ props: FootballField }> = ({ props
                 const data = card.cardData;
                 return (
                     <div
-                        onClick={() => dispatch(choseCardPosition(index.toString()))}
                         key={index}
                         className="playing-formation-424__card"
                     >
                         {
                             data
-                                ? <PlayingAreaFootballerCard card={data} place={'PlayingArea'} />
+                                ? <PlayingAreaFootballerCard card={data} index={index} place={'PlayingArea'} />
                                 : <a
+                                    onClick={() => dispatch(choseCardPosition(index))}
                                     href="#cardList"
                                     className="playing-formation-424__link"
                                 >

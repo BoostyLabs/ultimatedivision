@@ -7,8 +7,7 @@ export class TriangleStyle implements DropDownStyles {
         public state: boolean = false
     ) { }
     get style() {
-        let style = this.state ? 'rotate(-90deg)' : 'rotate(0deg)';
-        return style;
+        return this.state ? 'rotate(-90deg)' : 'rotate(0deg)';
     }
 }
 export class ListStyle implements DropDownStyles {
@@ -16,7 +15,15 @@ export class ListStyle implements DropDownStyles {
         public state: boolean = false
     ) { }
     get style() {
-        let style = this.state ? '0' : '90px';
-        return style;
+        return this.state ? '0' : '90px';
     }
+}
+
+export class FootballCardStyle implements DropDownStyles {
+    constructor (
+        public state: boolean
+        ) { }
+        get style() {
+            return this.state ? 'block' : 'none';
+        }
 }

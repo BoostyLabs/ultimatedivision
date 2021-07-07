@@ -12,8 +12,8 @@ const Formation = 'Formation';
 const Tactics = 'Cactics';
 const Captain = 'Captain';
 const ChoseCard = 'ChoseCard';
-const AddCard = 'AddCard';
-const RemoveCard = 'RemoveCard';
+const ADD = 'AddCard';
+const REMOVE = 'RemoveCard';
 
 
 
@@ -26,15 +26,22 @@ export const handleFormations = (option: string) => {
 };
 
 //Adding into cardList in reducer
-export const handleCard = (card: Card, index: string | null) => {
+export const addCard = (card: Card, index: string | null) => {
     return {
-        type: AddCard,
+        type: ADD,
         action: [card, index]
     }
 }
 
+export const removeCard = (index: number = -1) => {
+    return {
+        type: REMOVE,
+        action: index
+    }
+}
+
 //Selection position of card which should be added
-export const choseCardPosition = (index: string) => {
+export const choseCardPosition = (index: number) => {
     return {
         type: ChoseCard,
         action: index
@@ -65,12 +72,12 @@ export const fieldReducer = (cardState = FieldSetup, action: any) => {
         case ChoseCard:
             cardState.options.chosedCard = action.action
             return cardState;
-        case AddCard:
-            const ListOfCards = {
-                ...cardState,
-            }
-            ListOfCards.cardsList[action.action[1]].cardData = action.action[0];
-            return ListOfCards;
+        case ADD:
+            cardState.cardsList[action.action[1]].cardData = action.action[0];
+            return {...cardState}
+        case REMOVE:
+            cardState.cardsList[action.action].cardData = null;
+            return {...cardState}
         default:
             return cardState;
     }
