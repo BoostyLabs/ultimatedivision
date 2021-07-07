@@ -34,10 +34,10 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, index?: number, p
                 alt='background img'
             />
             <img className="football-field-card__face-picture"
-                src={card.mainInfo.facePicture}
+                src={card.mainInfo.playerFace}
                 alt="Player face" />
             <span className="football-field-card__name">
-                {card.overalInfo[0].value}
+                {card.mainInfo.lastName}
             </span>
             <ul className="football-field-card__list">
                 {card.stats.map(
@@ -50,7 +50,7 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, index?: number, p
                                     /**
                                     * get only average value of player's game property
                                     */
-                                    `${property.average} ${property.abbr}`
+                                    `${property.abbreviated} ${property.average} `
                                 }
                             </li>
                         );
