@@ -4,7 +4,7 @@ See LICENSE for copying information.
  */
 
 import React from 'react';
-import { NavLink, BrowserRouter } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import './UltimateDivisionNavbar.scss';
 
@@ -20,10 +20,11 @@ export const UltimateDivisionNavbar: React.FC = () => {
                 alt={ultimate} />
             <ul className="ultimatedivision-navbar__list">
                 <li className="ultimatedivision-navbar__item">
-                    <NavLink to={RouteConfig.Default.path}>
-                        <span className="ultimatedivision-navbar__item__active">
-                            HOME
-                        </span>
+                    <NavLink
+                        to={RouteConfig.Default.path}
+                        className="ultimatedivision-navbar__item__active"
+                    >
+                        HOME
                     </NavLink>
                 </li>
                 <li className="ultimatedivision-navbar__item">
@@ -36,17 +37,13 @@ export const UltimateDivisionNavbar: React.FC = () => {
                 </li>
                 <li className="ultimatedivision-navbar__item">
                     <NavLink
-                        to={RouteConfig.Club.path}
+                        to={RouteConfig.MarketPlace.path}
+                        className="ultimatedivision-navbar__item__active"
                     >
-                        <span
-                            className="ultimatedivision-navbar__item__active"
-                        >
-                            CLUB
-                        </span>
-
+                        CLUB
                     </NavLink>
                 </li>
             </ul >
-        </div>
+        </div >
     );
 };

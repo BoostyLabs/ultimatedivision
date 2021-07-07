@@ -21,7 +21,7 @@ export const MarketPlaceFootballerCard: React.FC<{ card: Card }> = ({ card }) =>
             <img className="marketplace-playerCard__face-picture"
                 src={card.mainInfo.playerFace}
                 alt="Player face" />
-            <NavLink to={RouteConfig.Club.path} >
+            <NavLink to={RouteConfig.FootballerCard.path} >
                 <span className="marketplace-playerCard__name">
                     {card.mainInfo.lastName}
                 </span>

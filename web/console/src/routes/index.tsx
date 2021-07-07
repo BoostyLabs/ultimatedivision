@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, RouteProps, BrowserRouter } from "react-router-dom";
+import { Switch, RouteProps } from "react-router-dom";
 import { FootballerCard } from "../components/FootballerCardPage/FootballerCard/FootballerCard";
 import { MarketPlace } from "../components/MarketPlacePage/MarketPlace/MarketPlace";
 
@@ -8,93 +8,54 @@ export class ComponentRoutes {
         public path: string,
         public component: React.FC,
         public exact: boolean,
-        // public subroutes: ComponentSubRouters
     ) { }
 };
-
-// class ComponentSubRouters {
-//     constructor(
-//         public path: string,
-//         public component: React.FC,
-//         public exact: boolean,
-//     ) { }
-// };
 
 export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
         "/ud/marketplace",
         MarketPlace,
-        false,
-        // new ComponentSubRouters(
-        //     "/ud/marketplace",
-        //     MarketPlace,
-        //     true
-        // )
+        true,
     );
-    public static Club: ComponentRoutes = new ComponentRoutes(
-        "/ud/club",
+    public static FootballerCard: ComponentRoutes = new ComponentRoutes(
+        "/ud/marketplace/card",
         FootballerCard,
-        false,
-        // new ComponentSubRouters(
-        //     "/ud/club",
-        //     FootballerCard,
-        //     true
-        // )
+        true,
     );
     public static Default: ComponentRoutes = new ComponentRoutes(
-        "/",
+        "/ud/",
         MarketPlace,
         true,
-        // new ComponentSubRouters(
-        //     "/ud/marketplace/card",
-        //     FootballerCard,
-        //     true
-        // )
     );
     public static routes: ComponentRoutes[] = [
         RouteConfig.MarketPlace,
-        RouteConfig.Club,
+        RouteConfig.FootballerCard,
         RouteConfig.Default
     ]
 };
 
 
 type RoutesProps = { component: React.FC } & RouteProps;
-type RoutesProps1 = { component: React.FC } & RouteProps;
-
 
 const Route: React.FC<RoutesProps> = ({
     component: Component, ...children
 }) => {
     return (
-
-        <Component {...children}>
-            {/* <SubRoute component={subroutes.component} exact={subroutes.exact} path={subroutes.path} /> */}
-        </Component>
+        <Component {...children} />
     )
 };
 
-const SubRoute: React.FC<RoutesProps1> = ({
-    component: Component, ...children
-}) => {
-    console.log(children);
-    return <Component {...children}></Component>
-}
-
 export const Routes = () => {
     return (
-        <BrowserRouter>
-                <Switch>
-                    {RouteConfig.routes.map((route, index) =>
-                        <Route
-                            key={index}
-                            path={route.path}
-                            component={route.component}
-                            exact={route.exact}
-                        // subroutes={route.subroutes}
-                        />
-                    )}
-                </Switch>
-        </BrowserRouter>
+        <Switch>
+            {RouteConfig.routes.map((route, index) =>
+                <Route
+                    key={index}
+                    path={route.path}
+                    component={route.component}
+                    exact={route.exact}
+                />
+            )}
+        </Switch>
     );
 };
