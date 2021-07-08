@@ -5,13 +5,14 @@ package admins
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var ErrAdminsService = errs.Class("admins service error")
+var ErrAdmins = errs.Class("admins service error")
 
 // Service is handling admins related logic.
 //
@@ -27,8 +28,8 @@ func NewService(admins DB) *Service {
 	}
 }
 
-// EncodePassword is method to encode password.
-func (service *Service) EncodePassword(admin Admin) error {
+// encodePassword is method to encode password.
+func (service *Service) encodePassword(admin Admin) error {
 	hash, err := bcrypt.GenerateFromPassword(admin.PasswordHash, bcrypt.DefaultCost)
 	if err != nil {
 		return err
@@ -48,20 +49,34 @@ func (service *Service) Get(ctx context.Context, id uuid.UUID) (Admin, error) {
 }
 
 // Create insert admin to DB.
-func (service *Service) Create(ctx context.Context, admin Admin) error {
-	err := service.EncodePassword(admin)
+func (service *Service) Create(ctx context.Context, email string, password []byte) error {
+	admin := Admin{
+		ID: uuid.New(),
+		Email: email,
+		PasswordHash: password,
+		CreatedAt: time.Now(),
+	}
+
+	err := service.encodePassword(admin)
 	if err != nil {
-		return ErrAdminsService.Wrap(err)
+		return ErrAdmins.Wrap(err)
 	}
 
 	return service.admins.Create(ctx, admin)
 }
 
 // Update updates admin from DB.
-func (service *Service) Update(ctx context.Context, admin Admin) error {
-	err := service.EncodePassword(admin)
+func (service *Service) Update(ctx context.Context, id uuid.UUID, newPassword []byte) error {
+	admin, err := service.Get(ctx, id)
 	if err != nil {
-		return ErrAdminsService.Wrap(err)
+		return ErrAdmins.Wrap(err)
+	}
+
+	admin.PasswordHash = newPassword
+
+	err = service.encodePassword(admin)
+	if err != nil {
+		return ErrAdmins.Wrap(err)
 	}
 
 	return service.admins.Update(ctx, admin)

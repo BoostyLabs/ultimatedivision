@@ -4,14 +4,12 @@
 package controllers
 
 import (
-	"html/template"
-	"net/http"
-	"net/url"
-	"time"
-
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
+	"html/template"
+	"net/http"
+	"net/url"
 
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/logger"
@@ -94,8 +92,7 @@ func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 
 		err := r.ParseForm()
 		if err != nil {
-			controller.log.Error("could not parse admin create form", ErrAdmins.Wrap(err))
-			http.Error(w, "could not parse admin create form", http.StatusInternalServerError)
+			http.Error(w, "could not parse admin create form", http.StatusBadRequest)
 			return
 		}
 
@@ -106,14 +103,7 @@ func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		admin := admins.Admin{
-			ID:           uuid.New(),
-			Email:        email,
-			PasswordHash: []byte(password),
-			CreatedAt:    time.Now(),
-		}
-
-		err = controller.admins.Create(ctx, admin)
+		err = controller.admins.Create(ctx, email, []byte(password))
 		if err != nil {
 			controller.log.Error("could not create admin", ErrAdmins.Wrap(err))
 			http.Error(w, "could not create admin", http.StatusInternalServerError) // status code should depends on error type.
@@ -141,12 +131,13 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		admin, err := controller.admins.Get(ctx, id)
 		if err != nil {
+			controller.log.Error("could not get admins list", ErrAdmins.Wrap(err))
+
 			if admins.ErrNoAdmin.Has(err) {
 				http.Error(w, "no admins with such id", http.StatusNotFound) // status code should depends on error t
 				return
 			}
 
-			controller.log.Error("could not get admins list", ErrAdmins.Wrap(err))
 			http.Error(w, "could not get admins list", http.StatusInternalServerError) // status code should depends on error type.
 			return
 		}
@@ -177,12 +168,7 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		updatedAdmin := admins.Admin{
-			ID:           id,
-			PasswordHash: []byte(password),
-		}
-
-		err = controller.admins.Update(ctx, updatedAdmin)
+		err = controller.admins.Update(ctx, id, []byte(password))
 		if err != nil {
 			controller.log.Error("could not update admin", ErrAdmins.Wrap(err))
 			http.Error(w, "could not update admin", http.StatusInternalServerError) // status code should depends on error type.
