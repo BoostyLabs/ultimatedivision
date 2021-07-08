@@ -24,9 +24,14 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, index?: number, p
 
     return (
         <div
+            data-content={place && ''}
             onClick={place ? () => changeVisibility(prev => !prev) : () => dispatch(addCard(card, chosenCard))}
             className="football-field-card"
         >
+            <div
+                className="football-field-card__wrapper"
+                style={{ display: style }}
+            ></div>
             <img
                 className="football-field-card__background"
                 src={card.mainInfo.backgroundType}
