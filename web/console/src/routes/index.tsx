@@ -3,6 +3,7 @@ import { Switch, RouteProps } from "react-router-dom";
 import { FootballerCard } from "../components/FootballerCardPage/FootballerCard/FootballerCard";
 import { MarketPlace } from "../components/MarketPlacePage/MarketPlace/MarketPlace";
 import { FootballField } from "../components/FootballFieldPage/FootballField/FootballField";
+import { MyCards } from '../components/MarketPlacePage/MyCards/MyCards';
 
 export class ComponentRoutes {
     constructor(
@@ -28,6 +29,12 @@ export class RouteConfig {
         FootballField,
         true,
     );
+    //TODO: Route with SubRoutes
+    public static MyCards: ComponentRoutes = new ComponentRoutes(
+        "/ud/marketplace/club",
+        MyCards,
+        true
+    )
     public static Default: ComponentRoutes = new ComponentRoutes(
         "/ud/",
         MarketPlace,
@@ -37,6 +44,7 @@ export class RouteConfig {
         RouteConfig.MarketPlace,
         RouteConfig.FootballerCard,
         RouteConfig.FootballField,
+        RouteConfig.MyCards,
         RouteConfig.Default
     ]
 };

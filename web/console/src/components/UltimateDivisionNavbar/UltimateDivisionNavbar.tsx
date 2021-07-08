@@ -37,7 +37,7 @@ export const UltimateDivisionNavbar: React.FC = () => {
                 </li>
                 <li className="ultimatedivision-navbar__item">
                     <NavLink
-                        to={RouteConfig.MarketPlace.path}
+                        to={RouteConfig.MyCards.path}
                         className="ultimatedivision-navbar__item__active"
                     >
                         CLUB

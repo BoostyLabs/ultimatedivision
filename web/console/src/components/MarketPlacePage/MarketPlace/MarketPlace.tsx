@@ -13,17 +13,24 @@ import { MarketPlaceCardsGroup }
     from '../MarketPlaceCardsGroup/MarketPlaceCardsGroup';
 import { UltimateDivisionPaginator }
     from '../../UltimateDivisionPaginator/UltimateDivisionPaginator';
+import { MarketPlaceFootballerCard }
+    from '../MarketPlaceCardsGroup/MarketPlaceFootballerCard/MarketPlaceFootballerCard';
 
 import './MarketPlace.scss';
+
 
 export const MarketPlace = () => {
     const cards = useSelector((state: RootState) => state.cardReducer);
 
     return (
         <section className="marketplace">
-            <MarketPlaceFilterField />
+            <MarketPlaceFilterField
+                title="MARKETPLACE"
+            />
             <MarketPlaceCardsGroup
-                cards={cards} />
+                cards={cards}
+                Component={MarketPlaceFootballerCard}
+            />
             <UltimateDivisionPaginator
                 itemCount={cards.length} />
         </section>
