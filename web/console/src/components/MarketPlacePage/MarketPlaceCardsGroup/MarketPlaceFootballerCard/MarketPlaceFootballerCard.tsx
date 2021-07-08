@@ -5,8 +5,8 @@ See LICENSE for copying information.
 
 import React from 'react';
 
-import { UltimateDIvisionPlayerCard }
-    from '../../../UltimateDIvisionPlayerCard/UltimateDIvisionPlayerCard';
+import { PlayerCard }
+    from '../../../PlayerCard/PlayerCard';
 
 import { Card } from '../../../../store/reducers/footballerCard';
 
@@ -17,7 +17,7 @@ export const MarketPlaceFootballerCard: React.FC<{ card: Card, place?: string }>
         <div
             className="marketplace-playerCard"
         >
-            <UltimateDIvisionPlayerCard
+            <PlayerCard
                 card={card}
                 parentClassName={"marketplace-playerCard"}
             />

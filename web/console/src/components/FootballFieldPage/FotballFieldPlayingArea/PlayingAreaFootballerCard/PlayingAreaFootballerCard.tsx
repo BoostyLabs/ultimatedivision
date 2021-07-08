@@ -5,7 +5,7 @@ See LICENSE for copying information.
 
 import React from 'react';
 
-import { UltimateDIvisionPlayerCard } from '../../../UltimateDIvisionPlayerCard/UltimateDIvisionPlayerCard';
+import { PlayerCard } from '../../../PlayerCard/PlayerCard';
 
 import { Card }
     from '../../../../store/reducers/footballerCard';
@@ -27,7 +27,7 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, place?: string }>
             className="football-field-card"
             data-background={card.mainInfo.backgroundType}
         >
-            <UltimateDIvisionPlayerCard
+            <PlayerCard
                 card={card}
                 parentClassName={"football-field-card"}
             />

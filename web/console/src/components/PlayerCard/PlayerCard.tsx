@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { Card } from '../../store/reducers/footballerCard';
 import { RouteConfig } from '../../routes';
 
-export const UltimateDIvisionPlayerCard: React.FC<{ card: Card, parentClassName: string }> = ({
+export const PlayerCard: React.FC<{ card: Card, parentClassName: string }> = ({
     card, parentClassName
 }) => {
     return (
