@@ -44,7 +44,7 @@ const (
 func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 	tx, err := cardsDB.conn.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return ErrCard.Wrap(err)
 	}
 
 	query :=
@@ -68,7 +68,7 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 	if err != nil {
 		err = tx.Rollback()
 		if err != nil {
-			return err
+			return ErrCard.Wrap(err)
 		}
 		return ErrCard.Wrap(err)
 	}
@@ -77,14 +77,14 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 	if err != nil {
 		err = tx.Rollback()
 		if err != nil {
-			return err
+			return ErrCard.Wrap(err)
 		}
-		return err
+		return ErrCard.Wrap(err)
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return err
+		return ErrCard.Wrap(err)
 	}
 
 	return nil
@@ -97,11 +97,20 @@ func createCardsAccessories(ctx context.Context, cardsDB *cardsDB, card cards.Ca
             cards_accessories (card_id, accessory_id) 
         VALUES
         `
-	values := []interface{}{}
-	countAccessories := len(card.Accessories)
+	query, values := buildStringForManyRecordsValue(query, card.ID, card.Accessories)
+	if _, err := cardsDB.conn.ExecContext(ctx, query, values...); err != nil {
+		return ErrCard.Wrap(err)
+	}
 
-	for i, accessory := range card.Accessories {
-		values = append(values, card.ID, accessory)
+	return nil
+}
+
+// buildStringForManyRecordsValue build string for many records value.
+func buildStringForManyRecordsValue(query string, cardID uuid.UUID, accessories []int) (string, []interface{}) {
+	values := []interface{}{}
+	countAccessories := len(accessories)
+	for i, accessory := range accessories {
+		values = append(values, cardID, accessory)
 
 		n := i * countAccessories
 		query += `(`
@@ -110,12 +119,8 @@ func createCardsAccessories(ctx context.Context, cardsDB *cardsDB, card cards.Ca
 		}
 		query = query[:len(query)-1] + `),`
 	}
-	query = query[:len(query)-1]
-	if _, err := cardsDB.conn.ExecContext(ctx, query, values...); err != nil {
-		return err
-	}
 
-	return nil
+	return query[:len(query)-1], values
 }
 
 // Get returns card by id from the data base.
@@ -148,7 +153,7 @@ func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, erro
 	default:
 		accessoryIds, err := listAccessoryIdsByCardID(ctx, cardsDB, id)
 		if err != nil {
-			return card, err
+			return card, ErrCard.Wrap(err)
 		}
 		card.Accessories = accessoryIds
 		return card, nil
@@ -167,7 +172,7 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
         `
 	rows, err := cardsDB.conn.QueryContext(ctx, query, cardID)
 	if err != nil {
-		return nil, err
+		return nil, ErrCard.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -177,12 +182,12 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
 	for rows.Next() {
 		var cardID int
 		if err = rows.Scan(&cardID); err != nil {
-			return nil, err
+			return nil, ErrCard.Wrap(err)
 		}
 		data = append(data, cardID)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, ErrCard.Wrap(err)
 	}
 
 	return data, nil
@@ -200,7 +205,6 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 	if err != nil {
 		return nil, ErrCard.Wrap(err)
 	}
-
 	defer func() {
 		err = errs.Combine(err, rows.Close())
 	}()
@@ -219,19 +223,19 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 			&card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus, &card.Interceptions,
 			&card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
 		); err != nil {
-			return nil, err
+			return nil, cards.ErrNoCard.Wrap(err)
 		}
 
 		accessoryIds, err := listAccessoryIdsByCardID(ctx, cardsDB, card.ID)
 		if err != nil {
-			return nil, err
+			return nil, ErrCard.Wrap(err)
 		}
 		card.Accessories = accessoryIds
 
 		data = append(data, card)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, ErrCard.Wrap(err)
 	}
 
 	return data, nil
