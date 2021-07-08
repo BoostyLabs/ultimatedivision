@@ -70,7 +70,7 @@ func (controller *Cards) Create(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID, err := uuid.Parse(vars["userID"])
 	if err != nil {
-		http.Error(w, "invalid parsing userID parameter", http.StatusBadRequest)
+		http.Error(w, "could not parse user id", http.StatusBadRequest)
 		return
 	}
 	if err := controller.cards.Create(ctx, userID); err != nil {
@@ -87,7 +87,7 @@ func (controller *Cards) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := uuid.Parse(vars["id"])
 	if err != nil {
-		http.Error(w, "invalid parsing card id parameter", http.StatusBadRequest)
+		http.Error(w, "could not parse card id", http.StatusBadRequest)
 		return
 	}
 	ctx := r.Context()
