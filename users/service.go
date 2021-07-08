@@ -5,6 +5,7 @@ package users
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -39,7 +40,18 @@ func (service *Service) List(ctx context.Context) ([]User, error) {
 }
 
 // Create creates a user and returns user email.
-func (service *Service) Create(ctx context.Context, user User) error {
+func (service *Service) Create(ctx context.Context, email, password, nickName, firstName, lastName string) error {
+	user := User{
+		ID:           uuid.New(),
+		Email:        email,
+		PasswordHash: []byte(password),
+		NickName:     nickName,
+		FirstName:    firstName,
+		LastName:     lastName,
+		LastLogin:    time.Time{},
+		Status:       StatusActive,
+		CreatedAt:    time.Now(),
+	}
 	err := user.EncodePass()
 	if err != nil {
 		return err
@@ -49,11 +61,11 @@ func (service *Service) Create(ctx context.Context, user User) error {
 }
 
 // Delete deletes a user.
-func (service *Service) Delete(ctx context.Context, email string) error {
-	return service.users.Delete(ctx, email)
+func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
+	return service.users.Delete(ctx, id)
 }
 
 // Update updates a users status.
-func (service *Service) Update(ctx context.Context, status int, email string) error {
-	return service.users.Update(ctx, status, email)
+func (service *Service) Update(ctx context.Context, status int, id uuid.UUID) error {
+	return service.users.Update(ctx, status, id)
 }

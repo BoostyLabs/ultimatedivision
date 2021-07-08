@@ -29,9 +29,9 @@ type DB interface {
 	// Create creates a user and writes to the database.
 	Create(ctx context.Context, user User) error
 	// Update updates a status in the database.
-	Update(ctx context.Context, status int, email string) error
+	Update(ctx context.Context, status int, id uuid.UUID) error
 	// Delete deletes a user in the database.
-	Delete(ctx context.Context, email string) error
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 // Status defines the list of possible user statuses.

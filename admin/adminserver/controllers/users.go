@@ -7,7 +7,6 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -95,7 +94,7 @@ func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
 		}
 		password := r.FormValue("password")
 		if password == "" {
-			http.Error(w, "email is empty", http.StatusBadRequest)
+			http.Error(w, "password is empty", http.StatusBadRequest)
 			return
 		}
 		nickName := r.FormValue("nickName")
@@ -114,19 +113,7 @@ func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		user := users.User{
-			ID:           uuid.New(),
-			Email:        email,
-			PasswordHash: []byte(password),
-			NickName:     nickName,
-			FirstName:    firstName,
-			LastName:     lastName,
-			LastLogin:    time.Time{},
-			Status:       0,
-			CreatedAt:    time.Now(),
-		}
-
-		err = controller.users.Create(ctx, user)
+		err = controller.users.Create(ctx, email, password, nickName, firstName, lastName)
 		if err != nil {
 			controller.log.Error("could not get users list", ErrUsers.Wrap(err))
 			http.Error(w, "could not get users list", http.StatusInternalServerError)
@@ -134,15 +121,6 @@ func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
 		}
 		controller.Redirect(w, r, "/users/list", http.MethodGet)
 	}
-}
-
-// Redirect redirects to specific url.
-func (controller *Users) Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) {
-	newRequest := r
-	newRequest.URL = r.URL
-	newRequest.Method = method
-
-	http.Redirect(w, newRequest, urlString, http.StatusMovedPermanently)
 }
 
 // Get is an endpoint that will provide a web page with user by id.
@@ -160,10 +138,17 @@ func (controller *Users) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := controller.users.Get(ctx, uuid.MustParse(id))
+	uuid, err := uuid.Parse(id)
+	if err != nil {
+		controller.log.Error("could not parse uuid", ErrUsers.Wrap(err))
+		http.Error(w, "could not parse uuid", http.StatusBadRequest)
+		return
+	}
+
+	user, err := controller.users.Get(ctx, uuid)
 	if err != nil {
 		controller.log.Error("could not get user", ErrUsers.Wrap(err))
-		http.Error(w, "could not get user", http.StatusInternalServerError)
+		http.Error(w, "could not get user", http.StatusBadRequest)
 		return
 	}
 
@@ -179,12 +164,22 @@ func (controller *Users) Get(w http.ResponseWriter, r *http.Request) {
 func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
-	w.WriteHeader(http.StatusOK)
-	email := params["email"]
+	id := params["id"]
+	if id == "" {
+		http.Error(w, "id is empty", http.StatusBadRequest)
+		return
+	}
+
+	uuid, err := uuid.Parse(id)
+	if err != nil {
+		controller.log.Error("could not parse uuid", ErrUsers.Wrap(err))
+		http.Error(w, "could not parse uuid", http.StatusBadRequest)
+		return
+	}
 
 	switch r.Method {
 	case http.MethodGet:
-		user, err := controller.users.GetByEmail(ctx, email)
+		user, err := controller.users.Get(ctx, uuid)
 		if err != nil {
 			controller.log.Error("could not get user", ErrUsers.Wrap(err))
 			http.Error(w, "could not get user", http.StatusNotFound)
@@ -218,7 +213,7 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = controller.users.Update(ctx, s, email)
+		err = controller.users.Update(ctx, s, uuid)
 		if err != nil {
 			controller.log.Error("could not update users status", ErrUsers.Wrap(err))
 			http.Error(w, "could not update users status", http.StatusInternalServerError)
@@ -262,10 +257,20 @@ func (controller *Users) GetByEmail(w http.ResponseWriter, r *http.Request) {
 func (controller *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
-	w.WriteHeader(http.StatusOK)
-	email := params["email"]
+	id := params["id"]
+	if id == "" {
+		http.Error(w, "id is empty", http.StatusBadRequest)
+		return
+	}
 
-	err := controller.users.Delete(ctx, email)
+	uuid, err := uuid.Parse(id)
+	if err != nil {
+		controller.log.Error("could not parse uuid", ErrUsers.Wrap(err))
+		http.Error(w, "could not parse uuid", http.StatusBadRequest)
+		return
+	}
+
+	err = controller.users.Delete(ctx, uuid)
 	if err != nil {
 		controller.log.Error("could not delete user", ErrUsers.Wrap(err))
 		http.Error(w, "could not delete user", http.StatusInternalServerError)
