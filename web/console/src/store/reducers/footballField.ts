@@ -13,7 +13,9 @@ const CAPTAIN_TYPE = 'Captain';
 const CHOSE_CARD_POSITION = 'ChoseCard';
 const ADD_CARD = 'AddCard';
 const REMOVE_CARD = 'RemoveCard';
-const EXCHANGE_CARDS = 'ReplaceCard'
+const DRAG_START = 'CurrentPossition';
+const DRAG_TARGET = 'DragTarget';
+const EXCHANGE_CARDS = 'ReplaceCard';
 
 //Chose type of cards positioning on football field
 export const handleFormations = (option: string) => {
@@ -46,6 +48,20 @@ export const choseCardPosition = (index: number) => {
     }
 }
 
+export const setDragStart = (index: number) => {
+    return {
+        type: DRAG_START,
+        action: index
+    }
+}
+
+export const setDragTarget = (index: number) => {
+    return {
+        type: DRAG_TARGET,
+        action: index
+    }
+}
+
 export const exchangeCards = (prevPosition: number, currentPosition: number) => {
     return {
         type: EXCHANGE_CARDS,
@@ -68,24 +84,32 @@ export const handleCaptain = (option: string) => {
 };
 
 export const fieldReducer = (cardState = FieldSetup, action: any) => {
+    const options = cardState.options;
+    const cardsList = cardState.cardsList;
 
     switch (action.type) {
         case FORMATION_TYPE:
-            cardState.options.formation = action.action;
+            options.formation = action.action;
             break;
         case CHOSE_CARD_POSITION:
-            cardState.options.chosedCard = action.action
+            options.chosedCard = action.action
             break;
         case ADD_CARD:
-            cardState.cardsList[action.action[1]].cardData = action.action[0];
+            cardsList[action.action[1]].cardData = action.action[0];
             break;
         case REMOVE_CARD:
-            cardState.cardsList[action.action].cardData = null;
+            cardsList[action.action].cardData = null;
             break;
-            case EXCHANGE_CARDS:
-            const prevValue = cardState.cardsList[action.action[0]];
-            cardState.cardsList[action.action[0]] = cardState.cardsList[action.action[1]];
-            cardState.cardsList[action.action[1]] = prevValue;
+        case DRAG_START:
+            options.dragStart = action.action;
+            break;
+        case DRAG_TARGET:
+            options.dragTarget = action.action;
+            break;
+        case EXCHANGE_CARDS:
+            const prevValue = cardsList[action.action[0]];
+            cardsList[action.action[0]] = cardsList[action.action[1]];
+            cardsList[action.action[1]] = prevValue;
             break;
     }
     return {...cardState}

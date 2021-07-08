@@ -6,28 +6,26 @@ See LICENSE for copying information.
 import React, { DragEvent } from 'react';
 import './PlayingFormation_424.scss';
 import { FootballField } from '../../../../../types/footballField';
-import { useDispatch } from 'react-redux';
-import { choseCardPosition }
+import { useDispatch, useSelector } from 'react-redux';
+import { choseCardPosition, setDragStart, setDragTarget }
     from '../../../../../store/reducers/footballField';
 import { PlayingAreaFootballerCard }
     from '../../../FootballFieldCardSelection/PlayingAreaFootballerCard/PlayingAreaFootballerCard';
 import { exchangeCards }
     from '../../../../../store/reducers/footballField';
-import { useState } from 'react';
+import { RootState } from '../../../../../store';
 
 export const PlayingFormation_424: React.FC<{ props: FootballField }> = ({ props }) => {
     const dispatch = useDispatch();
-
-    const [currentPosition, handleDrag] = useState(-1);
-    const [dragTarget, handleDragTarget] = useState(-1);
-
-    function dragOverHandler(e: DragEvent<HTMLDivElement>, index: number) {
+    const fieldSetup = useSelector((state: RootState) => state.fieldReducer.options);
+    
+    function dragOverHandler(e: any) {
         e.preventDefault();
-        handleDragTarget(index);
     };
-
-    function dropHandler(e: DragEvent<HTMLDivElement>) {
-        dispatch(exchangeCards(currentPosition, dragTarget));
+    
+    function dropHandler(e: DragEvent<HTMLDivElement>, index: number) {
+        dispatch(setDragTarget(index));
+        dispatch(exchangeCards(fieldSetup.dragStart, fieldSetup.dragTarget));
     };
 
     return (
@@ -39,9 +37,9 @@ export const PlayingFormation_424: React.FC<{ props: FootballField }> = ({ props
                         key={index}
                         className="playing-formation-424__card box"
                         draggable={true}
-                        onDragOver={e => dragOverHandler(e, index)}
-                        onMouseDown={(e: React.MouseEvent) => handleDrag(index)}
-                        onDrop={e => dropHandler(e)}
+                        onDragOver={e => dragOverHandler(e)}
+                        onMouseDown={() => dispatch(setDragStart(index))}
+                        onDrop={e => dropHandler(e, index)}
                     >
                         {
                             data
