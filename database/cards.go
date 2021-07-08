@@ -66,6 +66,7 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 		card.Handling, card.Sweeping, card.Throwing,
 	)
 	if err != nil {
+		// TODO: add defer for Rollback()
 		err = tx.Rollback()
 		if err != nil {
 			return ErrCard.Wrap(err)
