@@ -22,7 +22,7 @@ export const PlayingFormation_433: React.FC<{ props: FootballField }> = ({ props
     function dragOverHandler(e: DragEvent<HTMLDivElement>) {
         e.preventDefault();
     };
-    
+
     function dropHandler(e: DragEvent<HTMLDivElement>, index: number) {
         dispatch(setDragTarget(index));
         dispatch(exchangeCards(fieldSetup.dragStart, fieldSetup.dragTarget));
