@@ -28,7 +28,7 @@ func NewService(admins DB) *Service {
 }
 
 // EncodePassword is method to encode password.
-func (admin *Admin) EncodePassword() error {
+func (service *Service) EncodePassword(admin Admin) error {
 	hash, err := bcrypt.GenerateFromPassword(admin.PasswordHash, bcrypt.DefaultCost)
 	if err != nil {
 		return err
@@ -49,7 +49,7 @@ func (service *Service) Get(ctx context.Context, id uuid.UUID) (Admin, error) {
 
 // Create insert admin to DB.
 func (service *Service) Create(ctx context.Context, admin Admin) error {
-	err := admin.EncodePassword()
+	err := service.EncodePassword(admin)
 	if err != nil {
 		return ErrAdminsService.Wrap(err)
 	}
@@ -59,7 +59,7 @@ func (service *Service) Create(ctx context.Context, admin Admin) error {
 
 // Update updates admin from DB.
 func (service *Service) Update(ctx context.Context, admin Admin) error {
-	err := admin.EncodePassword()
+	err := service.EncodePassword(admin)
 	if err != nil {
 		return ErrAdminsService.Wrap(err)
 	}
