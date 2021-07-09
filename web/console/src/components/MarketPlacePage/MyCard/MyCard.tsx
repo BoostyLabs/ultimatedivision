@@ -6,9 +6,9 @@ See LICENSE for copying information.
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { Card } from '../../../../store/reducers/footballerCard';
+import { Card } from '../../../store/reducers/footballerCard';
 
-import { RouteConfig } from '../../../../routes';
+import { RouteConfig } from '../../../routes';
 
 import './MyCard.scss';
 

@@ -17,19 +17,28 @@ import { MarketPlaceFootballerCard }
     from '../MarketPlaceCardsGroup/MarketPlaceFootballerCard/MarketPlaceFootballerCard';
 
 import './MarketPlace.scss';
+import { MyCard } from '../MyCard/MyCard';
+import { RouteConfig } from '../../../routes';
 
 
-export const MarketPlace = () => {
+export const MarketPlace = ({ ...children }) => {
     const cards = useSelector((state: RootState) => state.cardReducer);
+
+    let Component = MarketPlaceFootballerCard;
+    let title = "MARKETPLACE";
+    if (children.path === RouteConfig.MyCards.path) {
+        Component = MyCard;
+        title = "MY CARDS";
+    };
 
     return (
         <section className="marketplace">
             <MarketPlaceFilterField
-                title="MARKETPLACE"
+                title={title}
             />
             <MarketPlaceCardsGroup
                 cards={cards}
-                Component={MarketPlaceFootballerCard}
+                Component={Component}
             />
             <UltimateDivisionPaginator
                 itemCount={cards.length} />
