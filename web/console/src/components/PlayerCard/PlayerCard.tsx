@@ -1,3 +1,8 @@
+/*
+Copyright (C) 2021 Creditor Corp. Group.
+See LICENSE for copying information.
+ */
+
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -14,9 +19,11 @@ export const PlayerCard: React.FC<{ card: Card, parentClassName: string }> = ({
                 src={card.mainInfo.backgroundType}
                 alt='background img'
             />
-            <img className={parentClassName + "__face-picture"}
+            <img
+                className={parentClassName + "__face-picture"}
                 src={card.mainInfo.playerFace}
-                alt="Player face" />
+                alt="Player face"
+            />
             <NavLink to={RouteConfig.FootballerCard.path} >
                 <span className={parentClassName + "__name"}>
                     {card.mainInfo.lastName}
