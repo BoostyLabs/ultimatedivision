@@ -38,13 +38,13 @@ type Admins struct {
 
 // NewAdmins is a constructor for admins controller.
 func NewAdmins(log logger.Logger, admins *admins.Service, templates AdminTemplates) *Admins {
-	managersController := &Admins{
+	adminsController := &Admins{
 		log:       log,
 		admins:    admins,
 		templates: templates,
 	}
 
-	return managersController
+	return adminsController
 }
 
 // List is an endpoint that will provide a web page with all admins.
@@ -140,8 +140,7 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		err = r.ParseForm()
 		if err != nil {
-			controller.log.Error("could not parse admin create form", ErrAdmins.Wrap(err))
-			http.Error(w, "could not parse admin create form", http.StatusInternalServerError)
+			http.Error(w, "could not parse admin create form", http.StatusBadRequest)
 			return
 		}
 
