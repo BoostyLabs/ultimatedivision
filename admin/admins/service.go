@@ -30,13 +30,13 @@ func NewService(admins DB) *Service {
 }
 
 // encodePassword is method to encode password.
-func (service *Service) encodePassword(admin Admin) error {
-	hash, err := bcrypt.GenerateFromPassword(admin.PasswordHash, bcrypt.DefaultCost)
+func (service *Service) encodePassword(password []byte) ([]byte, error) {
+	hash, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return []byte{}, err
 	}
-	admin.PasswordHash = hash
-	return nil
+
+	return hash, nil
 }
 
 // List returns all admins from DB.
@@ -52,16 +52,17 @@ func (service *Service) Get(ctx context.Context, id uuid.UUID) (Admin, error) {
 // Create insert admin to DB.
 func (service *Service) Create(ctx context.Context, email string, password []byte) error {
 	admin := Admin{
-		ID: uuid.New(),
-		Email: email,
+		ID:           uuid.New(),
+		Email:        email,
 		PasswordHash: password,
-		CreatedAt: time.Now(),
+		CreatedAt:    time.Now(),
 	}
 
-	err := service.encodePassword(admin)
+	passwordHash, err := service.encodePassword(password)
 	if err != nil {
 		return ErrAdmins.Wrap(err)
 	}
+	admin.PasswordHash = passwordHash
 
 	return service.admins.Create(ctx, admin)
 }
@@ -73,9 +74,12 @@ func (service *Service) Update(ctx context.Context, id uuid.UUID, newPassword []
 		return ErrAdmins.Wrap(err)
 	}
 
-	admin.PasswordHash = newPassword
+	admin.PasswordHash, err = service.encodePassword(newPassword)
+	if err != nil {
+		return ErrAdmins.Wrap(err)
+	}
 
-	err = service.encodePassword(admin)
+	admin.PasswordHash, err = service.encodePassword(newPassword)
 	if err != nil {
 		return ErrAdmins.Wrap(err)
 	}
