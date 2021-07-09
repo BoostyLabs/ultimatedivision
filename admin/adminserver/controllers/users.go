@@ -69,6 +69,8 @@ func (controller *Users) List(w http.ResponseWriter, r *http.Request) {
 
 // Create is an endpoint that will create a new user.
 func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	switch r.Method {
 	case http.MethodGet:
 		err := controller.templates.Create.Execute(w, nil)
@@ -78,7 +80,6 @@ func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	case http.MethodPost:
-		ctx := r.Context()
 		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, "could not get users form", http.StatusBadRequest)
@@ -156,7 +157,6 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	case http.MethodPost:
-		ctx := r.Context()
 		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, "could not get users form", http.StatusBadRequest)
