@@ -99,7 +99,7 @@ func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		controller.Redirect(w, r, "", http.MethodGet)
+		Redirect(w, r, "", http.MethodGet)
 	}
 }
 
@@ -164,6 +164,6 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		controller.Redirect(w, r, "/admins", http.MethodGet)
+		Redirect(w, r, "/admins", http.MethodGet)
 	}
 }
