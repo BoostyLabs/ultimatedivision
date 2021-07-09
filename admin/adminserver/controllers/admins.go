@@ -4,11 +4,12 @@
 package controllers
 
 import (
+	"html/template"
+	"net/http"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
-	"html/template"
-	"net/http"
 
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/logger"
