@@ -123,43 +123,6 @@ func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Get is an endpoint that will provide a web page with user by id.
-func (controller *Users) Get(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	err := r.ParseForm()
-	if err != nil {
-		controller.log.Error("could not get users form", ErrUsers.Wrap(err))
-		http.Error(w, "could not get users form", http.StatusInternalServerError)
-		return
-	}
-	id := r.FormValue("id")
-	if id == "" {
-		http.Error(w, "id is empty", http.StatusBadRequest)
-		return
-	}
-
-	uuid, err := uuid.Parse(id)
-	if err != nil {
-		controller.log.Error("could not parse uuid", ErrUsers.Wrap(err))
-		http.Error(w, "could not parse uuid", http.StatusBadRequest)
-		return
-	}
-
-	user, err := controller.users.Get(ctx, uuid)
-	if err != nil {
-		controller.log.Error("could not get user", ErrUsers.Wrap(err))
-		http.Error(w, "could not get user", http.StatusBadRequest)
-		return
-	}
-
-	err = controller.templates.Get.Execute(w, user)
-	if err != nil {
-		controller.log.Error("can not execute get user template", ErrUsers.Wrap(err))
-		http.Error(w, "can not execute get user template", http.StatusInternalServerError)
-		return
-	}
-}
-
 // Update is an endpoint that will update users status.
 func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -220,36 +183,6 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		controller.Redirect(w, r, "/users/list", http.MethodGet)
-	}
-}
-
-// GetByEmail is an endpoint that will provide a web page with user by email.
-func (controller *Users) GetByEmail(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	err := r.ParseForm()
-	if err != nil {
-		controller.log.Error("could not get users form", ErrUsers.Wrap(err))
-		http.Error(w, "could not get users form", http.StatusInternalServerError)
-		return
-	}
-	email := r.FormValue("email")
-	if email == "" {
-		http.Error(w, "email is empty", http.StatusBadRequest)
-		return
-	}
-
-	user, err := controller.users.GetByEmail(ctx, email)
-	if err != nil {
-		controller.log.Error("could not get user", ErrUsers.Wrap(err))
-		http.Error(w, "could not get user", http.StatusInternalServerError)
-		return
-	}
-
-	err = controller.templates.GetByEmail.Execute(w, user)
-	if err != nil {
-		controller.log.Error("can not execute get user template", ErrUsers.Wrap(err))
-		http.Error(w, "can not execute get user template", http.StatusInternalServerError)
-		return
 	}
 }
 

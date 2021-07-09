@@ -74,8 +74,6 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, admins *
 	userRouter.HandleFunc("/create", userController.Create).Methods(http.MethodGet, http.MethodPost)
 	userRouter.HandleFunc("/update/status/{id}", userController.Update).Methods(http.MethodGet, http.MethodPost)
 	userRouter.HandleFunc("/delete/{id}", userController.Delete).Methods(http.MethodGet)
-	userRouter.HandleFunc("/get", userController.Get).Methods(http.MethodGet)
-	userRouter.HandleFunc("/get-by-email", userController.GetByEmail).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
