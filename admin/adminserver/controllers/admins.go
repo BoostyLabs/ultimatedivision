@@ -4,13 +4,11 @@
 package controllers
 
 import (
-	"html/template"
-	"net/http"
-	"net/url"
-
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
+	"html/template"
+	"net/http"
 
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/logger"
@@ -46,17 +44,6 @@ func NewAdmins(log logger.Logger, admins *admins.Service, templates AdminTemplat
 	}
 
 	return managersController
-}
-
-// Redirect redirects to specific url.
-func (controller *Admins) Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) {
-	newRequest := new(http.Request)
-	*newRequest = *r
-	newRequest.URL = new(url.URL)
-	*newRequest.URL = *r.URL
-	newRequest.Method = method
-
-	http.Redirect(w, newRequest, urlString, http.StatusMovedPermanently)
 }
 
 // List is an endpoint that will provide a web page with all admins.
