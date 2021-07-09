@@ -36,13 +36,13 @@ type Cards struct {
 
 // NewCards is a constructor for cards controller.
 func NewCards(log logger.Logger, cards *cards.Service, templates CardTemplates) *Cards {
-	managersController := &Cards{
+	cardsController := &Cards{
 		log:       log,
 		cards:     cards,
 		templates: templates,
 	}
 
-	return managersController
+	return cardsController
 }
 
 // List is an endpoint that will provide a web page with all cards.
