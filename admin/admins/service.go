@@ -79,10 +79,5 @@ func (service *Service) Update(ctx context.Context, id uuid.UUID, newPassword []
 		return ErrAdmins.Wrap(err)
 	}
 
-	admin.PasswordHash, err = service.encodePassword(newPassword)
-	if err != nil {
-		return ErrAdmins.Wrap(err)
-	}
-
 	return service.admins.Update(ctx, admin)
 }
