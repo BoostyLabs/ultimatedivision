@@ -1,12 +1,20 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 package controllers
 
-import "net/http"
+import (
+	"net/http"
+	"net/url"
+)
 
 // Redirect redirects to specific url.
-func (controller Users) Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) {
-	newRequest := r
-	newRequest.URL = r.URL
+func Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) {
+	newRequest := new(http.Request)
+	*newRequest = *r
+	newRequest.URL = new(url.URL)
+	*newRequest.URL = *r.URL
 	newRequest.Method = method
 
-	http.Redirect(w, newRequest, urlString, http.StatusMovedPermanently)
+	http.Redirect(w, newRequest, urlString, http.StatusFound)
 }

@@ -24,7 +24,9 @@ func NewService(cards DB) *Service {
 }
 
 // Create add card in DB.
-func (service *Service) Create(ctx context.Context, card Card) error {
+func (service *Service) Create(ctx context.Context, userID uuid.UUID) error {
+	var card Card
+	// TODO:logic generate card
 	return service.cards.Create(ctx, card)
 }
 
@@ -36,4 +38,9 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Card, error)
 // List returns all cards from DB.
 func (service *Service) List(ctx context.Context) ([]Card, error) {
 	return service.cards.List(ctx)
+}
+
+// Delete destroy card in DB.
+func (service *Service) Delete(ctx context.Context, cardID uuid.UUID) error {
+	return service.cards.Delete(ctx, cardID)
 }

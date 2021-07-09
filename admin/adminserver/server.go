@@ -17,6 +17,7 @@ import (
 
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver/controllers"
+	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
 )
@@ -45,11 +46,12 @@ type Server struct {
 	templates struct {
 		admin controllers.AdminTemplates
 		user  controllers.UserTemplates
+		card  controllers.CardTemplates
 	}
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, admins *admins.Service, users *users.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, admins *admins.Service, users *users.Service, cards *cards.Service) (*Server, error) {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -74,6 +76,12 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, admins *
 	userRouter.HandleFunc("/create", userController.Create).Methods(http.MethodGet, http.MethodPost)
 	userRouter.HandleFunc("/update/status/{id}", userController.Update).Methods(http.MethodGet, http.MethodPost)
 	userRouter.HandleFunc("/delete/{id}", userController.Delete).Methods(http.MethodGet)
+
+	cardsRouter := router.PathPrefix("/cards").Subrouter().StrictSlash(true)
+	cardsController := controllers.NewCards(log, cards, server.templates.card)
+	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
+	cardsRouter.HandleFunc("/create/{userID}", cardsController.Create).Methods(http.MethodGet)
+	cardsRouter.HandleFunc("/delete/{id}", cardsController.Delete).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -112,18 +120,24 @@ func (server *Server) Close() error {
 func (server *Server) initializeTemplates() (err error) {
 	server.templates.user.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "users", "list.html"))
 	if err != nil {
-		return err
+		return Error.Wrap(err)
 	}
-
 	server.templates.user.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "users", "create.html"))
 	if err != nil {
-		return err
+		return Error.Wrap(err)
 	}
-
 	server.templates.user.Update, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "users", "update.html"))
 	if err != nil {
-		return err
+		return Error.Wrap(err)
+	}
+	server.templates.admin.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	if err != nil {
+		return Error.Wrap(err)
+	}
+	server.templates.card.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "cards", "list.html"))
+	if err != nil {
+		return Error.Wrap(err)
 	}
 
-	return err
+	return nil
 }

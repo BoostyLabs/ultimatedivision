@@ -1,7 +1,7 @@
 {
     "name": "cryptofotball",
     "version": "0.1.0",
-    "homepage": "http://chickenfish.games/ud/marketplace",
+    "homepage": "http://chickenfish.games/ud/",
     "private": true,
     "dependencies": {
         "@testing-library/jest-dom": "^5.12.0",
@@ -18,6 +18,7 @@
         "prop-types": "^15.7.2",
         "react": "^17.0.2",
         "react-chartjs-2": "^3.0.3",
+        "react-dnd-html5-backend": "^14.0.0",
         "react-dom": "^17.0.2",
         "react-parallax": "^3.3.0",
         "react-redux": "^7.2.4",
@@ -57,6 +58,7 @@
     },
     "devDependencies": {
         "@types/react-redux": "^7.1.16",
+        "@types/react-router-dom": "^5.1.7",
         "@types/redux": "^3.6.0",
         "@types/redux-thunk": "^2.1.0",
         "eslint": "^7.28.0",
