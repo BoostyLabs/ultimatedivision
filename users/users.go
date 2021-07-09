@@ -7,10 +7,9 @@ import (
 	"context"
 	"time"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // ErrNoUser indicated that user does not exist.

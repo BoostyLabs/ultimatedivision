@@ -8,7 +8,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/zeebo/errs"
 )
+
+// ErrUsers indicates that there was an error in the service.
+var ErrUsers = errs.Class("users service error")
 
 // Service is handling users related logic.
 //
@@ -54,7 +58,7 @@ func (service *Service) Create(ctx context.Context, email, password, nickName, f
 	}
 	err := user.EncodePass()
 	if err != nil {
-		return err
+		return ErrUsers.Wrap(err)
 	}
 
 	return service.users.Create(ctx, user)

@@ -82,7 +82,9 @@ func TestUsers(t *testing.T) {
 			require.NoError(t, err)
 
 			err = repository.Update(ctx, int(users.StatusSuspended), user1.ID)
+			userFromDB, err := repository.Get(ctx, user1.ID)
 			require.NoError(t, err)
+			compareUsers(t, user1, userFromDB)
 		})
 
 		t.Run("delete", func(t *testing.T) {

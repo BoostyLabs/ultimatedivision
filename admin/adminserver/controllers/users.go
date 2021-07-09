@@ -23,11 +23,9 @@ var (
 
 // UserTemplates holds all users related templates.
 type UserTemplates struct {
-	List       *template.Template
-	Create     *template.Template
-	Get        *template.Template
-	GetByEmail *template.Template
-	Update     *template.Template
+	List   *template.Template
+	Create *template.Template
+	Update *template.Template
 }
 
 // Users is a mvc controller that handles all admins related views.
@@ -57,7 +55,7 @@ func (controller *Users) List(w http.ResponseWriter, r *http.Request) {
 	users, err := controller.users.List(ctx)
 	if err != nil {
 		controller.log.Error("could not get users list", ErrUsers.Wrap(err))
-		http.Error(w, err.Error(), http.StatusInternalServerError) // status code should depends on error type.
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -115,8 +113,8 @@ func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
 
 		err = controller.users.Create(ctx, email, password, nickName, firstName, lastName)
 		if err != nil {
-			controller.log.Error("could not get users list", ErrUsers.Wrap(err))
-			http.Error(w, "could not get users list", http.StatusInternalServerError)
+			controller.log.Error("could not create user", ErrUsers.Wrap(err))
+			http.Error(w, "could not create user", http.StatusInternalServerError)
 			return
 		}
 		controller.Redirect(w, r, "/users/list", http.MethodGet)
@@ -135,7 +133,6 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 
 	uuid, err := uuid.Parse(id)
 	if err != nil {
-		controller.log.Error("could not parse uuid", ErrUsers.Wrap(err))
 		http.Error(w, "could not parse uuid", http.StatusBadRequest)
 		return
 	}
@@ -144,8 +141,12 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		user, err := controller.users.Get(ctx, uuid)
 		if err != nil {
-			controller.log.Error("could not get user", ErrUsers.Wrap(err))
-			http.Error(w, "could not get user", http.StatusNotFound)
+			controller.log.Error("could not get users list", ErrUsers.Wrap(err))
+			if users.ErrNoUser.Has(err) {
+				http.Error(w, "no users with such id", http.StatusNotFound)
+				return
+			}
+			http.Error(w, "could not get users list", http.StatusInternalServerError)
 			return
 		}
 
@@ -198,7 +199,6 @@ func (controller *Users) Delete(w http.ResponseWriter, r *http.Request) {
 
 	uuid, err := uuid.Parse(id)
 	if err != nil {
-		controller.log.Error("could not parse uuid", ErrUsers.Wrap(err))
 		http.Error(w, "could not parse uuid", http.StatusBadRequest)
 		return
 	}
