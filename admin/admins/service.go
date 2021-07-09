@@ -12,6 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// ErrAdmins indicates that there was an error in the service.
 var ErrAdmins = errs.Class("admins service error")
 
 // Service is handling admins related logic.
