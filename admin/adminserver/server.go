@@ -17,6 +17,7 @@ import (
 
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver/controllers"
+	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
 )
 
@@ -43,11 +44,12 @@ type Server struct {
 
 	templates struct {
 		admin controllers.AdminTemplates
+		card  controllers.CardTemplates
 	}
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, admins *admins.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, admins *admins.Service, cards *cards.Service) (*Server, error) {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -67,6 +69,12 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, admins *
 	adminsRouter.HandleFunc("", adminsController.List).Methods(http.MethodGet)
 	adminsRouter.HandleFunc("/create", adminsController.Create).Methods(http.MethodGet, http.MethodPost)
 	adminsRouter.HandleFunc("/update/{id}", adminsController.Update).Methods(http.MethodGet, http.MethodPost)
+
+	cardsRouter := router.PathPrefix("/cards").Subrouter().StrictSlash(true)
+	cardsController := controllers.NewCards(log, cards, server.templates.card)
+	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
+	cardsRouter.HandleFunc("/create/{userID}", cardsController.Create).Methods(http.MethodGet)
+	cardsRouter.HandleFunc("/delete/{id}", cardsController.Delete).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -104,6 +112,7 @@ func (server *Server) Close() error {
 // initializeTemplates initializes and caches templates for admins controller.
 func (server *Server) initializeTemplates() (err error) {
 	server.templates.admin.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	server.templates.card.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "cards", "list.html"))
 	if err != nil {
 		return err
 	}

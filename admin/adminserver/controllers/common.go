@@ -1,3 +1,6 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 package controllers
 
 import (
@@ -13,5 +16,5 @@ func Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) 
 	*newRequest.URL = *r.URL
 	newRequest.Method = method
 
-	http.Redirect(w, newRequest, urlString, http.StatusMovedPermanently)
+	http.Redirect(w, newRequest, urlString, http.StatusFound)
 }
