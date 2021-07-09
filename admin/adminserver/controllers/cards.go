@@ -68,6 +68,10 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 func (controller *Cards) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
+	if vars["userID"] == "" {
+		http.Error(w, "userID parameter is empty", http.StatusBadRequest)
+		return
+	}
 	userID, err := uuid.Parse(vars["userID"])
 	if err != nil {
 		http.Error(w, "could not parse user id", http.StatusBadRequest)
@@ -79,23 +83,27 @@ func (controller *Cards) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	controller.Redirect(w, r, "", "GET")
+	Redirect(w, r, "", "GET")
 }
 
 // Delete is an endpoint that will destroy record card to database.
 func (controller *Cards) Delete(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	vars := mux.Vars(r)
+	if vars["id"] == "" {
+		http.Error(w, "id parameter is empty", http.StatusBadRequest)
+		return
+	}
 	id, err := uuid.Parse(vars["id"])
 	if err != nil {
 		http.Error(w, "could not parse card id", http.StatusBadRequest)
 		return
 	}
-	ctx := r.Context()
 	if err := controller.cards.Delete(ctx, id); err != nil {
 		controller.log.Error("could not delete card", ErrCards.Wrap(err))
 		http.Error(w, "could not delete card", http.StatusInternalServerError)
 		return
 	}
 
-	controller.Redirect(w, r, "/cards", "GET")
+	Redirect(w, r, "/cards", "GET")
 }

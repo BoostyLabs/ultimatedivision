@@ -9,7 +9,7 @@ import (
 )
 
 // Redirect redirects to specific url.
-func (controller *Cards) Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) {
+func Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) {
 	newRequest := new(http.Request)
 	*newRequest = *r
 	newRequest.URL = new(url.URL)
