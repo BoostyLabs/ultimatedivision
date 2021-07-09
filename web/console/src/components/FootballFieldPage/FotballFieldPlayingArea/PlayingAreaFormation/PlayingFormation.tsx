@@ -4,22 +4,22 @@ See LICENSE for copying information.
  */
 
 import React, { DragEvent } from 'react';
-import './PlayingFormation_433.scss';
-import { FootballField } from '../../../../../types/footballField';
+import './PlayingFormation.scss';
+import { FootballField } from '../../../../types/footballField';
 import { useDispatch, useSelector } from 'react-redux';
 import { choseCardPosition, setDragStart, setDragTarget }
-    from '../../../../../store/reducers/footballField';
+    from '../../../../store/reducers/footballField';
 import { PlayingAreaFootballerCard }
-    from '../../../FootballFieldCardSelection/PlayingAreaFootballerCard/PlayingAreaFootballerCard';
+    from '../../FootballFieldCardSelection/PlayingAreaFootballerCard/PlayingAreaFootballerCard';
 import { exchangeCards }
-    from '../../../../../store/reducers/footballField';
-import { RootState } from '../../../../../store';
+    from '../../../../store/reducers/footballField';
+import { RootState } from '../../../../store';
 
-export const PlayingFormation_433: React.FC<{ props: FootballField }> = ({ props }) => {
+export const PlayingFormation: React.FC<{ props: FootballField, formation: string }> = ({ props, formation }) => {
     const dispatch = useDispatch();
     const fieldSetup = useSelector((state: RootState) => state.fieldReducer.options);
 
-    function dragOverHandler(e: DragEvent<HTMLDivElement>) {
+    function dragOverHandler(e: any) {
         e.preventDefault();
     };
 
@@ -29,13 +29,13 @@ export const PlayingFormation_433: React.FC<{ props: FootballField }> = ({ props
     };
 
     return (
-        <div className="playing-formation-433">
+        <div className={`playing-formation-${formation}`}>
             {props.cardsList.map((card, index) => {
                 const data = card.cardData;
                 return (
                     <div
                         key={index}
-                        className="playing-formation-433__card box"
+                        className={`playing-formation-${formation}__card box`}
                         draggable={true}
                         onDragOver={e => dragOverHandler(e)}
                         onMouseDown={() => dispatch(setDragStart(index))}
@@ -47,7 +47,7 @@ export const PlayingFormation_433: React.FC<{ props: FootballField }> = ({ props
                                 : <a
                                     onClick={() => dispatch(choseCardPosition(index))}
                                     href="#cardList"
-                                    className="playing-formation-433__link"
+                                    className={`playing-formation-${formation}__link`}
                                 >
                                 </a>
                         }
