@@ -3,7 +3,7 @@ package controllers
 import "net/http"
 
 // Redirect redirects to specific url.
-func (controller *Users) Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) {
+func (controller Users) Redirect(w http.ResponseWriter, r *http.Request, urlString, method string) {
 	newRequest := r
 	newRequest.URL = r.URL
 	newRequest.Method = method

@@ -39,13 +39,13 @@ type Users struct {
 
 // NewUsers is a constructor for users controller.
 func NewUsers(log logger.Logger, users *users.Service, templates UserTemplates) *Users {
-	managersController := &Users{
+	usersController := &Users{
 		log:       log,
 		users:     users,
 		templates: templates,
 	}
 
-	return managersController
+	return usersController
 }
 
 // List is an endpoint that will provide a web page with all users.
@@ -81,8 +81,7 @@ func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		err := r.ParseForm()
 		if err != nil {
-			controller.log.Error("could not get users form", ErrUsers.Wrap(err))
-			http.Error(w, "could not get users form", http.StatusInternalServerError)
+			http.Error(w, "could not get users form", http.StatusBadRequest)
 			return
 		}
 		email := r.FormValue("email")
@@ -141,12 +140,12 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		user, err := controller.users.Get(ctx, uuid)
 		if err != nil {
-			controller.log.Error("could not get users list", ErrUsers.Wrap(err))
+			controller.log.Error("could not get user", ErrUsers.Wrap(err))
 			if users.ErrNoUser.Has(err) {
-				http.Error(w, "no users with such id", http.StatusNotFound)
+				http.Error(w, "no user with such id", http.StatusNotFound)
 				return
 			}
-			http.Error(w, "could not get users list", http.StatusInternalServerError)
+			http.Error(w, "could not get user", http.StatusInternalServerError)
 			return
 		}
 
@@ -160,8 +159,7 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		err := r.ParseForm()
 		if err != nil {
-			controller.log.Error("could not get users form", ErrUsers.Wrap(err))
-			http.Error(w, "could not get users form", http.StatusInternalServerError)
+			http.Error(w, "could not get users form", http.StatusBadRequest)
 			return
 		}
 
@@ -172,8 +170,7 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 		}
 		s, err := strconv.Atoi(status)
 		if err != nil {
-			controller.log.Error("could not converted to type int", ErrUsers.Wrap(err))
-			http.Error(w, "could not converted to type int", http.StatusInternalServerError)
+			http.Error(w, "could not converted to type int", http.StatusBadRequest)
 			return
 		}
 
