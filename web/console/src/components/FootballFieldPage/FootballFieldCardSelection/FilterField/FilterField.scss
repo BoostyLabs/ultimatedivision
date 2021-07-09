@@ -47,7 +47,31 @@
                 margin-left: 5px;
                 vertical-align: middle;
             }
-
+        }
+        &__form {
+            display: flex;
+            align-items: center;
+        }
+        &__input {
+            background-color: transparent;
+            border: 1px solid $marketPlaceBorderColor;
+            padding: 5px 10px;
+            color: white;
+            margin-right: 10px;
+            border-radius: 20px;
+            outline: none;
+            &::placeholder {
+                color: rgb(189, 189, 189);
+                font-size: 14px;
+            }
+        }
+        &__search-picture {
+            margin: 0;
+        }
+        &__submit {
+            background: none;
+            border: none;
+            cursor: pointer;
         }
     }
 }

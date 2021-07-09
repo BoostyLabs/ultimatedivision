@@ -13,10 +13,6 @@ import search from '../../../../img/FootballFieldPage/FilterField/search.png'
 export const FilterField: React.FC = () => {
     const filterFieldTitles: { title: string, src: string }[] = [
         {
-            title: 'Player`s name',
-            src: search
-        },
-        {
             title: 'Card quality',
             src: rectangle
         },
@@ -35,6 +31,25 @@ export const FilterField: React.FC = () => {
         <section className="football-field-filter">
             <div className="football-field-filter__wrapper">
                 <ul className="football-field-filter__list">
+                    <li
+                        className="football-field-filter__list__item">
+                        <form action="" className="football-field-filter__list__form">
+                            <input
+                            type="text"
+                            placeholder="Player`s name"
+                            className="football-field-filter__list__input"
+                            />
+                            <button type="submit"
+                            className="football-field-filter__list__submit"
+                            >
+                                <img
+                                    src={search}
+                                    alt="Filter icon"
+                                    className="football-field-filter__list__item__search-picture"
+                                />
+                            </button>
+                        </form>
+                    </li>
                     {filterFieldTitles.map((item, index) => {
                         return (
                             <li key={index}

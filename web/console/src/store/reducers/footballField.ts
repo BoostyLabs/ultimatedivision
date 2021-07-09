@@ -26,7 +26,7 @@ export const handleFormations = (option: string) => {
 };
 
 //Adding into cardList in reducer
-export const addCard = (card: Card, index: string | null) => {
+export const addCard = (card: Card, index: number) => {
     return {
         type: ADD_CARD,
         action: [card, index]
