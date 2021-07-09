@@ -66,7 +66,7 @@ func (controller *Admins) List(w http.ResponseWriter, r *http.Request) {
 	admins, err := controller.admins.List(ctx)
 	if err != nil {
 		controller.log.Error("could not get admins list", ErrAdmins.Wrap(err))
-		http.Error(w, "could not get admins list", http.StatusInternalServerError) // status code should depends on error type.
+		http.Error(w, "could not get admins list", http.StatusInternalServerError)
 		return
 	}
 
@@ -100,14 +100,14 @@ func (controller *Admins) Create(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 		if email == "" || password == "" {
-			http.Error(w, "email or password input is empty", http.StatusBadRequest) // status code should depends on error type.
+			http.Error(w, "email or password input is empty", http.StatusBadRequest)
 			return
 		}
 
 		err = controller.admins.Create(ctx, email, []byte(password))
 		if err != nil {
 			controller.log.Error("could not create admin", ErrAdmins.Wrap(err))
-			http.Error(w, "could not create admin", http.StatusInternalServerError) // status code should depends on error type.
+			http.Error(w, "could not create admin", http.StatusInternalServerError)
 			return
 		}
 
@@ -135,11 +135,11 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 			controller.log.Error("could not get admins list", ErrAdmins.Wrap(err))
 
 			if admins.ErrNoAdmin.Has(err) {
-				http.Error(w, "no admins with such id", http.StatusNotFound) // status code should depends on error t
+				http.Error(w, "no admins with such id", http.StatusNotFound)
 				return
 			}
 
-			http.Error(w, "could not get admins list", http.StatusInternalServerError) // status code should depends on error type.
+			http.Error(w, "could not get admins list", http.StatusInternalServerError)
 			return
 		}
 
@@ -160,19 +160,19 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		passwordAgain := r.FormValue("password-again")
 		if password == "" || passwordAgain == "" {
-			http.Error(w, "empty field", http.StatusBadRequest) // status code should depends on error type.
+			http.Error(w, "empty field", http.StatusBadRequest)
 			return
 		}
 
 		if password != passwordAgain {
-			http.Error(w, "password mismatch", http.StatusBadRequest) // status code should depends on error type.
+			http.Error(w, "password mismatch", http.StatusBadRequest)
 			return
 		}
 
 		err = controller.admins.Update(ctx, id, []byte(password))
 		if err != nil {
 			controller.log.Error("could not update admin", ErrAdmins.Wrap(err))
-			http.Error(w, "could not update admin", http.StatusInternalServerError) // status code should depends on error type.
+			http.Error(w, "could not update admin", http.StatusInternalServerError)
 			return
 		}
 
