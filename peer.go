@@ -106,6 +106,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			logger,
 			peer.Admin.Listener,
 			peer.Admins.Service,
+			peer.Users.Service,
+			peer.Cards.Service,
 		)
 		if err != nil {
 			return nil, err
