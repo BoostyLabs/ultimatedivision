@@ -15,7 +15,6 @@ export const FootballFieldPlayingArea: React.FC = () => {
     const formation = useSelector((state: RootState) => state.fieldReducer.options.formation);
     const cardData = useSelector((state: RootState) => state.fieldReducer);
 
-
     return (
         <div className="football-field-playing-area" id="playingArea">
             <PlayingFormation props={cardData} formation={formation} />

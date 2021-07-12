@@ -22,9 +22,13 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, index?: number, p
     const [visibility, changeVisibility] = useState(false);
     const style = new FootballCardStyle(visibility).style;
 
+    function handleDeletion(e: any) {
+        e.preventDefault()
+        dispatch(removeCard(index))
+    }
+
     return (
         <div
-            data-content={place && ''}
             onClick={place ? () => changeVisibility(prev => !prev) : () => dispatch(addCard(card, chosenCard))}
             className="football-field-card"
         >
@@ -65,7 +69,7 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, index?: number, p
             </ul>
             <div
                 style={{ display: style }}
-                onClick={() => dispatch(removeCard(index))}
+                onClick={handleDeletion}
                 className="football-field-card__control">
                 &#10006; delete a player
             </div>

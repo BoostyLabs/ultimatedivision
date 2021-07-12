@@ -19,11 +19,11 @@ export const PlayingFormation: React.FC<{ props: FootballField, formation: strin
     const dispatch = useDispatch();
     const fieldSetup = useSelector((state: RootState) => state.fieldReducer.options);
 
-    function dragOverHandler(e: any) {
+    function dragOverHandler(e: DragEvent<HTMLAnchorElement>) {
         e.preventDefault();
     };
 
-    function dropHandler(e: DragEvent<HTMLDivElement>, index: number) {
+    function dropHandler(e: DragEvent<HTMLAnchorElement>, index: number) {
         dispatch(setDragTarget(index));
         dispatch(exchangeCards(fieldSetup.dragStart, fieldSetup.dragTarget));
     };
@@ -33,25 +33,22 @@ export const PlayingFormation: React.FC<{ props: FootballField, formation: strin
             {props.cardsList.map((card, index) => {
                 const data = card.cardData;
                 return (
-                    <div
+                    <a
+                        href={data? undefined : "#cardList"}
                         key={index}
-                        className={`playing-formation-${formation}__card box`}
+                        className={`playing-formation-${formation}__${data? 'card' : 'empty-card'}`}
+                        onClick={() => dispatch(choseCardPosition(index))}
                         draggable={true}
-                        onDragOver={e => dragOverHandler(e)}
-                        onMouseDown={() => dispatch(setDragStart(index))}
+                        onDragStart={() => dispatch(setDragStart(index))}
+                        onDragOver={dragOverHandler}
                         onDrop={e => dropHandler(e, index)}
                     >
                         {
                             data
                                 ? <PlayingAreaFootballerCard card={data} index={index} place={'PlayingArea'} />
-                                : <a
-                                    onClick={() => dispatch(choseCardPosition(index))}
-                                    href="#cardList"
-                                    className={`playing-formation-${formation}__link`}
-                                >
-                                </a>
+                                : null
                         }
-                    </div>
+                    </a>
                 )
             })}
         </div>
