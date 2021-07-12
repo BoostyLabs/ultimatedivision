@@ -6,13 +6,12 @@ See LICENSE for copying information.
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import './UltimateDivisionNavbar.scss';
+import './Navbar.scss';
 
-import ultimate from '../../img/MarketPlacePage/MarketPlaceNavbar/ultimate.png';
+import ultimate from '../../img/Navbar/ultimate.png';
 
 import { RouteConfig } from '../../routes';
 
-//TODO: delete redundant UltimateDivision prefix in next PR
 export const UltimateDivisionNavbar: React.FC = () => {
     return (
         <div className="ultimatedivision-navbar">

@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 import { UltimateDivisionNavbar }
-    from './components/UltimateDivisionNavbar/UltimateDivisionNavbar';
+    from './components/Navbar/Navbar';
 import { Routes } from './routes/index'
 
 import './App.scss';
