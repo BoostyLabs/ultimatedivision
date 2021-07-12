@@ -24,6 +24,7 @@ import { RouteConfig } from '../../../routes';
 export const MarketPlace = ({ ...children }) => {
     const cards = useSelector((state: RootState) => state.cardReducer);
 
+    //TODO: Route with SubRoutes
     let Component = MarketPlaceFootballerCard;
     let title = "MARKETPLACE";
     if (children.path === RouteConfig.MyCards.path) {

@@ -12,14 +12,6 @@ export class ComponentRoutes {
     ) { }
 };
 
-// export class ComponentRoutesLayout {
-//     constructor(
-//         public path: string,
-//         public component: React.FC,
-//         public exact: boolean,
-//     ) { }
-// };
-
 export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
         "/ud/marketplace",
