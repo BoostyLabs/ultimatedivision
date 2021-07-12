@@ -6,18 +6,20 @@ See LICENSE for copying information.
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import './UltimateDivisionNavbar.scss';
+import './Navbar.scss';
 
-import ultimate from '../../img/MarketPlacePage/MarketPlaceNavbar/ultimate.png';
+import ultimate from '../../img/Navbar/ultimate.png';
 
 import { RouteConfig } from '../../routes';
 
-export const UltimateDivisionNavbar: React.FC = () => {
+export const Navbar: React.FC = () => {
     return (
         <div className="ultimatedivision-navbar">
-            <img className="ultimatedivision-navbar__logo"
+            <img
+                className="ultimatedivision-navbar__logo"
                 src={ultimate}
-                alt={ultimate} />
+                alt="UltimateDivision logo"
+            />
             <ul className="ultimatedivision-navbar__list">
                 <li className="ultimatedivision-navbar__item">
                     <NavLink
@@ -37,7 +39,7 @@ export const UltimateDivisionNavbar: React.FC = () => {
                 </li>
                 <li className="ultimatedivision-navbar__item">
                     <NavLink
-                        to={RouteConfig.MarketPlace.path}
+                        to={RouteConfig.MyCards.path}
                         className="ultimatedivision-navbar__item__active"
                     >
                         CLUB

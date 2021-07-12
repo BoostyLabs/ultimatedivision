@@ -6,6 +6,8 @@ See LICENSE for copying information.
 import React from 'react';
 import './PlayingAreaFootballerCard.scss';
 
+import { PlayerCard } from '../../../PlayerCard/PlayerCard';
+
 import { Card }
     from '../../../../store/reducers/footballerCard';
 import { RootState } from '../../../../store';
@@ -22,49 +24,31 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card, index?: number, p
     const [visibility, changeVisibility] = useState(false);
     const style = new FootballCardStyle(visibility).style;
 
+    function handleDeletion(e: any) {
+        e.preventDefault()
+        dispatch(removeCard(index))
+    }
+
     return (
         <div
             onClick={place ? () => changeVisibility(prev => !prev) : () => dispatch(addCard(card, chosenCard))}
             className="football-field-card"
         >
-            <img
-                className="football-field-card__background"
-                src={card.mainInfo.backgroundType}
-                alt='background img'
-                draggable={false}
+            <div
+                className="football-field-card__wrapper"
+                style={{ display: style }}
+            ></div>
+            <PlayerCard
+                card={card}
+                parentClassName={"football-field-card"}
             />
-            <img className="football-field-card__face-picture"
-                src={card.mainInfo.playerFace}
-                draggable={false}
-                alt="Player face" />
-            <span className="football-field-card__name">
-                {card.mainInfo.lastName}
-            </span>
-            <ul className="football-field-card__list">
-                {card.stats.map(
-                    (property, index) => {
-                        return (
-                            <li
-                                className="football-field-card__list__item"
-                                key={index}>
-                                {
-                                    /**
-                                    * get only average value of player's game property
-                                    */
-                                    `${property.abbreviated} ${property.average} `
-                                }
-                            </li>
-                        );
-                    }
-                )}
-            </ul>
             <div
                 style={{ display: style }}
-                onClick={() => dispatch(removeCard(index))}
+                onClick={handleDeletion}
                 className="football-field-card__control">
                 &#10006; delete a player
             </div>
-        </div>
+        </div >
     );
 };
 
