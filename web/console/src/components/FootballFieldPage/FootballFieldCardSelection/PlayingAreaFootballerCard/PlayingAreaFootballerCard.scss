@@ -5,7 +5,6 @@ See LICENSE for copying information.
 @import '../../../../index.scss';
 
 .football-field-card {
-    background: attr(data-background);
     width: 110%;
     height: 115%;
     position: absolute;
@@ -24,7 +23,7 @@ See LICENSE for copying information.
             linear-gradient(to right, #fff 20px, rgba(0, 0, 0, 0) 0,rgba(0, 0, 0, 0) 95px, rgba(0, 0, 0, 0) 0, #fff 20px) bottom/115px 2px repeat-x, /* bottom */
             linear-gradient(#fff 30px, rgba(0, 0, 0, 0) 0,rgba(0, 0, 0, 0) 170px, rgba(0, 0, 0, 0) 0, #fff 20px) left/2px 200px repeat-y; /* left */
     }
-    &__background {
+    &__background-type {
         position: absolute;
         top: 0;
         left: 0;
