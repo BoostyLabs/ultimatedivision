@@ -25,7 +25,7 @@ export class CardStats {
         public fields: CardStatsField[] = []
     ) {
     }
-    get abbr (): string {
+    get abbr(): string {
         return this.title.slice(0, 3);
     }
     get color(): string {
@@ -54,6 +54,8 @@ export class CardMainInfo {
         public playerFace: string,
         public priceIcon: string,
         public bgType: number,
+        public priceGoldIcon: string,
+        public confirmIcon: string,
     ) { }
     get backgroundType() {
         /*
@@ -153,7 +155,7 @@ export class Diagram {
 
 export class FotballFieldInformationLine {
     constructor(
-        public id: string ='',
+        public id: string = '',
         public title: string = '',
         public options: string[] = []
     ) { }
