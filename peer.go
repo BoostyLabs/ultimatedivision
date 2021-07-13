@@ -7,16 +7,16 @@ import (
 	"context"
 	"errors"
 	"net"
-	"ultimatedivision/admin/adminauth"
-	"ultimatedivision/console/consoleserver"
-	"ultimatedivision/internal/auth"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver"
 	"ultimatedivision/cards"
+	"ultimatedivision/console/consoleserver"
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
 )
