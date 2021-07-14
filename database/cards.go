@@ -196,14 +196,62 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
 }
 
 // List returns all cards from the data base.
-func (cardsDB *cardsDB) List(ctx context.Context, urlQuery map[string]string) ([]cards.Card, error) {
+func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 	query :=
 		`SELECT 
             ` + allFields + ` 
         FROM 
             cards
         `
-	queryWhere, values := buildWhereString(urlQuery)
+
+	rows, err := cardsDB.conn.QueryContext(ctx, query)
+	if err != nil {
+		return nil, ErrCard.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	data := []cards.Card{}
+	for rows.Next() {
+		card := cards.Card{}
+		if err = rows.Scan(
+			&card.ID, &card.PlayerName, &card.Quality, &card.PictureType, &card.Height, &card.Weight, &card.SkinColor, &card.HairStyle,
+			&card.HairColor, &card.DominantFoot, &card.UserID, &card.Tactics, &card.Positioning, &card.Composure, &card.Aggression,
+			&card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed, &card.ReactionSpeed,
+			&card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling, &card.BallControl,
+			&card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing, &card.ForwardPass,
+			&card.Offense, &card.FinishingAbility, &card.ShotPower, &card.Accuracy, &card.Distance, &card.Penalty, &card.FreeKicks, &card.Corners,
+			&card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus, &card.Interceptions,
+			&card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
+		); err != nil {
+			return nil, cards.ErrNoCard.Wrap(err)
+		}
+
+		accessoryIds, err := listAccessoryIdsByCardID(ctx, cardsDB, card.ID)
+		if err != nil {
+			return nil, ErrCard.Wrap(err)
+		}
+		card.Accessories = accessoryIds
+
+		data = append(data, card)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, ErrCard.Wrap(err)
+	}
+
+	return data, nil
+}
+
+// ListWithFilters returns all cards from DB, taking the necessary filters.
+func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters cards.FiltersMap) ([]cards.Card, error) {
+	query :=
+		`SELECT 
+            ` + allFields + ` 
+        FROM 
+            cards
+        `
+	queryWhere, values := BuildWhereString(filters)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query+queryWhere, values...)
 	if err != nil {
@@ -244,14 +292,18 @@ func (cardsDB *cardsDB) List(ctx context.Context, urlQuery map[string]string) ([
 	return data, nil
 }
 
-// buildWhereString build string for WHERE.
-func buildWhereString(urlQuery map[string]string) (string, []interface{}) {
+// BuildWhereString build string for WHERE.
+func BuildWhereString(filters cards.FiltersMap) (string, []interface{}) {
 	var query string
 	var values []interface{}
 
-	if urlQuery != nil {
+	if filters != nil {
 		var where []string
-		for k, v := range urlQuery {
+		for k, v := range filters {
+			// TODO: move check in conroller
+			if err := cards.Validate(k); err != nil {
+				fmt.Println("ERROR")
+			}
 			values = append(values, v)
 			where = append(where, fmt.Sprintf(`"%s" = %s`, k, "$"+strconv.Itoa(len(values))))
 		}
