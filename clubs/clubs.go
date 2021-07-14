@@ -102,7 +102,7 @@ const (
 	LWB Position = 9
 	// RWB defines right attacking defenders.
 	RWB Position = 10
-	// RW defines right forward
+	// RW defines right forward.
 	RW Position = 11
 	// LW defines left forward.
 	LW Position = 12

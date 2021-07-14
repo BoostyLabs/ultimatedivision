@@ -108,7 +108,7 @@ func (clubsDB clubsDB) Update(ctx context.Context, club clubs.Club) error {
 	return ErrClubs.Wrap(err)
 }
 
-// UpdateCapitan updates capitan in the users team
+// UpdateCapitan updates capitan in the users team.
 func (clubsDB clubsDB) UpdateCapitan(ctx context.Context, capitan uuid.UUID, userID uuid.UUID) error {
 	query := `UPDATE  club_player
 			  SET capitan = $1

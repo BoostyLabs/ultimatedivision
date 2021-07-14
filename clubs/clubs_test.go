@@ -105,14 +105,13 @@ func TestTeam(t *testing.T) {
 	capitan := card1.ID
 
 	player := clubs.Players{
-		UserID: user1.ID,
-		CardID: card1.ID,
+		UserID:   user1.ID,
+		CardID:   card1.ID,
 		Position: clubs.CAM,
-		Capitan: capitan,
+		Capitan:  capitan,
 	}
 
 	players := []clubs.Players{player}
-
 
 	updatedClub := clubs.Club{
 		UserID:    user1.ID,
@@ -149,7 +148,7 @@ func TestTeam(t *testing.T) {
 		})
 
 		t.Run("Get cards from club", func(t *testing.T) {
-			playersFromDB, err := repositoryClub.ListCards(ctx,user1.ID)
+			playersFromDB, err := repositoryClub.ListCards(ctx, user1.ID)
 			require.NoError(t, err)
 
 			comparePlayers(t, playersFromDB, players)
