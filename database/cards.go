@@ -7,7 +7,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	_ "github.com/lib/pq" // using postgres driver
@@ -194,14 +196,16 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
 }
 
 // List returns all cards from the data base.
-func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
+func (cardsDB *cardsDB) List(ctx context.Context, urlQuery map[string]string) ([]cards.Card, error) {
 	query :=
 		`SELECT 
             ` + allFields + ` 
         FROM 
             cards
         `
-	rows, err := cardsDB.conn.QueryContext(ctx, query)
+	queryWhere, values := buildWhereString(urlQuery)
+
+	rows, err := cardsDB.conn.QueryContext(ctx, query+queryWhere, values...)
 	if err != nil {
 		return nil, ErrCard.Wrap(err)
 	}
@@ -238,6 +242,23 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 	}
 
 	return data, nil
+}
+
+// buildWhereString build string for WHERE.
+func buildWhereString(urlQuery map[string]string) (string, []interface{}) {
+	var query string
+	var values []interface{}
+
+	if urlQuery != nil {
+		var where []string
+		for k, v := range urlQuery {
+			values = append(values, v)
+			where = append(where, fmt.Sprintf(`"%s" = %s`, k, "$"+strconv.Itoa(len(values))))
+		}
+		query = (" WHERE " + strings.Join(where, " AND "))
+	}
+
+	return query, values
 }
 
 // Delete deletes record card in the data base.
