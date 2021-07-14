@@ -49,7 +49,7 @@ func NewCards(log logger.Logger, cards *cards.Service, templates CardTemplates) 
 func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	cards, err := controller.cards.List(ctx)
+	cards, err := controller.cards.List(ctx, nil)
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
 		http.Error(w, "could not get cards list", http.StatusInternalServerError)
