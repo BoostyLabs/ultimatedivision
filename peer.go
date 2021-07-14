@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"net"
+	"ultimatedivision/clubs"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -32,6 +33,9 @@ type DB interface {
 
 	// Cards provides access to cards db.
 	Cards() cards.DB
+
+	// Clubs provides access to clubs db.
+	Clubs() clubs.DB
 
 	// Close closes underlying db connection.
 	Close() error
