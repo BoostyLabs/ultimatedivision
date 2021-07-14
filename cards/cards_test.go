@@ -203,7 +203,10 @@ func TestCards(t *testing.T) {
 			err = repositoryCards.Create(ctx, card2)
 			require.NoError(t, err)
 
-			allCards, err := repositoryCards.List(ctx)
+			urlQuery := map[string]string{
+				"tactics": "1",
+			}
+			allCards, err := repositoryCards.List(ctx, urlQuery)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 2)
 			compareCards(t, card1, allCards[0])
@@ -214,7 +217,10 @@ func TestCards(t *testing.T) {
 			err := repositoryCards.Delete(ctx, card1.ID)
 			require.NoError(t, err)
 
-			allCards, err := repositoryCards.List(ctx)
+			urlQuery := map[string]string{
+				"tactics": "1",
+			}
+			allCards, err := repositoryCards.List(ctx, urlQuery)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 1)
 			compareCards(t, card2, allCards[0])
