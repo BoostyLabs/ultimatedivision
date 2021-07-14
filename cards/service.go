@@ -99,8 +99,13 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Card, error)
 }
 
 // List returns all cards from DB.
-func (service *Service) List(ctx context.Context, urlQuery map[string]string) ([]Card, error) {
-	return service.cards.List(ctx, urlQuery)
+func (service *Service) List(ctx context.Context) ([]Card, error) {
+	return service.cards.List(ctx)
+}
+
+// ListWithFilters returns all cards from DB, taking the necessary filters.
+func (service *Service) ListWithFilters(ctx context.Context, filters FiltersMap) ([]Card, error) {
+	return service.cards.ListWithFilters(ctx, filters)
 }
 
 // Delete destroy card in DB.

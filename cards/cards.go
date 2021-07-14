@@ -5,6 +5,7 @@ package cards
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -22,7 +23,9 @@ type DB interface {
 	// Get returns card by id from the data base.
 	Get(ctx context.Context, id uuid.UUID) (Card, error)
 	// List returns all cards from the data base.
-	List(ctx context.Context, urlQuery map[string]string) ([]Card, error)
+	List(ctx context.Context) ([]Card, error)
+	// List returns all cards from the data base.
+	ListWithFilters(ctx context.Context, filters FiltersMap) ([]Card, error)
 	// Delete deletes card record in the data base.
 	Delete(ctx context.Context, id uuid.UUID) error
 }
@@ -147,3 +150,22 @@ const (
 	// DominantFootRight indicates that dominant foot of the footballer is right.
 	DominantFootRight DominantFoot = "right"
 )
+
+// FiltersMap type for using filters.
+type FiltersMap map[string]string
+
+// allFilters defines the list of possible card filters.
+var allFilters = []string{
+	"dominantFoot",
+	"tactics",
+}
+
+// Validate checks filter access.
+func Validate(filter string) error {
+	for _, v := range allFilters {
+		if filter == v {
+			return nil
+		}
+	}
+	return fmt.Errorf("this filter does not exist")
+}
