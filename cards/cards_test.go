@@ -14,6 +14,7 @@ import (
 
 	"ultimatedivision"
 	"ultimatedivision/cards"
+	"ultimatedivision/database"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/users"
 )
@@ -97,7 +98,7 @@ func TestCards(t *testing.T) {
 		Accessories:      []int{1, 2},
 		DominantFoot:     "right",
 		UserID:           uuid.New(),
-		Tactics:          1,
+		Tactics:          2,
 		Positioning:      2,
 		Composure:        3,
 		Aggression:       4,
@@ -203,24 +204,38 @@ func TestCards(t *testing.T) {
 			err = repositoryCards.Create(ctx, card2)
 			require.NoError(t, err)
 
-			urlQuery := map[string]string{
-				"tactics": "1",
-			}
-			allCards, err := repositoryCards.List(ctx, urlQuery)
+			allCards, err := repositoryCards.List(ctx)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 2)
 			compareCards(t, card1, allCards[0])
 			compareCards(t, card2, allCards[1])
 		})
 
+		t.Run("list with filters", func(t *testing.T) {
+			filters := cards.FiltersMap{
+				"tactics": "1",
+			}
+			allCards, err := repositoryCards.ListWithFilters(ctx, filters)
+			assert.NoError(t, err)
+			assert.Equal(t, len(allCards), 1)
+			compareCards(t, card1, allCards[0])
+		})
+
+		t.Run("build where string", func(t *testing.T) {
+			filters := cards.FiltersMap{
+				"tactics": "1",
+			}
+			queryString, values := database.BuildWhereString(filters)
+
+			assert.Equal(t, queryString, ` WHERE "tactics" = $1`)
+			assert.Equal(t, values, []interface{}{"1"})
+		})
+
 		t.Run("delete", func(t *testing.T) {
 			err := repositoryCards.Delete(ctx, card1.ID)
 			require.NoError(t, err)
 
-			urlQuery := map[string]string{
-				"tactics": "1",
-			}
-			allCards, err := repositoryCards.List(ctx, urlQuery)
+			allCards, err := repositoryCards.List(ctx)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 1)
 			compareCards(t, card2, allCards[0])
