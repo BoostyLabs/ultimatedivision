@@ -161,9 +161,10 @@ type Filter struct {
 
 // Keys defines the list of possible card key filters.
 var Keys = []string{
-	"dominantFoot",
+	"dominant_foot",
 	"tactics",
 	"physique",
+	"player_name",
 }
 
 // Actions defines the list of possible card action filters.
@@ -173,6 +174,7 @@ var Actions = []string{
 	">",
 	"<=",
 	">=",
+	"LIKE",
 }
 
 // ValidateKey checks the validity of the key filter.
