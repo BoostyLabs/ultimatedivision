@@ -80,6 +80,11 @@ type Peer struct {
 		Service *cards.Service
 	}
 
+	// exposes clubs related logic
+	Clubs struct {
+		Service *clubs.Service
+	}
+
 	// Admin web server server with web UI.
 	Admin struct {
 		Listener net.Listener
@@ -121,6 +126,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // cards setup
 		peer.Cards.Service = cards.NewService(
 			peer.Database.Cards(),
+		)
+	}
+
+	{ // clubs setup
+		peer.Clubs.Service = clubs.NewService(
+			peer.Database.Clubs(),
 		)
 	}
 
