@@ -212,9 +212,34 @@ func TestCards(t *testing.T) {
 		})
 
 		t.Run("list with filters", func(t *testing.T) {
-			filters := cards.FiltersMap{
-				"tactics": "1",
+			filters := []cards.Filter{
+				{
+					Key:    "tactics",
+					Action: "=",
+					Value:  "1",
+				},
+				{
+					Key:    "physique",
+					Action: ">",
+					Value:  "1",
+				},
+				{
+					Key:    "physique",
+					Action: "<=",
+					Value:  "20",
+				},
 			}
+
+			for _, v := range filters {
+				err := v.ValidateKey()
+				assert.NoError(t, err)
+
+				err = v.ValidateAction()
+				assert.NoError(t, err)
+
+				v.ValidateValue()
+			}
+
 			allCards, err := repositoryCards.ListWithFilters(ctx, filters)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 1)
@@ -222,13 +247,38 @@ func TestCards(t *testing.T) {
 		})
 
 		t.Run("build where string", func(t *testing.T) {
-			filters := cards.FiltersMap{
-				"tactics": "1",
+			filters := []cards.Filter{
+				{
+					Key:    "tactics",
+					Action: "=",
+					Value:  "1",
+				},
+				{
+					Key:    "physique",
+					Action: ">",
+					Value:  "1",
+				},
+				{
+					Key:    "physique",
+					Action: "<=",
+					Value:  "20",
+				},
 			}
+
+			for _, v := range filters {
+				err := v.ValidateKey()
+				assert.NoError(t, err)
+
+				err = v.ValidateAction()
+				assert.NoError(t, err)
+
+				v.Value = v.ValidateValue()
+			}
+
 			queryString, values := database.BuildWhereString(filters)
 
-			assert.Equal(t, queryString, ` WHERE "tactics" = $1`)
-			assert.Equal(t, values, []interface{}{"1"})
+			assert.Equal(t, queryString, ` WHERE "tactics" = $1 AND "physique" > $2 AND "physique" <= $3`)
+			assert.Equal(t, values, []interface{}{"1", "1", "20"})
 		})
 
 		t.Run("delete", func(t *testing.T) {
