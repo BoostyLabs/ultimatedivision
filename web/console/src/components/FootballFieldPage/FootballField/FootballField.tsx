@@ -3,18 +3,21 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
-import React, { DragEvent } from 'react';
-import './FootballField.scss';
-
 import { useDispatch, useSelector } from 'react-redux';
-import { FootballFieldPlayingArea }
-    from '../FotballFieldPlayingArea/FootballFieldPlayingArea';
-import { FootballFieldInformation }
-    from '../FootballFieldInformation/FootballFieldInformation';
+
+import { DragEvent } from 'react';
+
 import { FootballFieldCardSelection }
     from '../FootballFieldCardSelection/FootballFieldCardSelection';
+import { FootballFieldInformation }
+    from '../FootballFieldInformation/FootballFieldInformation';
+import { FootballFieldPlayingArea }
+    from '../FotballFieldPlayingArea/FootballFieldPlayingArea';
+
 import { RootState } from '../../../store';
 import { removeCard } from '../../../store/reducers/footballField';
+
+import './FootballField.scss';
 
 export const FootballField: React.FC = () => {
     const dispatch = useDispatch();

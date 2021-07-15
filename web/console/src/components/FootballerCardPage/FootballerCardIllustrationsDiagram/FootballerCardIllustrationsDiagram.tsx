@@ -1,10 +1,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React from 'react';
-import './FootballerCardIllustrationsDiagram.scss';
 import { Doughnut } from 'react-chartjs-2';
+
 import { Diagram } from '../../../types/fotballerCard';
+
+import './FootballerCardIllustrationsDiagram.scss';
 
 export const FootballerCardIllustrationsDiagram: React.FC<{ props: Diagram }> = ({ props }) => {
     const { name, min, max, value } = props;
