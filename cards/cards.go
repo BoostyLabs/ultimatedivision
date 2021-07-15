@@ -6,6 +6,7 @@ package cards
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -25,7 +26,7 @@ type DB interface {
 	// List returns all cards from the data base.
 	List(ctx context.Context) ([]Card, error)
 	// List returns all cards from the data base.
-	ListWithFilters(ctx context.Context, filters FiltersMap) ([]Card, error)
+	ListWithFilters(ctx context.Context, filters []Filter) ([]Card, error)
 	// Delete deletes card record in the data base.
 	Delete(ctx context.Context, id uuid.UUID) error
 }
@@ -151,21 +152,50 @@ const (
 	DominantFootRight DominantFoot = "right"
 )
 
-// FiltersMap type for using filters.
-type FiltersMap map[string]string
-
-// allFilters defines the list of possible card filters.
-var allFilters = []string{
-	"dominantFoot",
-	"tactics",
+// Filter entitty for using filters.
+type Filter struct {
+	Key    string
+	Action string
+	Value  string
 }
 
-// Validate checks filter access.
-func Validate(filter string) error {
-	for _, v := range allFilters {
-		if filter == v {
+// Keys defines the list of possible card key filters.
+var Keys = []string{
+	"dominantFoot",
+	"tactics",
+	"physique",
+}
+
+// Actions defines the list of possible card action filters.
+var Actions = []string{
+	"=",
+	"<",
+	">",
+	"<=",
+	">=",
+}
+
+// ValidateKey checks the validity of the key filter.
+func (f Filter) ValidateKey() error {
+	for _, v := range Keys {
+		if f.Key == v {
 			return nil
 		}
 	}
-	return fmt.Errorf("this filter does not exist")
+	return fmt.Errorf("this key does not exist")
+}
+
+// ValidateAction checks the validity of the action filter.
+func (f Filter) ValidateAction() error {
+	for _, v := range Actions {
+		if f.Action == v {
+			return nil
+		}
+	}
+	return fmt.Errorf("this action does not exist")
+}
+
+// ValidateValue returns a copy of the string without of invalid UTF-8 bytes.
+func (f Filter) ValidateValue() string {
+	return strings.ToValidUTF8(f.Value, "")
 }

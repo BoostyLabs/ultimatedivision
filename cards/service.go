@@ -104,7 +104,7 @@ func (service *Service) List(ctx context.Context) ([]Card, error) {
 }
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
-func (service *Service) ListWithFilters(ctx context.Context, filters FiltersMap) ([]Card, error) {
+func (service *Service) ListWithFilters(ctx context.Context, filters []Filter) ([]Card, error) {
 	return service.cards.ListWithFilters(ctx, filters)
 }
 
