@@ -5,10 +5,8 @@ See LICENSE for copying information.
 
 import React from 'react';
 import './FootballerCardIllustrations.scss';
-import { FootballerCardIllustrationsRadar }
-    from '../FootballerCardIllustrationsRadar/FootballerCardIllustrationsRadar';
-import { FootballerCardIllustrationsDiagramsArea }
-    from '../FootballerCardIllustrationsDiagramsArea/FootballerCardIllustrationsDiagramsArea';
+import { FootballerCardIllustrationsRadar } from '../FootballerCardIllustrationsRadar';
+import { FootballerCardIllustrationsDiagramsArea } from '../FootballerCardIllustrationsDiagramsArea';
 
 import icon from '../../../img/FootballerCardPage/diamond2.png';
 

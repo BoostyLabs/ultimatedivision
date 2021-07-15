@@ -9,7 +9,7 @@ import './FootballFieldPlayingArea.scss';
 
 import { RootState } from '../../../store';
 
-import { PlayingFormation } from './PlayingAreaFormation/PlayingFormation';
+import { PlayingFormation } from './PlayingAreaFormation';
 
 export const FootballFieldPlayingArea: React.FC = () => {
     const formation = useSelector((state: RootState) => state.fieldReducer.options.formation);

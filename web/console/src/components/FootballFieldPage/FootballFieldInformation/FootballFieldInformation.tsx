@@ -6,13 +6,11 @@ See LICENSE for copying information.
 import React from 'react';
 import './FootballFieldInformation.scss';
 
+import { FootballFieldInformationFormation } from './FootballFieldInformationFormation';
+import { FootballFieldInformationTactic } from './FootballFieldInformationTactic';
+import { FootballFieldInformationCaptain } from './FootballFieldInformationCaptain';
+
 import { FootballFieldInformationLine } from '../../../types/footballField';
-import { FootballFieldInformationFormation }
-    from './FootballFieldInformationFormation/FootballFieldInformationFormation';
-import { FootballFieldInformationTactic }
-    from './FootballFieldInformationTactic/FootballFieldInformationTactic';
-import { FootballFieldInformationCaptain }
-    from './FootballFieldInformationCaptain/FootballFieldInformationCaptain';
 
 export const FootballFieldInformation: React.FC = () => {
     const INFORMATION_FIELDS = {

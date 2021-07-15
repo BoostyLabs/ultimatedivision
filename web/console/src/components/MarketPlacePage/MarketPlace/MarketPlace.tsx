@@ -7,14 +7,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 
-import { MarketPlaceFilterField }
-    from '../MarketPlaceFilterField/MarketPlaceFilterField';
-import { MarketPlaceCardsGroup }
-    from '../MarketPlaceCardsGroup/MarketPlaceCardsGroup';
-import { Paginator }
-    from '../../Paginator/Paginator';
-import { MarketPlaceFootballerCard }
-    from '../MarketPlaceCardsGroup/MarketPlaceFootballerCard/MarketPlaceFootballerCard';
+import { MarketPlaceFilterField } from '../MarketPlaceFilterField';
+import { MarketPlaceCardsGroup } from '../MarketPlaceCardsGroup';
+import { Paginator } from '../../Paginator';
+import { MarketPlaceFootballerCard } from '../MarketPlaceCardsGroup/MarketPlaceFootballerCard';
 
 import './MarketPlace.scss';
 import { MyCard } from '../MyCard/MyCard';

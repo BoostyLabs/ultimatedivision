@@ -8,13 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { PlayerCard } from '../../../PlayerCard/PlayerCard';
 
-import { Card }
-    from '../../../../store/reducers/footballerCard';
+import { FootballCardStyle } from '../../../../utils/footballField';
+
+import { Card } from '../../../../store/reducers/footballerCard';
 import { RootState } from '../../../../store';
-import { addCard, removeCard }
-    from '../../../../store/reducers/footballField';
-import { FootballCardStyle }
-    from '../../../../utils/footballField';
+import { addCard, removeCard } from '../../../../store/reducers/footballField';
 
 import './PlayingAreaFootballerCard.scss';
 

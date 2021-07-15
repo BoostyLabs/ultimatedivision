@@ -5,7 +5,7 @@ See LICENSE for copying information.
 
 import React from 'react';
 
-import { PlayerCard } from '../../PlayerCard/PlayerCard';
+import { PlayerCard } from '../../PlayerCard';
 
 import { Card } from '../../../store/reducers/footballerCard';
 

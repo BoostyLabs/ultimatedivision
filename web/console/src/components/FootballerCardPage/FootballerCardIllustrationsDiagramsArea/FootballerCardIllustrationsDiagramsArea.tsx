@@ -7,8 +7,7 @@ import { RootState } from '../../../store';
 
 import './FootballerCardIllustrationsDiagramsArea.scss';
 
-import { FootballerCardIllustrationsDiagram }
-    from '../FootballerCardIllustrationsDiagram/FootballerCardIllustrationsDiagram';
+import { FootballerCardIllustrationsDiagram } from '../FootballerCardIllustrationsDiagram';
 
 export const FootballerCardIllustrationsDiagramsArea: React.FC = () => {
     const FIRST_CARD_INDEX = 0;
