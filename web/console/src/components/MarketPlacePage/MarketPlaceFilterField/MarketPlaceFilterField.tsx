@@ -8,26 +8,29 @@ import React from 'react';
 import './marketPlaceFilterField.scss';
 
 import rectangle
-    from '../../../img/MarketPlacePage/marketPlaceFilterField/rectangle.png';
+    from '../../../img/MarketPlacePage/marketPlaceFilterField/rectangle.svg';
 import search
-    from '../../../img/MarketPlacePage/marketPlaceFilterField/search.png';
+    from '../../../img/MarketPlacePage/marketPlaceFilterField/search.svg';
 import star
-    from '../../../img/MarketPlacePage/marketPlaceFilterField/star.png';
+    from '../../../img/MarketPlacePage/marketPlaceFilterField/star.svg';
 import fut
-    from '../../../img/MarketPlacePage/marketPlaceFilterField/fut.png';
+    from '../../../img/MarketPlacePage/marketPlaceFilterField/fut.svg';
 import eye
-    from '../../../img/MarketPlacePage/marketPlaceFilterField/eye.png';
+    from '../../../img/MarketPlacePage/marketPlaceFilterField/eye.svg';
 import stars
-    from '../../../img/MarketPlacePage/marketPlaceFilterField/stars.png';
+    from '../../../img/MarketPlacePage/marketPlaceFilterField/stars.svg';
 import parametres
-    from '../../../img/MarketPlacePage/marketPlaceFilterField/parametres.png';
+    from '../../../img/MarketPlacePage/marketPlaceFilterField/parametres.svg';
+import { useState } from 'react';
 
 export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) => {
+    let [searchData, setSearchData] = useState('');
+
+    let handleSerchChange = (event: any) => {
+        setSearchData(event.target.value);
+    };
+
     const filterFieldTitles: Array<{ title: string; src: string }> = [
-        {
-            title: 'Search',
-            src: search,
-        },
         {
             title: 'Version',
             src: rectangle,
@@ -94,10 +97,25 @@ export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) =
             </h1>
             <div className="marketplace-filter__wrapper">
                 <ul className="marketplace-filter__list">
+                    <li className="marketplace-filter__list__item">
+                        <img
+                            src={search}
+                            alt="Filter Icon"
+                            className="marketplace-filter__list__item__picture"
+                        />
+                        <input
+                            value={searchData}
+                            placeholder={"Search"}
+                            className="marketplace-filter__list__item__search"
+                            onChange={handleSerchChange}
+                        />
+                    </li>
                     {filterFieldTitles.map((item, index) =>
                         <li key={index}
                             className="marketplace-filter__list__item">
-                            {item.title}
+                            <span className="marketplace-filter__list__item__title" >
+                                {item.title}
+                            </span>
                             <img
                                 src={item.src}
                                 alt="Filter icon"
@@ -107,6 +125,6 @@ export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) =
                     )}
                 </ul>
             </div>
-        </section>
+        </section >
     );
 };
