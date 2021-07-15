@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"net"
-	"ultimatedivision/clubs"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -16,6 +15,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver"
 	"ultimatedivision/cards"
+	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"

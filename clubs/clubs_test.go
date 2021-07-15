@@ -104,14 +104,14 @@ func TestTeam(t *testing.T) {
 
 	capitan := card1.ID
 
-	player := clubs.Players{
+	player := clubs.Player{
 		UserID:   user1.ID,
 		CardID:   card1.ID,
 		Position: clubs.CAM,
 		Capitan:  capitan,
 	}
 
-	players := []clubs.Players{player}
+	players := []clubs.Player{player}
 
 	updatedClub := clubs.Club{
 		UserID:    user1.ID,
@@ -182,7 +182,7 @@ func compareClubs(t *testing.T, clubDB clubs.Club, clubFake clubs.Club) {
 	assert.Equal(t, clubDB.Tactic, clubFake.Tactic)
 }
 
-func comparePlayers(t *testing.T, playersDB []clubs.Players, playersFake []clubs.Players) {
+func comparePlayers(t *testing.T, playersDB []clubs.Player, playersFake []clubs.Player) {
 	assert.Equal(t, len(playersDB), len(playersFake))
 
 	for i := 0; i < len(playersFake); i++ {

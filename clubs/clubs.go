@@ -29,7 +29,7 @@ type DB interface {
 	// GetClub gets team from database by user id.
 	GetClub(ctx context.Context, userID uuid.UUID) (Club, error)
 	// ListCards returns all cards from club.
-	ListCards(ctx context.Context, userID uuid.UUID) ([]Players, error)
+	ListCards(ctx context.Context, userID uuid.UUID) ([]Player, error)
 	// Add add new card to the team.
 	Add(ctx context.Context, userID uuid.UUID, card cards.Card, capitan uuid.UUID, position Position) error
 	// UpdateCapitan updates capitan in the team.
@@ -45,8 +45,8 @@ type Club struct {
 	Tactic    Tactic    `json:"tactic"`
 }
 
-// Players defines player entity.
-type Players struct {
+// Player defines card entity which in top11.
+type Player struct {
 	UserID   uuid.UUID `json:"userID"`
 	CardID   uuid.UUID `json:"cardID"`
 	Position Position  `json:"position"`

@@ -65,7 +65,7 @@ func (clubsDB clubsDB) GetClub(ctx context.Context, userID uuid.UUID) (clubs.Clu
 }
 
 // ListCards returns all cards from the club.
-func (clubsDB clubsDB) ListCards(ctx context.Context, userID uuid.UUID) ([]clubs.Players, error) {
+func (clubsDB clubsDB) ListCards(ctx context.Context, userID uuid.UUID) ([]clubs.Player, error) {
 	query := `SELECT user_id, card_id, card_position, capitan 
 			  FROM club_player
 			  WHERE user_id = $1`
@@ -74,15 +74,14 @@ func (clubsDB clubsDB) ListCards(ctx context.Context, userID uuid.UUID) ([]clubs
 	if err != nil {
 		return nil, ErrPlayers.Wrap(err)
 	}
-
 	defer func() {
 		err = errs.Combine(err, ErrPlayers.Wrap(rows.Close()))
 	}()
 
-	var players []clubs.Players
+	var players []clubs.Player
 
 	for rows.Next() {
-		var player clubs.Players
+		var player clubs.Player
 		err = rows.Scan(&player.UserID, &player.CardID, &player.Position, &player.Capitan)
 		if err != nil {
 			return nil, clubs.ErrNoPlayer.Wrap(err)
@@ -110,7 +109,7 @@ func (clubsDB clubsDB) Update(ctx context.Context, club clubs.Club) error {
 
 // UpdateCapitan updates capitan in the users team.
 func (clubsDB clubsDB) UpdateCapitan(ctx context.Context, capitan uuid.UUID, userID uuid.UUID) error {
-	query := `UPDATE  club_player
+	query := `UPDATE club_player
 			  SET capitan = $1
 			  WHERE user_id = $2`
 
@@ -125,7 +124,7 @@ func (clubsDB clubsDB) GetCapitan(ctx context.Context, userID uuid.UUID) (uuid.U
 			  FROM club_player
               WHERE user_id = $1`
 
-	var player clubs.Players
+	var player clubs.Player
 
 	row := clubsDB.conn.QueryRowContext(ctx, query, userID)
 

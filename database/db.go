@@ -6,7 +6,6 @@ package database
 import (
 	"context"
 	"database/sql"
-	"ultimatedivision/clubs"
 
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
@@ -14,6 +13,7 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
+	"ultimatedivision/clubs"
 	"ultimatedivision/users"
 )
 
@@ -132,17 +132,17 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             created_at    TIMESTAMP WITH TIME ZONE NOT NULL
         );
         CREATE TABLE IF NOT EXISTS clubs (
-            user_id   BYTEA   REFERENCES users(id) NOT NULL,
-            tactic    INTEGER                      NOT NULL,
-            formation INTEGER                      NOT NULL,
-            PRIMARY KEY(user_id)
+        	user_id   BYTEA   REFERENCES users(id) NOT NULL,
+        	tactic    INTEGER                      NOT NULL,
+        	formation INTEGER                      NOT NULL,
+        	PRIMARY KEY(user_id)
         );
         CREATE TABLE IF NOT EXISTS club_player(
-    	    user_id       BYTEA   REFERENCES clubs(user_id) NOT NULL,
-    	    card_id       BYTEA   REFERENCES cards(id)      NOT NULL,
-            card_position INTEGER                           NOT NULL,
-            capitan       BYTEA,
-            PRIMARY KEY(user_id, card_id)
+    		user_id       BYTEA   REFERENCES clubs(user_id) NOT NULL,
+    		card_id       BYTEA   REFERENCES cards(id)      NOT NULL,
+        	card_position INTEGER                           NOT NULL,
+        	capitan       BYTEA,
+        	PRIMARY KEY(user_id, card_id)
         );`
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
 	if err != nil {
