@@ -228,6 +228,11 @@ func TestCards(t *testing.T) {
 					Action: "<=",
 					Value:  "20",
 				},
+				{
+					Key:    "player_name",
+					Action: "LIKE",
+					Value:  "Dmytro",
+				},
 			}
 
 			for _, v := range filters {
@@ -263,6 +268,11 @@ func TestCards(t *testing.T) {
 					Action: "<=",
 					Value:  "20",
 				},
+				{
+					Key:    "player_name",
+					Action: "LIKE",
+					Value:  "Dmytro",
+				},
 			}
 
 			for _, v := range filters {
@@ -277,8 +287,8 @@ func TestCards(t *testing.T) {
 
 			queryString, values := database.BuildWhereString(filters)
 
-			assert.Equal(t, queryString, ` WHERE "tactics" = $1 AND "physique" > $2 AND "physique" <= $3`)
-			assert.Equal(t, values, []interface{}{"1", "1", "20"})
+			assert.Equal(t, queryString, ` WHERE "tactics" = $1 AND "physique" > $2 AND "physique" <= $3 AND "player_name" LIKE $4`)
+			assert.Equal(t, values, []interface{}{"1", "1", "20", "Dmytro"})
 		})
 
 		t.Run("delete", func(t *testing.T) {
