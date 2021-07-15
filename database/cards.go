@@ -244,7 +244,7 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 }
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
-func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters cards.FiltersMap) ([]cards.Card, error) {
+func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filter) ([]cards.Card, error) {
 	query :=
 		`SELECT 
             ` + allFields + ` 
@@ -293,22 +293,16 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters cards.Filte
 }
 
 // BuildWhereString build string for WHERE.
-func BuildWhereString(filters cards.FiltersMap) (string, []interface{}) {
+func BuildWhereString(filters []cards.Filter) (string, []interface{}) {
 	var query string
 	var values []interface{}
+	var where []string
 
-	if filters != nil {
-		var where []string
-		for k, v := range filters {
-			// TODO: move check in conroller
-			if err := cards.Validate(k); err != nil {
-				fmt.Println("ERROR")
-			}
-			values = append(values, v)
-			where = append(where, fmt.Sprintf(`"%s" = %s`, k, "$"+strconv.Itoa(len(values))))
-		}
-		query = (" WHERE " + strings.Join(where, " AND "))
+	for _, v := range filters {
+		values = append(values, v.Value)
+		where = append(where, fmt.Sprintf(`"%s" %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(values))))
 	}
+	query = (" WHERE " + strings.Join(where, " AND "))
 
 	return query, values
 }
