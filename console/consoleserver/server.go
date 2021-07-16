@@ -14,6 +14,7 @@ import (
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
 )
 
@@ -39,7 +40,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service) (*Server, error) {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -52,6 +53,10 @@ func NewServer(config Config, log logger.Logger, listener net.Listener) (*Server
 	testRouter.HandleFunc("", func(rw http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(rw, "hello!!!")
 	}).Methods(http.MethodGet)
+
+	cardsRouter := router.PathPrefix("/cards").Subrouter().StrictSlash(true)
+	cardsController := NewCards(log, cards)
+	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
