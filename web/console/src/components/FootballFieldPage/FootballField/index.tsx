@@ -3,9 +3,8 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
-import { useDispatch, useSelector } from 'react-redux';
-
 import { DragEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { FootballFieldCardSelection } from '../FootballFieldCardSelection';
 import { FootballFieldInformation } from '../FootballFieldInformation';

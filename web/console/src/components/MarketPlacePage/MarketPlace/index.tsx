@@ -5,7 +5,6 @@ See LICENSE for copying information.
 
 import { useSelector } from 'react-redux';
 
-
 import { MarketPlaceCardsGroup } from '../MarketPlaceCardsGroup';
 import { MarketPlaceFilterField } from '../MarketPlaceFilterField';
 import { MarketPlaceFootballerCard } from '../MarketPlaceCardsGroup/MarketPlaceFootballerCard';
