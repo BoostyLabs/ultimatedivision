@@ -2,17 +2,17 @@
 Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
-
-import React, { useState, useEffect } from 'react';
+/* eslint-disable */
+import { useEffect, useState } from 'react';
 
 import next
     from '../../img/UltimateDivisionPaginator/next.png';
 import previous
     from '../../img/UltimateDivisionPaginator/previous.png';
 import { PaginatorBlockPages }
-    from './PaginatorBlockPages/PaginatorBlockPages';
+    from './PaginatorBlockPages';
 
-import './Paginator.scss';
+import './index.scss';
 
 export const Paginator: React.FC<{ itemCount: number }> = ({ itemCount }) => {
     const FIRST_ITEM_PAGINATON = 1;
@@ -119,27 +119,27 @@ export const Paginator: React.FC<{ itemCount: number }> = ({ itemCount }) => {
     const onPageChange = (type: string, pageNumber: number = currentPage): void => {
         const STEP_FROM_CURRENT_PAGE = 1;
         switch (type) {
-        case 'next page':
-            if (pageNumber < pages.length) {
-                setCurrentPage(pageNumber + STEP_FROM_CURRENT_PAGE);
-            }
-            populatePages();
+            case 'next page':
+                if (pageNumber < pages.length) {
+                    setCurrentPage(pageNumber + STEP_FROM_CURRENT_PAGE);
+                }
+                populatePages();
 
-            return;
-        case 'previous page':
-            if (pageNumber > SECOND_PAGE_INDEX) {
-                setCurrentPage(pageNumber - STEP_FROM_CURRENT_PAGE);
-            }
-            populatePages();
+                return;
+            case 'previous page':
+                if (pageNumber > SECOND_PAGE_INDEX) {
+                    setCurrentPage(pageNumber - STEP_FROM_CURRENT_PAGE);
+                }
+                populatePages();
 
-            return;
-        case 'change page':
-            setCurrentPage(pageNumber);
-            populatePages();
+                return;
+            case 'change page':
+                setCurrentPage(pageNumber);
+                populatePages();
 
-            return;
-        default:
-            populatePages();
+                return;
+            default:
+                populatePages();
         }
     };
 

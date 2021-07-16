@@ -1,12 +1,15 @@
-import React from 'react';
-import './FootballFieldCardSelection.scss';
-
+/*
+Copyright (C) 2021 Creditor Corp. Group.
+See LICENSE for copying information.
+ */
 import { useSelector } from 'react-redux';
+
+import { FilterField } from './FilterField';
+import { PlayingAreaFootballerCard } from './PlayingAreaFootballerCard';
+
 import { RootState } from '../../../store';
-import { PlayingAreaFootballerCard }
-    from './PlayingAreaFootballerCard/PlayingAreaFootballerCard';
-import { FilterField }
-    from './FilterField/FilterField';
+
+import './index.scss';
 
 export const FootballFieldCardSelection = () => {
     const cardList = useSelector((state: RootState) => state.cardReducer);
@@ -17,7 +20,7 @@ export const FootballFieldCardSelection = () => {
             {cardList.map((card, index) =>
                 <a key={index} href="#playingArea" className="card-selection__card">
                     <PlayingAreaFootballerCard card={card} />
-                </a>
+                </a>,
             )}
         </div>
     );

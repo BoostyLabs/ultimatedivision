@@ -3,10 +3,6 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
-import React from 'react';
-
-import './marketPlaceFilterField.scss';
-
 import rectangle
     from '../../../img/MarketPlacePage/marketPlaceFilterField/rectangle.svg';
 import search
@@ -22,6 +18,8 @@ import stars
 import parametres
     from '../../../img/MarketPlacePage/marketPlaceFilterField/parametres.svg';
 import { useState } from 'react';
+
+import './index.scss';
 
 export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) => {
     let [searchData, setSearchData] = useState('');
@@ -82,8 +80,7 @@ export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) =
         {
             title: '',
             src: parametres,
-        }
-        ,
+        },
         {
             title: 'Misc',
             src: rectangle,
@@ -121,7 +118,7 @@ export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) =
                                 alt="Filter icon"
                                 className="marketplace-filter__list__item__picture"
                             />
-                        </li>
+                        </li>,
                     )}
                 </ul>
             </div>

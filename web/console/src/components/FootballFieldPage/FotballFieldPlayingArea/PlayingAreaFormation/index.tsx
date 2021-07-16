@@ -3,17 +3,17 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
-import React, { DragEvent } from 'react';
-import './PlayingFormation.scss';
+import { DragEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { PlayingAreaFootballerCard } from '../../FootballFieldCardSelection/PlayingAreaFootballerCard';
+
+import { choseCardPosition, exchangeCards, setDragStart, setDragTarget }
+    from '../../../../store/reducers/footballField';
 import { FootballField } from '../../../../types/footballField';
-import { choseCardPosition, setDragStart, setDragTarget }
-    from '../../../../store/reducers/footballField';
-import { PlayingAreaFootballerCard }
-    from '../../FootballFieldCardSelection/PlayingAreaFootballerCard/PlayingAreaFootballerCard';
-import { exchangeCards }
-    from '../../../../store/reducers/footballField';
 import { RootState } from '../../../../store';
+
+import './index.scss';
 
 export const PlayingFormation: React.FC<{ props: FootballField; formation: string }> = ({ props, formation }) => {
     const dispatch = useDispatch();

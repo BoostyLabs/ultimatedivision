@@ -3,20 +3,16 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
 */
 
-import React from 'react';
 import { useSelector } from 'react-redux';
+
+import { FootballerCardIllustrations } from '../FootballerCardIllustrations';
+import { FootballerCardPrice } from '../FootballerCardPrice';
+import { FootballerCardStatsArea } from '../FootballerCardStatsArea';
+import { FootballerCardInformation } from '../FootballerCardInformation';
+
 import { RootState } from '../../../store';
 
-import { FootballerCardIllustrations } from
-    '../FootballerCardIllustrations/FootballerCardIllustrations';
-import { FootballerCardPrice } from
-    '../FootballerCardPrice/FootballerCardPrice';
-import { FootballerCardStatsArea } from
-    '../FootballerCardStatsArea/FootballerCardStatsArea';
-import { FootballerCardInformation } from
-    '../FootballerCardInformation/FootballerCardInformation';
-
-import './FootballerCard.scss';
+import './index.scss';
 
 export const FootballerCard: React.FC = () => {
     /** TODO: Route config with cards ID */

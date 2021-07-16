@@ -4,22 +4,18 @@ See LICENSE for copying information.
  */
 
 import playerFace from '../../img/MarketPlacePage/marketPlaceCardsGroup/player.svg';
+import confirmIcon from '../../img/MarketPlacePage/MyCard/ok.png';
+import priceGoldIcon from '../../img/MarketPlacePage/MyCard/goldPrice.png';
 import priceIcon
     from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.png';
-import priceGoldIcon from '../../img/MarketPlacePage/MyCard/goldPrice.png';
-import confirmIcon from '../../img/MarketPlacePage/MyCard/ok.png';
 
-import star from '../../img/FootballerCardPage/star.png';
 import checked from '../../img/FootballerCardPage/checked.png';
+import star from '../../img/FootballerCardPage/star.png';
 
-import { CardMainInfo, CardStats } from '../../types/fotballerCard';
-import { CardStatsField } from '../../types/fotballerCard';
-import { CardInfoField } from '../../types/fotballerCard';
-import { CardPrice } from '../../types/fotballerCard';
-import { CardPriceField } from '../../types/fotballerCard';
-import { CardPriceId } from '../../types/fotballerCard';
-import { CardPricePRP } from '../../types/fotballerCard';
-import { Diagram } from '../../types/fotballerCard';
+import {
+    CardInfoField, CardMainInfo, CardPrice, CardPriceField,
+    CardPriceId, CardPricePRP, CardStats, CardStatsField, Diagram,
+} from '../../types/fotballerCard';
 
 /* eslint-disable */
 

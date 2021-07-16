@@ -2,21 +2,20 @@
 Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { PlayerCard } from '../../../PlayerCard/PlayerCard';
+import { PlayerCard } from '../../../PlayerCard';
 
-import { Card }
-    from '../../../../store/reducers/footballerCard';
-import { RootState } from '../../../../store';
 import { addCard, removeCard }
     from '../../../../store/reducers/footballField';
+import { Card }
+    from '../../../../store/reducers/footballerCard';
 import { FootballCardStyle }
     from '../../../../utils/footballField';
+import { RootState } from '../../../../store';
 
-import './PlayingAreaFootballerCard.scss';
+import './index.scss';
 
 export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card, index, place }) => {
     const dispatch = useDispatch();
