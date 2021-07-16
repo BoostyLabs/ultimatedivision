@@ -6,21 +6,16 @@ See LICENSE for copying information.
 import { useSelector } from 'react-redux';
 
 
-import { MarketPlaceCardsGroup }
-    from '../MarketPlaceCardsGroup/MarketPlaceCardsGroup';
-import { MarketPlaceFilterField }
-    from '../MarketPlaceFilterField/MarketPlaceFilterField';
-import { MarketPlaceFootballerCard }
-    from '../MarketPlaceCardsGroup/MarketPlaceFootballerCard/MarketPlaceFootballerCard';
-import { MyCard } from '../MyCard/MyCard';
-import { Paginator }
-    from '../../Paginator/Paginator';
+import { MarketPlaceCardsGroup } from '../MarketPlaceCardsGroup';
+import { MarketPlaceFilterField } from '../MarketPlaceFilterField';
+import { MarketPlaceFootballerCard } from '../MarketPlaceCardsGroup/MarketPlaceFootballerCard';
+import { MyCard } from '../MyCard';
+import { Paginator } from '../../Paginator';
 
 import { RouteConfig } from '../../../routes';
-
 import { RootState } from '../../../store';
 
-import './MarketPlace.scss';
+import './index.scss';
 
 export const MarketPlace = ({ ...children }) => {
     const cards = useSelector((state: RootState) => state.cardReducer);

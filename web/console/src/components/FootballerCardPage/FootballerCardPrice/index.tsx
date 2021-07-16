@@ -10,7 +10,7 @@ import { RootState } from '../../../store';
 
 import currency from '../../../img/FootballerCardPage/currency.png';
 
-import './FootballerCardPrice.scss';
+import './index.scss';
 
 export const FootballerCardPrice: React.FC = () => {
     const FIRST_CARD_INDEX = 0;

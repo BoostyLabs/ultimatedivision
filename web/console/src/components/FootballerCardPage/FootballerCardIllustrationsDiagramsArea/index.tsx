@@ -4,11 +4,11 @@
 import { useSelector } from 'react-redux';
 
 import { FootballerCardIllustrationsDiagram }
-    from '../FootballerCardIllustrationsDiagram/FootballerCardIllustrationsDiagram';
+    from '../FootballerCardIllustrationsDiagram';
 
 import { RootState } from '../../../store';
 
-import './FootballerCardIllustrationsDiagramsArea.scss';
+import './index.scss';
 
 export const FootballerCardIllustrationsDiagramsArea: React.FC = () => {
     const FIRST_CARD_INDEX = 0;

@@ -7,7 +7,7 @@ import { Radar } from 'react-chartjs-2';
 
 import { RootState } from '../../../store';
 
-import './FootballerCardIllustrationsRadar.scss';
+import './index.scss';
 
 export const FootballerCardIllustrationsRadar: React.FC = () => {
     const FIRST_CARD_INDEX = 0;

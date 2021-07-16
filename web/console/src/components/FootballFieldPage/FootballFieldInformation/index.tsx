@@ -3,14 +3,11 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 import { FootballFieldInformationLine } from '../../../types/footballField';
-import { FootballFieldInformationCaptain }
-    from './FootballFieldInformationCaptain/FootballFieldInformationCaptain';
-import { FootballFieldInformationFormation }
-    from './FootballFieldInformationFormation/FootballFieldInformationFormation';
-import { FootballFieldInformationTactic }
-    from './FootballFieldInformationTactic/FootballFieldInformationTactic';
+import { FootballFieldInformationCaptain } from './FootballFieldInformationCaptain';
+import { FootballFieldInformationFormation } from './FootballFieldInformationFormation';
+import { FootballFieldInformationTactic } from './FootballFieldInformationTactic';
 
-import './FootballFieldInformation.scss';
+import './index.scss';
 
 export const FootballFieldInformation: React.FC = () => {
     const INFORMATION_FIELDS = {

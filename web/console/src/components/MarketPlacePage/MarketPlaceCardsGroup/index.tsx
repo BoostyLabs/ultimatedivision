@@ -4,7 +4,7 @@ See LICENSE for copying information.
  */
 import { Card } from '../../../store/reducers/footballerCard';
 
-import './MarketPlaceCardsGroup.scss';
+import './index.scss';
 
 export const MarketPlaceCardsGroup: React.FC<{ cards: Card[]; Component: React.FC<{ card: Card; key: number }> }> = ({ cards, Component }) =>
     <div className="marketplace-cards">

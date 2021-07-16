@@ -3,14 +3,13 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 import { useSelector } from 'react-redux';
+
+import { FilterField } from './FilterField';
+import { PlayingAreaFootballerCard } from './PlayingAreaFootballerCard';
+
 import { RootState } from '../../../store';
 
-import { FilterField }
-    from './FilterField/FilterField';
-import { PlayingAreaFootballerCard }
-    from './PlayingAreaFootballerCard/PlayingAreaFootballerCard';
-
-import './FootballFieldCardSelection.scss';
+import './index.scss';
 
 export const FootballFieldCardSelection = () => {
     const cardList = useSelector((state: RootState) => state.cardReducer);

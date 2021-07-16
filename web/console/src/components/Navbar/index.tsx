@@ -9,7 +9,7 @@ import { RouteConfig } from '../../routes';
 
 import ultimate from '../../img/Navbar/ultimate.png';
 
-import './Navbar.scss';
+import './index.scss';
 
 export const Navbar: React.FC = () =>
     <div className="ultimatedivision-navbar">

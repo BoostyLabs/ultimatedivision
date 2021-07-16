@@ -7,17 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DragEvent } from 'react';
 
-import { FootballFieldCardSelection }
-    from '../FootballFieldCardSelection/FootballFieldCardSelection';
-import { FootballFieldInformation }
-    from '../FootballFieldInformation/FootballFieldInformation';
-import { FootballFieldPlayingArea }
-    from '../FotballFieldPlayingArea/FootballFieldPlayingArea';
+import { FootballFieldCardSelection } from '../FootballFieldCardSelection';
+import { FootballFieldInformation } from '../FootballFieldInformation';
+import { FootballFieldPlayingArea } from '../FotballFieldPlayingArea';
 
 import { RootState } from '../../../store';
 import { removeCard } from '../../../store/reducers/footballField';
 
-import './FootballField.scss';
+import './index.scss';
 
 export const FootballField: React.FC = () => {
     const dispatch = useDispatch();

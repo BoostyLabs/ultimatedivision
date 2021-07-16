@@ -7,14 +7,14 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { FotballFieldInformationLine } from '../../../../types/fotballerCard';
-import { handleFormations } from '../../../../store/reducers/footballField';
+import { handleCaptain } from '../../../../store/reducers/footballField';
 import { ListStyle, TriangleStyle } from '../../../../utils/footballField';
 
 import triangle from '../../../../img/FootballFieldPage/triangle.png';
 
-import './FootballFieldInformationFormation.scss';
+import './index.scss';
 
-export const FootballFieldInformationFormation: React.FC<{ props: FotballFieldInformationLine }> = ({ props }) => {
+export const FootballFieldInformationCaptain: React.FC<{ props: FotballFieldInformationLine }> = ({ props }) => {
     const [optionVisibility, changeVisibility] = useState(true);
 
     const LIST_HEIGHT = new ListStyle(optionVisibility);
@@ -48,7 +48,7 @@ export const FootballFieldInformationFormation: React.FC<{ props: FotballFieldIn
                     <li
                         key={index}
                         className="football-field-information-option__item"
-                        onClick={() => dispatch(handleFormations(item))}
+                        onClick={() => dispatch(handleCaptain)}
                     >
                         {item}
                     </li>,

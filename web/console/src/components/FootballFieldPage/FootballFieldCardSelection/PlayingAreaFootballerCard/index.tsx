@@ -5,17 +5,17 @@ See LICENSE for copying information.
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { PlayerCard } from '../../../PlayerCard';
+
+import { addCard, removeCard }
+    from '../../../../store/reducers/footballField';
 import { Card }
     from '../../../../store/reducers/footballerCard';
 import { FootballCardStyle }
     from '../../../../utils/footballField';
-import { PlayerCard } from '../../../PlayerCard/PlayerCard';
-
 import { RootState } from '../../../../store';
-import { addCard, removeCard }
-    from '../../../../store/reducers/footballField';
 
-import './PlayingAreaFootballerCard.scss';
+import './index.scss';
 
 export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card, index, place }) => {
     const dispatch = useDispatch();

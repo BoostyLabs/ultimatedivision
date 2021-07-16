@@ -6,15 +6,15 @@ See LICENSE for copying information.
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import triangle from '../../../../img/FootballFieldPage/triangle.png';
-
 import { FotballFieldInformationLine } from '../../../../types/fotballerCard';
-import { handleTactics } from '../../../../store/reducers/footballField';
+import { handleFormations } from '../../../../store/reducers/footballField';
 import { ListStyle, TriangleStyle } from '../../../../utils/footballField';
 
-import './FootballFieldInformationTactic.scss';
+import triangle from '../../../../img/FootballFieldPage/triangle.png';
 
-export const FootballFieldInformationTactic: React.FC<{ props: FotballFieldInformationLine }> = ({ props }) => {
+import './index.scss';
+
+export const FootballFieldInformationFormation: React.FC<{ props: FotballFieldInformationLine }> = ({ props }) => {
     const [optionVisibility, changeVisibility] = useState(true);
 
     const LIST_HEIGHT = new ListStyle(optionVisibility);
@@ -48,7 +48,7 @@ export const FootballFieldInformationTactic: React.FC<{ props: FotballFieldInfor
                     <li
                         key={index}
                         className="football-field-information-option__item"
-                        onClick={() => dispatch(handleTactics)}
+                        onClick={() => dispatch(handleFormations(item))}
                     >
                         {item}
                     </li>,

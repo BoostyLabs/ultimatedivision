@@ -18,7 +18,7 @@ import stars
 import parametres
     from '../../../img/MarketPlacePage/marketPlaceFilterField/parametres.png';
 
-import './marketPlaceFilterField.scss';
+import './index.scss';
 
 export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) => {
     const filterFieldTitles: Array<{ title: string; src: string }> = [

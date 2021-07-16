@@ -4,11 +4,11 @@ See LICENSE for copying information.
  */
 
 import { PlayerCard }
-    from '../../../PlayerCard/PlayerCard';
+    from '../../../PlayerCard';
 
 import { Card } from '../../../../store/reducers/footballerCard';
 
-import './MarketPlaceFootballerCard.scss';
+import './index.scss';
 
 export const MarketPlaceFootballerCard: React.FC<{ card: Card; place?: string }> = ({ card, place }) =>
     <div

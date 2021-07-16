@@ -3,14 +3,12 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
 */
 
-import { FootballerCardIllustrationsRadar }
-    from '../FootballerCardIllustrationsRadar/FootballerCardIllustrationsRadar';
-import { FootballerCardIllustrationsDiagramsArea }
-    from '../FootballerCardIllustrationsDiagramsArea/FootballerCardIllustrationsDiagramsArea';
+import { FootballerCardIllustrationsDiagramsArea } from '../FootballerCardIllustrationsDiagramsArea';
+import { FootballerCardIllustrationsRadar } from '../FootballerCardIllustrationsRadar';
 
 import icon from '../../../img/FootballerCardPage/diamond2.png';
 
-import './FootballerCardIllustrations.scss';
+import './index.scss';
 
 export const FootballerCardIllustrations: React.FC = () =>
     <div className="footballer-card-illustrations">

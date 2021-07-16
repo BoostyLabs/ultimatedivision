@@ -6,7 +6,7 @@ See LICENSE for copying information.
 import rectangle from '../../../../img/FootballFieldPage/FilterField/rectangle.png';
 import search from '../../../../img/FootballFieldPage/FilterField/search.png';
 
-import './FilterField.scss';
+import './index.scss';
 
 export const FilterField: React.FC = () => {
     const filterFieldTitles: Array<{ title: string; src: string }> = [

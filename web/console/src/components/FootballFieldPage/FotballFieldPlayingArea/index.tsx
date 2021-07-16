@@ -4,11 +4,11 @@ See LICENSE for copying information.
  */
 import { useSelector } from 'react-redux';
 
+import { PlayingFormation } from './PlayingAreaFormation';
+
 import { RootState } from '../../../store';
-import { PlayingFormation } from './PlayingAreaFormation/PlayingFormation';
 
-
-import './FootballFieldPlayingArea.scss';
+import './index.scss';
 
 export const FootballFieldPlayingArea: React.FC = () => {
     const formation = useSelector((state: RootState) => state.fieldReducer.options.formation);
