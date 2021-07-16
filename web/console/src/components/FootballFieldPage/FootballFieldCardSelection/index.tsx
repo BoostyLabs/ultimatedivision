@@ -3,7 +3,7 @@ import './index.scss';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
-import { PlayingAreaFootballerCard } from './PlayingAreaFootballerCard';
+import { PlayingAreaFootballerCard } from '../PlayingAreaFootballerCard';
 import { FilterField } from './FilterField';
 
 export const FootballFieldCardSelection = () => {
