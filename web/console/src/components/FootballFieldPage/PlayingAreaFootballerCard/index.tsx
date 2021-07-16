@@ -6,21 +6,21 @@ See LICENSE for copying information.
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { PlayerCard } from '../../../PlayerCard';
+import { PlayerCard } from '../../PlayerCard';
 
 import { Card }
-    from '../../../../store/reducers/footballerCard';
-import { RootState } from '../../../../store';
+    from '../../../store/reducers/footballerCard';
+import { RootState } from '../../../store';
 import { addCard, removeCard }
-    from '../../../../store/reducers/footballField';
+    from '../../../store/reducers/footballField';
 import { FootballCardStyle }
-    from '../../../../utils/footballField';
+    from '../../../utils/footballField';
 
 import './index.scss';
 
 export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card, index, place }) => {
     const dispatch = useDispatch();
-    const chosenCard = useSelector((state: RootState) => state.fieldReducer.options.chosedCard);
+    const fieldSetup = useSelector((state: RootState) => state.fieldReducer);
     const [visibility, changeVisibility] = useState(false);
     const style = new FootballCardStyle(visibility).style;
     /** remove player card implementation */
@@ -28,11 +28,13 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; p
         e.preventDefault();
         dispatch(removeCard(index));
     }
+    /* eslint-disable */
 
     return (
         <div
-            onClick={place ? () => changeVisibility(prev => !prev) : () => dispatch(addCard(card, chosenCard))}
+            onClick={place ? () => changeVisibility(prev => !prev) : () => dispatch(addCard(card, fieldSetup.options.chosedCard))}
             className="football-field-card"
+            draggable={true}
         >
             <div
                 className="football-field-card__wrapper"
