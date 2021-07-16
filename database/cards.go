@@ -296,13 +296,39 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 func BuildWhereString(filters []cards.Filter) (string, []interface{}) {
 	var query string
 	var values []interface{}
-	var where []string
+	var valuesAND []interface{}
+	var valuesOR []interface{}
+	var whereAND []string
+	var whereOR []string
 
 	for _, v := range filters {
-		values = append(values, v.Value)
-		where = append(where, fmt.Sprintf(`"%s" %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(values))))
+		if v.Action != "LIKE" {
+			// AND
+			valuesAND = append(valuesAND, v.Value)
+			whereAND = append(whereAND, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND))))
+		}
+
 	}
-	query = (" WHERE " + strings.Join(where, " AND "))
+	query = (" WHERE (" + strings.Join(whereAND, " AND ") + ")")
+	values = append(values, valuesAND...)
+
+	for _, v := range filters {
+		if v.Action == "LIKE" {
+			// OR
+			valuesOR = append(valuesOR, v.Value)
+			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
+			valuesOR = append(valuesOR, v.Value+" %")
+			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
+			valuesOR = append(valuesOR, "% "+v.Value)
+			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
+			valuesOR = append(valuesOR, "% "+v.Value+" %")
+			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
+		}
+
+	}
+
+	query += (" AND (" + strings.Join(whereOR, " OR ") + ")")
+	values = append(values, valuesOR...)
 
 	return query, values
 }
