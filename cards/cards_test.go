@@ -14,6 +14,7 @@ import (
 
 	"ultimatedivision"
 	"ultimatedivision/cards"
+	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/database"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/users"
@@ -23,7 +24,7 @@ func TestCards(t *testing.T) {
 
 	card1 := cards.Card{
 		ID:               uuid.New(),
-		PlayerName:       "Dmytro",
+		PlayerName:       "Dmytro yak muk",
 		Quality:          "bronze",
 		PictureType:      1,
 		Height:           178.8,
@@ -231,18 +232,14 @@ func TestCards(t *testing.T) {
 				{
 					Key:    "player_name",
 					Action: "LIKE",
-					Value:  "Dmytro",
+					Value:  "yak",
 				},
 			}
 
 			for _, v := range filters {
-				err := v.ValidateKey()
+				err := consoleserver.ValidateKey(v.Key)
 				assert.NoError(t, err)
-
-				err = v.ValidateAction()
-				assert.NoError(t, err)
-
-				v.ValidateValue()
+				v.Value = consoleserver.ValidateValue(v.Value)
 			}
 
 			allCards, err := repositoryCards.ListWithFilters(ctx, filters)
@@ -271,24 +268,20 @@ func TestCards(t *testing.T) {
 				{
 					Key:    "player_name",
 					Action: "LIKE",
-					Value:  "Dmytro",
+					Value:  "yak",
 				},
 			}
 
 			for _, v := range filters {
-				err := v.ValidateKey()
+				err := consoleserver.ValidateKey(v.Key)
 				assert.NoError(t, err)
-
-				err = v.ValidateAction()
-				assert.NoError(t, err)
-
-				v.Value = v.ValidateValue()
+				v.Value = consoleserver.ValidateValue(v.Value)
 			}
 
 			queryString, values := database.BuildWhereString(filters)
 
-			assert.Equal(t, queryString, ` WHERE "tactics" = $1 AND "physique" > $2 AND "physique" <= $3 AND "player_name" LIKE $4`)
-			assert.Equal(t, values, []interface{}{"1", "1", "20", "Dmytro"})
+			assert.Equal(t, queryString, ` WHERE (tactics = $1 AND physique > $2 AND physique <= $3) AND (player_name LIKE $4 OR player_name LIKE $5 OR player_name LIKE $6 OR player_name LIKE $7)`)
+			assert.Equal(t, values, []interface{}{"1", "1", "20", "yak", "yak %", "% yak", "% yak %"})
 		})
 
 		t.Run("delete", func(t *testing.T) {
