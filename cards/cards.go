@@ -5,8 +5,6 @@ package cards
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -152,52 +150,9 @@ const (
 	DominantFootRight DominantFoot = "right"
 )
 
-// Filter entitty for using filters.
+// Filter entitty for using filter cards.
 type Filter struct {
 	Key    string
 	Action string
 	Value  string
-}
-
-// Keys defines the list of possible card key filters.
-var Keys = []string{
-	"dominant_foot",
-	"tactics",
-	"physique",
-	"player_name",
-}
-
-// Actions defines the list of possible card action filters.
-var Actions = []string{
-	"=",
-	"<",
-	">",
-	"<=",
-	">=",
-	"LIKE",
-}
-
-// ValidateKey checks the validity of the key filter.
-func (f Filter) ValidateKey() error {
-	for _, v := range Keys {
-		if f.Key == v {
-			return nil
-		}
-	}
-	return fmt.Errorf("this key does not exist")
-}
-
-// ValidateAction checks the validity of the action filter.
-func (f Filter) ValidateAction() error {
-	for _, v := range Actions {
-		if f.Action == v {
-			return nil
-		}
-	}
-	return fmt.Errorf("this action does not exist")
-}
-
-// ValidateValue returns a copy of the string without of invalid UTF-8 bytes.
-func (f Filter) ValidateValue() string {
-	return strings.ToValidUTF8(f.Value, "")
 }
