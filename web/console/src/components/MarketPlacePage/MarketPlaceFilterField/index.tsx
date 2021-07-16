@@ -22,9 +22,9 @@ import { useState } from 'react';
 import './index.scss';
 
 export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) => {
-    let [searchData, setSearchData] = useState('');
+    const [searchData, setSearchData] = useState('');
 
-    let handleSerchChange = (event: any) => {
+    const handleSerchChange = (event: any) => {
         setSearchData(event.target.value);
     };
 
@@ -102,7 +102,7 @@ export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) =
                         />
                         <input
                             value={searchData}
-                            placeholder={"Search"}
+                            placeholder="Search"
                             className="marketplace-filter__list__item__search"
                             onChange={handleSerchChange}
                         />
