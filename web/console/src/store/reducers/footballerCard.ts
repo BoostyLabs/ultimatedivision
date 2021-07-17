@@ -3,34 +3,34 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
+import confirmIcon from '../../img/MarketPlacePage/MyCard/ok.png';
 import playerFace from '../../img/MarketPlacePage/marketPlaceCardsGroup/player.png';
+import priceGoldIcon from '../../img/MarketPlacePage/MyCard/goldPrice.png';
 import priceIcon
     from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.png';
-import priceGoldIcon from '../../img/MarketPlacePage/MyCard/goldPrice.png';
-import confirmIcon from '../../img/MarketPlacePage/MyCard/ok.png';
 
-import star from '../../img/FootballerCardPage/star.png';
 import checked from '../../img/FootballerCardPage/checked.png';
+import star from '../../img/FootballerCardPage/star.png';
 
-import { CardMainInfo, CardStats } from '../../types/fotballerCard';
-import { CardStatsField } from '../../types/fotballerCard';
-import { CardInfoField } from '../../types/fotballerCard';
-import { CardPrice } from "../../types/fotballerCard";
-import { CardPriceField } from '../../types/fotballerCard';
-import { CardPriceId } from '../../types/fotballerCard';
-import { CardPricePRP } from '../../types/fotballerCard';
-import { Diagram } from '../../types/fotballerCard';
+import {
+    CardInfoField, CardMainInfo, CardPrice, CardPriceField,
+    CardPriceId, CardPricePRP, CardStats, CardStatsField, Diagram,
+} from '../../types/fotballerCard';
 
+/* eslint-disable */
+
+/** Card base implementation */
 export class Card {
-    constructor(private bgType: number ) { }
+    /** constructor has private bgType for test */
+    constructor(private bgType: number) { }
     mainInfo = new CardMainInfo(
         'Ronalculus',
         1000000,
         playerFace,
         priceIcon,
-        this.bgType,
         priceGoldIcon,
         confirmIcon,
+        this.bgType,
     )
     overalInfo = [
         new CardInfoField('name', 'Albert Ronalculus'),
@@ -121,8 +121,8 @@ export class Card {
         new Diagram('6', 'in game stats', 100, 800, 688),
     ]
 }
-
-function cardList (count: number) {
+/** create list of player cards (implementation for test)*/
+function cardList(count: number) {
     let list: Card[] = [];
     while (count > 0) {
         list.push(new Card(0), new Card(1), new Card(2), new Card(3));

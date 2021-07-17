@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"net"
+	"ultimatedivision/users/userauth"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -15,6 +16,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver"
 	"ultimatedivision/cards"
+	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
@@ -33,6 +35,9 @@ type DB interface {
 	// Cards provides access to cards db.
 	Cards() cards.DB
 
+	// Clubs provides access to clubs db.
+	Clubs() clubs.DB
+
 	// Close closes underlying db connection.
 	Close() error
 
@@ -45,6 +50,13 @@ type Config struct {
 	Admins struct {
 		Server adminserver.Config `json:"server"`
 		Auth   struct {
+			TokenAuthSecret string `json:"tokenAuthSecret"`
+		} `json:"auth"`
+	}
+
+	Users struct {
+		// Server userserver.Config `json:"server"`
+		Auth struct {
 			TokenAuthSecret string `json:"tokenAuthSecret"`
 		} `json:"auth"`
 	}
@@ -69,11 +81,17 @@ type Peer struct {
 	// exposes users related logic.
 	Users struct {
 		Service *users.Service
+		Auth    *userauth.Service
 	}
 
 	// exposes cards related logic.
 	Cards struct {
 		Service *cards.Service
+	}
+
+	// exposes clubs related logic
+	Clubs struct {
+		Service *clubs.Service
 	}
 
 	// Admin web server server with web UI.
@@ -100,6 +118,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.Users.Service = users.NewService(
 			peer.Database.Users(),
 		)
+		peer.Users.Auth = userauth.NewService(
+			peer.Database.Users(),
+			auth.TokenSigner{
+				Secret: []byte(config.Users.Auth.TokenAuthSecret),
+			},
+		)
 	}
 
 	{ // admins setup
@@ -117,6 +141,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // cards setup
 		peer.Cards.Service = cards.NewService(
 			peer.Database.Cards(),
+		)
+	}
+
+	{ // clubs setup
+		peer.Clubs.Service = clubs.NewService(
+			peer.Database.Clubs(),
 		)
 	}
 

@@ -1,13 +1,13 @@
-import { createStore, combineReducers } from 'redux';
+import { combineReducers, createStore } from 'redux';
 
 import { cardReducer } from './reducers/footballerCard';
 import { fieldReducer } from './reducers/footballField';
 
 const reducer = combineReducers({
     cardReducer,
-    fieldReducer
+    fieldReducer,
 });
 
 export const store = createStore(reducer);
 
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>;
