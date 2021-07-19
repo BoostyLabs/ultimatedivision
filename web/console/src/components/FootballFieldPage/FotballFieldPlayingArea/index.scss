@@ -9,11 +9,11 @@
     background: url('../../../img/FootballFieldPage/football_field.jpg');
     background-size: cover;
     background-position: center;
+    cursor: default;
     &__wrapper {
         display: flex;
         align-items: flex-start;
         justify-content: space-around;
-        // border: 10px solid red;
     }
 
     &__4-4-2,

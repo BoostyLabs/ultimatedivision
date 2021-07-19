@@ -44,17 +44,17 @@ export const choseCardPosition = (index: number) => ({
     action: index,
 });
 
-export const setDragStart = (index: number) => ({
+export const setDragStart = (index?: number) => ({
     type: DRAG_START,
     action: index,
 });
 
-export const setDragTarget = (index: number) => ({
+export const setDragTarget = (index?: number) => ({
     type: DRAG_TARGET,
     action: index,
 });
 
-export const exchangeCards = (prevPosition: number, currentPosition: number) => ({
+export const exchangeCards = (prevPosition?: number, currentPosition?: number) => ({
     type: EXCHANGE_CARDS,
     action: [prevPosition, currentPosition],
 });

@@ -36,7 +36,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
             const position = playingArea.getBoundingClientRect();
             handleOffset({ x: position.x + 60, y: position.y + 100 });
         }
-    })
+    },[])
     const useMousePosition = (ev: any) => {
         setMousePosition({ x: ev.pageX, y: ev.pageY });
     };
@@ -51,10 +51,10 @@ export const FootballFieldPlayingArea: React.FC = () => {
     function onMouseUp(e: any, index: number = 0): void {
         e.stopPropagation()
 
-        if (isDragging) {
+        if (isDragging && dragStartIndex) {
             dispatch(setDragTarget(index));
             dispatch(exchangeCards(dragStartIndex, fieldSetup.options.dragTarget));
-            dispatch(setDragStart(-1));
+            dispatch(setDragStart());
             handleDrag(false);
         }
     }
@@ -62,7 +62,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
     /** when we release card not on target it just brings it on start position*/
     function mouseUpOnArea(e: any) {
         e.stopPropagation();
-        dispatch(setDragStart(-1));
+        dispatch(setDragStart());
     }
 
 
@@ -70,7 +70,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
     function removeFromArea() {
         if (isDragging) {
             dispatch(removeCard(dragStartIndex));
-            dispatch(setDragStart(-1));
+            dispatch(setDragStart());
             handleDrag(false);
         }
     }

@@ -40,7 +40,8 @@ See LICENSE for copying information.
         width: 60%;
     }
     &__list {
-        margin: 0 20px;
+        margin: 0 auto;
+        width: 70%;
         margin-top: 96px;
         display: grid;
         grid-column-gap: 0px;
@@ -48,6 +49,7 @@ See LICENSE for copying information.
         justify-items: center;
         list-style: none;
         &__item {
+            width: 25px;
             color: rgb(87, 86, 86);
             z-index: 2;
             font-size: 11px;
