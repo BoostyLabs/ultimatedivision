@@ -3,6 +3,8 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
+import { useState } from 'react';
+
 import rectangle
     from '../../../img/MarketPlacePage/marketPlaceFilterField/rectangle.svg';
 import search
@@ -17,7 +19,7 @@ import stars
     from '../../../img/MarketPlacePage/marketPlaceFilterField/stars.svg';
 import parametres
     from '../../../img/MarketPlacePage/marketPlaceFilterField/parametres.svg';
-import { useState } from 'react';
+
 
 import './index.scss';
 
