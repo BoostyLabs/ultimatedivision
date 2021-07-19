@@ -245,15 +245,18 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
 func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filter) ([]cards.Card, error) {
-	query :=
+	whereClause, valuesString := BuildWhereClause(filters)
+	valuesInterface := ConvertStringSliceToInterfaceSlice(valuesString)
+	query := fmt.Sprintf("%s %s",
 		`SELECT 
-            ` + allFields + ` 
+            `+allFields+` 
         FROM 
             cards
-        `
-	whereClause, values := BuildWhereString(filters)
+        `,
+		whereClause,
+	)
 
-	rows, err := cardsDB.conn.QueryContext(ctx, query+whereClause, values...)
+	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
 		return nil, ErrCard.Wrap(err)
 	}
@@ -292,43 +295,64 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 	return data, nil
 }
 
-// BuildWhereString build string for WHERE.
-func BuildWhereString(filters []cards.Filter) (string, []interface{}) {
+// ConvertStringSliceToInterfaceSlice converts slice string to slice interface.
+func ConvertStringSliceToInterfaceSlice(stringSlice []string) []interface{} {
+	interfaceSlice := make([]interface{}, 0, len(stringSlice))
+	for _, v := range stringSlice {
+		interfaceSlice = append(interfaceSlice, v)
+	}
+	return interfaceSlice
+}
+
+// BuildWhereClause build string for WHERE.
+func BuildWhereClause(filters []cards.Filter) (string, []string) {
 	var query string
-	var values []interface{}
-	var valuesAND []interface{}
-	var valuesOR []interface{}
+	var values []string
+	var valuesAND []string
+	var valuesOR []string
 	var whereAND []string
 	var whereOR []string
 
 	for _, v := range filters {
-		if v.Action != "LIKE" {
-			// AND
-			valuesAND = append(valuesAND, v.Value)
-			whereAND = append(whereAND, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND))))
+		if _, found := v[cards.Tactics]; found == true {
+			valuesAND = append(valuesAND, v[cards.Tactics])
+			whereAND = append(whereAND, fmt.Sprintf(`%s %s %s`, cards.Tactics, EQ, "$"+strconv.Itoa(len(valuesAND))))
 		}
 
+		if _, found := v[cards.MinPhysique]; found == true {
+			valuesAND = append(valuesAND, v[cards.MinPhysique])
+			whereAND = append(whereAND, fmt.Sprintf(`%s %s %s`, cards.Physique, GTE, "$"+strconv.Itoa(len(valuesAND))))
+		}
+
+		if _, found := v[cards.MaxPhysique]; found == true {
+			valuesAND = append(valuesAND, v[cards.MaxPhysique])
+			whereAND = append(whereAND, fmt.Sprintf(`%s %s %s`, cards.Physique, LTE, "$"+strconv.Itoa(len(valuesAND))))
+		}
 	}
-	query = (" WHERE (" + strings.Join(whereAND, " AND ") + ")")
-	values = append(values, valuesAND...)
+	if len(whereAND) > 0 {
+		query = (" WHERE " + strings.Join(whereAND, " AND "))
+		values = append(values, valuesAND...)
+	}
 
 	for _, v := range filters {
-		if v.Action == "LIKE" {
-			// OR
-			valuesOR = append(valuesOR, v.Value)
-			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
-			valuesOR = append(valuesOR, v.Value+" %")
-			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
-			valuesOR = append(valuesOR, "% "+v.Value)
-			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
-			valuesOR = append(valuesOR, "% "+v.Value+" %")
-			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, v.Key, v.Action, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
+		if _, found := v[cards.PlayerName]; found == true {
+			valuesOR = append(valuesOR, v[cards.PlayerName])
+			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, cards.PlayerName, LIKE, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
+			valuesOR = append(valuesOR, v[cards.PlayerName]+" %")
+			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, cards.PlayerName, LIKE, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
+			valuesOR = append(valuesOR, "% "+v[cards.PlayerName])
+			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, cards.PlayerName, LIKE, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
+			valuesOR = append(valuesOR, "% "+v[cards.PlayerName]+" %")
+			whereOR = append(whereOR, fmt.Sprintf(`%s %s %s`, cards.PlayerName, LIKE, "$"+strconv.Itoa(len(valuesAND)+len(valuesOR))))
 		}
-
 	}
-
-	query += (" AND (" + strings.Join(whereOR, " OR ") + ")")
-	values = append(values, valuesOR...)
+	if len(whereAND) > 0 && len(whereOR) > 0 {
+		query += (" AND (" + strings.Join(whereOR, " OR ") + ")")
+		values = append(values, valuesOR...)
+	} else if len(whereOR) > 0 {
+		query += (" WHERE (" + strings.Join(whereOR, " OR ") + ")")
+		values = append(values, valuesOR...)
+	}
 
 	return query, values
 }
