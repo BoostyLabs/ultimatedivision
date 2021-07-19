@@ -251,9 +251,9 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
         FROM 
             cards
         `
-	queryWhere, values := BuildWhereString(filters)
+	whereClause, values := BuildWhereString(filters)
 
-	rows, err := cardsDB.conn.QueryContext(ctx, query+queryWhere, values...)
+	rows, err := cardsDB.conn.QueryContext(ctx, query+whereClause, values...)
 	if err != nil {
 		return nil, ErrCard.Wrap(err)
 	}
