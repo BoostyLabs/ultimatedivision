@@ -13,6 +13,9 @@ import (
 // ErrNoCard indicated that card does not exist.
 var ErrNoCard = errs.Class("card does not exist")
 
+// ErrValidFilter indicated that filter does not valid.
+var ErrValidFilter = errs.Class("filter does not valid")
+
 // DB is exposing access to cards db.
 //
 // architecture: DB
@@ -151,16 +154,20 @@ const (
 )
 
 // Filter entity for using filter cards.
-type Filter struct {
-	Key    string
-	Action string
-	Value  string
-}
+type Filter map[Key]string
 
-// Keys defines the list of possible card key filters.
-var Keys = []string{
-	"dominant_foot",
-	"tactics",
-	"physique",
-	"player_name",
-}
+// Key defines the list of possible filter keys.
+type Key string
+
+const (
+	// Tactics indicates an assessment of the card's tactics.
+	Tactics Key = "tactics"
+	// MinPhysique indicates an assessment of the card's minimum physique.
+	MinPhysique Key = "min_physique"
+	// MaxPhysique indicates an assessment of the card's maximum physique.
+	MaxPhysique Key = "max_physique"
+	// Physique indicates an assessment of the card's physique.
+	Physique Key = "physique"
+	// PlayerName indicates the name of the card player name.
+	PlayerName Key = "player_name"
+)
