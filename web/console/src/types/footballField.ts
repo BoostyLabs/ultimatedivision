@@ -10,8 +10,8 @@ export class FootballField {
         captain: '',
         tactics: '',
         chosedCard: 0,
-        dragStart: -1,
-        dragTarget: -1,
+        dragStart: undefined,
+        dragTarget: undefined,
     };
     /** football team implementation */
     public cardsList = [
