@@ -14,7 +14,6 @@ import (
 
 	"ultimatedivision"
 	"ultimatedivision/cards"
-	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/database"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/users"
@@ -215,31 +214,22 @@ func TestCards(t *testing.T) {
 		t.Run("list with filters", func(t *testing.T) {
 			filters := []cards.Filter{
 				{
-					Key:    "tactics",
-					Action: "=",
-					Value:  "1",
+					cards.Tactics: "1",
 				},
 				{
-					Key:    "physique",
-					Action: ">",
-					Value:  "1",
+					cards.MinPhysique: "1",
 				},
 				{
-					Key:    "physique",
-					Action: "<=",
-					Value:  "20",
+					cards.MaxPhysique: "20",
 				},
 				{
-					Key:    "player_name",
-					Action: "LIKE",
-					Value:  "yak",
+					cards.PlayerName: "yak",
 				},
 			}
 
 			for _, v := range filters {
-				err := consoleserver.ValidateKey(v.Key)
+				err := v.Validate()
 				assert.NoError(t, err)
-				v.Value = consoleserver.ValidateValue(v.Value)
 			}
 
 			allCards, err := repositoryCards.ListWithFilters(ctx, filters)
@@ -251,37 +241,28 @@ func TestCards(t *testing.T) {
 		t.Run("build where string", func(t *testing.T) {
 			filters := []cards.Filter{
 				{
-					Key:    "tactics",
-					Action: "=",
-					Value:  "1",
+					cards.Tactics: "1",
 				},
 				{
-					Key:    "physique",
-					Action: ">",
-					Value:  "1",
+					cards.MinPhysique: "1",
 				},
 				{
-					Key:    "physique",
-					Action: "<=",
-					Value:  "20",
+					cards.MaxPhysique: "20",
 				},
 				{
-					Key:    "player_name",
-					Action: "LIKE",
-					Value:  "yak",
+					cards.PlayerName: "yak",
 				},
 			}
 
 			for _, v := range filters {
-				err := consoleserver.ValidateKey(v.Key)
+				err := v.Validate()
 				assert.NoError(t, err)
-				v.Value = consoleserver.ValidateValue(v.Value)
 			}
 
-			queryString, values := database.BuildWhereString(filters)
+			queryString, values := database.BuildWhereClause(filters)
 
-			assert.Equal(t, queryString, ` WHERE (tactics = $1 AND physique > $2 AND physique <= $3) AND (player_name LIKE $4 OR player_name LIKE $5 OR player_name LIKE $6 OR player_name LIKE $7)`)
-			assert.Equal(t, values, []interface{}{"1", "1", "20", "yak", "yak %", "% yak", "% yak %"})
+			assert.Equal(t, queryString, ` WHERE tactics = $1 AND physique >= $2 AND physique <= $3 AND (player_name LIKE $4 OR player_name LIKE $5 OR player_name LIKE $6 OR player_name LIKE $7)`)
+			assert.Equal(t, values, []string{"1", "1", "20", "yak", "yak %", "% yak", "% yak %"})
 		})
 
 		t.Run("delete", func(t *testing.T) {
