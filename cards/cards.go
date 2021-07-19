@@ -23,7 +23,7 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Card, error)
 	// List returns all cards from the data base.
 	List(ctx context.Context) ([]Card, error)
-	// List returns all cards from the data base.
+	// ListWithFilters returns all cards from the data base with filters.
 	ListWithFilters(ctx context.Context, filters []Filter) ([]Card, error)
 	// Delete deletes card record in the data base.
 	Delete(ctx context.Context, id uuid.UUID) error
@@ -150,9 +150,17 @@ const (
 	DominantFootRight DominantFoot = "right"
 )
 
-// Filter entitty for using filter cards.
+// Filter entity for using filter cards.
 type Filter struct {
 	Key    string
 	Action string
 	Value  string
+}
+
+// Keys defines the list of possible card key filters.
+var Keys = []string{
+	"dominant_foot",
+	"tactics",
+	"physique",
+	"player_name",
 }
