@@ -7,15 +7,18 @@ import (
 	"context"
 	"errors"
 	"net"
-	"ultimatedivision/admin/adminauth"
-	"ultimatedivision/internal/auth"
+	"ultimatedivision/users/userauth"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver"
 	"ultimatedivision/cards"
+	"ultimatedivision/clubs"
+	"ultimatedivision/console/consoleserver"
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
 )
@@ -24,13 +27,16 @@ import (
 //
 // architecture: Master Database.
 type DB interface {
-	//Admins provides access to admins db.
+	// Admins provides access to admins db.
 	Admins() admins.DB
 	// Users provides access to users db.
 	Users() users.DB
 
 	// Cards provides access to cards db.
 	Cards() cards.DB
+
+	// Clubs provides access to clubs db.
+	Clubs() clubs.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -46,6 +52,17 @@ type Config struct {
 		Auth   struct {
 			TokenAuthSecret string `json:"tokenAuthSecret"`
 		} `json:"auth"`
+	}
+
+	Users struct {
+		// Server userserver.Config `json:"server"`
+		Auth struct {
+			TokenAuthSecret string `json:"tokenAuthSecret"`
+		} `json:"auth"`
+	}
+
+	Consoles struct {
+		Server consoleserver.Config `json:"server"`
 	}
 }
 
@@ -64,6 +81,7 @@ type Peer struct {
 	// exposes users related logic.
 	Users struct {
 		Service *users.Service
+		Auth    *userauth.Service
 	}
 
 	// exposes cards related logic.
@@ -71,10 +89,21 @@ type Peer struct {
 		Service *cards.Service
 	}
 
+	// exposes clubs related logic
+	Clubs struct {
+		Service *clubs.Service
+	}
+
 	// Admin web server server with web UI.
 	Admin struct {
 		Listener net.Listener
 		Endpoint *adminserver.Server
+	}
+
+	// Console web server server with web UI.
+	Console struct {
+		Listener net.Listener
+		Endpoint *consoleserver.Server
 	}
 }
 
@@ -88,6 +117,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // users setup
 		peer.Users.Service = users.NewService(
 			peer.Database.Users(),
+		)
+		peer.Users.Auth = userauth.NewService(
+			peer.Database.Users(),
+			auth.TokenSigner{
+				Secret: []byte(config.Users.Auth.TokenAuthSecret),
+			},
 		)
 	}
 
@@ -106,6 +141,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // cards setup
 		peer.Cards.Service = cards.NewService(
 			peer.Database.Cards(),
+		)
+	}
+
+	{ // clubs setup
+		peer.Clubs.Service = clubs.NewService(
+			peer.Database.Clubs(),
 		)
 	}
 
@@ -129,6 +170,22 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		}
 	}
 
+	{ // console setup
+		peer.Console.Listener, err = net.Listen("tcp", config.Consoles.Server.Address)
+		if err != nil {
+			return nil, err
+		}
+
+		peer.Console.Endpoint, err = consoleserver.NewServer(
+			config.Consoles.Server,
+			logger,
+			peer.Console.Listener,
+		)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return peer, nil
 }
 
@@ -140,9 +197,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Admin.Endpoint.Run(ctx))
 	})
-	// group.Go(func() error {
-	//     return ignoreCancel(peer.Console.Endpoint.Run(ctx))
-	// })
+	group.Go(func() error {
+		return ignoreCancel(peer.Console.Endpoint.Run(ctx))
+	})
 
 	return group.Wait()
 }
@@ -152,7 +209,7 @@ func (peer *Peer) Close() error {
 	var errlist errs.Group
 
 	errlist.Add(peer.Admin.Endpoint.Close())
-	// errlist.Add(peer.Console.Endpoint.Close())
+	errlist.Add(peer.Console.Endpoint.Close())
 
 	return errlist.Err()
 }
