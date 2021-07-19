@@ -13,6 +13,11 @@ import (
 	"ultimatedivision/internal/logger"
 )
 
+const (
+	// PrefixMinMaxValues the number of first characters for min or max values.
+	PrefixMinMaxValues = 4
+)
+
 var (
 	// ErrCards is an internal error type for cards controller.
 	ErrCards = errs.Class("cards controller error")
@@ -53,23 +58,23 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 				Action: "LIKE",
 				Value:  ValidateValue(v[0]),
 			}
-		} else if k[:4] == "min_" {
-			if err := ValidateKey(k[4:]); err != nil {
+		} else if k[:PrefixMinMaxValues] == "min_" {
+			if err := ValidateKey(k[PrefixMinMaxValues:]); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
 			filter = cards.Filter{
-				Key:    k[4:],
+				Key:    k[PrefixMinMaxValues:],
 				Action: ">=",
 				Value:  ValidateValue(v[0]),
 			}
-		} else if k[:4] == "max_" {
-			if err := ValidateKey(k[4:]); err != nil {
+		} else if k[:PrefixMinMaxValues] == "max_" {
+			if err := ValidateKey(k[PrefixMinMaxValues:]); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
 			filter = cards.Filter{
-				Key:    k[4:],
+				Key:    k[PrefixMinMaxValues:],
 				Action: "<=",
 				Value:  ValidateValue(v[0]),
 			}

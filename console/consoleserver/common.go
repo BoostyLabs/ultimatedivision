@@ -6,24 +6,18 @@ package consoleserver
 import (
 	"fmt"
 	"strings"
+
+	"ultimatedivision/cards"
 )
 
-// ValidateKey checks the validity of the key filter.
+// ValidateKey checks the existence and validity of the key from the url request.
 func ValidateKey(key string) error {
-	for _, v := range Keys {
+	for _, v := range cards.Keys {
 		if key == v {
 			return nil
 		}
 	}
 	return fmt.Errorf(key + " key does not exist")
-}
-
-// Keys defines the list of possible card key filters.
-var Keys = []string{
-	"dominant_foot",
-	"tactics",
-	"physique",
-	"player_name",
 }
 
 // ValidateValue returns a copy of the string without of invalid UTF-8 bytes.
