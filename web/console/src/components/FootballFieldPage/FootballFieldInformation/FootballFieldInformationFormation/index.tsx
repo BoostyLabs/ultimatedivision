@@ -10,7 +10,7 @@ import { FotballFieldInformationLine } from '../../../../types/fotballerCard';
 import { handleFormations } from '../../../../store/reducers/footballField';
 import { ListStyle, TriangleStyle } from '../../../../utils/footballField';
 
-import triangle from '../../../../img/FootballFieldPage/triangle.png';
+import triangle from '../../../../img/FootballFieldPage/triangle.svg';
 
 import './index.scss';
 

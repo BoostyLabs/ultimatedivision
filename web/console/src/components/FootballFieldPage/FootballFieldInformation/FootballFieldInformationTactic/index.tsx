@@ -6,7 +6,7 @@ See LICENSE for copying information.
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import triangle from '../../../../img/FootballFieldPage/triangle.png';
+import triangle from '../../../../img/FootballFieldPage/triangle.svg';
 
 import { FotballFieldInformationLine } from '../../../../types/fotballerCard';
 import { handleTactics } from '../../../../store/reducers/footballField';

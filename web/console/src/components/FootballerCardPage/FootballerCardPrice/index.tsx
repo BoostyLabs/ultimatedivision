@@ -8,7 +8,7 @@ import { Doughnut } from 'react-chartjs-2';
 
 import { RootState } from '../../../store';
 
-import currency from '../../../img/FootballerCardPage/currency.png';
+import currency from '../../../img/FootballerCardPage/currency.svg';
 
 import './index.scss';
 
@@ -25,7 +25,7 @@ export const FootballerCardPrice: React.FC = () => {
             <div className="footballer-card-price__wrapper">
                 <div className="footballer-card-price__diagram">
                     <p className="footballer-card-price__diagram-value">
-                        PRP: <span className="footballer-card-price__diagram-value-quantity">{prpValue}%</span>
+                        PRP: <span>{prpValue}%</span>
                     </p>
                     <Doughnut
                         type={Doughnut}

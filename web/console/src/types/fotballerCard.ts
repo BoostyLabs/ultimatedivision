@@ -10,11 +10,11 @@ import silver from '../img/MarketPlacePage/marketPlaceCardsGroup/silver2.png';
 import wood from '../img/MarketPlacePage/marketPlaceCardsGroup/wood2.png';
 
 import currentBid
-    from '../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/bid.png';
+    from '../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/bid.svg';
 import minimumPrice
-    from '../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/minimum.png';
+    from '../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/minimum.svg';
 import purchased
-    from '../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/purchased.png';
+    from '../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/purchased.svg';
 
 /** player stats implementation */
 export class CardStats {

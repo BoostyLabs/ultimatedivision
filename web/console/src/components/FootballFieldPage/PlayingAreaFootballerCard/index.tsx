@@ -19,7 +19,6 @@ import './index.scss';
 
 export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card, index, place }) => {
     const dispatch = useDispatch();
-    const fieldSetup = useSelector((state: RootState) => state.fieldReducer);
     const [visibility, changeVisibility] = useState(false);
     const style = new FootballCardStyle(visibility).style;
     /** remove player card implementation */
@@ -27,11 +26,10 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; p
         e.preventDefault();
         dispatch(removeCard(index));
     }
-    /* eslint-disable */
 
     return (
         <div
-            onClick={place ? () => changeVisibility(prev => !prev) : () => dispatch(addCard(card, fieldSetup.options.chosedCard))}
+            onClick={() => changeVisibility(prev => !prev)}
             className="football-field-card"
             draggable={true}
         >
