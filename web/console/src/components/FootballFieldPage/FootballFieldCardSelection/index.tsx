@@ -11,6 +11,7 @@ import { PlayerCard } from '../../PlayerCard';
 
 
 import './index.scss';
+import { Paginator } from '../../Paginator';
 
 export const FootballFieldCardSelection = () => {
     const cardList = useSelector((state: RootState) => state.cardReducer);
@@ -33,6 +34,7 @@ export const FootballFieldCardSelection = () => {
                     </a>,
                 )}
             </div>
+                <Paginator itemCount={cardList.length} />
         </div>
     );
 };

@@ -49,14 +49,15 @@ export const FootballFieldPlayingArea: React.FC = () => {
 
     /** getting second drag index  and exchanging with first index*/
     function onMouseUp(e: any, index: number = 0): void {
-        e.stopPropagation()
+        e.stopPropagation();
 
         if (isDragging && dragStartIndex) {
             dispatch(setDragTarget(index));
             dispatch(exchangeCards(dragStartIndex, fieldSetup.options.dragTarget));
-            dispatch(setDragStart());
-            handleDrag(false);
         }
+        dispatch(setDragTarget())
+        dispatch(setDragStart());
+        handleDrag(false);
     }
 
     /** when we release card not on target it just brings it on start position*/
@@ -107,6 +108,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 onClick={(e) => dispatch(choseCardPosition(index))}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
+                                draggable={true}
                             >
                                 {
                                     data
