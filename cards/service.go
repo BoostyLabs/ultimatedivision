@@ -5,6 +5,9 @@ package cards
 
 import (
 	"context"
+	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -105,10 +108,57 @@ func (service *Service) List(ctx context.Context) ([]Card, error) {
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
 func (service *Service) ListWithFilters(ctx context.Context, filters []Filter) ([]Card, error) {
+	for _, v := range filters {
+		err := v.Validate()
+		if err != nil {
+			return nil, err
+		}
+	}
 	return service.cards.ListWithFilters(ctx, filters)
 }
 
 // Delete destroy card in DB.
 func (service *Service) Delete(ctx context.Context, cardID uuid.UUID) error {
 	return service.cards.Delete(ctx, cardID)
+}
+
+// Validate check of valid UTF-8 bytes and type.
+func (f Filter) Validate() error {
+	if _, found := f[Tactics]; found == true {
+		strings.ToValidUTF8(f[Tactics], "")
+
+		_, err := strconv.Atoi(f[Tactics])
+		if err != nil {
+			return ErrValidFilter.Wrap(fmt.Errorf("%s %s", f[Tactics], err))
+		}
+	}
+
+	if _, found := f[MinPhysique]; found == true {
+		strings.ToValidUTF8(f[MinPhysique], "")
+
+		_, err := strconv.Atoi(f[MinPhysique])
+		if err != nil {
+			return ErrValidFilter.Wrap(fmt.Errorf("%s %s", f[MinPhysique], err))
+		}
+	}
+
+	if _, found := f[MaxPhysique]; found == true {
+		strings.ToValidUTF8(f[MaxPhysique], "")
+
+		_, err := strconv.Atoi(f[MaxPhysique])
+		if err != nil {
+			return ErrValidFilter.Wrap(fmt.Errorf("%s %s", f[MaxPhysique], err))
+		}
+	}
+
+	if _, found := f[PlayerName]; found == true {
+		strings.ToValidUTF8(f[PlayerName], "")
+
+		_, err := strconv.Atoi(f[PlayerName])
+		if err == nil {
+			return ErrValidFilter.Wrap(fmt.Errorf("%s %s", f[PlayerName], err))
+		}
+	}
+
+	return nil
 }
