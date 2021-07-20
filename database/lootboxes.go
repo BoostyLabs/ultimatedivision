@@ -28,7 +28,7 @@ func (lootboxesDB lootboxesDB) Create(ctx context.Context, lootBox lootboxes.Use
 	query := `INSERT INTO user_lootbox(id,user_id, lootbox_id)
      VALUES($1,$2,$3)`
 
-	_, err := lootboxesDB.conn.QueryContext(ctx,query, lootBox.ID, lootBox.UserID, lootBox.LootBoxID)
+	_, err := lootboxesDB.conn.QueryContext(ctx, query, lootBox.ID, lootBox.UserID, lootBox.LootBoxID)
 
 	return ErrLootBoxes.Wrap(err)
 }
@@ -87,7 +87,7 @@ func (lootboxesDB lootboxesDB) GetLoot(ctx context.Context, lootBoxID uuid.UUID)
       FROM user_loot
       WHERE id = $1`
 
-	rows,err := lootboxesDB.conn.QueryContext(ctx, query, lootBoxID)
+	rows, err := lootboxesDB.conn.QueryContext(ctx, query, lootBoxID)
 	if err != nil {
 		return nil, ErrLootBoxes.Wrap(err)
 	}
@@ -98,12 +98,12 @@ func (lootboxesDB lootboxesDB) GetLoot(ctx context.Context, lootBoxID uuid.UUID)
 
 	var data []lootboxes.UserLoot
 
-	for rows.Next(){
+	for rows.Next() {
 		var userLoot lootboxes.UserLoot
 
 		err = rows.Scan(&userLoot.ID, &userLoot.CardID)
 		if err != nil {
-			return nil , ErrLootBoxes.Wrap(err)
+			return nil, ErrLootBoxes.Wrap(err)
 		}
 
 		data = append(data, userLoot)

@@ -147,7 +147,7 @@ func TestLootBox(t *testing.T) {
 		})
 
 		t.Run("Get id of all cards form loot box", func(t *testing.T) {
-			id,err := repositoryLootBoxes.GetLoot(ctx, userLootBox.ID)
+			id, err := repositoryLootBoxes.GetLoot(ctx, userLootBox.ID)
 			require.NoError(t, err)
 
 			assert.Equal(t, id, []uuid.UUID{card1.ID})
