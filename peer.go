@@ -7,6 +7,8 @@ import (
 	"context"
 	"errors"
 	"net"
+	"ultimatedivision/lootboxes"
+	"ultimatedivision/users/userauth"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -19,7 +21,6 @@ import (
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
 )
 
@@ -38,7 +39,7 @@ type DB interface {
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
 
-	// LootBoxes provides access to lootboxes db.
+	// LootBoxes provides access to clubs db.
 	LootBoxes() lootboxes.DB
 
 	// Close closes underlying db connection.
@@ -53,6 +54,13 @@ type Config struct {
 	Admins struct {
 		Server adminserver.Config `json:"server"`
 		Auth   struct {
+			TokenAuthSecret string `json:"tokenAuthSecret"`
+		} `json:"auth"`
+	}
+
+	Users struct {
+		// Server userserver.Config `json:"server"`
+		Auth struct {
 			TokenAuthSecret string `json:"tokenAuthSecret"`
 		} `json:"auth"`
 	}
@@ -77,6 +85,7 @@ type Peer struct {
 	// exposes users related logic.
 	Users struct {
 		Service *users.Service
+		Auth    *userauth.Service
 	}
 
 	// exposes cards related logic.
@@ -84,13 +93,13 @@ type Peer struct {
 		Service *cards.Service
 	}
 
-	// exposes clubs related logic.
+	// exposes clubs related logic
 	Clubs struct {
 		Service *clubs.Service
 	}
 
-	// exposes clubs related logic.
-	LootBoxes struct {
+	// exposes clubs related logic
+	LoootBoxes struct {
 		Service *lootboxes.Service
 	}
 
@@ -117,6 +126,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // users setup
 		peer.Users.Service = users.NewService(
 			peer.Database.Users(),
+		)
+		peer.Users.Auth = userauth.NewService(
+			peer.Database.Users(),
+			auth.TokenSigner{
+				Secret: []byte(config.Users.Auth.TokenAuthSecret),
+			},
 		)
 	}
 
@@ -145,7 +160,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	}
 
 	{ // lootboxes setup
-		peer.LootBoxes.Service = lootboxes.NewService(
+		peer.LoootBoxes.Service = lootboxes.NewService(
 			peer.Database.LootBoxes(),
 		)
 	}

@@ -7,16 +7,16 @@ import (
 	"context"
 	"testing"
 	"time"
-	"ultimatedivision/cards"
-
-	"ultimatedivision"
-	"ultimatedivision/database/dbtesting"
-	"ultimatedivision/lootboxes"
-	"ultimatedivision/users"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"ultimatedivision"
+	"ultimatedivision/cards"
+	"ultimatedivision/database/dbtesting"
+	"ultimatedivision/lootboxes"
+	"ultimatedivision/users"
 )
 
 func TestLootBox(t *testing.T) {
