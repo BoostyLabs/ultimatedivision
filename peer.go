@@ -7,8 +7,6 @@ import (
 	"context"
 	"errors"
 	"net"
-	"ultimatedivision/lootboxes"
-	"ultimatedivision/users/userauth"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -21,7 +19,9 @@ import (
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
+	"ultimatedivision/users/userauth"
 )
 
 // DB provides access to all databases and database related functionality.
