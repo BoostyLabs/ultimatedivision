@@ -15,6 +15,6 @@ export const FootballerCardIllustrations: React.FC<{card: Card}> = ({ card }) =>
         <div className="footballer-card-illustrations__card">
             <PlayerCard card={card} parentClassName="footballer-card-illustrations__card"/>
         </div>
-        <FootballerCardIllustrationsRadar />
-        <FootballerCardIllustrationsDiagramsArea />
+        <FootballerCardIllustrationsRadar card={card} />
+        <FootballerCardIllustrationsDiagramsArea card={card} />
     </div>;
