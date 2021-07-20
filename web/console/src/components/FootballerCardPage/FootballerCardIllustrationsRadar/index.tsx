@@ -30,7 +30,7 @@ export const FootballerCardIllustrationsRadar: React.FC = () => {
                         line: {
                             borderWidth: 1,
                             borderColor: '#66ff8791',
-                        }
+                        },
                     },
                     animations: {
                         tension: {
