@@ -145,13 +145,13 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         	capitan       BYTEA,
         	PRIMARY KEY(user_id, card_id)
         );
-        CREATE TABLE IF NOT EXISTS user_lootbox(
+        CREATE TABLE IF NOT EXISTS user_lootboxes(
             id         BYTEA PRIMARY KEY                            NOT NULL,
             user_id    BYTEA REFERENCES users(id) ON DELETE CASCADE NOT NULL,
             lootbox_id BYTEA                                        NOT NULL
         );
-		CREATE TABLE IF NOT EXISTS user_loot(
-		    id      BYTEA REFERENCES user_lootbox(id) ON DELETE CASCADE NOT NULL,
+        CREATE TABLE IF NOT EXISTS lootboxes_cards(
+		    id      BYTEA REFERENCES user_lootboxes(id) ON DELETE CASCADE NOT NULL,
 		    card_id BYTEA REFERENCES cards(id)                          NOT NULL,
 		    PRIMARY KEY(id, card_id)
 		);`

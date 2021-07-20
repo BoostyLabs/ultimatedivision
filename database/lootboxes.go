@@ -25,29 +25,29 @@ type lootboxesDB struct {
 
 // Create creates opened lootbox in db.
 func (lootboxesDB lootboxesDB) Create(ctx context.Context, lootBox lootboxes.UserLootBox) error {
-	query := `INSERT INTO user_lootbox(id,user_id, lootbox_id)
-     VALUES($1,$2,$3)`
+	query := `INSERT INTO user_lootboxes(id,user_id, lootbox_id)
+              VALUES($1,$2,$3)`
 
 	_, err := lootboxesDB.conn.QueryContext(ctx, query, lootBox.ID, lootBox.UserID, lootBox.LootBoxID)
 
 	return ErrLootBoxes.Wrap(err)
 }
 
-// CreateLoot inserts cards getting from lootbox.
-func (lootboxesDB lootboxesDB) CreateLoot(ctx context.Context, loot lootboxes.UserLoot) error {
-	query := `INSERT INTO user_loot(id,card_id)
-     VALUES($1,$2)`
+// CreateCards inserts cards getting from lootbox.
+func (lootboxesDB lootboxesDB) CreateCards(ctx context.Context, loot lootboxes.UserLoot) error {
+	query := `INSERT INTO lootboxes_cards(id,card_id)
+              VALUES($1,$2)`
 
 	_, err := lootboxesDB.conn.QueryContext(ctx, query, loot.ID, loot.CardID)
 
 	return ErrLootBoxes.Wrap(err)
 }
 
-// Get returns all id of opened loot boxes.
+// 	// Get returns all ids of opened lootboxes by userID.
 func (lootboxesDB lootboxesDB) Get(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
-	query := `Select id
-      FROM user_lootbox
-     WHERE user_id = $1`
+	query := `SELECT id
+              FROM user_lootboxes
+              WHERE user_id = $1`
 
 	rows, err := lootboxesDB.conn.QueryContext(ctx, query, userID)
 	if err != nil {
@@ -57,63 +57,46 @@ func (lootboxesDB lootboxesDB) Get(ctx context.Context, userID uuid.UUID) ([]uui
 		err = errs.Combine(err, rows.Close())
 	}()
 
-	var data []lootboxes.UserLootBox
-
+	var data []uuid.UUID
 	for rows.Next() {
-		var lootBox lootboxes.UserLootBox
-		err = rows.Scan(&lootBox.ID)
+		var id uuid.UUID
+
+		err = rows.Scan(&id)
 		if err != nil {
 			return nil, ErrLootBoxes.Wrap(err)
 		}
 
-		data = append(data, lootBox)
-	}
-	if err = rows.Err(); err != nil {
-		return nil, ErrLootBoxes.Wrap(err)
+		data = append(data, id)
 	}
 
-	var LootsID []uuid.UUID
-
-	for _, value := range data {
-		LootsID = append(LootsID, value.ID)
-	}
-
-	return LootsID, nil
+	return data, nil
 }
 
-// GetLoot returns all cards received from loot box.
-func (lootboxesDB lootboxesDB) GetLoot(ctx context.Context, lootBoxID uuid.UUID) ([]uuid.UUID, error) {
-	query := `Select id,card_id
-      FROM user_loot
-      WHERE id = $1`
+// GetCards returns all ids of cards received from LootBox.
+func (lootboxesDB lootboxesDB) GetCards(ctx context.Context, lootBoxID uuid.UUID) ([]uuid.UUID, error) {
+	query := `SELECT card_id
+              FROM lootboxes_cards
+              WHERE id = $1`
 
 	rows, err := lootboxesDB.conn.QueryContext(ctx, query, lootBoxID)
 	if err != nil {
 		return nil, ErrLootBoxes.Wrap(err)
 	}
-
 	defer func() {
 		err = errs.Combine(err, rows.Close())
 	}()
 
-	var data []lootboxes.UserLoot
-
+	var data []uuid.UUID
 	for rows.Next() {
-		var userLoot lootboxes.UserLoot
+		var cardID uuid.UUID
 
-		err = rows.Scan(&userLoot.ID, &userLoot.CardID)
+		err = rows.Scan(&cardID)
 		if err != nil {
 			return nil, ErrLootBoxes.Wrap(err)
 		}
 
-		data = append(data, userLoot)
+		data = append(data, cardID)
 	}
 
-	var CardsID []uuid.UUID
-
-	for _, value := range data {
-		CardsID = append(CardsID, value.CardID)
-	}
-
-	return CardsID, nil
+	return data, nil
 }

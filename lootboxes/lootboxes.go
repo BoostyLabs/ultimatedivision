@@ -19,12 +19,12 @@ var ErrNoLootBox = errs.Class("lootbox does not exist")
 type DB interface {
 	// Create creates opened lootbox in db.
 	Create(ctx context.Context, lootBox UserLootBox) error
-	// CreateLoot inserts cards getting from LootBox.
-	CreateLoot(ctx context.Context, loot UserLoot) error
-	// Get returns all ids of opened lootboxes.
+	// CreateCards inserts cards getting from LootBox.
+	CreateCards(ctx context.Context, loot UserLoot) error
+	// Get returns all ids of opened lootboxes by userID.
 	Get(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error)
-	// GetLoot returns all cards cards received from LootBox.
-	GetLoot(ctx context.Context, lootBoxID uuid.UUID) ([]uuid.UUID, error)
+	// GetCards returns all ids of cards received from LootBox.
+	GetCards(ctx context.Context, lootBoxID uuid.UUID) ([]uuid.UUID, error)
 }
 
 // LootBox defines types of loot box.
