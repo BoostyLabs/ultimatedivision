@@ -14,6 +14,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
 )
 
@@ -143,7 +144,17 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         	card_position INTEGER                           NOT NULL,
         	capitan       BYTEA,
         	PRIMARY KEY(user_id, card_id)
-        );`
+        );
+        CREATE TABLE IF NOT EXISTS user_lootbox(
+            id         BYTEA PRIMARY KEY                            NOT NULL,
+            user_id    BYTEA REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            lootbox_id BYTEA                                        NOT NULL
+        );
+		CREATE TABLE IF NOT EXISTS user_loot(
+		    id      BYTEA REFERENCES user_lootbox(id) ON DELETE CASCADE NOT NULL,
+		    card_id BYTEA REFERENCES cards(id)                          NOT NULL,
+		    PRIMARY KEY(id, card_id)
+		);`
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
 	if err != nil {
 		return Error.Wrap(err)
@@ -172,7 +183,12 @@ func (db *database) Cards() cards.DB {
 	return &cardsDB{conn: db.conn}
 }
 
-// Clubs provide access to club db.
+// Clubs provide access to clubs db.
 func (db *database) Clubs() clubs.DB {
 	return &clubsDB{conn: db.conn}
+}
+
+// LootBoxes provide access to lootboxes db.
+func (db *database) LootBoxes() lootboxes.DB {
+	return &lootboxesDB{conn: db.conn}
 }
