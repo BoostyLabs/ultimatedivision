@@ -31,7 +31,6 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; p
         <div
             onClick={() => changeVisibility(prev => !prev)}
             className="football-field-card"
-            
         >
             <div
                 className="football-field-card__wrapper"

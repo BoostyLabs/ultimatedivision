@@ -81,9 +81,6 @@
     &__4-2-4 {
         &__card,
         &__empty-card {
-            &:hover {
-                transform: scale(1.1);
-            }
             &:nth-child(1) {
                 @include footballFieldCardPosition(85%, 50%)
             }
@@ -123,9 +120,6 @@
     &__4-3-3 {
         &__card,
         &__empty-card {
-            &:hover {
-                transform: scale(1.1);
-            }
             &:nth-child(1) {
                 @include footballFieldCardPosition(85%, 50%)
             }

@@ -4,8 +4,8 @@ See LICENSE for copying information.
  */
 
 import confirmIcon from '../../img/MarketPlacePage/MyCard/ok.svg';
-import playerFace from '../../img/MarketPlacePage/marketPlaceCardsGroup/player.png';
 import priceGoldIcon from '../../img/MarketPlacePage/MyCard/goldPrice.svg';
+import playerFace from '../../img/MarketPlacePage/marketPlaceCardsGroup/player.svg';
 import priceIcon
     from '../../img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.svg';
 
