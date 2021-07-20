@@ -43,7 +43,7 @@ func (lootboxesDB lootboxesDB) CreateCards(ctx context.Context, loot lootboxes.U
 	return ErrLootBoxes.Wrap(err)
 }
 
-// 	// Get returns all ids of opened lootboxes by userID.
+// Get returns all ids of opened lootboxes by userID.
 func (lootboxesDB lootboxesDB) Get(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
 	query := `SELECT id
               FROM user_lootboxes
