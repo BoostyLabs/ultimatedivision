@@ -247,14 +247,7 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filter) ([]cards.Card, error) {
 	whereClause, valuesString := BuildWhereClause(filters)
 	valuesInterface := ConvertStringSliceToInterfaceSlice(valuesString)
-	query := fmt.Sprintf("%s %s",
-		`SELECT 
-            `+allFields+` 
-        FROM 
-            cards
-        `,
-		whereClause,
-	)
+	query := fmt.Sprintf("SELECT %s FROM cards %s", allFields, whereClause)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
