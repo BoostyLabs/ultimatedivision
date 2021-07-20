@@ -13,8 +13,8 @@ import (
 // ErrNoCard indicated that card does not exist.
 var ErrNoCard = errs.Class("card does not exist")
 
-// ErrValidFilter indicated that filter does not valid.
-var ErrValidFilter = errs.Class("filter does not valid")
+// ErrInvalidFilter indicated that filter does not valid.
+var ErrInvalidFilter = errs.Class("invalid filter")
 
 // DB is exposing access to cards db.
 //

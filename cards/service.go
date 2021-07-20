@@ -129,7 +129,7 @@ func (f Filter) Validate() error {
 
 		_, err := strconv.Atoi(f[Tactics])
 		if err != nil {
-			return ErrValidFilter.Wrap(fmt.Errorf("%s %s", f[Tactics], err))
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[Tactics], err))
 		}
 	}
 
@@ -138,7 +138,7 @@ func (f Filter) Validate() error {
 
 		_, err := strconv.Atoi(f[MinPhysique])
 		if err != nil {
-			return ErrValidFilter.Wrap(fmt.Errorf("%s %s", f[MinPhysique], err))
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[MinPhysique], err))
 		}
 	}
 
@@ -147,7 +147,7 @@ func (f Filter) Validate() error {
 
 		_, err := strconv.Atoi(f[MaxPhysique])
 		if err != nil {
-			return ErrValidFilter.Wrap(fmt.Errorf("%s %s", f[MaxPhysique], err))
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[MaxPhysique], err))
 		}
 	}
 
@@ -156,7 +156,7 @@ func (f Filter) Validate() error {
 
 		_, err := strconv.Atoi(f[PlayerName])
 		if err == nil {
-			return ErrValidFilter.Wrap(fmt.Errorf("%s %s", f[PlayerName], err))
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[PlayerName], err))
 		}
 	}
 
