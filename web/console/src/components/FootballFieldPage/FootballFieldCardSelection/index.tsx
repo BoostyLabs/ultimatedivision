@@ -22,7 +22,6 @@ export const FootballFieldCardSelection = () => {
         <div id="cardList" className="card-selection">
             <FilterField />
             <div className="card-selection__list">
-
                 {cardList.map((card, index) =>
                     <a key={index} href="#playingArea" className="card-selection__card"
                         onClick={() => dispatch(addCard(card, fieldSetup.options.chosedCard))}
@@ -34,7 +33,7 @@ export const FootballFieldCardSelection = () => {
                     </a>,
                 )}
             </div>
-                <Paginator itemCount={cardList.length} />
+            <Paginator itemCount={cardList.length} />
         </div>
     );
 };

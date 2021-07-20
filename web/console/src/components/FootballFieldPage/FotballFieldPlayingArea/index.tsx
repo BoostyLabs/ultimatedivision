@@ -111,9 +111,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 draggable={true}
                             >
                                 {
-                                    data
-                                        ? <PlayingAreaFootballerCard card={data} index={index} place={'PlayingArea'} />
-                                        : null
+                                    data && <PlayingAreaFootballerCard card={data} index={index} place={'PlayingArea'} />
                                 }
                             </a>
                         );
