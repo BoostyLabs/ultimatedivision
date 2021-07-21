@@ -3,15 +3,15 @@ package controllers
 import (
 	"html/template"
 	"net/http"
-	"ultimatedivision/database"
-	"ultimatedivision/users"
-	"ultimatedivision/users/userauth"
 	"unicode"
 
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/database"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/users"
+	"ultimatedivision/users/userauth"
 )
 
 // AuthError is a internal error for auth controller.
