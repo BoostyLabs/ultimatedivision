@@ -24,6 +24,20 @@ var _ cards.DB = (*cardsDB)(nil)
 // ErrCard indicates that there was an error in the database.
 var ErrCard = errs.Class("cards repository error")
 
+// Action defines the list of possible filter actions.
+type Action string
+
+const (
+	// EQ - equal to value.
+	EQ Action = "="
+	// GTE - greater than or equal to value.
+	GTE Action = ">="
+	// LTE - less than or equal to value.
+	LTE Action = "<="
+	// LIKE - like to value.
+	LIKE Action = "LIKE"
+)
+
 // cardsDB provides access to cards db.
 //
 // architecture: Database
@@ -244,9 +258,9 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 }
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
-func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filter) ([]cards.Card, error) {
-	whereClause, valuesString := BuildWhereClause(filters)
-	valuesInterface := ConvertStringSliceToInterfaceSlice(valuesString)
+func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filters) ([]cards.Card, error) {
+	whereClause, valuesString := BuildWhereClauseDependsOnCardsFilters(filters)
+	valuesInterface := ValidDBParameters(valuesString)
 	query := fmt.Sprintf("SELECT %s FROM cards %s", allFields, whereClause)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
@@ -288,8 +302,8 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 	return data, nil
 }
 
-// ConvertStringSliceToInterfaceSlice converts slice string to slice interface.
-func ConvertStringSliceToInterfaceSlice(stringSlice []string) []interface{} {
+// ValidDBParameters build valid parameter with string to sinterface.
+func ValidDBParameters(stringSlice []string) []interface{} {
 	interfaceSlice := make([]interface{}, 0, len(stringSlice))
 	for _, v := range stringSlice {
 		interfaceSlice = append(interfaceSlice, v)
@@ -297,8 +311,8 @@ func ConvertStringSliceToInterfaceSlice(stringSlice []string) []interface{} {
 	return interfaceSlice
 }
 
-// BuildWhereClause build string for WHERE.
-func BuildWhereClause(filters []cards.Filter) (string, []string) {
+// BuildWhereClauseDependsOnCardsFilters build string for WHERE.
+func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []string) {
 	var query string
 	var values []string
 	var valuesAND []string
