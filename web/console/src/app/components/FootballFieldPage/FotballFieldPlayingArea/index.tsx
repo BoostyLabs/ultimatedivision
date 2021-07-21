@@ -1,5 +1,4 @@
 // @ts-nocheck
-/* eslint-disable */
 /*
 Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
@@ -104,41 +103,46 @@ export const FootballFieldPlayingArea: React.FC = () => {
                 >
                     {fieldSetup.cardsList.map((card, index) => {
                         const data = card.cardData;
-                        console.log(data)
                         const equality = dragStartIndex === index;
-
                         // TO DO: change style by some class to change style in card
                         return (
                             <a
+                                style={
+                                    equality
+                                        ? { left: x - outerOffset.x, top: y - OFFSET_TOP, zIndex: 5, pointerEvents: 'none' }
+                                        : undefined
+                                }
                                 href={data ? undefined : '#cardList'}
                                 key={index}
                                 className={`playing-area__${formation}__${data ? 'card' : 'empty-card'}`}
                                 onClick={(e) => dispatch(choseCardPosition(index))}
+                                onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
+                                draggable={true}
                             >
                                 {
-                                    data &&
-                                    <>
-                                            <img
-                                            className={`playing-area__${formation}__card-shadow`}
-                                                src={data.mainInfo.shadowType}
-                                                alt="cardShadow"
-                                            />
-                                        <div
-                                            className={`playing-area__${formation}__card-wrapper`}
-                                            style={
-                                                equality
-                                                    ? { left: x - outerOffset.x, top: y - OFFSET_TOP, zIndex: 5, pointerEvents: 'none' }
-                                                    : undefined
-                                            }
-                                            onDragStart={(e) => dragStart(e, index)}
-                                            draggable={true}
-                                        >
-                                            <PlayingAreaFootballerCard card={data} index={index} place={'PlayingArea'} />
-                                        </div>
-                                    </>
+                                    data && <PlayingAreaFootballerCard card={data} index={index} place={'PlayingArea'} />
                                 }
                             </a>
+                        );
+                    })}
+                </div>
+                <div className={`playing-area__${formation}-shadows`}>
+                    {fieldSetup.cardsList.map((card, index) => {
+                        const data = card.cardData;
+                        return (
+                            <div
+                                className={`playing-area__${formation}-shadows__card`}
+                            >
+                                {data &&
+                                    <img
+                                    // If data exist it has maininfo, but TS do not let me use it even with check
+                                        src={data && data.mainInfo.shadowType}
+                                        alt={data && 'card shadow'}
+                                        className={`playing-area__${formation}-shadows__shadow`}
+                                    />
+                                }
+                            </div>
                         );
                     })}
                 </div>
