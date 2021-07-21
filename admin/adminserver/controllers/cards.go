@@ -77,7 +77,13 @@ func (controller *Cards) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "could not parse user id", http.StatusBadRequest)
 		return
 	}
-	if err := controller.cards.Create(ctx, userID); err != nil {
+
+	createCards := cards.CreateCards{
+		UserID:              userID,
+		CountCard:           1,
+		PercentageQualities: []int{60, 20, 15, 5},
+	}
+	if err := controller.cards.Create(ctx, createCards); err != nil {
 		controller.log.Error("could not create card", ErrCards.Wrap(err))
 		http.Error(w, "could not create card", http.StatusInternalServerError)
 		return
