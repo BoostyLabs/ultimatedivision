@@ -33,8 +33,8 @@ type Card struct {
 	PlayerName       string       `json:"playerName"`
 	Quality          Quality      `json:"quality"`
 	PictureType      int          `json:"pictureType"`
-	Height           float32      `json:"height"`
-	Weight           float32      `json:"weight"`
+	Height           Height       `json:"height"`
+	Weight           Weight       `json:"weight"`
 	SkinColor        int          `json:"skinColor"`
 	HairStyle        int          `json:"hairStyle"`
 	HairColor        int          `json:"hairColor"`
@@ -98,14 +98,32 @@ type Quality string
 const (
 	// QualityWood indicates that card quality is wood.
 	QualityWood Quality = "wood"
-	// QualityBronze indicates that card quality is bronze.
-	QualityBronze Quality = "bronze"
 	// QualitySilver indicates that card quality is silver.
 	QualitySilver Quality = "silver"
 	// QualityGold indicates that card quality is gold.
 	QualityGold Quality = "gold"
 	// QualityDiamond indicates that card quality is diamond.
 	QualityDiamond Quality = "diamond"
+)
+
+// Height defines the list of possible card heights.
+type Height float64
+
+const (
+	// MinHeight indicates that card minimum height is 150 conventional units.
+	MinHeight Height = 150.0
+	// MaxHeight indicates that card maximum height is 210 conventional units.
+	MaxHeight Height = 210.0
+)
+
+// Weight defines the list of possible card weights.
+type Weight float64
+
+const (
+	// MinWeight indicates that card minimum weight is 50 conventional units.
+	MinWeight Weight = 50.0
+	// MaxWeight indicates that card maximum weight is 100 conventional units.
+	MaxWeight Weight = 100.0
 )
 
 // PictureType defines the list of possible card picture types.
@@ -147,3 +165,59 @@ const (
 	// DominantFootRight indicates that dominant foot of the footballer is right.
 	DominantFootRight DominantFoot = "right"
 )
+
+// CreateCards entitty for using generate cards.
+type CreateCards struct {
+	UserID              uuid.UUID
+	CountCard           int
+	PercentageQualities []int
+}
+
+// DominantFoots defines the list of possible percent dominant foots.
+var DominantFoots = map[string]int{
+	"left":  50,
+	"right": 50,
+}
+
+// GroupSkills defines the list of possible group skills.
+var GroupSkills = map[string][]int{
+	"elementary":     {1, 20},
+	"basic":          {21, 40},
+	"medium":         {41, 60},
+	"upper-medium":   {61, 80},
+	"advanced":       {81, 90},
+	"upper-advanced": {91, 100},
+}
+
+// Skills defines the list of possible percent skills.
+var Skills = map[string]map[string]int{
+	"wood": {
+		"elementary":   30,
+		"basic":        30,
+		"medium":       30,
+		"upper-medium": 9,
+		"advanced":     1,
+	},
+	"silver": {
+		"elementary":   15,
+		"basic":        20,
+		"medium":       45,
+		"upper-medium": 15,
+		"advanced":     5,
+	},
+	"gold": {
+		"elementary":     5,
+		"basic":          15,
+		"medium":         25,
+		"upper-medium":   45,
+		"advanced":       8,
+		"upper-advanced": 2,
+	},
+	"diamond": {
+		"basic":          5,
+		"medium":         30,
+		"upper-medium":   50,
+		"advanced":       10,
+		"upper-advanced": 5,
+	},
+}
