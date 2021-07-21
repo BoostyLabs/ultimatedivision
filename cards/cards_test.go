@@ -212,7 +212,7 @@ func TestCards(t *testing.T) {
 		})
 
 		t.Run("list with filters", func(t *testing.T) {
-			filters := []cards.Filter{
+			filters := []cards.Filters{
 				{
 					cards.Tactics: "1",
 				},
@@ -239,7 +239,7 @@ func TestCards(t *testing.T) {
 		})
 
 		t.Run("build where string", func(t *testing.T) {
-			filters := []cards.Filter{
+			filters := []cards.Filters{
 				{
 					cards.Tactics: "1",
 				},
@@ -259,7 +259,7 @@ func TestCards(t *testing.T) {
 				assert.NoError(t, err)
 			}
 
-			queryString, values := database.BuildWhereClause(filters)
+			queryString, values := database.BuildWhereClauseDependsOnCardsFilters(filters)
 
 			assert.Equal(t, queryString, ` WHERE tactics = $1 AND physique >= $2 AND physique <= $3 AND (player_name LIKE $4 OR player_name LIKE $5 OR player_name LIKE $6 OR player_name LIKE $7)`)
 			assert.Equal(t, values, []string{"1", "1", "20", "yak", "yak %", "% yak", "% yak %"})
