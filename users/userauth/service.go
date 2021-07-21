@@ -3,9 +3,9 @@ package userauth
 import (
 	"context"
 	"crypto/subtle"
-	"github.com/google/uuid"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 	"golang.org/x/crypto/bcrypt"
 
