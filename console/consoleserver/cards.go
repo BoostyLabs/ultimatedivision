@@ -13,11 +13,6 @@ import (
 	"ultimatedivision/internal/logger"
 )
 
-const (
-	// PrefixMinMaxValues the number of first characters for min or max values.
-	PrefixMinMaxValues = 4
-)
-
 var (
 	// ErrCards is an internal error type for cards controller.
 	ErrCards = errs.Class("cards controller error")
@@ -40,7 +35,7 @@ func NewCards(log logger.Logger, cards *cards.Service) *Cards {
 	return cardsController
 }
 
-// List is an endpoint that will provide a web page with all cards.
+// List is an endpoint that allows will view cards.
 func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var cardsList []cards.Card
