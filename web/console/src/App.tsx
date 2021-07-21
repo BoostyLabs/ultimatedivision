@@ -9,7 +9,6 @@ import { Navbar }
     from './app/components/Navbar';
 import { Routes } from './app/routes/index';
 
-import './app/static/styles/App.scss';
 /** initial App setup */
 export function App() {
     return (

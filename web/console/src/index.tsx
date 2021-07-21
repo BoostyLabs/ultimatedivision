@@ -10,7 +10,7 @@ import { App } from './App';
 
 import { store } from './app/store';
 
-import './app/static/styles/index.scss';
+import './index.scss';
 
 ReactDOM.render(
     <Provider store={store}>
