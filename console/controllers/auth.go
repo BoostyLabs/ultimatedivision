@@ -4,13 +4,12 @@ import (
 	"html/template"
 	"net/http"
 	"ultimatedivision/database"
+	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 	"unicode"
 
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/admin/adminauth"
-	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 )
@@ -129,54 +128,44 @@ func isPasswordValid(s string) bool {
 	return len(s) >= 8 && letters >= 1 && number && upper && special
 }
 
-// Login is an endpoint to authorize admin and set auth cookie in browser.
+// Login is an endpoint to authorize user and set auth cookie in browser.
 func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var err error
 
-	switch r.Method {
-	case http.MethodGet:
-		err = auth.loginTemplate.Execute(w, nil)
-		if err != nil {
-			auth.log.Error("Could not execute login template", AuthError.Wrap(err))
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-	case http.MethodPost:
-		err = r.ParseForm()
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
-		email := r.Form["email"]
-		password := r.Form["password"]
-		if len(email) == 0 || len(password) == 0 {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-		if email[0] == "" || password[0] == "" {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
-		response, err := auth.service.Token(ctx, email[0], password[0])
-		if err != nil {
-			auth.log.Error("could not get auth token", AuthError.Wrap(err))
-			switch {
-			case admins.ErrNoAdmin.Has(err):
-				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-			case adminauth.ErrUnauthenticated.Has(err):
-				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-			default:
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			}
-
-			return
-		}
-
-		auth.cookie.SetTokenCookie(w, response)
+	err = r.ParseForm()
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
 	}
+
+	email := r.Form["email"]
+	password := r.Form["password"]
+	if len(email) == 0 || len(password) == 0 {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if email[0] == "" || password[0] == "" {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	response, err := auth.service.Token(ctx, email[0], password[0])
+	if err != nil {
+		auth.log.Error("could not get auth token", AuthError.Wrap(err))
+		switch {
+		case users.ErrNoUser.Has(err):
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		case userauth.ErrUnauthenticated.Has(err):
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		default:
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		}
+
+		return
+	}
+
+	auth.cookie.SetTokenCookie(w, response)
 }
 
 // Logout is an endpoint to log out and remove auth cookie from browser.
