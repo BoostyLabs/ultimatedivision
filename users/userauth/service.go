@@ -3,6 +3,7 @@ package userauth
 import (
 	"context"
 	"crypto/subtle"
+	"github.com/google/uuid"
 	"time"
 
 	"github.com/zeebo/errs"
@@ -124,4 +125,31 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 	}
 
 	return nil
+}
+
+// GetUserByEmail returns user by email from DB.
+func (service *Service) GetUserByEmail(ctx context.Context, email string) (users.User, error) {
+	return service.users.GetByEmail(ctx, email)
+}
+
+// RegisterUser - register a new user.
+func (service *Service) RegisterUser(ctx context.Context, email, password, nickName, firstName, lastName string) error {
+	user := users.User{
+		ID:           uuid.New(),
+		Email:        email,
+		PasswordHash: []byte(password),
+		NickName:     nickName,
+		FirstName:    firstName,
+		LastName:     lastName,
+		LastLogin:    time.Time{},
+		Status:       users.StatusActive,
+		CreatedAt:    time.Now(),
+	}
+
+	err := user.EncodePass()
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	return service.users.Create(ctx, user)
 }

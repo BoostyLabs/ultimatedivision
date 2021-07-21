@@ -6,11 +6,11 @@ package controllers
 import (
 	"html/template"
 	"net/http"
-	"ultimatedivision/admin/admins"
 
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/admin/adminauth"
+	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 )
