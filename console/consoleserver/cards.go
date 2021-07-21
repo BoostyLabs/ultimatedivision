@@ -45,41 +45,17 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var cardsList []cards.Card
 	var err error
+	var filters cards.SliceFilters
 	urlQuery := r.URL.Query()
 	tactics := urlQuery.Get(string(cards.Tactics))
 	minPhysique := urlQuery.Get(string(cards.MinPhysique))
 	maxPhysique := urlQuery.Get(string(cards.MaxPhysique))
 	playerName := urlQuery.Get(string(cards.PlayerName))
-	var filter cards.Filter
-	var filters []cards.Filter
 
-	if tactics != "" {
-		filter = cards.Filter{
-			cards.Tactics: tactics,
-		}
-		filters = append(filters, filter)
-	}
-
-	if minPhysique != "" {
-		filter = cards.Filter{
-			cards.MinPhysique: minPhysique,
-		}
-		filters = append(filters, filter)
-	}
-
-	if maxPhysique != "" {
-		filter = cards.Filter{
-			cards.MaxPhysique: maxPhysique,
-		}
-		filters = append(filters, filter)
-	}
-
-	if playerName != "" {
-		filter = cards.Filter{
-			cards.PlayerName: playerName,
-		}
-		filters = append(filters, filter)
-	}
+	filters = filters.Add(cards.Tactics, tactics)
+	filters = filters.Add(cards.MinPhysique, minPhysique)
+	filters = filters.Add(cards.MaxPhysique, maxPhysique)
+	filters = filters.Add(cards.PlayerName, playerName)
 
 	if len(filters) > 0 {
 		cardsList, err = controller.cards.ListWithFilters(ctx, filters)
