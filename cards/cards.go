@@ -5,6 +5,9 @@ package cards
 
 import (
 	"context"
+	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -27,7 +30,7 @@ type DB interface {
 	// List returns all cards from the data base.
 	List(ctx context.Context) ([]Card, error)
 	// ListWithFilters returns all cards from the data base with filters.
-	ListWithFilters(ctx context.Context, filters []Filter) ([]Card, error)
+	ListWithFilters(ctx context.Context, filters []Filters) ([]Card, error)
 	// Delete deletes card record in the data base.
 	Delete(ctx context.Context, id uuid.UUID) error
 }
@@ -153,21 +156,77 @@ const (
 	DominantFootRight DominantFoot = "right"
 )
 
-// Filter entity for using filter cards.
-type Filter map[Key]string
+// Filters entity for using filter cards.
+type Filters map[Filter]string
 
-// Key defines the list of possible filter keys.
-type Key string
+// Filter defines the list of possible filters.
+type Filter string
 
 const (
 	// Tactics indicates an assessment of the card's tactics.
-	Tactics Key = "tactics"
+	Tactics Filter = "tactics"
 	// MinPhysique indicates an assessment of the card's minimum physique.
-	MinPhysique Key = "min_physique"
+	MinPhysique Filter = "min_physique"
 	// MaxPhysique indicates an assessment of the card's maximum physique.
-	MaxPhysique Key = "max_physique"
+	MaxPhysique Filter = "max_physique"
 	// Physique indicates an assessment of the card's physique.
-	Physique Key = "physique"
+	Physique Filter = "physique"
 	// PlayerName indicates the name of the card player name.
-	PlayerName Key = "player_name"
+	PlayerName Filter = "player_name"
 )
+
+// SliceFilters entity for using group filter cards.
+type SliceFilters []Filters
+
+// Add check is empty and append value to slice.
+func (s SliceFilters) Add(name Filter, value string) SliceFilters {
+	if value != "" {
+		filter := Filters{
+			name: value,
+		}
+		s = append(s, filter)
+		return s
+	}
+	return s
+}
+
+// Validate check of valid UTF-8 bytes and type.
+func (f Filters) Validate() error {
+	if _, found := f[Tactics]; found == true {
+		strings.ToValidUTF8(f[Tactics], "")
+
+		_, err := strconv.Atoi(f[Tactics])
+		if err != nil {
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[Tactics], err))
+		}
+	}
+
+	if _, found := f[MinPhysique]; found == true {
+		strings.ToValidUTF8(f[MinPhysique], "")
+
+		_, err := strconv.Atoi(f[MinPhysique])
+		if err != nil {
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[MinPhysique], err))
+		}
+	}
+
+	if _, found := f[MaxPhysique]; found == true {
+		strings.ToValidUTF8(f[MaxPhysique], "")
+
+		_, err := strconv.Atoi(f[MaxPhysique])
+		if err != nil {
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[MaxPhysique], err))
+		}
+	}
+
+	if _, found := f[PlayerName]; found == true {
+		strings.ToValidUTF8(f[PlayerName], "")
+
+		_, err := strconv.Atoi(f[PlayerName])
+		if err == nil {
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[PlayerName], err))
+		}
+	}
+
+	return nil
+}
