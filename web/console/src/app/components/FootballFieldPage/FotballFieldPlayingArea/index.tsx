@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* eslint-disable */
 /*
 Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
@@ -102,26 +104,39 @@ export const FootballFieldPlayingArea: React.FC = () => {
                 >
                     {fieldSetup.cardsList.map((card, index) => {
                         const data = card.cardData;
+                        console.log(data)
                         const equality = dragStartIndex === index;
 
                         // TO DO: change style by some class to change style in card
                         return (
                             <a
-                                style={
-                                    equality
-                                        ? { left: x - outerOffset.x, top: y - OFFSET_TOP, zIndex: 5, pointerEvents: 'none' }
-                                        : undefined
-                                }
                                 href={data ? undefined : '#cardList'}
                                 key={index}
                                 className={`playing-area__${formation}__${data ? 'card' : 'empty-card'}`}
                                 onClick={(e) => dispatch(choseCardPosition(index))}
-                                onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
-                                draggable={true}
                             >
                                 {
-                                    data && <PlayingAreaFootballerCard card={data} index={index} place={'PlayingArea'} />
+                                    data &&
+                                    <>
+                                            <img
+                                            className={`playing-area__${formation}__card-shadow`}
+                                                src={data.mainInfo.shadowType}
+                                                alt="cardShadow"
+                                            />
+                                        <div
+                                            className={`playing-area__${formation}__card-wrapper`}
+                                            style={
+                                                equality
+                                                    ? { left: x - outerOffset.x, top: y - OFFSET_TOP, zIndex: 5, pointerEvents: 'none' }
+                                                    : undefined
+                                            }
+                                            onDragStart={(e) => dragStart(e, index)}
+                                            draggable={true}
+                                        >
+                                            <PlayingAreaFootballerCard card={data} index={index} place={'PlayingArea'} />
+                                        </div>
+                                    </>
                                 }
                             </a>
                         );

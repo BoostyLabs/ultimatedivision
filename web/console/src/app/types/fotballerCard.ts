@@ -9,6 +9,11 @@ import gold from '../static/img/MarketPlacePage/marketPlaceCardsGroup/gold2.svg'
 import silver from '../static/img/MarketPlacePage/marketPlaceCardsGroup/silver2.svg';
 import wood from '../static/img/MarketPlacePage/marketPlaceCardsGroup/wood2.svg';
 
+import diamondShadow from '../static/img/MarketPlacePage/marketPlaceCardsGroup/diamondShadow.svg'
+import goldShadow from '../static/img/MarketPlacePage/marketPlaceCardsGroup/goldShadow.svg'
+import silverShadow from '../static/img/MarketPlacePage/marketPlaceCardsGroup/silverShadow.svg'
+import woodShadow from '../static/img/MarketPlacePage/marketPlaceCardsGroup/woodShadow.svg'
+
 import currentBid
     from '../static/img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/bid.svg';
 import minimumPrice
@@ -70,6 +75,13 @@ export class CardMainInfo {
         ];
         let background = qualities[this.bgType];
         return background;
+    };
+    get shadowType() {
+        const qualities = [
+            diamondShadow, goldShadow, silverShadow, woodShadow
+        ];
+        let shadow = qualities[this.bgType];
+        return shadow;
     };
     /** get image with price status depend on price status */
     get priceStatus() {
