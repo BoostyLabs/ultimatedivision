@@ -3,7 +3,6 @@ package userauth
 import (
 	"context"
 	"crypto/subtle"
-	"net/http"
 	"time"
 	"unicode"
 
@@ -139,7 +138,7 @@ func (service *Service) RegisterUser(ctx context.Context, email, password, nickN
 
 	// check the password is valid.
 	if !isPasswordValid(password) {
-		return errs.New("The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character.", http.StatusBadRequest)
+		return errs.New("The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character.")
 	}
 
 	user := users.User{
