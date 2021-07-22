@@ -68,6 +68,10 @@ type Config struct {
 	Consoles struct {
 		Server consoleserver.Config `json:"server"`
 	}
+
+	LootBoxes struct {
+		Config lootboxes.Config `json:"Config"`
+	}
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -162,6 +166,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // lootboxes setup
 		peer.LoootBoxes.Service = lootboxes.NewService(
 			peer.Database.LootBoxes(),
+			config.LootBoxes.Config,
 		)
 	}
 
