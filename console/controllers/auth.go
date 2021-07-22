@@ -1,13 +1,12 @@
 package controllers
 
 import (
+	"encoding/json"
 	"html/template"
 	"net/http"
-	"unicode"
 
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/database"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
@@ -45,87 +44,20 @@ func NewAuth(log logger.Logger, service *userauth.Service, authCookie *auth.Cook
 func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var err error
+	var request users.RegistrationRequest
 
-	err = r.ParseForm()
-	if err != nil {
-		http.Error(w, "could not get users form", http.StatusBadRequest)
-		return
-	}
-	email := r.FormValue("email")
-	if email == "" {
-		http.Error(w, "email is empty", http.StatusBadRequest)
-		return
-	}
-	password := r.FormValue("password")
-	if password == "" {
-		http.Error(w, "password is empty", http.StatusBadRequest)
-		return
-	}
-	nickName := r.FormValue("nickName")
-	if nickName == "" {
-		http.Error(w, "nick name is empty", http.StatusBadRequest)
-		return
-	}
-	firstName := r.FormValue("firstName")
-	if firstName == "" {
-		http.Error(w, "first name is empty", http.StatusBadRequest)
-		return
-	}
-	lastName := r.FormValue("lastName")
-	if lastName == "" {
-		http.Error(w, "last name is empty", http.StatusBadRequest)
-		return
-	}
-
-	email = database.NormalizeEmail(email)
-
-	// check if the user email address already exists.
-	_, err = auth.service.GetUserByEmail(ctx, email)
-	if err == nil {
-		http.Error(w, "This email address is already in use.", http.StatusBadRequest)
-		return
-	}
-
-	// check the password is valid.
-	if !isPasswordValid(password) {
-		http.Error(w, "The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character.", http.StatusBadRequest)
+	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, AuthError.Wrap(err).Error(), http.StatusBadRequest)
 		return
 	}
 
 	// create the new user in the database.
-	err = auth.service.RegisterUser(ctx, email, password, nickName, firstName, lastName)
+	err = auth.service.RegisterUser(ctx, request.Email, request.Password, request.NickName, request.FirstName, request.LastName)
 	if err != nil {
-		auth.log.Error("Could not register user", AuthError.Wrap(err))
+		auth.log.Error("Unable to register new user", AuthError.Wrap(err))
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-
-	// @todo sending email function still have to finalize.
-	//// launch a goroutine that sends the email verification.
-	//go func() {
-	//	_, err := auth.service.GenerateAndSendEmailConfirmation(user.Email)
-	//	if err != nil {
-	//		auth.log.Error("Unable to send account activation email", AuthError.Wrap(err))
-	//	}
-	//}()
-}
-
-func isPasswordValid(s string) bool {
-	var number, upper, special bool
-	letters := 0
-	for _, c := range s {
-		switch {
-		case unicode.IsNumber(c):
-			number = true
-		case unicode.IsUpper(c):
-			upper = true
-		case unicode.IsPunct(c) || unicode.IsSymbol(c) || unicode.IsMark(c):
-			special = true
-		case unicode.IsLetter(c) || c == ' ':
-			letters++
-		}
-	}
-	return len(s) >= 8 && letters >= 1 && number && upper && special
 }
 
 // Login is an endpoint to authorize user and set auth cookie in browser.
@@ -133,24 +65,19 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var err error
 
-	err = r.ParseForm()
-	if err != nil {
+	var request users.RegistrationRequest
+
+	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, AuthError.Wrap(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	if request.Email == "" || request.Password == "" {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	email := r.Form["email"]
-	password := r.Form["password"]
-	if len(email) == 0 || len(password) == 0 {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-	if email[0] == "" || password[0] == "" {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	response, err := auth.service.Token(ctx, email[0], password[0])
+	response, err := auth.service.Token(ctx, request.Email, request.Password)
 	if err != nil {
 		auth.log.Error("could not get auth token", AuthError.Wrap(err))
 		switch {

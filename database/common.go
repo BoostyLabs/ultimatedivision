@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// NormalizeEmail brings the email to UpperCase.
-func NormalizeEmail(email string) string {
+// normalizeEmail brings the email to UpperCase.
+func normalizeEmail(email string) string {
 	return strings.ToUpper(email)
 }
