@@ -132,6 +132,6 @@ function cardList(count: number) {
 
 }
 
-export const cardReducer = (cardState = cardList(100)) => {
+export const cardReducer = (cardState = cardList(20)) => {
     return cardState;
 };

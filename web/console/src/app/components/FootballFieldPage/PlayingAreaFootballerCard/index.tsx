@@ -3,7 +3,7 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { PlayerCard } from '../../PlayerCard';
 

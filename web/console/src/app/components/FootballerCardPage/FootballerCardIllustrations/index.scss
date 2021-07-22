@@ -4,10 +4,10 @@
 @import '../../../../index.scss';
 
 .footballer-card-illustrations {
-    width: 300px;
     position: relative;
     display: flex;
     flex-direction: column;
+    margin-right: 60px;
     &::after {
         @extend %pseudoelementsInFootballerCard;
         top: 32%;
@@ -32,7 +32,7 @@
             left: 0;
             right: 0;
             margin: 0 auto;
-            top: 85px;
+            top: 97px;
             width: 60%;
         }
         &__list {
