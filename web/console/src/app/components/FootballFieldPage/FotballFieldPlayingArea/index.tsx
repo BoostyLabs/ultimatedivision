@@ -1,4 +1,3 @@
-// @ts-nocheck
 /*
 Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
@@ -133,12 +132,14 @@ export const FootballFieldPlayingArea: React.FC = () => {
                         return (
                             <div
                                 className={`playing-area__${formation}-shadows__card`}
+                                key={index}
                             >
                                 {data &&
                                     <img
-                                    // If data exist it has maininfo, but TS do not let me use it even with check
-                                        src={data && data.mainInfo.shadowType}
-                                        alt={data && 'card shadow'}
+                                        // If data exist it has maininfo, but TS do not let me use it even with check
+                                        // @ts-ignore
+                                        src={data.mainInfo.shadowType}
+                                        alt="card shadow"
                                         className={`playing-area__${formation}-shadows__shadow`}
                                     />
                                 }
