@@ -33,13 +33,14 @@ type Card struct {
 	PlayerName       string       `json:"playerName"`
 	Quality          Quality      `json:"quality"`
 	PictureType      int          `json:"pictureType"`
-	Height           Height       `json:"height"`
-	Weight           Weight       `json:"weight"`
+	Height           float64      `json:"height"`
+	Weight           float64      `json:"weight"`
 	SkinColor        int          `json:"skinColor"`
 	HairStyle        int          `json:"hairStyle"`
 	HairColor        int          `json:"hairColor"`
 	Accessories      []int        `json:"accessories"`
 	DominantFoot     DominantFoot `json:"dominantFoot"`
+	IsTattoos        bool         `json:"isTattoos"`
 	UserID           uuid.UUID    `json:"userId"`
 	Tactics          int          `json:"tactics"`
 	Positioning      int          `json:"positioning"`
@@ -106,26 +107,6 @@ const (
 	QualityDiamond Quality = "diamond"
 )
 
-// Height defines the list of possible card heights.
-type Height float64
-
-const (
-	// MinHeight indicates that card minimum height is 150 conventional units.
-	MinHeight Height = 150.0
-	// MaxHeight indicates that card maximum height is 210 conventional units.
-	MaxHeight Height = 210.0
-)
-
-// Weight defines the list of possible card weights.
-type Weight float64
-
-const (
-	// MinWeight indicates that card minimum weight is 50 conventional units.
-	MinWeight Weight = 50.0
-	// MaxWeight indicates that card maximum weight is 100 conventional units.
-	MaxWeight Weight = 100.0
-)
-
 // PictureType defines the list of possible card picture types.
 var PictureType = map[int]string{
 	1: "https://drive.google.com/file/d/1ESKPpiCoMUkOEpaa40VBFl4O1bPrDntS/view?usp=sharing",
@@ -173,51 +154,75 @@ type CreateCards struct {
 	PercentageQualities []int
 }
 
-// DominantFoots defines the list of possible percent dominant foots.
-var DominantFoots = map[string]int{
-	"left":  50,
-	"right": 50,
-}
+// RangeValueForSkills defines the list of possible group skills.
+var RangeValueForSkills = map[string][]int{}
 
-// GroupSkills defines the list of possible group skills.
-var GroupSkills = map[string][]int{
-	"elementary":     {1, 20},
-	"basic":          {21, 40},
-	"medium":         {41, 60},
-	"upper-medium":   {61, 80},
-	"advanced":       {81, 90},
-	"upper-advanced": {91, 100},
-}
+// Config defines values needed by generate cards.
+type Config struct {
+	Height struct {
+		Min float64 `json:"min"`
+		Max float64 `json:"max"`
+	} `json:"height"`
 
-// Skills defines the list of possible percent skills.
-var Skills = map[string]map[string]int{
-	"wood": {
-		"elementary":   30,
-		"basic":        30,
-		"medium":       30,
-		"upper-medium": 9,
-		"advanced":     1,
-	},
-	"silver": {
-		"elementary":   15,
-		"basic":        20,
-		"medium":       45,
-		"upper-medium": 15,
-		"advanced":     5,
-	},
-	"gold": {
-		"elementary":     5,
-		"basic":          15,
-		"medium":         25,
-		"upper-medium":   45,
-		"advanced":       8,
-		"upper-advanced": 2,
-	},
-	"diamond": {
-		"basic":          5,
-		"medium":         30,
-		"upper-medium":   50,
-		"advanced":       10,
-		"upper-advanced": 5,
-	},
+	Weight struct {
+		Min float64 `json:"min"`
+		Max float64 `json:"max"`
+	} `json:"weight"`
+
+	DominantFoots struct {
+		Left  int `json:"left"`
+		Right int `json:"right"`
+	} `json:"dominantFoots"`
+
+	Skills struct {
+		Wood struct {
+			Elementary  int `json:"elementary"`
+			Basic       int `json:"basic"`
+			Medium      int `json:"medium"`
+			UpperMedium int `json:"upperMedium"`
+			Advanced    int `json:"advanced"`
+		} `json:"wood"`
+		Silver struct {
+			Elementary  int `json:"elementary"`
+			Basic       int `json:"basic"`
+			Medium      int `json:"medium"`
+			UpperMedium int `json:"upperMedium"`
+			Advanced    int `json:"advanced"`
+		} `json:"silver"`
+		Gold struct {
+			Elementary    int `json:"elementary"`
+			Basic         int `json:"basic"`
+			Medium        int `json:"medium"`
+			UpperMedium   int `json:"upperMedium"`
+			Advanced      int `json:"advanced"`
+			UpperAdvanced int `json:"upperAdvanced"`
+		} `json:"gold"`
+		Diamond struct {
+			Basic         int `json:"basic"`
+			Medium        int `json:"medium"`
+			UpperMedium   int `json:"upperMedium"`
+			Advanced      int `json:"advanced"`
+			UpperAdvanced int `json:"upperAdvanced"`
+		} `json:"diamond"`
+	} `json:"skills"`
+
+	RangeValueForSkills struct {
+		MinElementary    int `json:"minElementary"`
+		MaxElementary    int `json:"maxElementary"`
+		MinBasic         int `json:"minBasic"`
+		MaxBasic         int `json:"maxBasic"`
+		MinMedium        int `json:"minMedium"`
+		MaxMedium        int `json:"maxMedium"`
+		MinUpperMedium   int `json:"minUpperMedium"`
+		MaxUpperMedium   int `json:"maxUpperMedium"`
+		MinAdvanced      int `json:"minAdvanced"`
+		MaxAdvanced      int `json:"maxAdvanced"`
+		MinUpperAdvanced int `json:"minUpperAdvanced"`
+		MaxUpperAdvanced int `json:"maxUpperAdvanced"`
+	} `json:"rangeValueForSkills"`
+
+	Tattoos struct {
+		Gold    int `json:"gold"`
+		Diamond int `json:"diamond"`
+	} `json:"tattoos"`
 }
