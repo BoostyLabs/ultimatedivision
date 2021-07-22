@@ -16,47 +16,112 @@ import (
 //
 // architecture: Service
 type Service struct {
-	cards DB
+	cards  DB
+	config Config
 }
 
 // NewService is a constructor for cards service.
-func NewService(cards DB) *Service {
+func NewService(cards DB, config Config) *Service {
 	return &Service{
-		cards: cards,
+		cards:  cards,
+		config: config,
 	}
 }
 
 // Create add card in DB.
 func (service *Service) Create(ctx context.Context, createCards CreateCards) error {
 
-	Qualities := map[string]int{
+	qualities := map[string]int{
 		"wood":    createCards.PercentageQualities[0],
 		"silver":  createCards.PercentageQualities[1],
 		"gold":    createCards.PercentageQualities[2],
 		"diamond": createCards.PercentageQualities[3],
 	}
+
+	minHeight := service.config.Height.Min
+	maxHeight := service.config.Height.Max
+	minWeight := service.config.Weight.Min
+	maxWeight := service.config.Weight.Max
+
+	var skills = map[string]map[string]int{
+		"wood": {
+			"elementary":  service.config.Skills.Wood.Elementary,
+			"basic":       service.config.Skills.Wood.Basic,
+			"medium":      service.config.Skills.Wood.Medium,
+			"upperMedium": service.config.Skills.Wood.UpperMedium,
+			"advanced":    service.config.Skills.Wood.Advanced,
+		},
+		"silver": {
+			"elementary":  service.config.Skills.Silver.Elementary,
+			"basic":       service.config.Skills.Silver.Basic,
+			"medium":      service.config.Skills.Silver.Medium,
+			"upperMedium": service.config.Skills.Silver.UpperMedium,
+			"advanced":    service.config.Skills.Silver.Advanced,
+		},
+		"gold": {
+			"elementary":    service.config.Skills.Gold.Elementary,
+			"basic":         service.config.Skills.Gold.Basic,
+			"medium":        service.config.Skills.Gold.Medium,
+			"upperMedium":   service.config.Skills.Gold.UpperMedium,
+			"advanced":      service.config.Skills.Gold.Advanced,
+			"upperAdvanced": service.config.Skills.Gold.UpperMedium,
+		},
+		"diamond": {
+			"basic":         service.config.Skills.Diamond.Basic,
+			"medium":        service.config.Skills.Diamond.Medium,
+			"upperMedium":   service.config.Skills.Diamond.UpperMedium,
+			"advanced":      service.config.Skills.Diamond.Advanced,
+			"upperAdvanced": service.config.Skills.Diamond.UpperAdvanced,
+		},
+	}
+
+	RangeValueForSkills = map[string][]int{
+		"elementary":    {service.config.RangeValueForSkills.MinElementary, service.config.RangeValueForSkills.MaxElementary},
+		"basic":         {service.config.RangeValueForSkills.MinBasic, service.config.RangeValueForSkills.MaxBasic},
+		"medium":        {service.config.RangeValueForSkills.MinMedium, service.config.RangeValueForSkills.MaxMedium},
+		"upperMedium":   {service.config.RangeValueForSkills.MinUpperMedium, service.config.RangeValueForSkills.MaxUpperMedium},
+		"advanced":      {service.config.RangeValueForSkills.MinAdvanced, service.config.RangeValueForSkills.MaxAdvanced},
+		"upperAdvanced": {service.config.RangeValueForSkills.MinUpperAdvanced, service.config.RangeValueForSkills.MaxUpperAdvanced},
+	}
+
+	var dominantFoots = map[string]int{
+		"left":  service.config.DominantFoots.Left,
+		"right": service.config.DominantFoots.Right,
+	}
+
+	var isTattoos bool
+	var tattoos = map[string]int{
+		"gold":    service.config.Tattoos.Gold,
+		"diamond": service.config.Tattoos.Diamond,
+	}
+
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	quality := searchValueByPercent(Qualities)
-	tactics := generateGroupSkill(Skills[quality])
-	physique := generateGroupSkill(Skills[quality])
-	technique := generateGroupSkill(Skills[quality])
-	offense := generateGroupSkill(Skills[quality])
-	defence := generateGroupSkill(Skills[quality])
-	goalkeeping := generateGroupSkill(Skills[quality])
+	quality := searchValueByPercent(qualities)
+	tactics := generateGroupSkill(skills[quality])
+	physique := generateGroupSkill(skills[quality])
+	technique := generateGroupSkill(skills[quality])
+	offense := generateGroupSkill(skills[quality])
+	defence := generateGroupSkill(skills[quality])
+	goalkeeping := generateGroupSkill(skills[quality])
+
+	if result := searchValueByPercent(tattoos); result != "" {
+		isTattoos = true
+	}
 
 	card := Card{
 		ID:               uuid.New(),
 		PlayerName:       "Dmytro",
 		Quality:          Quality(quality),
 		PictureType:      1,
-		Height:           Height(Round(rand.Float64()*(float64(MaxHeight)-float64(MinHeight))+float64(MinHeight), 0.01)),
-		Weight:           Weight(Round(rand.Float64()*(float64(MaxWeight)-float64(MinWeight))+float64(MinWeight), 0.01)),
+		Height:           round(rand.Float64()*(maxHeight-minHeight)+minHeight, 0.01),
+		Weight:           round(rand.Float64()*(maxWeight-minWeight)+minWeight, 0.01),
 		SkinColor:        1,
 		HairStyle:        1,
 		HairColor:        1,
 		Accessories:      []int{1, 2},
-		DominantFoot:     DominantFoot(searchValueByPercent(DominantFoots)),
+		DominantFoot:     DominantFoot(searchValueByPercent(dominantFoots)),
+		IsTattoos:        isTattoos,
 		UserID:           createCards.UserID,
 		Tactics:          tactics,
 		Positioning:      generateSkill(tactics),
@@ -127,7 +192,7 @@ func searchValueByPercent(generateMap map[string]int) string {
 
 // generateGroupSkill search value string by percent and generate assessment in the appropriate range.
 func generateGroupSkill(generateMap map[string]int) int {
-	skillValue := GroupSkills[searchValueByPercent(generateMap)]
+	skillValue := RangeValueForSkills[searchValueByPercent(generateMap)]
 	difference := skillValue[1] - skillValue[0]
 	rand := rand.Intn(difference) + 1
 	return skillValue[0] + rand
@@ -145,8 +210,8 @@ func generateSkill(value int) int {
 	return result
 }
 
-// Round rounds float64 the specified range.
-func Round(x, unit float64) float64 {
+// round rounds float64 the specified range.
+func round(x, unit float64) float64 {
 	return math.Round(x/unit) * unit
 }
 
