@@ -16,7 +16,7 @@ import './index.scss';
 
 export const FootballField: React.FC = () => {
     const dispatch = useDispatch();
-    const dragItemPosition = useSelector((state: RootState) => state.fieldReducer.options.dragStart);
+    const fieldSetup = useSelector((state: RootState) => state.fieldReducer.options);
     /** prevent default user agent action */
     function dragOverHandler(e: DragEvent<HTMLDivElement>) {
         e.preventDefault();
@@ -25,7 +25,7 @@ export const FootballField: React.FC = () => {
     /** TO DO: ADD TYPE FOR Event */
     function drop(e: any) {
         if (e.target.className === 'football-field__wrapper') {
-            dispatch(removeCard(dragItemPosition));
+            dispatch(removeCard(fieldSetup.dragStart));
         }
     };
 
@@ -36,7 +36,13 @@ export const FootballField: React.FC = () => {
         >
             <h1 className="football-field__title">Football Field</h1>
             <FootballFieldPlayingArea />
-            <FootballFieldCardSelection />
+            <div
+                style={fieldSetup.showCardSeletion ? { height: 'unset' } : { height: '0' }}
+                className="football-field__wrapper"
+            >
+                < FootballFieldCardSelection />
+            </div>
+
         </div>
     );
 };

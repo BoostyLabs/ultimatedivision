@@ -10,7 +10,7 @@ import { FootballFieldInformation } from '../FootballFieldInformation';
 import { PlayingAreaFootballerCard } from '../PlayingAreaFootballerCard';
 
 import { RootState } from '../../../store';
-import { choseCardPosition, exchangeCards, removeCard, setDragStart, setDragTarget }
+import { cardSelectionVisibility, choseCardPosition, exchangeCards, removeCard, setDragStart, setDragTarget }
     from '../../../store/reducers/footballField';
 
 import './index.scss';
@@ -48,6 +48,12 @@ export const FootballFieldPlayingArea: React.FC = () => {
     }, []);
     const useMousePosition = (ev: any) => {
         setMousePosition({ x: ev.pageX, y: ev.pageY });
+    };
+
+    /** Add card position, and shows card selection */
+    function handleClick(index: number) {
+        dispatch(choseCardPosition(index));
+        dispatch(cardSelectionVisibility(true));
     };
 
     /** getting dragged card index and changing state to allow mouseUp */
@@ -104,6 +110,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                         const data = card.cardData;
                         const equality = dragStartIndex === index;
                         // TO DO: change style by some class to change style in card
+
                         return (
                             <a
                                 style={
@@ -114,7 +121,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 href={data ? undefined : '#cardList'}
                                 key={index}
                                 className={`playing-area__${formation}__${data ? 'card' : 'empty-card'}`}
-                                onClick={(e) => dispatch(choseCardPosition(index))}
+                                onClick={(e) => handleClick(index)}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
                                 draggable={true}
@@ -129,6 +136,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                 <div className={`playing-area__${formation}-shadows`}>
                     {fieldSetup.cardsList.map((card, index) => {
                         const data = card.cardData;
+
                         return (
                             <div
                                 className={`playing-area__${formation}-shadows__card`}

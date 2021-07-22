@@ -8,6 +8,7 @@ import { Card } from '../../store/reducers/footballerCard';
 
 const FieldSetup = new FootballField();
 const FORMATION_TYPE = 'Formation';
+const CARD_SELECTION_VISIBILITY = 'SelectionVisibility';
 const TACTICS_TYPE = 'Cactics';
 const CAPTAIN_TYPE = 'Captain';
 const CHOSE_CARD_POSITION = 'ChoseCard';
@@ -26,6 +27,11 @@ type dragParamType = number | null;
 /** Chose type of cards positioning on football field */
 export const handleFormations = (option: string) => ({
     type: FORMATION_TYPE,
+    action: option,
+});
+
+export const cardSelectionVisibility = (option: boolean) => ({
+    type: CARD_SELECTION_VISIBILITY,
     action: option,
 });
 
@@ -78,6 +84,9 @@ export const fieldReducer = (cardState = FieldSetup, action: any = {}) => {
     switch (action.type) {
     case FORMATION_TYPE:
         options.formation = action.action;
+        break;
+    case CARD_SELECTION_VISIBILITY:
+        options.showCardSeletion = action.action;
         break;
     case CHOSE_CARD_POSITION:
         options.chosedCard = action.action;

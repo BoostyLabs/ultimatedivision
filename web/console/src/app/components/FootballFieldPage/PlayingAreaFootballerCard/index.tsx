@@ -17,7 +17,7 @@ import './index.scss';
 export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card, index, place }) => {
     const dispatch = useDispatch();
     const [visibility, changeVisibility] = useState(false);
-    const style = visibility ? 'block' : 'none'
+    const style = visibility ? 'block' : 'none';
     /** remove player card implementation */
     function handleDeletion(e: any) {
         e.preventDefault();

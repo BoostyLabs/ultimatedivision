@@ -9,9 +9,6 @@
         margin-bottom: 40px;
     }
     &__wrapper {
-        padding: 15px;
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-around;
+        overflow-y: hidden;
     }
 }

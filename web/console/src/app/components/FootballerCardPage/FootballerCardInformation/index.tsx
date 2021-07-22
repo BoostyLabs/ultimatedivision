@@ -9,7 +9,7 @@ import { Card } from '../../../store/reducers/footballerCard';
 import './index.scss';
 
 export const FootballerCardInformation: React.FC<{card: Card}> = ({ card }) => {
-    const overalInfo = card.overalInfo
+    const overalInfo = card.overalInfo;
 
     return (
         <div className="footballer-card-information">
