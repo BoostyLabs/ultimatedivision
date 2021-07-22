@@ -64,6 +64,10 @@ type Config struct {
 	Consoles struct {
 		Server consoleserver.Config `json:"server"`
 	}
+
+	Cards struct {
+		cards.Config
+	}
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -141,6 +145,14 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // cards setup
 		peer.Cards.Service = cards.NewService(
 			peer.Database.Cards(),
+			cards.Config{
+				Height:              config.Cards.Height,
+				Weight:              config.Cards.Weight,
+				DominantFoots:       config.Cards.DominantFoots,
+				Skills:              config.Cards.Skills,
+				RangeValueForSkills: config.Cards.RangeValueForSkills,
+				Tattoos:             config.Cards.Tattoos,
+			},
 		)
 	}
 
