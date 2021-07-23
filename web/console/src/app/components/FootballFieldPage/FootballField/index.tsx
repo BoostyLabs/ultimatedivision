@@ -37,12 +37,11 @@ export const FootballField: React.FC = () => {
             <h1 className="football-field__title">Football Field</h1>
             <FootballFieldPlayingArea />
             <div
-                style={fieldSetup.showCardSeletion ? { height: 'unset' } : { height: '0' }}
+                style={{ height: fieldSetup.showCardSeletion ? 'unset' : '0' }}
                 className="football-field__wrapper"
             >
                 < FootballFieldCardSelection />
             </div>
-
         </div>
     );
 };

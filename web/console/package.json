@@ -14,6 +14,7 @@
         "aos": "^2.3.4",
         "chart.js": "^3.3.2",
         "classnames": "^2.3.1",
+        "node": "^16.5.0",
         "node-sass": "^6.0.0",
         "prop-types": "^15.7.2",
         "react": "^17.0.2",

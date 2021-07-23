@@ -19,8 +19,8 @@ export const FootballFieldCardSelection = () => {
     const fieldSetup = useSelector((state: RootState) => state.fieldReducer);
 
     /** Add card to field, and hide card selection component */
-    function handleClick(card: Card, chosedCard: number) {
-        dispatch(addCard(card, chosedCard));
+    function handleClick(card: Card, index: number) {
+        dispatch(addCard(card, index));
         dispatch(cardSelectionVisibility(false));
     }
 
