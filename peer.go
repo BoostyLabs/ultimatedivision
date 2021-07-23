@@ -67,6 +67,7 @@ type Config struct {
 
 	Cards struct {
 		cards.Config
+		cards.PercentageQualities `json:"percentageQualities"`
 	}
 }
 
@@ -176,6 +177,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Admins.Service,
 			peer.Users.Service,
 			peer.Cards.Service,
+			config.Cards.PercentageQualities,
 		)
 		if err != nil {
 			return nil, err
