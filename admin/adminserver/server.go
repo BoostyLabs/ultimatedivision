@@ -60,7 +60,7 @@ type Server struct {
 		auth  controllers.AuthTemplates
 	}
 
-	percentageQualities cards.PercentageQualities
+	cards.PercentageQualities
 }
 
 // NewServer is a constructor for admin web server.
