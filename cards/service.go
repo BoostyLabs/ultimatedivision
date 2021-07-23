@@ -29,13 +29,13 @@ func NewService(cards DB, config Config) *Service {
 }
 
 // Create add card in DB.
-func (service *Service) Create(ctx context.Context, createCards CreateCards) error {
+func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int) error {
 
 	qualities := map[string]int{
-		"wood":    createCards.PercentageQualities[0],
-		"silver":  createCards.PercentageQualities[1],
-		"gold":    createCards.PercentageQualities[2],
-		"diamond": createCards.PercentageQualities[3],
+		"wood":    percentageQualities[0],
+		"silver":  percentageQualities[1],
+		"gold":    percentageQualities[2],
+		"diamond": percentageQualities[3],
 	}
 
 	minHeight := service.config.Height.Min
@@ -122,7 +122,7 @@ func (service *Service) Create(ctx context.Context, createCards CreateCards) err
 		Accessories:      []int{1, 2},
 		DominantFoot:     DominantFoot(searchValueByPercent(dominantFoots)),
 		IsTattoos:        isTattoos,
-		UserID:           createCards.UserID,
+		UserID:           userID,
 		Tactics:          tactics,
 		Positioning:      generateSkill(tactics),
 		Composure:        generateSkill(tactics),
