@@ -147,13 +147,6 @@ const (
 	DominantFootRight DominantFoot = "right"
 )
 
-// CreateCards entitty for using generate cards.
-type CreateCards struct {
-	UserID              uuid.UUID
-	CountCard           int
-	PercentageQualities []int
-}
-
 // RangeValueForSkills defines the list of possible group skills.
 var RangeValueForSkills = map[string][]int{}
 
@@ -225,4 +218,12 @@ type Config struct {
 		Gold    int `json:"gold"`
 		Diamond int `json:"diamond"`
 	} `json:"tattoos"`
+}
+
+// PercentageQualities entity for probabilities generate cards.
+type PercentageQualities struct {
+	Wood    int `json:"wood"`
+	Silver  int `json:"silver"`
+	Gold    int `json:"gold"`
+	Diamond int `json:"diamond"`
 }
