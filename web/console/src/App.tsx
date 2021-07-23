@@ -5,9 +5,8 @@ See LICENSE for copying information.
 
 import { BrowserRouter } from 'react-router-dom';
 
-import { Navbar }
-    from './app/components/Navbar';
-import { Routes } from './app/routes/index';
+import { Navbar } from '@Navbar';
+import { Routes } from '@Routes/index';
 
 /** initial App setup */
 export function App() {

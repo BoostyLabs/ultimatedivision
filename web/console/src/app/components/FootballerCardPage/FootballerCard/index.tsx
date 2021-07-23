@@ -3,10 +3,10 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
 */
 
-import { FootballerCardIllustrations } from '../FootballerCardIllustrations';
-import { FootballerCardPrice } from '../FootballerCardPrice';
-import { FootballerCardStatsArea } from '../FootballerCardStatsArea';
-import { FootballerCardInformation } from '../FootballerCardInformation';
+import { FootballerCardIllustrations } from '@FootballerCard/FootballerCardIllustrations';
+import { FootballerCardPrice } from '@FootballerCard/FootballerCardPrice';
+import { FootballerCardStatsArea } from '@FootballerCard/FootballerCardStatsArea';
+import { FootballerCardInformation } from '@FootballerCard/FootballerCardInformation';
 
 import './index.scss';
 
@@ -24,10 +24,10 @@ export const FootballerCard: React.FC = (props) => {
                             {cardData.overalInfo[FIRST_CARD_INDEX].value}
                         </h1>
                     </div>
-                    <FootballerCardIllustrations card={cardData}/>
+                    <FootballerCardIllustrations card={cardData} />
                     <div className="footballer-card__stats-area">
                         <FootballerCardPrice />
-                        <FootballerCardStatsArea card={cardData}/>
+                        <FootballerCardStatsArea card={cardData} />
                         <FootballerCardInformation card={cardData} />
                     </div>
                 </div>

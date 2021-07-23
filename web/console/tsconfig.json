@@ -1,11 +1,47 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@FootballerCard": [
+        "./src/app/components/FootballerCardPage/*"
+      ],
+      "@FootballField": [
+        "./src/app/components/FootballFieldPage/*"
+      ],
+      "@MarketPlace": [
+        "./src/app/components/MarketPlacePage/*"
+      ],
+      "@Navbar": [
+        "./src/app/components/Navbar/*"
+      ],
+      "@Paginator": [
+        "./src/app/components/Paginator/*"
+      ],
+      "@PlayerCard": [
+        "./src/app/components/PlayerCard/*"
+      ],
+      "@Img": [
+        "./src/app/static/img/*"
+      ],
+      "@Store": [
+        "./src/app/store/*"
+      ],
+      "@Types": [
+        "./src/app/types/*"
+      ],
+      "@Routes": [
+        "./src/app/routes/*"
+      ],
+    },
     "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "ScriptHost"
     ],
+    "importHelpers": true,
+    "sourceMap": true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -17,10 +53,12 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "noEmit": false,
+    "jsx": "react-jsx",
+    // "outDir": "./dist/"
   },
-  "include": [
-    "src"
-  ]
+  // "include": [
+  //     "src/**/**/**/*.ts",
+  //     "src/**/**/*.ts",
+  // ]
 }

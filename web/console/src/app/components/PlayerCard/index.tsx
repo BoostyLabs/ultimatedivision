@@ -5,9 +5,9 @@ See LICENSE for copying information.
 
 import { Link, NavLink } from 'react-router-dom';
 
-import { RouteConfig } from '../../routes';
+import { RouteConfig } from '@Routes';
 
-import { Card } from '../../store/reducers/footballerCard';
+import { Card } from '@Store/reducers/footballerCard';
 
 export const PlayerCard: React.FC<{ card: Card; parentClassName: string }> = ({
     card, parentClassName,

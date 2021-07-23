@@ -6,12 +6,12 @@ See LICENSE for copying information.
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { FootballFieldInformation } from '../FootballFieldInformation';
-import { PlayingAreaFootballerCard } from '../PlayingAreaFootballerCard';
+import { FootballFieldInformation } from '@FootballField/FootballFieldInformation';
+import { PlayingAreaFootballerCard } from '@FootballField/PlayingAreaFootballerCard';
 
-import { RootState } from '../../../store';
+import { RootState } from '@Store';
 import { cardSelectionVisibility, choseCardPosition, exchangeCards, removeCard, setDragStart, setDragTarget }
-    from '../../../store/reducers/footballField';
+    from '@Store/reducers/footballField';
 
 import './index.scss';
 

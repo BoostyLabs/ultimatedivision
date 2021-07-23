@@ -6,9 +6,9 @@ import { useSelector } from 'react-redux';
 
 import { Doughnut } from 'react-chartjs-2';
 
-import { RootState } from '../../../store';
+import { RootState } from '@Store';
 
-import currency from '../../../static/img/FootballerCardPage/currency.svg';
+import currency from '@Img/FootballerCardPage/currency.svg';
 
 import './index.scss';
 

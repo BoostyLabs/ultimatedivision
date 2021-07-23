@@ -3,8 +3,8 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
-import { FootballField } from '../../types/footballField';
-import { Card } from '../../store/reducers/footballerCard';
+import { FootballField } from '@Types/footballField';
+import { Card } from '@Store/reducers/footballerCard';
 
 const FieldSetup = new FootballField();
 const FORMATION_TYPE = 'Formation';

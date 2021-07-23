@@ -5,12 +5,9 @@ See LICENSE for copying information.
 /* eslint-disable */
 import { useEffect, useState } from 'react';
 
-import next
-    from '../../static/img/UltimateDivisionPaginator/next.png';
-import previous
-    from '../../static/img/UltimateDivisionPaginator/previous.png';
-import { PaginatorBlockPages }
-    from './PaginatorBlockPages';
+import next from '@Img/UltimateDivisionPaginator/next.png';
+import previous from '@Img/UltimateDivisionPaginator/previous.png';
+import { PaginatorBlockPages } from '@Paginator/PaginatorBlockPages';
 
 import './index.scss';
 
