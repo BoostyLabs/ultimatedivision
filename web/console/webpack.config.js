@@ -1,7 +1,6 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TsConfigPathPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
     mode: 'development',
@@ -26,9 +25,6 @@ module.exports = {
         historyApiFallback: true
     },
     resolve: {
-        plugins: [
-            new TsConfigPathPlugin(),
-        ],
         alias: {
             "@FootballerCard": path.resolve(__dirname, './src/app/components/FootballerCardPage/'),
             "@FootballField": path.resolve(__dirname, './src/app/components/FootballFieldPage/'),
@@ -44,11 +40,8 @@ module.exports = {
         extensions: [
             '.ts',
             '.tsx',
-            '.scss',
-            '.ttf',
-            '.png',
-            '.svg',
-            '...'
+            '.js',
+            '.jsx',
         ],
         modules: ['node_modules']
     },
@@ -67,20 +60,25 @@ module.exports = {
                 test: /\.(s[c]ss|css)$/,
                 use: [
                     'style-loader',
-                    'css-loader',
-                    // 'resolve-url-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+
+                            url: false
+                        }
+                    },
                     'sass-loader'
                 ]
             },
             {
-                test: /\.ttf$/,
+                test: /\.(woff|woff2|eot|ttf|otf)$/i,
                 use: [
                     {
                         loader: 'url-loader',
                         options: {
-                            relativeUrls: true
+                            name: './fonts/[name].[ext]',
                         }
-                    }
+                    },
                 ]
             },
             {
@@ -90,8 +88,30 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                            limit: 10000,
-                            name: './images/[name].[hash].[ext]',
+                            name: './images/[name].[ext]',
+                        }
+                    },
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            mozjpeg: {
+                                progressive: true,
+                            },
+                            // optipng.enabled: false will disable optipng
+                            optipng: {
+                                enabled: false,
+                            },
+                            pngquant: {
+                                quality: [0.8, 0.90],
+                                speed: 2
+                            },
+                            gifsicle: {
+                                interlaced: false,
+                            },
+                            // the webp option will enable WEBP
+                            webp: {
+                                quality: 75
+                            }
                         }
                     },
                 ],
