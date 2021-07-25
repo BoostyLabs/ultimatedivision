@@ -14,7 +14,7 @@ import { removeCard } from '@Store/reducers/footballField';
 
 import './index.scss';
 
-export const FootballField: React.FC = () => {
+const FootballField: React.FC = () => {
     const dispatch = useDispatch();
     const fieldSetup = useSelector((state: RootState) => state.fieldReducer.options);
     /** prevent default user agent action */
@@ -45,3 +45,5 @@ export const FootballField: React.FC = () => {
         </div>
     );
 };
+
+export default FootballField;

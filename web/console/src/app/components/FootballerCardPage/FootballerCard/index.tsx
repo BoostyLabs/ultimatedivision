@@ -10,7 +10,7 @@ import { FootballerCardInformation } from '@FootballerCard/FootballerCardInforma
 
 import './index.scss';
 
-export const FootballerCard: React.FC = (props) => {
+const FootballerCard: React.FC = (props) => {
     // @ts-ignore
     const cardData = props.location.state.card;
     const FIRST_CARD_INDEX = 0;
@@ -35,3 +35,5 @@ export const FootballerCard: React.FC = (props) => {
         </div>
     );
 };
+
+export default FootballerCard;
