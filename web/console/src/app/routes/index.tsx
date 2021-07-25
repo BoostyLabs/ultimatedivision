@@ -27,27 +27,27 @@ export class ComponentRoutes {
 /** Route config implementation */
 export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
-        '/ud/marketplace',
+        '/test/marketplace',
         MarketPlace,
         true,
     );
     public static FootballerCard: ComponentRoutes = new ComponentRoutes(
-        '/ud/marketplace/card',
+        '/test/marketplace/card',
         FootballerCard,
         true,
     );
     public static FootballField: ComponentRoutes = new ComponentRoutes(
-        '/ud/field',
+        '/test/field',
         FootballField,
         true,
     );
     public static MyCards: ComponentRoutes = new ComponentRoutes(
-        '/ud/marketplace/club',
+        '/test/marketplace/club',
         MarketPlace,
         true,
     );
     public static Default: ComponentRoutes = new ComponentRoutes(
-        '/ud/',
+        '/test/',
         MarketPlace,
         true,
     );

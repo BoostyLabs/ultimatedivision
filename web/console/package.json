@@ -1,7 +1,7 @@
 {
     "name": "cryptofotball",
     "version": "0.1.0",
-    "homepage": "http://ultimatedivision.com/ud/",
+    "homepage": "http://ultimatedivision.com/test/",
     "private": true,
     "dependencies": {
         "@svgr/webpack": "5.5.0",

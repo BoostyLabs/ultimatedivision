@@ -4,13 +4,16 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     mode: 'development',
+    experiments: {
+        asset: true
+    },
     entry: './src/index.tsx',
     target: 'web',
     devtool: 'inline-source-map',
     output: {
         path: path.resolve(__dirname, 'dist/'),
         filename: '[name].[hash].js',
-        publicPath: '/'
+        publicPath: 'https://ultimatedivision.com/test/'
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -60,37 +63,26 @@ module.exports = {
                 test: /\.(s[c]ss|css)$/,
                 use: [
                     'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-
-                            url: false
-                        }
-                    },
-                    'sass-loader'
+                    'css-loader',
+                    'sass-loader',
                 ]
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/i,
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            name: './fonts/[name].[ext]',
-                        }
-                    },
-                ]
+                exclude: /(node_modules)/,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'fonts/[name][hash:5][ext]'
+                },
             },
             {
                 test: /\.(jpe|jpg|png|svg)(\?.*$|$)/,
                 exclude: /(node_modules)/,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'images/[name][hash:5][ext]'
+                },
                 use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            name: './images/[name].[ext]',
-                        }
-                    },
                     {
                         loader: 'image-webpack-loader',
                         options: {
