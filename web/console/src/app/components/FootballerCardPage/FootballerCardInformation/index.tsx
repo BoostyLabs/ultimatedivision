@@ -1,11 +1,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Card } from '@Store/reducers/footballerCard';
+import { Card } from '@store/reducers/footballerCard';
 
 import './index.scss';
 
-export const FootballerCardInformation: React.FC<{card: Card}> = ({ card }) => {
+export const FootballerCardInformation: React.FC<{ card: Card }> = ({ card }) => {
     const overalInfo = card.overalInfo;
 
     return (

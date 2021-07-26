@@ -6,10 +6,10 @@ See LICENSE for copying information.
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { FotballFieldInformationLine } from '@Types/fotballerCard';
-import { handleTactics } from '@Store/reducers/footballField';
+import { FotballFieldInformationLine } from '@types/fotballerCard';
+import { handleTactics } from '@store/reducers/footballField';
 
-import triangle from '@Img/FootballFieldPage/triangle.svg';
+import triangle from '@img/FootballFieldPage/triangle.svg';
 
 import './index.scss';
 

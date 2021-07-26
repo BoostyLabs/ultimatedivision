@@ -6,11 +6,11 @@ See LICENSE for copying information.
 import { DragEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { FootballFieldCardSelection } from '@FootballField/FootballFieldCardSelection';
-import { FootballFieldPlayingArea } from '@FootballField/FotballFieldPlayingArea';
+import { FootballFieldCardSelection } from '@footballField/FootballFieldCardSelection';
+import { FootballFieldPlayingArea } from '@footballField/FotballFieldPlayingArea';
 
-import { RootState } from '@Store';
-import { removeCard } from '@Store/reducers/footballField';
+import { RootState } from '@store';
+import { removeCard } from '@store/reducers/footballField';
 
 import './index.scss';
 

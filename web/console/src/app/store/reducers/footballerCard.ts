@@ -3,19 +3,19 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
-import confirmIcon from '@Img/MarketPlacePage/MyCard/ok.svg';
-import priceGoldIcon from '@Img/MarketPlacePage/MyCard/goldPrice.svg';
-import playerFace from '@Img/MarketPlacePage/marketPlaceCardsGroup/player.svg';
+import confirmIcon from '@img/MarketPlacePage/MyCard/ok.svg';
+import priceGoldIcon from '@img/MarketPlacePage/MyCard/goldPrice.svg';
+import playerFace from '@img/MarketPlacePage/marketPlaceCardsGroup/player.svg';
 import priceIcon
-    from '@Img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.svg';
+    from '@img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.svg';
 
-import checked from '@Img/FootballerCardPage/checked.svg';
-import star from '@Img/FootballerCardPage/star.svg';
+import checked from '@img/FootballerCardPage/checked.svg';
+import star from '@img/FootballerCardPage/star.svg';
 
 import {
     CardInfoField, CardMainInfo, CardPrice, CardPriceField,
     CardPriceId, CardPricePRP, CardStats, CardStatsField, Diagram,
-} from '@Types/fotballerCard';
+} from '@types/fotballerCard';
 
 /* eslint-disable */
 

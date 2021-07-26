@@ -6,9 +6,9 @@ See LICENSE for copying information.
 import { lazy } from 'react';
 import { RouteProps, Switch } from 'react-router-dom';
 
-const FootballerCard = lazy(() => import('@FootballerCard/FootballerCard'));
-const FootballField = lazy(() => import('@FootballField/FootballField'));
-const MarketPlace = lazy(() => import('@MarketPlace/MarketPlace'));
+const FootballerCard = lazy(() => import('@footballerCard/FootballerCard'));
+const FootballField = lazy(() => import('@footballField/FootballField'));
+const MarketPlace = lazy(() => import('@marketPlace/MarketPlace'));
 
 /** Route base config implementation */
 export class ComponentRoutes {

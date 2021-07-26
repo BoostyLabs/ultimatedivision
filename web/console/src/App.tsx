@@ -6,8 +6,8 @@ See LICENSE for copying information.
 import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { Navbar } from '@Navbar';
-import { Routes } from '@Routes/index';
+import { Navbar } from '@navbar';
+import { Routes } from '@routes/index';
 
 /** initial App setup */
 export function App() {

@@ -2,34 +2,34 @@
   "compilerOptions": {
     "baseUrl": "/",
     "paths": {
-      "@FootballerCard": [
+      "@footballerCard": [
         "./src/app/components/FootballerCardPage/*"
       ],
-      "@FootballField": [
+      "@footballField": [
         "./src/app/components/FootballFieldPage/*"
       ],
-      "@MarketPlace": [
+      "@marketPlace": [
         "./src/app/components/MarketPlacePage/*"
       ],
-      "@Navbar": [
+      "@navbar": [
         "./src/app/components/Navbar/*"
       ],
-      "@Paginator": [
+      "@paginator": [
         "./src/app/components/Paginator/*"
       ],
-      "@PlayerCard": [
+      "@playerCard": [
         "./src/app/components/PlayerCard/*"
       ],
-      "@Img": [
+      "@img": [
         "./src/app/static/img/*"
       ],
-      "@Store": [
+      "@store": [
         "./src/app/store/*"
       ],
-      "@Types": [
+      "@types": [
         "./src/app/types/*"
       ],
-      "@Routes": [
+      "@routes": [
         "./src/app/routes/*"
       ],
     },

@@ -3,8 +3,8 @@ Copyright (C) 2021 Creditor Corp. Group.
 See LICENSE for copying information.
  */
 
-import rectangle from '@Img/FootballFieldPage/triangle.svg';
-import search from '@Img/FootballFieldPage/search.svg';
+import rectangle from '@img/FootballFieldPage/triangle.svg';
+import search from '@img/FootballFieldPage/search.svg';
 
 import './index.scss';
 

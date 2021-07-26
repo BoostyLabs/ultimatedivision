@@ -13,7 +13,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist/'),
         filename: '[name].[hash].js',
-        publicPath: 'https://ultimatedivision.com/test/'
+        publicPath: '/'
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -29,16 +29,16 @@ module.exports = {
     },
     resolve: {
         alias: {
-            "@FootballerCard": path.resolve(__dirname, './src/app/components/FootballerCardPage/'),
-            "@FootballField": path.resolve(__dirname, './src/app/components/FootballFieldPage/'),
-            "@MarketPlace": path.resolve(__dirname, './src/app/components/MarketPlacePage/'),
-            "@Navbar": path.resolve(__dirname, './src/app/components/Navbar/'),
-            "@Paginator": path.resolve(__dirname, './src/app/components/Paginator/'),
-            "@PlayerCard": path.resolve(__dirname, './src/app/components/PlayerCard/'),
-            "@Img": path.resolve(__dirname, './src/app/static/img/'),
-            "@Store": path.resolve(__dirname, './src/app/store/'),
-            "@Types": path.resolve(__dirname, './src/app/types/'),
-            "@Routes": path.resolve(__dirname, './src/app/routes/'),
+            "@footballerCard": path.resolve(__dirname, './src/app/components/FootballerCardPage/'),
+            "@footballField": path.resolve(__dirname, './src/app/components/FootballFieldPage/'),
+            "@marketPlace": path.resolve(__dirname, './src/app/components/MarketPlacePage/'),
+            "@navbar": path.resolve(__dirname, './src/app/components/Navbar/'),
+            "@paginator": path.resolve(__dirname, './src/app/components/Paginator/'),
+            "@playerCard": path.resolve(__dirname, './src/app/components/PlayerCard/'),
+            "@img": path.resolve(__dirname, './src/app/static/img/'),
+            "@store": path.resolve(__dirname, './src/app/store/'),
+            "@types": path.resolve(__dirname, './src/app/types/'),
+            "@routes": path.resolve(__dirname, './src/app/routes/'),
         },
         extensions: [
             '.ts',
