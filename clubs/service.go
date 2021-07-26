@@ -98,12 +98,12 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squads, []SquadCards, error) {
 	squad, err := service.clubs.GetSquad(ctx, clubID)
 	if err != nil {
-		return Squads{},nil, ErrClubs.Wrap(err)
+		return Squads{}, nil, ErrClubs.Wrap(err)
 	}
 
 	squadCards, err := service.clubs.ListSquadCards(ctx, squad.ID)
 	if err != nil {
-		return Squads{},nil, ErrClubs.Wrap(err)
+		return Squads{}, nil, ErrClubs.Wrap(err)
 	}
 
 	return squad, squadCards, nil
