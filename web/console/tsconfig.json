@@ -23,6 +23,9 @@
       "@img": [
         "./src/app/static/img/*"
       ],
+      "@fonts": [
+        "./src/app/static/fonts/*"
+      ],
       "@store": [
         "./src/app/store/*"
       ],
@@ -31,6 +34,9 @@
       ],
       "@routes": [
         "./src/app/routes/*"
+      ],
+      "@": [
+        "./src/*"
       ],
     },
     "target": "es5",
