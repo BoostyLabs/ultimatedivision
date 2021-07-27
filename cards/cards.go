@@ -179,15 +179,15 @@ const (
 type SliceFilters []Filters
 
 // Add check is empty and append value to slice.
-func (s SliceFilters) Add(name Filter, value string) SliceFilters {
-	if value != "" {
-		filter := Filters{
-			name: value,
-		}
-		s = append(s, filter)
-		return s
+func (s *SliceFilters) Add(name Filter, value string) {
+	if value == "" {
+		return
 	}
-	return s
+
+	filter := Filters{
+		name: value,
+	}
+	*s = append(*s, filter)
 }
 
 // Validate check of valid UTF-8 bytes and type.
