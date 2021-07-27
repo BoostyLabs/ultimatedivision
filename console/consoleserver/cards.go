@@ -47,10 +47,10 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	maxPhysique := urlQuery.Get(string(cards.MaxPhysique))
 	playerName := urlQuery.Get(string(cards.PlayerName))
 
-	filters = filters.Add(cards.Tactics, tactics)
-	filters = filters.Add(cards.MinPhysique, minPhysique)
-	filters = filters.Add(cards.MaxPhysique, maxPhysique)
-	filters = filters.Add(cards.PlayerName, playerName)
+	filters.Add(cards.Tactics, tactics)
+	filters.Add(cards.MinPhysique, minPhysique)
+	filters.Add(cards.MaxPhysique, maxPhysique)
+	filters.Add(cards.PlayerName, playerName)
 
 	if len(filters) > 0 {
 		cardsList, err = controller.cards.ListWithFilters(ctx, filters)
