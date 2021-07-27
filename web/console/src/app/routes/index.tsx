@@ -9,6 +9,9 @@ import { RouteProps, Switch } from 'react-router-dom';
 const FootballerCard = lazy(() => import('@components/FootballerCardPage/FootballerCard'));
 const FootballField = lazy(() => import('@components/FootballFieldPage/FootballField'));
 const MarketPlace = lazy(() => import('@components/MarketPlacePage/MarketPlace'));
+const WhitePaper = lazy(() => import('@components/WhitePaperPage/WhitePaper'));
+const Tokenomics = lazy(() => import('@components/TokenomicsPage/Tokenomics'));
+
 
 /** Route base config implementation */
 export class ComponentRoutes {
@@ -46,9 +49,14 @@ export class RouteConfig {
         MarketPlace,
         true,
     );
+    public static Tokenomics: ComponentRoutes = new ComponentRoutes(
+        '/test/tokenomics',
+        Tokenomics,
+        true,
+    );
     public static Default: ComponentRoutes = new ComponentRoutes(
-        '/test/',
-        MarketPlace,
+        '/test/whitepaper',
+        WhitePaper,
         true,
     );
     public static routes: ComponentRoutes[] = [
@@ -56,6 +64,7 @@ export class RouteConfig {
         RouteConfig.FootballerCard,
         RouteConfig.FootballField,
         RouteConfig.MyCards,
+        RouteConfig.Tokenomics,
         RouteConfig.Default,
     ];
 };
