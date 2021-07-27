@@ -1,42 +1,15 @@
 {
   "compilerOptions": {
-    "baseUrl": "/",
+    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ],
-      "@footballerCard/*": [
-        "@/app/components/FootballerCardPage/*"
+      "@components/*": [
+        "./src/app/components/*"
       ],
-      "@footballField/*": [
-        "@/app/components/FootballFieldPage/*"
-      ],
-      "@marketPlace/*": [
-        "@/app/components/MarketPlacePage/*"
-      ],
-      "@navbar/*": [
-        "@/app/components/Navbar/*"
-      ],
-      "@paginator/*": [
-        "@/app/components/Paginator/*"
-      ],
-      "@playerCard/*": [
-        "@/app/components/PlayerCard/*"
-      ],
-      "@img/*": [
-        "@/app/static/img/*"
-      ],
-      "@fonts/*": [
-        "@/app/static/fonts/*"
-      ],
-      "@store/*": [
-        "@/app/store/*"
-      ],
-      "@types/*": [
-        "@/app/types/*"
-      ],
-      "@routes/*": [
-        "src/app/routes/*"
+      "@static/*": [
+        "./src/app/static/*"
       ],
     },
     "target": "es5",
