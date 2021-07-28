@@ -21,8 +21,8 @@ import {
 
 /** Card base implementation */
 export class Card {
-    /** constructor has private bgType for test */
-    constructor(private bgType: number) { }
+    /** constructor has id for test */
+    constructor(public id: number) { }
     mainInfo = new CardMainInfo(
         'Ronalculus',
         1000000,
@@ -30,7 +30,7 @@ export class Card {
         priceIcon,
         priceGoldIcon,
         confirmIcon,
-        this.bgType,
+        this.id
     )
     overalInfo = [
         new CardInfoField('name', 'Albert Ronalculus'),
@@ -124,12 +124,10 @@ export class Card {
 /** create list of player cards (implementation for test)*/
 function cardList(count: number) {
     let list: Card[] = [];
-    while (count > 0) {
-        list.push(new Card(0), new Card(1), new Card(2), new Card(3));
-        count--;
+    for (let i = 1; i < count; i++) {
+        list.push(new Card(i));
     }
     return list;
-
 }
 
 export const cardReducer = (cardState = cardList(20)) => {

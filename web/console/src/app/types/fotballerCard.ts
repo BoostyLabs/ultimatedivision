@@ -66,21 +66,32 @@ export class CardMainInfo {
         public priceIcon: string,
         public priceGoldIcon: string,
         public confirmIcon: string,
-        public bgType: number,
+        public id: number,
     ) { }
     /** backgroundtype picture that depend on quality */
     get backgroundType() {
         const qualities = [
             diamond, gold, silver, wood
         ];
-        let background = qualities[this.bgType];
+        /** just for test rigth now */
+        let backgroundId = this.id;
+        if (backgroundId >= qualities.length) {
+            backgroundId = backgroundId % qualities.length;
+        }
+        let background = qualities[backgroundId];
         return background;
     };
     get shadowType() {
+        /** get shadow type of picture depend on quality */
         const qualities = [
             diamondShadow, goldShadow, silverShadow, woodShadow
         ];
-        let shadow = qualities[this.bgType];
+        /** just for test rigth now */
+        let qualityId = this.id;
+        if (qualityId >= qualities.length) {
+            qualityId = qualityId % qualities.length;
+        }
+        let shadow = qualities[qualityId];
         return shadow;
     };
     /** get image with price status depend on price status */
@@ -88,7 +99,12 @@ export class CardMainInfo {
         const statuses = [
             currentBid, minimumPrice, purchased, currentBid
         ];
-        let status = statuses[this.bgType];
+        /** just for test rigth now */
+        let statusId = this.id;
+        if (statusId >= statuses.length) {
+            statusId = statusId % statuses.length;
+        }
+        let status = statuses[statusId];
         return status;
     };
 }

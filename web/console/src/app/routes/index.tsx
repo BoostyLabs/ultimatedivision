@@ -32,9 +32,9 @@ export class RouteConfig {
         true,
     );
     public static FootballerCard: ComponentRoutes = new ComponentRoutes(
-        '/test/marketplace/card',
+        '/test/marketplace/card/:id',
         FootballerCard,
-        true,
+        false,
     );
     public static FootballField: ComponentRoutes = new ComponentRoutes(
         '/test/field',
