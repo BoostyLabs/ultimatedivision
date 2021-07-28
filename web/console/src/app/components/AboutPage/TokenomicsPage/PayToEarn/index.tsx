@@ -2,10 +2,12 @@ import React from 'react';
 
 import './index.scss';
 
-export const Staking = () => {
+const EarnToPay = () => {
     return (
         <div>
             
         </div>
     )
 }
+
+export default EarnToPay;

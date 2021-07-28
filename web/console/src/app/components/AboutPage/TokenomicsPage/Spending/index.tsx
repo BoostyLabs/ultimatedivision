@@ -2,7 +2,7 @@ import React from 'react';
 
 import './index.scss';
 
-const Tokenomics = () => {
+const Spending = () => {
     return (
         <div>
             
@@ -10,4 +10,4 @@ const Tokenomics = () => {
     )
 }
 
-export default Tokenomics;
+export default Spending;

@@ -21,7 +21,7 @@ export const Navbar: React.FC = () =>
         <ul className="ultimatedivision-navbar__list">
             <li className="ultimatedivision-navbar__item">
                 <NavLink
-                    to={RouteConfig.Default.path}
+                    to={RouteConfig.Default.path.toString()}
                     className="ultimatedivision-navbar__item__active"
                 >
                     HOME
@@ -29,7 +29,7 @@ export const Navbar: React.FC = () =>
             </li>
             <li className="ultimatedivision-navbar__item">
                 <NavLink
-                    to={RouteConfig.MarketPlace.path}
+                    to={RouteConfig.MarketPlace.path.toString()}
                     className="ultimatedivision-navbar__item__active"
                 >
                     MARKETPLACE
@@ -37,7 +37,7 @@ export const Navbar: React.FC = () =>
             </li>
             <li className="ultimatedivision-navbar__item">
                 <NavLink
-                    to={RouteConfig.MyCards.path}
+                    to={RouteConfig.MyCards.path.toString()}
                     className="ultimatedivision-navbar__item__active"
                 >
                     CLUB
@@ -45,7 +45,7 @@ export const Navbar: React.FC = () =>
             </li>
             <li className="ultimatedivision-navbar__item">
                 <NavLink
-                    to={RouteConfig.FootballField.path}
+                    to={RouteConfig.FootballField.path.toString()}
                     className="ultimatedivision-navbar__item__active"
                 >
                     FIELD

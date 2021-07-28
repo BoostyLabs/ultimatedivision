@@ -1,11 +1,11 @@
 @import '@/index.scss';
 
-.info-menu {
-    min-width: 400px;
+.about-menu {
+    width: 400px;
     width: 25%;
-    min-height: 100vh;
-    position: relative;
-    top: -10vh;
+    min-height: 110vh;
+    top: 0;
+    position: fixed;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -35,18 +35,25 @@
     }
     &__tokenomics-list,
     &__whitepaper-list {
-        width: 270px;
         list-style: none;
         overflow-y: hidden;
         transition: height 0.3s ease-in-out;
     }
     &__tokenomics-item,
     &__whitepaper-item {
-        padding: 5px 14px;
         font-family: "Montserrat";
         font-size: 18px;
         cursor: pointer;
         transition: all 0.3s;
+        color: white;
+    }
+    &__tokenomics-link,
+    &__whitepaper-link {
+        width: 270px;
+        display: inline-block;
+        padding: 5px 14px;
+        color: white;
+        text-decoration: none;
         &:hover {
             background-color: #464678;
             color: $cardHighlightColor;

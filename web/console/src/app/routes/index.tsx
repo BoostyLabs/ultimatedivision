@@ -9,22 +9,27 @@ import { RouteProps, Switch } from 'react-router-dom';
 const FootballerCard = lazy(() => import('@components/FootballerCardPage/FootballerCard'));
 const FootballField = lazy(() => import('@components/FootballFieldPage/FootballField'));
 const MarketPlace = lazy(() => import('@components/MarketPlacePage/MarketPlace'));
-const WhitePaper = lazy(() => import('@components/WhitePaperPage/WhitePaper'));
-const Tokenomics = lazy(() => import('@components/TokenomicsPage/Tokenomics'));
+const About = lazy(() => import('@components/AboutPage/About'));
 
+import Summary from '@/app/components/AboutPage/WhitePaperPage/Summary';
+import GameMechanics from '@/app/components/AboutPage/WhitePaperPage/GameMechanics';
+import PayToEarnEconomy from '@components/AboutPage/WhitePaperPage/PayToEarnEconomy';
+import Technology from '@components/AboutPage/WhitePaperPage/Technology';
+
+import Fund from '@components/AboutPage/TokenomicsPage/Fund';
+import PayToEarn from '@components/AboutPage/TokenomicsPage/PayToEarn';
+import Spending from '@components/AboutPage/TokenomicsPage/Spending';
+import Staking from '@components/AboutPage/TokenomicsPage/Staking';
 
 /** Route base config implementation */
 export class ComponentRoutes {
     /** data route config*/
     constructor(
-        public path: string,
+        public path: string | string[],
         public component: React.FC,
         public exact: boolean,
-    ) {
-        this.path = path;
-        this.component = component;
-        this.exact = exact;
-    }
+        public subRoutes?: ComponentRoutes[]
+    ) { }
 };
 
 /** Route config implementation */
@@ -49,32 +54,71 @@ export class RouteConfig {
         MarketPlace,
         true,
     );
-    public static Tokenomics: ComponentRoutes = new ComponentRoutes(
-        '/test/tokenomics',
-        Tokenomics,
-        true,
-    );
     public static Default: ComponentRoutes = new ComponentRoutes(
-        '/test/whitepaper',
-        WhitePaper,
-        true,
+        ['/test/whitepaper', '/test/tokenomics'],
+        About,
+        false,
+        [
+            new ComponentRoutes(
+                '/test/whitepaper/summary',
+                Summary,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/whitepaper/game-mechanicks',
+                GameMechanics,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/whitepaper/pay-to-earn-and-economy',
+                PayToEarnEconomy,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/whitepaper/technology',
+                Technology,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/tokenomics/udt-spending',
+                Spending,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/tokenomics/pay-to-earn',
+                PayToEarn,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/tokenomics/staking',
+                Staking,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/tokenomics/ud-dao-fund',
+                Fund,
+                true
+            ),
+        ]
     );
     public static routes: ComponentRoutes[] = [
         RouteConfig.MarketPlace,
         RouteConfig.FootballerCard,
         RouteConfig.FootballField,
         RouteConfig.MyCards,
-        RouteConfig.Tokenomics,
         RouteConfig.Default,
     ];
 };
 
-type RoutesProps = { component: React.FC } & RouteProps;
+type RoutesProps = { component: React.FC<{ routes?: ComponentRoutes[] }> } & RouteProps;
 
-const Route: React.FC<RoutesProps> = ({
-    component: Component, ...children
-}) =>
-    <Component {...children} />;
+export const Route: React.FC<RoutesProps> = ({
+    component: Component,
+    ...children
+}) => {
+    // console.log(children)
+    return <Component {...children} />;
+}
 
 export const Routes = () =>
     <Switch>
@@ -84,6 +128,8 @@ export const Routes = () =>
                 path={route.path}
                 component={route.component}
                 exact={route.exact}
+                //@ts-ignore
+                routes={route.subRoutes}
             />,
         )}
     </Switch>;
