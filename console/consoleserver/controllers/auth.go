@@ -8,6 +8,8 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/gorilla/mux"
+
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/auth"
@@ -61,6 +63,25 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+
+	auth.responseWithJSON(w, http.StatusOK, "OK")
+}
+
+func (auth *Auth) ConfirmUserEmail(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	params := mux.Vars(r)
+	token := params["token"]
+	if token == "" {
+		http.Error(w, "Unable to confirm address. Missing token", http.StatusNotFound)
+		return
+	}
+	err := auth.service.ConfirmUserEmail(ctx, token)
+	if err != nil {
+		auth.log.Error("Unable to confirm address", AuthError.Wrap(err))
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	auth.responseWithJSON(w, http.StatusOK, "Email address confirmed")
 }
 
 // Login is an endpoint to authorize user and set auth cookie in browser.
@@ -101,4 +122,18 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 // Logout is an endpoint to log out and remove auth cookie from browser.
 func (auth *Auth) Logout(w http.ResponseWriter, r *http.Request) {
 	auth.cookie.RemoveTokenCookie(w)
+}
+
+// responseWithJSON gives response in JSON
+func (auth *Auth) responseWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, err := json.Marshal(payload)
+	if err != nil {
+		auth.log.Error("Failed to marshal response", AuthError.Wrap(err))
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
 }

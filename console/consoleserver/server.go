@@ -6,7 +6,6 @@ package consoleserver
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net"
 	"net/http"
 
@@ -14,7 +13,10 @@ import (
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/console/consoleserver/controllers"
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/users/userauth"
 )
 
 var (
@@ -34,8 +36,15 @@ type Server struct {
 	log    logger.Logger
 	config Config
 
+	authService *userauth.Service
+	cookieAuth  *auth.CookieAuth
+
 	listener net.Listener
 	server   http.Server
+
+	templates struct {
+		auth controllers.AuthTemplates
+	}
 }
 
 // NewServer is a constructor for console web server.
@@ -48,10 +57,11 @@ func NewServer(config Config, log logger.Logger, listener net.Listener) (*Server
 
 	router := mux.NewRouter()
 
-	testRouter := router.PathPrefix("/test").Subrouter().StrictSlash(true)
-	testRouter.HandleFunc("", func(rw http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(rw, "hello!!!")
-	}).Methods(http.MethodGet)
+	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
+	router.HandleFunc("/login", authController.Login).Methods(http.MethodPost, http.MethodGet)
+	router.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
+	router.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
+	router.HandleFunc("/email/confirm/{token}", authController.ConfirmUserEmail).Methods(http.MethodPost)
 
 	server.server = http.Server{
 		Handler: router,

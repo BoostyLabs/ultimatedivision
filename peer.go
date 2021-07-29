@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"net"
-	"ultimatedivision/users/userauth"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -18,9 +17,11 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
+	"ultimatedivision/console/emails"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
+	"ultimatedivision/users/userauth"
 )
 
 // DB provides access to all databases and database related functionality.
@@ -105,6 +106,11 @@ type Peer struct {
 		Listener net.Listener
 		Endpoint *consoleserver.Server
 	}
+
+	// exposes email related logic
+	Email struct {
+		Service *emails.Service
+	}
 }
 
 // New is a constructor for ultimatedivision.Peer.
@@ -123,7 +129,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			auth.TokenSigner{
 				Secret: []byte(config.Users.Auth.TokenAuthSecret),
 			},
-		)
+			peer.Email.Service,
+			logger)
 	}
 
 	{ // admins setup

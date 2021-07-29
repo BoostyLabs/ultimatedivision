@@ -13,7 +13,9 @@ import (
 	"github.com/zeebo/errs"
 	"golang.org/x/crypto/bcrypt"
 
+	"ultimatedivision/console/emails"
 	"ultimatedivision/internal/auth"
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
 )
 
@@ -34,15 +36,19 @@ var (
 //
 // architecture: Service
 type Service struct {
-	users  users.DB
-	signer auth.TokenSigner
+	users        users.DB
+	signer       auth.TokenSigner
+	emailService *emails.Service
+	log          logger.Logger
 }
 
 // NewService is a constructor for user auth service.
-func NewService(users users.DB, signer auth.TokenSigner) *Service {
+func NewService(users users.DB, signer auth.TokenSigner, emailService *emails.Service, log logger.Logger) *Service {
 	return &Service{
-		users:  users,
-		signer: signer,
+		users:        users,
+		signer:       signer,
+		emailService: emailService,
+		log:          log,
 	}
 }
 
@@ -166,14 +172,17 @@ func (service *Service) RegisterUser(ctx context.Context, email, password, nickN
 		return Error.Wrap(err)
 	}
 
+	token, _ := service.Token(ctx, user.Email, string(user.PasswordHash))
+
 	// @todo sending email function still have to finalize.
-	//// launch a goroutine that sends the email verification.
-	//go func() {
-	//	_, err := auth.service.GenerateAndSendEmailConfirmation(user.Email)
-	//	if err != nil {
-	//		auth.log.Error("Unable to send account activation email", AuthError.Wrap(err))
-	//	}
-	//}()
+	// launch a goroutine that sends the email verification.
+	go func() {
+		err = service.emailService.SendVerificationEmail(user.Email, token)
+		if err != nil {
+			service.log.Error("Unable to send account activation email", Error.Wrap(err))
+			return
+		}
+	}()
 
 	return err
 }
@@ -195,4 +204,34 @@ func isPasswordValid(s string) bool {
 		}
 	}
 	return len(s) >= 8 && letters >= 1 && number && upper && special
+}
+
+// ConfirmUserEmail - parse token and confirm User.
+func (service *Service) ConfirmUserEmail(ctx context.Context, tokenS string) error {
+	status := int(users.StatusVerified)
+	token, err := auth.FromBase64URLString(tokenS)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	claims, err := service.authenticate(token)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	if !claims.ExpiresAt.IsZero() && claims.ExpiresAt.Before(time.Now()) {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	user, err := service.users.GetByEmail(ctx, claims.Email)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	err = service.users.Update(ctx, status, user.ID)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	return nil
 }

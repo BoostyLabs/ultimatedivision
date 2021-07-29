@@ -41,6 +41,8 @@ const (
 	StatusActive Status = 0
 	// StatusSuspended indicates that user cannot login to the account.
 	StatusSuspended Status = 1
+	// StatusVerified indicates that user email is verified.
+	StatusVerified Status = 3
 )
 
 // User describes user entity.
