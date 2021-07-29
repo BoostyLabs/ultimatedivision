@@ -2,12 +2,10 @@ import React from 'react';
 
 import './index.scss';
 
-const EarnToPay = () => {
-    return (
-        <div>
-            
-        </div>
-    )
-}
+const EarnToPay = () =>
+    <div>
+
+    </div>;
+
 
 export default EarnToPay;

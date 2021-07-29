@@ -2,12 +2,10 @@ import React from 'react';
 
 import './index.scss';
 
-const Spending = () => {
-    return (
-        <div>
-            
-        </div>
-    )
-}
+const Spending = () =>
+    <div>
+
+    </div>;
+
 
 export default Spending;

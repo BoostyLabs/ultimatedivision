@@ -17,8 +17,8 @@ import './index.scss';
 
 export const FootballFieldInformationCaptain: React.FC<{ props: FotballFieldInformationLine }> = ({ props }) => {
     const [optionVisibility, changeVisibility] = useState(false);
-
-    const optionStyle = new DropdownStyle(optionVisibility, 90);
+    const LIST_HEIGHT = 90;
+    const optionStyle = new DropdownStyle(optionVisibility, LIST_HEIGHT);
 
     const dispatch = useDispatch();
 

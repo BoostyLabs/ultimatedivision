@@ -2,12 +2,10 @@ import React from 'react';
 
 import './index.scss';
 
-const Fund = () => {
-    return (
-        <div>
-            
-        </div>
-    )
-}
+const Fund = () =>
+    <div>
+
+    </div>;
+
 
 export default Fund;

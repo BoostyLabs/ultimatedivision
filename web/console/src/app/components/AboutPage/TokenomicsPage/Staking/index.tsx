@@ -2,12 +2,10 @@ import React from 'react';
 
 import './index.scss';
 
-const Staking = () => {
-    return (
-        <div>
-            
-        </div>
-    )
-}
+const Staking = () =>
+    <div>
+
+    </div>;
+
 
 export default Staking;

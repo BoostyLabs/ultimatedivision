@@ -44,7 +44,6 @@
         font-family: "Montserrat";
         font-size: 18px;
         cursor: pointer;
-        transition: all 0.3s;
         color: white;
     }
     &__tokenomics-link,
@@ -54,6 +53,7 @@
         padding: 5px 14px;
         color: white;
         text-decoration: none;
+        transition: all 0.3s;
         &:hover {
             background-color: #464678;
             color: $cardHighlightColor;

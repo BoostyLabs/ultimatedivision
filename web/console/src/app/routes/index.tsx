@@ -10,7 +10,6 @@ const FootballerCard = lazy(() => import('@components/FootballerCardPage/Footbal
 const FootballField = lazy(() => import('@components/FootballFieldPage/FootballField'));
 const MarketPlace = lazy(() => import('@components/MarketPlacePage/MarketPlace'));
 const About = lazy(() => import('@components/AboutPage/About'));
-// import About from '../components/AboutPage/About';
 
 import Summary from '@/app/components/AboutPage/WhitePaperPage/Summary';
 import GameMechanics from '@/app/components/AboutPage/WhitePaperPage/GameMechanics';
@@ -123,10 +122,7 @@ export class RouteConfig {
 export const Route: React.FC<ComponentRoutes> = ({
     component: Component,
     ...children
-}) => {
-    // console.log(children)
-    return <Component {...children} />;
-}
+}) => <Component {...children} />;
 
 export const Routes = () =>
     <Switch>
