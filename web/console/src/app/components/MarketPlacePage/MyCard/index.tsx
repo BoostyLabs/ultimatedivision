@@ -19,7 +19,7 @@ export const MyCard: React.FC<{ card: Card }> = ({ card }) =>
         <Link
             style={{ textDecoration: 'none' }}
             to={{
-                pathname: RouteConfig.FootballerCard.path.toString(),
+                pathname: RouteConfig.FootballerCard.path,
                 state: {
                     card,
                 },

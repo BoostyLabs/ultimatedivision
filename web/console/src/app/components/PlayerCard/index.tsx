@@ -27,7 +27,7 @@ export const PlayerCard: React.FC<{ card: Card; parentClassName: string }> = ({
         />
         <Link
             to={{
-                pathname: RouteConfig.FootballerCard.path.toString(),
+                pathname: RouteConfig.FootballerCard.path,
                 state: {
                     card,
                 },

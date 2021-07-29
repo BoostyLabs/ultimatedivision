@@ -10,6 +10,7 @@ const FootballerCard = lazy(() => import('@components/FootballerCardPage/Footbal
 const FootballField = lazy(() => import('@components/FootballFieldPage/FootballField'));
 const MarketPlace = lazy(() => import('@components/MarketPlacePage/MarketPlace'));
 const About = lazy(() => import('@components/AboutPage/About'));
+// import About from '../components/AboutPage/About';
 
 import Summary from '@/app/components/AboutPage/WhitePaperPage/Summary';
 import GameMechanics from '@/app/components/AboutPage/WhitePaperPage/GameMechanics';
@@ -25,8 +26,8 @@ import Staking from '@components/AboutPage/TokenomicsPage/Staking';
 export class ComponentRoutes {
     /** data route config*/
     constructor(
-        public path: string | string[],
-        public component: React.FC,
+        public path: string,
+        public component: React.FC<{children: ComponentRoutes[]}>,
         public exact: boolean,
         public subRoutes?: ComponentRoutes[]
     ) { }
@@ -54,8 +55,34 @@ export class RouteConfig {
         MarketPlace,
         true,
     );
+    public static Tokenomics: ComponentRoutes = new ComponentRoutes(
+        '/test/tokenomics',
+        About,
+        false,
+        [
+            new ComponentRoutes(
+                '/test/tokenomics/udt-spending',
+                Spending,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/tokenomics/pay-to-earn',
+                PayToEarn,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/tokenomics/staking',
+                Staking,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/tokenomics/ud-dao-fund',
+                Fund,
+                true
+            ),
+        ]);
     public static Default: ComponentRoutes = new ComponentRoutes(
-        ['/test/whitepaper', '/test/tokenomics'],
+        '/test/whitepaper',
         About,
         false,
         [
@@ -79,26 +106,6 @@ export class RouteConfig {
                 Technology,
                 true
             ),
-            new ComponentRoutes(
-                '/test/tokenomics/udt-spending',
-                Spending,
-                true
-            ),
-            new ComponentRoutes(
-                '/test/tokenomics/pay-to-earn',
-                PayToEarn,
-                true
-            ),
-            new ComponentRoutes(
-                '/test/tokenomics/staking',
-                Staking,
-                true
-            ),
-            new ComponentRoutes(
-                '/test/tokenomics/ud-dao-fund',
-                Fund,
-                true
-            ),
         ]
     );
     public static routes: ComponentRoutes[] = [
@@ -106,13 +113,14 @@ export class RouteConfig {
         RouteConfig.FootballerCard,
         RouteConfig.FootballField,
         RouteConfig.MyCards,
+        RouteConfig.Tokenomics,
         RouteConfig.Default,
     ];
 };
 
-type RoutesProps = { component: React.FC<{ routes?: ComponentRoutes[] }> } & RouteProps;
+// type RoutesProps = { component: React.FC<{ routes?: ComponentRoutes[] }> } & RouteProps;
 
-export const Route: React.FC<RoutesProps> = ({
+export const Route: React.FC<ComponentRoutes> = ({
     component: Component,
     ...children
 }) => {
@@ -128,8 +136,7 @@ export const Routes = () =>
                 path={route.path}
                 component={route.component}
                 exact={route.exact}
-                //@ts-ignore
-                routes={route.subRoutes}
+                children={route.subRoutes}
             />,
         )}
     </Switch>;

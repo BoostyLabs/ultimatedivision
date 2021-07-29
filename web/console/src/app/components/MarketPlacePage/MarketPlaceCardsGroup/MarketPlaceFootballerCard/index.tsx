@@ -19,7 +19,7 @@ export const MarketPlaceFootballerCard: React.FC<{ card: Card; place?: string }>
         <Link
             style={{ textDecoration: 'none' }}
             to={{
-                pathname: RouteConfig.FootballerCard.path.toString(),
+                pathname: RouteConfig.FootballerCard.path,
                 state: {
                     card,
                 },
