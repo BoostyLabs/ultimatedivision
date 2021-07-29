@@ -180,7 +180,6 @@ func (service *Service) RegisterUser(ctx context.Context, email, password, nickN
 		err = service.emailService.SendVerificationEmail(user.Email, token)
 		if err != nil {
 			service.log.Error("Unable to send account activation email", Error.Wrap(err))
-			return
 		}
 	}()
 
