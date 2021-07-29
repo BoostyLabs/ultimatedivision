@@ -66,6 +66,7 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	auth.responseWithJSON(w, http.StatusOK, "OK")
 }
 
+// ConfirmUserEmail confirm the email of the user based on the received token.
 func (auth *Auth) ConfirmUserEmail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
@@ -123,7 +124,7 @@ func (auth *Auth) Logout(w http.ResponseWriter, r *http.Request) {
 	auth.cookie.RemoveTokenCookie(w)
 }
 
-// responseWithJSON gives response in JSON
+// responseWithJSON gives response in JSON.
 func (auth *Auth) responseWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, err := json.Marshal(payload)
 	if err != nil {
@@ -134,5 +135,8 @@ func (auth *Auth) responseWithJSON(w http.ResponseWriter, code int, payload inte
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	w.Write(response)
+	_, err = w.Write(response)
+	if err != nil {
+		auth.log.Error("Failed to write response", AuthError.Wrap(err))
+	}
 }
