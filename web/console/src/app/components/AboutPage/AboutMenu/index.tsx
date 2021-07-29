@@ -31,7 +31,6 @@ export const AboutMenu = () => {
             ],
         tokenomics:
             [
-
                 'UDT Spending',
                 'Play to Earn',
                 'Staking',

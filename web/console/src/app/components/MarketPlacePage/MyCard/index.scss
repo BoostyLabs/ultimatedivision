@@ -11,6 +11,9 @@
     padding-bottom: 40px;
     margin: 100px 15px 0px;
     cursor: pointer;
+    &__link {
+        text-decoration: none;
+    }
     &__background-type {
         z-index: 1;
         position: absolute;

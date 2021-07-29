@@ -15,7 +15,7 @@ export const MarketPlaceFootballerCard: React.FC<{ card: Card; place?: string }>
         className="marketplace-playerCard"
     >
         <Link
-            style={{ textDecoration: 'none' }}
+            className="marketplace-playerCard__link"
             to={{
                 pathname: RouteConfig.FootballerCard.path,
                 state: {

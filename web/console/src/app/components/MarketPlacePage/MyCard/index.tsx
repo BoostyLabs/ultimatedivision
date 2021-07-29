@@ -15,7 +15,7 @@ export const MyCard: React.FC<{ card: Card }> = ({ card }) =>
         className="marketplace-myCard"
     >
         <Link
-            style={{ textDecoration: 'none' }}
+            className="marketplace-myCard__link"
             to={{
                 pathname: RouteConfig.FootballerCard.path,
                 state: {
