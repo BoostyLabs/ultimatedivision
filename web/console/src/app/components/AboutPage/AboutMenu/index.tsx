@@ -8,6 +8,7 @@ import triangle from '@static/img/FootballFieldPage/triangle.svg';
 
 import './index.scss';
 import { Link } from 'react-router-dom';
+import { RouteConfig } from '@/app/routes';
 
 export const AboutMenu = () => {
 
@@ -20,45 +21,19 @@ export const AboutMenu = () => {
     const menuFields = {
         whitepaper:
             [
-                {
-                    path: '/summary',
-                    name: 'Summary',
-                },
-                {
-                    path: '/game-mechanicks',
-                    name: 'Game Mechanics',
-                },
-                {
-                    path: '/pay-to-earn-and-economy',
-                    name: 'Play to Earn and Economy'
-                },
-                {
-                    path: '/technology',
-                    name: 'Technology'
-                },
-                {
-                    path: '/team',
-                    name: 'Team'
-                }
+                'Summary',
+                'Game Mechanics',
+                'Play to Earn and Economy',
+                'Technology',
+                'Team',
             ],
         tokenomics:
             [
-                {
-                    path: '/udt-spending',
-                    name: 'UDT Spending',
-                },
-                {
-                    path: '/pay-to-earn',
-                    name: 'Play to Earn'
-                },
-                {
-                    path: '/staking',
-                    name: 'Staking'
-                },
-                {
-                    path: '/ud-dao-fund',
-                    name: 'UD DAO Fund'
-                }
+
+                'UDT Spending',
+                'Play to Earn',
+                'Staking',
+                'UD DAO Fund',
             ],
     }
 
@@ -84,16 +59,17 @@ export const AboutMenu = () => {
                 style={{ height: whitePaperStyle.listHeight }}
             >
                 {
-                    menuFields.whitepaper.map((item, index) => (
+                    RouteConfig.Default.subRoutes&&
+                    RouteConfig.Default.subRoutes.map((item, index) => (
                         <li
                             key={index}
                             className="about-menu__whitepaper-item"
                         >
                             <Link
-                                to={`/test/whitepaper${item.path}`}
+                                to={item.path}
                                 className="about-menu__whitepaper-link"
                             >
-                                {item.name}
+                                {menuFields.whitepaper[index]}
 
                             </Link>
                         </li>
@@ -118,16 +94,17 @@ export const AboutMenu = () => {
                 style={{ height: tokenomicsStyle.listHeight }}
             >
                 {
-                    menuFields.tokenomics.map((item, index) => (
+                    RouteConfig.Tokenomics.subRoutes &&
+                    RouteConfig.Tokenomics.subRoutes.map((item, index) => (
                         <li
                             key={index}
                             className="about-menu__tokenomics-item"
                         >
                             <Link
-                                to={`/test/tokenomics${item.path}`}
+                                to={item.path}
                                 className="about-menu__tokenomics-link"
                             >
-                                {item.name}
+                                {menuFields.tokenomics[index]}
 
                             </Link>
                         </li>

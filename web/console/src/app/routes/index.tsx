@@ -87,7 +87,7 @@ export class RouteConfig {
         false,
         [
             new ComponentRoutes(
-                '/test/whitepaper/summary',
+                '/test/whitepaper/',
                 Summary,
                 true
             ),
