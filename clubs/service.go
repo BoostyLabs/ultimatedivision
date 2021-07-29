@@ -28,15 +28,15 @@ func NewService(clubs DB) *Service {
 	}
 }
 
-// CreateClub creates clubs.
-func (service *Service) CreateClub(ctx context.Context, userID uuid.UUID) error {
+// Create creates clubs.
+func (service *Service) Create(ctx context.Context, userID uuid.UUID) error {
 	newClub := Club{
 		ID:        uuid.New(),
 		OwnerID:   userID,
 		CreatedAt: time.Now().UTC(),
 	}
 
-	return service.clubs.CreateClub(ctx, newClub)
+	return service.clubs.Create(ctx, newClub)
 }
 
 // CreateSquad creates new squad for club.
@@ -45,6 +45,7 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error
 		ID:     uuid.New(),
 		ClubID: clubID,
 	}
+
 	return service.clubs.CreateSquad(ctx, newSquad)
 }
 
@@ -62,9 +63,7 @@ func (service *Service) Add(ctx context.Context, squadID uuid.UUID, cardID uuid.
 		Capitan:  capitan,
 	}
 
-	err = service.clubs.Add(ctx, newSquadCard)
-
-	return ErrClubs.Wrap(err)
+	return service.clubs.Add(ctx, newSquadCard)
 }
 
 // UpdateSquad updates tactic and formation of the squad.
@@ -75,23 +74,17 @@ func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, tact
 		Tactic:    tactic,
 	}
 
-	err := service.clubs.UpdateTacticFormation(ctx, updatedSquad)
-
-	return ErrClubs.Wrap(err)
+	return service.clubs.UpdateTacticFormation(ctx, updatedSquad)
 }
 
 // UpdateCapitan updates capitan in the club.
 func (service *Service) UpdateCapitan(ctx context.Context, squadID uuid.UUID, capitanID uuid.UUID) error {
-	err := service.clubs.UpdateCapitan(ctx, capitanID, squadID)
-
-	return ErrClubs.Wrap(err)
+	return service.clubs.UpdateCapitan(ctx, capitanID, squadID)
 }
 
 // UpdateCardPosition updates position of card in the squad.
 func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, position Position) error {
-	err := service.clubs.UpdatePosition(ctx, squadID, cardID, position)
-
-	return ErrClubs.Wrap(err)
+	return service.clubs.UpdatePosition(ctx, squadID, cardID, position)
 }
 
 // GetSquad returns all squads from club.
@@ -109,9 +102,7 @@ func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squads,
 	return squad, squadCards, nil
 }
 
-// ListClub returns users clubs.
-func (service *Service) ListClub(ctx context.Context, userID uuid.UUID) ([]Club, error) {
-	userClubs, err := service.clubs.ListClubs(ctx, userID)
-
-	return userClubs, err
+// List returns users clubs.
+func (service *Service) List(ctx context.Context, userID uuid.UUID) ([]Club, error) {
+	return service.clubs.List(ctx, userID)
 }

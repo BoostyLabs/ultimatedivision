@@ -21,12 +21,12 @@ var ErrNoSquad = errs.Class("squad does not exist")
 //
 // architecture: DB
 type DB interface {
-	// CreateClub creates club in the database.
-	CreateClub(ctx context.Context, club Club) error
+	// Create creates club in the database.
+	Create(ctx context.Context, club Club) error
 	// CreateSquad creates squad for clubs in the database.
 	CreateSquad(ctx context.Context, squad Squads) error
-	// ListClubs returns all the clubs owned by the user.
-	ListClubs(ctx context.Context, userID uuid.UUID) ([]Club, error)
+	// List returns all the clubs owned by the user.
+	List(ctx context.Context, userID uuid.UUID) ([]Club, error)
 	// GetSquad returns squad.
 	GetSquad(ctx context.Context, squadID uuid.UUID) (Squads, error)
 	// GetCapitan returns id of capitan.
@@ -45,25 +45,25 @@ type DB interface {
 
 // Club defines club entity.
 type Club struct {
-	ID        uuid.UUID `json:"ID"`
-	OwnerID   uuid.UUID `json:"ownerID"`
+	ID        uuid.UUID `json:"id"`
+	OwnerID   uuid.UUID `json:"ownerId"`
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-// Squads defines squad entity.
+// Squads describes squads of clubs.
 type Squads struct {
-	ID        uuid.UUID `json:"ID"`
+	ID        uuid.UUID `json:"id"`
 	Name      string    `json:"name"`
-	ClubID    uuid.UUID `json:"clubID"`
+	ClubID    uuid.UUID `json:"clubId"`
 	Formation Formation `json:"formation"`
 	Tactic    Tactic    `json:"tactic"`
 }
 
 // SquadCards defines all cards from squad.
 type SquadCards struct {
-	ID       uuid.UUID `json:"ID"`
-	CardID   uuid.UUID `json:"cardID"`
+	ID       uuid.UUID `json:"id"`
+	CardID   uuid.UUID `json:"cardId"`
 	Position Position  `json:"position"`
 	Capitan  uuid.UUID `json:"capitan"`
 }

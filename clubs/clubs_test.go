@@ -81,7 +81,7 @@ func TestTeam(t *testing.T) {
 			err := repositoryUsers.Create(ctx, testUser)
 			require.NoError(t, err)
 
-			err = repositoryClubs.CreateClub(ctx, testClub)
+			err = repositoryClubs.Create(ctx, testClub)
 			require.NoError(t, err)
 
 		})
@@ -92,7 +92,7 @@ func TestTeam(t *testing.T) {
 		})
 
 		t.Run("List clubs", func(t *testing.T) {
-			clubDB, err := repositoryClubs.ListClubs(ctx, testClub.ID)
+			clubDB, err := repositoryClubs.List(ctx, testClub.ID)
 			require.NoError(t, err)
 
 			compareClubs(t, clubDB, []clubs.Club{testClub})

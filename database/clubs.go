@@ -27,8 +27,8 @@ type clubsDB struct {
 	conn *sql.DB
 }
 
-// CreateClub creates empty club in the db.
-func (clubsDB *clubsDB) CreateClub(ctx context.Context, club clubs.Club) error {
+// Create creates empty club in the db.
+func (clubsDB *clubsDB) Create(ctx context.Context, club clubs.Club) error {
 	query := `INSERT INTO clubs(id, owner_id, club_name, created_at)
 			   VALUES($1,$2,$3,$4)`
 
@@ -59,8 +59,8 @@ func (clubsDB clubsDB) Add(ctx context.Context, squadCards clubs.SquadCards) err
 	return ErrSquad.Wrap(err)
 }
 
-// ListClubs returns all the clubs owned by the user.
-func (clubsDB clubsDB) ListClubs(ctx context.Context, userID uuid.UUID) ([]clubs.Club, error) {
+// List returns all the clubs owned by the user.
+func (clubsDB clubsDB) List(ctx context.Context, userID uuid.UUID) ([]clubs.Club, error) {
 	query := `SELECT id, owner_id, club_name, created_at
 			  FROM clubs
 			  WHERE owner_id = $1`
