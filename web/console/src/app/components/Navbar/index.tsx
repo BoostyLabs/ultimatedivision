@@ -1,13 +1,9 @@
-//Copyright (C) 2021 Creditor Corp. Group.
-//See LICENSE for copying information.
-
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
 import { NavLink } from 'react-router-dom';
 import { RouteConfig } from '@/app/routes';
-
 import ultimate from '@static/img/Navbar/ultimate.png';
-
 import './index.scss';
-
 export const Navbar: React.FC = () =>
     <div className="ultimatedivision-navbar">
         <img

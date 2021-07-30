@@ -1,12 +1,10 @@
-//Copyright (C) 2021 Creditor Corp. Group.
-//See LICENSE for copying information.
-
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
 import { Switch } from 'react-router-dom';
 
 import { AboutPageSubroutes, ComponentRoutes, Route } from '@/app/routes';
 
 import { AboutMenu } from '../AboutMenu';
-
 import './index.scss';
 
 const About: React.FC<{ children: AboutPageSubroutes }> = ({ children }) => {

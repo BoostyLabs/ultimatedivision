@@ -8,7 +8,6 @@ const FootballerCard = lazy(() => import('@components/FootballerCardPage/Footbal
 const FootballField = lazy(() => import('@components/FootballFieldPage/FootballField'));
 const MarketPlace = lazy(() => import('@components/MarketPlacePage/MarketPlace'));
 const About = lazy(() => import('@components/AboutPage/About'));
-
 import Summary from '@/app/components/AboutPage/WhitePaperPage/Summary';
 import GameMechanics from '@/app/components/AboutPage/WhitePaperPage/GameMechanics';
 import PayToEarnEconomy from '@components/AboutPage/WhitePaperPage/PayToEarnEconomy';
