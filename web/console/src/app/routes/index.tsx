@@ -10,7 +10,6 @@ const FootballerCard = lazy(() => import('@components/FootballerCardPage/Footbal
 const FootballField = lazy(() => import('@components/FootballFieldPage/FootballField'));
 const MarketPlace = lazy(() => import('@components/MarketPlacePage/MarketPlace'));
 const About = lazy(() => import('@components/AboutPage/About'));
-// import About from '../components/AboutPage/About';
 
 import Summary from '@/app/components/AboutPage/WhitePaperPage/Summary';
 import GameMechanics from '@/app/components/AboutPage/WhitePaperPage/GameMechanics';
@@ -18,7 +17,7 @@ import PayToEarnEconomy from '@components/AboutPage/WhitePaperPage/PayToEarnEcon
 import Technology from '@components/AboutPage/WhitePaperPage/Technology';
 
 import Fund from '@components/AboutPage/TokenomicsPage/Fund';
-import PayToEarn from '@components/AboutPage/TokenomicsPage/PayToEarn';
+import PlayToEarn from '@components/AboutPage/TokenomicsPage/PlayToEarn';
 import Spending from '@components/AboutPage/TokenomicsPage/Spending';
 import Staking from '@components/AboutPage/TokenomicsPage/Staking';
 
@@ -66,8 +65,8 @@ export class RouteConfig {
                 true
             ),
             new ComponentRoutes(
-                '/test/tokenomics/pay-to-earn',
-                PayToEarn,
+                '/test/tokenomics/play-to-earn',
+                PlayToEarn,
                 true
             ),
             new ComponentRoutes(
