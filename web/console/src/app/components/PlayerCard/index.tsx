@@ -1,13 +1,11 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
- */
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 
 import { Link, NavLink } from 'react-router-dom';
 
-import { RouteConfig } from '../../routes';
+import { RouteConfig } from '@/app/routes';
 
-import { Card } from '../../store/reducers/footballerCard';
+import { Card } from '@/app/store/reducers/footballerCard';
 
 export const PlayerCard: React.FC<{ card: Card; parentClassName: string }> = ({
     card, parentClassName,
@@ -28,7 +26,7 @@ export const PlayerCard: React.FC<{ card: Card; parentClassName: string }> = ({
         <Link
             to={{
                 pathname: RouteConfig.FootballerCard.path,
-                state:{
+                state: {
                     card,
                 },
             }}

@@ -1,21 +1,19 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
- */
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 
-import confirmIcon from '../../static/img/MarketPlacePage/MyCard/ok.svg';
-import priceGoldIcon from '../../static/img/MarketPlacePage/MyCard/goldPrice.svg';
-import playerFace from '../../static/img/MarketPlacePage/marketPlaceCardsGroup/player.svg';
+import confirmIcon from '@static/img/MarketPlacePage/MyCard/ok.svg';
+import priceGoldIcon from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
+import playerFace from '@static/img/MarketPlacePage/marketPlaceCardsGroup/player.svg';
 import priceIcon
-    from '../../static/img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.svg';
+    from '@static/img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.svg';
 
-import checked from '../../static/img/FootballerCardPage/checked.svg';
-import star from '../../static/img/FootballerCardPage/star.svg';
+import checked from '@static/img/FootballerCardPage/checked.svg';
+import star from '@static/img/FootballerCardPage/star.svg';
 
 import {
     CardInfoField, CardMainInfo, CardPrice, CardPriceField,
     CardPriceId, CardPricePRP, CardStats, CardStatsField, Diagram,
-} from '../../types/fotballerCard';
+} from '@/app/types/fotballerCard';
 
 /* eslint-disable */
 
@@ -132,6 +130,6 @@ function cardList(count: number) {
 
 }
 
-export const cardReducer = (cardState = cardList(100)) => {
+export const cardReducer = (cardState = cardList(20)) => {
     return cardState;
 };

@@ -1,11 +1,12 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
- */
-import { FootballFieldInformationLine } from '../../../types/footballField';
-import { FootballFieldInformationCaptain } from './FootballFieldInformationCaptain';
-import { FootballFieldInformationFormation } from './FootballFieldInformationFormation';
-import { FootballFieldInformationTactic } from './FootballFieldInformationTactic';
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
+import { FootballFieldInformationLine } from '@/app/types/footballField';
+import { FootballFieldInformationCaptain } from
+    '@components/FootballFieldPage/FootballFieldInformation/FootballFieldInformationCaptain';
+import { FootballFieldInformationFormation } from
+    '@components/FootballFieldPage/FootballFieldInformation/FootballFieldInformationFormation';
+import { FootballFieldInformationTactic } from
+    '@components/FootballFieldPage/FootballFieldInformation/FootballFieldInformationTactic';
 
 import './index.scss';
 

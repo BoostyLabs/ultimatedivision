@@ -1,14 +1,12 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
-*/
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 import { useSelector } from 'react-redux';
 
 import { Doughnut } from 'react-chartjs-2';
 
-import { RootState } from '../../../store';
+import { RootState } from '@/app/store';
 
-import currency from '../../../static/img/FootballerCardPage/currency.svg';
+import currency from '@static/img/FootballerCardPage/currency.svg';
 
 import './index.scss';
 

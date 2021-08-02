@@ -1,9 +1,7 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
-*/
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 
-import { CardStats } from '../../../types/fotballerCard';
+import { CardStats } from '@/app/types/fotballerCard';
 
 import './index.scss';
 

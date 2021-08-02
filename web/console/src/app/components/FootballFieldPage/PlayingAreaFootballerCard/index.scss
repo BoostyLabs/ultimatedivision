@@ -1,9 +1,7 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
- */
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 
-@import '../../../../index.scss';
+@import '@/index.scss';
 
 .football-field-card {
     width: 110%;
@@ -71,8 +69,8 @@ See LICENSE for copying information.
         left: 20px;
         padding: 7px;
         z-index: 2;
-        color: $footballerCardTextColor;
-        background-color: $footballFielInfoBackground;
+        color: $textColor;
+        background-color: $highlightBackground;
         font-size: 11px;
         font-weight: lighter;
         border-radius: 5px;
@@ -82,7 +80,7 @@ See LICENSE for copying information.
         }
         &::before {
             content: '';
-            background: $footballFielInfoBackground;
+            background: $highlightBackground;
             position: absolute;
             left: 10px;
             top: -5px;

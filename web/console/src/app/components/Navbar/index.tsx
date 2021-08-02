@@ -1,13 +1,11 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
- */
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 
 import { NavLink } from 'react-router-dom';
 
-import { RouteConfig } from '../../routes';
+import { RouteConfig } from '@/app/routes';
 
-import ultimate from '../../static/img/Navbar/ultimate.png';
+import ultimate from '@static/img/Navbar/ultimate.png';
 
 import './index.scss';
 
@@ -21,7 +19,7 @@ export const Navbar: React.FC = () =>
         <ul className="ultimatedivision-navbar__list">
             <li className="ultimatedivision-navbar__item">
                 <NavLink
-                    to={RouteConfig.Default.path}
+                    to={RouteConfig.WhitePaper.path}
                     className="ultimatedivision-navbar__item__active"
                 >
                     HOME

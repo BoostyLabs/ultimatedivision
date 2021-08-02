@@ -1,14 +1,11 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
-*/
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 
 import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { Navbar }
-    from './app/components/Navbar';
-import { Routes } from './app/routes/index';
+import { Navbar } from '@components/Navbar';
+import { Routes } from '@/app/routes';
 
 /** initial App setup */
 export function App() {

@@ -1,18 +1,16 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
- */
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 
 import { useSelector } from 'react-redux';
 
-import { MarketPlaceCardsGroup } from '../MarketPlaceCardsGroup';
-import { MarketPlaceFilterField } from '../MarketPlaceFilterField';
-import { MarketPlaceFootballerCard } from '../MarketPlaceCardsGroup/MarketPlaceFootballerCard';
-import { MyCard } from '../MyCard';
-import { Paginator } from '../../Paginator';
+import { MarketPlaceCardsGroup } from '@components/MarketPlacePage/MarketPlaceCardsGroup';
+import { MarketPlaceFilterField } from '@components/MarketPlacePage/MarketPlaceFilterField';
+import { MarketPlaceFootballerCard } from '@components/MarketPlacePage/MarketPlaceCardsGroup/MarketPlaceFootballerCard';
+import { MyCard } from '@components/MarketPlacePage/MyCard';
+import { Paginator } from '@components/Paginator';
 
-import { RouteConfig } from '../../../routes';
-import { RootState } from '../../../store';
+import { RouteConfig } from '@/app/routes';
+import { RootState } from '@/app/store';
 
 import './index.scss';
 

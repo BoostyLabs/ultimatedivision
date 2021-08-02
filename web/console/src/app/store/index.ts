@@ -1,7 +1,7 @@
 import { combineReducers, createStore } from 'redux';
 
-import { cardReducer } from './reducers/footballerCard';
-import { fieldReducer } from './reducers/footballField';
+import { cardReducer } from '@/app/store/reducers/footballerCard';
+import { fieldReducer } from '@/app/store/reducers/footballField';
 
 const reducer = combineReducers({
     cardReducer,

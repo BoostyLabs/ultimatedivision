@@ -1,16 +1,11 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
- */
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 /* eslint-disable */
 import { useEffect, useState } from 'react';
 
-import next
-    from '../../static/img/UltimateDivisionPaginator/next.png';
-import previous
-    from '../../static/img/UltimateDivisionPaginator/previous.png';
-import { PaginatorBlockPages }
-    from './PaginatorBlockPages';
+import next from '@static/img/UltimateDivisionPaginator/next.png';
+import previous from '@static/img/UltimateDivisionPaginator/previous.png';
+import { PaginatorBlockPages } from '@components/Paginator/PaginatorBlockPages';
 
 import './index.scss';
 
