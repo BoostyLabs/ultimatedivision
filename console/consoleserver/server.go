@@ -6,7 +6,6 @@ package consoleserver
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net"
 	"net/http"
 
@@ -49,12 +48,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 
 	router := mux.NewRouter()
 
-	testRouter := router.PathPrefix("/test").Subrouter().StrictSlash(true)
-	testRouter.HandleFunc("", func(rw http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(rw, "hello!!!")
-	}).Methods(http.MethodGet)
-
-	cardsRouter := router.PathPrefix("/cards").Subrouter().StrictSlash(true)
+	cardsRouter := router.PathPrefix("/cards").Subrouter()
 	cardsController := NewCards(log, cards)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 
