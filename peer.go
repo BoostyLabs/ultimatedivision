@@ -19,6 +19,7 @@ import (
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -37,6 +38,9 @@ type DB interface {
 
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
+
+	// LootBoxes provides access to clubs db.
+	LootBoxes() lootboxes.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -65,9 +69,14 @@ type Config struct {
 		Server consoleserver.Config `json:"server"`
 	}
 
+
 	Cards struct {
 		cards.Config
 		cards.PercentageQualities `json:"percentageQualities"`
+  }
+  
+	LootBoxes struct {
+		Config lootboxes.Config `json:"Config"`
 	}
 }
 
@@ -97,6 +106,11 @@ type Peer struct {
 	// exposes clubs related logic
 	Clubs struct {
 		Service *clubs.Service
+	}
+
+	// exposes clubs related logic
+	LoootBoxes struct {
+		Service *lootboxes.Service
 	}
 
 	// Admin web server server with web UI.
@@ -160,6 +174,13 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // clubs setup
 		peer.Clubs.Service = clubs.NewService(
 			peer.Database.Clubs(),
+		)
+	}
+
+	{ // lootboxes setup
+		peer.LoootBoxes.Service = lootboxes.NewService(
+			peer.Database.LootBoxes(),
+			config.LootBoxes.Config,
 		)
 	}
 
