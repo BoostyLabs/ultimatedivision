@@ -21,16 +21,6 @@ type Service struct {
 	config    Config
 }
 
-// Config defines configuration for LootBox.
-type Config struct {
-	Cost     int         `json:"cost"`
-	CardsNum int         `json:"cardsNum"`
-	Wood     Probability `json:"wood"`
-	Silver   Probability `json:"silver"`
-	Gold     Probability `json:"gold"`
-	Diamond  Probability `json:"diamond"`
-}
-
 // NewService is a constructor for lootboxes service.
 func NewService(lootboxes DB, config Config) *Service {
 	return &Service{
@@ -39,17 +29,26 @@ func NewService(lootboxes DB, config Config) *Service {
 	}
 }
 
-// Create creates opened LootBox.
+// Create creates LootBox.
 func (service *Service) Create(ctx context.Context, userID uuid.UUID, lootBoxID uuid.UUID) error {
-	openedLootBox := OpenedLootBoxes{
+	openedLootBox := UserLootBoxes{
 		UserID:    userID,
 		LootBoxID: lootBoxID,
 	}
 
 	err := service.lootboxes.Create(ctx, openedLootBox)
 
-	// TODO: call create cards method and return slice of generated cards.
+	return ErrLootBoxes.Wrap(err)
+}
+
+// Open opens lootbox by user.
+func (service *Service) Open(ctx context.Context, userID uuid.UUID, lootBoxID uuid.UUID) error {
+	// TODO: call create cards method.
 	// TODO: check if user has enough money for lootbox.
+
+	err := service.lootboxes.Delete(ctx, userID, lootBoxID)
+
+	// TODO: return slice of generated cards and error.
 
 	return ErrLootBoxes.Wrap(err)
 }

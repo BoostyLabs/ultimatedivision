@@ -35,7 +35,7 @@ func TestLootBox(t *testing.T) {
 		Name: "Regular Box",
 	}
 
-	userLootBox := lootboxes.OpenedLootBoxes{
+	userLootBox := lootboxes.UserLootBoxes{
 		UserID:    user1.ID,
 		LootBoxID: RegularBox.ID,
 	}
@@ -49,6 +49,11 @@ func TestLootBox(t *testing.T) {
 			require.NoError(t, err)
 
 			err = repositoryLootBoxes.Create(ctx, userLootBox)
+			require.NoError(t, err)
+		})
+
+		t.Run("Delete", func(t *testing.T) {
+			err := repositoryLootBoxes.Delete(ctx, userLootBox.UserID, userLootBox.LootBoxID)
 			require.NoError(t, err)
 		})
 	})
