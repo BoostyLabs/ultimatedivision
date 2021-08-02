@@ -1,7 +1,6 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
- */
+//@ts-nocheck
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 
 import { lazy } from 'react';
 import { RouteProps, Switch } from 'react-router-dom';
@@ -17,7 +16,7 @@ import PayToEarnEconomy from '@components/AboutPage/WhitePaperPage/PayToEarnEcon
 import Technology from '@components/AboutPage/WhitePaperPage/Technology';
 
 import Fund from '@components/AboutPage/TokenomicsPage/Fund';
-import PlayToEarn from '@components/AboutPage/TokenomicsPage/PlayToEarn';
+import PayToEarn from '@components/AboutPage/TokenomicsPage/PayToEarn';
 import Spending from '@components/AboutPage/TokenomicsPage/Spending';
 import Staking from '@components/AboutPage/TokenomicsPage/Staking';
 
@@ -26,7 +25,7 @@ export class ComponentRoutes {
     /** data route config*/
     constructor(
         public path: string,
-        public component: React.FC<{children: ComponentRoutes[]}>,
+        public component: React.FC<{ children: ComponentRoutes[] }>,
         public exact: boolean,
         public subRoutes?: ComponentRoutes[]
     ) { }
@@ -65,8 +64,8 @@ export class RouteConfig {
                 true
             ),
             new ComponentRoutes(
-                '/test/tokenomics/play-to-earn',
-                PlayToEarn,
+                '/test/tokenomics/pay-to-earn',
+                PayToEarn,
                 true
             ),
             new ComponentRoutes(
@@ -80,6 +79,33 @@ export class RouteConfig {
                 true
             ),
         ]);
+    public static WhitePaper: ComponentRoutes = new ComponentRoutes(
+        '/test/whitepaper',
+        About,
+        false,
+        [
+            new ComponentRoutes(
+                '/test/whitepaper',
+                Summary,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/whitepaper/game-mechanicks',
+                GameMechanics,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/whitepaper/pay-to-earn-and-economy',
+                PayToEarnEconomy,
+                true
+            ),
+            new ComponentRoutes(
+                '/test/whitepaper/technology',
+                Technology,
+                true
+            ),
+        ]
+    );
     public static Default: ComponentRoutes = new ComponentRoutes(
         '/test/whitepaper',
         About,
@@ -113,6 +139,7 @@ export class RouteConfig {
         RouteConfig.FootballField,
         RouteConfig.MyCards,
         RouteConfig.Tokenomics,
+        RouteConfig.WhitePaper,
         RouteConfig.Default,
     ];
 };
@@ -122,10 +149,7 @@ export class RouteConfig {
 export const Route: React.FC<ComponentRoutes> = ({
     component: Component,
     ...children
-}) => {
-    // console.log(children)
-    return <Component {...children} />;
-}
+}) => <Component {...children} />;
 
 export const Routes = () =>
     <Switch>

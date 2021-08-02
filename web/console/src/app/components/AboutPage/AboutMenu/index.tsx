@@ -1,4 +1,6 @@
-import React from 'react';
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
+
 import { useState } from 'react';
 
 import { DropdownStyle } from '@/app/utils/dropdownStyle';
@@ -11,12 +13,12 @@ import { Link } from 'react-router-dom';
 import { RouteConfig } from '@/app/routes';
 
 export const AboutMenu = () => {
-
     const [whitePaperVisibility, changeWhitePaperVisibility] = useState(false);
     const [tokenomicsVisibility, changeTokenomicsVisibility] = useState(false);
 
-    const whitePaperStyle = new DropdownStyle(whitePaperVisibility, 130);
-    const tokenomicsStyle = new DropdownStyle(tokenomicsVisibility, 130);
+    const LIST_HEIGHT = 130;
+    const whitePaperStyle = new DropdownStyle(whitePaperVisibility, LIST_HEIGHT);
+    const tokenomicsStyle = new DropdownStyle(tokenomicsVisibility, LIST_HEIGHT);
 
     const menuFields = {
         whitepaper:
@@ -29,13 +31,12 @@ export const AboutMenu = () => {
             ],
         tokenomics:
             [
-
                 'UDT Spending',
                 'Play to Earn',
                 'Staking',
                 'UD DAO Fund',
             ],
-    }
+    };
 
     return (
         <div className="about-menu">
@@ -59,8 +60,8 @@ export const AboutMenu = () => {
                 style={{ height: whitePaperStyle.listHeight }}
             >
                 {
-                    RouteConfig.Default.subRoutes&&
-                    RouteConfig.Default.subRoutes.map((item, index) => (
+                    RouteConfig.WhitePaper.subRoutes &&
+                    RouteConfig.WhitePaper.subRoutes.map((item, index) =>
                         <li
                             key={index}
                             className="about-menu__whitepaper-item"
@@ -73,7 +74,7 @@ export const AboutMenu = () => {
 
                             </Link>
                         </li>
-                    ))
+                    )
                 }
             </ul>
 
@@ -95,7 +96,7 @@ export const AboutMenu = () => {
             >
                 {
                     RouteConfig.Tokenomics.subRoutes &&
-                    RouteConfig.Tokenomics.subRoutes.map((item, index) => (
+                    RouteConfig.Tokenomics.subRoutes.map((item, index) =>
                         <li
                             key={index}
                             className="about-menu__tokenomics-item"
@@ -108,9 +109,9 @@ export const AboutMenu = () => {
 
                             </Link>
                         </li>
-                    ))
+                    )
                 }
             </ul>
         </div>
-    )
-}
+    );
+};

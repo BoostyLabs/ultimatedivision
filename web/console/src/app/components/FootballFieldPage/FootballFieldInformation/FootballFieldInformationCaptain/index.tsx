@@ -1,7 +1,5 @@
-/*
-Copyright (C) 2021 Creditor Corp. Group.
-See LICENSE for copying information.
- */
+//Copyright (C) 2021 Creditor Corp. Group.
+//See LICENSE for copying information.
 
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -17,8 +15,8 @@ import './index.scss';
 
 export const FootballFieldInformationCaptain: React.FC<{ props: FotballFieldInformationLine }> = ({ props }) => {
     const [optionVisibility, changeVisibility] = useState(false);
-
-    const optionStyle = new DropdownStyle(optionVisibility, 90);
+    const LIST_HEIGHT = 90;
+    const optionStyle = new DropdownStyle(optionVisibility, LIST_HEIGHT);
 
     const dispatch = useDispatch();
 
