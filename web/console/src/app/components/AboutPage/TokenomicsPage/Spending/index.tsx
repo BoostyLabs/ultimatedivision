@@ -99,7 +99,7 @@ const Spending: React.FC = () => {
                                 maintainAspectRatio: true,
                                 hoverOffset: 16,
                             }],
-                            // labels: dataDoughnutStats.map((dataDoughnutStat) => dataDoughnutStat.value),
+                            labels: dataDoughnutStats.map((dataDoughnutStat) => dataDoughnutStat.value),
                         }
                         }
                         options={{
@@ -123,33 +123,33 @@ const Spending: React.FC = () => {
                                     backgroundColor: 'transparent',
                                     displayColors: false,
                                     padding: {
-                                        left: 130,
-                                        right: 210,
-                                        top: 165,
-                                        bottom: 165,
+                                        left: 230,
+                                        right: 110,
+                                        top: 265,
+                                        bottom: 265,
                                     },
-                                    titleAlign: 'center'
+                                    titleAlign: 'left'
                                 },
+                                legend: {
+                                    position: 'right',
+                                    maxHeight: 550,
+                                    labels: {
+                                        color: 'white',
+                                        font: {
+                                            size: 16
+                                        },
+                                        usePointStyle: true,
+                                        padding: 30
+                                    },
+                                    onClick: (e: any, legendItem: any, legend: any) => {
+                                        console.log(legendItem);
+                                        console.log(legend)
+                                    }
+                                }
                             },
                         }}
                     />
                 </div>
-                <ul className="spending__diagrams__list">
-                    {dataDoughnutStats.map((dataDoughnutStat, index) => {
-                        return <li
-                            key={index}
-                            className="spending__diagrams__list__item"
-                        >
-                            <div
-                                style={dataDoughnutStat.style}
-                                className="spending__diagrams__list__item__round"
-                            />
-                            <span className={`spending__diagrams__list__item__value`}>
-                                {dataDoughnutStat.value}
-                            </span>
-                        </li>
-                    })}
-                </ul>
             </div>
         </div>
     )
