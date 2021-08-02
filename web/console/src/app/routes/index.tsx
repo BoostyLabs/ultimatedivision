@@ -31,15 +31,14 @@ export class ComponentRoutes {
         public children?: ComponentRoutes[]
     ) { }
     public addChildren(children: ComponentRoutes[]): ComponentRoutes {
-        this.children =  children.map(item => item = item.with(item, this))
+        this.children = children.map(item => item.with(item, this))
 
         return this;
     }
 
     public with(child: ComponentRoutes, parent: ComponentRoutes): ComponentRoutes {
-        const path = `${parent.path}${child.path}`
         debugger
-        return new ComponentRoutes(path, child.component, true);
+        return new ComponentRoutes(`${parent.path}/${child.path}`, child.component, true);
     }
 };
 /** Route config implementation */
@@ -66,7 +65,7 @@ export class RouteConfig {
     );
 
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
-        '/whitepaper/',
+        '/whitepaper',
         WhitePaper,
         true
     );
@@ -121,6 +120,7 @@ export class RouteConfig {
         true,
     );
     public static routes: ComponentRoutes[] = [
+        RouteConfig.Default,
         RouteConfig.FootballField,
         RouteConfig.MarketPlace.addChildren([
             RouteConfig.FootballerCard,
