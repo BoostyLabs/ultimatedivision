@@ -174,7 +174,6 @@ func (service *Service) RegisterUser(ctx context.Context, email, password, nickN
 
 	token, _ := service.Token(ctx, user.Email, string(user.PasswordHash))
 
-	// @todo sending email function still have to finalize.
 	// launch a goroutine that sends the email verification.
 	go func() {
 		err = service.emailService.SendVerificationEmail(user.Email, token)
