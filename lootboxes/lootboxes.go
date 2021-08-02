@@ -42,7 +42,7 @@ type Config struct {
 	Diamond  Probability `json:"diamond"`
 }
 
-// UserLootBoxes describes all lootboxes that user has.
+// UserLootBoxes describes lootbox that user has.
 type UserLootBoxes struct {
 	UserID    uuid.UUID `json:"userId"`
 	LootBoxID uuid.UUID `json:"LootBoxId"`
