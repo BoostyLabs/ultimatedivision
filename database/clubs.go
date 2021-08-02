@@ -38,7 +38,7 @@ func (clubsDB *clubsDB) Create(ctx context.Context, club clubs.Club) error {
 	return ErrClubs.Wrap(err)
 }
 
-func (clubsDB clubsDB) CreateSquad(ctx context.Context, squad clubs.Squads) error {
+func (clubsDB *clubsDB) CreateSquad(ctx context.Context, squad clubs.Squads) error {
 	query := `INSERT INTO squads(id, squad_name, club_id, tactic, formation)
 			   VALUES($1,$2,$3,$4,$5)`
 
@@ -49,7 +49,7 @@ func (clubsDB clubsDB) CreateSquad(ctx context.Context, squad clubs.Squads) erro
 }
 
 // Add inserts card to club.
-func (clubsDB clubsDB) Add(ctx context.Context, squadCards clubs.SquadCards) error {
+func (clubsDB *clubsDB) Add(ctx context.Context, squadCards clubs.SquadCards) error {
 	query := `INSERT  INTO squad_cards(id, card_id, card_position, capitan)
 			  VALUES($1,$2,$3,$4)`
 
@@ -60,7 +60,7 @@ func (clubsDB clubsDB) Add(ctx context.Context, squadCards clubs.SquadCards) err
 }
 
 // List returns all the clubs owned by the user.
-func (clubsDB clubsDB) List(ctx context.Context, userID uuid.UUID) ([]clubs.Club, error) {
+func (clubsDB *clubsDB) List(ctx context.Context, userID uuid.UUID) ([]clubs.Club, error) {
 	query := `SELECT id, owner_id, club_name, created_at
 			  FROM clubs
 			  WHERE owner_id = $1`
@@ -90,7 +90,7 @@ func (clubsDB clubsDB) List(ctx context.Context, userID uuid.UUID) ([]clubs.Club
 }
 
 // GetSquad returns squad from database.
-func (clubsDB clubsDB) GetSquad(ctx context.Context, clubID uuid.UUID) (clubs.Squads, error) {
+func (clubsDB *clubsDB) GetSquad(ctx context.Context, clubID uuid.UUID) (clubs.Squads, error) {
 	query := `SELECT id, squad_name, club_id, tactic, formation 
 			  FROM squads
 			  WHERE club_id = $1`
@@ -112,7 +112,7 @@ func (clubsDB clubsDB) GetSquad(ctx context.Context, clubID uuid.UUID) (clubs.Sq
 }
 
 // ListSquadCards returns all cards from squad.
-func (clubsDB clubsDB) ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]clubs.SquadCards, error) {
+func (clubsDB *clubsDB) ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]clubs.SquadCards, error) {
 	query := `SELECT id, card_id, card_position, capitan 
 			  FROM squad_cards
 			  WHERE id = $1`
@@ -144,7 +144,7 @@ func (clubsDB clubsDB) ListSquadCards(ctx context.Context, squadID uuid.UUID) ([
 }
 
 // UpdateTacticFormation updates tactic and formation for squad.
-func (clubsDB clubsDB) UpdateTacticFormation(ctx context.Context, squad clubs.Squads) error {
+func (clubsDB *clubsDB) UpdateTacticFormation(ctx context.Context, squad clubs.Squads) error {
 	query := `UPDATE squads
 			  SET tactic = $1, formation = $2
   			  WHERE id = $3`
@@ -155,7 +155,7 @@ func (clubsDB clubsDB) UpdateTacticFormation(ctx context.Context, squad clubs.Sq
 }
 
 // UpdateCapitan updates capitan in the users team.
-func (clubsDB clubsDB) UpdateCapitan(ctx context.Context, capitan uuid.UUID, squadID uuid.UUID) error {
+func (clubsDB *clubsDB) UpdateCapitan(ctx context.Context, capitan uuid.UUID, squadID uuid.UUID) error {
 	query := `UPDATE squad_cards
 			  SET capitan = $1
 			  WHERE id = $2`
@@ -166,7 +166,7 @@ func (clubsDB clubsDB) UpdateCapitan(ctx context.Context, capitan uuid.UUID, squ
 }
 
 // UpdatePosition updates position of card in the squad.
-func (clubsDB clubsDB) UpdatePosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition clubs.Position) error {
+func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition clubs.Position) error {
 	query := `UPDATE squad_cards
 			  SET card_position = $1
 			  WHERE card_id = $2 AND id = $3`
@@ -177,7 +177,7 @@ func (clubsDB clubsDB) UpdatePosition(ctx context.Context, squadID uuid.UUID, ca
 }
 
 // GetCapitan returns id of capitan of the users team.
-func (clubsDB clubsDB) GetCapitan(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error) {
+func (clubsDB *clubsDB) GetCapitan(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error) {
 	query := `SELECT capitan
 			  FROM squad_cards
               WHERE id = $1`
