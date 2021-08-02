@@ -4,7 +4,6 @@
 package consoleserver
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/zeebo/errs"
@@ -38,7 +37,6 @@ func NewCards(log logger.Logger, cards *cards.Service) *Cards {
 // List is an endpoint that allows will view cards.
 func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var cardsList []cards.Card
 	var err error
 	var filters cards.SliceFilters
 	urlQuery := r.URL.Query()
@@ -53,18 +51,15 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	filters.Add(cards.PlayerName, playerName)
 
 	if len(filters) > 0 {
-		cardsList, err = controller.cards.ListWithFilters(ctx, filters)
+		_, err = controller.cards.ListWithFilters(ctx, filters)
 	} else {
-		cardsList, err = controller.cards.List(ctx)
+		_, err = controller.cards.List(ctx)
 	}
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
 		http.Error(w, "could not get cards list", http.StatusInternalServerError)
 		return
 	}
-	if len(cardsList) != 0 {
-		fmt.Fprintf(w, "first card name - "+cardsList[0].PlayerName)
-	} else {
-		fmt.Fprintf(w, "not found cards")
-	}
+
+	// TODO: template response
 }
