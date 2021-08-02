@@ -39,9 +39,6 @@ type DB interface {
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
 
-	// LootBoxes provides access to clubs db.
-	LootBoxes() lootboxes.DB
-
 	// Close closes underlying db connection.
 	Close() error
 
@@ -67,6 +64,11 @@ type Config struct {
 
 	Consoles struct {
 		Server consoleserver.Config `json:"server"`
+	}
+
+	Cards struct {
+		cards.Config
+		cards.PercentageQualities `json:"percentageQualities"`
 	}
 
 	LootBoxes struct {
@@ -154,6 +156,14 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // cards setup
 		peer.Cards.Service = cards.NewService(
 			peer.Database.Cards(),
+			cards.Config{
+				Height:              config.Cards.Height,
+				Weight:              config.Cards.Weight,
+				DominantFoots:       config.Cards.DominantFoots,
+				Skills:              config.Cards.Skills,
+				RangeValueForSkills: config.Cards.RangeValueForSkills,
+				Tattoos:             config.Cards.Tattoos,
+			},
 		)
 	}
 
@@ -184,6 +194,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Admins.Service,
 			peer.Users.Service,
 			peer.Cards.Service,
+			config.Cards.PercentageQualities,
 		)
 		if err != nil {
 			return nil, err
@@ -200,6 +211,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.Consoles.Server,
 			logger,
 			peer.Console.Listener,
+			peer.Cards.Service,
 		)
 		if err != nil {
 			return nil, err

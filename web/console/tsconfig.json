@@ -1,11 +1,26 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@components/*": [
+        "./src/app/components/*"
+      ],
+      "@static/*": [
+        "./src/app/static/*"
+      ],
+    },
     "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "ScriptHost"
     ],
+    "importHelpers": true,
+    "sourceMap": true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -17,10 +32,12 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "noEmit": false,
+    "jsx": "react-jsx",
+    // "outDir": "./dist/"
   },
-  "include": [
-    "src"
-  ]
+  // "include": [
+  //     "src/**/**/**/*.ts",
+  //     "src/**/**/*.ts",
+  // ]
 }
