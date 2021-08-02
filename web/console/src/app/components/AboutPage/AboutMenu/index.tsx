@@ -56,8 +56,8 @@ export const AboutMenu = () => {
                 style={{ height: whitePaperStyle.listHeight }}
             >
                 {
-                    RouteConfig.About.subRoutes?.whitePaper &&
-                    RouteConfig.About.subRoutes?.whitePaper.map((item, index) =>
+                    RouteConfig.Whitepaper.children &&
+                    RouteConfig.Whitepaper.children.map((item, index) =>
                         <li
                             key={index}
                             className="about-menu__whitepaper-item"
@@ -89,8 +89,8 @@ export const AboutMenu = () => {
                 style={{ height: tokenomicsStyle.listHeight }}
             >
                 {
-                    RouteConfig.About.subRoutes?.tokenomics &&
-                    RouteConfig.About.subRoutes?.tokenomics.map((item, index) =>
+                    RouteConfig.Tokenomics.children &&
+                    RouteConfig.Tokenomics.children.map((item, index) =>
                         <li
                             key={index}
                             className="about-menu__tokenomics-item"
