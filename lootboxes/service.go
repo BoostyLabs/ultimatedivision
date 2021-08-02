@@ -5,8 +5,8 @@ package lootboxes
 
 import (
 	"context"
+	"ultimatedivision/cards"
 
-	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 )
 
@@ -30,23 +30,20 @@ func NewService(lootboxes DB, config Config) *Service {
 }
 
 // Create creates LootBox.
-func (service *Service) Create(ctx context.Context, userID uuid.UUID, lootBoxID uuid.UUID) error {
-	openedLootBox := UserLootBoxes{
-		UserID:    userID,
-		LootBoxID: lootBoxID,
-	}
-
-	err := service.lootboxes.Create(ctx, openedLootBox)
+func (service *Service) Create(ctx context.Context, userLootBox UserLootBoxes) error {
+	err := service.lootboxes.Create(ctx, userLootBox)
 
 	return ErrLootBoxes.Wrap(err)
 }
 
 // Open opens lootbox by user.
-func (service *Service) Open(ctx context.Context, userID uuid.UUID, lootBoxID uuid.UUID) error {
+func (service *Service) Open(ctx context.Context, userLootBox UserLootBoxes) error {
+	probabilities := []Probability{service.config.Wood, service.config.Silver, service.config.Gold, service.config.Diamond }
+	lootBoxCards := cards.Service.Create(context.Background(), userLootBox.UserID, probabilities)
 	// TODO: call create cards method.
 	// TODO: check if user has enough money for lootbox.
 
-	err := service.lootboxes.Delete(ctx, userID, lootBoxID)
+	err := service.lootboxes.Delete(ctx, userLootBox)
 
 	// TODO: return slice of generated cards and error.
 

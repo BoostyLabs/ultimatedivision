@@ -20,7 +20,7 @@ type DB interface {
 	// Create creates lootbox of user in db.
 	Create(ctx context.Context, lootBox UserLootBoxes) error
 	// Delete deletes opened lootbox by user in db.
-	Delete(ctx context.Context, userID uuid.UUID, lootBoxID uuid.UUID) error
+	Delete(ctx context.Context, lootBox UserLootBoxes) error
 }
 
 // LootBox defines lootbox.
@@ -30,7 +30,7 @@ type LootBox struct {
 }
 
 // Probability defines probability of getting different types of cards.
-type Probability float32
+type Probability int
 
 // Config defines configuration for LootBox.
 type Config struct {

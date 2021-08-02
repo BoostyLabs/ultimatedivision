@@ -7,7 +7,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/lootboxes"
@@ -34,11 +33,11 @@ func (lootboxesDB *lootboxesDB) Create(ctx context.Context, lootBox lootboxes.Us
 }
 
 // Delete deletes opened lootbox by user in db.
-func (lootboxesDB *lootboxesDB) Delete(ctx context.Context, userID uuid.UUID, lootBoxID uuid.UUID) error {
+func (lootboxesDB *lootboxesDB) Delete(ctx context.Context, lootBox lootboxes.UserLootBoxes) error {
 	query := `DELETE FROM lootboxes
               WHERE user_id = $1 and lootbox_id = $2`
 
-	_, err := lootboxesDB.conn.ExecContext(ctx, query, userID, lootBoxID)
+	_, err := lootboxesDB.conn.ExecContext(ctx, query, lootBox.UserID, lootBox.LootBoxID)
 
 	return ErrLootBoxes.Wrap(err)
 }

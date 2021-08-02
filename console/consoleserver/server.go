@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net"
 	"net/http"
+	"ultimatedivision/lootboxes"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -39,7 +40,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service) (*Server, error) {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -51,6 +52,11 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
 	cardsController := NewCards(log, cards)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
+
+	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
+	lootBoxesController := NewLootBoxes(log, lootBoxes)
+	lootBoxesRouter.HandleFunc("/create", lootBoxesController.Create).Methods(http.MethodPost)
+	lootBoxesRouter.HandleFunc("/open", lootBoxesController.Open).Methods(http.MethodDelete)
 
 	server.server = http.Server{
 		Handler: router,

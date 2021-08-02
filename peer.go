@@ -39,6 +39,9 @@ type DB interface {
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
 
+	// LootBoxes provides access to lootboxes db.
+	LootBoxes() lootboxes.DB
+
 	// Close closes underlying db connection.
 	Close() error
 
@@ -105,7 +108,7 @@ type Peer struct {
 	}
 
 	// exposes clubs related logic
-	LoootBoxes struct {
+	LootBoxes struct {
 		Service *lootboxes.Service
 	}
 
@@ -174,7 +177,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	}
 
 	{ // lootboxes setup
-		peer.LoootBoxes.Service = lootboxes.NewService(
+		peer.LootBoxes.Service = lootboxes.NewService(
 			peer.Database.LootBoxes(),
 			config.LootBoxes.Config,
 		)
