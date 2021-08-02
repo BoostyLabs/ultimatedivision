@@ -14,6 +14,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
 )
 
@@ -151,6 +152,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             capitan       BYTEA,
             PRIMARY KEY(id, card_id)
         );`
+
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
 	if err != nil {
 		return Error.Wrap(err)
@@ -182,4 +184,9 @@ func (db *database) Cards() cards.DB {
 // Clubs provide access to club db.
 func (db *database) Clubs() clubs.DB {
 	return &clubsDB{conn: db.conn}
+}
+
+// LootBoxes provide access to lootboxes db.
+func (db *database) LootBoxes() lootboxes.DB {
+	return &lootboxesDB{conn: db.conn}
 }

@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"net"
-	"ultimatedivision/users/userauth"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -20,7 +19,9 @@ import (
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
+	"ultimatedivision/users/userauth"
 )
 
 // DB provides access to all databases and database related functionality.
@@ -37,6 +38,9 @@ type DB interface {
 
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
+
+	// LootBoxes provides access to clubs db.
+	LootBoxes() lootboxes.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -63,6 +67,10 @@ type Config struct {
 
 	Consoles struct {
 		Server consoleserver.Config `json:"server"`
+	}
+
+	LootBoxes struct {
+		Config lootboxes.Config `json:"Config"`
 	}
 }
 
@@ -92,6 +100,11 @@ type Peer struct {
 	// exposes clubs related logic
 	Clubs struct {
 		Service *clubs.Service
+	}
+
+	// exposes clubs related logic
+	LoootBoxes struct {
+		Service *lootboxes.Service
 	}
 
 	// Admin web server server with web UI.
@@ -150,6 +163,13 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // lootboxes setup
+		peer.LoootBoxes.Service = lootboxes.NewService(
+			peer.Database.LootBoxes(),
+			config.LootBoxes.Config,
+		)
+	}
+
 	{ // admin setup
 		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
 		if err != nil {
@@ -180,6 +200,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.Consoles.Server,
 			logger,
 			peer.Console.Listener,
+			peer.Cards.Service,
 		)
 		if err != nil {
 			return nil, err
