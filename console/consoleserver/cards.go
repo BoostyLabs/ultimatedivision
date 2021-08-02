@@ -4,6 +4,7 @@
 package consoleserver
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/zeebo/errs"
@@ -37,6 +38,7 @@ func NewCards(log logger.Logger, cards *cards.Service) *Cards {
 // List is an endpoint that allows will view cards.
 func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	var cardsList []cards.Card
 	var err error
 	var filters cards.SliceFilters
 	urlQuery := r.URL.Query()
@@ -51,9 +53,9 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	filters.Add(cards.PlayerName, playerName)
 
 	if len(filters) > 0 {
-		_, err = controller.cards.ListWithFilters(ctx, filters)
+		cardsList, err = controller.cards.ListWithFilters(ctx, filters)
 	} else {
-		_, err = controller.cards.List(ctx)
+		cardsList, err = controller.cards.List(ctx)
 	}
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
@@ -61,5 +63,8 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: template response
+	if err = json.NewEncoder(w).Encode(cardsList); err != nil {
+		controller.log.Error("failed to write json response", ErrCards.Wrap(err))
+		return
+	}
 }
