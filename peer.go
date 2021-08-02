@@ -69,12 +69,11 @@ type Config struct {
 		Server consoleserver.Config `json:"server"`
 	}
 
-
 	Cards struct {
 		cards.Config
 		cards.PercentageQualities `json:"percentageQualities"`
-  }
-  
+	}
+
 	LootBoxes struct {
 		Config lootboxes.Config `json:"Config"`
 	}
