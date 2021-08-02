@@ -1,14 +1,21 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 package userauth
 
 import (
 	"context"
 	"crypto/subtle"
 	"time"
+	"unicode"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 	"golang.org/x/crypto/bcrypt"
 
+	"ultimatedivision/console/emails"
 	"ultimatedivision/internal/auth"
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
 )
 
@@ -29,15 +36,19 @@ var (
 //
 // architecture: Service
 type Service struct {
-	users  users.DB
-	signer auth.TokenSigner
+	users        users.DB
+	signer       auth.TokenSigner
+	emailService *emails.Service
+	log          logger.Logger
 }
 
 // NewService is a constructor for user auth service.
-func NewService(users users.DB, signer auth.TokenSigner) *Service {
+func NewService(users users.DB, signer auth.TokenSigner, emailService *emails.Service, log logger.Logger) *Service {
 	return &Service{
-		users:  users,
-		signer: signer,
+		users:        users,
+		signer:       signer,
+		emailService: emailService,
+		log:          log,
 	}
 }
 
@@ -121,6 +132,104 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 	_, err = service.users.GetByEmail(ctx, claims.Email)
 	if err != nil {
 		return errs.New("authorization failed. no user with email: %s", claims.Email)
+	}
+
+	return nil
+}
+
+// RegisterUser - register a new user.
+func (service *Service) RegisterUser(ctx context.Context, email, password, nickName, firstName, lastName string) error {
+	// check if the user email address already exists.
+	_, err := service.users.GetByEmail(ctx, email)
+	if err == nil {
+		return errs.New("This email address is already in use.")
+	}
+
+	// check the password is valid.
+	if !isPasswordValid(password) {
+		return errs.New("The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character.")
+	}
+
+	user := users.User{
+		ID:           uuid.New(),
+		Email:        email,
+		PasswordHash: []byte(password),
+		NickName:     nickName,
+		FirstName:    firstName,
+		LastName:     lastName,
+		LastLogin:    time.Time{},
+		Status:       users.StatusActive,
+		CreatedAt:    time.Now().UTC(),
+	}
+
+	err = user.EncodePass()
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	err = service.users.Create(ctx, user)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	token, _ := service.Token(ctx, user.Email, string(user.PasswordHash))
+
+	// @todo sending email function still have to finalize.
+	// launch a goroutine that sends the email verification.
+	go func() {
+		err = service.emailService.SendVerificationEmail(user.Email, token)
+		if err != nil {
+			service.log.Error("Unable to send account activation email", Error.Wrap(err))
+		}
+	}()
+
+	return err
+}
+
+// isPasswordValid check the password for all conditions.
+func isPasswordValid(s string) bool {
+	var number, upper, special bool
+	letters := 0
+	for _, c := range s {
+		switch {
+		case unicode.IsNumber(c):
+			number = true
+		case unicode.IsUpper(c):
+			upper = true
+		case unicode.IsPunct(c) || unicode.IsSymbol(c) || unicode.IsMark(c):
+			special = true
+		case unicode.IsLetter(c) || c == ' ':
+			letters++
+		}
+	}
+	return len(s) >= 8 && letters >= 1 && number && upper && special
+}
+
+// ConfirmUserEmail - parse token and confirm User.
+func (service *Service) ConfirmUserEmail(ctx context.Context, tokenS string) error {
+	status := int(users.StatusVerified)
+	token, err := auth.FromBase64URLString(tokenS)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	claims, err := service.authenticate(token)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	if !claims.ExpiresAt.IsZero() && claims.ExpiresAt.Before(time.Now()) {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	user, err := service.users.GetByEmail(ctx, claims.Email)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	err = service.users.Update(ctx, status, user.ID)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
 	}
 
 	return nil

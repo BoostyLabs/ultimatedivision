@@ -41,6 +41,8 @@ const (
 	StatusActive Status = 0
 	// StatusSuspended indicates that user cannot login to the account.
 	StatusSuspended Status = 1
+	// StatusVerified indicates that user email is verified.
+	StatusVerified Status = 3
 )
 
 // User describes user entity.
@@ -64,4 +66,13 @@ func (user *User) EncodePass() error {
 	}
 	user.PasswordHash = hash
 	return nil
+}
+
+// RegistrationRequest for body payload.
+type RegistrationRequest struct {
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	NickName  string `json:"nickName"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
