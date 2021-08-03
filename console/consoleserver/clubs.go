@@ -147,5 +147,21 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 
 // Delete removes card from squad.
 func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 
+	var squadCard clubs.SquadCards
+
+	if err := json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
+		http.Error(w, "could not parse json", http.StatusBadRequest)
+		return
+	}
+
+	err := controller.clubs.Delete(ctx, squadCard.ID, squadCard.CardID)
+	if err != nil {
+		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
+		http.Error(w, "could not delete card from the squad", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
