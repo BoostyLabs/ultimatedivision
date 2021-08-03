@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"net"
-	"ultimatedivision/users/userauth"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -20,7 +19,9 @@ import (
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
+	"ultimatedivision/users/userauth"
 )
 
 // DB provides access to all databases and database related functionality.
@@ -37,6 +38,9 @@ type DB interface {
 
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
+
+	// LootBoxes provides access to clubs db.
+	LootBoxes() lootboxes.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -63,6 +67,15 @@ type Config struct {
 
 	Consoles struct {
 		Server consoleserver.Config `json:"server"`
+	}
+
+	Cards struct {
+		cards.Config
+		cards.PercentageQualities `json:"percentageQualities"`
+	}
+
+	LootBoxes struct {
+		Config lootboxes.Config `json:"Config"`
 	}
 }
 
@@ -92,6 +105,11 @@ type Peer struct {
 	// exposes clubs related logic
 	Clubs struct {
 		Service *clubs.Service
+	}
+
+	// exposes clubs related logic
+	LoootBoxes struct {
+		Service *lootboxes.Service
 	}
 
 	// Admin web server server with web UI.
@@ -141,12 +159,27 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // cards setup
 		peer.Cards.Service = cards.NewService(
 			peer.Database.Cards(),
+			cards.Config{
+				Height:              config.Cards.Height,
+				Weight:              config.Cards.Weight,
+				DominantFoots:       config.Cards.DominantFoots,
+				Skills:              config.Cards.Skills,
+				RangeValueForSkills: config.Cards.RangeValueForSkills,
+				Tattoos:             config.Cards.Tattoos,
+			},
 		)
 	}
 
 	{ // clubs setup
 		peer.Clubs.Service = clubs.NewService(
 			peer.Database.Clubs(),
+		)
+	}
+
+	{ // lootboxes setup
+		peer.LoootBoxes.Service = lootboxes.NewService(
+			peer.Database.LootBoxes(),
+			config.LootBoxes.Config,
 		)
 	}
 
@@ -164,6 +197,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Admins.Service,
 			peer.Users.Service,
 			peer.Cards.Service,
+			config.Cards.PercentageQualities,
 		)
 		if err != nil {
 			return nil, err
@@ -180,6 +214,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.Consoles.Server,
 			logger,
 			peer.Console.Listener,
+			peer.Cards.Service,
 		)
 		if err != nil {
 			return nil, err

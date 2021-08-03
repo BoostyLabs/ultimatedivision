@@ -5,6 +5,9 @@ package cards
 
 import (
 	"context"
+	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -12,6 +15,9 @@ import (
 
 // ErrNoCard indicated that card does not exist.
 var ErrNoCard = errs.Class("card does not exist")
+
+// ErrInvalidFilter indicated that filter does not valid.
+var ErrInvalidFilter = errs.Class("invalid filter")
 
 // DB is exposing access to cards db.
 //
@@ -23,6 +29,8 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Card, error)
 	// List returns all cards from the data base.
 	List(ctx context.Context) ([]Card, error)
+	// ListWithFilters returns all cards from the data base with filters.
+	ListWithFilters(ctx context.Context, filters []Filters) ([]Card, error)
 	// Delete deletes card record in the data base.
 	Delete(ctx context.Context, id uuid.UUID) error
 }
@@ -33,13 +41,14 @@ type Card struct {
 	PlayerName       string       `json:"playerName"`
 	Quality          Quality      `json:"quality"`
 	PictureType      int          `json:"pictureType"`
-	Height           float32      `json:"height"`
-	Weight           float32      `json:"weight"`
+	Height           float64      `json:"height"`
+	Weight           float64      `json:"weight"`
 	SkinColor        int          `json:"skinColor"`
 	HairStyle        int          `json:"hairStyle"`
 	HairColor        int          `json:"hairColor"`
 	Accessories      []int        `json:"accessories"`
 	DominantFoot     DominantFoot `json:"dominantFoot"`
+	IsTattoos        bool         `json:"isTattoos"`
 	UserID           uuid.UUID    `json:"userId"`
 	Tactics          int          `json:"tactics"`
 	Positioning      int          `json:"positioning"`
@@ -98,8 +107,6 @@ type Quality string
 const (
 	// QualityWood indicates that card quality is wood.
 	QualityWood Quality = "wood"
-	// QualityBronze indicates that card quality is bronze.
-	QualityBronze Quality = "bronze"
 	// QualitySilver indicates that card quality is silver.
 	QualitySilver Quality = "silver"
 	// QualityGold indicates that card quality is gold.
@@ -147,3 +154,159 @@ const (
 	// DominantFootRight indicates that dominant foot of the footballer is right.
 	DominantFootRight DominantFoot = "right"
 )
+
+// RangeValueForSkills defines the list of possible group skills.
+var RangeValueForSkills = map[string][]int{}
+
+// Config defines values needed by generate cards.
+type Config struct {
+	Height struct {
+		Min float64 `json:"min"`
+		Max float64 `json:"max"`
+	} `json:"height"`
+
+	Weight struct {
+		Min float64 `json:"min"`
+		Max float64 `json:"max"`
+	} `json:"weight"`
+
+	DominantFoots struct {
+		Left  int `json:"left"`
+		Right int `json:"right"`
+	} `json:"dominantFoots"`
+
+	Skills struct {
+		Wood struct {
+			Elementary  int `json:"elementary"`
+			Basic       int `json:"basic"`
+			Medium      int `json:"medium"`
+			UpperMedium int `json:"upperMedium"`
+			Advanced    int `json:"advanced"`
+		} `json:"wood"`
+		Silver struct {
+			Elementary  int `json:"elementary"`
+			Basic       int `json:"basic"`
+			Medium      int `json:"medium"`
+			UpperMedium int `json:"upperMedium"`
+			Advanced    int `json:"advanced"`
+		} `json:"silver"`
+		Gold struct {
+			Elementary    int `json:"elementary"`
+			Basic         int `json:"basic"`
+			Medium        int `json:"medium"`
+			UpperMedium   int `json:"upperMedium"`
+			Advanced      int `json:"advanced"`
+			UpperAdvanced int `json:"upperAdvanced"`
+		} `json:"gold"`
+		Diamond struct {
+			Basic         int `json:"basic"`
+			Medium        int `json:"medium"`
+			UpperMedium   int `json:"upperMedium"`
+			Advanced      int `json:"advanced"`
+			UpperAdvanced int `json:"upperAdvanced"`
+		} `json:"diamond"`
+	} `json:"skills"`
+
+	RangeValueForSkills struct {
+		MinElementary    int `json:"minElementary"`
+		MaxElementary    int `json:"maxElementary"`
+		MinBasic         int `json:"minBasic"`
+		MaxBasic         int `json:"maxBasic"`
+		MinMedium        int `json:"minMedium"`
+		MaxMedium        int `json:"maxMedium"`
+		MinUpperMedium   int `json:"minUpperMedium"`
+		MaxUpperMedium   int `json:"maxUpperMedium"`
+		MinAdvanced      int `json:"minAdvanced"`
+		MaxAdvanced      int `json:"maxAdvanced"`
+		MinUpperAdvanced int `json:"minUpperAdvanced"`
+		MaxUpperAdvanced int `json:"maxUpperAdvanced"`
+	} `json:"rangeValueForSkills"`
+
+	Tattoos struct {
+		Gold    int `json:"gold"`
+		Diamond int `json:"diamond"`
+	} `json:"tattoos"`
+}
+
+// PercentageQualities entity for probabilities generate cards.
+type PercentageQualities struct {
+	Wood    int `json:"wood"`
+	Silver  int `json:"silver"`
+	Gold    int `json:"gold"`
+	Diamond int `json:"diamond"`
+}
+
+// Filters entity for using filter cards.
+type Filters map[Filter]string
+
+// Filter defines the list of possible filters.
+type Filter string
+
+const (
+	// Tactics indicates an assessment of the card's tactics.
+	Tactics Filter = "tactics"
+	// MinPhysique indicates an assessment of the card's minimum physique.
+	MinPhysique Filter = "min_physique"
+	// MaxPhysique indicates an assessment of the card's maximum physique.
+	MaxPhysique Filter = "max_physique"
+	// Physique indicates an assessment of the card's physique.
+	Physique Filter = "physique"
+	// PlayerName indicates the name of the card player name.
+	PlayerName Filter = "player_name"
+)
+
+// SliceFilters entity for using group filter cards.
+type SliceFilters []Filters
+
+// Add check is empty and append value to slice.
+func (s *SliceFilters) Add(name Filter, value string) {
+	if value == "" {
+		return
+	}
+
+	filter := Filters{
+		name: value,
+	}
+	*s = append(*s, filter)
+}
+
+// Validate check of valid UTF-8 bytes and type.
+func (f Filters) Validate() error {
+	if _, found := f[Tactics]; found == true {
+		strings.ToValidUTF8(f[Tactics], "")
+
+		_, err := strconv.Atoi(f[Tactics])
+		if err != nil {
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[Tactics], err))
+		}
+	}
+
+	if _, found := f[MinPhysique]; found == true {
+		strings.ToValidUTF8(f[MinPhysique], "")
+
+		_, err := strconv.Atoi(f[MinPhysique])
+		if err != nil {
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[MinPhysique], err))
+		}
+	}
+
+	if _, found := f[MaxPhysique]; found == true {
+		strings.ToValidUTF8(f[MaxPhysique], "")
+
+		_, err := strconv.Atoi(f[MaxPhysique])
+		if err != nil {
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[MaxPhysique], err))
+		}
+	}
+
+	if _, found := f[PlayerName]; found == true {
+		strings.ToValidUTF8(f[PlayerName], "")
+
+		_, err := strconv.Atoi(f[PlayerName])
+		if err == nil {
+			return ErrInvalidFilter.Wrap(fmt.Errorf("%s %s", f[PlayerName], err))
+		}
+	}
+
+	return nil
+}

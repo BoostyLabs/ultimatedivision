@@ -14,6 +14,7 @@ import (
 
 	"ultimatedivision"
 	"ultimatedivision/cards"
+	"ultimatedivision/database"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/users"
 )
@@ -22,8 +23,8 @@ func TestCards(t *testing.T) {
 
 	card1 := cards.Card{
 		ID:               uuid.New(),
-		PlayerName:       "Dmytro",
-		Quality:          "bronze",
+		PlayerName:       "Dmytro yak muk",
+		Quality:          "wood",
 		PictureType:      1,
 		Height:           178.8,
 		Weight:           72.2,
@@ -32,6 +33,7 @@ func TestCards(t *testing.T) {
 		HairColor:        1,
 		Accessories:      []int{1, 2},
 		DominantFoot:     "left",
+		IsTattoos:        false,
 		UserID:           uuid.New(),
 		Tactics:          1,
 		Positioning:      2,
@@ -87,7 +89,7 @@ func TestCards(t *testing.T) {
 	card2 := cards.Card{
 		ID:               uuid.New(),
 		PlayerName:       "Vova",
-		Quality:          "silver",
+		Quality:          "gold",
 		PictureType:      2,
 		Height:           179.9,
 		Weight:           73.3,
@@ -96,8 +98,9 @@ func TestCards(t *testing.T) {
 		HairColor:        2,
 		Accessories:      []int{1, 2},
 		DominantFoot:     "right",
+		IsTattoos:        true,
 		UserID:           uuid.New(),
-		Tactics:          1,
+		Tactics:          2,
 		Positioning:      2,
 		Composure:        3,
 		Aggression:       4,
@@ -210,6 +213,60 @@ func TestCards(t *testing.T) {
 			compareCards(t, card2, allCards[1])
 		})
 
+		t.Run("list with filters", func(t *testing.T) {
+			filters := []cards.Filters{
+				{
+					cards.Tactics: "1",
+				},
+				{
+					cards.MinPhysique: "1",
+				},
+				{
+					cards.MaxPhysique: "20",
+				},
+				{
+					cards.PlayerName: "yak",
+				},
+			}
+
+			for _, v := range filters {
+				err := v.Validate()
+				assert.NoError(t, err)
+			}
+
+			allCards, err := repositoryCards.ListWithFilters(ctx, filters)
+			assert.NoError(t, err)
+			assert.Equal(t, len(allCards), 1)
+			compareCards(t, card1, allCards[0])
+		})
+
+		t.Run("build where string", func(t *testing.T) {
+			filters := []cards.Filters{
+				{
+					cards.Tactics: "1",
+				},
+				{
+					cards.MinPhysique: "1",
+				},
+				{
+					cards.MaxPhysique: "20",
+				},
+				{
+					cards.PlayerName: "yak",
+				},
+			}
+
+			for _, v := range filters {
+				err := v.Validate()
+				assert.NoError(t, err)
+			}
+
+			queryString, values := database.BuildWhereClauseDependsOnCardsFilters(filters)
+
+			assert.Equal(t, queryString, ` WHERE tactics = $1 AND physique >= $2 AND physique <= $3 AND (player_name LIKE $4 OR player_name LIKE $5 OR player_name LIKE $6 OR player_name LIKE $7)`)
+			assert.Equal(t, values, []string{"1", "1", "20", "yak", "yak %", "% yak", "% yak %"})
+		})
+
 		t.Run("delete", func(t *testing.T) {
 			err := repositoryCards.Delete(ctx, card1.ID)
 			require.NoError(t, err)
@@ -233,6 +290,7 @@ func compareCards(t *testing.T, card1, card2 cards.Card) {
 	assert.Equal(t, card1.HairColor, card2.HairColor)
 	assert.Equal(t, card1.Accessories, card2.Accessories)
 	assert.Equal(t, card1.DominantFoot, card2.DominantFoot)
+	assert.Equal(t, card1.IsTattoos, card2.IsTattoos)
 	assert.Equal(t, card1.UserID, card2.UserID)
 	assert.Equal(t, card1.Positioning, card2.Positioning)
 	assert.Equal(t, card1.Composure, card2.Composure)

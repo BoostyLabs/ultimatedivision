@@ -14,6 +14,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
 )
 
@@ -69,6 +70,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
 			hair_style        INTEGER                        NOT NULL,
             hair_color        INTEGER                        NOT NULL,
             dominant_foot     VARCHAR                        NOT NULL,
+            is_tattoos        BOOLEAN                        NOT NULL,
             user_id           BYTEA    REFERENCES users(id)  NOT NULL,
             tactics           INTEGER                        NOT NULL,
             positioning       INTEGER                        NOT NULL,
@@ -132,18 +134,31 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             created_at    TIMESTAMP WITH TIME ZONE NOT NULL
         );
         CREATE TABLE IF NOT EXISTS clubs (
-        	user_id   BYTEA   REFERENCES users(id) NOT NULL,
-        	tactic    INTEGER                      NOT NULL,
-        	formation INTEGER                      NOT NULL,
-        	PRIMARY KEY(user_id)
+            id         BYTEA     PRIMARY KEY          NOT NULL,
+            owner_id   BYTEA     REFERENCES users(id) NOT NULL,
+            club_name  VARCHAR                        NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE       NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS club_player(
-    		user_id       BYTEA   REFERENCES clubs(user_id) NOT NULL,
-    		card_id       BYTEA   REFERENCES cards(id)      NOT NULL,
-        	card_position INTEGER                           NOT NULL,
-        	capitan       BYTEA,
-        	PRIMARY KEY(user_id, card_id)
+        CREATE TABLE IF NOT EXISTS squads (
+            id            BYTEA   PRIMARY KEY                            NOT NULL,
+            squad_name    VARCHAR,
+            club_id       BYTEA   REFERENCES clubs(id) ON DELETE CASCADE NOT NULL,
+            tactic        INTEGER                                        NOT NULL,
+            formation     INTEGER                                        NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS squad_cards (
+            id            BYTEA   REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
+            card_id       BYTEA   REFERENCES cards(id) ON DELETE CASCADE  NOT NULL, 
+            card_position INTEGER                                         NOT NULL,
+            capitan       BYTEA,
+            PRIMARY KEY(id, card_id)
+        );
+        CREATE TABLE IF NOT EXISTS lootboxes(
+            user_id    BYTEA REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            lootbox_id BYTEA                                        NOT NULL,
+            PRIMARY KEY(user_id, lootbox_id)
         );`
+
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
 	if err != nil {
 		return Error.Wrap(err)
@@ -175,4 +190,9 @@ func (db *database) Cards() cards.DB {
 // Clubs provide access to club db.
 func (db *database) Clubs() clubs.DB {
 	return &clubsDB{conn: db.conn}
+}
+
+// LootBoxes provide access to lootboxes db.
+func (db *database) LootBoxes() lootboxes.DB {
+	return &lootboxesDB{conn: db.conn}
 }
