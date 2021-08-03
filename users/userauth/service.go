@@ -30,6 +30,9 @@ var (
 
 	// Error is a error class for internal auth errors.
 	Error = errs.Class("user auth internal error")
+
+	// ErrPermission should be returned when user permission denied.
+	ErrPermission = errs.Class("permission denied")
 )
 
 // Service is handling all user authentication logic.
@@ -137,8 +140,8 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 	return nil
 }
 
-// RegisterUser - register a new user.
-func (service *Service) RegisterUser(ctx context.Context, email, password, nickName, firstName, lastName string) error {
+// Register - register a new user.
+func (service *Service) Register(ctx context.Context, email, password, nickName, firstName, lastName string) error {
 	// check if the user email address already exists.
 	_, err := service.users.GetByEmail(ctx, email)
 	if err == nil {
@@ -158,7 +161,7 @@ func (service *Service) RegisterUser(ctx context.Context, email, password, nickN
 		FirstName:    firstName,
 		LastName:     lastName,
 		LastLogin:    time.Time{},
-		Status:       users.StatusActive,
+		Status:       users.StatusCreated,
 		CreatedAt:    time.Now().UTC(),
 	}
 
@@ -205,9 +208,9 @@ func isPasswordValid(s string) bool {
 }
 
 // ConfirmUserEmail - parse token and confirm User.
-func (service *Service) ConfirmUserEmail(ctx context.Context, tokenS string) error {
-	status := int(users.StatusVerified)
-	token, err := auth.FromBase64URLString(tokenS)
+func (service *Service) ConfirmUserEmail(ctx context.Context, activationToken string) error {
+	status := int(users.StatusActive)
+	token, err := auth.FromBase64URLString(activationToken)
 	if err != nil {
 		return Error.Wrap(err)
 	}
@@ -224,6 +227,10 @@ func (service *Service) ConfirmUserEmail(ctx context.Context, tokenS string) err
 	user, err := service.users.GetByEmail(ctx, claims.Email)
 	if err != nil {
 		return ErrUnauthenticated.Wrap(err)
+	}
+
+	if user.Status != users.StatusCreated {
+		return ErrPermission.Wrap(err)
 	}
 
 	err = service.users.Update(ctx, status, user.ID)

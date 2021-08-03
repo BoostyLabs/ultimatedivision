@@ -37,12 +37,12 @@ type DB interface {
 type Status int
 
 const (
+	// StatusCreated indicates that user email is created.
+	StatusCreated Status = 0
 	// StatusActive indicates that user can login to the account.
-	StatusActive Status = 0
+	StatusActive Status = 1
 	// StatusSuspended indicates that user cannot login to the account.
-	StatusSuspended Status = 1
-	// StatusVerified indicates that user email is verified.
-	StatusVerified Status = 3
+	StatusSuspended Status = 2
 )
 
 // User describes user entity.

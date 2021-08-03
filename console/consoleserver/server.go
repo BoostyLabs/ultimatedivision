@@ -61,7 +61,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	router.HandleFunc("/login", authController.Login).Methods(http.MethodPost, http.MethodGet)
 	router.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	router.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
-	router.HandleFunc("/email/confirm/{token}", authController.ConfirmUserEmail).Methods(http.MethodPost)
+	router.HandleFunc("/email/confirm/{token}", authController.ConfirmUserEmail).Methods(http.MethodGet)
 
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
 	cardsController := NewCards(log, cards)
