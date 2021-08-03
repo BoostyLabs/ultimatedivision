@@ -126,7 +126,23 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 
 // Add add new card to the squad.
 func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 
+	var newSquadCard clubs.SquadCards
+
+	if err := json.NewDecoder(r.Body).Decode(&newSquadCard); err != nil {
+		http.Error(w, "could not parse json", http.StatusBadRequest)
+		return
+	}
+
+	err := controller.clubs.Add(ctx, newSquadCard)
+	if err != nil {
+		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
+		http.Error(w, "could not add card to the squad", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // Delete removes card from squad.

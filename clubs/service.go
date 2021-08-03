@@ -50,18 +50,13 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error
 }
 
 // Add add new card to the squad of the club.
-func (service *Service) Add(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, position Position) error {
-	capitan, err := service.clubs.GetCapitan(ctx, squadID)
+func (service *Service) Add(ctx context.Context, newSquadCard SquadCards) error {
+	capitan, err := service.clubs.GetCapitan(ctx, newSquadCard.ID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
 	}
 
-	newSquadCard := SquadCards{
-		ID:       squadID,
-		CardID:   cardID,
-		Position: position,
-		Capitan:  capitan,
-	}
+	newSquadCard.Capitan = capitan
 
 	return service.clubs.Add(ctx, newSquadCard)
 }
