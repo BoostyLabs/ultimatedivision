@@ -30,26 +30,29 @@ export class ComponentRoutes {
         public exact: boolean,
         public children?: ComponentRoutes[]
     ) { }
-    public addChildren(children: ComponentRoutes[]): ComponentRoutes {
-        this.children = children.map(item => item.with(item, this))
 
-        return this;
+    public with(child: ComponentRoutes, parrent: ComponentRoutes): ComponentRoutes {
+        return new ComponentRoutes(
+            `${parrent.path}/${child.path}`,
+            child.component,
+            child.exact,
+        )
     }
 
-    public with(child: ComponentRoutes, parent: ComponentRoutes): ComponentRoutes {
-        debugger
-        return new ComponentRoutes(`${parent.path}/${child.path}`, child.component, true);
+    public addChildren(children: ComponentRoutes[]): ComponentRoutes {
+        this.children = children.map(item => item.with(item, this))
+        return this;
     }
 };
 /** Route config implementation */
 export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
-        '/marketplace/',
+        '/marketplace',
         MarketPlace,
         true,
     );
     public static FootballerCard: ComponentRoutes = new ComponentRoutes(
-        'card',
+        '/card',
         FootballerCard,
         true,
     );
@@ -63,16 +66,15 @@ export class RouteConfig {
         MarketPlace,
         true,
     );
-
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
         '/whitepaper',
         WhitePaper,
-        true
+        false
     );
     public static Tokenomics: ComponentRoutes = new ComponentRoutes(
         '/tokenomics',
         Tokenomics,
-        true
+        false
     );
     public static Summary: ComponentRoutes = new ComponentRoutes(
         'summary',
@@ -122,9 +124,8 @@ export class RouteConfig {
     public static routes: ComponentRoutes[] = [
         RouteConfig.Default,
         RouteConfig.FootballField,
-        RouteConfig.MarketPlace.addChildren([
-            RouteConfig.FootballerCard,
-        ]),
+        RouteConfig.MarketPlace,
+        RouteConfig.FootballerCard,
         RouteConfig.MyCards,
         RouteConfig.Whitepaper.addChildren([
             RouteConfig.Summary,
@@ -144,15 +145,18 @@ export const Route: React.FC<ComponentRoutes> = ({
     component: Component,
     ...children
 }) => <Component {...children} />;
+
 export const Routes = () =>
     <Switch>
-        {RouteConfig.routes.map((route, index) =>
-            <Route
-                key={index}
-                path={route.path}
-                component={route.component}
-                exact={route.exact}
-                children={route.children}
-            />,
-        )}
+        {RouteConfig.routes.map((route, index) => {
+            return (
+                <Route
+                    key={index}
+                    path={route.path}
+                    component={route.component}
+                    exact={route.exact}
+                    children={route.children}
+                />
+            )
+        })}
     </Switch>;

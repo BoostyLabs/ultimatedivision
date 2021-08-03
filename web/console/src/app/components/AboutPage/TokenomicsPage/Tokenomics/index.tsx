@@ -14,7 +14,7 @@ export const Tokenomics: React.FC<{ children: ComponentRoutes[] }> = ({ children
             <AboutMenu />
             <div className="tokenomics__wrapper">
                 <Switch>
-                    {children.map((route, index) => {
+                    {children.map((route, index) => (
                         <Route
                             key={index}
                             path={route.path}
@@ -22,7 +22,7 @@ export const Tokenomics: React.FC<{ children: ComponentRoutes[] }> = ({ children
                             exact={route.exact}
                             children={route.children}
                         />
-                    })
+                    ))
                     }
                 </Switch>
             </div>
