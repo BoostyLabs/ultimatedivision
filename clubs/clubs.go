@@ -25,8 +25,8 @@ type DB interface {
 	Create(ctx context.Context, club Club) error
 	// CreateSquad creates squad for clubs in the database.
 	CreateSquad(ctx context.Context, squad Squads) error
-	// List returns all the clubs owned by the user.
-	List(ctx context.Context, userID uuid.UUID) ([]Club, error)
+	// Get returns club owned by the user.
+	Get(ctx context.Context, userID uuid.UUID) (Club, error)
 	// GetSquad returns squad.
 	GetSquad(ctx context.Context, squadID uuid.UUID) (Squads, error)
 	// GetCapitan returns id of capitan.
@@ -35,6 +35,8 @@ type DB interface {
 	ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCards, error)
 	// Add add new card to the squad.
 	Add(ctx context.Context, squadCards SquadCards) error
+	// DeleteSquadCard deletes card from squad.
+	DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error
 	// UpdateTacticFormation updates tactic and formation in the squad.
 	UpdateTacticFormation(ctx context.Context, squad Squads) error
 	// UpdateCapitan updates capitan in the squad.

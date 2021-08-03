@@ -59,34 +59,36 @@ func (clubsDB *clubsDB) Add(ctx context.Context, squadCards clubs.SquadCards) er
 	return ErrSquad.Wrap(err)
 }
 
-// List returns all the clubs owned by the user.
-func (clubsDB *clubsDB) List(ctx context.Context, userID uuid.UUID) ([]clubs.Club, error) {
+// DeleteSquadCard deletes card from squad.
+func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error{
+	query := `DELETE FROM squad_cards
+              WHERE id = $1 AND card_id = $2`
+
+	_, err := clubsDB.conn.ExecContext(ctx, query, squadID, cardID)
+
+	return ErrSquad.Wrap(err)
+}
+
+// Get returns club owned by the user.
+func (clubsDB *clubsDB) Get(ctx context.Context, userID uuid.UUID) (clubs.Club, error) {
 	query := `SELECT id, owner_id, club_name, created_at
 			  FROM clubs
 			  WHERE owner_id = $1`
 
-	rows, err := clubsDB.conn.QueryContext(ctx, query, userID)
+	row := clubsDB.conn.QueryRowContext(ctx, query, userID)
+
+	var club clubs.Club
+
+	err := row.Scan(&club.ID, &club.OwnerID, &club.Name, &club.CreatedAt)
 	if err != nil {
-		return nil, ErrClubs.Wrap(err)
-	}
-	defer func() {
-		err = errs.Combine(err, ErrClubs.Wrap(rows.Close()))
-	}()
-
-	var userClubs []clubs.Club
-
-	for rows.Next() {
-		var club clubs.Club
-
-		err = rows.Scan(&club.ID, &club.OwnerID, &club.Name, &club.CreatedAt)
-		if err != nil {
-			return nil, clubs.ErrNoClub.Wrap(err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return club, clubs.ErrNoClub.Wrap(err)
 		}
 
-		userClubs = append(userClubs, club)
+		return club, clubs.ErrClubs.Wrap(err)
 	}
 
-	return userClubs, nil
+	return club, nil
 }
 
 // GetSquad returns squad from database.

@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net"
 	"net/http"
+	"ultimatedivision/clubs"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -39,7 +40,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, clubs *clubs.Service) (*Server, error) {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -51,6 +52,15 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
 	cardsController := NewCards(log, cards)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
+
+	clubsRouter := router.PathPrefix("/clubs").Subrouter()
+	clubsController := NewClubs(log, clubs)
+	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("", clubsController.UpdateSquad).Methods(http.MethodPut)
+	clubsRouter.HandleFunc("/squads", clubsController.Add).Methods(http.MethodPost)
+	clubsRouter.HandleFunc("/squads", clubsController.UpdatePosition).Methods(http.MethodPut)
+	clubsRouter.HandleFunc("/squads", clubsController.Delete).Methods(http.MethodDelete)
+
 
 	server.server = http.Server{
 		Handler: router,

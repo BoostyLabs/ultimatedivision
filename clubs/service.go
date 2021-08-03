@@ -66,6 +66,11 @@ func (service *Service) Add(ctx context.Context, squadID uuid.UUID, cardID uuid.
 	return service.clubs.Add(ctx, newSquadCard)
 }
 
+// Delete deletes card from squad.
+func (service *Service) Delete(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error{
+	return service.clubs.DeleteSquadCard(ctx, squadID, cardID)
+}
+
 // UpdateSquad updates tactic and formation of the squad.
 func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, tactic Tactic, formation Formation) error {
 	updatedSquad := Squads{
@@ -102,7 +107,7 @@ func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squads,
 	return squad, squadCards, nil
 }
 
-// List returns users clubs.
-func (service *Service) List(ctx context.Context, userID uuid.UUID) ([]Club, error) {
-	return service.clubs.List(ctx, userID)
+// Get returns user club.
+func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error) {
+	return service.clubs.Get(ctx, userID)
 }

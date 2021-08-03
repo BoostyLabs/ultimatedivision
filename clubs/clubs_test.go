@@ -91,11 +91,11 @@ func TestTeam(t *testing.T) {
 			require.NoError(t, err)
 		})
 
-		t.Run("List clubs", func(t *testing.T) {
-			clubDB, err := repositoryClubs.List(ctx, testClub.ID)
+		t.Run("Get club", func(t *testing.T) {
+			clubDB, err := repositoryClubs.Get(ctx, testUser.ID)
 			require.NoError(t, err)
 
-			compareClubs(t, clubDB, []clubs.Club{testClub})
+			compareClubs(t, clubDB, testClub)
 		})
 
 		t.Run("Get squad", func(t *testing.T) {
@@ -141,19 +141,21 @@ func TestTeam(t *testing.T) {
 			err := repositoryClubs.UpdatePosition(ctx, updatedSquad.ID, testCard.ID, clubs.CM)
 			require.NoError(t, err)
 		})
+
+		t.Run("Delete card from squad", func(t *testing.T) {
+			err := repositoryClubs.DeleteSquadCard(ctx, updatedSquad.ID, testCard.ID)
+			require.NoError(t, err)
+		})
 	})
 
 }
 
-func compareClubs(t *testing.T, clubDB []clubs.Club, clubTest []clubs.Club) {
-	assert.Equal(t, len(clubDB), len(clubDB))
+func compareClubs(t *testing.T, clubDB clubs.Club, clubTest clubs.Club) {
+	assert.Equal(t, clubDB.ID, clubTest.ID)
+	assert.Equal(t, clubDB.OwnerID, clubTest.OwnerID)
+	assert.Equal(t, clubDB.Name, clubTest.Name)
+	assert.WithinDuration(t, clubDB.CreatedAt, clubTest.CreatedAt, 1*time.Second)
 
-	for i := 0; i < len(clubDB); i++ {
-		assert.Equal(t, clubDB[i].ID, clubTest[i].ID)
-		assert.Equal(t, clubDB[i].Name, clubTest[i].Name)
-		assert.Equal(t, clubDB[i].OwnerID, clubTest[i].OwnerID)
-		assert.WithinDuration(t, clubDB[i].CreatedAt, clubTest[i].CreatedAt, 1*time.Second)
-	}
 }
 
 func compareSquads(t *testing.T, squadDB clubs.Squads, squadTest clubs.Squads) {
