@@ -85,11 +85,9 @@ const Spending: React.FC = () => {
                         type={Doughnut}
                         data={{
                             datasets: [{
-                                data:
-                                    dataDoughnutStats.map((dataDoughnutStat) => dataDoughnutStat.points),
+                                data: dataDoughnutStats.map((dataDoughnutStat) => dataDoughnutStat.points),
                                 label: dataDoughnutStats.map((dataDoughnutStat) => dataDoughnutStat.value),
-                                backgroundColor:
-                                    dataDoughnutStats.map((dataDoughnutStat) => dataDoughnutStat.style.backgroundColor),
+                                backgroundColor: dataDoughnutStats.map((dataDoughnutStat) => dataDoughnutStat.style.backgroundColor),
                                 borderColor: [
                                     'transparent',
                                 ],
@@ -108,31 +106,17 @@ const Spending: React.FC = () => {
                             },
                             plugins: {
                                 tooltip: {
-                                    callbacks: {
-                                        label: (tooltipModel: any) => {
-                                            let index = tooltipModel.dataIndex;
-                                            console.log(tooltipModel);
-                                            return `${tooltipModel.dataset.label[index]}`
-                                        },
-                                        title: (tooltipItem: any) => {
-                                            let index = tooltipItem[0].dataIndex;
-                                            console.log(tooltipItem);
-                                            return `${tooltipItem[0].dataset.data[index]}`;
-                                        }
-                                    },
                                     backgroundColor: 'transparent',
                                     displayColors: false,
                                     padding: {
-                                        left: 230,
-                                        right: 110,
-                                        top: 265,
-                                        bottom: 265,
+                                        left: 135,
+                                        right: 355,
+                                        top: 270,
+                                        bottom: 280,
                                     },
-                                    titleAlign: 'left'
                                 },
                                 legend: {
                                     position: 'right',
-                                    maxHeight: 550,
                                     labels: {
                                         color: 'white',
                                         font: {
@@ -140,10 +124,6 @@ const Spending: React.FC = () => {
                                         },
                                         usePointStyle: true,
                                         padding: 30
-                                    },
-                                    onClick: (e: any, legendItem: any, legend: any) => {
-                                        console.log(legendItem);
-                                        console.log(legend)
                                     }
                                 }
                             },

@@ -16,7 +16,7 @@ import PayToEarnEconomy from '@components/AboutPage/WhitePaperPage/PayToEarnEcon
 import Technology from '@components/AboutPage/WhitePaperPage/Technology';
 
 import Fund from '@components/AboutPage/TokenomicsPage/Fund';
-import PayToEarn from '@components/AboutPage/TokenomicsPage/PayToEarn';
+import PlayToEarn from '@components/AboutPage/TokenomicsPage/PlayToEarn';
 import Spending from '@components/AboutPage/TokenomicsPage/Spending';
 import Staking from '@components/AboutPage/TokenomicsPage/Staking';
 
@@ -65,7 +65,7 @@ export class RouteConfig {
             ),
             new ComponentRoutes(
                 '/test/tokenomics/pay-to-earn',
-                PayToEarn,
+                PlayToEarn,
                 true
             ),
             new ComponentRoutes(
