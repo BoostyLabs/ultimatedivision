@@ -70,6 +70,21 @@ type SquadCards struct {
 	Capitan  uuid.UUID `json:"capitan"`
 }
 
+// UpdateRequest is struct for body payload.
+type UpdateRequest struct {
+	ID        uuid.UUID `json:"squadId"`
+	Tactic    Tactic    `json:"tactic"`
+	Capitan   uuid.UUID `json:"capitan"`
+	Formation Formation `json:"formation"`
+}
+
+// ClubResponse is a struct for response clubs, squad and squadCards.
+type ClubResponse struct {
+	Clubs      Club
+	Squad      Squads
+	SquadCards []SquadCards
+}
+
 // Formation defines a list of possible formations.
 type Formation int
 

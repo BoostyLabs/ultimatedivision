@@ -67,7 +67,7 @@ func (service *Service) Add(ctx context.Context, squadID uuid.UUID, cardID uuid.
 }
 
 // Delete deletes card from squad.
-func (service *Service) Delete(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error{
+func (service *Service) Delete(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error {
 	return service.clubs.DeleteSquadCard(ctx, squadID, cardID)
 }
 
@@ -75,10 +75,9 @@ func (service *Service) Delete(ctx context.Context, squadID uuid.UUID, cardID uu
 func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, tactic Tactic, formation Formation) error {
 	updatedSquad := Squads{
 		ID:        squadID,
-		Formation: formation,
 		Tactic:    tactic,
+		Formation: formation,
 	}
-
 	return service.clubs.UpdateTacticFormation(ctx, updatedSquad)
 }
 

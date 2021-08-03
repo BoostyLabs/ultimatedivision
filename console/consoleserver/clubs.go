@@ -36,13 +36,6 @@ func NewClubs(log logger.Logger, clubs *clubs.Service) *Clubs {
 	return clubsController
 }
 
-// team is a struct for response clubs, squad and squadCards.
-type team struct {
-	clubs      clubs.Club
-	squad      clubs.Squads
-	squadCards []clubs.SquadCards
-}
-
 // Get returns club, squad and squad cards by user id.
 func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -70,10 +63,10 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userTeam := team{
-		clubs:      club,
-		squad:      squad,
-		squadCards: squadCards,
+	userTeam := clubs.ClubResponse{
+		Clubs:      club,
+		Squad:      squad,
+		SquadCards: squadCards,
 	}
 
 	if err = json.NewEncoder(w).Encode(userTeam); err != nil {
@@ -84,12 +77,51 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 
 // UpdatePosition updates card position in the squad.
 func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 
+	var squadCard clubs.SquadCards
+
+	if err := json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
+		http.Error(w, "could not decode json", http.StatusBadRequest)
+		return
+	}
+
+	err := controller.clubs.UpdateCardPosition(ctx, squadCard.ID, squadCard.CardID, squadCard.Position)
+	if err != nil {
+		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
+		http.Error(w, "could not update card position", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // UpdateSquad updates squad tactic, capitan and formation.
 func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 
+	var updatedSquad clubs.UpdateRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&updatedSquad); err != nil {
+		http.Error(w, "could not decode json", http.StatusBadRequest)
+		return
+	}
+
+	err := controller.clubs.UpdateSquad(ctx, updatedSquad.ID, updatedSquad.Tactic, updatedSquad.Formation)
+	if err != nil {
+		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
+		http.Error(w, "could not update squad", http.StatusInternalServerError)
+		return
+	}
+
+	err = controller.clubs.UpdateCapitan(ctx, updatedSquad.ID, updatedSquad.Capitan)
+	if err != nil {
+		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
+		http.Error(w, "could not update squad", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // Add add new card to the squad.
