@@ -7,9 +7,8 @@ import { Switch } from 'react-router-dom';
 const FootballerCard = lazy(() => import('@components/FootballerCardPage/FootballerCard'));
 const FootballField = lazy(() => import('@components/FootballFieldPage/FootballField'));
 const MarketPlace = lazy(() => import('@components/MarketPlacePage/MarketPlace'));
-
-import { WhitePaper } from '../components/AboutPage/WhitePaperPage/WhitePaper';
-import { Tokenomics } from '../components/AboutPage/TokenomicsPage/Tokenomics';
+const WhitePaper = lazy(() => import('@components/AboutPage/WhitePaperPage/WhitePaper'));
+const Tokenomics = lazy(() => import('@components/AboutPage/TokenomicsPage/Tokenomics'));
 
 import Summary from '@/app/components/AboutPage/WhitePaperPage/Summary';
 import GameMechanics from '@/app/components/AboutPage/WhitePaperPage/GameMechanics';
@@ -55,32 +54,32 @@ export class ComponentRoutes implements RouteItem {
 /** Route config implementation */
 export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
-        '/marketplace',
+        '/ud/marketplace',
         MarketPlace,
         true,
     );
     public static FootballerCard: ComponentRoutes = new ComponentRoutes(
-        '/card',
+        '/ud/card',
         FootballerCard,
         true,
     );
     public static FootballField: ComponentRoutes = new ComponentRoutes(
-        '/field',
+        '/ud/field',
         FootballField,
         true,
     );
     public static MyCards: ComponentRoutes = new ComponentRoutes(
-        '/club',
+        '/ud/club',
         MarketPlace,
         true,
     );
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
-        '/whitepaper',
+        '/ud/whitepaper',
         WhitePaper,
         false
     );
     public static Tokenomics: ComponentRoutes = new ComponentRoutes(
-        '/tokenomics',
+        '/ud/tokenomics',
         Tokenomics,
         false
     );
@@ -125,7 +124,7 @@ export class RouteConfig {
         true
     );
     public static Default: ComponentRoutes = new ComponentRoutes(
-        '/',
+        '/ud/',
         MarketPlace,
         true,
     );

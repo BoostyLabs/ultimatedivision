@@ -4,11 +4,9 @@
 import { Switch } from 'react-router-dom';
 import { ComponentRoutes, Route } from '@/app/router';
 
-import { AboutMenu } from '../../AboutMenu';
-
 import './index.scss';
 
-export const WhitePaper: React.FC<{ children: ComponentRoutes[] }> = ({ children }) => {
+const WhitePaper: React.FC<{ children: ComponentRoutes[] }> = ({ children }) => {
     return (
         <div className="whitepaper">
             <div className="whitepaper__wrapper">
@@ -28,3 +26,5 @@ export const WhitePaper: React.FC<{ children: ComponentRoutes[] }> = ({ children
         </div>
     )
 }
+
+export default WhitePaper;
