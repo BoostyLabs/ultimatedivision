@@ -14,6 +14,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/internal/logger"
 )
 
@@ -49,7 +50,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	router := mux.NewRouter()
 
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
-	cardsController := NewCards(log, cards)
+	cardsController := controllers.NewCards(log, cards)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 
 	server.server = http.Server{
