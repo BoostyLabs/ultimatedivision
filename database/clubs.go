@@ -60,7 +60,7 @@ func (clubsDB *clubsDB) Add(ctx context.Context, squadCards clubs.SquadCards) er
 }
 
 // DeleteSquadCard deletes card from squad.
-func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error{
+func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error {
 	query := `DELETE FROM squad_cards
               WHERE id = $1 AND card_id = $2`
 

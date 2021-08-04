@@ -61,7 +61,6 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsRouter.HandleFunc("/squads", clubsController.UpdatePosition).Methods(http.MethodPut)
 	clubsRouter.HandleFunc("/squads", clubsController.Delete).Methods(http.MethodDelete)
 
-
 	server.server = http.Server{
 		Handler: router,
 	}

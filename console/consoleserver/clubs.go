@@ -5,9 +5,9 @@ package consoleserver
 
 import (
 	"encoding/json"
-	"github.com/google/uuid"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
