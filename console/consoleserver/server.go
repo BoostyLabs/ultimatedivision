@@ -14,6 +14,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
 )
@@ -47,14 +48,15 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 		listener: listener,
 	}
 
+	cardsController := controllers.NewCards(log, cards)
+	lootBoxesController := controllers.NewLootBoxes(log, lootBoxes)
+
 	router := mux.NewRouter()
 
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
-	cardsController := NewCards(log, cards)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
-	lootBoxesController := NewLootBoxes(log, lootBoxes)
 	lootBoxesRouter.HandleFunc("/create", lootBoxesController.Create).Methods(http.MethodPost)
 	lootBoxesRouter.HandleFunc("/open", lootBoxesController.Open).Methods(http.MethodDelete)
 

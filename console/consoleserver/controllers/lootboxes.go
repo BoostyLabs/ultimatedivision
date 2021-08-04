@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package consoleserver
+package controllers
 
 import (
 	"encoding/json"
@@ -42,16 +42,18 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 	var userLootBox lootboxes.UserLootBoxes
 
 	if err := json.NewDecoder(r.Body).Decode(&userLootBox); err != nil {
-		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusBadRequest)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	err := controller.lootBoxes.Create(ctx, userLootBox)
 	if err != nil {
-		controller.log.Error("could not create loot box for user", ErrLootBoxes.Wrap(err))
+		controller.log.Error("could not create lootbox for user", ErrLootBoxes.Wrap(err))
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
 }
 
 // Open is an endpoint that opens user lootbox.
@@ -61,7 +63,7 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	var userLootBox lootboxes.UserLootBoxes
 
 	if err := json.NewDecoder(r.Body).Decode(&userLootBox); err != nil {
-		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusBadRequest)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
@@ -77,4 +79,6 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
 }
