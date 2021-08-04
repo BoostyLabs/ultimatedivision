@@ -11,7 +11,6 @@ import './index.scss';
 export const Tokenomics: React.FC<{ children: ComponentRoutes[] }> = ({ children }) => {
     return (
         <div className="tokenomics">
-            <AboutMenu />
             <div className="tokenomics__wrapper">
                 <Switch>
                     {children.map((route, index) => (

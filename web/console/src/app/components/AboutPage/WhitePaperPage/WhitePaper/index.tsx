@@ -11,7 +11,6 @@ import './index.scss';
 export const WhitePaper: React.FC<{ children: ComponentRoutes[] }> = ({ children }) => {
     return (
         <div className="whitepaper">
-            <AboutMenu />
             <div className="whitepaper__wrapper">
                 <Switch>
                     {children.map((route, index) => (
