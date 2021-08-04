@@ -215,6 +215,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			logger,
 			peer.Console.Listener,
 			peer.Cards.Service,
+			peer.LootBoxes.Service,
 		)
 		if err != nil {
 			return nil, err

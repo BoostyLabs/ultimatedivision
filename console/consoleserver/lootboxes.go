@@ -61,9 +61,15 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := controller.lootBoxes.Open(r.Context(), userLootBox)
+	cards, err := controller.lootBoxes.Open(r.Context(), userLootBox)
 	if err != nil {
 		controller.log.Error("could not open loot box", ErrLootBoxes.Wrap(err))
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(cards); err != nil {
+		controller.log.Error("could not encode cards", ErrLootBoxes.Wrap(err))
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
