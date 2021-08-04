@@ -38,12 +38,12 @@ func (service *Service) Create(ctx context.Context, userLootBox UserLootBoxes) e
 
 // Open opens lootbox by user.
 func (service *Service) Open(ctx context.Context, userLootBox UserLootBoxes) error {
-	probabilities := []Probability{service.config.Wood, service.config.Silver, service.config.Gold, service.config.Diamond }
-	lootBoxCards := cards.Service.Create(context.Background(), userLootBox.UserID, probabilities)
+	probabilities := []int{service.config.Wood, service.config.Silver, service.config.Gold, service.config.Diamond }
+	err := cards.Service.Create(cards.Service{}, ctx, userLootBox.UserID, probabilities)
 	// TODO: call create cards method.
 	// TODO: check if user has enough money for lootbox.
 
-	err := service.lootboxes.Delete(ctx, userLootBox)
+	err = service.lootboxes.Delete(ctx, userLootBox)
 
 	// TODO: return slice of generated cards and error.
 

@@ -29,17 +29,14 @@ type LootBox struct {
 	Name string    `json:"name"`
 }
 
-// Probability defines probability of getting different types of cards.
-type Probability int
-
 // Config defines configuration for LootBox.
 type Config struct {
 	Cost     int         `json:"cost"`
 	CardsNum int         `json:"cardsNum"`
-	Wood     Probability `json:"wood"`
-	Silver   Probability `json:"silver"`
-	Gold     Probability `json:"gold"`
-	Diamond  Probability `json:"diamond"`
+	Wood     int `json:"wood"`
+	Silver   int `json:"silver"`
+	Gold     int `json:"gold"`
+	Diamond  int `json:"diamond"`
 }
 
 // UserLootBoxes describes lootbox that user has.
