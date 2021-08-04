@@ -37,6 +37,8 @@ func NewLootBoxes(log logger.Logger, lootBoxes *lootboxes.Service) *LootBoxes {
 
 // Create is an endpoint that creates new lootbox for user.
 func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	var userLootBox lootboxes.UserLootBoxes
 
 	if err := json.NewDecoder(r.Body).Decode(&userLootBox); err != nil {
@@ -44,7 +46,7 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := controller.lootBoxes.Create(r.Context(), userLootBox)
+	err := controller.lootBoxes.Create(ctx, userLootBox)
 	if err != nil {
 		controller.log.Error("could not create loot box for user", ErrLootBoxes.Wrap(err))
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -54,6 +56,8 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 
 // Open is an endpoint that opens user lootbox.
 func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	var userLootBox lootboxes.UserLootBoxes
 
 	if err := json.NewDecoder(r.Body).Decode(&userLootBox); err != nil {
@@ -61,7 +65,7 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := controller.lootBoxes.Open(r.Context(), userLootBox)
+	cards, err := controller.lootBoxes.Open(ctx, userLootBox)
 	if err != nil {
 		controller.log.Error("could not open loot box", ErrLootBoxes.Wrap(err))
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

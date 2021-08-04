@@ -31,8 +31,8 @@ type LootBox struct {
 
 // Config defines configuration for LootBox.
 type Config struct {
-	Cost     int         `json:"cost"`
-	CardsNum int         `json:"cardsNum"`
+	Cost     int `json:"cost"`
+	CardsNum int `json:"cardsNum"`
 	Wood     int `json:"wood"`
 	Silver   int `json:"silver"`
 	Gold     int `json:"gold"`

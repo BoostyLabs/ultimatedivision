@@ -8,7 +8,6 @@ import (
 	"errors"
 	"net"
 	"net/http"
-	"ultimatedivision/lootboxes"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -16,6 +15,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/lootboxes"
 )
 
 var (
