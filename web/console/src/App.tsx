@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { Navbar } from '@components/Navbar';
 import { Routes } from '@/app/router';
-import { AboutMenu } from './app/components/AboutPage/AboutMenu';
+import { AboutMenu } from '@components/AboutPage/AboutMenu';
 
 /** initial App setup */
 export function App() {
