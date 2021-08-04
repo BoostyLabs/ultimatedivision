@@ -150,6 +150,7 @@ export class RouteConfig {
         ])
     ];
 };
+
 export const Route: React.FC<RouteItem> = ({
     component: Component,
     ...children
