@@ -68,8 +68,8 @@ func (user *User) EncodePass() error {
 	return nil
 }
 
-// RegistrationRequest for body payload.
-type RegistrationRequest struct {
+// ReceivingFields for body payload.
+type ReceivingFields struct {
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 	NickName  string `json:"nickName"`

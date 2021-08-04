@@ -175,7 +175,10 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 		return Error.Wrap(err)
 	}
 
-	token, _ := service.Token(ctx, user.Email, string(user.PasswordHash))
+	token, err := service.Token(ctx, user.Email, string(user.PasswordHash))
+	if err != nil {
+		return Error.Wrap(err)
+	}
 
 	// launch a goroutine that sends the email verification.
 	go func() {

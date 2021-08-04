@@ -47,11 +47,11 @@ func NewAuth(log logger.Logger, userAuth *userauth.Service, authCookie *auth.Coo
 	}
 }
 
-// Register a new user account.
+// Register creates a new user account.
 func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var err error
-	var request users.RegistrationRequest
+	var request users.ReceivingFields
 
 	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
 		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
@@ -68,8 +68,8 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	auth.responseWithJSON(w, http.StatusOK, "OK")
 }
 
-// ConfirmUserEmail confirm the email of the user based on the received token.
-func (auth *Auth) ConfirmUserEmail(w http.ResponseWriter, r *http.Request) {
+// ConfirmEmail confirm the email of the user based on the received token.
+func (auth *Auth) ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 	token := params["token"]
@@ -96,56 +96,39 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var err error
 
-	var request users.RegistrationRequest
+	var request users.ReceivingFields
 
 	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, AuthError.Wrap(err).Error(), http.StatusBadRequest)
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
 		return
 	}
 
 	if request.Email == "" || request.Password == "" {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
 		return
 	}
 
-	response, err := auth.userAuth.Token(ctx, request.Email, request.Password)
+	authToken, err := auth.userAuth.Token(ctx, request.Email, request.Password)
 	if err != nil {
 		auth.log.Error("could not get auth token", AuthError.Wrap(err))
 		switch {
 		case users.ErrNoUser.Has(err):
-			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
 		case userauth.ErrUnauthenticated.Has(err):
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
 		default:
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		}
 
 		return
 	}
 
-	auth.cookie.SetTokenCookie(w, response)
+	auth.cookie.SetTokenCookie(w, authToken)
 }
 
 // Logout is an endpoint to log out and remove auth cookie from browser.
 func (auth *Auth) Logout(w http.ResponseWriter, r *http.Request) {
 	auth.cookie.RemoveTokenCookie(w)
-}
-
-// responseWithJSON gives response in JSON.
-func (auth *Auth) responseWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, err := json.Marshal(payload)
-	if err != nil {
-		auth.log.Error("Failed to marshal response", AuthError.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	_, err = w.Write(response)
-	if err != nil {
-		auth.log.Error("Failed to write response", AuthError.Wrap(err))
-	}
 }
 
 func (auth *Auth) serveError(w http.ResponseWriter, status int, err error) {
