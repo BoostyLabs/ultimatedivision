@@ -44,7 +44,7 @@ type Server struct {
 	cookieAuth  *auth.CookieAuth
 
 	templates struct {
-		auth controllers.AuthTemplates
+		auth *controllers.AuthTemplates
 	}
 }
 
@@ -56,15 +56,21 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 		listener: listener,
 	}
 
-	router := mux.NewRouter()
 	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
-	router.HandleFunc("/login", authController.Login).Methods(http.MethodPost, http.MethodGet)
-	router.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
-	router.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
-	router.HandleFunc("/email/confirm/{token}", authController.ConfirmUserEmail).Methods(http.MethodGet)
+	cardsController := NewCards(log, cards)
+
+	router := mux.NewRouter()
+	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
+	router.HandleFunc("/login", authController.LoginTemplateHandler).Methods(http.MethodGet)
+
+	apiRouter := router.PathPrefix("/api/v0").Subrouter()
+	authRouter := apiRouter.PathPrefix("/auth").Subrouter()
+	authRouter.HandleFunc("/login", authController.Login).Methods(http.MethodPost, http.MethodGet)
+	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
+	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
+	authRouter.HandleFunc("/email/confirm/{token}", authController.ConfirmUserEmail).Methods(http.MethodGet)
 
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
-	cardsController := NewCards(log, cards)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 
 	server.server = http.Server{

@@ -23,7 +23,9 @@ var AuthError = errs.Class("auth controller error")
 
 // AuthTemplates holds all auth related templates.
 type AuthTemplates struct {
-	Login *template.Template
+	Login          *template.Template
+	Register       *template.Template
+	ChangePassword *template.Template
 }
 
 // Auth login authentication entity.
@@ -32,16 +34,16 @@ type Auth struct {
 	userAuth *userauth.Service
 	cookie   *auth.CookieAuth
 
-	loginTemplate *template.Template
+	templates *AuthTemplates
 }
 
 // NewAuth returns new instance of Auth.
-func NewAuth(log logger.Logger, userAuth *userauth.Service, authCookie *auth.CookieAuth, templates AuthTemplates) *Auth {
+func NewAuth(log logger.Logger, userAuth *userauth.Service, authCookie *auth.CookieAuth, templates *AuthTemplates) *Auth {
 	return &Auth{
-		log:           log,
-		userAuth:      userAuth,
-		cookie:        authCookie,
-		loginTemplate: templates.Login,
+		log:       log,
+		userAuth:  userAuth,
+		cookie:    authCookie,
+		templates: templates,
 	}
 }
 
@@ -158,5 +160,47 @@ func (auth *Auth) serveError(w http.ResponseWriter, status int, err error) {
 	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
 		auth.log.Error("failed to write json error response", AuthError.Wrap(err))
+	}
+}
+
+// RegisterTemplateHandler is web app http handler function.
+func (auth *Auth) RegisterTemplateHandler(w http.ResponseWriter, r *http.Request) {
+	header := w.Header()
+
+	header.Set("Content-Type", "text/html; charset=UTF-8")
+	header.Set("X-Content-Type-Options", "nosniff")
+	header.Set("Referrer-Policy", "same-origin")
+
+	if err := auth.templates.Register.Execute(w, nil); err != nil {
+		auth.log.Error("index template could not be executed", AuthError.Wrap(err))
+		return
+	}
+}
+
+// LoginTemplateHandler is web app http handler function.
+func (auth *Auth) LoginTemplateHandler(w http.ResponseWriter, r *http.Request) {
+	header := w.Header()
+
+	header.Set("Content-Type", "text/html; charset=UTF-8")
+	header.Set("X-Content-Type-Options", "nosniff")
+	header.Set("Referrer-Policy", "same-origin")
+
+	if err := auth.templates.Login.Execute(w, nil); err != nil {
+		auth.log.Error("index template could not be executed", AuthError.Wrap(err))
+		return
+	}
+}
+
+// ChangePasswordTemplateHandler is web app http handler function.
+func (auth *Auth) ChangePasswordTemplateHandler(w http.ResponseWriter, r *http.Request) {
+	header := w.Header()
+
+	header.Set("Content-Type", "text/html; charset=UTF-8")
+	header.Set("X-Content-Type-Options", "nosniff")
+	header.Set("Referrer-Policy", "same-origin")
+
+	if err := auth.templates.ChangePassword.Execute(w, nil); err != nil {
+		auth.log.Error("index template could not be executed", AuthError.Wrap(err))
+		return
 	}
 }
