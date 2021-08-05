@@ -8,13 +8,14 @@ import (
 	"errors"
 	"net"
 	"net/http"
-	"ultimatedivision/clubs"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/clubs"
+	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/internal/logger"
 )
 
@@ -47,19 +48,28 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 		listener: listener,
 	}
 
+	cardsController := controllers.NewCards(log, cards)
+	clubsController := controllers.NewClubs(log, clubs)
+
 	router := mux.NewRouter()
 
-	cardsRouter := router.PathPrefix("/cards").Subrouter()
-	cardsController := NewCards(log, cards)
+	apiRouter := router.PathPrefix("/api/v0").Subrouter()
+
+	cardsRouter := apiRouter.PathPrefix("/cards").Subrouter()
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 
-	clubsRouter := router.PathPrefix("/clubs").Subrouter()
-	clubsController := NewClubs(log, clubs)
-	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
+	clubsRouter := apiRouter.PathPrefix("/clubs").Subrouter()
+	clubsRouter.HandleFunc("{userId}", clubsController.Create).Methods(http.MethodPost)
+	clubsRouter.HandleFunc("{userId}", clubsController.Get).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("", clubsController.UpdateSquad).Methods(http.MethodPut)
-	clubsRouter.HandleFunc("/squads", clubsController.Add).Methods(http.MethodPost)
-	clubsRouter.HandleFunc("/squads", clubsController.UpdatePosition).Methods(http.MethodPut)
-	clubsRouter.HandleFunc("/squads", clubsController.Delete).Methods(http.MethodDelete)
+
+	squadsRouter := clubsRouter.Path("/squads").Subrouter()
+	squadsRouter.HandleFunc("{clubId}", clubsController.Create).Methods(http.MethodPost)
+
+	squadCardsRouter := squadsRouter.Path("/squad-cards").Subrouter()
+	squadCardsRouter.HandleFunc("", clubsController.Add).Methods(http.MethodPost)
+	squadCardsRouter.HandleFunc("", clubsController.UpdatePosition).Methods(http.MethodPut)
+	squadCardsRouter.HandleFunc("", clubsController.Delete).Methods(http.MethodDelete)
 
 	server.server = http.Server{
 		Handler: router,
