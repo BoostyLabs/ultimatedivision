@@ -54,32 +54,32 @@ export class ComponentRoutes implements RouteItem {
 /** Route config implementation */
 export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
-        '/ud/marketplace',
+        '/marketplace',
         MarketPlace,
         true,
     );
     public static FootballerCard: ComponentRoutes = new ComponentRoutes(
-        '/ud/card',
+        '/card',
         FootballerCard,
         true,
     );
     public static FootballField: ComponentRoutes = new ComponentRoutes(
-        '/ud/field',
+        '/field',
         FootballField,
         true,
     );
     public static MyCards: ComponentRoutes = new ComponentRoutes(
-        '/ud/club',
+        '/club',
         MarketPlace,
         true,
     );
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
-        '/ud/whitepaper',
+        '/whitepaper',
         WhitePaper,
         false
     );
     public static Tokenomics: ComponentRoutes = new ComponentRoutes(
-        '/ud/tokenomics',
+        '/tokenomics',
         Tokenomics,
         false
     );
@@ -124,7 +124,7 @@ export class RouteConfig {
         true
     );
     public static Default: ComponentRoutes = new ComponentRoutes(
-        '/ud/',
+        '/',
         MarketPlace,
         true,
     );
@@ -146,7 +146,7 @@ export class RouteConfig {
             RouteConfig.Staking,
             RouteConfig.PayToEarn
         ])
-    ];
+    ]
 };
 
 export const Route: React.FC<RouteItem> = ({

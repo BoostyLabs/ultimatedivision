@@ -1,7 +1,7 @@
 {
     "name": "cryptofotball",
     "version": "0.1.0",
-    "homepage": "https://ultimatedivision.com/test/",
+    "homepage": "https://ultimatedivision.com/ud/",
     "private": true,
     "dependencies": {
         "chart.js": "3.4.1",
