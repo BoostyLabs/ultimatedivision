@@ -39,11 +39,9 @@ export class ComponentRoutes implements RouteItem {
     ) { }
 
     public with(child: ComponentRoutes, parrent: ComponentRoutes): ComponentRoutes {
-        return new ComponentRoutes(
-            `${parrent.path}/${child.path}`,
-            child.component,
-            child.exact,
-        )
+        child.path = `${parrent.path}/${child.path}`;
+
+        return this;
     }
 
     public addChildren(children: ComponentRoutes[]): ComponentRoutes {
@@ -142,9 +140,9 @@ export class RouteConfig {
         ]),
         RouteConfig.Tokenomics.addChildren([
             RouteConfig.Spending,
-            RouteConfig.Fund,
+            RouteConfig.PayToEarn,
             RouteConfig.Staking,
-            RouteConfig.PayToEarn
+            RouteConfig.Fund,
         ])
     ]
 };

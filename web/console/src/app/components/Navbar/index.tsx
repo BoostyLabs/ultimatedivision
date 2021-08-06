@@ -14,7 +14,7 @@ export const Navbar: React.FC = () =>
         <ul className="ultimatedivision-navbar__list">
             <li className="ultimatedivision-navbar__item">
                 <NavLink
-                    to={RouteConfig.Whitepaper.path}
+                    to={RouteConfig.Summary.path}
                     className="ultimatedivision-navbar__item__active"
                 >
                     HOME
