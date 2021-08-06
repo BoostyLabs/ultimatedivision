@@ -2,7 +2,7 @@
 //See LICENSE for copying information.
 
 import { Suspense } from 'react';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter, useHistory } from 'react-router-dom';
 
 import { Navbar } from '@components/Navbar';
 import { Routes } from '@/app/router';
@@ -13,11 +13,11 @@ export function App() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
             {/** TODO: LoadingPage */}
-            <HashRouter basename="/">
+            <BrowserRouter basename="/" history={createHistory()}>
                 <Navbar />
                 <AboutMenu />
                 <Routes />
-            </HashRouter>
+            </BrowserRouter>
         </Suspense>
 
     );
