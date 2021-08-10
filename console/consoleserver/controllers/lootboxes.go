@@ -18,6 +18,21 @@ var (
 	ErrLootBoxes = errs.Class("lootboxes controller error")
 )
 
+func (controller *LootBoxes) serveError(w http.ResponseWriter, status int, err error) {
+	w.WriteHeader(status)
+
+	var response struct {
+		Error string `json:"error"`
+	}
+
+	response.Error = err.Error()
+
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		controller.log.Error("failed to write json error response", ErrLootBoxes.Wrap(err))
+	}
+}
+
 // LootBoxes is a mvc controller that handles all lootboxes related views.
 type LootBoxes struct {
 	log logger.Logger
@@ -37,48 +52,48 @@ func NewLootBoxes(log logger.Logger, lootBoxes *lootboxes.Service) *LootBoxes {
 
 // Create is an endpoint that creates new lootbox for user.
 func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	ctx := r.Context()
 
-	var userLootBox lootboxes.UserLootBoxes
+	var lootBox lootboxes.LootBox
 
-	if err := json.NewDecoder(r.Body).Decode(&userLootBox); err != nil {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&lootBox); err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrLootBoxes.Wrap(err))
 		return
 	}
 
-	err := controller.lootBoxes.Create(ctx, userLootBox)
+	err := controller.lootBoxes.Create(ctx, lootBox)
 	if err != nil {
 		controller.log.Error("could not create lootbox for user", ErrLootBoxes.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
 }
 
 // Open is an endpoint that opens user lootbox.
 func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	ctx := r.Context()
 
-	var userLootBox lootboxes.UserLootBoxes
+	var lootBox lootboxes.LootBox
 
-	if err := json.NewDecoder(r.Body).Decode(&userLootBox); err != nil {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&lootBox); err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrLootBoxes.Wrap(err))
 		return
 	}
 
-	cards, err := controller.lootBoxes.Open(ctx, userLootBox)
+	cards, err := controller.lootBoxes.Open(ctx, lootBox)
 	if err != nil {
 		controller.log.Error("could not open loot box", ErrLootBoxes.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
 		return
 	}
 
 	if err = json.NewEncoder(w).Encode(cards); err != nil {
 		controller.log.Error("could not encode cards", ErrLootBoxes.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
 }

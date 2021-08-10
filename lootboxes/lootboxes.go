@@ -18,16 +18,27 @@ var ErrNoLootBox = errs.Class("lootbox does not exist")
 // architecture: DB
 type DB interface {
 	// Create creates lootbox of user in db.
-	Create(ctx context.Context, lootBox UserLootBoxes) error
+	Create(ctx context.Context, lootBox LootBox) error
 	// Delete deletes opened lootbox by user in db.
-	Delete(ctx context.Context, lootBox UserLootBoxes) error
+	Delete(ctx context.Context, lootBox LootBox) error
 }
 
 // LootBox defines lootbox.
 type LootBox struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
+	UserID    uuid.UUID `json:"userId"`
+	LootBoxID uuid.UUID `json:"id"`
+	Name      Type      `json:"name"`
 }
+
+// Type defines type of LootBox.
+type Type string
+
+const (
+	// RegularBox defines regular box type.
+	RegularBox Type = "Regular Box"
+	// UDReleaseCelebrationBox defines UD Release Celebration Box type.
+	UDReleaseCelebrationBox Type = "UD Release Celebration Box"
+)
 
 // Config defines configuration for LootBox.
 type Config struct {
@@ -37,10 +48,4 @@ type Config struct {
 	Silver   int `json:"silver"`
 	Gold     int `json:"gold"`
 	Diamond  int `json:"diamond"`
-}
-
-// UserLootBoxes describes lootbox that user has.
-type UserLootBoxes struct {
-	UserID    uuid.UUID `json:"userId"`
-	LootBoxID uuid.UUID `json:"LootBoxId"`
 }

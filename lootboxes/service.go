@@ -33,14 +33,14 @@ func NewService(config Config, lootboxes DB, cards *cards.Service) *Service {
 }
 
 // Create creates LootBox.
-func (service *Service) Create(ctx context.Context, userLootBox UserLootBoxes) error {
+func (service *Service) Create(ctx context.Context, userLootBox LootBox) error {
 	err := service.lootboxes.Create(ctx, userLootBox)
 
 	return ErrLootBoxes.Wrap(err)
 }
 
 // Open opens lootbox by user.
-func (service *Service) Open(ctx context.Context, userLootBox UserLootBoxes) ([]cards.Card, error) {
+func (service *Service) Open(ctx context.Context, userLootBox LootBox) ([]cards.Card, error) {
 	probabilities := []int{service.config.Wood, service.config.Silver, service.config.Gold, service.config.Diamond}
 
 	var lootBoxCards []cards.Card

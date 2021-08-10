@@ -30,14 +30,10 @@ func TestLootBox(t *testing.T) {
 		CreatedAt:    time.Now(),
 	}
 
-	RegularBox := lootboxes.LootBox{
-		ID:   uuid.New(),
-		Name: "Regular Box",
-	}
-
-	userLootBox := lootboxes.UserLootBoxes{
+	userLootBox := lootboxes.LootBox{
 		UserID:    user1.ID,
-		LootBoxID: RegularBox.ID,
+		LootBoxID: uuid.New(),
+		Name:      lootboxes.RegularBox,
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
