@@ -102,12 +102,12 @@ type Peer struct {
 		Service *cards.Service
 	}
 
-	// exposes clubs related logic
+	// exposes clubs related logic.
 	Clubs struct {
 		Service *clubs.Service
 	}
 
-	// exposes clubs related logic
+	// exposes lootboxes related logic.
 	LootBoxes struct {
 		Service *lootboxes.Service
 	}
