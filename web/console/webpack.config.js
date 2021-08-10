@@ -15,12 +15,13 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist/'),
         filename: '[name].[hash].js',
-        publicPath: '/'
+        publicPath: 'https://ultimatedivision.com/ud/'
     },
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Ultimate Division',
-            template: './public/index.html'
+            template: './public/index.html',
+            favicon: './src/app/static/img/favicon.ico'
         }),
         new CleanWebpackPlugin(),
         new CssMinimizerPlugin(),
@@ -104,7 +105,7 @@ module.exports = {
                             },
                             // the webp option will enable WEBP
                             webp: {
-                                quality: 75
+                                enabled: false
                             }
                         }
                     },

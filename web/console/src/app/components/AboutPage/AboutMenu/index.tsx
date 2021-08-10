@@ -7,7 +7,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { RouteConfig } from '@/app/router';
 
 import { DropdownStyle } from '@/app/utils/dropdownStyle';
-import ultimate from '@static/img/Navbar/ultimate.png';
+import ultimate from '@static/img/Navbar/ultimate.svg';
 import triangle from '@static/img/FootballFieldPage/triangle.svg';
 import './index.scss';
 
