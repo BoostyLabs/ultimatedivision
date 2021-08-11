@@ -41,6 +41,7 @@ func NewMarketplaces(log logger.Logger, marketplaces *marketplaces.Service) *Mar
 // ListActive is an endpoint that returns active lots list.
 func (controller *Marketplaces) ListActive(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	w.Header().Set("Content-Type", "application/json")
 
 	lotsListActive, err := controller.marketplaces.ListActive(ctx)
 	if err != nil {
@@ -59,6 +60,8 @@ func (controller *Marketplaces) ListActive(w http.ResponseWriter, r *http.Reques
 func (controller *Marketplaces) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
+	w.Header().Set("Content-Type", "application/json")
+
 	if vars["id"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplaces.Wrap(fmt.Errorf("id parameter is empty")))
 		return
