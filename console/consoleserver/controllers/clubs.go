@@ -20,36 +20,6 @@ var (
 	ErrClubs = errs.Class("clubs controller error")
 )
 
-// UpdateRequest is struct for update body payload.
-type UpdateRequest struct {
-	ID        uuid.UUID       `json:"squadId"`
-	Tactic    clubs.Tactic    `json:"tactic"`
-	Capitan   uuid.UUID       `json:"capitan"`
-	Formation clubs.Formation `json:"formation"`
-}
-
-// ClubResponse is a struct for response clubs, squad and squadCards.
-type ClubResponse struct {
-	Clubs      clubs.Club        `json:"clubs"`
-	Squad      clubs.Squad       `json:"squad"`
-	SquadCards []clubs.SquadCard `json:"squadCards"`
-}
-
-func (controller *Clubs) serveError(w http.ResponseWriter, status int, err error) {
-	w.WriteHeader(status)
-
-	var response struct {
-		Error string `json:"error"`
-	}
-
-	response.Error = err.Error()
-
-	err = json.NewEncoder(w).Encode(response)
-	if err != nil {
-		controller.log.Error("failed to write json error response", ErrClubs.Wrap(err))
-	}
-}
-
 // Clubs is a mvc controller that handles all clubs related views.
 type Clubs struct {
 	log logger.Logger
@@ -165,7 +135,6 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 
 	if err = json.NewEncoder(w).Encode(userTeam); err != nil {
 		controller.log.Error("failed to write json response", ErrClubs.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 }
@@ -258,5 +227,36 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
+	}
+}
+
+// UpdateRequest is struct for update body payload.
+type UpdateRequest struct {
+	ID        uuid.UUID       `json:"squadId"`
+	Tactic    clubs.Tactic    `json:"tactic"`
+	Capitan   uuid.UUID       `json:"capitan"`
+	Formation clubs.Formation `json:"formation"`
+}
+
+// ClubResponse is a struct for response clubs, squad and squadCards.
+type ClubResponse struct {
+	Clubs      clubs.Club        `json:"clubs"`
+	Squad      clubs.Squad       `json:"squad"`
+	SquadCards []clubs.SquadCard `json:"squadCards"`
+}
+
+// serveError replies to the request with specific code and error message.
+func (controller *Clubs) serveError(w http.ResponseWriter, status int, err error) {
+	w.WriteHeader(status)
+
+	var response struct {
+		Error string `json:"error"`
+	}
+
+	response.Error = err.Error()
+
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		controller.log.Error("failed to write json error response", ErrClubs.Wrap(err))
 	}
 }
