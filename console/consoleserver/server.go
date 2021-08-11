@@ -57,8 +57,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
-	lootBoxesRouter.HandleFunc("/create", lootBoxesController.Create).Methods(http.MethodPost)
-	lootBoxesRouter.HandleFunc("/open", lootBoxesController.Open).Methods(http.MethodDelete)
+	lootBoxesRouter.HandleFunc("", lootBoxesController.Create).Methods(http.MethodPost)
+	lootBoxesRouter.HandleFunc("", lootBoxesController.Open).Methods(http.MethodDelete)
 
 	server.server = http.Server{
 		Handler: router,
