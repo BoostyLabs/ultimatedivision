@@ -15,10 +15,10 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/console/consoleserver/controllers"
-	"ultimatedivision/marketplaces"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
+	"ultimatedivision/marketplaces"
 	"ultimatedivision/users/userauth"
 )
 
@@ -61,7 +61,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
 	cardsController := controllers.NewCards(log, cards)
 	lootBoxesController := controllers.NewLootBoxes(log, lootBoxes)
-  marketplacesController := controllers.NewMarketplaces(log, marketplaces)
+	marketplacesController := controllers.NewMarketplaces(log, marketplaces)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -80,7 +80,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	marketplaceRouter := router.PathPrefix("/marketplace").Subrouter()
 	marketplaceRouter.HandleFunc("", marketplacesController.ListActive).Methods(http.MethodGet)
 	marketplaceRouter.HandleFunc("/{id}", marketplacesController.Get).Methods(http.MethodGet)
-  
+
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
 	lootBoxesRouter.HandleFunc("", lootBoxesController.Create).Methods(http.MethodPost)
 	lootBoxesRouter.HandleFunc("", lootBoxesController.Open).Methods(http.MethodDelete)
