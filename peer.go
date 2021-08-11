@@ -17,8 +17,10 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
+	"ultimatedivision/console/emails"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/mail"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplaces"
 	"ultimatedivision/users"
@@ -40,7 +42,7 @@ type DB interface {
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
 
-	// LootBoxes provides access to clubs db.
+	// LootBoxes provides access to lootboxes db.
 	LootBoxes() lootboxes.DB
 
 	// Marketplaces provides access to marketplaces db.
@@ -71,6 +73,7 @@ type Config struct {
 
 	Consoles struct {
 		Server consoleserver.Config `json:"server"`
+		Emails *emails.Config       `json:"emails"`
 	}
 
 	Cards struct {
@@ -79,7 +82,7 @@ type Config struct {
 	}
 
 	LootBoxes struct {
-		Config lootboxes.Config `json:"Config"`
+		Config lootboxes.Config `json:"lootboxes"`
 	}
 }
 
@@ -88,6 +91,7 @@ type Peer struct {
 	Config   Config
 	Log      logger.Logger
 	Database DB
+	Sender   mail.Sender
 
 	// exposes admins relates logic.
 	Admins struct {
@@ -106,13 +110,13 @@ type Peer struct {
 		Service *cards.Service
 	}
 
-	// exposes clubs related logic
+	// exposes clubs related logic.
 	Clubs struct {
 		Service *clubs.Service
 	}
 
-	// exposes clubs related logic
-	LoootBoxes struct {
+	// exposes lootboxes related logic.
+	LootBoxes struct {
 		Service *lootboxes.Service
 	}
 
@@ -129,13 +133,14 @@ type Peer struct {
 
 	// Console web server server with web UI.
 	Console struct {
-		Listener net.Listener
-		Endpoint *consoleserver.Server
+		Listener     net.Listener
+		Endpoint     *consoleserver.Server
+		EmailService *emails.Service
 	}
 }
 
 // New is a constructor for ultimatedivision.Peer.
-func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
+func New(logger logger.Logger, config Config, db DB, sender mail.Sender) (peer *Peer, err error) {
 	peer = &Peer{
 		Log:      logger,
 		Database: db,
@@ -150,7 +155,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			auth.TokenSigner{
 				Secret: []byte(config.Users.Auth.TokenAuthSecret),
 			},
-		)
+			peer.Console.EmailService,
+			logger)
 	}
 
 	{ // admins setup
@@ -186,9 +192,10 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	}
 
 	{ // lootboxes setup
-		peer.LoootBoxes.Service = lootboxes.NewService(
-			peer.Database.LootBoxes(),
+		peer.LootBoxes.Service = lootboxes.NewService(
 			config.LootBoxes.Config,
+			peer.Database.LootBoxes(),
+			peer.Cards.Service,
 		)
 	}
 
@@ -225,10 +232,17 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Console.Listener,
 			peer.Cards.Service,
 			peer.Marketplaces.Service,
+			peer.LootBoxes.Service,
 		)
 		if err != nil {
 			return nil, err
 		}
+
+		peer.Console.EmailService = emails.NewService(
+			logger,
+			sender,
+			config.Consoles.Emails,
+		)
 	}
 
 	return peer, nil
