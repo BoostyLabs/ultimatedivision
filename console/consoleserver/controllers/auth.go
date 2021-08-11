@@ -28,7 +28,7 @@ type AuthTemplates struct {
 	ChangePassword *template.Template
 }
 
-// Auth login authentication entity.
+// Auth describe authentication entity.
 type Auth struct {
 	log      logger.Logger
 	userAuth *userauth.Service
@@ -50,8 +50,8 @@ func NewAuth(log logger.Logger, userAuth *userauth.Service, authCookie *auth.Coo
 // Register creates a new user account.
 func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
+
 	var err error
 	var request users.CreateUserFields
 
@@ -68,11 +68,11 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ConfirmEmail confirm the email of the user based on the received token.
+// ConfirmEmail confirms the email of the user based on the received token.
 func (auth *Auth) ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
+
 	params := mux.Vars(r)
 	token := params["token"]
 	if token == "" {
@@ -90,18 +90,15 @@ func (auth *Auth) ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 		auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		return
 	}
-
 }
 
 // Login is an endpoint to authorize user and set auth cookie in browser.
 func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
+
 	var err error
-
 	var request users.CreateUserFields
-
 	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
 		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
 		return
@@ -135,21 +132,6 @@ func (auth *Auth) Logout(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	auth.cookie.RemoveTokenCookie(w)
-}
-
-func (auth *Auth) serveError(w http.ResponseWriter, status int, err error) {
-	w.WriteHeader(status)
-
-	var response struct {
-		Error string `json:"error"`
-	}
-
-	response.Error = err.Error()
-
-	err = json.NewEncoder(w).Encode(response)
-	if err != nil {
-		auth.log.Error("failed to write json error response", AuthError.Wrap(err))
-	}
 }
 
 // RegisterTemplateHandler is web app http handler function.
@@ -191,5 +173,21 @@ func (auth *Auth) ChangePasswordTemplateHandler(w http.ResponseWriter, r *http.R
 	if err := auth.templates.ChangePassword.Execute(w, nil); err != nil {
 		auth.log.Error("index template could not be executed", AuthError.Wrap(err))
 		return
+	}
+}
+
+// serveError replies to request with specific code and error.
+func (auth *Auth) serveError(w http.ResponseWriter, status int, err error) {
+	w.WriteHeader(status)
+
+	var response struct {
+		Error string `json:"error"`
+	}
+
+	response.Error = err.Error()
+
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		auth.log.Error("failed to write json error response", AuthError.Wrap(err))
 	}
 }

@@ -45,11 +45,11 @@ type Service struct {
 }
 
 // NewService is a constructor for user auth service.
-func NewService(users users.DB, signer auth.TokenSigner, emailService *emails.Service, log logger.Logger) *Service {
+func NewService(users users.DB, signer auth.TokenSigner, emails *emails.Service, log logger.Logger) *Service {
 	return &Service{
 		users:        users,
 		signer:       signer,
-		emailService: emailService,
+		emailService: emails,
 		log:          log,
 	}
 }
@@ -216,5 +216,5 @@ func (service *Service) ConfirmUserEmail(ctx context.Context, activationToken st
 		return ErrPermission.Wrap(err)
 	}
 
-	return service.users.Update(ctx, status, user.ID)
+	return Error.Wrap(service.users.Update(ctx, status, user.ID))
 }
