@@ -49,6 +49,8 @@ func NewAuth(log logger.Logger, userAuth *userauth.Service, authCookie *auth.Coo
 
 // Register creates a new user account.
 func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	ctx := r.Context()
 	var err error
 	var request users.CreateUserFields
@@ -64,12 +66,12 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
 }
 
 // ConfirmEmail confirm the email of the user based on the received token.
 func (auth *Auth) ConfirmEmail(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	ctx := r.Context()
 	params := mux.Vars(r)
 	token := params["token"]
@@ -89,11 +91,12 @@ func (auth *Auth) ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 }
 
 // Login is an endpoint to authorize user and set auth cookie in browser.
 func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	ctx := r.Context()
 	var err error
 
@@ -125,15 +128,13 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	auth.cookie.SetTokenCookie(w, authToken)
-
-	w.Header().Set("Content-Type", "application/json")
 }
 
 // Logout is an endpoint to log out and remove auth cookie from browser.
 func (auth *Auth) Logout(w http.ResponseWriter, r *http.Request) {
-	auth.cookie.RemoveTokenCookie(w)
-
 	w.Header().Set("Content-Type", "application/json")
+
+	auth.cookie.RemoveTokenCookie(w)
 }
 
 func (auth *Auth) serveError(w http.ResponseWriter, status int, err error) {
