@@ -119,9 +119,8 @@ func compareAllFieldsLot(t *testing.T, lot1, lot2 marketplaces.Lot) {
 	assert.Equal(t, lot1.StartPrice, lot2.StartPrice)
 	assert.Equal(t, lot1.MaxPrice, lot2.MaxPrice)
 	assert.Equal(t, lot1.CurrentPrice, lot2.CurrentPrice)
-	// TODO: compare dates in a better way.
-	// assert.Equal(t, lot1.StartTime, lot2.StartTime)
-	// assert.Equal(t, lot1.EndTime, lot2.EndTime)
+	assert.WithinDuration(t, lot1.StartTime, lot2.StartTime, 1*time.Second)
+	assert.WithinDuration(t, lot1.EndTime, lot2.EndTime, 1*time.Second)
 }
 
 func compareLotForGet(t *testing.T, lot1, lot2 marketplaces.Lot) {
