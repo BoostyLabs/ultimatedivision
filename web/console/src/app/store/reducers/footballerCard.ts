@@ -30,10 +30,10 @@ export const filterList: (filterValue: string) => FilterAction = (filterValue: s
 // FilterField functionality base implementation
 
 export const cardReducer = (cardState = cardList(20), action: any = {}) => {
-    let marketPlaceCardList = [...cardState];
+    let marketPlaceCardList = cardState.slice();
     switch (action.type) {
     case SEARCH_FILTER:
-        marketPlaceCardList = cardState.filter(card =>
+        marketPlaceCardList = cardState.slice().filter(card =>
             card.overalInfo[0].value.includes(action.action));
         break;
     default:
