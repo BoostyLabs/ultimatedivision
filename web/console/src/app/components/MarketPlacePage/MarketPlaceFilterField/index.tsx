@@ -1,5 +1,5 @@
-//Copyright (C) 2021 Creditor Corp. Group.
-//See LICENSE for copying information.
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
 
 import { useState } from 'react';
 
@@ -18,6 +18,9 @@ import stars
 import parametres
     from '@static/img/MarketPlacePage/marketPlaceFilterField/parametres.svg';
 
+import { useDispatch } from 'react-redux';
+import { filterList } from '@/app/store/reducers/footballerCard';
+
 import './index.scss';
 
 export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) => {
@@ -26,6 +29,7 @@ export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) =
     const handleSerchChange = (event: any) => {
         setSearchData(event.target.value);
     };
+    const dispatch = useDispatch();
 
     const filterFieldTitles: Array<{ title: string; src: string }> = [
         {
@@ -98,6 +102,7 @@ export const MarketPlaceFilterField: React.FC<{ title: string }> = ({ title }) =
                             src={search}
                             alt="Filter Icon"
                             className="marketplace-filter__list__item__picture"
+                            onClick={() => dispatch(filterList(searchData))}
                         />
                         <input
                             value={searchData}
