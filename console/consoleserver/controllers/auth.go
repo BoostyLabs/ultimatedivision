@@ -28,7 +28,7 @@ type AuthTemplates struct {
 	ChangePassword *template.Template
 }
 
-// Auth describe authentication entity.
+// Auth is an authentication controller that exposes users authentication functionality.
 type Auth struct {
 	log      logger.Logger
 	userAuth *userauth.Service
