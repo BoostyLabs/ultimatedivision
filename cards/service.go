@@ -122,6 +122,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		Accessories:      []int{1, 2},
 		DominantFoot:     DominantFoot(searchValueByPercent(dominantFoots)),
 		IsTattoos:        isTattoos,
+		IsActive:         true,
 		UserID:           userID,
 		Tactics:          tactics,
 		Positioning:      generateSkill(tactics),

@@ -49,6 +49,7 @@ type Card struct {
 	Accessories      []int        `json:"accessories"`
 	DominantFoot     DominantFoot `json:"dominantFoot"`
 	IsTattoos        bool         `json:"isTattoos"`
+	IsActive         bool         `json:"isActive"`
 	UserID           uuid.UUID    `json:"userId"`
 	Tactics          int          `json:"tactics"`
 	Positioning      int          `json:"positioning"`
