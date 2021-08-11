@@ -180,7 +180,7 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = controller.clubs.UpdateCapitan(ctx, updatedSquad.ID, updatedSquad.Capitan)
+	err = controller.clubs.UpdateCaptain(ctx, updatedSquad.ID, updatedSquad.Captain)
 	if err != nil {
 		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
@@ -234,7 +234,7 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 type UpdateRequest struct {
 	ID        uuid.UUID       `json:"squadId"`
 	Tactic    clubs.Tactic    `json:"tactic"`
-	Capitan   uuid.UUID       `json:"capitan"`
+	Captain   uuid.UUID       `json:"captain"`
 	Formation clubs.Formation `json:"formation"`
 }
 

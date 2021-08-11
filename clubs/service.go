@@ -51,12 +51,12 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error
 
 // Add add new card to the squad of the club.
 func (service *Service) Add(ctx context.Context, newSquadCard SquadCard) error {
-	capitan, err := service.clubs.GetCapitan(ctx, newSquadCard.ID)
+	capitan, err := service.clubs.GetCaptain(ctx, newSquadCard.ID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
 	}
 
-	newSquadCard.Capitan = capitan
+	newSquadCard.Captain = capitan
 
 	return service.clubs.AddSquadCard(ctx, newSquadCard)
 }
@@ -76,9 +76,9 @@ func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, tact
 	return service.clubs.UpdateTacticFormation(ctx, updatedSquad)
 }
 
-// UpdateCapitan updates capitan in the club.
-func (service *Service) UpdateCapitan(ctx context.Context, squadID uuid.UUID, capitanID uuid.UUID) error {
-	return service.clubs.UpdateCapitan(ctx, capitanID, squadID)
+// UpdateCaptain updates captain in the club.
+func (service *Service) UpdateCaptain(ctx context.Context, squadID uuid.UUID, capitanID uuid.UUID) error {
+	return service.clubs.UpdateCaptain(ctx, capitanID, squadID)
 }
 
 // UpdateCardPosition updates position of card in the squad.
