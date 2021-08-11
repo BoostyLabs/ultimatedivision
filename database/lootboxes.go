@@ -24,10 +24,27 @@ type lootboxesDB struct {
 
 // Create creates opened lootbox in db.
 func (lootboxesDB *lootboxesDB) Create(ctx context.Context, lootBox lootboxes.LootBox) error {
+	tx, err := lootboxesDB.conn.BeginTx(ctx, nil)
+	if err != nil {
+		return ErrLootBoxes.Wrap(err)
+	}
 	query := `INSERT INTO lootboxes(lootbox_id, user_id, lootbox_name)
               VALUES($1,$2,$3)`
 
-	_, err := lootboxesDB.conn.ExecContext(ctx, query, lootBox.UserID, lootBox.UserID, lootBox.Name)
+	_, err = lootboxesDB.conn.ExecContext(ctx, query, lootBox.UserID, lootBox.UserID, lootBox.Name)
+
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return ErrLootBoxes.Wrap(err)
+		}
+		return ErrLootBoxes.Wrap(err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return ErrLootBoxes.Wrap(err)
+	}
 
 	return ErrLootBoxes.Wrap(err)
 }

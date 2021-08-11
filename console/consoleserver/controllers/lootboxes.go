@@ -18,21 +18,6 @@ var (
 	ErrLootBoxes = errs.Class("lootboxes controller error")
 )
 
-func (controller *LootBoxes) serveError(w http.ResponseWriter, status int, err error) {
-	w.WriteHeader(status)
-
-	var response struct {
-		Error string `json:"error"`
-	}
-
-	response.Error = err.Error()
-
-	err = json.NewEncoder(w).Encode(response)
-	if err != nil {
-		controller.log.Error("failed to write json error response", ErrLootBoxes.Wrap(err))
-	}
-}
-
 // LootBoxes is a mvc controller that handles all lootboxes related views.
 type LootBoxes struct {
 	log logger.Logger
@@ -93,7 +78,22 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 
 	if err = json.NewEncoder(w).Encode(cards); err != nil {
 		controller.log.Error("could not encode cards", ErrLootBoxes.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
 		return
+	}
+}
+
+// serveError replies to the request with specific code and error message.
+func (controller *LootBoxes) serveError(w http.ResponseWriter, status int, err error) {
+	w.WriteHeader(status)
+
+	var response struct {
+		Error string `json:"error"`
+	}
+
+	response.Error = err.Error()
+
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		controller.log.Error("failed to write json error response", ErrLootBoxes.Wrap(err))
 	}
 }
