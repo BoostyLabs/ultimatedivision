@@ -231,8 +231,8 @@ func New(logger logger.Logger, config Config, db DB, sender mail.Sender) (peer *
 			logger,
 			peer.Console.Listener,
 			peer.Cards.Service,
-			peer.Marketplaces.Service,
 			peer.LootBoxes.Service,
+			peer.Marketplaces.Service,
 		)
 		if err != nil {
 			return nil, err
