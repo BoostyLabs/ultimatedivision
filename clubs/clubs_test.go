@@ -39,7 +39,7 @@ func TestTeam(t *testing.T) {
 		CreatedAt: time.Now().UTC(),
 	}
 
-	testSquad := clubs.Squads{
+	testSquad := clubs.Squad{
 		ID:        uuid.New(),
 		Name:      "test squad",
 		ClubID:    testClub.ID,
@@ -52,20 +52,20 @@ func TestTeam(t *testing.T) {
 		UserID: testUser.ID,
 	}
 
-	testSquadCards := clubs.SquadCards{
+	testSquadCards := clubs.SquadCard{
 		ID:       testSquad.ID,
 		CardID:   testCard.ID,
 		Position: clubs.CAM,
 	}
 
-	updatedSquadCards := []clubs.SquadCards{{
+	updatedSquadCards := []clubs.SquadCard{{
 		ID:       testSquad.ID,
 		CardID:   testCard.ID,
 		Position: clubs.CAM,
 		Capitan:  testCard.ID,
 	}}
 
-	updatedSquad := clubs.Squads{
+	updatedSquad := clubs.Squad{
 		ID:        testSquad.ID,
 		ClubID:    testClub.ID,
 		Formation: clubs.FourFourTwo,
@@ -158,14 +158,14 @@ func compareClubs(t *testing.T, clubDB clubs.Club, clubTest clubs.Club) {
 
 }
 
-func compareSquads(t *testing.T, squadDB clubs.Squads, squadTest clubs.Squads) {
+func compareSquads(t *testing.T, squadDB clubs.Squad, squadTest clubs.Squad) {
 	assert.Equal(t, squadDB.ID, squadTest.ID)
 	assert.Equal(t, squadDB.ClubID, squadTest.ClubID)
 	assert.Equal(t, squadDB.Tactic, squadTest.Tactic)
 	assert.Equal(t, squadDB.Formation, squadTest.Formation)
 }
 
-func comparePlayers(t *testing.T, playersDB []clubs.SquadCards, playersTest []clubs.SquadCards) {
+func comparePlayers(t *testing.T, playersDB []clubs.SquadCard, playersTest []clubs.SquadCard) {
 	assert.Equal(t, len(playersDB), len(playersTest))
 
 	for i := 0; i < len(playersTest); i++ {

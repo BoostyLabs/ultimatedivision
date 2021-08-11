@@ -24,21 +24,21 @@ type DB interface {
 	// Create creates club in the database.
 	Create(ctx context.Context, club Club) error
 	// CreateSquad creates squad for clubs in the database.
-	CreateSquad(ctx context.Context, squad Squads) error
+	CreateSquad(ctx context.Context, squad Squad) error
 	// Get returns club owned by the user.
 	Get(ctx context.Context, userID uuid.UUID) (Club, error)
 	// GetSquad returns squad.
-	GetSquad(ctx context.Context, squadID uuid.UUID) (Squads, error)
+	GetSquad(ctx context.Context, squadID uuid.UUID) (Squad, error)
 	// GetCapitan returns id of capitan.
 	GetCapitan(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error)
 	// ListSquadCards returns all cards from squad.
-	ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCards, error)
+	ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error)
 	// Add add new card to the squad.
-	Add(ctx context.Context, squadCards SquadCards) error
+	Add(ctx context.Context, squadCards SquadCard) error
 	// DeleteSquadCard deletes card from squad.
 	DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error
 	// UpdateTacticFormation updates tactic and formation in the squad.
-	UpdateTacticFormation(ctx context.Context, squad Squads) error
+	UpdateTacticFormation(ctx context.Context, squad Squad) error
 	// UpdateCapitan updates capitan in the squad.
 	UpdateCapitan(ctx context.Context, capitan uuid.UUID, squadID uuid.UUID) error
 	// UpdatePosition updates position of card in the squad.
@@ -53,8 +53,8 @@ type Club struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-// Squads describes squads of clubs.
-type Squads struct {
+// Squad describes squads of clubs.
+type Squad struct {
 	ID        uuid.UUID `json:"id"`
 	Name      string    `json:"name"`
 	ClubID    uuid.UUID `json:"clubId"`
@@ -62,27 +62,12 @@ type Squads struct {
 	Tactic    Tactic    `json:"tactic"`
 }
 
-// SquadCards defines all cards from squad.
-type SquadCards struct {
+// SquadCard defines all cards from squad.
+type SquadCard struct {
 	ID       uuid.UUID `json:"id"`
 	CardID   uuid.UUID `json:"cardId"`
 	Position Position  `json:"position"`
 	Capitan  uuid.UUID `json:"capitan"`
-}
-
-// UpdateRequest is struct for body payload.
-type UpdateRequest struct {
-	ID        uuid.UUID `json:"squadId"`
-	Tactic    Tactic    `json:"tactic"`
-	Capitan   uuid.UUID `json:"capitan"`
-	Formation Formation `json:"formation"`
-}
-
-// ClubResponse is a struct for response clubs, squad and squadCards.
-type ClubResponse struct {
-	Clubs      Club
-	Squad      Squads
-	SquadCards []SquadCards
 }
 
 // Formation defines a list of possible formations.

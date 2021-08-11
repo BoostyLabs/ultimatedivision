@@ -41,7 +41,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) error {
 
 // CreateSquad creates new squad for club.
 func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error {
-	newSquad := Squads{
+	newSquad := Squad{
 		ID:     uuid.New(),
 		ClubID: clubID,
 	}
@@ -50,7 +50,7 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error
 }
 
 // Add add new card to the squad of the club.
-func (service *Service) Add(ctx context.Context, newSquadCard SquadCards) error {
+func (service *Service) Add(ctx context.Context, newSquadCard SquadCard) error {
 	capitan, err := service.clubs.GetCapitan(ctx, newSquadCard.ID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
@@ -68,7 +68,7 @@ func (service *Service) Delete(ctx context.Context, squadID uuid.UUID, cardID uu
 
 // UpdateSquad updates tactic and formation of the squad.
 func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, tactic Tactic, formation Formation) error {
-	updatedSquad := Squads{
+	updatedSquad := Squad{
 		ID:        squadID,
 		Tactic:    tactic,
 		Formation: formation,
@@ -87,15 +87,15 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 }
 
 // GetSquad returns all squads from club.
-func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squads, []SquadCards, error) {
+func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, []SquadCard, error) {
 	squad, err := service.clubs.GetSquad(ctx, clubID)
 	if err != nil {
-		return Squads{}, nil, ErrClubs.Wrap(err)
+		return Squad{}, nil, ErrClubs.Wrap(err)
 	}
 
 	squadCards, err := service.clubs.ListSquadCards(ctx, squad.ID)
 	if err != nil {
-		return Squads{}, nil, ErrClubs.Wrap(err)
+		return Squad{}, nil, ErrClubs.Wrap(err)
 	}
 
 	return squad, squadCards, nil
