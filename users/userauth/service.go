@@ -7,7 +7,6 @@ import (
 	"context"
 	"crypto/subtle"
 	"time"
-	"unicode"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -145,12 +144,12 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 	// check if the user email address already exists.
 	_, err := service.users.GetByEmail(ctx, email)
 	if err == nil {
-		return errs.New("This email address is already in use.")
+		return Error.Wrap(errs.New("This email address is already in use."))
 	}
 
 	// check the password is valid.
-	if !isPasswordValid(password) {
-		return errs.New("The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character.")
+	if !users.IsPasswordValid(password) {
+		return Error.Wrap(errs.New("The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character."))
 	}
 
 	user := users.User{
@@ -191,25 +190,6 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 	return err
 }
 
-// isPasswordValid check the password for all conditions.
-func isPasswordValid(s string) bool {
-	var number, upper, special bool
-	letters := 0
-	for _, c := range s {
-		switch {
-		case unicode.IsNumber(c):
-			number = true
-		case unicode.IsUpper(c):
-			upper = true
-		case unicode.IsPunct(c) || unicode.IsSymbol(c) || unicode.IsMark(c):
-			special = true
-		case unicode.IsLetter(c) || c == ' ':
-			letters++
-		}
-	}
-	return len(s) >= 8 && letters >= 1 && number && upper && special
-}
-
 // ConfirmUserEmail - parse token and confirm User.
 func (service *Service) ConfirmUserEmail(ctx context.Context, activationToken string) error {
 	status := int(users.StatusActive)
@@ -236,10 +216,5 @@ func (service *Service) ConfirmUserEmail(ctx context.Context, activationToken st
 		return ErrPermission.Wrap(err)
 	}
 
-	err = service.users.Update(ctx, status, user.ID)
-	if err != nil {
-		return ErrUnauthenticated.Wrap(err)
-	}
-
-	return nil
+	return service.users.Update(ctx, status, user.ID)
 }

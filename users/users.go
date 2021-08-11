@@ -6,6 +6,7 @@ package users
 import (
 	"context"
 	"time"
+	"unicode"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -68,11 +69,30 @@ func (user *User) EncodePass() error {
 	return nil
 }
 
-// ReceivingFields for body payload.
-type ReceivingFields struct {
+// CreateUserFields for crete user.
+type CreateUserFields struct {
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 	NickName  string `json:"nickName"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
+}
+
+// IsPasswordValid check the password for all conditions.
+func IsPasswordValid(s string) bool {
+	var number, upper, special bool
+	letters := 0
+	for _, c := range s {
+		switch {
+		case unicode.IsNumber(c):
+			number = true
+		case unicode.IsUpper(c):
+			upper = true
+		case unicode.IsPunct(c) || unicode.IsSymbol(c) || unicode.IsMark(c):
+			special = true
+		case unicode.IsLetter(c) || c == ' ':
+			letters++
+		}
+	}
+	return len(s) >= 8 && letters >= 1 && number && upper && special
 }

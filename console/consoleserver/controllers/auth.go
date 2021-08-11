@@ -51,7 +51,7 @@ func NewAuth(log logger.Logger, userAuth *userauth.Service, authCookie *auth.Coo
 func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var err error
-	var request users.ReceivingFields
+	var request users.CreateUserFields
 
 	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
 		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
@@ -65,7 +65,7 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.responseWithJSON(w, http.StatusOK, "OK")
+	w.Header().Set("Content-Type", "application/json")
 }
 
 // ConfirmEmail confirm the email of the user based on the received token.
@@ -88,7 +88,8 @@ func (auth *Auth) ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 		auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		return
 	}
-	auth.responseWithJSON(w, http.StatusOK, "Email address confirmed")
+
+	w.Header().Set("Content-Type", "application/json")
 }
 
 // Login is an endpoint to authorize user and set auth cookie in browser.
@@ -96,7 +97,7 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var err error
 
-	var request users.ReceivingFields
+	var request users.CreateUserFields
 
 	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
 		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
@@ -124,11 +125,15 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	auth.cookie.SetTokenCookie(w, authToken)
+
+	w.Header().Set("Content-Type", "application/json")
 }
 
 // Logout is an endpoint to log out and remove auth cookie from browser.
 func (auth *Auth) Logout(w http.ResponseWriter, r *http.Request) {
 	auth.cookie.RemoveTokenCookie(w)
+
+	w.Header().Set("Content-Type", "application/json")
 }
 
 func (auth *Auth) serveError(w http.ResponseWriter, status int, err error) {
