@@ -49,7 +49,7 @@ func (clubsDB *clubsDB) CreateSquad(ctx context.Context, squad clubs.Squad) erro
 }
 
 // Add inserts card to club.
-func (clubsDB *clubsDB) Add(ctx context.Context, squadCards clubs.SquadCard) error {
+func (clubsDB *clubsDB) AddSquadCard(ctx context.Context, squadCards clubs.SquadCard) error {
 	query := `INSERT  INTO squad_cards(id, card_id, card_position, capitan)
               VALUES($1,$2,$3,$4)`
 
@@ -69,8 +69,8 @@ func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, squadID uuid.UUID, 
 	return ErrSquad.Wrap(err)
 }
 
-// Get returns club owned by the user.
-func (clubsDB *clubsDB) Get(ctx context.Context, userID uuid.UUID) (clubs.Club, error) {
+// GetByUserID returns club owned by the user.
+func (clubsDB *clubsDB) GetByUserID(ctx context.Context, userID uuid.UUID) (clubs.Club, error) {
 	query := `SELECT id, owner_id, club_name, created_at
 			  FROM clubs
 			  WHERE owner_id = $1`

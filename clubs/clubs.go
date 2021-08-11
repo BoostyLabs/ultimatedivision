@@ -25,16 +25,16 @@ type DB interface {
 	Create(ctx context.Context, club Club) error
 	// CreateSquad creates squad for clubs in the database.
 	CreateSquad(ctx context.Context, squad Squad) error
-	// Get returns club owned by the user.
-	Get(ctx context.Context, userID uuid.UUID) (Club, error)
+	// GetByUserID returns club owned by the user.
+	GetByUserID(ctx context.Context, userID uuid.UUID) (Club, error)
 	// GetSquad returns squad.
 	GetSquad(ctx context.Context, squadID uuid.UUID) (Squad, error)
 	// GetCapitan returns id of capitan.
 	GetCapitan(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error)
 	// ListSquadCards returns all cards from squad.
 	ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error)
-	// Add add new card to the squad.
-	Add(ctx context.Context, squadCards SquadCard) error
+	// AddSquadCard add new card to the squad.
+	AddSquadCard(ctx context.Context, squadCards SquadCard) error
 	// DeleteSquadCard deletes card from squad.
 	DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error
 	// UpdateTacticFormation updates tactic and formation in the squad.

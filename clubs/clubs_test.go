@@ -92,7 +92,7 @@ func TestTeam(t *testing.T) {
 		})
 
 		t.Run("Get club", func(t *testing.T) {
-			clubDB, err := repositoryClubs.Get(ctx, testUser.ID)
+			clubDB, err := repositoryClubs.GetByUserID(ctx, testUser.ID)
 			require.NoError(t, err)
 
 			compareClubs(t, clubDB, testClub)
@@ -105,11 +105,11 @@ func TestTeam(t *testing.T) {
 			compareSquads(t, squadDB, testSquad)
 		})
 
-		t.Run("Add card to squad", func(t *testing.T) {
+		t.Run("AddSquadCard card to squad", func(t *testing.T) {
 			err := repositoryCards.Create(ctx, testCard)
 			require.NoError(t, err)
 
-			err = repositoryClubs.Add(ctx, testSquadCards)
+			err = repositoryClubs.AddSquadCard(ctx, testSquadCards)
 			require.NoError(t, err)
 		})
 

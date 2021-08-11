@@ -58,7 +58,7 @@ func (service *Service) Add(ctx context.Context, newSquadCard SquadCard) error {
 
 	newSquadCard.Capitan = capitan
 
-	return service.clubs.Add(ctx, newSquadCard)
+	return service.clubs.AddSquadCard(ctx, newSquadCard)
 }
 
 // Delete deletes card from squad.
@@ -103,5 +103,5 @@ func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, 
 
 // Get returns user club.
 func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error) {
-	return service.clubs.Get(ctx, userID)
+	return service.clubs.GetByUserID(ctx, userID)
 }
