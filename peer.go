@@ -20,6 +20,7 @@ import (
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
+	"ultimatedivision/marketplaces"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -41,6 +42,9 @@ type DB interface {
 
 	// LootBoxes provides access to clubs db.
 	LootBoxes() lootboxes.DB
+
+	// Marketplaces provides access to marketplaces db.
+	Marketplaces() marketplaces.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -110,6 +114,11 @@ type Peer struct {
 	// exposes clubs related logic
 	LoootBoxes struct {
 		Service *lootboxes.Service
+	}
+
+	// exposes marketplaces related logic
+	Marketplaces struct {
+		Service *marketplaces.Service
 	}
 
 	// Admin web server server with web UI.
@@ -215,6 +224,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			logger,
 			peer.Console.Listener,
 			peer.Cards.Service,
+			peer.Marketplaces.Service,
 		)
 		if err != nil {
 			return nil, err

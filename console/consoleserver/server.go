@@ -14,7 +14,9 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/marketplaces"
 )
 
 var (
@@ -39,18 +41,24 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, marketplaces *marketplaces.Service) (*Server, error) {
 	server := &Server{
 		log:      log,
 		config:   config,
 		listener: listener,
 	}
 
+	cardsController := controllers.NewCards(log, cards)
+	marketplacesController := controllers.NewMarketplaces(log, marketplaces)
+
 	router := mux.NewRouter()
 
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
-	cardsController := NewCards(log, cards)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
+
+	marketplaceRouter := router.PathPrefix("/marketplace").Subrouter()
+	marketplaceRouter.HandleFunc("", marketplacesController.ListActive).Methods(http.MethodGet)
+	marketplaceRouter.HandleFunc("/{id}", marketplacesController.Get).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
