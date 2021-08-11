@@ -14,7 +14,11 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/console/consoleserver/controllers"
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/lootboxes"
+	"ultimatedivision/users/userauth"
 )
 
 var (
@@ -36,21 +40,44 @@ type Server struct {
 
 	listener net.Listener
 	server   http.Server
+
+	authService *userauth.Service
+	cookieAuth  *auth.CookieAuth
+
+	templates struct {
+		auth *controllers.AuthTemplates
+	}
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service) (*Server, error) {
 	server := &Server{
 		log:      log,
 		config:   config,
 		listener: listener,
 	}
 
+	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
+	cardsController := controllers.NewCards(log, cards)
+	lootBoxesController := controllers.NewLootBoxes(log, lootBoxes)
+
 	router := mux.NewRouter()
+	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
+	router.HandleFunc("/login", authController.LoginTemplateHandler).Methods(http.MethodGet)
+
+	apiRouter := router.PathPrefix("/api/v0").Subrouter()
+	authRouter := apiRouter.PathPrefix("/auth").Subrouter()
+	authRouter.HandleFunc("/login", authController.Login).Methods(http.MethodPost)
+	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
+	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
+	authRouter.HandleFunc("/email/confirm/{token}", authController.ConfirmEmail).Methods(http.MethodGet)
 
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
-	cardsController := NewCards(log, cards)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
+
+	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
+	lootBoxesRouter.HandleFunc("", lootBoxesController.Create).Methods(http.MethodPost)
+	lootBoxesRouter.HandleFunc("", lootBoxesController.Open).Methods(http.MethodDelete)
 
 	server.server = http.Server{
 		Handler: router,
