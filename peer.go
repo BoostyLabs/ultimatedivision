@@ -78,7 +78,7 @@ type Config struct {
 	} `json:"cards"`
 
 	LootBoxes struct {
-		Config lootboxes.Config `json:"regular"`
+		Config lootboxes.Config `json:"lootBoxes"`
 	} `json:"lootBoxes"`
 }
 
