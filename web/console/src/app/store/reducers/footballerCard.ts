@@ -14,31 +14,6 @@ function cardList(count: number): Card[] {
     return list;
 }
 
-const SEARCH_FILTER = 'SearchFilter';
-
-
-interface FilterAction {
-    type: string;
-    action: string;
-}
-
-export const filterList: (filterValue: string) => FilterAction = (filterValue: string) => ({
-    type: SEARCH_FILTER,
-    action: filterValue,
-});
-
-// FilterField functionality base implementation
-
 export const cardReducer = (cardState = cardList(20), action: any = {}) => {
-    let marketPlaceCardList = cardState.slice();
-    switch (action.type) {
-    case SEARCH_FILTER:
-        marketPlaceCardList = cardState.slice().filter(card =>
-            card.overalInfo[0].value.includes(action.action));
-        break;
-    default:
-        break;
-    }
-
-    return marketPlaceCardList;
+    return cardState;
 };

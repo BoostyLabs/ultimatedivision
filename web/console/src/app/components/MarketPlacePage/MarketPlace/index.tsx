@@ -4,7 +4,7 @@
 import { useSelector } from 'react-redux';
 
 import { MarketPlaceCardsGroup } from '@components/MarketPlacePage/MarketPlaceCardsGroup';
-import { MarketPlaceFilterField } from '@components/MarketPlacePage/MarketPlaceFilterField';
+import { FilterField } from '@/app/components/FilterField';
 import { MarketPlaceFootballerCard } from '@components/MarketPlacePage/MarketPlaceCardsGroup/MarketPlaceFootballerCard';
 import { MyCard } from '@components/MarketPlacePage/MyCard';
 import { Paginator } from '@components/Paginator';
@@ -26,7 +26,7 @@ const MarketPlace = ({ ...children }) => {
 
     return (
         <section className="marketplace">
-            <MarketPlaceFilterField
+            <FilterField
                 title={title}
             />
             <MarketPlaceCardsGroup
