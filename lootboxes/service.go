@@ -44,12 +44,12 @@ func (service *Service) Open(ctx context.Context, userLootBox LootBox) ([]cards.
 	cardsNum := 0
 	probabilities := make([]int, 0, 5)
 
-	if userLootBox.Name == RegularBox {
-		cardsNum = service.config.ConfigRegularBox.CardsNum
-		probabilities = []int{service.config.ConfigRegularBox.Wood, service.config.ConfigRegularBox.Silver, service.config.ConfigRegularBox.Gold, service.config.ConfigRegularBox.Diamond}
-	} else if userLootBox.Name == UDReleaseCelebrationBox {
-		cardsNum = service.config.ConfigUDReleaseCelebrationBox.CardsNum
-		probabilities = []int{service.config.ConfigUDReleaseCelebrationBox.Wood, service.config.ConfigUDReleaseCelebrationBox.Silver, service.config.ConfigUDReleaseCelebrationBox.Gold, service.config.ConfigUDReleaseCelebrationBox.Diamond}
+	if userLootBox.Type == RegularBox {
+		cardsNum = service.config.RegularBoxConfig.CardsNum
+		probabilities = []int{service.config.RegularBoxConfig.Wood, service.config.RegularBoxConfig.Silver, service.config.RegularBoxConfig.Gold, service.config.RegularBoxConfig.Diamond}
+	} else if userLootBox.Type == UDReleaseCelebrationBox {
+		cardsNum = service.config.UDReleaseCelebrationBoxConfig.CardsNum
+		probabilities = []int{service.config.UDReleaseCelebrationBoxConfig.Wood, service.config.UDReleaseCelebrationBoxConfig.Silver, service.config.UDReleaseCelebrationBoxConfig.Gold, service.config.UDReleaseCelebrationBoxConfig.Diamond}
 	}
 
 	var lootBoxCards []cards.Card

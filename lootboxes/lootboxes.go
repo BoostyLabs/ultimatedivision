@@ -23,7 +23,7 @@ type DB interface {
 type LootBox struct {
 	UserID    uuid.UUID `json:"userId"`
 	LootBoxID uuid.UUID `json:"id"`
-	Name      Type      `json:"name"`
+	Type      Type      `json:"name"`
 }
 
 // Type defines type of LootBox.
@@ -36,8 +36,8 @@ const (
 	UDReleaseCelebrationBox Type = "UD Release Celebration Box"
 )
 
-// ConfigRegularBox defines configuration for Regular Box LootBox.
-type ConfigRegularBox struct {
+// RegularBoxConfig defines configuration for Regular Box LootBox.
+type RegularBoxConfig struct {
 	Cost     int `json:"cost"`
 	CardsNum int `json:"cardsNum"`
 	Wood     int `json:"wood"`
@@ -46,8 +46,8 @@ type ConfigRegularBox struct {
 	Diamond  int `json:"diamond"`
 }
 
-// ConfigUDReleaseCelebrationBox defines configuration for UD Release Celebration Box LootBox.
-type ConfigUDReleaseCelebrationBox struct {
+// UDReleaseCelebrationBoxConfig defines configuration for UD Release Celebration Box LootBox.
+type UDReleaseCelebrationBoxConfig struct {
 	Cost     int `json:"cost"`
 	CardsNum int `json:"cardsNum"`
 	Wood     int `json:"wood"`
@@ -58,6 +58,6 @@ type ConfigUDReleaseCelebrationBox struct {
 
 // Config defines configuration for lootboxes.
 type Config struct {
-	ConfigRegularBox              `json:"regularBox"`
-	ConfigUDReleaseCelebrationBox `json:"UDReleaseCelebrationBox"`
+	RegularBoxConfig              `json:"regular"`
+	UDReleaseCelebrationBoxConfig `json:"UDReleaseCelebration"`
 }
