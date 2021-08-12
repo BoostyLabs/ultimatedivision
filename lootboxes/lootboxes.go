@@ -36,7 +36,7 @@ const (
 	UDReleaseCelebrationBox Type = "UD Release Celebration Box"
 )
 
-// RegularBoxConfig defines configuration for Regular Box LootBox.
+// RegularBoxConfig defines configuration for Regular Box.
 type RegularBoxConfig struct {
 	Cost     int `json:"cost"`
 	CardsNum int `json:"cardsNum"`
@@ -46,7 +46,7 @@ type RegularBoxConfig struct {
 	Diamond  int `json:"diamond"`
 }
 
-// UDReleaseCelebrationBoxConfig defines configuration for UD Release Celebration Box LootBox.
+// UDReleaseCelebrationBoxConfig defines configuration for UD Release Celebration Box.
 type UDReleaseCelebrationBoxConfig struct {
 	Cost     int `json:"cost"`
 	CardsNum int `json:"cardsNum"`
