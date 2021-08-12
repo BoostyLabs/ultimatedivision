@@ -11,7 +11,6 @@ export const FootballerCardIllustrationsRadar: React.FC<{ card: Card }> = ({ car
     const stats = card.stats;
     const labels = ['TAC', 'PHY', 'TEC', 'OFF', 'DEF', 'GK'];
 
-
     return (
         <div className="footballer-card-illustrations-radar">
             <Radar
