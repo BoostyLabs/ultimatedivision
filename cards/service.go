@@ -237,6 +237,11 @@ func (service *Service) ListWithFilters(ctx context.Context, filters []Filters) 
 	return service.cards.ListWithFilters(ctx, filters)
 }
 
+// UpdateStatus updates card status.
+func (service *Service) UpdateStatus(ctx context.Context, status Status, id uuid.UUID) error {
+	return service.cards.UpdateStatus(ctx, status, id)
+}
+
 // Delete destroy card in DB.
 func (service *Service) Delete(ctx context.Context, cardID uuid.UUID) error {
 	return service.cards.Delete(ctx, cardID)

@@ -31,6 +31,8 @@ type DB interface {
 	List(ctx context.Context) ([]Card, error)
 	// ListWithFilters returns all cards from the data base with filters.
 	ListWithFilters(ctx context.Context, filters []Filters) ([]Card, error)
+	// UpdateStatus updates status card in the database.
+	UpdateStatus(ctx context.Context, status Status, id uuid.UUID) error
 	// Delete deletes card record in the data base.
 	Delete(ctx context.Context, id uuid.UUID) error
 }
