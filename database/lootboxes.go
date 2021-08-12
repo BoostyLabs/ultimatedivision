@@ -28,6 +28,7 @@ func (lootboxesDB *lootboxesDB) Create(ctx context.Context, lootBox lootboxes.Lo
 	if err != nil {
 		return ErrLootBoxes.Wrap(err)
 	}
+
 	query := `INSERT INTO lootboxes(lootbox_id, user_id, lootbox_name)
               VALUES($1,$2,$3)`
 

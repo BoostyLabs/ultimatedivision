@@ -7,11 +7,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/zeebo/errs"
 )
-
-// ErrNoLootBox indicates that lootbox does not exist.
-var ErrNoLootBox = errs.Class("lootbox does not exist")
 
 // DB is exposing access to lootboxes db.
 //
@@ -35,17 +31,33 @@ type Type string
 
 const (
 	// RegularBox defines regular box type.
-	RegularBox Type = "Regular Box"
+	RegularBox Type = "RegularBox"
 	// UDReleaseCelebrationBox defines UD Release Celebration Box type.
-	UDReleaseCelebrationBox Type = "UD Release Celebration Box"
+	UDReleaseCelebrationBox Type = "UDReleaseCelebrationBox"
 )
 
-// Config defines configuration for LootBox.
-type Config struct {
+// ConfigRegularBox defines configuration for Regular Box LootBox.
+type ConfigRegularBox struct {
 	Cost     int `json:"cost"`
 	CardsNum int `json:"cardsNum"`
 	Wood     int `json:"wood"`
 	Silver   int `json:"silver"`
 	Gold     int `json:"gold"`
 	Diamond  int `json:"diamond"`
+}
+
+// ConfigUDReleaseCelebrationBox defines configuration for UD Release Celebration Box LootBox.
+type ConfigUDReleaseCelebrationBox struct {
+	Cost     int `json:"cost"`
+	CardsNum int `json:"cardsNum"`
+	Wood     int `json:"wood"`
+	Silver   int `json:"silver"`
+	Gold     int `json:"gold"`
+	Diamond  int `json:"diamond"`
+}
+
+// Config defines configuration for lootboxes.
+type Config struct {
+	ConfigRegularBox              `json:"regularBox"`
+	ConfigUDReleaseCelebrationBox `json:"UDReleaseCelebrationBox"`
 }
