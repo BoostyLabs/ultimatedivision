@@ -46,7 +46,7 @@ type cardsDB struct {
 }
 
 const (
-	allFields = `id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, is_active, user_id,
+	allFields = `id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, status, user_id,
 		tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed,
 		agility, stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve,
 		volleys, short_passing, long_passing, forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty,
@@ -72,7 +72,7 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 		`
 	_, err = cardsDB.conn.ExecContext(ctx, query,
 		card.ID, card.PlayerName, card.Quality, card.PictureType, card.Height, card.Weight, card.SkinColor, card.HairStyle, card.HairColor,
-		card.DominantFoot, card.IsTattoos, card.IsActive, card.UserID, card.Tactics, card.Positioning, card.Composure, card.Aggression, card.Vision, card.Awareness,
+		card.DominantFoot, card.IsTattoos, card.Status, card.UserID, card.Tactics, card.Positioning, card.Composure, card.Aggression, card.Vision, card.Awareness,
 		card.Crosses, card.Physique, card.Acceleration, card.RunningSpeed, card.ReactionSpeed, card.Agility, card.Stamina, card.Strength,
 		card.Jumping, card.Balance, card.Technique, card.Dribbling, card.BallControl, card.WeakFoot, card.SkillMoves, card.Finesse,
 		card.Curve, card.Volleys, card.ShortPassing, card.LongPassing, card.ForwardPass, card.Offense, card.FinishingAbility, card.ShotPower,
@@ -152,7 +152,7 @@ func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, erro
         `
 	err := cardsDB.conn.QueryRowContext(ctx, query, id).Scan(
 		&card.ID, &card.PlayerName, &card.Quality, &card.PictureType, &card.Height, &card.Weight, &card.SkinColor, &card.HairStyle,
-		&card.HairColor, &card.DominantFoot, &card.IsTattoos, &card.IsActive, &card.UserID, &card.Tactics, &card.Positioning, &card.Composure, &card.Aggression,
+		&card.HairColor, &card.DominantFoot, &card.IsTattoos, &card.Status, &card.UserID, &card.Tactics, &card.Positioning, &card.Composure, &card.Aggression,
 		&card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed, &card.ReactionSpeed,
 		&card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling, &card.BallControl,
 		&card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing, &card.ForwardPass,
@@ -231,7 +231,7 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 		card := cards.Card{}
 		if err = rows.Scan(
 			&card.ID, &card.PlayerName, &card.Quality, &card.PictureType, &card.Height, &card.Weight, &card.SkinColor, &card.HairStyle,
-			&card.HairColor, &card.DominantFoot, &card.IsTattoos, &card.IsActive, &card.UserID, &card.Tactics, &card.Positioning, &card.Composure, &card.Aggression,
+			&card.HairColor, &card.DominantFoot, &card.IsTattoos, &card.Status, &card.UserID, &card.Tactics, &card.Positioning, &card.Composure, &card.Aggression,
 			&card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed, &card.ReactionSpeed,
 			&card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling, &card.BallControl,
 			&card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing, &card.ForwardPass,
@@ -276,7 +276,7 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 		card := cards.Card{}
 		if err = rows.Scan(
 			&card.ID, &card.PlayerName, &card.Quality, &card.PictureType, &card.Height, &card.Weight, &card.SkinColor, &card.HairStyle,
-			&card.HairColor, &card.DominantFoot, &card.IsTattoos, &card.IsActive, &card.UserID, &card.Tactics, &card.Positioning, &card.Composure, &card.Aggression,
+			&card.HairColor, &card.DominantFoot, &card.IsTattoos, &card.Status, &card.UserID, &card.Tactics, &card.Positioning, &card.Composure, &card.Aggression,
 			&card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed, &card.ReactionSpeed,
 			&card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling, &card.BallControl,
 			&card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing, &card.ForwardPass,
