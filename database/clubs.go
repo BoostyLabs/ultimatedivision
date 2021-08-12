@@ -180,7 +180,7 @@ func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, squadID uuid.UUID, c
 
 // GetCaptain returns id of captain of the users team.
 func (clubsDB *clubsDB) GetCaptainID(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error) {
-	query := `SELECT capitan
+	query := `SELECT capitan_id
 			  FROM squad_cards
               WHERE id = $1`
 

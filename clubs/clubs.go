@@ -64,10 +64,10 @@ type Squad struct {
 
 // SquadCard defines all cards from squad.
 type SquadCard struct {
-	ID       uuid.UUID `json:"id"`
-	CardID   uuid.UUID `json:"cardId"`
-	Position Position  `json:"position"`
-	CaptainID  uuid.UUID `json:"captain"`
+	ID        uuid.UUID `json:"id"`
+	CardID    uuid.UUID `json:"cardId"`
+	Position  Position  `json:"position"`
+	CaptainID uuid.UUID `json:"captain"`
 }
 
 // Formation defines a list of possible formations.

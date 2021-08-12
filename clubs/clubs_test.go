@@ -59,10 +59,10 @@ func TestTeam(t *testing.T) {
 	}
 
 	updatedSquadCards := []clubs.SquadCard{{
-		ID:       testSquad.ID,
-		CardID:   testCard.ID,
-		Position: clubs.CAM,
-		CaptainID:  testCard.ID,
+		ID:        testSquad.ID,
+		CardID:    testCard.ID,
+		Position:  clubs.CAM,
+		CaptainID: testCard.ID,
 	}}
 
 	updatedSquad := clubs.Squad{
