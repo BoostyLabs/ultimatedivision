@@ -364,6 +364,16 @@ func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []s
 	return query, values
 }
 
+// UpdateStatus updates status card in the database.
+func (cardsDB *cardsDB) UpdateStatus(ctx context.Context, status cards.Status, id uuid.UUID) error {
+	_, err := cardsDB.conn.QueryContext(ctx, "UPDATE cards SET status=$1 WHERE id=$2", status, id)
+	if err != nil {
+		return ErrCard.Wrap(err)
+	}
+
+	return nil
+}
+
 // Delete deletes record card in the data base.
 func (cardsDB *cardsDB) Delete(ctx context.Context, id uuid.UUID) error {
 	query :=
