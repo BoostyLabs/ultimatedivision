@@ -42,7 +42,7 @@ func (service *Service) Create(ctx context.Context, userLootBox LootBox) error {
 // Open opens lootbox by user.
 func (service *Service) Open(ctx context.Context, userLootBox LootBox) ([]cards.Card, error) {
 	cardsNum := 0
-	probabilities := make([]int, 0, 5)
+	probabilities := make([]int, 0, 4)
 
 	if userLootBox.Type == RegularBox {
 		cardsNum = service.config.RegularBoxConfig.CardsNum
