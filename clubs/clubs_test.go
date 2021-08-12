@@ -62,7 +62,7 @@ func TestTeam(t *testing.T) {
 		ID:       testSquad.ID,
 		CardID:   testCard.ID,
 		Position: clubs.CAM,
-		Captain:  testCard.ID,
+		CaptainID:  testCard.ID,
 	}}
 
 	updatedSquad := clubs.Squad{
@@ -114,7 +114,7 @@ func TestTeam(t *testing.T) {
 		})
 
 		t.Run("Get capitan", func(t *testing.T) {
-			capitan, err := repositoryClubs.GetCaptain(ctx, testSquad.ID)
+			capitan, err := repositoryClubs.GetCaptainID(ctx, testSquad.ID)
 			require.NoError(t, err)
 
 			assert.Equal(t, capitan, uuid.Nil)
@@ -171,7 +171,7 @@ func comparePlayers(t *testing.T, playersDB []clubs.SquadCard, playersTest []clu
 	for i := 0; i < len(playersTest); i++ {
 		assert.Equal(t, playersDB[i].ID, playersTest[i].ID)
 		assert.Equal(t, playersDB[i].CardID, playersTest[i].CardID)
-		assert.Equal(t, playersDB[i].Captain, playersTest[i].Captain)
+		assert.Equal(t, playersDB[i].CaptainID, playersTest[i].CaptainID)
 		assert.Equal(t, playersDB[i].Position, playersTest[i].Position)
 	}
 }
