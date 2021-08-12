@@ -49,7 +49,7 @@ type Card struct {
 	Accessories      []int        `json:"accessories"`
 	DominantFoot     DominantFoot `json:"dominantFoot"`
 	IsTattoos        bool         `json:"isTattoos"`
-	IsActive         bool         `json:"isActive"`
+	Status           Status       `json:"status"`
 	UserID           uuid.UUID    `json:"userId"`
 	Tactics          int          `json:"tactics"`
 	Positioning      int          `json:"positioning"`
@@ -154,6 +154,16 @@ const (
 	DominantFootLeft DominantFoot = "left"
 	// DominantFootRight indicates that dominant foot of the footballer is right.
 	DominantFootRight DominantFoot = "right"
+)
+
+// Status defines the list of possible card statuses.
+type Status int
+
+const (
+	// StatusActive indicates that card is active.
+	StatusActive Status = iota
+	// StatusSale indicates that card for sale.
+	StatusSale
 )
 
 // RangeValueForSkills defines the list of possible group skills.

@@ -34,7 +34,7 @@ func TestCards(t *testing.T) {
 		Accessories:      []int{1, 2},
 		DominantFoot:     "left",
 		IsTattoos:        false,
-		IsActive:         true,
+		Status:           cards.StatusActive,
 		UserID:           uuid.New(),
 		Tactics:          1,
 		Positioning:      2,
@@ -100,7 +100,7 @@ func TestCards(t *testing.T) {
 		Accessories:      []int{1, 2},
 		DominantFoot:     "right",
 		IsTattoos:        true,
-		IsActive:         false,
+		Status:           cards.StatusSale,
 		UserID:           uuid.New(),
 		Tactics:          2,
 		Positioning:      2,
@@ -293,7 +293,7 @@ func compareCards(t *testing.T, card1, card2 cards.Card) {
 	assert.Equal(t, card1.Accessories, card2.Accessories)
 	assert.Equal(t, card1.DominantFoot, card2.DominantFoot)
 	assert.Equal(t, card1.IsTattoos, card2.IsTattoos)
-	assert.Equal(t, card1.IsActive, card2.IsActive)
+	assert.Equal(t, card1.Status, card2.Status)
 	assert.Equal(t, card1.UserID, card2.UserID)
 	assert.Equal(t, card1.Positioning, card2.Positioning)
 	assert.Equal(t, card1.Composure, card2.Composure)
