@@ -222,8 +222,8 @@ func New(logger logger.Logger, config Config, db DB, sender mail.Sender) (peer *
 			logger,
 			peer.Console.Listener,
 			peer.Cards.Service,
-			peer.Clubs.Service,
 			peer.LootBoxes.Service,
+			peer.Clubs.Service,
 		)
 
 		peer.Console.EmailService = emails.NewService(
