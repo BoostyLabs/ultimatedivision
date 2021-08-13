@@ -4,8 +4,8 @@
 import { FootballerCardIllustrationsDiagramsArea } from '@components/FootballerCardPage/FootballerCardIllustrationsDiagramsArea';
 import { FootballerCardIllustrationsRadar } from '@components/FootballerCardPage/FootballerCardIllustrationsRadar';
 
-import { Card } from '@/app/types/fotballerCard';
-import { PlayerCard } from '@components/PlayerCard';
+import { Card } from '@/Card';
+import { PlayerCard } from '@/app/components/common/PlayerCard';
 
 import './index.scss';
 

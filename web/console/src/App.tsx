@@ -4,9 +4,9 @@
 import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { Navbar } from '@components/Navbar';
+import { Navbar } from '@/app/components/common/Navbar';
 import { Routes } from '@/app/router';
-import { AboutMenu } from '@components/AboutPage/AboutMenu';
+import { AboutMenu } from '@/app/components/common/AboutMenu';
 
 /** initial App setup */
 export function App() {

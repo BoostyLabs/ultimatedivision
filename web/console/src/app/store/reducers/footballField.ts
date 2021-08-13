@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { FootballField } from '@/app/types/footballField';
-import { Card } from '@/app/types/fotballerCard';
+import { Card } from '@/Card';
 
 const FieldSetup = new FootballField();
 const FORMATION_TYPE = 'Formation';

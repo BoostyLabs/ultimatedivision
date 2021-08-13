@@ -4,10 +4,10 @@
 import { useSelector } from 'react-redux';
 
 import { MarketPlaceCardsGroup } from '@components/MarketPlacePage/MarketPlaceCardsGroup';
-import { FilterField } from '@/app/components/FilterField';
+import { FilterField } from '@/app/components/common/FilterField';
 import { MarketPlaceFootballerCard } from '@components/MarketPlacePage/MarketPlaceCardsGroup/MarketPlaceFootballerCard';
 import { MyCard } from '@components/MarketPlacePage/MyCard';
-import { Paginator } from '@components/Paginator';
+import { Paginator } from '@/app/components/common/Paginator';
 
 import { RouteConfig } from '@/app/router';
 import { RootState } from '@/app/store';
