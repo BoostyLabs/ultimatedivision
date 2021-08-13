@@ -217,7 +217,7 @@ func New(logger logger.Logger, config Config, db DB, sender mail.Sender) (peer *
 			return nil, err
 		}
 
-		peer.Console.Endpoint, err = consoleserver.NewServer(
+		peer.Console.Endpoint = consoleserver.NewServer(
 			config.Console.Server,
 			logger,
 			peer.Console.Listener,
@@ -225,9 +225,6 @@ func New(logger logger.Logger, config Config, db DB, sender mail.Sender) (peer *
 			peer.Clubs.Service,
 			peer.LootBoxes.Service,
 		)
-		if err != nil {
-			return nil, err
-		}
 
 		peer.Console.EmailService = emails.NewService(
 			logger,
