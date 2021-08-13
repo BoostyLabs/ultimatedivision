@@ -55,7 +55,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, clubs *clubs.Service,) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, clubs *clubs.Service) *Server {
 	server := &Server{
 		log:      log,
 		config:   config,
