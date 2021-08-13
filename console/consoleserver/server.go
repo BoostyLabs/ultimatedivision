@@ -82,17 +82,17 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	cardsRouter.Handle("", server.withAuth(http.HandlerFunc(cardsController.List))).Methods(http.MethodGet)
 
 	clubsRouter := apiRouter.PathPrefix("/clubs").Subrouter()
-	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
-	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
-	clubsRouter.HandleFunc("", clubsController.UpdateSquad).Methods(http.MethodPut)
+	clubsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.Create))).Methods(http.MethodPost)
+	clubsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.Get))).Methods(http.MethodGet)
+	clubsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.UpdateSquad))).Methods(http.MethodPut)
 
 	squadsRouter := clubsRouter.Path("/squads").Subrouter()
-	squadsRouter.HandleFunc("/{clubId}", clubsController.Create).Methods(http.MethodPost)
+	squadsRouter.Handle("/{clubId}", server.withAuth(http.HandlerFunc(clubsController.Create))).Methods(http.MethodPost)
 
 	squadCardsRouter := squadsRouter.Path("/squad-cards").Subrouter()
-	squadCardsRouter.HandleFunc("", clubsController.Add).Methods(http.MethodPost)
-	squadCardsRouter.HandleFunc("", clubsController.UpdatePosition).Methods(http.MethodPut)
-	squadCardsRouter.HandleFunc("", clubsController.Delete).Methods(http.MethodDelete)
+	squadCardsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.Add))).Methods(http.MethodPost)
+	squadCardsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.UpdatePosition))).Methods(http.MethodPut)
+	squadCardsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.Delete))).Methods(http.MethodDelete)
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
 	lootBoxesRouter.Handle("", server.withAuth(http.HandlerFunc(lootBoxesController.Create))).Methods(http.MethodPost)
