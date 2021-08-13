@@ -48,7 +48,7 @@ type DB interface {
 // Club defines club entity.
 type Club struct {
 	ID        uuid.UUID `json:"id"`
-	OwnerID   uuid.UUID `json:"ownerId"`
+	OwnerID   uuid.UUID `json:"-"`
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"createdAt"`
 }

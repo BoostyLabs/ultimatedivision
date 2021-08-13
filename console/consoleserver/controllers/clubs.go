@@ -43,21 +43,7 @@ func (controller *Clubs) Create(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	params := mux.Vars(r)
-	idParam := params["clubId"]
-
-	if idParam == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(errs.New("empty id parameter")))
-		return
-	}
-
-	id, err := uuid.Parse(idParam)
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
-		return
-	}
-
-	err = controller.clubs.Create(ctx, id)
+	err := controller.clubs.Create(ctx)
 	if err != nil {
 		controller.log.Error("could not create club", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
@@ -85,7 +71,7 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = controller.clubs.Create(ctx, id)
+	err = controller.clubs.CreateSquad(ctx, id)
 	if err != nil {
 		controller.log.Error("could not create club", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
@@ -99,21 +85,7 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	params := mux.Vars(r)
-	idParam := params["userId"]
-
-	if idParam == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(errs.New("empty id parameter")))
-		return
-	}
-
-	id, err := uuid.Parse(idParam)
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
-		return
-	}
-
-	club, err := controller.clubs.Get(ctx, id)
+	club, err := controller.clubs.Get(ctx)
 	if err != nil {
 		if clubs.ErrNoClub.Has(err) {
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))

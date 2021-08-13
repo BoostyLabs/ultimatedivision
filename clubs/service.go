@@ -7,6 +7,9 @@ import (
 	"context"
 	"time"
 
+	"ultimatedivision/internal/auth"
+	"ultimatedivision/users/userauth"
+
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 )
@@ -29,7 +32,14 @@ func NewService(clubs DB) *Service {
 }
 
 // Create creates clubs.
-func (service *Service) Create(ctx context.Context, userID uuid.UUID) error {
+func (service *Service) Create(ctx context.Context) error {
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		return userauth.ErrUnauthenticated.Wrap(err)
+	}
+
+	userID := claims.ID
+
 	newClub := Club{
 		ID:        uuid.New(),
 		OwnerID:   userID,
@@ -102,6 +112,13 @@ func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, 
 }
 
 // Get returns user club.
-func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error) {
+func (service *Service) Get(ctx context.Context) (Club, error) {
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		return Club{}, userauth.ErrUnauthenticated.Wrap(err)
+	}
+
+	userID := claims.ID
+
 	return service.clubs.GetByUserID(ctx, userID)
 }
