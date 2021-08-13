@@ -1,7 +1,7 @@
-//Copyright (C) 2021 Creditor Corp. Group.
-//See LICENSE for copying information.
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../store';
+import { RootState } from '@/app/store';
 import { addCard, cardSelectionVisibility } from '@/app/store/reducers/footballField';
 
 import { FilterField } from
@@ -10,20 +10,24 @@ import { PlayerCard } from '@components/PlayerCard';
 
 import './index.scss';
 import { Paginator } from '@components/Paginator';
-import { Card } from '@/app/store/reducers/footballerCard';
+import { Card } from '@/app/types/fotballerCard';
 
 export const FootballFieldCardSelection = () => {
     const cardList = useSelector((state: RootState) => state.cardReducer);
     const dispatch = useDispatch();
     const fieldSetup = useSelector((state: RootState) => state.fieldReducer);
 
+    const Y_SCROLL_POINT = 200;
+    const X_SCROLL_POINT = 0;
+    const DELAY = 10;
+
     /** Add card to field, and hide card selection component */
     function handleClick(card: Card, index: number) {
         dispatch(addCard(card, index));
         dispatch(cardSelectionVisibility(false));
         setTimeout(() => {
-            window.scroll(0, 200);
-        }, 10);
+            window.scroll(X_SCROLL_POINT, Y_SCROLL_POINT);
+        }, DELAY);
     }
 
     return (

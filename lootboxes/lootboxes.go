@@ -21,7 +21,7 @@ type DB interface {
 
 // LootBox defines lootbox.
 type LootBox struct {
-	UserID    uuid.UUID `json:"userId"`
+	UserID    uuid.UUID `json:"-"`
 	LootBoxID uuid.UUID `json:"id"`
 	Type      Type      `json:"name"`
 }
