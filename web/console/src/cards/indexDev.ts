@@ -4,27 +4,24 @@
 
 /** class for our getters to get label and value while mapping */
 export class CardField {
+    /** label and value for mapping */
     constructor(
         public label: string,
         public value: string | number,
     ) { }
 }
-export class CardStatsField {
-    constructor(
-        public label: string,
-        public value: number,
-    ) { }
-}
 
+/* eslint-disable */
+/** player stats implementation */
 export class CardStats {
     /** main stat with substats */
     constructor(
         public title: string = '',
         public abbreviated: string = '',
-        public fields: CardStatsField[] = []
+        public fields: CardField[] = []
     ) { }
     public average: number = this.fields
-        .map(item => item.value)
+        .map(item => +item.value)
         .reduce((prev, current) => prev + current) / this.fields.length;
     /** abbreviated title of card stat name */
     get abbr(): string {
@@ -50,8 +47,9 @@ export class CardStats {
     }
 }
 
-
+/** Card base implementation */
 export class Card {
+    /** Card fields */
     constructor(
         public id: string,
         public playerName: number,
@@ -116,12 +114,12 @@ export class Card {
         public sweeping: number,
         public throwing: number,
     ) { }
-        /** Using in footballerCard in info block */
+    /** Using in footballerCard in info block */
     get mainInfo() {
         return [
             new CardField('name', this.playerName),
             // To do: at this momenty nation does not exist
-            new CardField('nation', "this.nation"),
+            new CardField('nation', 'this.nation'),
             new CardField('skills', '5'),
             new CardField('weak foot', this.weakFoot),
             new CardField('intl. rep', '5'),
@@ -133,19 +131,19 @@ export class Card {
             // To do: create method to convert attack and defence values into this scale
             new CardField('def. wr', 'low'),
             new CardField('arr. wr', 'high'),
-            //next fields does not exist in card at this moment
+            // next fields does not exist in card at this moment
             new CardField('added on', '2020-09-10'),
             new CardField('origin', 'na'),
             new CardField('r. Face', 'low'),
             new CardField('b. type', ''),
-            new CardField('age', '36 years old')
-        ]
+            new CardField('age', '36 years old'),
+        ];
     }
 
     /** Using in diagramm area in footballerCard */
-    get diagramArea () {
-        //To do: need to get real min and max values to convert into diagram value
-        //To do: this fields does not exist
+    get diagramArea() {
+        // To do: need to get real min and max values to convert into diagram value
+        // To do: this fields does not exist
         return [
             new CardField('physical', 688),
             new CardField('mental', 688),
@@ -153,10 +151,11 @@ export class Card {
             new CardField('cham. style', 688),
             new CardField('base stats', 688),
             new CardField('in game stats', 688),
-        ]
+        ];
     }
 
-    get statsArea () {
+    /** returns fields for card stats area in footballerCard */
+    get statsArea() {
         return [
             new CardStats('tactics', 'tac', [
                 new CardStatsField('positioning', this.positioning),
@@ -210,7 +209,7 @@ export class Card {
                 new CardStatsField('handling', this.handling),
                 new CardStatsField('sweeping', this.sweeping),
                 new CardStatsField('throwing', this.throwing),
-            ])
-        ]
+            ]),
+        ];
     }
 }
