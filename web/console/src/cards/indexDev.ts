@@ -4,27 +4,24 @@
 
 /** class for our getters to get label and value while mapping */
 export class CardField {
+    /** label and value for mapping */
     constructor(
         public label: string,
         public value: string | number,
     ) { }
 }
-export class CardStatsField {
-    constructor(
-        public label: string,
-        public value: number,
-    ) { }
-}
 
+/* eslint-disable */
+/** player stats implementation */
 export class CardStats {
     /** main stat with substats */
     constructor(
         public title: string = '',
         public abbreviated: string = '',
-        public fields: CardStatsField[] = []
+        public fields: CardField[] = []
     ) { }
     public average: number = this.fields
-        .map(item => item.value)
+        .map(item => +item.value)
         .reduce((prev, current) => prev + current) / this.fields.length;
     /** abbreviated title of card stat name */
     get abbr(): string {
@@ -50,8 +47,9 @@ export class CardStats {
     }
 }
 
-
+/** Card base implementation */
 export class Card {
+    /** Card fields */
     constructor(
         public id: string,
         public playerName: number,
@@ -116,12 +114,12 @@ export class Card {
         public sweeping: number,
         public throwing: number,
     ) { }
-        /** Using in footballerCard in info block */
+    /** Using in footballerCard in info block */
     get mainInfo() {
         return [
             new CardField('name', this.playerName),
             // To do: at this momenty nation does not exist
-            new CardField('nation', "this.nation"),
+            new CardField('nation', 'this.nation'),
             new CardField('skills', '5'),
             new CardField('weak foot', this.weakFoot),
             new CardField('intl. rep', '5'),
@@ -133,19 +131,19 @@ export class Card {
             // To do: create method to convert attack and defence values into this scale
             new CardField('def. wr', 'low'),
             new CardField('arr. wr', 'high'),
-            //next fields does not exist in card at this moment
+            // next fields does not exist in card at this moment
             new CardField('added on', '2020-09-10'),
             new CardField('origin', 'na'),
             new CardField('r. Face', 'low'),
             new CardField('b. type', ''),
-            new CardField('age', '36 years old')
-        ]
+            new CardField('age', '36 years old'),
+        ];
     }
 
     /** Using in diagramm area in footballerCard */
-    get diagramArea () {
-        //To do: need to get real min and max values to convert into diagram value
-        //To do: this fields does not exist
+    get diagramArea() {
+        // To do: need to get real min and max values to convert into diagram value
+        // To do: this fields does not exist
         return [
             new CardField('physical', 688),
             new CardField('mental', 688),
@@ -153,64 +151,65 @@ export class Card {
             new CardField('cham. style', 688),
             new CardField('base stats', 688),
             new CardField('in game stats', 688),
-        ]
+        ];
     }
 
-    get statsArea () {
+    /** returns fields for card stats area in footballerCard */
+    get statsArea() {
         return [
             new CardStats('tactics', 'tac', [
-                new CardStatsField('positioning', this.positioning),
-                new CardStatsField('composure', this.composure,),
-                new CardStatsField('aggression', this.aggression),
-                new CardStatsField('vision', this.vision),
-                new CardStatsField('awareness', this.awareness),
-                new CardStatsField('crosses', this.crosses),
+                new CardField('positioning', this.positioning),
+                new CardField('composure', this.composure,),
+                new CardField('aggression', this.aggression),
+                new CardField('vision', this.vision),
+                new CardField('awareness', this.awareness),
+                new CardField('crosses', this.crosses),
             ]),
             new CardStats('physique', 'phy', [
-                new CardStatsField('acceleration', this.acceleration),
-                new CardStatsField('running speed', this.runningSpeed),
-                new CardStatsField('reaction speed', this.reactionSpeed),
-                new CardStatsField('agility', this.agility),
-                new CardStatsField('stamina', this.stamina),
-                new CardStatsField('strength', this.strength),
-                new CardStatsField('jumping', this.jumping),
-                new CardStatsField('balance', this.jumping),
+                new CardField('acceleration', this.acceleration),
+                new CardField('running speed', this.runningSpeed),
+                new CardField('reaction speed', this.reactionSpeed),
+                new CardField('agility', this.agility),
+                new CardField('stamina', this.stamina),
+                new CardField('strength', this.strength),
+                new CardField('jumping', this.jumping),
+                new CardField('balance', this.jumping),
             ]),
             new CardStats('technique', 'tec', [
-                new CardStatsField('dribbing', this.dribbling),
-                new CardStatsField('ball fontrol', this.ballControl),
-                new CardStatsField('weak foot', this.weakFoot),
-                new CardStatsField('skill moves', this.skillMoves),
-                new CardStatsField('finesse', this.finesse),
-                new CardStatsField('curve', this.curve),
-                new CardStatsField('volleys', this.volleys),
-                new CardStatsField('short passing', this.shortPassing),
-                new CardStatsField('long passing', this.longPassing),
-                new CardStatsField('forward pass', this.forwardPass),
+                new CardField('dribbing', this.dribbling),
+                new CardField('ball fontrol', this.ballControl),
+                new CardField('weak foot', this.weakFoot),
+                new CardField('skill moves', this.skillMoves),
+                new CardField('finesse', this.finesse),
+                new CardField('curve', this.curve),
+                new CardField('volleys', this.volleys),
+                new CardField('short passing', this.shortPassing),
+                new CardField('long passing', this.longPassing),
+                new CardField('forward pass', this.forwardPass),
             ]),
             new CardStats('offence', 'off', [
-                new CardStatsField('finishing ability', this.finishingAbility),
-                new CardStatsField('shot power', this.shotPower),
-                new CardStatsField('accuracy', this.accuracy),
-                new CardStatsField('distance', this.distance),
-                new CardStatsField('penalty', this.penalty),
-                new CardStatsField('free Kicks', this.freeKicks),
-                new CardStatsField('corners', this.corners),
-                new CardStatsField('heading accuracy', this.headingAccuracy),
+                new CardField('finishing ability', this.finishingAbility),
+                new CardField('shot power', this.shotPower),
+                new CardField('accuracy', this.accuracy),
+                new CardField('distance', this.distance),
+                new CardField('penalty', this.penalty),
+                new CardField('free Kicks', this.freeKicks),
+                new CardField('corners', this.corners),
+                new CardField('heading accuracy', this.headingAccuracy),
             ]),
             new CardStats('defence', 'def', [
-                new CardStatsField('offside trap', this.offsideTrap),
-                new CardStatsField('tackles', this.tackles),
-                new CardStatsField('ball focus', this.ballFocus),
-                new CardStatsField('interceptions', this.interceptions),
-                new CardStatsField('vigilance', this.vigilance),
+                new CardField('offside trap', this.offsideTrap),
+                new CardField('tackles', this.tackles),
+                new CardField('ball focus', this.ballFocus),
+                new CardField('interceptions', this.interceptions),
+                new CardField('vigilance', this.vigilance),
             ]),
             new CardStats('goalkeeping', 'gk', [
-                new CardStatsField('diving', this.diving),
-                new CardStatsField('handling', this.handling),
-                new CardStatsField('sweeping', this.sweeping),
-                new CardStatsField('throwing', this.throwing),
-            ])
-        ]
+                new CardField('diving', this.diving),
+                new CardField('handling', this.handling),
+                new CardField('sweeping', this.sweeping),
+                new CardField('throwing', this.throwing),
+            ]),
+        ];
     }
 }
