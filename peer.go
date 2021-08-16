@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"net"
+	"net/mail"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -20,7 +21,7 @@ import (
 	"ultimatedivision/console/emails"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/internal/mail"
+	mail2 "ultimatedivision/internal/mail"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
@@ -32,6 +33,7 @@ import (
 type DB interface {
 	// Admins provides access to admins db.
 	Admins() admins.DB
+
 	// Users provides access to users db.
 	Users() users.DB
 
@@ -46,7 +48,6 @@ type DB interface {
 
 	// Close closes underlying db connection.
 	Close() error
-
 	// CreateSchema create tables.
 	CreateSchema(ctx context.Context) error
 }
@@ -58,28 +59,28 @@ type Config struct {
 		Auth   struct {
 			TokenAuthSecret string `json:"tokenAuthSecret"`
 		} `json:"auth"`
-	}
+	} `json:"admins"`
 
 	Users struct {
 		// Server userserver.Config `json:"server"`
 		Auth struct {
 			TokenAuthSecret string `json:"tokenAuthSecret"`
 		} `json:"auth"`
-	}
+	} `json:"users"`
 
-	Consoles struct {
+	Console struct {
 		Server consoleserver.Config `json:"server"`
-		Emails *emails.Config       `json:"emails"`
-	}
+		Emails emails.Config        `json:"emails"`
+	} `json:"console"`
 
 	Cards struct {
 		cards.Config
 		cards.PercentageQualities `json:"percentageQualities"`
-	}
+	} `json:"cards"`
 
 	LootBoxes struct {
-		Config lootboxes.Config `json:"lootboxes"`
-	}
+		Config lootboxes.Config `json:"regular"`
+	} `json:"lootBoxes"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -87,7 +88,7 @@ type Peer struct {
 	Config   Config
 	Log      logger.Logger
 	Database DB
-	Sender   mail.Sender
+	Sender   mail2.Sender
 
 	// exposes admins relates logic.
 	Admins struct {
@@ -131,7 +132,7 @@ type Peer struct {
 }
 
 // New is a constructor for ultimatedivision.Peer.
-func New(logger logger.Logger, config Config, db DB, sender mail.Sender) (peer *Peer, err error) {
+func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	peer = &Peer{
 		Log:      logger,
 		Database: db,
@@ -212,26 +213,38 @@ func New(logger logger.Logger, config Config, db DB, sender mail.Sender) (peer *
 	}
 
 	{ // console setup
-		peer.Console.Listener, err = net.Listen("tcp", config.Consoles.Server.Address)
+		peer.Console.Listener, err = net.Listen("tcp", config.Console.Server.Address)
 		if err != nil {
 			return nil, err
 		}
 
-		peer.Console.Endpoint, err = consoleserver.NewServer(
-			config.Consoles.Server,
+		peer.Console.Endpoint = consoleserver.NewServer(
+			config.Console.Server,
 			logger,
 			peer.Console.Listener,
 			peer.Cards.Service,
 			peer.LootBoxes.Service,
 		)
+
+		from, err := mail.ParseAddress(config.Console.Emails.From)
 		if err != nil {
+			logger.Error("email address is not valid", err)
 			return nil, err
+		}
+
+		sender := mail2.SMTPSender{
+			ServerAddress: config.Console.Emails.SMTPServerAddress,
+			From:          *from,
+			Auth: mail2.LoginAuth{
+				Username: config.Console.Emails.PlainLogin,
+				Password: config.Console.Emails.PlainPassword,
+			},
 		}
 
 		peer.Console.EmailService = emails.NewService(
 			logger,
-			sender,
-			config.Consoles.Emails,
+			&sender,
+			config.Console.Emails,
 		)
 	}
 

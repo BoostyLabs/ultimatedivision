@@ -19,7 +19,6 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/database"
 	"ultimatedivision/internal/logger/zaplog"
-	"ultimatedivision/internal/mail"
 )
 
 // Error is a default error type for ultimatedivision cli.
@@ -52,6 +51,12 @@ var (
 		RunE:        cmdRun,
 		Annotations: map[string]string{"type": "run"},
 	}
+	destroyCmd = &cobra.Command{
+		Use:         "destroy",
+		Short:       "deletes config folder",
+		RunE:        cmdDestroy,
+		Annotations: map[string]string{"type": "run"},
+	}
 	setupCfg Config
 	runCfg   Config
 
@@ -61,6 +66,7 @@ var (
 func init() {
 	rootCmd.AddCommand(setupCmd)
 	rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(destroyCmd)
 }
 
 func main() {
@@ -132,14 +138,7 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		log.Error("Error creating schema", Error.Wrap(err))
 	}
 
-	// TODO: modify this point.
-	sender := mail.SMTPSender{
-		ServerAddress: "",
-		From:          mail.Address{},
-		Auth:          nil,
-	}
-
-	peer, err := ultimatedivision.New(log, runCfg.Config, db, &sender)
+	peer, err := ultimatedivision.New(log, runCfg.Config, db)
 	if err != nil {
 		log.Error("Error starting ultimatedivision bank service", Error.Wrap(err))
 		return Error.Wrap(err)
@@ -149,6 +148,10 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 	closeError := peer.Close()
 
 	return Error.Wrap(errs.Combine(runError, closeError))
+}
+
+func cmdDestroy(cmd *cobra.Command, args []string) (err error) {
+	return os.RemoveAll(defaultConfigDir)
 }
 
 // readConfig reads config from default config dir.
