@@ -4,7 +4,7 @@
 import { FootballerCardIllustrationsDiagramsArea } from '@components/FootballerCardPage/FootballerCardIllustrationsDiagramsArea';
 import { FootballerCardIllustrationsRadar } from '@components/FootballerCardPage/FootballerCardIllustrationsRadar';
 
-import { Card } from '@/Card';
+import { Card } from '@/cards';
 import { PlayerCard } from '@/app/components/common/PlayerCard';
 
 import './index.scss';

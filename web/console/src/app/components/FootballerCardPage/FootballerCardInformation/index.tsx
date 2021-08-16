@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Card } from '@/Card';
+import { Card } from '@/cards';
 
 import './index.scss';
 

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { PlayerCard } from '@/app/components/common/PlayerCard';
 
-import { Card } from '@/Card';
+import { Card } from '@/cards';
 import { removeCard } from '@/app/store/reducers/footballField';
 
 import './index.scss';

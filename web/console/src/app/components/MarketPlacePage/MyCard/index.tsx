@@ -6,7 +6,7 @@ import { PlayerCard } from '@/app/components/common/PlayerCard';
 import { Link } from 'react-router-dom';
 import { RouteConfig } from '@/app/router';
 
-import { Card } from '@/Card';
+import { Card } from '@/cards';
 
 import './index.scss';
 

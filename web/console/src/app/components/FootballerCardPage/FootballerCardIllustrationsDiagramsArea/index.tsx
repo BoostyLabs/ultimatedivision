@@ -5,7 +5,7 @@
 import { FootballerCardIllustrationsDiagram }
     from '@components/FootballerCardPage/FootballerCardIllustrationsDiagram';
 
-import { Card } from '@/Card';
+import { Card } from '@/cards';
 
 import './index.scss';
 

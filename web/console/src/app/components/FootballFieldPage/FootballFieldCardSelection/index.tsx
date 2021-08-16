@@ -10,7 +10,7 @@ import { PlayerCard } from '@/app/components/common/PlayerCard';
 
 import './index.scss';
 import { Paginator } from '@/app/components/common/Paginator';
-import { Card } from '@/Card';
+import { Card } from '@/cards';
 
 export const FootballFieldCardSelection = () => {
     const cardList = useSelector((state: RootState) => state.cardReducer);
