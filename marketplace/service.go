@@ -163,7 +163,6 @@ func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
 	}
 
 	// TODO: transfer money to the old cardholder from new user. If userID == shopperID not transfer mb
-	// TODO: change userId for item and status to active.
 
 	if winLot.Type == TypeCard {
 		if err := service.cards.UpdateStatus(ctx, winLot.ItemID, cards.StatusActive); err != nil {
