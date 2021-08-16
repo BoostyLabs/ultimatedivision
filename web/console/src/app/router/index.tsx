@@ -4,20 +4,20 @@
 import { lazy } from 'react';
 import { Switch } from 'react-router-dom';
 
-const FootballerCard = lazy(() => import('@components/FootballerCardPage/FootballerCard'));
-const FootballField = lazy(() => import('@components/FootballFieldPage/FootballField'));
-const MarketPlace = lazy(() => import('@components/MarketPlacePage/MarketPlace'));
-const WhitePaper = lazy(() => import('@components/AboutPage/WhitePaperPage/WhitePaper'));
-const Tokenomics = lazy(() => import('@components/AboutPage/TokenomicsPage/Tokenomics'));
+const FootballerCard = lazy(() => import('@/app/views/FootballerCard'));
+const FootballField = lazy(() => import('@/app/views/FootballField'));
+const MarketPlace = lazy(() => import('@/app/views/MarketPlace'));
+const WhitePaper = lazy(() => import('@/app/views/WhitePaper'));
+const Tokenomics = lazy(() => import('@/app/views/Tokenomics'));
 
-import Summary from '@/app/components/AboutPage/WhitePaperPage/Summary';
-import GameMechanics from '@/app/components/AboutPage/WhitePaperPage/GameMechanics';
-import PayToEarnEconomy from '@components/AboutPage/WhitePaperPage/PayToEarnEconomy';
-import Technology from '@components/AboutPage/WhitePaperPage/Technology';
-import Fund from '@components/AboutPage/TokenomicsPage/Fund';
-import PlayToEarn from '@components/AboutPage/TokenomicsPage/PlayToEarn';
-import Spending from '@components/AboutPage/TokenomicsPage/Spending';
-import Staking from '@components/AboutPage/TokenomicsPage/Staking';
+import Summary from '@/app/components/WhitePaperPage/Summary';
+import GameMechanics from '@/app/components/WhitePaperPage/GameMechanics';
+import PayToEarnEconomy from '@/app/components/WhitePaperPage/PayToEarnEconomy';
+import Technology from '@/app/components/WhitePaperPage/Technology';
+import Fund from '@/app/components/TokenomicsPage/Fund';
+import PlayToEarn from '@/app/components/TokenomicsPage/PlayToEarn';
+import Spending from '@/app/components/TokenomicsPage/Spending';
+import Staking from '@/app/components/TokenomicsPage/Staking';
 
 /** Route base config implementation */
 export class ComponentRoutes {
