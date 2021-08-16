@@ -7,6 +7,7 @@ import { HttpClient } from '@/private/http/client';
  * ErrorUnauthorized is a custom error type for performing unauthorized operations.
  */
 export class UnauthorizedError extends Error {
+    /** Error message while unautorized */
     public constructor(message = 'authorization required') {
         super(message);
     }
@@ -16,6 +17,7 @@ export class UnauthorizedError extends Error {
  * BadRequestError is a custom error type for performing bad request.
  */
 export class BadRequestError extends Error {
+    /** Error message while bad request */
     public constructor(message = 'bad request') {
         super(message);
     }
@@ -25,10 +27,14 @@ export class BadRequestError extends Error {
  * InternalError is a custom error type for internal server error.
  */
 export class InternalError extends Error {
+    /** Error message for internal server error */
     public constructor(message = 'internal server error') {
         super(message);
     }
 }
+const UNAUTORISED_ERROR = 401;
+const BAD_REQUEST_ERROR = 401;
+const INTERNAL_ERROR = 401;
 
 /**
  * APIClient is base client that holds http client and error handler.
@@ -55,9 +61,9 @@ export class APIClient {
         const body = await response.json();
 
         switch (response.status) {
-        case 401: throw new UnauthorizedError(body.error);
-        case 400: throw new BadRequestError(body.error);
-        case 500:
+        case UNAUTORISED_ERROR: throw new UnauthorizedError(body.error);
+        case BAD_REQUEST_ERROR: throw new BadRequestError(body.error);
+        case INTERNAL_ERROR:
         default:
             throw new InternalError(body.error);
         }
