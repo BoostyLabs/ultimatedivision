@@ -365,13 +365,15 @@ func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []s
 }
 
 // UpdateStatus updates status card in the database.
-func (cardsDB *cardsDB) UpdateStatus(ctx context.Context, status cards.Status, id uuid.UUID) error {
+func (cardsDB *cardsDB) UpdateStatus(ctx context.Context, id uuid.UUID, status cards.Status) error {
 	_, err := cardsDB.conn.QueryContext(ctx, "UPDATE cards SET status=$1 WHERE id=$2", status, id)
-	if err != nil {
-		return ErrCard.Wrap(err)
-	}
+	return ErrCard.Wrap(err)
+}
 
-	return nil
+// UpdateUserID updates user id card in the database.
+func (cardsDB *cardsDB) UpdateUserID(ctx context.Context, id, userID uuid.UUID) error {
+	_, err := cardsDB.conn.QueryContext(ctx, "UPDATE cards SET user_id=$1 WHERE id=$2", userID, id)
+	return ErrCard.Wrap(err)
 }
 
 // Delete deletes record card in the data base.
