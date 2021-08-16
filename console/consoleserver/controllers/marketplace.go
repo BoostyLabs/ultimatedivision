@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -38,6 +39,19 @@ func NewMarketplaces(log logger.Logger, marketplaces *marketplace.Service) *Mark
 	return marketplacesController
 }
 
+type ResponseLot struct {
+	ID           uuid.UUID          `json:"id"`
+	ItemID       uuid.UUID          `json:"itemId"`
+	Type         marketplace.Type   `json:"type"`
+	Status       marketplace.Status `json:"status"`
+	StartPrice   float64            `json:"startPrice"`
+	MaxPrice     float64            `json:"maxPrice"`
+	CurrentPrice float64            `json:"currentPrice"`
+	StartTime    time.Time          `json:"startTime"`
+	EndTime      time.Time          `json:"endTime"`
+	Period       marketplace.Period `json:"period"`
+}
+
 // ListActiveLots is an endpoint that returns active lots list.
 func (controller *Marketplaces) ListActiveLots(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -45,8 +59,8 @@ func (controller *Marketplaces) ListActiveLots(w http.ResponseWriter, r *http.Re
 
 	listActiveLots, err := controller.marketplaces.ListActiveLots(ctx)
 	if err != nil {
-		controller.log.Error("could not get active lots list", ErrMarketplaces.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrMarketplaces.Wrap(err))
+		controller.log.Error("could not get active lots list", marketplace.ErrNoLot.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, marketplace.ErrNoLot.Wrap(err))
 		return
 	}
 
@@ -75,21 +89,22 @@ func (controller *Marketplaces) GetLotByID(w http.ResponseWriter, r *http.Reques
 
 	lot, err := controller.marketplaces.GetLotByID(ctx, id)
 	if err != nil {
-		controller.log.Error("could not get active lot", ErrMarketplaces.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrMarketplaces.Wrap(err))
+		controller.log.Error("could not get lot", marketplace.ErrNoLot.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, marketplace.ErrNoLot.Wrap(err))
 		return
 	}
 
-	responseLot := map[string]interface{}{
-		"id":           lot.ID,
-		"itemId":       lot.ItemID,
-		"type":         lot.Type,
-		"status":       lot.Status,
-		"startPrice":   lot.StartPrice,
-		"maxPrice":     lot.MaxPrice,
-		"currentPrice": lot.CurrentPrice,
-		"startTime":    lot.StartPrice,
-		"endTime":      lot.EndTime,
+	responseLot := ResponseLot{
+		ID:           lot.ID,
+		ItemID:       lot.ItemID,
+		Type:         lot.Type,
+		Status:       lot.Status,
+		StartPrice:   lot.StartPrice,
+		MaxPrice:     lot.MaxPrice,
+		CurrentPrice: lot.CurrentPrice,
+		StartTime:    lot.StartTime,
+		EndTime:      lot.EndTime,
+		Period:       lot.Period,
 	}
 
 	if err = json.NewEncoder(w).Encode(responseLot); err != nil {
