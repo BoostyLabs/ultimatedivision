@@ -112,6 +112,46 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context) ([]marke
 	return lots, nil
 }
 
+// ListActiveLotsWhereEndTimeLTENow returns active lots from the data base.
+func (marketplaceDB *marketplaceDB) ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([]marketplace.Lot, error) {
+	query :=
+		`SELECT 
+			` + allLotOfFields + ` 
+        FROM 
+            lots
+		WHERE
+			status = $1
+		AND
+			end_time <= $2
+        `
+
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, time.Now().UTC())
+	if err != nil {
+		return nil, ErrCard.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	lots := []marketplace.Lot{}
+	for rows.Next() {
+		lot := marketplace.Lot{}
+		if err = rows.Scan(
+			&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status,
+			&lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
+		); err != nil {
+			return nil, marketplace.ErrNoLot.Wrap(err)
+		}
+
+		lots = append(lots, lot)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	return lots, nil
+}
+
 // UpdateShopperIDLot updates shopper id of lot in the database.
 func (marketplaceDB *marketplaceDB) UpdateShopperIDLot(ctx context.Context, id, shopperID uuid.UUID) error {
 	_, err := marketplaceDB.conn.QueryContext(ctx, "UPDATE lots SET shopper_id=$1 WHERE id=$2", shopperID, id)
