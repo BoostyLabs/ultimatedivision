@@ -134,7 +134,7 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err := controller.clubs.UpdateCardPosition(ctx, squadCard.ID, squadCard.CardID, squadCard.Position)
+	err := controller.clubs.UpdateCardPosition(ctx, squadCard.SquadID, squadCard.CardID, squadCard.Position)
 	if err != nil {
 		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
@@ -204,7 +204,7 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := controller.clubs.Delete(ctx, squadCard.ID, squadCard.CardID)
+	err := controller.clubs.Delete(ctx, squadCard.SquadID, squadCard.CardID)
 	if err != nil {
 		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))

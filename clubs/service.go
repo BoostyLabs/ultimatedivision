@@ -7,11 +7,11 @@ import (
 	"context"
 	"time"
 
-	"ultimatedivision/internal/auth"
-	"ultimatedivision/users/userauth"
-
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/internal/auth"
+	"ultimatedivision/users/userauth"
 )
 
 // ErrClubs indicates that there was an error in the service.
@@ -52,8 +52,8 @@ func (service *Service) Create(ctx context.Context) error {
 // CreateSquad creates new squad for club.
 func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error {
 	newSquad := Squad{
-		ID:     uuid.New(),
-		ClubID: clubID,
+		SquadID: uuid.New(),
+		ClubID:  clubID,
 	}
 
 	return service.clubs.CreateSquad(ctx, newSquad)
@@ -61,7 +61,7 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error
 
 // Add add new card to the squad of the club.
 func (service *Service) Add(ctx context.Context, newSquadCard SquadCard) error {
-	capitanID, err := service.clubs.GetCaptainID(ctx, newSquadCard.ID)
+	capitanID, err := service.clubs.GetCaptainID(ctx, newSquadCard.SquadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
 	}
@@ -79,7 +79,7 @@ func (service *Service) Delete(ctx context.Context, squadID uuid.UUID, cardID uu
 // UpdateSquad updates tactic and formation of the squad.
 func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, tactic Tactic, formation Formation) error {
 	updatedSquad := Squad{
-		ID:        squadID,
+		SquadID:   squadID,
 		Tactic:    tactic,
 		Formation: formation,
 	}
@@ -103,7 +103,7 @@ func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, 
 		return Squad{}, nil, ErrClubs.Wrap(err)
 	}
 
-	squadCards, err := service.clubs.ListSquadCards(ctx, squad.ID)
+	squadCards, err := service.clubs.ListSquadCards(ctx, squad.SquadID)
 	if err != nil {
 		return Squad{}, nil, ErrClubs.Wrap(err)
 	}
