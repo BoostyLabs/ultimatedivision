@@ -39,6 +39,7 @@ func NewMarketplaces(log logger.Logger, marketplaces *marketplace.Service) *Mark
 	return marketplacesController
 }
 
+// ResponseLot describes the values required to response for get lot by id.
 type ResponseLot struct {
 	ID           uuid.UUID          `json:"id"`
 	ItemID       uuid.UUID          `json:"itemId"`

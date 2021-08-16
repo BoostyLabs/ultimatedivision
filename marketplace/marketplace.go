@@ -87,10 +87,12 @@ const (
 	MaxPeriod Period = 120
 )
 
+// Config defines configuration for Marketplace.
 type Config struct {
 	LotRenewalInterval time.Duration `json:"lotRenewalInterval"`
 }
 
+// WinLot describes the values required to win.
 type WinLot struct {
 	ID        uuid.UUID `json:"id"`
 	UserID    uuid.UUID `json:"userId"`
