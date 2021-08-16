@@ -52,6 +52,7 @@ type DB interface {
 
 	// Close closes underlying db connection.
 	Close() error
+
 	// CreateSchema create tables.
 	CreateSchema(ctx context.Context) error
 }
@@ -85,6 +86,10 @@ type Config struct {
 	LootBoxes struct {
 		Config lootboxes.Config `json:"regular"`
 	} `json:"lootBoxes"`
+
+	Marketplace struct {
+		marketplace.Config
+	} `json:"marketplace"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -123,7 +128,8 @@ type Peer struct {
 
 	// exposes marketplace related logic
 	Marketplace struct {
-		Service *marketplace.Service
+		Service            *marketplace.Service
+		ExpirationLotChore *marketplace.Chore
 	}
 
 	// Admin web server server with web UI.
@@ -200,6 +206,23 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // marketplace setup
+		peer.Marketplace.Service = marketplace.NewService(
+			peer.Database.Marketplace(),
+			peer.Users.Service,
+			peer.Cards.Service,
+		)
+
+		peer.Marketplace.ExpirationLotChore = marketplace.NewChore(
+			peer.Log,
+			config.Marketplace.Config,
+			peer.Database.Marketplace(),
+			peer.Users.Service,
+			peer.Cards.Service,
+		)
+
+	}
+
 	{ // admin setup
 		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
 		if err != nil {
@@ -271,6 +294,10 @@ func (peer *Peer) Run(ctx context.Context) error {
 	})
 	group.Go(func() error {
 		return ignoreCancel(peer.Console.Endpoint.Run(ctx))
+	})
+
+	group.Go(func() error {
+		return ignoreCancel(peer.Marketplace.ExpirationLotChore.Run(ctx))
 	})
 
 	return group.Wait()
