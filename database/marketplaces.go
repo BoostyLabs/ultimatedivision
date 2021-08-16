@@ -7,61 +7,66 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/marketplaces"
+	"ultimatedivision/marketplace"
 )
 
-// ensures that marketplacesDB implements marketplaces.DB.
-var _ marketplaces.DB = (*marketplacesDB)(nil)
+// ensures that marketplaceDB implements marketplaces.DB.
+var _ marketplace.DB = (*marketplaceDB)(nil)
 
 // ErrMarketplace indicates that there was an error in the database.
-var ErrMarketplace = errs.Class("marketplaces repository error")
+var ErrMarketplace = errs.Class("marketplace repository error")
 
-// marketplacesDB provides access to marketplaces db.
+// marketplaceDB provides access to marketplaces db.
 //
 // architecture: Database
-type marketplacesDB struct {
+type marketplaceDB struct {
 	conn *sql.DB
 }
 
-// Create creates lot in the db.
-func (marketplacesDB *marketplacesDB) Create(ctx context.Context, lot marketplaces.Lot) error {
+const (
+	allLotOfFields = `id, item_id, type, user_id, shopper_id, status, start_price, max_price, current_price, start_time, end_time, period`
+)
+
+// CreateLot creates lot in the db.
+func (marketplaceDB *marketplaceDB) CreateLot(ctx context.Context, lot marketplace.Lot) error {
 	query :=
 		`INSERT INTO 
-			lots(id, item_id, type, user_id, shopper_id, status, start_price, max_price, current_price, start_time, end_time)
+			lots(` + allLotOfFields + `)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 		`
 
-	_, err := marketplacesDB.conn.ExecContext(ctx, query,
+	_, err := marketplaceDB.conn.ExecContext(ctx, query,
 		lot.ID, lot.ItemID, lot.Type, lot.UserID, lot.ShopperID, lot.Status,
-		lot.StartPrice, lot.MaxPrice, lot.CurrentPrice, lot.StartTime, lot.EndTime)
+		lot.StartPrice, lot.MaxPrice, lot.CurrentPrice, lot.StartTime, lot.EndTime, lot.Period)
 
 	return ErrMarketplace.Wrap(err)
 }
 
-// Get returns lot by id from the data base.
-func (marketplacesDB *marketplacesDB) Get(ctx context.Context, id uuid.UUID) (marketplaces.Lot, error) {
-	lot := marketplaces.Lot{}
+// GetLotByID returns lot by id from the data base.
+func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID) (marketplace.Lot, error) {
+	lot := marketplace.Lot{}
 	query :=
 		`SELECT 
-			id, item_id, type, status, start_price, max_price, current_price, start_time, end_time
+			` + allLotOfFields + `
         FROM 
             lots
         WHERE 
             id = $1
         `
-	err := marketplacesDB.conn.QueryRowContext(ctx, query, id).Scan(
-		&lot.ID, &lot.ItemID, &lot.Type, &lot.Status, &lot.StartPrice,
-		&lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime,
+	err := marketplaceDB.conn.QueryRowContext(ctx, query, id).Scan(
+		&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status,
+		&lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
 	)
 
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
-		return lot, marketplaces.ErrNoLot.Wrap(err)
+		return lot, marketplace.ErrNoLot.Wrap(err)
 	case err != nil:
 		return lot, ErrMarketplace.Wrap(err)
 	default:
@@ -69,18 +74,18 @@ func (marketplacesDB *marketplacesDB) Get(ctx context.Context, id uuid.UUID) (ma
 	}
 }
 
-// List returns active lots from the data base.
-func (marketplacesDB *marketplacesDB) ListActive(ctx context.Context) ([]marketplaces.Lot, error) {
+// ListActiveLots returns active lots from the data base.
+func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context) ([]marketplace.Lot, error) {
 	query :=
 		`SELECT 
-			id, item_id, type, user_id, shopper_id, status, start_price, max_price, current_price, start_time, end_time 
+			` + allLotOfFields + ` 
         FROM 
             lots
 		WHERE
 			status = $1
         `
 
-	rows, err := marketplacesDB.conn.QueryContext(ctx, query, marketplaces.StatusActive)
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive)
 	if err != nil {
 		return nil, ErrCard.Wrap(err)
 	}
@@ -88,14 +93,14 @@ func (marketplacesDB *marketplacesDB) ListActive(ctx context.Context) ([]marketp
 		err = errs.Combine(err, rows.Close())
 	}()
 
-	lots := []marketplaces.Lot{}
+	lots := []marketplace.Lot{}
 	for rows.Next() {
-		lot := marketplaces.Lot{}
+		lot := marketplace.Lot{}
 		if err = rows.Scan(
 			&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status,
-			&lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime,
+			&lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
 		); err != nil {
-			return nil, marketplaces.ErrNoLot.Wrap(err)
+			return nil, marketplace.ErrNoLot.Wrap(err)
 		}
 
 		lots = append(lots, lot)
@@ -105,4 +110,28 @@ func (marketplacesDB *marketplacesDB) ListActive(ctx context.Context) ([]marketp
 	}
 
 	return lots, nil
+}
+
+// UpdateShopperIDLot updates shopper id of lot in the database.
+func (marketplaceDB *marketplaceDB) UpdateShopperIDLot(ctx context.Context, id, shopperID uuid.UUID) error {
+	_, err := marketplaceDB.conn.QueryContext(ctx, "UPDATE lots SET shopper_id=$1 WHERE id=$2", shopperID, id)
+	return ErrMarketplace.Wrap(err)
+}
+
+// UpdateStatusLot updates status of lot in the database.
+func (marketplaceDB *marketplaceDB) UpdateStatusLot(ctx context.Context, id uuid.UUID, status marketplace.Status) error {
+	_, err := marketplaceDB.conn.QueryContext(ctx, "UPDATE lots SET status=$1 WHERE id=$2", status, id)
+	return ErrMarketplace.Wrap(err)
+}
+
+// UpdateCurrentPriceLot updates current price of lot in the database.
+func (marketplaceDB *marketplaceDB) UpdateCurrentPriceLot(ctx context.Context, id uuid.UUID, currentPrice float64) error {
+	_, err := marketplaceDB.conn.QueryContext(ctx, "UPDATE lots SET current_price=$1 WHERE id=$2", currentPrice, id)
+	return ErrMarketplace.Wrap(err)
+}
+
+// UpdateEndTimeLot updates end time of lot in the database.
+func (marketplaceDB *marketplaceDB) UpdateEndTimeLot(ctx context.Context, id uuid.UUID, endTime time.Time) error {
+	_, err := marketplaceDB.conn.QueryContext(ctx, "UPDATE lots SET end_time=$1 WHERE id=$2", endTime, id)
+	return ErrMarketplace.Wrap(err)
 }

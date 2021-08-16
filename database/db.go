@@ -15,7 +15,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/lootboxes"
-	"ultimatedivision/marketplaces"
+	"ultimatedivision/marketplace"
 	"ultimatedivision/users"
 )
 
@@ -171,7 +171,8 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             max_price     NUMERIC(16,2),
             current_price NUMERIC(16,2),
             start_time    TIMESTAMP WITH TIME ZONE                                        NOT NULL,
-            end_time      TIMESTAMP WITH TIME ZONE                                        NOT NULL
+            end_time      TIMESTAMP WITH TIME ZONE                                        NOT NULL,
+            period        INTEGER                                                         NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -212,7 +213,7 @@ func (db *database) LootBoxes() lootboxes.DB {
 	return &lootboxesDB{conn: db.conn}
 }
 
-// Marketplaces provided access to accounts db.
-func (db *database) Marketplaces() marketplaces.DB {
-	return &marketplacesDB{conn: db.conn}
+// Marketplace provided access to accounts db.
+func (db *database) Marketplace() marketplace.DB {
+	return &marketplaceDB{conn: db.conn}
 }
