@@ -32,7 +32,9 @@ type DB interface {
 	// ListWithFilters returns all cards from the data base with filters.
 	ListWithFilters(ctx context.Context, filters []Filters) ([]Card, error)
 	// UpdateStatus updates status card in the database.
-	UpdateStatus(ctx context.Context, status Status, id uuid.UUID) error
+	UpdateStatus(ctx context.Context, id uuid.UUID, status Status) error
+	// UpdateUserID updates user id card in the database.
+	UpdateUserID(ctx context.Context, id, userID uuid.UUID) error
 	// Delete deletes card record in the data base.
 	Delete(ctx context.Context, id uuid.UUID) error
 }
@@ -162,10 +164,10 @@ const (
 type Status int
 
 const (
-	// StatusActive indicates that card is active.
-	StatusActive Status = iota
-	// StatusSale indicates that card for sale.
-	StatusSale
+	// StatusActive indicates that the card can be used in a team and sold.
+	StatusActive Status = 0
+	// StatusSale indicates that the card is sold and can't used by the team.
+	StatusSale Status = 1
 )
 
 // RangeValueForSkills defines the list of possible group skills.

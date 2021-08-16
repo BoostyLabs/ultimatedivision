@@ -271,7 +271,7 @@ func TestCards(t *testing.T) {
 
 		t.Run("update status", func(t *testing.T) {
 			card1.Status = cards.StatusActive
-			err := repositoryCards.UpdateStatus(ctx, card1.Status, card1.ID)
+			err := repositoryCards.UpdateStatus(ctx, card1.ID, card1.Status)
 			require.NoError(t, err)
 
 			allCards, err := repositoryCards.List(ctx)
@@ -279,6 +279,16 @@ func TestCards(t *testing.T) {
 			assert.Equal(t, len(allCards), 2)
 			compareCards(t, card1, allCards[1])
 			compareCards(t, card2, allCards[0])
+		})
+
+		t.Run("update user id", func(t *testing.T) {
+			card1.UserID = user2.ID
+			err := repositoryCards.UpdateUserID(ctx, card1.ID, user2.ID)
+			require.NoError(t, err)
+
+			card, err := repositoryCards.Get(ctx, card1.ID)
+			assert.NoError(t, err)
+			compareCards(t, card1, card)
 		})
 
 		t.Run("delete", func(t *testing.T) {
