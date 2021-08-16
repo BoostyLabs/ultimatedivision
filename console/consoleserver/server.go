@@ -6,8 +6,10 @@ package consoleserver
 import (
 	"context"
 	"errors"
+	"html/template"
 	"net"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -29,7 +31,8 @@ var (
 
 // Config contains configuration for console web server.
 type Config struct {
-	Address string `json:"address"`
+	Address   string `json:"address"`
+	StaticDir string `json:"staticDir"`
 }
 
 // Server represents console web server.
@@ -46,12 +49,13 @@ type Server struct {
 	cookieAuth  *auth.CookieAuth
 
 	templates struct {
-		auth *controllers.AuthTemplates
+		index *template.Template
+		auth  *controllers.AuthTemplates
 	}
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplaces *marketplace.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplaces *marketplace.Service) *Server {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -75,30 +79,39 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/email/confirm/{token}", authController.ConfirmEmail).Methods(http.MethodGet)
 
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
-	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
+	cardsRouter.Handle("", server.withAuth(http.HandlerFunc(cardsController.List))).Methods(http.MethodGet)
 
 	marketplaceRouter := router.PathPrefix("/marketplace").Subrouter()
 	marketplaceRouter.HandleFunc("", marketplacesController.ListActiveLots).Methods(http.MethodGet)
 	marketplaceRouter.HandleFunc("/{id}", marketplacesController.GetLotByID).Methods(http.MethodGet)
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
-	lootBoxesRouter.HandleFunc("", lootBoxesController.Create).Methods(http.MethodPost)
-	lootBoxesRouter.HandleFunc("", lootBoxesController.Open).Methods(http.MethodDelete)
+	lootBoxesRouter.Handle("", server.withAuth(http.HandlerFunc(lootBoxesController.Create))).Methods(http.MethodPost)
+	lootBoxesRouter.Handle("", server.withAuth(http.HandlerFunc(lootBoxesController.Open))).Methods(http.MethodDelete)
+
+	fs := http.FileServer(http.Dir(server.config.StaticDir))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
+	router.PathPrefix("/").HandlerFunc(server.appHandler)
 
 	server.server = http.Server{
 		Handler: router,
 	}
 
-	return server, nil
+	return server
 }
 
 // Run starts the server that host webapp and api endpoint.
 func (server *Server) Run(ctx context.Context) (err error) {
+	err = server.initializeTemplates()
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
 	ctx, cancel := context.WithCancel(ctx)
 	var group errgroup.Group
 	group.Go(func() error {
 		<-ctx.Done()
-		return server.server.Shutdown(context.Background())
+		return Error.Wrap(server.server.Shutdown(context.Background()))
 	})
 	group.Go(func() error {
 		defer cancel()
@@ -107,13 +120,66 @@ func (server *Server) Run(ctx context.Context) (err error) {
 		if isCancelled || errors.Is(err, http.ErrServerClosed) {
 			err = nil
 		}
-		return err
+		return Error.Wrap(err)
 	})
 
-	return group.Wait()
+	return Error.Wrap(group.Wait())
 }
 
 // Close closes server and underlying listener.
 func (server *Server) Close() error {
-	return server.server.Close()
+	return Error.Wrap(server.server.Close())
+}
+
+// appHandler is web app http handler function.
+func (server *Server) appHandler(w http.ResponseWriter, r *http.Request) {
+	header := w.Header()
+
+	header.Set("Content-Type", "text/html; charset=UTF-8")
+	// header.Set("X-Content-Type-Options", "nosniff")
+	header.Set("Referrer-Policy", "same-origin")
+
+	if server.templates.index == nil {
+		server.log.Error("index template is not set", nil)
+		return
+	}
+
+	if err := server.templates.index.Execute(w, nil); err != nil {
+		server.log.Error("index template could not be executed", err)
+		return
+	}
+}
+
+// withAuth performs initial authorization before every request.
+func (server *Server) withAuth(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		token, err := server.cookieAuth.GetToken(r)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		}
+
+		ctx = auth.SetToken(ctx, []byte(token))
+
+		claims, err := server.authService.Authorize(ctx)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		}
+
+		ctx = auth.SetClaims(ctx, claims)
+
+		handler.ServeHTTP(w, r.Clone(ctx))
+	})
+}
+
+// initializeTemplates is used to initialize all templates.
+func (server *Server) initializeTemplates() (err error) {
+	server.templates.index, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "dist", "index.html"))
+	if err != nil {
+		server.log.Error("dist folder is not generated. use 'npm run build' command", err)
+		return err
+	}
+
+	return nil
 }
