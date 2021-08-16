@@ -56,6 +56,8 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 
 				winLot := WinLot{
 					ID:        lot.ID,
+					ItemID:    lot.ItemID,
+					Type:      TypeCard,
 					UserID:    lot.UserID,
 					ShopperID: lot.ShopperID,
 					Status:    StatusSold,
@@ -73,7 +75,13 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					return ChoreError.Wrap(err)
 				}
 
-				// TODO: change status to active for item.
+				if lot.Type == TypeCard {
+					if err := chore.service.cards.UpdateStatus(ctx, lot.ItemID, cards.StatusActive); err != nil {
+						return ErrMarketplace.Wrap(err)
+					}
+
+				}
+				// TODO: check other items
 			}
 		}
 

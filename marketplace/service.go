@@ -34,28 +34,35 @@ func NewService(marketplace DB, users *users.Service, cards *cards.Service) *Ser
 
 // CreateLot add lot in DB.
 func (service *Service) CreateLot(ctx context.Context, lot Lot) error {
-	// TODO: change status item to StatusSale.
 
-	_, err := service.cards.Get(ctx, lot.ItemID)
+	card, err := service.cards.Get(ctx, lot.ItemID)
 	if err == nil {
-		// TODO: if card status = StatusSale, return error "the card is already on sale"
+		if card.Status == cards.StatusSale {
+			return ErrMarketplace.Wrap(fmt.Errorf("the card is already on sale"))
+		}
+
+		if err := service.cards.UpdateStatus(ctx, lot.ItemID, cards.StatusSale); err != nil {
+			return ErrMarketplace.Wrap(err)
+		}
+
 		lot.Type = TypeCard
 	}
 	// TODO: check other items
+
 	if lot.Type == "" {
-		return ErrLot.Wrap(fmt.Errorf("not found item by id"))
+		return ErrMarketplace.Wrap(fmt.Errorf("not found item by id"))
 	}
 
 	if _, err := service.users.Get(ctx, lot.UserID); err != nil {
-		return err
+		return ErrMarketplace.Wrap(err)
 	}
 
 	if lot.MaxPrice != 0 || lot.MaxPrice < lot.StartPrice {
-		return ErrLot.Wrap(fmt.Errorf("max price less start price"))
+		return ErrMarketplace.Wrap(fmt.Errorf("max price less start price"))
 	}
 
 	if lot.Period < MinPeriod && lot.Period < MaxPeriod {
-		return ErrLot.Wrap(fmt.Errorf("period exceed the range from 1 to 120 hours"))
+		return ErrMarketplace.Wrap(fmt.Errorf("period exceed the range from 1 to 120 hours"))
 	}
 
 	lot = Lot{
@@ -92,13 +99,13 @@ func (service *Service) ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([
 // PlaceBet checks the amount of money and makes a bet.
 func (service *Service) PlaceBet(ctx context.Context, id, shopperID uuid.UUID, betAmount float64) error {
 	if _, err := service.users.Get(ctx, shopperID); err != nil {
-		return err
+		return ErrMarketplace.Wrap(err)
 	}
 	// TODO: check if the user has the required amount of money.
 
 	lot, err := service.GetLotByID(ctx, id)
 	if err != nil {
-		return err
+		return ErrMarketplace.Wrap(err)
 	}
 
 	if betAmount > lot.CurrentPrice {
@@ -109,16 +116,18 @@ func (service *Service) PlaceBet(ctx context.Context, id, shopperID uuid.UUID, b
 		// TODO: unhold old user's money if exist.
 
 		if err := service.UpdateShopperIDLot(ctx, id, shopperID); err != nil {
-			return err
+			return ErrMarketplace.Wrap(err)
 		}
 
 		if betAmount >= lot.MaxPrice || lot.MaxPrice != 0 {
 			if err := service.UpdateCurrentPriceLot(ctx, id, lot.MaxPrice); err != nil {
-				return err
+				return ErrMarketplace.Wrap(err)
 			}
 
 			winLot := WinLot{
 				ID:        id,
+				ItemID:    lot.ItemID,
+				Type:      TypeCard,
 				UserID:    lot.UserID,
 				ShopperID: shopperID,
 				Status:    StatusSoldBuynow,
@@ -126,22 +135,22 @@ func (service *Service) PlaceBet(ctx context.Context, id, shopperID uuid.UUID, b
 			}
 
 			if err := service.WinLot(ctx, winLot); err != nil {
-				return ErrLot.Wrap(err)
+				return ErrMarketplace.Wrap(err)
 			}
 
 		} else {
 			if err := service.UpdateCurrentPriceLot(ctx, id, betAmount); err != nil {
-				return err
+				return ErrMarketplace.Wrap(err)
 			}
 			if lot.EndTime.Sub(time.Now().UTC()) < time.Minute {
 				if err := service.UpdateEndTimeLot(ctx, id, time.Now().UTC().Add(time.Minute)); err != nil {
-					return err
+					return ErrMarketplace.Wrap(err)
 				}
 			}
 		}
 
 	} else {
-		return ErrLot.Wrap(fmt.Errorf("not enough money"))
+		return ErrMarketplace.Wrap(fmt.Errorf("not enough money"))
 	}
 
 	return nil
@@ -150,16 +159,25 @@ func (service *Service) PlaceBet(ctx context.Context, id, shopperID uuid.UUID, b
 // WinLot changes the owner of the item and transfers money.
 func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
 	if err := service.UpdateStatusLot(ctx, winLot.ID, winLot.Status); err != nil {
-		return err
+		return ErrMarketplace.Wrap(err)
 	}
 
 	// TODO: transfer money to the old cardholder from new user. If userID == shopperID not transfer mb
 	// TODO: change userId for item and status to active.
 
+	if winLot.Type == TypeCard {
+		if err := service.cards.UpdateStatus(ctx, winLot.ItemID, cards.StatusActive); err != nil {
+			return ErrMarketplace.Wrap(err)
+		}
+
+		if err := service.cards.UpdateUserID(ctx, winLot.ItemID, winLot.ShopperID); err != nil {
+			return ErrMarketplace.Wrap(err)
+		}
+	}
+	// TODO: check other items
+
 	return nil
 }
-
-// TODO: add fuction for end time lot.
 
 // UpdateShopperIDLot updates shopper id of lot.
 func (service *Service) UpdateShopperIDLot(ctx context.Context, id, shopperID uuid.UUID) error {

@@ -14,8 +14,8 @@ import (
 // ErrNoLot indicated that lot does not exist.
 var ErrNoLot = errs.Class("lot does not exist")
 
-// ErrLot indicated that there was an error in service.
-var ErrLot = errs.Class("lot service error")
+// ErrMarketplace indicated that there was an error in service.
+var ErrMarketplace = errs.Class("marketplace service error")
 
 // DB is exposing access to lots db.
 //
@@ -95,6 +95,8 @@ type Config struct {
 // WinLot describes the values required to win.
 type WinLot struct {
 	ID        uuid.UUID `json:"id"`
+	ItemID    uuid.UUID `json:"itemId"`
+	Type      Type      `json:"type"`
 	UserID    uuid.UUID `json:"userId"`
 	ShopperID uuid.UUID `json:"shopperID"`
 	Status    Status    `json:"status"`
