@@ -84,6 +84,11 @@ func (service *Service) ListActiveLots(ctx context.Context) ([]Lot, error) {
 	return service.marketplace.ListActiveLots(ctx)
 }
 
+// ListActiveLotsWhereEndTimeLTENow returns active lots from DB.
+func (service *Service) ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([]Lot, error) {
+	return service.marketplace.ListActiveLotsWhereEndTimeLTENow(ctx)
+}
+
 // PlaceBet checks the amount of money and makes a bet.
 func (service *Service) PlaceBet(ctx context.Context, id, shopperID uuid.UUID, betAmount float64) error {
 	if _, err := service.users.Get(ctx, shopperID); err != nil {
@@ -111,7 +116,16 @@ func (service *Service) PlaceBet(ctx context.Context, id, shopperID uuid.UUID, b
 			if err := service.UpdateCurrentPriceLot(ctx, id, lot.MaxPrice); err != nil {
 				return err
 			}
-			if err := service.WinLot(ctx, id, lot.UserID, shopperID, StatusSoldBuynow, lot.MaxPrice); err != nil {
+
+			winLot := WinLot{
+				ID:        id,
+				UserID:    lot.UserID,
+				ShopperID: shopperID,
+				Status:    StatusSoldBuynow,
+				Amount:    lot.MaxPrice,
+			}
+
+			if err := service.WinLot(ctx, winLot); err != nil {
 				return ErrLot.Wrap(err)
 			}
 
@@ -134,13 +148,13 @@ func (service *Service) PlaceBet(ctx context.Context, id, shopperID uuid.UUID, b
 }
 
 // WinLot changes the owner of the item and transfers money.
-func (service *Service) WinLot(ctx context.Context, id, userID, shopperID uuid.UUID, status Status, amount float64) error {
-	if err := service.UpdateStatusLot(ctx, id, status); err != nil {
+func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
+	if err := service.UpdateStatusLot(ctx, winLot.ID, winLot.Status); err != nil {
 		return err
 	}
 
-	// TODO: transfer money to the old cardholder from new user.
-	// TODO: change userId for item.
+	// TODO: transfer money to the old cardholder from new user. If userID == shopperID not transfer mb
+	// TODO: change userId for item and status to active.
 
 	return nil
 }

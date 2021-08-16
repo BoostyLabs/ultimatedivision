@@ -27,6 +27,8 @@ type DB interface {
 	GetLotByID(ctx context.Context, id uuid.UUID) (Lot, error)
 	// ListActiveLots returns active lots from the data base.
 	ListActiveLots(ctx context.Context) ([]Lot, error)
+	// ListActiveLotsWhereEndTimeLTENow returns active lots where end time tower than or equal to time now UTC from the data base.
+	ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([]Lot, error)
 	// UpdateShopperIDLot updates shopper id of lot in the database.
 	UpdateShopperIDLot(ctx context.Context, id, shopperID uuid.UUID) error
 	// UpdateStatusLot updates status of lot in the database.
@@ -84,3 +86,15 @@ const (
 	// MaxPeriod indicates that lot maximal period time is 120 hour.
 	MaxPeriod Period = 120
 )
+
+type Config struct {
+	LotRenewalInterval time.Duration `json:"lotRenewalInterval"`
+}
+
+type WinLot struct {
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"userId"`
+	ShopperID uuid.UUID `json:"shopperID"`
+	Status    Status    `json:"status"`
+	Amount    float64   `json:"amount"`
+}

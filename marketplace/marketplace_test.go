@@ -109,6 +109,21 @@ func TestMarketplaces(t *testing.T) {
 			compareLot(t, lot2, activeLots[0])
 		})
 
+		t.Run("list active where end time lte now", func(t *testing.T) {
+			lot1.EndTime = time.Now().UTC()
+			err := repositoryMarketplaces.UpdateEndTimeLot(ctx, lot1.ID, lot1.EndTime)
+			require.NoError(t, err)
+
+			lot1.Status = marketplace.StatusActive
+			err = repositoryMarketplaces.UpdateStatusLot(ctx, lot1.ID, marketplace.StatusActive)
+			require.NoError(t, err)
+
+			activeLots, err := repositoryMarketplaces.ListActiveLotsWhereEndTimeLTENow(ctx)
+			assert.NoError(t, err)
+			assert.Equal(t, len(activeLots), 1)
+			compareLot(t, lot1, activeLots[0])
+		})
+
 		t.Run("update shopperID of lot", func(t *testing.T) {
 			lot1.ShopperID = uuid.New()
 			err := repositoryMarketplaces.UpdateShopperIDLot(ctx, lot1.ID, lot1.ShopperID)
