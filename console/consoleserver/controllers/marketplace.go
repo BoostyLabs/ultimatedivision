@@ -13,7 +13,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/marketplaces"
+	"ultimatedivision/marketplace"
 )
 
 var (
@@ -25,11 +25,11 @@ var (
 type Marketplaces struct {
 	log logger.Logger
 
-	marketplaces *marketplaces.Service
+	marketplaces *marketplace.Service
 }
 
 // NewMarketplaces is a constructor for marketplaces controller.
-func NewMarketplaces(log logger.Logger, marketplaces *marketplaces.Service) *Marketplaces {
+func NewMarketplaces(log logger.Logger, marketplaces *marketplace.Service) *Marketplaces {
 	marketplacesController := &Marketplaces{
 		log:          log,
 		marketplaces: marketplaces,
@@ -38,26 +38,26 @@ func NewMarketplaces(log logger.Logger, marketplaces *marketplaces.Service) *Mar
 	return marketplacesController
 }
 
-// ListActive is an endpoint that returns active lots list.
-func (controller *Marketplaces) ListActive(w http.ResponseWriter, r *http.Request) {
+// ListActiveLots is an endpoint that returns active lots list.
+func (controller *Marketplaces) ListActiveLots(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 
-	lotsListActive, err := controller.marketplaces.ListActive(ctx)
+	listActiveLots, err := controller.marketplaces.ListActiveLots(ctx)
 	if err != nil {
 		controller.log.Error("could not get active lots list", ErrMarketplaces.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplaces.Wrap(err))
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(lotsListActive); err != nil {
+	if err = json.NewEncoder(w).Encode(listActiveLots); err != nil {
 		controller.log.Error("failed to write json response", ErrMarketplaces.Wrap(err))
 		return
 	}
 }
 
-// Get is an endpoint that returns lot by id.
-func (controller *Marketplaces) Get(w http.ResponseWriter, r *http.Request) {
+// GetLotByID is an endpoint that returns lot by id.
+func (controller *Marketplaces) GetLotByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
 	w.Header().Set("Content-Type", "application/json")
@@ -73,14 +73,26 @@ func (controller *Marketplaces) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lot, err := controller.marketplaces.Get(ctx, id)
+	lot, err := controller.marketplaces.GetLotByID(ctx, id)
 	if err != nil {
 		controller.log.Error("could not get active lot", ErrMarketplaces.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplaces.Wrap(err))
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(lot); err != nil {
+	responseLot := map[string]interface{}{
+		"id":           lot.ID,
+		"itemId":       lot.ItemID,
+		"type":         lot.Type,
+		"status":       lot.Status,
+		"startPrice":   lot.StartPrice,
+		"maxPrice":     lot.MaxPrice,
+		"currentPrice": lot.CurrentPrice,
+		"startTime":    lot.StartPrice,
+		"endTime":      lot.EndTime,
+	}
+
+	if err = json.NewEncoder(w).Encode(responseLot); err != nil {
 		controller.log.Error("failed to write json response", ErrMarketplaces.Wrap(err))
 		return
 	}

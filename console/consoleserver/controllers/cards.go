@@ -6,10 +6,11 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"ultimatedivision/cards"
-	"ultimatedivision/internal/logger"
 
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/cards"
+	"ultimatedivision/internal/logger"
 )
 
 var (

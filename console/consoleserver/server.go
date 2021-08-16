@@ -18,7 +18,7 @@ import (
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
-	"ultimatedivision/marketplaces"
+	"ultimatedivision/marketplace"
 	"ultimatedivision/users/userauth"
 )
 
@@ -51,7 +51,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplaces *marketplaces.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplaces *marketplace.Service) (*Server, error) {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -78,8 +78,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 
 	marketplaceRouter := router.PathPrefix("/marketplace").Subrouter()
-	marketplaceRouter.HandleFunc("", marketplacesController.ListActive).Methods(http.MethodGet)
-	marketplaceRouter.HandleFunc("/{id}", marketplacesController.Get).Methods(http.MethodGet)
+	marketplaceRouter.HandleFunc("", marketplacesController.ListActiveLots).Methods(http.MethodGet)
+	marketplaceRouter.HandleFunc("/{id}", marketplacesController.GetLotByID).Methods(http.MethodGet)
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
 	lootBoxesRouter.HandleFunc("", lootBoxesController.Create).Methods(http.MethodPost)
