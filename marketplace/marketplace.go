@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package marketplaces
+package marketplace
 
 import (
 	"context"
@@ -14,16 +14,27 @@ import (
 // ErrNoLot indicated that lot does not exist.
 var ErrNoLot = errs.Class("lot does not exist")
 
+// ErrLot indicated that there was an error in service.
+var ErrLot = errs.Class("lot service error")
+
 // DB is exposing access to lots db.
 //
 // architecture: DB
 type DB interface {
-	// Create add lot in the data base.
-	Create(ctx context.Context, lot Lot) error
-	// Get returns lot by id from the data base.
-	Get(ctx context.Context, id uuid.UUID) (Lot, error)
-	// ListActive returns active lots from the data base.
-	ListActive(ctx context.Context) ([]Lot, error)
+	// CreateLot add lot in the data base.
+	CreateLot(ctx context.Context, lot Lot) error
+	// GetLotByID returns lot by id from the data base.
+	GetLotByID(ctx context.Context, id uuid.UUID) (Lot, error)
+	// ListActiveLots returns active lots from the data base.
+	ListActiveLots(ctx context.Context) ([]Lot, error)
+	// UpdateShopperIDLot updates shopper id of lot in the database.
+	UpdateShopperIDLot(ctx context.Context, id, shopperID uuid.UUID) error
+	// UpdateStatusLot updates status of lot in the database.
+	UpdateStatusLot(ctx context.Context, id uuid.UUID, status Status) error
+	// UpdateCurrentPriceLot updates current price of lot in the database.
+	UpdateCurrentPriceLot(ctx context.Context, id uuid.UUID, currentPrice float64) error
+	// UpdateEndTimeLot updates end time of lot in the database.
+	UpdateEndTimeLot(ctx context.Context, id uuid.UUID, endTime time.Time) error
 }
 
 // Lot describes lot entity.
