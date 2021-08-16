@@ -34,10 +34,11 @@ func NewService(marketplace DB, users *users.Service, cards *cards.Service) *Ser
 
 // CreateLot add lot in DB.
 func (service *Service) CreateLot(ctx context.Context, lot Lot) error {
-	// TODO: change status card to StatusSale.
+	// TODO: change status item to StatusSale.
 
 	_, err := service.cards.Get(ctx, lot.ItemID)
 	if err == nil {
+		// TODO: if card status = StatusSale, return error "the card is already on sale"
 		lot.Type = TypeCard
 	}
 	// TODO: check other items
