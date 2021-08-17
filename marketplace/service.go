@@ -33,49 +33,49 @@ func NewService(marketplace DB, users *users.Service, cards *cards.Service) *Ser
 }
 
 // CreateLot add lot in DB.
-func (service *Service) CreateLot(ctx context.Context, lot Lot) error {
+func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) error {
 
-	card, err := service.cards.Get(ctx, lot.ItemID)
+	card, err := service.cards.Get(ctx, createLot.ItemID)
 	if err == nil {
 		if card.Status == cards.StatusSale {
 			return ErrMarketplace.Wrap(fmt.Errorf("the card is already on sale"))
 		}
 
-		if err := service.cards.UpdateStatus(ctx, lot.ItemID, cards.StatusSale); err != nil {
+		if err := service.cards.UpdateStatus(ctx, createLot.ItemID, cards.StatusSale); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
-		lot.Type = TypeCard
+		createLot.Type = TypeCard
 	}
 	// TODO: check other items
 
-	if lot.Type == "" {
+	if createLot.Type == "" {
 		return ErrMarketplace.Wrap(fmt.Errorf("not found item by id"))
 	}
 
-	if _, err := service.users.Get(ctx, lot.UserID); err != nil {
+	if _, err := service.users.Get(ctx, createLot.UserID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 
-	if lot.MaxPrice != 0 || lot.MaxPrice < lot.StartPrice {
+	if createLot.MaxPrice != 0 || createLot.MaxPrice < createLot.StartPrice {
 		return ErrMarketplace.Wrap(fmt.Errorf("max price less start price"))
 	}
 
-	if lot.Period < MinPeriod && lot.Period < MaxPeriod {
+	if createLot.Period < MinPeriod && createLot.Period < MaxPeriod {
 		return ErrMarketplace.Wrap(fmt.Errorf("period exceed the range from 1 to 120 hours"))
 	}
 
-	lot = Lot{
+	lot := Lot{
 		ID:         uuid.New(),
-		ItemID:     lot.ItemID,
-		Type:       lot.Type,
-		UserID:     lot.UserID,
+		ItemID:     createLot.ItemID,
+		Type:       createLot.Type,
+		UserID:     createLot.UserID,
 		Status:     StatusActive,
-		StartPrice: lot.StartPrice,
-		MaxPrice:   lot.MaxPrice,
+		StartPrice: createLot.StartPrice,
+		MaxPrice:   createLot.MaxPrice,
 		StartTime:  time.Now().UTC(),
-		EndTime:    lot.StartTime.Add(time.Duration(lot.Period) * time.Hour),
-		Period:     lot.Period,
+		EndTime:    time.Now().UTC().Add(time.Duration(createLot.Period) * time.Hour),
+		Period:     createLot.Period,
 	}
 
 	return service.marketplace.CreateLot(ctx, lot)
@@ -96,40 +96,40 @@ func (service *Service) ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([
 	return service.marketplace.ListActiveLotsWhereEndTimeLTENow(ctx)
 }
 
-// PlaceBet checks the amount of money and makes a bet.
-func (service *Service) PlaceBet(ctx context.Context, id, shopperID uuid.UUID, betAmount float64) error {
-	if _, err := service.users.Get(ctx, shopperID); err != nil {
+// PlaceBetLot checks the amount of money and makes a bet.
+func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
+	if _, err := service.users.Get(ctx, betLot.ShopperID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 	// TODO: check if the user has the required amount of money.
 
-	lot, err := service.GetLotByID(ctx, id)
+	lot, err := service.GetLotByID(ctx, betLot.ID)
 	if err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 
-	if betAmount > lot.CurrentPrice {
+	if betLot.BetAmount > lot.CurrentPrice {
 		/** TODO: the transaction may be required for all operations,
 		so that an error in the middle does not lead to an unwanted result in the database. **/
 
 		// TODO: update status to `hold` for new user's money.
 		// TODO: unhold old user's money if exist.
 
-		if err := service.UpdateShopperIDLot(ctx, id, shopperID); err != nil {
+		if err := service.UpdateShopperIDLot(ctx, betLot.ID, betLot.ShopperID); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
-		if betAmount >= lot.MaxPrice || lot.MaxPrice != 0 {
-			if err := service.UpdateCurrentPriceLot(ctx, id, lot.MaxPrice); err != nil {
+		if betLot.BetAmount >= lot.MaxPrice || lot.MaxPrice != 0 {
+			if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, lot.MaxPrice); err != nil {
 				return ErrMarketplace.Wrap(err)
 			}
 
 			winLot := WinLot{
-				ID:        id,
+				ID:        betLot.ID,
 				ItemID:    lot.ItemID,
 				Type:      TypeCard,
 				UserID:    lot.UserID,
-				ShopperID: shopperID,
+				ShopperID: betLot.ShopperID,
 				Status:    StatusSoldBuynow,
 				Amount:    lot.MaxPrice,
 			}
@@ -139,11 +139,11 @@ func (service *Service) PlaceBet(ctx context.Context, id, shopperID uuid.UUID, b
 			}
 
 		} else {
-			if err := service.UpdateCurrentPriceLot(ctx, id, betAmount); err != nil {
+			if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, betLot.BetAmount); err != nil {
 				return ErrMarketplace.Wrap(err)
 			}
 			if lot.EndTime.Sub(time.Now().UTC()) < time.Minute {
-				if err := service.UpdateEndTimeLot(ctx, id, time.Now().UTC().Add(time.Minute)); err != nil {
+				if err := service.UpdateEndTimeLot(ctx, betLot.ID, time.Now().UTC().Add(time.Minute)); err != nil {
 					return ErrMarketplace.Wrap(err)
 				}
 			}
