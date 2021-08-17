@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -119,64 +118,31 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 
-	err := r.ParseForm()
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("could not parse lot create form")))
+	var createLot marketplace.CreateLot
+
+	if err := json.NewDecoder(r.Body).Decode(&createLot); err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
 	}
 
-	itemIDForm := r.FormValue("itemId")
-	if itemIDForm == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("itemIDForm input is empty")))
-		return
-	}
-	itemID, err := uuid.Parse(itemIDForm)
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("could not parse item id")))
+	if createLot.ItemID.String() == "" {
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("item id is empty")))
 		return
 	}
 
-	startPriceForm := r.FormValue("startPrice")
-	if startPriceForm == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("startPriceForm input is empty")))
-		return
-	}
-	startPrice, err := strconv.ParseFloat(startPriceForm, 64)
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("could not parse start price")))
+	if createLot.StartPrice == 0 {
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("start price is empty")))
 		return
 	}
 
-	maxPriceForm := r.FormValue("maxPrice")
-	maxPrice := 0.0
-	if maxPriceForm != "" {
-		maxPrice, err = strconv.ParseFloat(maxPriceForm, 64)
-		if err != nil {
-			controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("could not parse max price")))
-			return
-		}
-	}
-
-	periodForm := r.FormValue("period")
-	if periodForm == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("periodForm input is empty")))
-		return
-	}
-	period, err := strconv.Atoi(periodForm)
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("could not parse period")))
+	if createLot.Period == 0 {
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("period is empty")))
 		return
 	}
 
-	createLot := marketplace.CreateLot{
-		ItemID: itemID,
-		// TODO: userID with token
-		StartPrice: startPrice,
-		MaxPrice:   maxPrice,
-		Period:     marketplace.Period(period),
-	}
+	// TODO: userID with token
 
-	err = controller.marketplace.CreateLot(ctx, createLot)
+	err := controller.marketplace.CreateLot(ctx, createLot)
 	if err != nil {
 		controller.log.Error("could not create lot", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
@@ -189,35 +155,26 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 
-	IDForm := r.FormValue("Id")
-	if IDForm == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("IDForm input is empty")))
-		return
-	}
-	id, err := uuid.Parse(IDForm)
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("could not parse id")))
+	var betLot marketplace.BetLot
+
+	if err := json.NewDecoder(r.Body).Decode(&betLot); err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
 	}
 
-	betAmountForm := r.FormValue("betAmount")
-	if betAmountForm == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("betAmountForm input is empty")))
-		return
-	}
-	betAmount, err := strconv.ParseFloat(betAmountForm, 64)
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("could not parse bet amount")))
+	if betLot.ID.String() == "" {
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("id lot is empty")))
 		return
 	}
 
-	betLot := marketplace.BetLot{
-		ID: id,
-		// TODO: shopperID with token
-		BetAmount: betAmount,
+	if betLot.BetAmount == 0 {
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("bet amount is empty")))
+		return
 	}
 
-	err = controller.marketplace.PlaceBetLot(ctx, betLot)
+	// TODO: shopperID with token
+
+	err := controller.marketplace.PlaceBetLot(ctx, betLot)
 	if err != nil {
 		controller.log.Error("could not place bet lot", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
