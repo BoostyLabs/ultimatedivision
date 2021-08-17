@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { PlayerCard } from '@/app/components/common/PlayerCard';
+import { PlayerCard } from '@components/common/PlayerCard';
 
 import { Link } from 'react-router-dom';
 import { RouteConfig } from '@/app/router';

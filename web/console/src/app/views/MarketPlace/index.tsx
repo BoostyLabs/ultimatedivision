@@ -4,8 +4,8 @@
 import { useSelector } from 'react-redux';
 
 import { MarketPlaceCardsGroup } from '@components/MarketPlacePage/MarketPlaceCardsGroup';
-import { FilterField } from '@/app/components/common/FilterField';
-import { Paginator } from '@/app/components/common/Paginator';
+import { FilterField } from '@components/common/FilterField';
+import { Paginator } from '@components/common/Paginator';
 
 import { RootState } from '@/app/store';
 

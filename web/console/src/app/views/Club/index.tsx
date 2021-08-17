@@ -4,9 +4,9 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 
-import { FilterField } from '@/app/components/common/FilterField';
-import { ClubCardsArea } from '@/app/components/ClubPage/ClubCardsArea';
-import { Paginator } from '@/app/components/common/Paginator';
+import { FilterField } from '@components/common/FilterField';
+import { ClubCardsArea } from '@components/ClubPage/ClubCardsArea';
+import { Paginator } from '@components/common/Paginator';
 
 import './index.scss';
 
