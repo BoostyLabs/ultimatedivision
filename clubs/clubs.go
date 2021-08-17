@@ -55,7 +55,7 @@ type Club struct {
 
 // Squad describes squads of clubs.
 type Squad struct {
-	SquadID   uuid.UUID `json:"id"`
+	SquadID   uuid.UUID `json:"squadId"`
 	Name      string    `json:"name"`
 	ClubID    uuid.UUID `json:"clubId"`
 	Formation Formation `json:"formation"`
@@ -64,7 +64,7 @@ type Squad struct {
 
 // SquadCard defines all cards from squad.
 type SquadCard struct {
-	SquadID   uuid.UUID `json:"id"`
+	SquadID   uuid.UUID `json:"squadId"`
 	CardID    uuid.UUID `json:"cardId"`
 	Position  Position  `json:"position"`
 	CaptainID uuid.UUID `json:"captain"`
