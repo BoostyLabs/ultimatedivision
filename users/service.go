@@ -11,11 +11,13 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/auth"
-	"ultimatedivision/users/userauth"
 )
 
 // ErrUsers indicates that there was an error in the service.
 var ErrUsers = errs.Class("users service error")
+
+// ErrUnauthenticated should be returned when user performs unauthenticated action.
+var ErrUnauthenticated = errs.Class("user unauthenticated error")
 
 // Service is handling users related logic.
 //
@@ -82,7 +84,7 @@ func (service *Service) GetProfile(ctx context.Context) (*Profile, error) {
 
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
-		return nil, userauth.ErrUnauthenticated.Wrap(err)
+		return nil, ErrUnauthenticated.Wrap(err)
 	}
 
 	user, err := service.users.GetByEmail(ctx, claims.Email)
