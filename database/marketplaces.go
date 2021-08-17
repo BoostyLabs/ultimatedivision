@@ -15,13 +15,13 @@ import (
 	"ultimatedivision/marketplace"
 )
 
-// ensures that marketplaceDB implements marketplaces.DB.
+// ensures that marketplaceDB implements marketplace.DB.
 var _ marketplace.DB = (*marketplaceDB)(nil)
 
 // ErrMarketplace indicates that there was an error in the database.
 var ErrMarketplace = errs.Class("marketplace repository error")
 
-// marketplaceDB provides access to marketplaces db.
+// marketplaceDB provides access to marketplace db.
 //
 // architecture: Database
 type marketplaceDB struct {

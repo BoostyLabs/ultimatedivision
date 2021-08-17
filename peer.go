@@ -47,7 +47,7 @@ type DB interface {
 	// LootBoxes provides access to lootboxes db.
 	LootBoxes() lootboxes.DB
 
-	// Marketplace provides access to marketplaces db.
+	// Marketplace provides access to marketplace db.
 	Marketplace() marketplace.DB
 
 	// Close closes underlying db connection.
