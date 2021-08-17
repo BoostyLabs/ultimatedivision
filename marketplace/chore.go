@@ -60,7 +60,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				winLot := WinLot{
 					ID:        lot.ID,
 					ItemID:    lot.ItemID,
-					Type:      TypeCard,
+					Type:      lot.Type,
 					UserID:    lot.UserID,
 					ShopperID: lot.ShopperID,
 					Status:    StatusSold,
