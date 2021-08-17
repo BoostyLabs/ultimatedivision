@@ -148,6 +148,39 @@ func (auth *Auth) RegisterTemplateHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// ChangePassword change users password.
+func (auth *Auth) ChangePassword(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	ctx := r.Context()
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "could not get users form", http.StatusBadRequest)
+		return
+	}
+	password := r.FormValue("password")
+	if password == "" {
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		return
+	}
+	newPassword := r.FormValue("newPassword")
+	if newPassword == "" {
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		return
+	}
+
+	err = auth.userAuth.ChangePassword(ctx, password, newPassword)
+	if err != nil {
+		auth.log.Error("Unable to change password", AuthError.Wrap(err))
+		auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode("success"); err != nil {
+		auth.log.Error("failed to write json response", ErrUsers.Wrap(err))
+		return
+	}
+}
+
 // LoginTemplateHandler is web app http handler function.
 func (auth *Auth) LoginTemplateHandler(w http.ResponseWriter, r *http.Request) {
 	header := w.Header()

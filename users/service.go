@@ -9,6 +9,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/internal/auth"
+	"ultimatedivision/users/userauth"
 )
 
 // ErrUsers indicates that there was an error in the service.
@@ -72,4 +75,25 @@ func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
 // Update updates a users status.
 func (service *Service) Update(ctx context.Context, status int, id uuid.UUID) error {
 	return service.users.Update(ctx, status, id)
+}
+
+// GetProfile returns user profile.
+func (service *Service) GetProfile(ctx context.Context) (*Profile, error) {
+
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		return nil, userauth.ErrUnauthenticated.Wrap(err)
+	}
+
+	user, err := service.users.GetByEmail(ctx, claims.Email)
+	if err != nil {
+		return nil, ErrUsers.Wrap(err)
+	}
+
+	profile := Profile{
+		Email:     user.Email,
+		NickName:  user.NickName,
+		CreatedAt: user.CreatedAt,
+	}
+	return &profile, nil
 }
