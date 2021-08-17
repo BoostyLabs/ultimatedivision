@@ -4,9 +4,10 @@
 import { lazy } from 'react';
 import { Switch } from 'react-router-dom';
 
+const MarketPlace = lazy(() => import('@/app/views/MarketPlace'));
+const Club = lazy(() => import('@/app/views/Club'));
 const FootballerCard = lazy(() => import('@/app/views/FootballerCard'));
 const FootballField = lazy(() => import('@/app/views/FootballField'));
-const MarketPlace = lazy(() => import('@/app/views/MarketPlace'));
 const WhitePaper = lazy(() => import('@/app/views/WhitePaper'));
 const Tokenomics = lazy(() => import('@/app/views/Tokenomics'));
 
@@ -69,9 +70,9 @@ export class RouteConfig {
         FootballField,
         true,
     );
-    public static MyCards: ComponentRoutes = new ComponentRoutes(
+    public static Club: ComponentRoutes = new ComponentRoutes(
         '/club',
-        MarketPlace,
+        Club,
         true,
     );
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
@@ -133,8 +134,8 @@ export class RouteConfig {
         RouteConfig.Default,
         RouteConfig.FootballField,
         RouteConfig.MarketPlace,
+        RouteConfig.Club,
         RouteConfig.FootballerCard,
-        RouteConfig.MyCards,
         RouteConfig.Whitepaper.addChildren([
             RouteConfig.Summary,
             RouteConfig.GameMechanick,

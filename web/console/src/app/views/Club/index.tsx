@@ -2,24 +2,23 @@
 // See LICENSE for copying information.
 
 import { useSelector } from 'react-redux';
-
-import { MarketPlaceCardsGroup } from '@components/MarketPlacePage/MarketPlaceCardsGroup';
-import { FilterField } from '@/app/components/common/FilterField';
-import { Paginator } from '@/app/components/common/Paginator';
-
 import { RootState } from '@/app/store';
+
+import { FilterField } from '@/app/components/common/FilterField';
+import { ClubCardsArea } from '@/app/components/ClubPage/ClubCardsArea';
+import { Paginator } from '@/app/components/common/Paginator';
 
 import './index.scss';
 
-const MarketPlace = () => {
+const Club: React.FC = () => {
     const cards = useSelector((state: RootState) => state.cardReducer);
 
     return (
-        <section className="marketplace">
+        <section className="club">
             <FilterField
-                title="MARKETPLACE"
+                title="My cards"
             />
-            <MarketPlaceCardsGroup
+            <ClubCardsArea
                 cards={cards}
             />
             <Paginator
@@ -28,4 +27,4 @@ const MarketPlace = () => {
     );
 };
 
-export default MarketPlace;
+export default Club;

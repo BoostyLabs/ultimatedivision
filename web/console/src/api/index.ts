@@ -57,6 +57,7 @@ export class APIClient {
      *
      * @private
      */
+    /* eslint-disable-next-line */
     protected async handleError(response: Response): Promise<void> {
         const body = await response.json();
 

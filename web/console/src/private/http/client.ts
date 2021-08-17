@@ -58,6 +58,7 @@ export class HttpClient {
      * @param path
      * @param body serialized JSON
      */
+    /* eslint-disable-next-line */
     private async do(method: string, path: string, body: string | null): Promise<Response> {
         const request: RequestInit = {
             method: method,

@@ -10,7 +10,7 @@ import { Card } from '@/cards';
 
 import './index.scss';
 
-export const MarketPlaceFootballerCard: React.FC<{ card: Card; place?: string }> = ({ card, place }) =>
+export const MarketPlaceFootballerCard: React.FC<{ card: Card; place?: string }> = ({ card }) =>
     <div
         className="marketplace-playerCard"
     >
