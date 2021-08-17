@@ -92,6 +92,23 @@ type Config struct {
 	LotRenewalInterval time.Duration `json:"lotRenewalInterval"`
 }
 
+// CreateLot describes entity for create lot.
+type CreateLot struct {
+	ItemID     uuid.UUID `json:"itemId"`
+	Type       Type      `json:"type"`
+	UserID     uuid.UUID `json:"userId"`
+	StartPrice float64   `json:"startPrice"`
+	MaxPrice   float64   `json:"maxPrice"`
+	Period     Period    `json:"period"`
+}
+
+// BetLot describes entity for place bet lot.
+type BetLot struct {
+	ID        uuid.UUID `json:"id"`
+	ShopperID uuid.UUID `json:"shopperId"`
+	BetAmount float64   `json:"betAmount"`
+}
+
 // WinLot describes the values required to win.
 type WinLot struct {
 	ID        uuid.UUID `json:"id"`
