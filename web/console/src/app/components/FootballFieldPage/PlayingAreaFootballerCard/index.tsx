@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { PlayerCard } from '@/app/components/common/PlayerCard';
+import { PlayerCard } from '@components/common/PlayerCard';
 
 import { Card } from '@/cards';
 import { removeCard } from '@/app/store/reducers/footballField';

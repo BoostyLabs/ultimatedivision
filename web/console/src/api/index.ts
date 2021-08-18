@@ -33,8 +33,8 @@ export class InternalError extends Error {
     }
 }
 const UNAUTORISED_ERROR = 401;
-const BAD_REQUEST_ERROR = 401;
-const INTERNAL_ERROR = 401;
+const BAD_REQUEST_ERROR = 404;
+const INTERNAL_ERROR = 500;
 
 /**
  * APIClient is base client that holds http client and error handler.
@@ -59,14 +59,13 @@ export class APIClient {
      */
     /* eslint-disable-next-line */
     protected async handleError(response: Response): Promise<void> {
-        const body = await response.json();
 
         switch (response.status) {
-        case UNAUTORISED_ERROR: throw new UnauthorizedError(body.error);
-        case BAD_REQUEST_ERROR: throw new BadRequestError(body.error);
+        case UNAUTORISED_ERROR: throw new UnauthorizedError();
+        case BAD_REQUEST_ERROR: throw new BadRequestError();
         case INTERNAL_ERROR:
         default:
-            throw new InternalError(body.error);
+            throw new InternalError();
         }
     }
 }

@@ -48,7 +48,7 @@ export class CardStats {
 }
 
 /** Card base implementation */
-export class Card {
+export class CardDev {
     /** Card fields */
     constructor(
         public id: string,

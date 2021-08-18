@@ -1,19 +1,22 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { MarketPlaceCardsGroup } from '@components/MarketPlacePage/MarketPlaceCardsGroup';
-import { FilterField } from '@/app/components/common/FilterField';
-import { Paginator } from '@/app/components/common/Paginator';
+import { FilterField } from '@components/common/FilterField';
+import { Paginator } from '@components/common/Paginator';
 
 import { RootState } from '@/app/store';
+import { createCardList } from '@/app/store/reducers/marketplace';
 
 import './index.scss';
 
 const MarketPlace = () => {
-    const cards = useSelector((state: RootState) => state.cardReducer);
-
+    const dispatch = useDispatch()
+        dispatch(createCardList())
+    const cards = useSelector((state: RootState) => state.marketplaceReducer);
+    // const cards = getCards(new MarketplaceClient());
     return (
         <section className="marketplace">
             <FilterField

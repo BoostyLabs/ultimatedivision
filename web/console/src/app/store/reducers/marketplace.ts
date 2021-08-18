@@ -1,0 +1,51 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
+import { Card } from '@/cards';
+import { MarketplaceClient } from '@/api/marketplace';
+import { getCards } from '@/app/hooks/getCards';
+import { CardDev } from '@/cards/indexDev';
+import { Dispatch } from 'redux';
+
+const FIRST_CARD_TYPE = 0;
+const SECOND_CARD_TYPE = 1;
+const THIRD_CARD_TYPE = 2;
+const FOURTH_CARD_TYPE = 3;
+const CARDS_AMOUNT = 20;
+
+const GET_CARDS = 'GetCards';
+
+const addCards = (cards: []) => ({
+    type: GET_CARDS,
+    action: cards
+})
+
+/** create list of player cards (implementation for test)*/
+function cardList(count: number): Card[] {
+    const list: Card[] = [];
+    while (count) {
+        list.push(
+            new Card(FIRST_CARD_TYPE),
+            new Card(SECOND_CARD_TYPE),
+            new Card(THIRD_CARD_TYPE),
+            new Card(FOURTH_CARD_TYPE)
+        );
+        count--;
+    }
+
+    return list;
+}
+
+// thunk for creating cards list
+export const createCardList = () => {
+    return async function(dispatch: Dispatch) {
+        const cardsRequest = await getCards(new MarketplaceClient);
+        //@ts-ignore 
+        const listOfCards = cardsRequest.data.map(card => new CardDev(...card));
+        dispatch(addCards(listOfCards));
+    }
+
+}
+
+
+export const marketplaceReducer = (cardState = cardList(CARDS_AMOUNT), action: any = {}) => cardState;
