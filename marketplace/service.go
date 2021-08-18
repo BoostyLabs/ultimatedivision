@@ -37,7 +37,7 @@ func NewService(marketplace DB, users *users.Service, cards *cards.Service) *Ser
 // CreateLot add lot in DB.
 func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) error {
 
-	_, err := auth.GetClaims(ctx)
+	claims, err := auth.GetClaims(ctx)
 	if err != nil {
 		return userauth.ErrUnauthenticated.Wrap(err)
 	}
@@ -60,7 +60,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 		return ErrMarketplace.Wrap(fmt.Errorf("not found item by id"))
 	}
 
-	if _, err := service.users.Get(ctx, createLot.UserID); err != nil {
+	if _, err := service.users.Get(ctx, claims.ID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 
@@ -76,7 +76,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 		ID:         uuid.New(),
 		ItemID:     createLot.ItemID,
 		Type:       createLot.Type,
-		UserID:     createLot.UserID,
+		UserID:     claims.ID,
 		Status:     StatusActive,
 		StartPrice: createLot.StartPrice,
 		MaxPrice:   createLot.MaxPrice,
@@ -90,11 +90,19 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 
 // GetLotByID returns lot by id from DB.
 func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, error) {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return Lot{}, userauth.ErrUnauthenticated.Wrap(err)
+	}
 	return service.marketplace.GetLotByID(ctx, id)
 }
 
 // ListActiveLots returns active lots from DB.
 func (service *Service) ListActiveLots(ctx context.Context) ([]Lot, error) {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return []Lot{}, userauth.ErrUnauthenticated.Wrap(err)
+	}
 	return service.marketplace.ListActiveLots(ctx)
 }
 
@@ -105,12 +113,12 @@ func (service *Service) ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([
 
 // PlaceBetLot checks the amount of money and makes a bet.
 func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
-	_, err := auth.GetClaims(ctx)
+	claims, err := auth.GetClaims(ctx)
 	if err != nil {
 		return userauth.ErrUnauthenticated.Wrap(err)
 	}
 
-	if _, err := service.users.Get(ctx, betLot.ShopperID); err != nil {
+	if _, err := service.users.Get(ctx, claims.ID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 	// TODO: check if the user has the required amount of money.
@@ -130,7 +138,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 	// TODO: update status to `hold` for new user's money.
 	// TODO: unhold old user's money if exist.
 
-	if err := service.UpdateShopperIDLot(ctx, betLot.ID, betLot.ShopperID); err != nil {
+	if err := service.UpdateShopperIDLot(ctx, betLot.ID, claims.ID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 
@@ -144,7 +152,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 			ItemID:    lot.ItemID,
 			Type:      TypeCard,
 			UserID:    lot.UserID,
-			ShopperID: betLot.ShopperID,
+			ShopperID: claims.ID,
 			Status:    StatusSoldBuynow,
 			Amount:    lot.MaxPrice,
 		}
@@ -169,10 +177,6 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 
 // WinLot changes the owner of the item and transfers money.
 func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
 
 	if err := service.UpdateStatusLot(ctx, winLot.ID, winLot.Status); err != nil {
 		return ErrMarketplace.Wrap(err)
@@ -196,36 +200,20 @@ func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
 
 // UpdateShopperIDLot updates shopper id of lot.
 func (service *Service) UpdateShopperIDLot(ctx context.Context, id, shopperID uuid.UUID) error {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
 	return ErrMarketplace.Wrap(service.marketplace.UpdateShopperIDLot(ctx, id, shopperID))
 }
 
 // UpdateStatusLot updates status of lot.
 func (service *Service) UpdateStatusLot(ctx context.Context, id uuid.UUID, status Status) error {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
 	return ErrMarketplace.Wrap(service.marketplace.UpdateStatusLot(ctx, id, status))
 }
 
 // UpdateCurrentPriceLot updates current price of lot.
 func (service *Service) UpdateCurrentPriceLot(ctx context.Context, id uuid.UUID, currentPrice float64) error {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
 	return ErrMarketplace.Wrap(service.marketplace.UpdateCurrentPriceLot(ctx, id, currentPrice))
 }
 
 // UpdateEndTimeLot updates end time of lot.
 func (service *Service) UpdateEndTimeLot(ctx context.Context, id uuid.UUID, endTime time.Time) error {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
 	return ErrMarketplace.Wrap(service.marketplace.UpdateEndTimeLot(ctx, id, endTime))
 }
