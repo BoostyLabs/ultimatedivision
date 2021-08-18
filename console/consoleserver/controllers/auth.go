@@ -150,7 +150,8 @@ func (auth *Auth) RegisterTemplateHandler(w http.ResponseWriter, r *http.Request
 
 // ChangePassword change users password.
 func (auth *Auth) ChangePassword(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Content-Type", "application/json")
+
 	ctx := r.Context()
 	err := r.ParseForm()
 	if err != nil {
