@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/marketplace"
 )
@@ -57,6 +58,13 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.log.Error("user unauthenticated error", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
+		return
+	}
+
 	listActiveLots, err := controller.marketplace.ListActiveLots(ctx)
 	if err != nil {
 		controller.log.Error("could not get active lots list", marketplace.ErrNoLot.Wrap(err))
@@ -75,6 +83,13 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	ctx := r.Context()
 	vars := mux.Vars(r)
 	w.Header().Set("Content-Type", "application/json")
+
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.log.Error("user unauthenticated error", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
+		return
+	}
 
 	if vars["id"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("id parameter is empty")))
@@ -118,8 +133,14 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 
-	var createLot marketplace.CreateLot
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.log.Error("user unauthenticated error", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
+		return
+	}
 
+	var createLot marketplace.CreateLot
 	if err := json.NewDecoder(r.Body).Decode(&createLot); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
@@ -140,10 +161,8 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// TODO: userID with token
-
-	err := controller.marketplace.CreateLot(ctx, createLot)
-	if err != nil {
+	createLot.UserID = claims.ID
+	if err := controller.marketplace.CreateLot(ctx, createLot); err != nil {
 		controller.log.Error("could not create lot", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
@@ -155,8 +174,14 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 
-	var betLot marketplace.BetLot
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.log.Error("user unauthenticated error", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
+		return
+	}
 
+	var betLot marketplace.BetLot
 	if err := json.NewDecoder(r.Body).Decode(&betLot); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
@@ -172,10 +197,8 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// TODO: shopperID with token
-
-	err := controller.marketplace.PlaceBetLot(ctx, betLot)
-	if err != nil {
+	betLot.ShopperID = claims.ID
+	if err := controller.marketplace.PlaceBetLot(ctx, betLot); err != nil {
 		controller.log.Error("could not place bet lot", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
