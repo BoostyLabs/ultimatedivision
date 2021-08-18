@@ -5,7 +5,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -60,6 +59,8 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 
 	listActiveLots, err := controller.marketplace.ListActiveLots(ctx)
 	if err != nil {
+		controller.log.Error("could not get active lots list", ErrMarketplace.Wrap(err))
+
 		if userauth.ErrUnauthenticated.Has(err) {
 			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
 			return
@@ -70,7 +71,6 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		controller.log.Error("could not get active lots list", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}
@@ -88,7 +88,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Type", "application/json")
 
 	if vars["id"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("id parameter is empty")))
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("id parameter is empty"))
 		return
 	}
 
@@ -100,6 +100,8 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 
 	lot, err := controller.marketplace.GetLotByID(ctx, id)
 	if err != nil {
+		controller.log.Error("could not get lot", ErrMarketplace.Wrap(err))
+
 		if userauth.ErrUnauthenticated.Has(err) {
 			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
 			return
@@ -110,7 +112,6 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		controller.log.Error("could not get lot", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}
@@ -146,27 +147,28 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 	}
 
 	if createLot.ItemID.String() == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("item id is empty")))
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("item id is empty"))
 		return
 	}
 
 	if createLot.StartPrice == 0 {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("start price is empty")))
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("start price is empty"))
 		return
 	}
 
 	if createLot.Period == 0 {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("period is empty")))
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("period is empty"))
 		return
 	}
 
 	if err := controller.marketplace.CreateLot(ctx, createLot); err != nil {
+		controller.log.Error("could not create lot", ErrMarketplace.Wrap(err))
+
 		if userauth.ErrUnauthenticated.Has(err) {
 			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
 			return
 		}
 
-		controller.log.Error("could not create lot", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}
@@ -184,22 +186,23 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 	}
 
 	if betLot.ID.String() == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("id lot is empty")))
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("id lot is empty"))
 		return
 	}
 
 	if betLot.BetAmount == 0 {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(fmt.Errorf("bet amount is empty")))
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("bet amount is empty"))
 		return
 	}
 
 	if err := controller.marketplace.PlaceBetLot(ctx, betLot); err != nil {
+		controller.log.Error("could not place bet lot", ErrMarketplace.Wrap(err))
+
 		if userauth.ErrUnauthenticated.Has(err) {
 			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
 			return
 		}
 
-		controller.log.Error("could not place bet lot", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}

@@ -220,7 +220,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Service,
 			peer.Cards.Service,
 		)
-
 	}
 
 	{ // admin setup
