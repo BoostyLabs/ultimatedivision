@@ -179,5 +179,4 @@ func compareLot(t *testing.T, lot1, lot2 marketplace.Lot) {
 	assert.WithinDuration(t, lot1.StartTime, lot2.StartTime, 1*time.Second)
 	assert.WithinDuration(t, lot1.EndTime, lot2.EndTime, 1*time.Second)
 	assert.Equal(t, lot1.Period, lot2.Period)
-
 }

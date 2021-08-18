@@ -5,7 +5,6 @@ package marketplace
 
 import (
 	"context"
-	sync2 "sync"
 
 	"github.com/zeebo/errs"
 
@@ -24,12 +23,9 @@ var (
 //
 // architecture: Chore
 type Chore struct {
-	log logger.Logger
-
+	log     logger.Logger
 	service *Service
 	Loop    *sync.Cycle
-
-	Mutex sync2.Mutex
 }
 
 // NewChore instantiates Chore.
