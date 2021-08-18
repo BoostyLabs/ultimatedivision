@@ -49,6 +49,11 @@ func (service *Service) Create(ctx context.Context) error {
 
 // CreateSquad creates new squad for club.
 func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return userauth.ErrUnauthenticated.Wrap(err)
+	}
+
 	newSquad := Squad{
 		ID:     uuid.New(),
 		ClubID: clubID,
@@ -59,26 +64,51 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error
 
 // Add add new card to the squad of the club.
 func (service *Service) Add(ctx context.Context, newSquadCard SquadCard) error {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return userauth.ErrUnauthenticated.Wrap(err)
+	}
+
 	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, newSquadCard))
 }
 
 // Delete deletes card from squad.
 func (service *Service) Delete(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return userauth.ErrUnauthenticated.Wrap(err)
+	}
+
 	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, squadID, cardID))
 }
 
 // UpdateSquad updates tactic and formation of the squad.
 func (service *Service) UpdateSquad(ctx context.Context, updatedSquad Squad) error {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return userauth.ErrUnauthenticated.Wrap(err)
+	}
+
 	return ErrClubs.Wrap(service.clubs.UpdateTacticFormationCaptain(ctx, updatedSquad))
 }
 
 // UpdateCardPosition updates position of card in the squad.
 func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, position Position) error {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return userauth.ErrUnauthenticated.Wrap(err)
+	}
+
 	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, squadID, cardID, position))
 }
 
 // GetSquad returns all squads from club.
 func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, []SquadCard, error) {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return Squad{}, nil,userauth.ErrUnauthenticated.Wrap(err)
+	}
+
 	squad, err := service.clubs.GetSquad(ctx, clubID)
 	if err != nil {
 		return Squad{}, nil, ErrClubs.Wrap(err)
