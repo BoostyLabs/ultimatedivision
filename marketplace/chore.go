@@ -34,7 +34,6 @@ type Chore struct {
 
 // NewChore instantiates Chore.
 func NewChore(log logger.Logger, config Config, marketplace DB, users *users.Service, cards *cards.Service) *Chore {
-
 	return &Chore{
 		log: log,
 		service: NewService(
@@ -49,7 +48,6 @@ func NewChore(log logger.Logger, config Config, marketplace DB, users *users.Ser
 // Run starts the chore.
 func (chore *Chore) Run(ctx context.Context) (err error) {
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
-		chore.Mutex.Lock()
 		lots, err := chore.service.ListActiveLotsWhereEndTimeLTENow(ctx)
 
 		// TODO: the transaction may be required for all operations.
@@ -71,7 +69,6 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
-
 			} else {
 				err := chore.service.UpdateStatusLot(ctx, lot.ID, StatusExpired)
 				if err != nil {
@@ -82,14 +79,10 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					if err := chore.service.cards.UpdateStatus(ctx, lot.ItemID, cards.StatusActive); err != nil {
 						return ErrMarketplace.Wrap(err)
 					}
-
 				}
 				// TODO: check other items
 			}
 		}
-
-		chore.Mutex.Unlock()
-
 		return ChoreError.Wrap(err)
 	})
 }

@@ -27,7 +27,7 @@ type DB interface {
 	GetLotByID(ctx context.Context, id uuid.UUID) (Lot, error)
 	// ListActiveLots returns active lots from the data base.
 	ListActiveLots(ctx context.Context) ([]Lot, error)
-	// ListActiveLotsWhereEndTimeLTENow returns active lots where end time tower than or equal to time now UTC from the data base.
+	// ListActiveLotsWhereEndTimeLTENow returns active lots where end time lower than or equal to time now UTC from the data base.
 	ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([]Lot, error)
 	// UpdateShopperIDLot updates shopper id of lot in the database.
 	UpdateShopperIDLot(ctx context.Context, id, shopperID uuid.UUID) error

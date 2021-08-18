@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/users"
 )
 
@@ -34,6 +35,11 @@ func NewService(marketplace DB, users *users.Service, cards *cards.Service) *Ser
 
 // CreateLot add lot in DB.
 func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) error {
+
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
 
 	card, err := service.cards.Get(ctx, createLot.ItemID)
 	if err == nil {
@@ -78,7 +84,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 		Period:     createLot.Period,
 	}
 
-	return service.marketplace.CreateLot(ctx, lot)
+	return ErrMarketplace.Wrap(service.marketplace.CreateLot(ctx, lot))
 }
 
 // GetLotByID returns lot by id from DB.
@@ -98,6 +104,11 @@ func (service *Service) ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([
 
 // PlaceBetLot checks the amount of money and makes a bet.
 func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+
 	if _, err := service.users.Get(ctx, betLot.ShopperID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
@@ -108,49 +119,48 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 		return ErrMarketplace.Wrap(err)
 	}
 
-	if betLot.BetAmount > lot.CurrentPrice {
-		/** TODO: the transaction may be required for all operations,
-		so that an error in the middle does not lead to an unwanted result in the database. **/
+	if betLot.BetAmount < lot.CurrentPrice {
+		return ErrMarketplace.Wrap(fmt.Errorf("not enough money"))
+	}
 
-		// TODO: update status to `hold` for new user's money.
-		// TODO: unhold old user's money if exist.
+	/** TODO: the transaction may be required for all operations,
+	so that an error in the middle does not lead to an unwanted result in the database. **/
 
-		if err := service.UpdateShopperIDLot(ctx, betLot.ID, betLot.ShopperID); err != nil {
+	// TODO: update status to `hold` for new user's money.
+	// TODO: unhold old user's money if exist.
+
+	if err := service.UpdateShopperIDLot(ctx, betLot.ID, betLot.ShopperID); err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+
+	if betLot.BetAmount >= lot.MaxPrice || lot.MaxPrice != 0 {
+		if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, lot.MaxPrice); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
-		if betLot.BetAmount >= lot.MaxPrice || lot.MaxPrice != 0 {
-			if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, lot.MaxPrice); err != nil {
-				return ErrMarketplace.Wrap(err)
-			}
+		winLot := WinLot{
+			ID:        betLot.ID,
+			ItemID:    lot.ItemID,
+			Type:      TypeCard,
+			UserID:    lot.UserID,
+			ShopperID: betLot.ShopperID,
+			Status:    StatusSoldBuynow,
+			Amount:    lot.MaxPrice,
+		}
 
-			winLot := WinLot{
-				ID:        betLot.ID,
-				ItemID:    lot.ItemID,
-				Type:      TypeCard,
-				UserID:    lot.UserID,
-				ShopperID: betLot.ShopperID,
-				Status:    StatusSoldBuynow,
-				Amount:    lot.MaxPrice,
-			}
-
-			if err := service.WinLot(ctx, winLot); err != nil {
-				return ErrMarketplace.Wrap(err)
-			}
-
-		} else {
-			if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, betLot.BetAmount); err != nil {
-				return ErrMarketplace.Wrap(err)
-			}
-			if lot.EndTime.Sub(time.Now().UTC()) < time.Minute {
-				if err := service.UpdateEndTimeLot(ctx, betLot.ID, time.Now().UTC().Add(time.Minute)); err != nil {
-					return ErrMarketplace.Wrap(err)
-				}
-			}
+		if err := service.WinLot(ctx, winLot); err != nil {
+			return ErrMarketplace.Wrap(err)
 		}
 
 	} else {
-		return ErrMarketplace.Wrap(fmt.Errorf("not enough money"))
+		if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, betLot.BetAmount); err != nil {
+			return ErrMarketplace.Wrap(err)
+		}
+		if lot.EndTime.Sub(time.Now().UTC()) < time.Minute {
+			if err := service.UpdateEndTimeLot(ctx, betLot.ID, time.Now().UTC().Add(time.Minute)); err != nil {
+				return ErrMarketplace.Wrap(err)
+			}
+		}
 	}
 
 	return nil
@@ -158,6 +168,11 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 
 // WinLot changes the owner of the item and transfers money.
 func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+
 	if err := service.UpdateStatusLot(ctx, winLot.ID, winLot.Status); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
@@ -180,20 +195,36 @@ func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
 
 // UpdateShopperIDLot updates shopper id of lot.
 func (service *Service) UpdateShopperIDLot(ctx context.Context, id, shopperID uuid.UUID) error {
-	return service.marketplace.UpdateShopperIDLot(ctx, id, shopperID)
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+	return ErrMarketplace.Wrap(service.marketplace.UpdateShopperIDLot(ctx, id, shopperID))
 }
 
 // UpdateStatusLot updates status of lot.
 func (service *Service) UpdateStatusLot(ctx context.Context, id uuid.UUID, status Status) error {
-	return service.marketplace.UpdateStatusLot(ctx, id, status)
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+	return ErrMarketplace.Wrap(service.marketplace.UpdateStatusLot(ctx, id, status))
 }
 
 // UpdateCurrentPriceLot updates current price of lot.
 func (service *Service) UpdateCurrentPriceLot(ctx context.Context, id uuid.UUID, currentPrice float64) error {
-	return service.marketplace.UpdateCurrentPriceLot(ctx, id, currentPrice)
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+	return ErrMarketplace.Wrap(service.marketplace.UpdateCurrentPriceLot(ctx, id, currentPrice))
 }
 
 // UpdateEndTimeLot updates end time of lot.
 func (service *Service) UpdateEndTimeLot(ctx context.Context, id uuid.UUID, endTime time.Time) error {
-	return service.marketplace.UpdateEndTimeLot(ctx, id, endTime)
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+	return ErrMarketplace.Wrap(service.marketplace.UpdateEndTimeLot(ctx, id, endTime))
 }

@@ -19,7 +19,6 @@ import (
 )
 
 func TestMarketplace(t *testing.T) {
-
 	lot1 := marketplace.Lot{
 		ID:           uuid.New(),
 		ItemID:       uuid.New(),
