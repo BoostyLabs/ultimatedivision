@@ -5,7 +5,6 @@ package marketplace
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -43,8 +42,12 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 
 	card, err := service.cards.Get(ctx, createLot.ItemID)
 	if err == nil {
+		if card.UserID != claims.ID {
+			return ErrMarketplace.New("it is not the user's card")
+		}
+
 		if card.Status == cards.StatusSale {
-			return ErrMarketplace.Wrap(fmt.Errorf("the card is already on sale"))
+			return ErrMarketplace.New("the card is already on sale")
 		}
 
 		if err := service.cards.UpdateStatus(ctx, createLot.ItemID, cards.StatusSale); err != nil {
@@ -56,7 +59,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 	// TODO: check other items
 
 	if createLot.Type == "" {
-		return ErrMarketplace.Wrap(fmt.Errorf("not found item by id"))
+		return ErrMarketplace.New("not found item by id")
 	}
 
 	if _, err := service.users.Get(ctx, claims.ID); err != nil {
@@ -64,11 +67,11 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 	}
 
 	if createLot.MaxPrice != 0 || createLot.MaxPrice < createLot.StartPrice {
-		return ErrMarketplace.Wrap(fmt.Errorf("max price less start price"))
+		return ErrMarketplace.New("max price less start price")
 	}
 
 	if createLot.Period < MinPeriod && createLot.Period < MaxPeriod {
-		return ErrMarketplace.Wrap(fmt.Errorf("period exceed the range from 1 to 120 hours"))
+		return ErrMarketplace.New("period exceed the range from 1 to 120 hours")
 	}
 
 	lot := Lot{
@@ -128,7 +131,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 	}
 
 	if betLot.BetAmount < lot.CurrentPrice {
-		return ErrMarketplace.Wrap(fmt.Errorf("not enough money"))
+		return ErrMarketplace.New("not enough money")
 	}
 
 	/** TODO: the transaction may be required for all operations,
