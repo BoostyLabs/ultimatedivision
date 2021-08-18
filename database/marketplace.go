@@ -112,7 +112,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context) ([]marke
 	return lots, nil
 }
 
-// ListActiveLotsWhereEndTimeLTENow returns active lots from the data base.
+// ListActiveLotsWhereEndTimeLTENow returns active lots where end time lower than or equal to time now UTC from the data base.
 func (marketplaceDB *marketplaceDB) ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([]marketplace.Lot, error) {
 	query :=
 		`SELECT 
