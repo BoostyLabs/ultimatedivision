@@ -73,8 +73,8 @@ func (service *Service) UpdateSquad(ctx context.Context, updatedSquad Squad) err
 }
 
 // UpdateCardPosition updates position of card in the squad.
-func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, position Position) error {
-	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, squadID, cardID, position))
+func (service *Service) UpdateCardPosition(ctx context.Context, squadCard SquadCard) error {
+	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, squadCard.SquadID, squadCard.CardID, squadCard.Position))
 }
 
 // GetSquad returns all squads from club.

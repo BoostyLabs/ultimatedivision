@@ -159,7 +159,7 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err := controller.clubs.UpdateCardPosition(ctx, squadCard.SquadID, squadCard.CardID, squadCard.Position)
+	err := controller.clubs.UpdateCardPosition(ctx, squadCard)
 	if err != nil {
 		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
 
