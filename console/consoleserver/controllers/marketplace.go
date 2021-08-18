@@ -67,8 +67,12 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 
 	listActiveLots, err := controller.marketplace.ListActiveLots(ctx)
 	if err != nil {
-		controller.log.Error("could not get active lots list", marketplace.ErrNoLot.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, marketplace.ErrNoLot.Wrap(err))
+		if marketplace.ErrNoLot.Has(err) {
+			controller.serveError(w, http.StatusNotFound, ErrMarketplace.Wrap(err))
+			return
+		}
+		controller.log.Error("could not get active lots list", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}
 
@@ -104,8 +108,12 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 
 	lot, err := controller.marketplace.GetLotByID(ctx, id)
 	if err != nil {
-		controller.log.Error("could not get lot", marketplace.ErrNoLot.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, marketplace.ErrNoLot.Wrap(err))
+		if marketplace.ErrNoLot.Has(err) {
+			controller.serveError(w, http.StatusNotFound, ErrMarketplace.Wrap(err))
+			return
+		}
+		controller.log.Error("could not get lot", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}
 
