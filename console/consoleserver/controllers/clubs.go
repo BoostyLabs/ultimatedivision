@@ -61,7 +61,7 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 	idParam := params["clubId"]
 
 	if idParam == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(errs.New("empty id parameter")))
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
 	}
 
@@ -148,21 +148,14 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	var updatedSquad UpdateRequest
+	var updatedSquad clubs.Squad
 
 	if err := json.NewDecoder(r.Body).Decode(&updatedSquad); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
-	err := controller.clubs.UpdateSquad(ctx, updatedSquad.ID, updatedSquad.Tactic, updatedSquad.Formation)
-	if err != nil {
-		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
-		return
-	}
-
-	err = controller.clubs.UpdateCaptain(ctx, updatedSquad.ID, updatedSquad.Captain)
+	err := controller.clubs.UpdateSquad(ctx, updatedSquad)
 	if err != nil {
 		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))

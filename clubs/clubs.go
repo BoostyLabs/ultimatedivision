@@ -37,10 +37,8 @@ type DB interface {
 	AddSquadCard(ctx context.Context, squadCards SquadCard) error
 	// DeleteSquadCard deletes card from squad.
 	DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error
-	// UpdateTacticFormation updates tactic and formation in the squad.
-	UpdateTacticFormation(ctx context.Context, squad Squad) error
-	// UpdateCaptain updates captain in the squad.
-	UpdateCaptain(ctx context.Context, capitanID uuid.UUID, squadID uuid.UUID) error
+	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
+	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
 	// UpdatePosition updates position of card in the squad.
 	UpdatePosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition Position) error
 }
@@ -55,19 +53,19 @@ type Club struct {
 
 // Squad describes squads of clubs.
 type Squad struct {
-	SquadID   uuid.UUID `json:"squadId"`
-	Name      string    `json:"name"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"-"`
 	ClubID    uuid.UUID `json:"clubId"`
 	Formation Formation `json:"formation"`
 	Tactic    Tactic    `json:"tactic"`
+	CaptainID uuid.UUID `json:"captainId"`
 }
 
 // SquadCard defines all cards from squad.
 type SquadCard struct {
-	SquadID   uuid.UUID `json:"squadId"`
-	CardID    uuid.UUID `json:"cardId"`
-	Position  Position  `json:"position"`
-	CaptainID uuid.UUID `json:"captain"`
+	SquadID  uuid.UUID `json:"squadId"`
+	CardID   uuid.UUID `json:"cardId"`
+	Position Position  `json:"position"`
 }
 
 // Formation defines a list of possible formations.
