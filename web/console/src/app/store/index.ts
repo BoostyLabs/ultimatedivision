@@ -6,10 +6,12 @@ import thunk from 'redux-thunk';
 
 import { marketplaceReducer } from '@/app/store/reducers/marketplace';
 import { fieldReducer } from '@/app/store/reducers/footballField';
+import { ClubReducer } from '@/app/store/reducers/club';
 
 const reducer = combineReducers({
     marketplaceReducer,
     fieldReducer,
+    ClubReducer,
 });
 
 export const store = createStore(reducer, applyMiddleware(thunk));
