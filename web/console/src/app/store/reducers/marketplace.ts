@@ -50,16 +50,16 @@ export const createCardList = () => async function(dispatch: Dispatch) {
 };
 
 // to do: add switch case for reducer when api will be done
-export const marketplaceReducer = (cardState = cardList, action: any = {}) => {
-    /**will be enabled when api will be returning list of cards */
-    // switch (action.type) {
-    // case GET_CARDS:
-    //     cardState = action.action;
-    //     break;
-    // default:
-    //     break;
-    // }
+export const marketplaceReducer = (cardState = cardList, action: any = {}) =>
+/** will be enabled when api will be returning list of cards */
+// switch (action.type) {
+// case GET_CARDS:
+//     cardState = action.action;
+//     break;
+// default:
+//     break;
+// }
 
-    //@ts-ignore
-    return [...cardState];
-};
+    // @ts-ignore
+    [...cardState];
+
