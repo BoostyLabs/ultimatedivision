@@ -3,12 +3,12 @@
 
 import { APIClient } from '@/api/index';
 
+/** MarketplaceClient base implementation */
 export class MarketplaceClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/cards';
 
+    /** method calls get method from APIClient */
     public async getCards() {
-        return this.http.get(this.ROOT_PATH);
+        return await this.http.get(this.ROOT_PATH);
     }
 }
-
-

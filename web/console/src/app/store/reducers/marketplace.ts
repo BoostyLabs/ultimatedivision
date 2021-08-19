@@ -17,8 +17,8 @@ const GET_CARDS = 'GetCards';
 
 const addCards = (cards: []) => ({
     type: GET_CARDS,
-    action: cards
-})
+    action: cards,
+});
 
 /** create list of player cards (implementation for test)*/
 function cardList(count: number): Card[] {
@@ -37,15 +37,12 @@ function cardList(count: number): Card[] {
 }
 
 // thunk for creating cards list
-export const createCardList = () => {
-    return async function(dispatch: Dispatch) {
-        const cardsRequest = await getCards(new MarketplaceClient);
-        //@ts-ignore 
-        const listOfCards = cardsRequest.data.map(card => new CardDev(...card));
-        dispatch(addCards(listOfCards));
-    }
+export const createCardList = () => async function(dispatch: Dispatch) {
+    const cardsRequest = await getCards(new MarketplaceClient);
+    // @ts-ignore
+    const listOfCards = cardsRequest.data.map(card => new CardDev(...card));
+    dispatch(addCards(listOfCards));
+};
 
-}
-
-
+// to do: add switch case for reducer when api will be done
 export const marketplaceReducer = (cardState = cardList(CARDS_AMOUNT), action: any = {}) => cardState;

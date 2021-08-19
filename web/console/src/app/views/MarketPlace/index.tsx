@@ -13,10 +13,10 @@ import { createCardList } from '@/app/store/reducers/marketplace';
 import './index.scss';
 
 const MarketPlace = () => {
-    const dispatch = useDispatch()
-        dispatch(createCardList())
+    const dispatch = useDispatch();
+    dispatch(createCardList());
     const cards = useSelector((state: RootState) => state.marketplaceReducer);
-    // const cards = getCards(new MarketplaceClient());
+
     return (
         <section className="marketplace">
             <FilterField
