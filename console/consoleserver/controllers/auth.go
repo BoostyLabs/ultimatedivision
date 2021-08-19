@@ -155,17 +155,17 @@ func (auth *Auth) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, "could not get users form", http.StatusBadRequest)
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(errs.New("could not get users form")))
 		return
 	}
 	password := r.FormValue("password")
 	if password == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("password is empty"))
 		return
 	}
 	newPassword := r.FormValue("newPassword")
 	if newPassword == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("password is empty"))
 		return
 	}
 

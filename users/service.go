@@ -81,7 +81,6 @@ func (service *Service) Update(ctx context.Context, status int, id uuid.UUID) er
 
 // GetProfile returns user profile.
 func (service *Service) GetProfile(ctx context.Context) (*Profile, error) {
-
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
 		return nil, ErrUnauthenticated.Wrap(err)

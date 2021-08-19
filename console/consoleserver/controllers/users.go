@@ -41,13 +41,28 @@ func (controller *Users) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	profile, err := controller.users.GetProfile(ctx)
 	if err != nil {
-		controller.log.Error("could not get users profile", ErrUsers.Wrap(err))
-		http.Error(w, "could not get users profile", http.StatusInternalServerError)
+		controller.serveError(w, http.StatusInternalServerError, ErrUsers.Wrap(errs.New("could not get users profile")))
 		return
 	}
 
 	if err = json.NewEncoder(w).Encode(profile); err != nil {
 		controller.log.Error("failed to write json response", ErrUsers.Wrap(err))
 		return
+	}
+}
+
+// serveError replies to request with specific code and error.
+func (controller *Users) serveError(w http.ResponseWriter, status int, err error) {
+	w.WriteHeader(status)
+
+	var response struct {
+		Error string `json:"error"`
+	}
+
+	response.Error = err.Error()
+
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		controller.log.Error("failed to write json error response", AuthError.Wrap(err))
 	}
 }

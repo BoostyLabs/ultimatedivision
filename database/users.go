@@ -136,9 +136,5 @@ func (usersDB *usersDB) Update(ctx context.Context, status int, id uuid.UUID) er
 // UpdatePassword updates a password in the database.
 func (usersDB *usersDB) UpdatePassword(ctx context.Context, passwordHash []byte, id uuid.UUID) error {
 	_, err := usersDB.conn.QueryContext(ctx, "UPDATE users SET password=$1 WHERE id=$2", passwordHash, id)
-	if err != nil {
-		return ErrUsers.Wrap(err)
-	}
-
-	return nil
+	return ErrUsers.Wrap(err)
 }

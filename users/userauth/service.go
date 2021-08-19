@@ -248,5 +248,5 @@ func (service *Service) ChangePassword(ctx context.Context, password, newPasswor
 		return Error.Wrap(err)
 	}
 
-	return service.users.UpdatePassword(ctx, user.PasswordHash, user.ID)
+	return Error.Wrap(service.users.UpdatePassword(ctx, user.PasswordHash, user.ID))
 }

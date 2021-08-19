@@ -83,8 +83,8 @@ type CreateUserFields struct {
 // Profile for user profile.
 type Profile struct {
 	Email     string    `json:"email"`
-	NickName  string    `json:"nick_name"`
-	CreatedAt time.Time `json:"register_date"`
+	NickName  string    `json:"nickName"`
+	CreatedAt time.Time `json:"registerDate"`
 }
 
 // IsPasswordValid check the password for all conditions.
