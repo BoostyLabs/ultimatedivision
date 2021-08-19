@@ -11,6 +11,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/auth"
+	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
 
@@ -22,6 +23,7 @@ var ErrClubs = errs.Class("clubs service error")
 // architecture: Service
 type Service struct {
 	clubs DB
+	users users.Service
 }
 
 // NewService is a constructor for clubs service.
@@ -38,9 +40,15 @@ func (service *Service) Create(ctx context.Context) error {
 		return userauth.ErrUnauthenticated.Wrap(err)
 	}
 
+	nickname, err := service.users.GetNickNameByID(ctx, claims.ID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
 	newClub := Club{
 		ID:        uuid.New(),
 		OwnerID:   claims.ID,
+		Name:      nickname,
 		CreatedAt: time.Now().UTC(),
 	}
 
