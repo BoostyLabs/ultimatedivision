@@ -150,12 +150,12 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 	// check if the user email address already exists.
 	_, err := service.users.GetByEmail(ctx, email)
 	if err == nil {
-		return Error.Wrap(errs.New("This email address is already in use."))
+		return Error.New("This email address is already in use.")
 	}
 
 	// check the password is valid.
 	if !users.IsPasswordValid(password) {
-		return Error.Wrap(errs.New("The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character."))
+		return Error.New("The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character.")
 	}
 
 	user := users.User{

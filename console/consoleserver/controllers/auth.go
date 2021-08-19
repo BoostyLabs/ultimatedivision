@@ -155,7 +155,7 @@ func (auth *Auth) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	err := r.ParseForm()
 	if err != nil {
-		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(errs.New("could not get users form")))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("could not get users form"))
 		return
 	}
 	password := r.FormValue("password")

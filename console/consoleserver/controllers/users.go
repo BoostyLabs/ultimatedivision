@@ -37,11 +37,13 @@ func NewUsers(log logger.Logger, users *users.Service) *Users {
 
 // GetProfile returns the current user profile with all relevant information.
 func (controller *Users) GetProfile(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	ctx := r.Context()
 
 	profile, err := controller.users.GetProfile(ctx)
 	if err != nil {
-		controller.serveError(w, http.StatusInternalServerError, ErrUsers.Wrap(errs.New("could not get users profile")))
+		controller.serveError(w, http.StatusInternalServerError, ErrUsers.New("could not get users profile"))
 		return
 	}
 
