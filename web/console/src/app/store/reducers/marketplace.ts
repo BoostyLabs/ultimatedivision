@@ -60,5 +60,6 @@ export const marketplaceReducer = (cardState = cardList, action: any = {}) => {
     //     break;
     // }
 
+    //@ts-ignore
     return [...cardState];
 };

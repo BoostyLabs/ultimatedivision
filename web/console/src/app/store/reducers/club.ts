@@ -33,5 +33,6 @@ export const ClubReducer = (cardState = cardList, action: any = {}) => {
         break;
     }
 
+    //@ts-ignore
     return [...cardState];
 };
