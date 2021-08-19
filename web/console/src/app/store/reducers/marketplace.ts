@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { Card } from '@/cards';
-import { MarketplaceClient } from '@/api/marketplace';
+import { Marketplace } from '@/marketplace/service';
 import { getCards } from '@/app/hooks/getCards';
 import { CardDev } from '@/cards/indexDev';
 import { Dispatch } from 'redux';
@@ -42,24 +42,24 @@ const cardList = cardListCreator(CARDS_AMOUNT);
 // const cardList: CardDev[] = [];
 
 // thunk for creating cards list
-export const createCardList = () => async function (dispatch: Dispatch) {
-    const cardsRequest = await getCards(new MarketplaceClient());
+export const createCardList = () => async function(dispatch: Dispatch) {
+    const cardsRequest = await getCards(new Marketplace());
     // @ts-ignore
     const listOfCards = cardsRequest.data.map(card => new CardDev(...card));
     dispatch(addCards(listOfCards));
 };
 
 // to do: add switch case for reducer when api will be done
-export const marketplaceReducer = (cardState = cardList, action: any = {}) => {
-    /** will be enabled when api will be returning list of cards */
-    // switch (action.type) {
-    // case GET_CARDS:
-    //     cardState = action.action;
-    //     break;
-    // default:
-    //     break;
-    // }
+export const marketplaceReducer = (cardState = cardList, action: any = {}) =>
+/** will be enabled when api will be returning list of cards */
+// switch (action.type) {
+// case GET_CARDS:
+//     cardState = action.action;
+//     break;
+// default:
+//     break;
+// }
 
     // @ts-ignore
-    return [...cardState];
-}
+    [...cardState];
+

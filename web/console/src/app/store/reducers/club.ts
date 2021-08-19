@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { ClubClient } from '@/api/club';
+import { Club } from '@/club/service';
 import { getCards } from '@/app/hooks/getCards';
 import { CardDev } from '@/cards/indexDev';
 import { Dispatch } from 'redux';
@@ -13,12 +13,11 @@ const addCards = (cards: CardDev[]) => ({
     action: cards,
 });
 
-
 const cardList: CardDev[] = [];
 
 // thunk for creating cards list
 export const createCardList = () => async function(dispatch: Dispatch) {
-    const cardsRequest = await getCards(new ClubClient());
+    const cardsRequest = await getCards(new Club());
     // @ts-ignore
     const listOfCards = cardsRequest.data.map(card => new CardDev(...card));
     dispatch(addCards(listOfCards));

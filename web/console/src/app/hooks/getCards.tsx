@@ -2,11 +2,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { ClubClient } from '@/api/club';
-import { MarketplaceClient } from '@/api/marketplace';
+import { Club } from '@/club/service';
+import { Marketplace } from '@/marketplace/service';
 import { useEffect, useState } from 'react';
 
-export const getCards = (client: MarketplaceClient | ClubClient) => {
+export const getCards = (client: Marketplace | Club) => {
     const [response, handleResponse] = useState({ data: null, isLoading: true });
 
     /** Calls metgod get from MarketplaceClient | ClubClient */
