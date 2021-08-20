@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Portal | Update Lootbox</title>
+</head>
+<body>
+<form action="/lootboxes/update/{{.ID}}" method="post">
+    <table>
+        <tr>
+            <td>
+                Name:
+            </td>
+            <td>
+                <input type="text" name="name">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Cost:
+            </td>
+            <td>
+                <input type="text" name="cost">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Cards number:
+            </td>
+            <td>
+                <input type="text" name="cards_num">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Wood probabilities:
+            </td>
+            <td>
+                <input type="text" name="wood">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Silver probabilities:
+            </td>
+            <td>
+                <input type="text" name="silver">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Gold probabilities:
+            </td>
+            <td>
+                <input type="text" name="gold">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Diamond probabilities:
+            </td>
+            <td>
+                <input type="text" name="diamond">
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Update">
+</form>
+</body>
+</html>
