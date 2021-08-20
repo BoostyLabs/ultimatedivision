@@ -4,14 +4,12 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
-import { marketplaceReducer } from '@/app/store/reducers/marketplace';
+import { cardsReducer } from '@/app/store/reducers/cards';
 import { fieldReducer } from '@/app/store/reducers/footballField';
-import { ClubReducer } from '@/app/store/reducers/club';
 
 const reducer = combineReducers({
-    marketplaceReducer,
+    cardsReducer,
     fieldReducer,
-    ClubReducer,
 });
 
 export const store = createStore(reducer, applyMiddleware(thunk));
