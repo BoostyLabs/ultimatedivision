@@ -47,7 +47,6 @@ func NewMarketplace(log logger.Logger, marketplace *marketplace.Service, templat
 // List is an endpoint that will provide a web page with active lots.
 func (controller *Marketplace) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	w.Header().Set("Content-Type", "application/json")
 
 	lots, err := controller.marketplace.ListActiveLots(ctx)
 	if err != nil {
