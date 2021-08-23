@@ -84,7 +84,7 @@ type Config struct {
 	} `json:"cards"`
 
 	LootBoxes struct {
-		Config lootboxes.Config `json:"regular"`
+		Config lootboxes.Config `json:"lootBoxes"`
 	} `json:"lootBoxes"`
 
 	Marketplace struct {
@@ -255,6 +255,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Console.Listener,
 			peer.Cards.Service,
 			peer.LootBoxes.Service,
+			peer.Clubs.Service,
 		)
 
 		from, err := mail.ParseAddress(config.Console.Emails.From)
