@@ -20,7 +20,6 @@ import (
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
-	"ultimatedivision/marketplace"
 	"ultimatedivision/users/userauth"
 )
 
@@ -55,7 +54,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplace *marketplace.Service) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service) *Server {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -65,7 +64,6 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
 	cardsController := controllers.NewCards(log, cards)
 	lootBoxesController := controllers.NewLootBoxes(log, lootBoxes)
-	marketplaceController := controllers.NewMarketplace(log, marketplace)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -80,12 +78,6 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
 	cardsRouter.Handle("", server.withAuth(http.HandlerFunc(cardsController.List))).Methods(http.MethodGet)
-
-	marketplaceRouter := router.PathPrefix("/marketplace").Subrouter()
-	marketplaceRouter.Handle("", server.withAuth(http.HandlerFunc(marketplaceController.ListActiveLots))).Methods(http.MethodGet)
-	marketplaceRouter.Handle("/{id}", server.withAuth(http.HandlerFunc(marketplaceController.GetLotByID))).Methods(http.MethodGet)
-	marketplaceRouter.Handle("", server.withAuth(http.HandlerFunc(marketplaceController.CreateLot))).Methods(http.MethodPost)
-	marketplaceRouter.Handle("/{id}", server.withAuth(http.HandlerFunc(marketplaceController.PlaceBetLot))).Methods(http.MethodPost)
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
 	lootBoxesRouter.Handle("", server.withAuth(http.HandlerFunc(lootBoxesController.Create))).Methods(http.MethodPost)
