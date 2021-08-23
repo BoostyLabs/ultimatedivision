@@ -10,17 +10,18 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/admin/adminauth"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver/controllers"
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/marketplace"
 	"ultimatedivision/users"
 )
 
@@ -54,17 +55,18 @@ type Server struct {
 	cookieAuth  *auth.CookieAuth
 
 	templates struct {
-		admin controllers.AdminTemplates
-		user  controllers.UserTemplates
-		card  controllers.CardTemplates
-		auth  controllers.AuthTemplates
+		admin       controllers.AdminTemplates
+		user        controllers.UserTemplates
+		card        controllers.CardTemplates
+		auth        controllers.AuthTemplates
+		marketplace controllers.MarketplaceTemplates
 	}
 
 	cards.PercentageQualities
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities, marketplace *marketplace.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -102,10 +104,16 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	userRouter.HandleFunc("/delete/{id}", userController.Delete).Methods(http.MethodGet)
 
 	cardsRouter := router.PathPrefix("/cards").Subrouter().StrictSlash(true)
+	cardsRouter.Use(server.withAuth)
 	cardsController := controllers.NewCards(log, cards, server.templates.card, percentageQualities)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 	cardsRouter.HandleFunc("/create/{userID}", cardsController.Create).Methods(http.MethodGet)
 	cardsRouter.HandleFunc("/delete/{id}", cardsController.Delete).Methods(http.MethodGet)
+
+	marketplaceRouter := router.PathPrefix("/marketplace").Subrouter().StrictSlash(true)
+	marketplaceRouter.Use(server.withAuth)
+	marketplaceController := controllers.NewMarketplace(log, marketplace, server.templates.card)
+	marketplaceRouter.HandleFunc("", marketplaceController.List).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
