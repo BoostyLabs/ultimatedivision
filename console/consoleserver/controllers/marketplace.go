@@ -146,19 +146,8 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if createLot.ItemID.String() == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("item id is empty"))
-		return
-	}
-
-	if createLot.StartPrice == 0 {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("start price is empty"))
-		return
-	}
-
-	if createLot.Period == 0 {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("period is empty"))
-		return
+	if err := createLot.Validate(); err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 	}
 
 	if err := controller.marketplace.CreateLot(ctx, createLot); err != nil {
