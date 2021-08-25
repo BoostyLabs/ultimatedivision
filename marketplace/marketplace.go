@@ -118,6 +118,7 @@ type WinLot struct {
 	Amount    float64   `json:"amount"`
 }
 
+// Validate check is empty parameters.
 func (createLot CreateLot) Validate() error {
 	if createLot.ItemID.String() == "" {
 		return ErrMarketplace.New("item id is empty")
