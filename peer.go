@@ -224,6 +224,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Console.Listener,
 			peer.Cards.Service,
 			peer.LootBoxes.Service,
+			peer.Clubs.Service,
 			peer.Users.Auth,
 		)
 
