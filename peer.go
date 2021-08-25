@@ -123,6 +123,12 @@ type Peer struct {
 		Service *lootboxes.Service
 	}
 
+	// exposes marketplace related logic
+	Marketplace struct {
+		Service            *marketplace.Service
+		ExpirationLotChore *marketplace.Chore
+	}
+
 	// Admin web server server with web UI.
 	Admin struct {
 		Listener net.Listener
@@ -231,6 +237,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Cards.Service,
 			peer.LootBoxes.Service,
 			peer.Marketplace.Service,
+			peer.Clubs.Service,
+			peer.Users.Auth,
 		)
 
 		from, err := mail.ParseAddress(config.Console.Emails.From)
