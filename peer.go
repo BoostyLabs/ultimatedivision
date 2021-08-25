@@ -230,7 +230,9 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Console.Listener,
 			peer.Cards.Service,
 			peer.LootBoxes.Service,
-			peer.Marketplace.Service,
+			peer.Clubs.Service,
+      peer.Marketplace.Service,
+			peer.Users.Auth,
 		)
 
 		from, err := mail.ParseAddress(config.Console.Emails.From)
