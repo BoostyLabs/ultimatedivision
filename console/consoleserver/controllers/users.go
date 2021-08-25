@@ -5,12 +5,13 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/zeebo/errs"
 	"net/http"
-	"ultimatedivision/users/userauth"
+
+	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
+	"ultimatedivision/users/userauth"
 )
 
 var (
