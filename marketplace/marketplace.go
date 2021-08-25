@@ -117,3 +117,19 @@ type WinLot struct {
 	Status    Status    `json:"status"`
 	Amount    float64   `json:"amount"`
 }
+
+func (createLot CreateLot) Validate() error {
+	if createLot.ItemID.String() == "" {
+		return ErrMarketplace.New("item id is empty")
+	}
+
+	if createLot.StartPrice == 0 {
+		return ErrMarketplace.New("start price is empty")
+	}
+
+	if createLot.Period == 0 {
+		return ErrMarketplace.New("period is empty")
+	}
+
+	return nil
+}
