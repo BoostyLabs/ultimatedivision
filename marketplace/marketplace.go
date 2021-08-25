@@ -107,7 +107,7 @@ type BetLot struct {
 	BetAmount float64   `json:"betAmount"`
 }
 
-// WinLot describes the values required to win.
+// WinLot entity that contains the values required to win the card.
 type WinLot struct {
 	ID        uuid.UUID `json:"id"`
 	ItemID    uuid.UUID `json:"itemId"`
@@ -116,4 +116,20 @@ type WinLot struct {
 	ShopperID uuid.UUID `json:"shopperID"`
 	Status    Status    `json:"status"`
 	Amount    float64   `json:"amount"`
+}
+
+func (createLot CreateLot) Validate() error {
+	if createLot.ItemID.String() == "" {
+		return ErrMarketplace.New("item id is empty")
+	}
+
+	if createLot.StartPrice == 0 {
+		return ErrMarketplace.New("start price is empty")
+	}
+
+	if createLot.Period == 0 {
+		return ErrMarketplace.New("period is empty")
+	}
+
+	return nil
 }

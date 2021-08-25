@@ -96,7 +96,9 @@ func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, erro
 	if err != nil {
 		return Lot{}, userauth.ErrUnauthenticated.Wrap(err)
 	}
-	return service.marketplace.GetLotByID(ctx, id)
+	lot, err := service.marketplace.GetLotByID(ctx, id)
+
+	return lot, ErrMarketplace.Wrap(err)
 }
 
 // ListActiveLots returns active lots from DB.
@@ -105,12 +107,15 @@ func (service *Service) ListActiveLots(ctx context.Context) ([]Lot, error) {
 	if err != nil {
 		return []Lot{}, userauth.ErrUnauthenticated.Wrap(err)
 	}
-	return service.marketplace.ListActiveLots(ctx)
+	lots, err := service.marketplace.ListActiveLots(ctx)
+
+	return lots, ErrMarketplace.Wrap(err)
 }
 
 // ListActiveLotsWhereEndTimeLTENow returns active lots from DB.
 func (service *Service) ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([]Lot, error) {
-	return service.marketplace.ListActiveLotsWhereEndTimeLTENow(ctx)
+	lots, err := service.marketplace.ListActiveLotsWhereEndTimeLTENow(ctx)
+	return lots, ErrMarketplace.Wrap(err)
 }
 
 // PlaceBetLot checks the amount of money and makes a bet.
