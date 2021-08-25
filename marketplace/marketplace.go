@@ -107,7 +107,7 @@ type BetLot struct {
 	BetAmount float64   `json:"betAmount"`
 }
 
-// WinLot describes the values required to win.
+// WinLot entity that contains the values required to win the card.
 type WinLot struct {
 	ID        uuid.UUID `json:"id"`
 	ItemID    uuid.UUID `json:"itemId"`

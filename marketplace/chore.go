@@ -65,19 +65,21 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
-			} else {
-				err := chore.service.UpdateStatusLot(ctx, lot.ID, StatusExpired)
-				if err != nil {
-					return ChoreError.Wrap(err)
-				}
-
-				if lot.Type == TypeCard {
-					if err := chore.service.cards.UpdateStatus(ctx, lot.ItemID, cards.StatusActive); err != nil {
-						return ErrMarketplace.Wrap(err)
-					}
-				}
-				// TODO: check other items
+				continue
 			}
+
+			err := chore.service.UpdateStatusLot(ctx, lot.ID, StatusExpired)
+			if err != nil {
+				return ChoreError.Wrap(err)
+			}
+
+			if lot.Type == TypeCard {
+				if err := chore.service.cards.UpdateStatus(ctx, lot.ItemID, cards.StatusActive); err != nil {
+					return ErrMarketplace.Wrap(err)
+				}
+			}
+			// TODO: check other items
+
 		}
 		return ChoreError.Wrap(err)
 	})
