@@ -151,25 +151,17 @@ func (auth *Auth) RegisterTemplateHandler(w http.ResponseWriter, r *http.Request
 // ChangePassword change users password.
 func (auth *Auth) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
-	err := r.ParseForm()
-	if err != nil {
-		auth.serveError(w, http.StatusBadRequest, AuthError.New("could not get users form"))
-		return
-	}
-	password := r.FormValue("password")
-	if password == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.New("password is empty"))
-		return
-	}
-	newPassword := r.FormValue("newPassword")
-	if newPassword == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.New("password is empty"))
+
+	var err error
+	var request users.Password
+
+	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
 		return
 	}
 
-	err = auth.userAuth.ChangePassword(ctx, password, newPassword)
+	err = auth.userAuth.ChangePassword(ctx, request.Password, request.NewPassword)
 	if err != nil {
 		auth.log.Error("Unable to change password", AuthError.Wrap(err))
 		auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))

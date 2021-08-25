@@ -98,3 +98,10 @@ func (service *Service) GetProfile(ctx context.Context) (*Profile, error) {
 	}
 	return &profile, nil
 }
+
+// GetNickNameByID returns nickname of user.
+func (service *Service) GetNickNameByID(ctx context.Context, id uuid.UUID) (string, error) {
+	nickname, err := service.users.GetNickNameByID(ctx, id)
+
+	return nickname, ErrUsers.Wrap(err)
+}
