@@ -123,6 +123,12 @@ type Peer struct {
 		Service *lootboxes.Service
 	}
 
+	// exposes marketplace related logic
+	Marketplace struct {
+		Service            *marketplace.Service
+		ExpirationLotChore *marketplace.Chore
+	}
+
 	// Admin web server server with web UI.
 	Admin struct {
 		Listener net.Listener
@@ -268,6 +274,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	})
 	group.Go(func() error {
 		return ignoreCancel(peer.Console.Endpoint.Run(ctx))
+	})
+	group.Go(func() error {
+		return ignoreCancel(peer.Marketplace.ExpirationLotChore.Run(ctx))
 	})
 
 	return group.Wait()
