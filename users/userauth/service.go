@@ -180,7 +180,7 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 		return Error.Wrap(err)
 	}
 
-	// @todo I am testing and fixing this points
+	// @TODO I am testing and fixing this points.
 	_, err = service.Token(ctx, user.Email, password)
 	if err != nil {
 		return Error.Wrap(err)
