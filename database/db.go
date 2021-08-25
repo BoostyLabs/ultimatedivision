@@ -58,7 +58,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             last_login       TIMESTAMP WITH TIME ZONE NOT NULL,
             status           INTEGER                  NOT NULL,
             created_at       TIMESTAMP WITH TIME ZONE NOT NULL
-        );
+            );
         CREATE TABLE IF NOT EXISTS cards (
             id                BYTEA         PRIMARY KEY                            NOT NULL,
             player_name       VARCHAR                                              NOT NULL,
