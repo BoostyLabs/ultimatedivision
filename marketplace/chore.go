@@ -41,7 +41,7 @@ func NewChore(log logger.Logger, config Config, marketplace DB, users *users.Ser
 	}
 }
 
-// Run starts the chore.
+// Run starts the chore for re-check the expiration time of the lot.
 func (chore *Chore) Run(ctx context.Context) (err error) {
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
 		lots, err := chore.service.ListActiveLotsWhereEndTimeLTENow(ctx)

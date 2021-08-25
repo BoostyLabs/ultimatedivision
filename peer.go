@@ -47,6 +47,9 @@ type DB interface {
 	// LootBoxes provides access to lootboxes db.
 	LootBoxes() lootboxes.DB
 
+	// Marketplace provides access to marketplace db.
+	Marketplace() marketplace.DB
+
 	// Close closes underlying db connection.
 	Close() error
 
@@ -199,6 +202,22 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.LootBoxes.Service = lootboxes.NewService(
 			config.LootBoxes.Config,
 			peer.Database.LootBoxes(),
+			peer.Cards.Service,
+		)
+	}
+
+	{ // marketplace setup
+		peer.Marketplace.Service = marketplace.NewService(
+			peer.Database.Marketplace(),
+			peer.Users.Service,
+			peer.Cards.Service,
+		)
+
+		peer.Marketplace.ExpirationLotChore = marketplace.NewChore(
+			peer.Log,
+			config.Marketplace.Config,
+			peer.Database.Marketplace(),
+			peer.Users.Service,
 			peer.Cards.Service,
 		)
 	}
