@@ -112,9 +112,9 @@ func (service *Service) ListActiveLots(ctx context.Context) ([]Lot, error) {
 	return lots, ErrMarketplace.Wrap(err)
 }
 
-// ListActiveLotsWhereEndTimeLTENow returns active lots from DB.
-func (service *Service) ListActiveLotsWhereEndTimeLTENow(ctx context.Context) ([]Lot, error) {
-	lots, err := service.marketplace.ListActiveLotsWhereEndTimeLTENow(ctx)
+// ListExpiredLot returns active lots from DB.
+func (service *Service) ListExpiredLot(ctx context.Context) ([]Lot, error) {
+	lots, err := service.marketplace.ListExpiredLot(ctx)
 	return lots, ErrMarketplace.Wrap(err)
 }
 
