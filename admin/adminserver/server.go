@@ -112,8 +112,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 
 	marketplaceRouter := router.PathPrefix("/marketplace").Subrouter().StrictSlash(true)
 	marketplaceRouter.Use(server.withAuth)
-	marketplaceController := controllers.NewMarketplace(log, marketplace, server.templates.card)
-	marketplaceRouter.HandleFunc("", marketplaceController.List).Methods(http.MethodGet)
+	marketplaceController := controllers.NewMarketplace(log, marketplace, cards, server.templates.marketplace)
+	marketplaceRouter.HandleFunc("", marketplaceController.ListActiveLots).Methods(http.MethodGet)
+	marketplaceRouter.HandleFunc("/create", marketplaceController.CreateLot).Methods(http.MethodGet, http.MethodPost)
 
 	server.server = http.Server{
 		Handler: router,
@@ -177,6 +178,16 @@ func (server *Server) initializeTemplates() (err error) {
 	}
 
 	server.templates.card.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "cards", "list.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.card.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "marketplace", "list.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.card.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "marketplace", "create.html"))
 	if err != nil {
 		return err
 	}
