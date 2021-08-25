@@ -108,7 +108,7 @@ func TestMarketplace(t *testing.T) {
 			compareLot(t, lot2, activeLots[0])
 		})
 
-		t.Run("list active where end time lte now", func(t *testing.T) {
+		t.Run("list expired lot", func(t *testing.T) {
 			lot1.EndTime = time.Now().UTC()
 			err := repositoryMarketplace.UpdateEndTimeLot(ctx, lot1.ID, lot1.EndTime)
 			require.NoError(t, err)
@@ -117,7 +117,7 @@ func TestMarketplace(t *testing.T) {
 			err = repositoryMarketplace.UpdateStatusLot(ctx, lot1.ID, marketplace.StatusActive)
 			require.NoError(t, err)
 
-			activeLots, err := repositoryMarketplace.ListActiveLotsWhereEndTimeLTENow(ctx)
+			activeLots, err := repositoryMarketplace.ListExpiredLot(ctx)
 			assert.NoError(t, err)
 			assert.Equal(t, len(activeLots), 1)
 			compareLot(t, lot1, activeLots[0])
