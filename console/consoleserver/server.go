@@ -32,6 +32,11 @@ var (
 type Config struct {
 	Address   string `json:"address"`
 	StaticDir string `json:"staticDir"`
+
+	Auth struct {
+		CookieName string `json:"cookieName"`
+		Path       string `json:"path"`
+	} `json:"auth"`
 }
 
 // Server represents console web server.
@@ -54,11 +59,16 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, userAuth *userauth.Service) *Server {
 	server := &Server{
-		log:      log,
-		config:   config,
-		listener: listener,
+		log:         log,
+		config:      config,
+		listener:    listener,
+		authService: userAuth,
+		cookieAuth: auth.NewCookieAuth(auth.CookieSettings{
+			Name: config.Auth.CookieName,
+			Path: config.Auth.Path,
+		}),
 	}
 
 	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
