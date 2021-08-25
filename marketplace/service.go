@@ -182,7 +182,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 	return nil
 }
 
-// WinLot changes the owner of the item and transfers money.
+// WinLot changes owner of the item and transfers money.
 func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
 	if err := service.UpdateStatusLot(ctx, winLot.ID, winLot.Status); err != nil {
 		return ErrMarketplace.Wrap(err)

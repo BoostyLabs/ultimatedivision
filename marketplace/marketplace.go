@@ -67,13 +67,13 @@ const (
 type Status string
 
 const (
-	// StatusActive indicates that lot status is active.
+	// StatusActive indicates that lot is active that is, the lot is sold at auction.
 	StatusActive Status = "active"
-	// StatusExpired indicates that lot status is expired.
+	// StatusExpired indicates that the time of lot has expired.
 	StatusExpired Status = "expired"
-	// StatusSold indicates that lot status is sold.
+	// StatusSold indicates that the lot was sold after the expiration of the lot at the highest rate.
 	StatusSold Status = "sold"
-	// StatusSoldBuynow indicates that lot status is sold buynow.
+	// StatusSoldBuynow indicates that the lot was purchased at the maximum price.
 	StatusSoldBuynow Status = "soldBuynow"
 )
 
@@ -87,12 +87,12 @@ const (
 	MaxPeriod Period = 120
 )
 
-// Config defines configuration for Marketplace.
+// Config defines configuration for marketplace.
 type Config struct {
 	LotRenewalInterval time.Duration `json:"lotRenewalInterval"`
 }
 
-// CreateLot describes entity for create lot.
+// CreateLot entity that contains the values required to create the lot.
 type CreateLot struct {
 	ItemID     uuid.UUID `json:"itemId"`
 	Type       Type      `json:"type"`
@@ -101,13 +101,13 @@ type CreateLot struct {
 	Period     Period    `json:"period"`
 }
 
-// BetLot describes entity for place bet lot.
+// BetLot entity that contains the values required to place bet the lot.
 type BetLot struct {
 	ID        uuid.UUID `json:"id"`
 	BetAmount float64   `json:"betAmount"`
 }
 
-// WinLot entity that contains the values required to win the card.
+// WinLot entity that contains the values required to win the lot.
 type WinLot struct {
 	ID        uuid.UUID `json:"id"`
 	ItemID    uuid.UUID `json:"itemId"`
@@ -118,7 +118,7 @@ type WinLot struct {
 	Amount    float64   `json:"amount"`
 }
 
-// Validate check is empty parameters.
+// Validate check is empty fields of create lot entity.
 func (createLot CreateLot) Validate() error {
 	if createLot.ItemID.String() == "" {
 		return ErrMarketplace.New("item id is empty")
