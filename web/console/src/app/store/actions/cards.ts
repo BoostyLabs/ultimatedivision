@@ -12,9 +12,9 @@ export const addCards = (cards: []) => ({
 });
 
 // thunk for creating cards list
-export const createCardList = () => async function (dispatch: Dispatch) {
-    const cardsRequest = await useCards();
+export const createCardList = () => async function(dispatch: Dispatch) {
+    const cards = await useCards();
     // @ts-ignore
-    const listOfCards = cardsRequest.data.map(card => new CardDev(...card));
+    const listOfCards = cards.data.map(card => new CardDev(...card));
     dispatch(addCards(listOfCards));
 };
