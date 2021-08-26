@@ -4,21 +4,21 @@
 import { lazy } from 'react';
 import { Switch } from 'react-router-dom';
 
-const MarketPlace = lazy(() => import('@/app/views/MarketPlace'));
-const Club = lazy(() => import('@/app/views/Club'));
-const FootballerCard = lazy(() => import('@/app/views/FootballerCard'));
-const FootballField = lazy(() => import('@/app/views/FootballField'));
-const WhitePaper = lazy(() => import('@/app/views/WhitePaper'));
-const Tokenomics = lazy(() => import('@/app/views/Tokenomics'));
+const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
+const Club = lazy(() => import('@/app/views/ClubPage'));
+const FootballerCard = lazy(() => import('@/app/views/FootballerCardPage'));
+const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
+const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
+const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
 
-import Summary from '@components/WhitePaperPage/Summary';
-import GameMechanics from '@components/WhitePaperPage/GameMechanics';
-import PayToEarnEconomy from '@components/WhitePaperPage/PayToEarnEconomy';
-import Technology from '@components/WhitePaperPage/Technology';
-import Fund from '@components/TokenomicsPage/Fund';
-import PlayToEarn from '@components/TokenomicsPage/PlayToEarn';
-import Spending from '@components/TokenomicsPage/Spending';
-import Staking from '@components/TokenomicsPage/Staking';
+import Summary from '@/app/components/WhitePaper/Summary';
+import GameMechanics from '@/app/components/WhitePaper/GameMechanics';
+import PayToEarnEconomy from '@/app/components/WhitePaper/PayToEarnEconomy';
+import Technology from '@/app/components/WhitePaper/Technology';
+import Fund from '@/app/components/Tokenomics/Fund';
+import PlayToEarn from '@/app/components/Tokenomics/PlayToEarn';
+import Spending from '@/app/components/Tokenomics/Spending';
+import Staking from '@/app/components/Tokenomics/Staking';
 
 /** Route base config implementation */
 export class ComponentRoutes {
