@@ -78,7 +78,7 @@ func (service *Service) Open(ctx context.Context, userLootBox LootBox) ([]cards.
 		lootBoxCards = append(lootBoxCards, card)
 	}
 
-	sortSliceOfCards(lootBoxCards)
+	sortLootBoxCards(lootBoxCards)
 
 	err = service.lootboxes.Delete(ctx, userLootBox)
 
@@ -99,13 +99,14 @@ func getValue(quality cards.Quality) int {
 }
 
 // sortSliceOfCards sorts cards returned from loot box.
-func sortSliceOfCards(cards []cards.Card) {
+func sortLootBoxCards(cards []cards.Card) {
 	sort.Slice(cards, func(i, j int) bool {
 		sortByRarity := getValue(cards[i].Quality) > getValue(cards[j].Quality)
 
 		if getValue(cards[i].Quality) == getValue(cards[j].Quality) {
 			parametersOfCard1 := cards[i].Tactics + cards[i].Physique + cards[i].Technique + cards[i].Offense + cards[i].Defence + cards[i].Goalkeeping
 			parametersOfCard2 := cards[j].Tactics + cards[j].Physique + cards[j].Technique + cards[j].Offense + cards[j].Defence + cards[j].Goalkeeping
+
 			return parametersOfCard1 > parametersOfCard2
 		}
 
