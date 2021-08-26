@@ -187,12 +187,12 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 	}
 
 	// launch a goroutine that sends the email verification.
-	//go func() {
+	// go func() {
 	//	err = service.emailService.SendVerificationEmail(user.Email, token)
 	//	if err != nil {
 	//		service.log.Error("Unable to send account activation email", Error.Wrap(err))
 	//	}
-	//}()
+	// }()
 
 	return err
 }
