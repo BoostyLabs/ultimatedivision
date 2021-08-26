@@ -180,6 +180,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // clubs setup
 		peer.Clubs.Service = clubs.NewService(
 			peer.Database.Clubs(),
+			peer.Users.Service,
 		)
 	}
 
@@ -206,6 +207,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Service,
 			peer.Cards.Service,
 			config.Cards.PercentageQualities,
+			peer.Clubs.Service,
 		)
 		if err != nil {
 			return nil, err
@@ -225,6 +227,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Cards.Service,
 			peer.LootBoxes.Service,
 			peer.Clubs.Service,
+			peer.Users.Auth,
 		)
 
 		from, err := mail.ParseAddress(config.Console.Emails.From)

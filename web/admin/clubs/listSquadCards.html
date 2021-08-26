@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Portal | Squad Cards</title>
+</head>
+<body>
+<table style="width:100%">
+    <thead>
+    <tr>
+        <th>Squad ID</th>
+        <th>Club ID</th>
+        <th>Position</th>
+        <th>Operations</th>
+    </tr>
+    </thead>
+    {{range .}}
+    <tr>
+        <td>
+            {{.SquadID}}
+        </td>
+        <td>
+            {{.CardID}}
+        </td>
+        <td>
+            {{.Position}}
+        </td>
+    </tr>
+    {{end}}
+</table>
+</body>
+</html>

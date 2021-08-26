@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Portal | Squads</title>
+</head>
+<body>
+<table style="width:100%">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Club ID</th>
+        <th>Formation</th>
+        <th>Tactic</th>
+        <th>Captain ID</th>
+        <th>Operations</th>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            {{.ID}}
+        </td>
+        <td>
+            {{.Name}}
+        </td>
+        <td>
+            {{.ClubID}}
+        </td>
+        <td>
+            {{.Formation}}
+        </td>
+        <td>
+            {{.Tactic}}
+        </td>
+        <td>
+            {{.CaptainID}}
+        </td>
+        <td>
+            <a href = "/clubs/squad-card/{{.ID}}">Get squad cards</a>
+        </td>
+    </tr>
+
+</table>
+</body>
+</html>

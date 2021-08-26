@@ -48,12 +48,13 @@ func (controller *Clubs) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		controller.log.Error("could not create club", ErrClubs.Wrap(err))
 
-		if userauth.ErrUnauthenticated.Has(err) {
+		switch {
+		case userauth.ErrUnauthenticated.Has(err):
 			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-			return
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
 
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 }
@@ -80,14 +81,15 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 
 	err = controller.clubs.CreateSquad(ctx, id)
 	if err != nil {
-		controller.log.Error("could not create club", ErrClubs.Wrap(err))
+		controller.log.Error("could not create squad", ErrClubs.Wrap(err))
 
-		if userauth.ErrUnauthenticated.Has(err) {
+		switch {
+		case userauth.ErrUnauthenticated.Has(err):
 			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-			return
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
 
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 }
@@ -100,44 +102,56 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 
 	club, err := controller.clubs.Get(ctx)
 	if err != nil {
-		controller.log.Error("could not get user club", ErrClubs.Wrap(err))
+		controller.log.Error("could not get club", ErrClubs.Wrap(err))
 
-		if userauth.ErrUnauthenticated.Has(err) {
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-			return
-		}
-
-		if clubs.ErrNoClub.Has(err) {
+		switch {
+		case clubs.ErrNoClub.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
-			return
+		case userauth.ErrUnauthenticated.Has(err):
+			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
 
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 
-	squad, squadCards, err := controller.clubs.GetSquad(ctx, club.ID)
+	squad, err := controller.clubs.GetSquad(ctx, club.ID)
 	if err != nil {
-		controller.log.Error("could not get squad and squad cards", ErrClubs.Wrap(err))
+		controller.log.Error("could not get squad", ErrClubs.Wrap(err))
 
-		if userauth.ErrUnauthenticated.Has(err) {
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-			return
-		}
-
-		if clubs.ErrNoSquad.Has(err) {
+		switch {
+		case clubs.ErrNoSquad.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
-			return
+		case userauth.ErrUnauthenticated.Has(err):
+			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
 
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
+		return
+	}
+
+	squadCard, err := controller.clubs.GetSquadCard(ctx, squad.ID)
+	if err != nil {
+		controller.log.Error("could not get squad card", ErrClubs.Wrap(err))
+
+		switch {
+		case clubs.ErrNoClub.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
+			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
+		}
+
 		return
 	}
 
 	userTeam := ClubResponse{
 		Clubs:      club,
 		Squad:      squad,
-		SquadCards: squadCards,
+		SquadCards: squadCard,
 	}
 
 	if err = json.NewEncoder(w).Encode(userTeam); err != nil {
@@ -163,12 +177,15 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
 
-		if userauth.ErrUnauthenticated.Has(err) {
+		switch {
+		case clubs.ErrNoSquad.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
 			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-			return
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
 
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 }
@@ -190,12 +207,15 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
 
-		if userauth.ErrUnauthenticated.Has(err) {
+		switch {
+		case clubs.ErrNoSquad.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
 			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-			return
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
 
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 }
@@ -217,12 +237,15 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
 
-		if userauth.ErrUnauthenticated.Has(err) {
+		switch {
+		case clubs.ErrNoSquad.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
 			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-			return
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
 
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 }
@@ -242,14 +265,17 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 
 	err := controller.clubs.Delete(ctx, squadCard.SquadID, squadCard.CardID)
 	if err != nil {
-		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
+		controller.log.Error("could not delete card from squad", ErrClubs.Wrap(err))
 
-		if userauth.ErrUnauthenticated.Has(err) {
+		switch {
+		case clubs.ErrNoSquad.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
 			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-			return
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
 
-		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 }

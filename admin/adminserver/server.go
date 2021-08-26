@@ -10,15 +10,16 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/admin/adminauth"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver/controllers"
 	"ultimatedivision/cards"
+	"ultimatedivision/clubs"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
@@ -57,6 +58,7 @@ type Server struct {
 		admin controllers.AdminTemplates
 		user  controllers.UserTemplates
 		card  controllers.CardTemplates
+		clubs controllers.ClubsTemplates
 		auth  controllers.AuthTemplates
 	}
 
@@ -64,7 +66,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities, clubs *clubs.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -106,6 +108,15 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 	cardsRouter.HandleFunc("/create/{userID}", cardsController.Create).Methods(http.MethodGet)
 	cardsRouter.HandleFunc("/delete/{id}", cardsController.Delete).Methods(http.MethodGet)
+
+	clubsRouter := router.PathPrefix("/clubs").Subrouter().StrictSlash(true)
+	// clubsRouter.Use(server.withAuth)
+	clubsController := controllers.NewClubs(log, clubs, server.templates.clubs)
+	clubsRouter.HandleFunc("/create/{userID}", clubsController.Create).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/{userID}", clubsController.Get).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/squad/create/{clubID}", clubsController.CreateSquad).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/squad/{clubID}", clubsController.GetSquad).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/squad-card/{squadID}", clubsController.GetSquadCard).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -174,6 +185,21 @@ func (server *Server) initializeTemplates() (err error) {
 	}
 
 	server.templates.auth.Login, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "auth", "login.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.clubs.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "list.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.clubs.ListSquads, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "listSquad.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.clubs.ListSquadCards, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "listSquadCards.html"))
 	if err != nil {
 		return err
 	}
