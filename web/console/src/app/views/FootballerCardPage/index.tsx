@@ -1,10 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { FootballerCardIllustrations } from '@/app/components/FootballerCard/FootballerCardIllustrations';
-import { FootballerCardPrice } from '@/app/components/FootballerCard/FootballerCardPrice';
-import { FootballerCardStatsArea } from '@/app/components/FootballerCard/FootballerCardStatsArea';
-import { FootballerCardInformation } from '@/app/components/FootballerCard/FootballerCardInformation';
+import { FootballerCardIllustrations } from '@components/FootballerCard/FootballerCardIllustrations';
+import { FootballerCardPrice } from '@components/FootballerCard/FootballerCardPrice';
+import { FootballerCardStatsArea } from '@components/FootballerCard/FootballerCardStatsArea';
+import { FootballerCardInformation } from '@components/FootballerCard/FootballerCardInformation';
 
 import './index.scss';
 

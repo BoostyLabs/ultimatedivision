@@ -6,13 +6,13 @@ import { FootballField } from '@/app/types/footballField';
 import {
     ADD_CARD,
     CAPTAIN,
-    SELECTION_VISIBILITY,
     CARD_POSITION,
     DRAG_START,
     DRAG_TARGET,
     EXCHANGE_CARDS,
     FORMATION,
     REMOVE_CARD,
+    SELECTION_VISIBILITY,
     TACTICS,
 } from '@/app/store/actions/footballField';
 

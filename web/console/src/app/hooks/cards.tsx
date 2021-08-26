@@ -10,9 +10,9 @@ export const useCards = () => {
     const cardService = useSelector((state: RootState) => state.cardsReducer.cardService);
 
     type Data = {
-        data: null | Card[],
-        isLoading: boolean
-    }
+        data: null | Card[];
+        isLoading: boolean;
+    };
 
     const [data, handleData] = useState<SetStateAction<Data>>({ data: null, isLoading: true });
 

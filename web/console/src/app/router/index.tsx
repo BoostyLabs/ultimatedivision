@@ -11,14 +11,14 @@ const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
 const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
 const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
 
-import Summary from '@/app/components/WhitePaper/Summary';
-import GameMechanics from '@/app/components/WhitePaper/GameMechanics';
-import PayToEarnEconomy from '@/app/components/WhitePaper/PayToEarnEconomy';
-import Technology from '@/app/components/WhitePaper/Technology';
-import Fund from '@/app/components/Tokenomics/Fund';
-import PlayToEarn from '@/app/components/Tokenomics/PlayToEarn';
-import Spending from '@/app/components/Tokenomics/Spending';
-import Staking from '@/app/components/Tokenomics/Staking';
+import Summary from '@components/WhitePaper/Summary';
+import GameMechanics from '@components/WhitePaper/GameMechanics';
+import PayToEarnEconomy from '@components/WhitePaper/PayToEarnEconomy';
+import Technology from '@components/WhitePaper/Technology';
+import Fund from '@components/Tokenomics/Fund';
+import PlayToEarn from '@components/Tokenomics/PlayToEarn';
+import Spending from '@components/Tokenomics/Spending';
+import Staking from '@components/Tokenomics/Staking';
 
 /** Route base config implementation */
 export class ComponentRoutes {

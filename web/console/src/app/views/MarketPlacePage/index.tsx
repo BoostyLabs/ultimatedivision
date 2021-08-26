@@ -3,7 +3,7 @@
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { MarketPlaceCardsGroup } from '@/app/components/MarketPlace/MarketPlaceCardsGroup';
+import { MarketPlaceCardsGroup } from '@components/MarketPlace/MarketPlaceCardsGroup';
 import { FilterField } from '@components/common/FilterField';
 import { Paginator } from '@components/common/Paginator';
 

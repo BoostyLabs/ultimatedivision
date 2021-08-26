@@ -2,11 +2,11 @@
 // See LICENSE for copying information.
 
 import { Card } from '@/card';
-import { MarketPlaceFootballerCard } from '@/app/components/MarketPlace/MarketPlaceCardsGroup/MarketPlaceFootballerCard';
+import { MarketPlaceFootballerCard } from '@components/MarketPlace/MarketPlaceCardsGroup/MarketPlaceFootballerCard';
 
 import './index.scss';
 
-export const MarketPlaceCardsGroup: React.FC<{ cards: Card[]}> = ({ cards }) =>
+export const MarketPlaceCardsGroup: React.FC<{ cards: Card[] }> = ({ cards }) =>
     <div className="marketplace-cards">
         <div className="marketplace-cards__wrapper">
             {cards.map((card, index) =>

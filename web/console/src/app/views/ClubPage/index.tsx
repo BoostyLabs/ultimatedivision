@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 
 import { FilterField } from '@components/common/FilterField';
-import { ClubCardsArea } from '@/app/components/Club/ClubCardsArea';
+import { ClubCardsArea } from '@components/Club/ClubCardsArea';
 import { Paginator } from '@components/common/Paginator';
 
 import './index.scss';

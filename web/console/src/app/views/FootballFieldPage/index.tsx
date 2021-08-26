@@ -5,9 +5,9 @@ import { DragEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { FootballFieldCardSelection } from
-    '@/app/components/FootballField/FootballFieldCardSelection';
+    '@components/FootballField/FootballFieldCardSelection';
 import { FootballFieldPlayingArea } from
-    '@/app/components/FootballField/FotballFieldPlayingArea';
+    '@components/FootballField/FotballFieldPlayingArea';
 
 import { RootState } from '@/app/store';
 import { removeCard } from '@/app/store/actions/footballField';
@@ -39,7 +39,7 @@ const FootballField: React.FC = () => {
             <h1 className="football-field__title">Football Field</h1>
             <FootballFieldPlayingArea />
             <div
-                style={{ height: cardSelectionVisibility? 'unset' : '0' }}
+                style={{ height: cardSelectionVisibility ? 'unset' : '0' }}
                 className="football-field__wrapper"
             >
                 < FootballFieldCardSelection />

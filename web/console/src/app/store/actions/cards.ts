@@ -14,6 +14,6 @@ export const addCards = (cards: []) => ({
 // thunk for creating cards list
 export const createCardList = () => async function(dispatch: Dispatch) {
     const cards = await useCards();
-    //@ts-ignore
+    // @ts-ignore
     dispatch(addCards(cards.data.map(card => new CardDev(...card))));
 };

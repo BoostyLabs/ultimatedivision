@@ -2,11 +2,11 @@
 // See LICENSE for copying information.
 import { FootballFieldInformationLine } from '@/app/types/footballField';
 import { FootballFieldInformationCaptain } from
-    '@/app/components/FootballField/FootballFieldInformation/FootballFieldInformationCaptain';
+    '@components/FootballField/FootballFieldInformation/FootballFieldInformationCaptain';
 import { FootballFieldInformationFormation } from
-    '@/app/components/FootballField/FootballFieldInformation/FootballFieldInformationFormation';
+    '@components/FootballField/FootballFieldInformation/FootballFieldInformationFormation';
 import { FootballFieldInformationTactic } from
-    '@/app/components/FootballField/FootballFieldInformation/FootballFieldInformationTactic';
+    '@components/FootballField/FootballFieldInformation/FootballFieldInformationTactic';
 
 import './index.scss';
 

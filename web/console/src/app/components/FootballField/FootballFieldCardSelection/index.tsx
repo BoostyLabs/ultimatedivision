@@ -5,7 +5,7 @@ import { RootState } from '@/app/store';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/footballField';
 
 import { FilterField } from
-    '@/app/components/FootballField/FootballFieldCardSelection/FilterField';
+    '@components/FootballField/FootballFieldCardSelection/FilterField';
 import { PlayerCard } from '@components/common/PlayerCard';
 
 import './index.scss';

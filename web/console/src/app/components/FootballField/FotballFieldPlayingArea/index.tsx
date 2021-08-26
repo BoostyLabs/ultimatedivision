@@ -4,8 +4,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { FootballFieldInformation } from '@/app/components/FootballField/FootballFieldInformation';
-import { PlayingAreaFootballerCard } from '@/app/components/FootballField/PlayingAreaFootballerCard';
+import { FootballFieldInformation } from '@components/FootballField/FootballFieldInformation';
+import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
 import { RootState } from '@/app/store';
 import { cardSelectionVisibility, choseCardPosition, exchangeCards, removeCard, setDragStart, setDragTarget }
