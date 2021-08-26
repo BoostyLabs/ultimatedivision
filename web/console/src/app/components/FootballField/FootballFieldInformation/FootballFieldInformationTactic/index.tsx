@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { FotballFieldInformationLine } from '@/card';
-import { handleTactics } from '@/app/store/actions/footballField';
+import { setTactic } from '@/app/store/actions/footballField';
 
 import { DropdownStyle } from '@/app/utils/dropdownStyle';
 
@@ -46,7 +46,7 @@ export const FootballFieldInformationTactic: React.FC<{ props: FotballFieldInfor
                     <li
                         key={index}
                         className="football-field-information-option__item"
-                        onClick={() => dispatch(handleTactics)}
+                        onClick={() => dispatch(setTactic)}
                     >
                         {item}
                     </li>,

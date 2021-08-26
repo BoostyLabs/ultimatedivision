@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Card } from '@/card/service';
+import { CardService } from '@/card/service';
 import { useEffect, useState } from 'react';
 
 export const useCards = () => {
@@ -9,7 +9,7 @@ export const useCards = () => {
 
     /** Calls metgod get from MarketplaceClient | ClubClient */
     async function getDataFromApi() {
-        const cards = await new Card().getCards();
+        const cards = await new CardService().get();
 
         handleData({
             // @ts-ignore

@@ -6,18 +6,18 @@ import { CardClient } from '@/api/cards';
 /**
  * exposes all bandwidth related logic
  */
-export class Card {
-    protected readonly club: CardClient;
+export class CardService {
+    protected readonly card: CardClient;
     /** sets ClubClient into club field */
     public constructor(club: CardClient = new CardClient()) {
-        this.club = club;
+        this.card = club;
     }
     /** get catds from api */
-    public async getCards() {
-        return await this.club.getCards();
+    public async get() {
+        return await this.card.get();
     }
     /** post cards into buyed cardlist */
-    public async buyCard(param: string) {
-        return await this.club.buyCard(param);
+    public async buy(param: string) {
+        return await this.card.buy(param);
     }
 }

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { FotballFieldInformationLine } from '@/card';
-import { handleFormations } from '@/app/store/actions/footballField';
+import { setFormation } from '@/app/store/actions/footballField';
 
 import { DropdownStyle } from '@/app/utils/dropdownStyle';
 
@@ -46,7 +46,7 @@ export const FootballFieldInformationFormation: React.FC<{ props: FotballFieldIn
                     <li
                         key={index}
                         className="football-field-information-option__item"
-                        onClick={() => dispatch(handleFormations(item))}
+                        onClick={() => dispatch(setFormation(item))}
                     >
                         {item}
                     </li>,

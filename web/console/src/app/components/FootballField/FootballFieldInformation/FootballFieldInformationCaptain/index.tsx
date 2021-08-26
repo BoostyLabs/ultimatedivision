@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { FotballFieldInformationLine } from '@/card';
-import { handleCaptain } from '@/app/store/actions/footballField';
+import { setCaptain } from '@/app/store/actions/footballField';
 
 import { DropdownStyle } from '@/app/utils/dropdownStyle';
 
@@ -46,7 +46,7 @@ export const FootballFieldInformationCaptain: React.FC<{ props: FotballFieldInfo
                     <li
                         key={index}
                         className="football-field-information-option__item"
-                        onClick={() => dispatch(handleCaptain)}
+                        onClick={() => dispatch(setCaptain)}
                     >
                         {item}
                     </li>,

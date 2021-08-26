@@ -9,7 +9,7 @@ import { ClubCardsArea } from '@/app/components/Club/ClubCardsArea';
 import { Paginator } from '@components/common/Paginator';
 
 import { CardClient } from '@/api/cards';
-import { useCards } from '@/app/hooks/useCards';
+import { useCards } from '@/app/hooks/cards';
 
 import './index.scss';
 

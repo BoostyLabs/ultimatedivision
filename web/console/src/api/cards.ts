@@ -9,11 +9,11 @@ export class CardClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/cards';
 
     /** method calls get method from APIClient */
-    public async getCards() {
+    public async get() {
         return await this.http.get(this.ROOT_PATH);
     }
     /** method post for implementing buying cards */
-    public async buyCard(id: string) {
+    public async buy(id: string) {
         return await this.http.post(this.ROOT_PATH, id);
     }
 }

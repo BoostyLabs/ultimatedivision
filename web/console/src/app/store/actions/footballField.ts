@@ -18,7 +18,7 @@ type dragParamType = number | null;
 const DEFAULT_CARD_INDEX = null;
 
 /** Chose type of cards positioning on football field */
-export const handleFormations = (option: string) => ({
+export const setFormation = (option: string) => ({
     type: FORMATION_TYPE,
     action: option,
 });
@@ -60,12 +60,12 @@ export const exchangeCards = (prevPosition: dragParamType, currentPosition: drag
     action: [prevPosition, currentPosition],
 });
 
-export const handleTactics = (option: string) => ({
+export const setTactic = (option: string) => ({
     type: TACTICS_TYPE,
     action: option,
 });
 
-export const handleCaptain = (option: string) => ({
+export const setCaptain = (option: string) => ({
     type: CAPTAIN_TYPE,
     action: option,
 });
