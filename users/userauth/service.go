@@ -132,15 +132,16 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 		return ErrUnauthenticated.Wrap(err)
 	}
 
-	user, err := service.users.GetByEmail(ctx, claims.Email)
+	_, err = service.users.GetByEmail(ctx, claims.Email)
 	if err != nil {
 		return ErrUnauthenticated.New("authorization failed. no user with email: %s", claims.Email)
 	}
 
-	if user.Status != users.StatusActive {
-		// TODO: return different errors on 0 and 2 statuses
-		return ErrUnauthenticated.New("authorization failed. no user with email: %s", claims.Email)
-	}
+	// TODO: uncommit when email verification is done
+	//if user.Status != users.StatusActive {
+	// TODO: return different errors on 0 and 2 statuses
+	//	return ErrUnauthenticated.New("authorization failed. no user with email: %s", claims.Email)
+	//}
 
 	return nil
 }
