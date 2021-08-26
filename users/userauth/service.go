@@ -244,7 +244,7 @@ func (service *Service) ChangePassword(ctx context.Context, password, newPasswor
 		return ErrUnauthenticated.Wrap(err)
 	}
 
-	user.PasswordHash = []byte(password)
+	user.PasswordHash = []byte(newPassword)
 	err = user.EncodePass()
 	if err != nil {
 		return Error.Wrap(err)

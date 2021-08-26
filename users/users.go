@@ -91,8 +91,8 @@ type Profile struct {
 
 // Password for old/new passwords.
 type Password struct {
-	Password    string `json:"email"`
-	NewPassword string `json:"nickName"`
+	Password    string `json:"password"`
+	NewPassword string `json:"newPassword"`
 }
 
 // IsPasswordValid check the password for all conditions.
