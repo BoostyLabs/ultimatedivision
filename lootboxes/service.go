@@ -101,7 +101,7 @@ func getValue(quality cards.Quality) int {
 // sortSliceOfCards sorts cards returned from loot box.
 func sortLootBoxCards(cards []cards.Card) {
 	sort.Slice(cards, func(i, j int) bool {
-		sortByRarity := getValue(cards[i].Quality) > getValue(cards[j].Quality)
+		sortByQuality := getValue(cards[i].Quality) > getValue(cards[j].Quality)
 
 		if getValue(cards[i].Quality) == getValue(cards[j].Quality) {
 			parametersOfCard1 := cards[i].Tactics + cards[i].Physique + cards[i].Technique + cards[i].Offense + cards[i].Defence + cards[i].Goalkeeping
@@ -110,6 +110,6 @@ func sortLootBoxCards(cards []cards.Card) {
 			return parametersOfCard1 > parametersOfCard2
 		}
 
-		return sortByRarity
+		return sortByQuality
 	})
 }
