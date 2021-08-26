@@ -5,15 +5,15 @@ import { FootballField } from '@/app/types/footballField';
 
 import {
     ADD_CARD,
-    CAPTAIN_TYPE,
-    CARD_SELECTION_VISIBILITY,
-    CHOSE_CARD_POSITION,
+    CAPTAIN,
+    SELECTION_VISIBILITY,
+    CARD_POSITION,
     DRAG_START,
     DRAG_TARGET,
     EXCHANGE_CARDS,
-    FORMATION_TYPE,
+    FORMATION,
     REMOVE_CARD,
-    TACTICS_TYPE,
+    TACTICS,
 } from '@/app/store/actions/footballField';
 
 const FieldSetup = new FootballField();
@@ -28,13 +28,13 @@ export const fieldReducer = (cardState = FieldSetup, action: any = {}) => {
     const cardsList = cardState.cardsList;
 
     switch (action.type) {
-    case FORMATION_TYPE:
+    case FORMATION:
         options.formation = action.action;
         break;
-    case CARD_SELECTION_VISIBILITY:
+    case SELECTION_VISIBILITY:
         options.showCardSeletion = action.action;
         break;
-    case CHOSE_CARD_POSITION:
+    case CARD_POSITION:
         options.chosedCard = action.action;
         break;
     case ADD_CARD:

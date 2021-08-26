@@ -8,14 +8,10 @@ import { FilterField } from '@components/common/FilterField';
 import { ClubCardsArea } from '@/app/components/Club/ClubCardsArea';
 import { Paginator } from '@components/common/Paginator';
 
-import { CardClient } from '@/api/cards';
-import { useCards } from '@/app/hooks/cards';
-
 import './index.scss';
 
 const Club: React.FC = () => {
-    const cards = useSelector((state: RootState) => state.cardsReducer);
-    // const cards = useCards(new ClubClient());
+    const cards = useSelector((state: RootState) => state.cardsReducer.cards);
 
     return (
         <section className="club">

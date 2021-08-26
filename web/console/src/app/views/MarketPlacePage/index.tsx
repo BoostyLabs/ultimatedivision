@@ -15,7 +15,7 @@ import './index.scss';
 const MarketPlace = () => {
     const dispatch = useDispatch();
     // dispatch(createCardList());
-    const cards = useSelector((state: RootState) => state.cardsReducer);
+    const cards = useSelector((state: RootState) => state.cardsReducer.cards);
 
     return (
         <section className="marketplace">

@@ -1,11 +1,14 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { CardService } from '@/card/service';
 import { Card } from '@/card';
 import { SetStateAction, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 export const useCards = () => {
+    const cardService = useSelector((state: RootState) => state.cardsReducer.cardService);
+
     type Data = {
         data: null | Card[],
         isLoading: boolean
@@ -13,9 +16,9 @@ export const useCards = () => {
 
     const [data, handleData] = useState<SetStateAction<Data>>({ data: null, isLoading: true });
 
-    /** Calls metgod get from MarketplaceClient | ClubClient */
+    /** Calls method get from  ClubClient */
     async function getDataFromApi() {
-        const cards = await new CardService().get();
+        const cards = await cardService.get();
 
         handleData({
             // @ts-ignore

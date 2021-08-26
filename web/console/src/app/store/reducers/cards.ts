@@ -4,6 +4,7 @@
 import { Card } from '@/card';
 
 import { ADD_CARDS } from '@/app/store/actions/cards';
+import { CardService } from '@/card/service';
 
 const FIRST_CARD_TYPE = 0;
 const SECOND_CARD_TYPE = 1;
@@ -28,20 +29,22 @@ function cardListCreator(count: number): Card[] {
     return list;
 }
 
-/** for testing, will be replaced by empty array */
-const cardList = cardListCreator(CARDS_AMOUNT);
-// const cardList: CardDev[] = [];
 
+/** To do: replace cards by empty array */
+export const cardSetup = {
+    cardService: new CardService(),
+    cards: cardListCreator(CARDS_AMOUNT)
+}
 
-export const cardsReducer = (cardState = cardList, action: any = {}) =>
+export const cardsReducer = (cardState = cardSetup, action: any = {}) => {
 /** will be enabled when api will be returning list of cards */
 // switch (action.type) {
 // case ADD_CARDS:
-//     cardState = action.action;
+//     cardState.cards = action.action;
 //     break;
 // default:
 //     break;
 // }
 
-    cardState.slice();
-
+    return {...cardState};
+}

@@ -13,7 +13,7 @@ import { Paginator } from '@components/common/Paginator';
 import { Card } from '@/card';
 
 export const FootballFieldCardSelection = () => {
-    const cardList = useSelector((state: RootState) => state.cardsReducer);
+    const cards = useSelector((state: RootState) => state.cardsReducer.cards);
     const dispatch = useDispatch();
     const fieldSetup = useSelector((state: RootState) => state.fieldReducer);
 
@@ -34,7 +34,7 @@ export const FootballFieldCardSelection = () => {
         <div id="cardList" className="card-selection">
             <FilterField />
             <div className="card-selection__list">
-                {cardList.map((card, index) =>
+                {cards.map((card, index) =>
                     <div
                         key={index}
                         className="card-selection__card"
@@ -47,7 +47,7 @@ export const FootballFieldCardSelection = () => {
                     </div>,
                 )}
             </div>
-            <Paginator itemCount={cardList.length} />
+            <Paginator itemCount={cards.length} />
         </div>
     );
 };

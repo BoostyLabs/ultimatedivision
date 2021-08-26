@@ -3,28 +3,28 @@
 
 import { Card } from '@/card';
 
-export const FORMATION_TYPE = 'Formation';
-export const CARD_SELECTION_VISIBILITY = 'SelectionVisibility';
-export const TACTICS_TYPE = 'Cactics';
-export const CAPTAIN_TYPE = 'Captain';
-export const CHOSE_CARD_POSITION = 'ChoseCard';
-export const ADD_CARD = 'AddCard';
-export const REMOVE_CARD = 'RemoveCard';
-export const DRAG_START = 'CurrentPossition';
-export const DRAG_TARGET = 'DragTarget';
-export const EXCHANGE_CARDS = 'ReplaceCard';
+export const FORMATION = 'FORMATION';
+export const SELECTION_VISIBILITY = 'SELECTION_VISIBILITY';
+export const TACTICS = 'TACTICS';
+export const CAPTAIN = 'CAPTAIN';
+export const CARD_POSITION = 'CARD_POSITION';
+export const ADD_CARD = 'ADD_CARD';
+export const REMOVE_CARD = 'REMOVE_CARD';
+export const DRAG_START = 'DRAG_START';
+export const DRAG_TARGET = 'DRAG_TARGET';
+export const EXCHANGE_CARDS = 'EXCHANGE_CARDS';
 
 type dragParamType = number | null;
 const DEFAULT_CARD_INDEX = null;
 
 /** Chose type of cards positioning on football field */
 export const setFormation = (option: string) => ({
-    type: FORMATION_TYPE,
+    type: FORMATION,
     action: option,
 });
 
 export const cardSelectionVisibility = (option: boolean) => ({
-    type: CARD_SELECTION_VISIBILITY,
+    type: SELECTION_VISIBILITY,
     action: option,
 });
 
@@ -41,7 +41,7 @@ export const removeCard = (index: dragParamType = DEFAULT_CARD_INDEX) => ({
 
 /** Selection position of card which should be added */
 export const choseCardPosition = (index: number) => ({
-    type: CHOSE_CARD_POSITION,
+    type: CARD_POSITION,
     action: index,
 });
 
@@ -61,11 +61,11 @@ export const exchangeCards = (prevPosition: dragParamType, currentPosition: drag
 });
 
 export const setTactic = (option: string) => ({
-    type: TACTICS_TYPE,
+    type: TACTICS,
     action: option,
 });
 
 export const setCaptain = (option: string) => ({
-    type: CAPTAIN_TYPE,
+    type: CAPTAIN,
     action: option,
 });
