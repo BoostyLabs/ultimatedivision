@@ -3,6 +3,7 @@ package cards
 import (
 	"strconv"
 	"strings"
+
 	"ultimatedivision/pkg/sqlsearchoperators"
 )
 
