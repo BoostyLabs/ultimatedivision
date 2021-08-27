@@ -279,115 +279,117 @@ type Filters struct {
 type Filter string
 
 const (
-	// FilterTactics indicates an tactics of the card.
+	// FilterTactics indicates filtering by card tactics.
 	FilterTactics Filter = "tactics"
-	// FilterPositioning indicates an positioning of the card.
+	// FilterPositioning indicates filtering by card positioning.
 	FilterPositioning Filter = "positioning"
-	// FilterComposure indicates an composure of the card.
+	// FilterComposure indicates filtering by card composure.
 	FilterComposure Filter = "composure"
-	// FilterAggression indicates an aggression of the card.
+	// FilterAggression indicates filtering by card aggression.
 	FilterAggression Filter = "aggression"
-	// FilterVision indicates an vision of the card.
+	// FilterVision indicates filtering by card vision.
 	FilterVision Filter = "vision"
-	// FilterAwareness indicates an awareness of the card.
+	// FilterAwareness indicates filtering by card awareness.
 	FilterAwareness Filter = "awareness"
-	// FilterCrosses indicates an crosses of the card.
+	// FilterCrosses indicates filtering by card crosses.
 	FilterCrosses Filter = "crosses"
-	// FilterPhysique indicates an physique of the card.
+	// FilterPhysique indicates filtering by card physique.
 	FilterPhysique Filter = "physique"
-	// FilterAcceleration indicates an acceleration of the card.
+	// FilterAcceleration indicates filtering by card acceleration.
 	FilterAcceleration Filter = "acceleration"
-	// FilterRunningSpeed indicates an running speed of the card.
+	// FilterRunningSpeed indicates filtering by card running speed.
 	FilterRunningSpeed Filter = "running_speed"
-	// FilterReactionSpeed indicates an reaction speed of the card.
+	// FilterReactionSpeed indicates filtering by card reaction speed.
 	FilterReactionSpeed Filter = "reaction_speed"
-	// FilterAgility indicates an agility of the card.
+	// FilterAgility indicates filtering by card agility.
 	FilterAgility Filter = "agility"
-	// FilterStamina indicates an stamina of the card.
+	// FilterStamina indicates filtering by card stamina.
 	FilterStamina Filter = "stamina"
-	// FilterStrength indicates an strength of the card.
+	// FilterStrength indicates filtering by card strength.
 	FilterStrength Filter = "strength"
-	// FilterJumping indicates an jumping of the card.
+	// FilterJumping indicates filtering by card jumping.
 	FilterJumping Filter = "jumping"
-	// FilterBalance indicates an balance of the card.
+	// FilterBalance indicates filtering by card balance.
 	FilterBalance Filter = "balance"
-	// FilterTechnique indicates an technique of the card.
+	// FilterTechnique indicates filtering by card technique.
 	FilterTechnique Filter = "technique"
-	// FilterDribbling indicates an dribbling of the card.
+	// FilterDribbling indicates filtering by card dribbling.
 	FilterDribbling Filter = "dribbling"
-	// FilterBallControl indicates an ball control of the card.
+	// FilterBallControl indicates filtering by card ball control.
 	FilterBallControl Filter = "ball_control"
-	// FilterWeakFoot indicates an weak foot of the card.
+	// FilterWeakFoot indicates filtering by card weak foot.
 	FilterWeakFoot Filter = "weak_foot"
-	// FilterSkillMoves indicates an skill moves of the card.
+	// FilterSkillMoves indicates filtering by card skill moves.
 	FilterSkillMoves Filter = "skill_moves"
-	// FilterFinesse indicates an finesse of the card.
+	// FilterFinesse indicates filtering by card finesse.
 	FilterFinesse Filter = "finesse"
-	// FilterCurve indicates an curve of the card.
+	// FilterCurve indicates filtering by card curve.
 	FilterCurve Filter = "curve"
-	// FilterVolleys indicates an volleys of the card.
+	// FilterVolleys indicates filtering by card volleys.
 	FilterVolleys Filter = "volleys"
-	// FilterShortPassing indicates an short passing of the card.
+	// FilterShortPassing indicates filtering by card short passing.
 	FilterShortPassing Filter = "short_passing"
-	// FilterLongPassing indicates an long passing of the card.
+	// FilterLongPassing indicates filtering by card long passing.
 	FilterLongPassing Filter = "long_passing"
-	// FilterForwardPass indicates an forward pass of the card.
+	// FilterForwardPass indicates filtering by card forward pass.
 	FilterForwardPass Filter = "forward_pass"
-	// FilterOffense indicates an offense of the card.
+	// FilterOffense indicates filtering by card offense.
 	FilterOffense Filter = "offense"
-	// FilterFinishingAbility indicates an finishing ability of the card.
+	// FilterFinishingAbility indicates filtering by card finishing ability.
 	FilterFinishingAbility Filter = "finishing_ability"
-	// FilterShotPower indicates an shot power of the card.
+	// FilterShotPower indicates filtering by card shot power.
 	FilterShotPower Filter = "shot_power"
-	// FilterAccuracy indicates an accuracy of the card.
+	// FilterAccuracy indicates filtering by card accuracy.
 	FilterAccuracy Filter = "accuracy"
-	// FilterDistance indicates an distance of the card.
+	// FilterDistance indicates filtering by card distance.
 	FilterDistance Filter = "distance"
-	// FilterPenalty indicates an penalty of the card.
+	// FilterPenalty indicates filtering by card penalty.
 	FilterPenalty Filter = "penalty"
-	// FilterFreeKicks indicates an free kicks of the card.
+	// FilterFreeKicks indicates filtering by card free kicks.
 	FilterFreeKicks Filter = "free_kicks"
-	// FilterCorners indicates an corners of the card.
+	// FilterCorners indicates filtering by card corners.
 	FilterCorners Filter = "corners"
-	// FilterHeadingAccuracy indicates an heading accuracy of the card.
+	// FilterHeadingAccuracy indicates filtering by card heading accuracy.
 	FilterHeadingAccuracy Filter = "heading_accuracy"
-	// FilterDefence indicates an defence of the card.
+	// FilterDefence indicates filtering by card defence.
 	FilterDefence Filter = "defence"
-	// FilterOffsideTrap indicates an offside trap of the card.
+	// FilterOffsideTrap indicates filtering by card offside trap.
 	FilterOffsideTrap Filter = "offside_trap"
-	// FilterSliding indicates an sliding of the card.
+	// FilterSliding indicates filtering by card sliding.
 	FilterSliding Filter = "sliding"
-	// FilterTackles indicates an tackles of the card.
+	// FilterTackles indicates filtering by card tackles.
 	FilterTackles Filter = "tackles"
-	// FilterBallFocus indicates an ball focus of the card.
+	// FilterBallFocus indicates filtering by card ball focus.
 	FilterBallFocus Filter = "ball_focus"
-	// FilterInterceptions indicates an interceptions of the card.
+	// FilterInterceptions indicates filtering by card interceptions.
 	FilterInterceptions Filter = "interceptions"
-	// FilterVigilance indicates an vigilance of the card.
+	// FilterVigilance indicates filtering by card vigilance.
 	FilterVigilance Filter = "vigilance"
-	// FilterGoalkeeping indicates an goalkeeping of the card.
+	// FilterGoalkeeping indicates filtering by card goalkeeping.
 	FilterGoalkeeping Filter = "goalkeeping"
-	// FilterReflexes indicates an reflexes of the card.
+	// FilterReflexes indicates filtering by card reflexes.
 	FilterReflexes Filter = "reflexes"
-	// FilterDiving indicates an diving of the card.
+	// FilterDiving indicates filtering by card diving.
 	FilterDiving Filter = "diving"
-	// FilterHandling indicates an handling of the card.
+	// FilterHandling indicates filtering by card handling.
 	FilterHandling Filter = "handling"
-	// FilterSweeping indicates an sweeping of the card.
+	// FilterSweeping indicates filtering by card sweeping.
 	FilterSweeping Filter = "sweeping"
-	// FilterThrowing indicates an throwing of the card.
+	// FilterThrowing indicates filtering by card throwing.
 	FilterThrowing Filter = "throwing"
-	// FilterQuality indicates an quality of the card.
+	// FilterQuality indicates filtering by card quality.
 	FilterQuality Filter = "quality"
-	// FilterHeight indicates an height of the card.
+	// FilterHeight indicates filtering by card height.
 	FilterHeight Filter = "height"
-	// FilterWeight indicates an weight of the card.
+	// FilterWeight indicates filtering by card weight.
 	FilterWeight Filter = "weight"
-	// FilterDominantFoot indicates an dominant foot of the card.
+	// FilterDominantFoot indicates filtering by card dominant foot.
 	FilterDominantFoot Filter = "dominant_foot"
-	// FilterType indicates an type of the card.
+	// FilterType indicates filtering by card type.
 	FilterType Filter = "type"
-	// FilterPlayerName indicates the name of the card player name.
+	// FilterPrice indicates filtering by card price.
+	FilterPrice Filter = "price"
+	// FilterPlayerName indicates filtering by card player name.
 	FilterPlayerName Filter = "player_name"
 )
 
@@ -414,7 +416,7 @@ func (f Filters) Validate() error {
 		return nil
 	}
 
-	if f.Name == FilterHeight || f.Name == FilterWeight {
+	if f.Name == FilterHeight || f.Name == FilterWeight || f.Name == FilterPrice {
 		strings.ToValidUTF8(f.Value, "")
 
 		_, err := strconv.ParseFloat(f.Value, 64)
