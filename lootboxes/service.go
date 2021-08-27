@@ -93,23 +93,23 @@ var QualityToValue = map[cards.Quality]int{
 	cards.QualityDiamond: 3,
 }
 
-// getValue returns value of card by key.
-func getValue(quality cards.Quality) int {
+// getValueOfQuality returns value of card by key.
+func getValueOfQuality(quality cards.Quality) int {
 	return QualityToValue[quality]
 }
 
-// sortSliceOfCards sorts cards returned from loot box.
+// sortLootBoxCards sorts cards returned from loot box.
 func sortLootBoxCards(cards []cards.Card) {
 	sort.Slice(cards, func(i, j int) bool {
-		sortByQuality := getValue(cards[i].Quality) > getValue(cards[j].Quality)
+		sortByQuality := getValueOfQuality(cards[i].Quality) > getValueOfQuality(cards[j].Quality)
 
-		if getValue(cards[i].Quality) == getValue(cards[j].Quality) {
-			parametersOfCard1 := cards[i].Tactics + cards[i].Physique + cards[i].Technique + cards[i].Offense + cards[i].Defence + cards[i].Goalkeeping
-			parametersOfCard2 := cards[j].Tactics + cards[j].Physique + cards[j].Technique + cards[j].Offense + cards[j].Defence + cards[j].Goalkeeping
-
-			return parametersOfCard1 > parametersOfCard2
+		if getValueOfQuality(cards[i].Quality) != getValueOfQuality(cards[j].Quality) {
+			return sortByQuality
 		}
 
-		return sortByQuality
+		parametersOfCard1 := cards[i].Tactics + cards[i].Physique + cards[i].Technique + cards[i].Offense + cards[i].Defence + cards[i].Goalkeeping
+		parametersOfCard2 := cards[j].Tactics + cards[j].Physique + cards[j].Technique + cards[j].Offense + cards[j].Defence + cards[j].Goalkeeping
+
+		return parametersOfCard1 > parametersOfCard2
 	})
 }
