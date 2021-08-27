@@ -168,7 +168,6 @@ func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter c
 	}
 
 	lots, err := service.marketplace.ListActiveLotsByItemID(ctx, cardIds)
-
 	return lots, ErrMarketplace.Wrap(err)
 }
 
