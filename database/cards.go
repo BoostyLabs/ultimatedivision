@@ -371,14 +371,14 @@ func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []s
 				leftJoin = " LEFT JOIN lots ON cards.id = lots.item_id "
 				values = append(values, filter.Value)
 				where = append(where, fmt.Sprintf(`
-                    CASE WHEN
-                        lots.current_price = 0
-                    THEN
-                        lots.start_price
-                    ELSE
-                        lots.current_price
-                    END
-                        %s %s`,
+					CASE WHEN
+						lots.current_price = 0
+					THEN
+						lots.start_price
+					ELSE
+						lots.current_price
+					END
+						%s %s`,
 					filter.SearchOperator,
 					"$"+strconv.Itoa(len(values))))
 			}
