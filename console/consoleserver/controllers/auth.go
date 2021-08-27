@@ -164,8 +164,14 @@ func (auth *Auth) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	err = auth.userAuth.ChangePassword(ctx, request.Password, request.NewPassword)
 	if err != nil {
 		auth.log.Error("Unable to change password", AuthError.Wrap(err))
-		auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
-		return
+		switch {
+		case users.ErrNoUser.Has(err):
+			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
+			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
+		default:
+			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
+		}
 	}
 
 	if err = json.NewEncoder(w).Encode("success"); err != nil {
