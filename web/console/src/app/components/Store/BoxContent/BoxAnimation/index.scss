@@ -1,0 +1,30 @@
+@import '@/index.scss';
+
+.box-animation {
+    padding-top: 200px;
+    &__box-cover,
+    &__box-body {
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+    }
+    &__box-cover {
+        animation: opening 5s ease-in-out;
+        @keyframes opening {
+            0% {
+                transform: translate(0 0);
+            }
+            10% {
+                transform: translate(0 -20px);
+            }
+            80% {
+                transform: translate(400px 0);
+            }
+            100% {
+                transform: translate(500px 500px);
+            }
+        }
+    }
+
+}
