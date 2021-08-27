@@ -10,19 +10,19 @@
         margin: 0 auto;
     }
     &__box-cover {
-        animation: opening 5s ease-in-out;
+        animation: opening 5s 1s 1 normal forwards;
         @keyframes opening {
             0% {
                 transform: translate(0 0);
             }
             10% {
-                transform: translate(0 -20px);
+                transform: translateY(-20px);
             }
-            80% {
-                transform: translate(400px 0);
+            50% {
+                transform: translateX(250px);
             }
             100% {
-                transform: translate(500px 500px);
+                transform: translateY(250px) translateX(300px);
             }
         }
     }
