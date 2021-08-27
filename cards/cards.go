@@ -467,5 +467,4 @@ func (f Filters) Validate() error {
 	}
 
 	return ErrInvalidFilter.New("invalid name parameter - %s", f.Name)
-
 }
