@@ -33,10 +33,10 @@ function cardListCreator(count: number): Card[] {
 /** To do: replace cards by empty array */
 export const cardSetup = {
     cardService: new CardService(),
-    cards: cardListCreator(CARDS_AMOUNT)
-}
+    cards: cardListCreator(CARDS_AMOUNT),
+};
 
-export const cardsReducer = (cardState = cardSetup, action: any = {}) => {
+export const cardsReducer = (cardState = cardSetup, action: any = {}) =>
 /** will be enabled when api will be returning list of cards */
 // switch (action.type) {
 // case ADD_CARDS:
@@ -46,5 +46,5 @@ export const cardsReducer = (cardState = cardSetup, action: any = {}) => {
 //     break;
 // }
 
-    return {...cardState};
-}
+    ({ ...cardState });
+
