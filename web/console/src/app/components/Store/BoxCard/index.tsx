@@ -48,9 +48,15 @@ export const BoxCard: React.FC<{ data: BoxData }> = ({ data }) => {
                 </div>
                 <div className="box-card__qualities">
                     {data.dropChance.map((item, index) =>
-                        <BoxCardQuality label={qualities[index]} chance={item} />
+                        <BoxCardQuality
+                            label={qualities[index]}
+                            chance={item}
+                            key={index}
+                        />
                     )}
-                    <button className="box-card__button">
+                    <button
+                        className="box-card__button"
+                    >
                         <span className="box-card__button-text">OPEN</span>
                         <span className="box-card__button-value"><img src={coin} alt="" />{data.price}</span>
                     </button>
