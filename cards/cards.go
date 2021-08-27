@@ -466,5 +466,6 @@ func (f Filters) Validate() error {
 		return ErrInvalidFilter.New("%s %s", f.Value, "is not an indicator of type card")
 	}
 
-	return ErrInvalidFilter.New("invalid name parameter")
+	return ErrInvalidFilter.New("invalid name parameter - %s", f.Name)
+
 }
