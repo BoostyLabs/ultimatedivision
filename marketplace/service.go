@@ -5,6 +5,8 @@ package marketplace
 
 import (
 	"context"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -109,6 +111,63 @@ func (service *Service) ListActiveLots(ctx context.Context) ([]Lot, error) {
 		return []Lot{}, userauth.ErrUnauthenticated.Wrap(err)
 	}
 	lots, err := service.marketplace.ListActiveLots(ctx)
+
+	return lots, ErrMarketplace.Wrap(err)
+}
+
+// ListActiveLotsWithFilters returns active lots from DB, taking the necessary filters.
+func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters []cards.Filters) ([]Lot, error) {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return nil, userauth.ErrUnauthenticated.Wrap(err)
+	}
+
+	for _, v := range filters {
+		err := v.Validate()
+		if err != nil {
+			return nil, ErrMarketplace.Wrap(err)
+		}
+	}
+
+	cards, err := service.cards.ListWithFilters(ctx, filters)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	var cardIds []uuid.UUID
+	for _, v := range cards {
+		cardIds = append(cardIds, v.ID)
+	}
+
+	lots, err := service.marketplace.ListActiveLotsByItemID(ctx, cardIds)
+	return lots, ErrMarketplace.Wrap(err)
+}
+
+// ListActiveLotsByPlayerName returns active lots from DB by player name card.
+func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter cards.Filters) ([]Lot, error) {
+	_, err := auth.GetClaims(ctx)
+	if err != nil {
+		return nil, userauth.ErrUnauthenticated.Wrap(err)
+	}
+	strings.ToValidUTF8(filter.Value, "")
+
+	// TODO: add best check
+	_, err = strconv.Atoi(filter.Value)
+	if err == nil {
+		return nil, ErrMarketplace.Wrap(cards.ErrInvalidFilter.New("%s %s", filter.Value, err))
+	}
+
+	cards, err := service.cards.ListByPlayerName(ctx, filter)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	var cardIds []uuid.UUID
+	for _, v := range cards {
+		cardIds = append(cardIds, v.ID)
+	}
+
+	lots, err := service.marketplace.ListActiveLotsByItemID(ctx, cardIds)
 
 	return lots, ErrMarketplace.Wrap(err)
 }
