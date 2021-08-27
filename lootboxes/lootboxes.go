@@ -5,8 +5,11 @@ package lootboxes
 
 import (
 	"context"
+	"sort"
 
 	"github.com/google/uuid"
+
+	"ultimatedivision/cards"
 )
 
 // DB is exposing access to lootboxes db.
@@ -60,4 +63,20 @@ type UDReleaseCelebrationBoxConfig struct {
 type Config struct {
 	RegularBoxConfig              `json:"regular"`
 	UDReleaseCelebrationBoxConfig `json:"UDReleaseCelebration"`
+}
+
+// sortLootBoxCards sorts cards returned from loot box.
+func sortLootBoxCards(cards []cards.Card) {
+	sort.Slice(cards, func(i, j int) bool {
+		sortByQuality := cards[i].Quality.GetValueOfQuality() > cards[j].Quality.GetValueOfQuality()
+
+		if cards[i].Quality.GetValueOfQuality() != cards[j].Quality.GetValueOfQuality() {
+			return sortByQuality
+		}
+
+		parametersOfCard1 := cards[i].Tactics + cards[i].Physique + cards[i].Technique + cards[i].Offense + cards[i].Defence + cards[i].Goalkeeping
+		parametersOfCard2 := cards[j].Tactics + cards[j].Physique + cards[j].Technique + cards[j].Offense + cards[j].Defence + cards[j].Goalkeeping
+
+		return parametersOfCard1 > parametersOfCard2
+	})
 }
