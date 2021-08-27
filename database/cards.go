@@ -249,14 +249,15 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 	whereClause, valuesString := BuildWhereClauseDependsOnCardsFilters(filters)
 	valuesInterface := ValidDBParameters(valuesString)
 	query := fmt.Sprintf(`
-		SELECT
-			cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
-			cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
+        SELECT
+            cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
+            cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
             stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
-			forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
-			tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
-		FROM
-			cards %s`, whereClause)
+            forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
+            tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
+        FROM
+            cards %s`,
+		whereClause)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
@@ -311,7 +312,7 @@ func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filte
 		err = errs.Combine(err, rows.Close())
 	}()
 
-	data := []cards.Card{}
+	var data []cards.Card
 	for rows.Next() {
 		card := cards.Card{}
 		if err = rows.Scan(
@@ -368,9 +369,19 @@ func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []s
 
 		for _, v := range filters {
 			if v.Name == cards.FilterType && v.Value == string(cards.TypeBought) {
-				leftJoin = " LEFT JOIN lots ON cards.id = lots.user_id "
+				leftJoin = " LEFT JOIN lots ON cards.id = lots.item_id "
 				values = append(values, filter.Value)
-				where = append(where, fmt.Sprintf(`CASE WHEN(lots.current_price IS NOT NULL) THEN lots.current_price END %s %s`, filter.SearchOperator, "$"+strconv.Itoa(len(values))))
+				where = append(where, fmt.Sprintf(`
+                    CASE WHEN
+                        lots.current_price = 0
+                    THEN
+                        lots.start_price
+                    ELSE
+                        lots.current_price
+                    END
+                        %s %s`,
+					filter.SearchOperator,
+					"$"+strconv.Itoa(len(values))))
 			}
 		}
 
@@ -380,7 +391,7 @@ func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []s
 		query += leftJoin
 	}
 	if len(where) > 0 {
-		query += (" WHERE " + strings.Join(where, " AND "))
+		query += " WHERE " + strings.Join(where, " AND ")
 	}
 
 	fmt.Println(query)
