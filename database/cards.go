@@ -360,7 +360,6 @@ func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []s
 	var leftJoin string
 
 	for _, filter := range filters {
-
 		if filter.Name != cards.FilterPrice {
 			values = append(values, filter.Value)
 			where = append(where, fmt.Sprintf(`cards.%s %s %s`, filter.Name, filter.SearchOperator, "$"+strconv.Itoa(len(values))))
@@ -384,7 +383,6 @@ func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []s
 					"$"+strconv.Itoa(len(values))))
 			}
 		}
-
 	}
 
 	if leftJoin != "" {
@@ -393,8 +391,6 @@ func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []s
 	if len(where) > 0 {
 		query += " WHERE " + strings.Join(where, " AND ")
 	}
-
-	fmt.Println(query)
 	return query, values
 }
 
