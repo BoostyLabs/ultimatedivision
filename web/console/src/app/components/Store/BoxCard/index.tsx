@@ -1,7 +1,9 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { BoxData } from '@/lootBox';
+import { useDispatch } from 'react-redux';
+
+import { BoxData } from '@/app/types/lootboxData';
 
 import wood from '@static/img/StorePage/BoxCard/wood.svg';
 import silver from '@static/img/StorePage/BoxCard/silver.svg';
@@ -13,6 +15,8 @@ import './index.scss';
 import { BoxCardQuality } from './BoxCardQuality';
 
 export const BoxCard: React.FC<{ data: BoxData }> = ({ data }) => {
+    const dispatch = useDispatch();
+
     const qualities = [
         {
             name: 'Wood',
@@ -56,6 +60,7 @@ export const BoxCard: React.FC<{ data: BoxData }> = ({ data }) => {
                     )}
                     <button
                         className="box-card__button"
+                        onClick={() => dispatch(data.buy({ id: data.id, name: data.title }))}
                     >
                         <span className="box-card__button-text">OPEN</span>
                         <span className="box-card__button-value"><img src={coin} alt="" />{data.price}</span>
