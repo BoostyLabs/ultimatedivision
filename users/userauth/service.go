@@ -252,3 +252,27 @@ func (service *Service) ChangePassword(ctx context.Context, password, newPasswor
 
 	return Error.Wrap(service.users.UpdatePassword(ctx, user.PasswordHash, user.ID))
 }
+
+// ResetPassword - change users password.
+func (service *Service) ResetPassword(ctx context.Context, email, password string) error {
+	user, err := service.users.GetByEmail(ctx, email)
+	if err != nil {
+		return users.ErrUsers.Wrap(err)
+	}
+
+	// @TODO I am testing and fixing this points.
+	_, err = service.Token(ctx, user.Email, password)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	// launch a goroutine that sends the email verification.
+	//go func() {
+	//	err = service.emailService.SendVerificationEmail(user.Email, token)
+	//	if err != nil {
+	//		service.log.Error("Unable to send account activation email", Error.Wrap(err))
+	//	}
+	//}()
+
+	return err
+}

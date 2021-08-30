@@ -91,6 +91,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
 	authRouter.HandleFunc("/email/confirm/{token}", authController.ConfirmEmail).Methods(http.MethodGet)
+	authRouter.HandleFunc("/reset-password", authController.ResetPassword).Methods(http.MethodPost)
+	authRouter.HandleFunc("/recovery-password/{token}", authController.ResetPassword).Methods(http.MethodGet)
 	authRouter.Handle("/change-password", server.withAuth(http.HandlerFunc(authController.ChangePassword))).Methods(http.MethodPost)
 
 	profile := apiRouter.PathPrefix("/profile").Subrouter()
