@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create lot</title>
+    <title>Place bet lot</title>
 </head>
 <body>
     <nav>
@@ -15,21 +15,8 @@
             </ul>
         </div>
     </nav>
-    <form action="/marketplace/create" method="post">
+    <form action="/marketplace/bet/{{.ID}}" method="post">
         <table>
-            <tr>
-                <td>
-                    Item:
-                </td>
-                <td>
-                    <select size="3" name="itemId">
-                        <option selected disabled>Select item</option>
-                        {{range .Cards}}
-                            <option value="{{.ID}}">{{.PlayerName}}</option>
-                        {{end}}
-                    </select>
-                </td>
-            </tr>
 			<tr>
                 <td>
                     User:
@@ -45,30 +32,14 @@
             </tr>
             <tr>
                 <td>
-                    StartPrice:
+                    Amount:
                 </td>
                 <td>
-                    <input type="number" name="startPrice" step="0.01" min="0">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    MaxPrice:
-                </td>
-                <td>
-                    <input type="number" name="maxPrice" step="0.01" min="0">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Period:
-                </td>
-                <td>
-                    <input type="number" name="period" min="1" max="120">
+                    <input type="number" name="betAmount" step="0.01" min="0">
                 </td>
             </tr>
         </table>
-        <input type="submit" value="Create">
+        <input type="submit" value="Place bet">
     </form>
 </body>
 </html>

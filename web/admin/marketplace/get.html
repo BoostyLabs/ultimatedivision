@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MarketPlace</title>
+  <title>MarketPlace get lot by id</title>
 </head>
 <body>
   <nav>
@@ -11,6 +11,7 @@
         <li><a href="/admins">Admins</a></li>
         <li><a href="/users">Users</a></li>
         <li><a href="/cards">Cards</a></li>
+        <li><a href="/marketplace">Marketplace</a></li>
         <li><a href="/marketplace/create">Create lot</a></li>
       </ul>
     </div>
@@ -32,7 +33,6 @@
         <th>Period</th>
       </tr>
     </thead>
-    {{range .}}
       <tr>
         <td>
           {{.ID}}
@@ -70,11 +70,7 @@
         <td>
           {{.Period}}
         </td>
-        <td>
-          <a href="/marketplace/bet/{{.ID}}">Place bet</a>
-        </td>
       </tr>
-    {{end}}
   </table>
 </body>
 </html>
