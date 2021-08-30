@@ -15,7 +15,10 @@ import './index.scss';
 
 
 export const BoxAnimation = () => {
-    const card = useSelector((state: RootState) => state.cardsReducer.cards[0])
+    // TODO: will be replaced by backend data
+    // eslint-disable-next-line
+    const card = useSelector((state: RootState) => state.cardsReducer.cards[0]);
+
     return (
         <div className="box-animation">
             <div className="box-animation__box-wrapper">
@@ -58,5 +61,5 @@ export const BoxAnimation = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};

@@ -4,12 +4,10 @@
 import { BoxAnimation } from './BoxAnimation';
 import './index.scss';
 
-const BoxContent = () => {
-    return (
-        <div className="box-content">
-            <BoxAnimation />
-        </div>
-    )
-}
+const BoxContent = () =>
+    <div className="box-content">
+        <BoxAnimation />
+    </div>;
+
 
 export default BoxContent;

@@ -11,7 +11,7 @@ const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
 const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
 const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
 const Store = lazy(() => import('@/app/views/StorePage'));
-const BoxContent = lazy(() => import('@components/Store/BoxContent'))
+const BoxContent = lazy(() => import('@components/Store/BoxContent'));
 
 import Summary from '@components/WhitePaper/Summary';
 import GameMechanics from '@components/WhitePaper/GameMechanics';
