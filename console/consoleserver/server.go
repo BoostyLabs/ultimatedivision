@@ -119,7 +119,6 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 
 	marketplaceRouter := apiRouter.PathPrefix("/marketplace").Subrouter()
 	marketplaceRouter.Handle("", server.withAuth(http.HandlerFunc(marketplaceController.ListActiveLots))).Methods(http.MethodGet)
-	marketplaceRouter.Handle("/byPlayerName", server.withAuth(http.HandlerFunc(marketplaceController.ListActiveLotsByPlayerName))).Methods(http.MethodGet)
 	marketplaceRouter.Handle("/byID/{id}", server.withAuth(http.HandlerFunc(marketplaceController.GetLotByID))).Methods(http.MethodGet)
 	marketplaceRouter.Handle("", server.withAuth(http.HandlerFunc(marketplaceController.CreateLot))).Methods(http.MethodPost)
 	marketplaceRouter.Handle("/bet", server.withAuth(http.HandlerFunc(marketplaceController.PlaceBetLot))).Methods(http.MethodPost)

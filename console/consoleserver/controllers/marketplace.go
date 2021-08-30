@@ -49,9 +49,10 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 		err            error
 		filters        []cards.Filters
 	)
-	urlQuery := r.URL.Query()
 
-	if len(urlQuery) > 0 {
+	urlQuery := r.URL.Query()
+	playerName := urlQuery.Get(string(cards.FilterPlayerName))
+	if playerName == "" {
 		for key, value := range urlQuery {
 			filter := cards.Filters{
 				Name:           "",
@@ -80,50 +81,21 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 
 			filters = append(filters, filter)
 		}
-	}
 
-	if len(filters) > 0 {
-		listActiveLots, err = controller.marketplace.ListActiveLotsWithFilters(ctx, filters)
-	} else {
-		listActiveLots, err = controller.marketplace.ListActiveLots(ctx)
-	}
-	if err != nil {
-		controller.log.Error("could not get active lots list", ErrMarketplace.Wrap(err))
-		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
-		case marketplace.ErrNoLot.Has(err):
-			controller.serveError(w, http.StatusNotFound, ErrMarketplace.Wrap(err))
-		default:
-			controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
+		if len(filters) > 0 {
+			listActiveLots, err = controller.marketplace.ListActiveLotsWithFilters(ctx, filters)
+		} else {
+			listActiveLots, err = controller.marketplace.ListActiveLots(ctx)
 		}
-		return
-	}
+	} else {
+		filter := cards.Filters{
+			Name:           cards.FilterPlayerName,
+			Value:          playerName,
+			SearchOperator: sqlsearchoperators.LIKE,
+		}
 
-	if err = json.NewEncoder(w).Encode(listActiveLots); err != nil {
-		controller.log.Error("failed to write json response", ErrMarketplace.Wrap(err))
-		return
+		listActiveLots, err = controller.marketplace.ListActiveLotsByPlayerName(ctx, filter)
 	}
-}
-
-// ListActiveLotsByPlayerName is an endpoint that returns active lots list by player name card.
-func (controller *Marketplace) ListActiveLotsByPlayerName(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	w.Header().Set("Content-Type", "application/json")
-	var filter cards.Filters
-
-	playerName := r.URL.Query().Get(string(cards.FilterPlayerName))
-	if playerName == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("empty player name parameter"))
-		return
-	}
-	filter = cards.Filters{
-		Name:           cards.FilterPlayerName,
-		Value:          playerName,
-		SearchOperator: sqlsearchoperators.LIKE,
-	}
-
-	listActiveLots, err := controller.marketplace.ListActiveLotsByPlayerName(ctx, filter)
 	if err != nil {
 		controller.log.Error("could not get active lots list", ErrMarketplace.Wrap(err))
 		switch {
