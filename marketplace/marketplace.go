@@ -167,13 +167,13 @@ type ResponseLot struct {
 	Period       Period    `json:"period"`
 }
 
-// ResponseLot entity describes the values required to response for create lot in admin.
+// ResponseCreateLot entity describes the values required to response for create lot in admin.
 type ResponseCreateLot struct {
 	Cards []cards.Card
 	Users []users.User
 }
 
-// ResponseLot entity describes the values required to response for place bet lot in admin.
+// ResponsePlaceBetLot entity describes the values required to response for place bet lot in admin.
 type ResponsePlaceBetLot struct {
 	ID    uuid.UUID
 	Users []users.User
