@@ -9,10 +9,15 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/internal/auth"
 )
 
 // ErrUsers indicates that there was an error in the service.
 var ErrUsers = errs.Class("users service error")
+
+// ErrUnauthenticated should be returned when user performs unauthenticated action.
+var ErrUnauthenticated = errs.Class("user unauthenticated error")
 
 // Service is handling users related logic.
 //
@@ -72,4 +77,31 @@ func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
 // Update updates a users status.
 func (service *Service) Update(ctx context.Context, status int, id uuid.UUID) error {
 	return service.users.Update(ctx, status, id)
+}
+
+// GetProfile returns user profile.
+func (service *Service) GetProfile(ctx context.Context) (*Profile, error) {
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		return nil, ErrUnauthenticated.Wrap(err)
+	}
+
+	user, err := service.users.GetByEmail(ctx, claims.Email)
+	if err != nil {
+		return nil, ErrUsers.Wrap(err)
+	}
+
+	profile := Profile{
+		Email:     user.Email,
+		NickName:  user.NickName,
+		CreatedAt: user.CreatedAt,
+	}
+	return &profile, nil
+}
+
+// GetNickNameByID returns nickname of user.
+func (service *Service) GetNickNameByID(ctx context.Context, id uuid.UUID) (string, error) {
+	nickname, err := service.users.GetNickNameByID(ctx, id)
+
+	return nickname, ErrUsers.Wrap(err)
 }

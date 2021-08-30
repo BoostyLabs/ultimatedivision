@@ -4,10 +4,8 @@
 package controllers
 
 import (
-	"html/template"
-	"net/http"
-
 	"github.com/zeebo/errs"
+	"html/template"
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
@@ -41,35 +39,5 @@ func NewLootBoxes(log logger.Logger, lootboxes *lootboxes.Service, templates Loo
 	}
 
 	return lootBoxesController
-}
-
-// Update is an endpoint that updates loot boxes.
-func (controller *LootBoxes) Update(w http.ResponseWriter, r *http.Request){
-	switch r.Method {
-	case http.MethodGet:
-		err := controller.templates.Update.Execute(w, nil)
-		if err != nil {
-			controller.log.Error("could not execute update loot boxes template", ErrLootBoxes.Wrap(err))
-			http.Error(w, "could not execute update loot boxes template", http.StatusInternalServerError)
-			return
-		}
-	case http.MethodPost:
-
-	}
-}
-
-// Create is an endpoint that creates loot boxes.
-func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request){
-	switch r.Method {
-	case http.MethodGet:
-		err := controller.templates.Create.Execute(w, nil)
-		if err != nil {
-			controller.log.Error("could not execute create lootboxes template", ErrLootBoxes.Wrap(err))
-			http.Error(w, "could not execute create lootboxes template", http.StatusInternalServerError)
-			return
-		}
-	case http.MethodPost:
-
-	}
 }
 
