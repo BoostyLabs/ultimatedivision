@@ -1,11 +1,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { BoxData } from '@/lootBox';
+import { BoxData } from '@/app/types/lootBox';
 
 import box from '@static/img/StorePage/BoxCard/box.svg';
 import coolBox from '@static/img/StorePage/BoxCard/coolBox.svg';
-import { BoxCard } from '../BoxCard';
+import { BoxCard } from './BoxCard';
 
 import './index.scss';
 

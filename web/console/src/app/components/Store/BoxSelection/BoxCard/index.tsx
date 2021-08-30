@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { BoxData } from '@/lootBox';
+import { BoxData } from '@/app/types';
 
 import wood from '@static/img/StorePage/BoxCard/wood.svg';
 import silver from '@static/img/StorePage/BoxCard/silver.svg';
