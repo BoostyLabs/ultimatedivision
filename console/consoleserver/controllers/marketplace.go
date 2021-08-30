@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/users/userauth"
@@ -117,11 +118,19 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.log.Error("could not authorize user", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
+		return
+	}
+
 	var createLot marketplace.CreateLot
 	if err := json.NewDecoder(r.Body).Decode(&createLot); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
 	}
+	createLot.UserID = claims.ID
 
 	if err := createLot.ValidateCreateLot(); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
@@ -145,11 +154,19 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.log.Error("could not authorize user", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
+		return
+	}
+
 	var betLot marketplace.BetLot
 	if err := json.NewDecoder(r.Body).Decode(&betLot); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
 	}
+	betLot.UserID = claims.ID
 
 	if err := betLot.ValidateBetLot(); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
