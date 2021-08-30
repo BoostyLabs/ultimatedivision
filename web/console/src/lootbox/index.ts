@@ -3,6 +3,7 @@
 
 /** domain entity Lootbox implementation */
 export class Lootbox {
+    /** receives base params: id and name */
     constructor(
         public id: string,
         public name: string,

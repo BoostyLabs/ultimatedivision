@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { APIClient } from "@/api/index";
-import { Lootbox } from "@/lootbox";
+import { APIClient } from '@/api/index';
+import { Lootbox } from '@/lootbox';
 
 /** LootboxClient is a lootbox api client */
 export class LootboxClient extends APIClient {

@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Lootbox } from "@/lootbox";
+import { Lootbox } from '@/lootbox';
 
 /** Class for lootBox Cards in store */
 export class BoxData {
@@ -13,6 +13,6 @@ export class BoxData {
         public quantity: number,
         public dropChance: number[],
         public price: string,
-        public buy: (lootbox: Lootbox) => { type: string, lootbox: Lootbox }
+        public buy: (lootbox: Lootbox) => { type: string; lootbox: Lootbox }
     ) { }
 }

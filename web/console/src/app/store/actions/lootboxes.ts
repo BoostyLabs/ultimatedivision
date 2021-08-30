@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Lootbox } from "@/lootbox";
+import { Lootbox } from '@/lootbox';
 
 export const BUY_LOOTBOX = 'BUY_LOOTBOX';
 export const OPEN_LOOTBOX = 'OPEN_LOOTBOX';
