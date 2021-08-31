@@ -33,7 +33,6 @@
         right: 0;
         margin: 0 auto;
         display: flex;
-        width: 650px;
         opacity: 0;
         animation: light 2s 1.5s 1 normal forwards;
         @keyframes light {
@@ -51,18 +50,7 @@
         opacity: 0;
         animation: light 3s 4s 1 normal forwards;
     }
-    &__light-image {
-        position: absolute;
-        &:first-child {
-            left: 0;
-        }
-        &:last-child {
-            right: 0;
-        }
-        &:nth-child(2){
-            left: 190px;
-        }
-    }
+
     &__ribbons {
         left: 0;
         right: 0;
