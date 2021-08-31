@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"ultimatedivision/admin/adminauth"
+	"ultimatedivision/lootboxes"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -54,17 +55,18 @@ type Server struct {
 	cookieAuth  *auth.CookieAuth
 
 	templates struct {
-		admin controllers.AdminTemplates
-		user  controllers.UserTemplates
-		card  controllers.CardTemplates
-		auth  controllers.AuthTemplates
+		admin   controllers.AdminTemplates
+		user    controllers.UserTemplates
+		card    controllers.CardTemplates
+		auth    controllers.AuthTemplates
+		lootbox controllers.LootBoxesTemplates
 	}
 
 	cards.PercentageQualities
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities, lootboxes *lootboxes.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -106,6 +108,12 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 	cardsRouter.HandleFunc("/create/{userID}", cardsController.Create).Methods(http.MethodGet)
 	cardsRouter.HandleFunc("/delete/{id}", cardsController.Delete).Methods(http.MethodGet)
+
+	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter().StrictSlash(true)
+	lootBoxesController := controllers.NewLootBoxes(log, lootboxes, server.templates.lootbox)
+	lootBoxesRouter.HandleFunc("/open/{id}", lootBoxesController.Open).Methods(http.MethodGet)
+	lootBoxesRouter.HandleFunc("/create/{id}", lootBoxesController.Create).Methods(http.MethodGet, http.MethodPost)
+	lootBoxesRouter.HandleFunc("", lootBoxesController.List).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -174,6 +182,19 @@ func (server *Server) initializeTemplates() (err error) {
 	}
 
 	server.templates.auth.Login, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "auth", "login.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.lootbox.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "lootboxes", "list.html"))
+	if err != nil {
+		return err
+	}
+	server.templates.lootbox.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "lootboxes", "create.html"))
+	if err != nil {
+		return err
+	}
+	server.templates.lootbox.ListCards, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "lootboxes", "listCards.html"))
 	if err != nil {
 		return err
 	}

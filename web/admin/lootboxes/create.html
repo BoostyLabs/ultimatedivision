@@ -6,65 +6,13 @@
 </head>
 <body>
 <form action="/lootboxes/create" method="post">
-  <table>
-    <tr>
-      <td>
-        Name:
-      </td>
-      <td>
-        <input type="text" name="name">
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Cost:
-      </td>
-      <td>
-        <input type="text" name="cost">
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Cards number:
-      </td>
-      <td>
-        <input type="text" name="cards_num">
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Wood probabilities:
-      </td>
-      <td>
-        <input type="text" name="wood">
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Silver probabilities:
-      </td>
-      <td>
-        <input type="text" name="silver">
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Gold probabilities:
-      </td>
-      <td>
-        <input type="text" name="gold">
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Diamond probabilities:
-      </td>
-      <td>
-        <input type="text" name="diamond">
-      </td>
-    </tr>
-  </table>
-  <input type="submit" value="Create">
+  <form>
+    <p><b>Chose type of loot box</b></p>
+    <p><input name="lootbox" type="radio" value="regular" checked="checked"> Regular box</p>
+    <p><input name="lootbox" type="radio" value="release"> UD Release Celebration Box</p>
+    <input type="submit" value="Create">
+  </form>
 </form>
 </body>
 </html>
+

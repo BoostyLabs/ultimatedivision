@@ -8,48 +8,31 @@
 <nav>
     <div>
         <ul>
-            <li><a href="/admins/create">Add lootbox</a></li>
+            <li><a href="/lootboxes/create">Add lootbox</a></li>
         </ul>
     </div>
 </nav>
 <table style="width:100%">
     <thead>
     <tr>
-        <th>Name</th>
-        <th>Cost</th>
-        <th>Number of cards</th>
-        <th>Wood probabilities</th>
-        <th>Silver probabilities</th>
-        <th>Gold probabilities</th>
-        <th>Diamond probabilities</th>
-        <th>Operation</th>
+        <th>User ID</th>
+        <th>Lootbox ID</th>
+        <th>Lootbox Type</th>
     </tr>
     </thead>
     {{range .}}
     <tr>
         <td>
-            {{.Name}}
+            {{.UserID}}
         </td>
         <td>
-            {{.Cost}}
+            {{.LootBoxID}}
         </td>
         <td>
-            {{.CardsNum}}
+            {{.Type}}
         </td>
         <td>
-            {{.Wood}}
-        </td>
-        <td>
-            {{.Silver}}
-        </td>
-        <td>
-            {{.Gold}}
-        </td>
-        <td>
-            {{.Diamond}}
-        </td>
-        <td>
-            <a href="/lootboxes/update/{{.ID}}">Update</a>
+            <a href="/lootboxes/open">Open</a>
         </td>
     </tr>
     {{end}}

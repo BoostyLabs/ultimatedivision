@@ -5,9 +5,13 @@ package lootboxes
 
 import (
 	"context"
+	"github.com/zeebo/errs"
 
 	"github.com/google/uuid"
 )
+
+// ErrNoLootBox indicates that loot box does not exist.
+var ErrNoLootBox = errs.Class("loot box does not exist")
 
 // DB is exposing access to lootboxes db.
 //
@@ -17,6 +21,8 @@ type DB interface {
 	Create(ctx context.Context, lootBox LootBox) error
 	// Delete deletes opened lootbox by user in db.
 	Delete(ctx context.Context, lootBox LootBox) error
+	// GetByUserID returns all users loot boxes.
+	GetByUserID(ctx context.Context, id uuid.UUID) ([]LootBox, error)
 }
 
 // LootBox defines lootbox.

@@ -6,6 +6,8 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"github.com/google/uuid"
 
 	"github.com/zeebo/errs"
 
@@ -57,4 +59,39 @@ func (lootboxesDB *lootboxesDB) Delete(ctx context.Context, lootBox lootboxes.Lo
 	_, err := lootboxesDB.conn.ExecContext(ctx, query, lootBox.UserID, lootBox.LootBoxID)
 
 	return ErrLootBoxes.Wrap(err)
+}
+
+// GetByUserID returns all users loot box by id.
+func (lootboxesDB *lootboxesDB) GetByUserID(ctx context.Context, id uuid.UUID) ([]lootboxes.LootBox, error) {
+	query := `SELECT user_id, lootbox_id, lootbox_name
+              FROM lootboxes
+              WHERE user_id = $1`
+
+	rows, err := lootboxesDB.conn.QueryContext(ctx, query, id)
+	if err != nil{
+		return nil, ErrLootBoxes.Wrap(err)
+	}
+
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	var userLootBoxes []lootboxes.LootBox
+
+	for rows.Next(){
+		var userLootBox lootboxes.LootBox
+
+		err = rows.Scan(&userLootBox.UserID, &userLootBox.LootBoxID, &userLootBox.Type)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, lootboxes.ErrNoLootBox.Wrap(err)
+			}
+
+			return nil, ErrLootBoxes.Wrap(err)
+		}
+
+		userLootBoxes = append(userLootBoxes, userLootBox)
+	}
+
+	return userLootBoxes, nil
 }
