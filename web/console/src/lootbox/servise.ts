@@ -16,7 +16,7 @@ export class Lootboxes {
         return await this.lootboxes.buy(lootbox);
     };
     /** handles lootbox opening */
-    public async open(lootbox: Lootbox): Promise<Response> {
-        return await this.lootboxes.open(lootbox);
+    public async open(id: string): Promise<Response> {
+        return await this.lootboxes.open(id);
     };
 };

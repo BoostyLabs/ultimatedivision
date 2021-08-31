@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 
 import { BoxData } from '@/app/types/lootboxData';
 
+import { BoxCardQuality } from './BoxCardQuality';
+
 import wood from '@static/img/StorePage/BoxCard/wood.svg';
 import silver from '@static/img/StorePage/BoxCard/silver.svg';
 import gold from '@static/img/StorePage/BoxCard/gold.svg';
@@ -12,10 +14,13 @@ import diamond from '@static/img/StorePage/BoxCard/diamond.svg';
 import coin from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
 
 import './index.scss';
-import { BoxCardQuality } from './BoxCardQuality';
 
 export const BoxCard: React.FC<{ data: BoxData }> = ({ data }) => {
     const dispatch = useDispatch();
+
+    const openLootbox = () => {
+        dispatch(data.buy({ id: data.id, name: data.title }))
+    };
 
     const qualities = [
         {
@@ -60,7 +65,7 @@ export const BoxCard: React.FC<{ data: BoxData }> = ({ data }) => {
                     )}
                     <button
                         className="box-card__button"
-                        onClick={() => dispatch(data.buy({ id: data.id, name: data.title }))}
+                        onClick={openLootbox}
                     >
                         <span className="box-card__button-text">OPEN</span>
                         <span className="box-card__button-value"><img src={coin} alt="" />{data.price}</span>

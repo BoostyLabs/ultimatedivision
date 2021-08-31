@@ -15,21 +15,25 @@ export class LootboxState {
     };
 };
 
+const lootboxClient = new LootboxClient();
+const lootboxService = new Lootboxes(lootboxClient);
+const lootboxState = new LootboxState(lootboxService);
+
 export const lootboxReducer = (
-    lootboxState = new LootboxState(new Lootboxes(new LootboxClient())),
+    state = lootboxState,
     action: any = {}
 ) => {
-    const lootboxes = lootboxState.lootboxes;
+    const lootboxes = state.lootboxes;
 
     switch (action.type) {
-    case BUY_LOOTBOX:
-        lootboxes.buy(action.lootbox);
-        break;
-    case OPEN_LOOTBOX:
-        lootboxes.open(action.lootbox);
-        break;
-    default:
-        break;
+        case BUY_LOOTBOX:
+            lootboxes.buy(action.lootbox);
+            break;
+        case OPEN_LOOTBOX:
+            lootboxes.open(action.lootbox);
+            break;
+        default:
+            break;
     };
 
     return { ...lootboxState };

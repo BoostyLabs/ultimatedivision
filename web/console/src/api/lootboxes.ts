@@ -12,7 +12,7 @@ export class LootboxClient extends APIClient {
         return await this.http.post(this.ROOT_PATH, JSON.stringify(lootbox));
     };
     /** opens lootbox*/
-    public async open(lootbox: Lootbox) {
-        return await this.http.delete(this.ROOT_PATH, JSON.stringify(lootbox));
+    public async open(id: string) {
+        return await this.http.delete(`${this.ROOT_PATH}/${id}`);
     };
 };

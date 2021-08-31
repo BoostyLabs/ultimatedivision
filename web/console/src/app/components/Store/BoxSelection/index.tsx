@@ -13,6 +13,7 @@ import './index.scss';
 export const BoxSelection = () => {
     const REGULAR_BOX_CARDS_QUANTITY = 5;
     const COOL_BOX_CARDS_QUANTITY = 10;
+    /** TODO: remove test code */
     const boxesData = [
         new BoxData(
             '1',
