@@ -6,6 +6,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/zeebo/errs"
@@ -48,15 +49,39 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 	var (
-		cardsList []cards.Card
-		err       error
-		filters   []cards.Filters
+		cardsList   []cards.Card
+		err         error
+		filters     []cards.Filters
+		limit, page int
 	)
 
 	urlQuery := r.URL.Query()
+	limitQuery := urlQuery.Get("limit")
+	pageQuery := urlQuery.Get("page")
+	if limitQuery != "" {
+		limit, err = strconv.Atoi(limitQuery)
+		if err != nil {
+			controller.serveError(w, http.StatusBadRequest, ErrCards.Wrap(err))
+		}
+	}
+	if pageQuery != "" {
+		page, err = strconv.Atoi(pageQuery)
+		if err != nil {
+			controller.serveError(w, http.StatusBadRequest, ErrCards.Wrap(err))
+		}
+	}
+
+	pagination := cards.Pagination{
+		Limit: limit,
+		Page:  page,
+	}
 	playerName := urlQuery.Get(string(cards.FilterPlayerName))
 	if playerName == "" {
 		for key, value := range urlQuery {
+			if key == "limit" || key == "page" {
+				continue
+			}
+
 			filter := cards.Filters{
 				Name:           "",
 				Value:          value[numberPositionOfURLParameter],
@@ -86,9 +111,9 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(filters) > 0 {
-			cardsList, err = controller.cards.ListWithFilters(ctx, filters)
+			cardsList, err = controller.cards.ListWithFilters(ctx, filters, pagination)
 		} else {
-			cardsList, err = controller.cards.List(ctx)
+			cardsList, err = controller.cards.List(ctx, pagination)
 		}
 	} else {
 		filter := cards.Filters{
@@ -96,7 +121,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 			Value:          playerName,
 			SearchOperator: sqlsearchoperators.LIKE,
 		}
-		cardsList, err = controller.cards.ListByPlayerName(ctx, filter)
+		cardsList, err = controller.cards.ListByPlayerName(ctx, filter, pagination)
 	}
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
