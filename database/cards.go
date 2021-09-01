@@ -196,13 +196,17 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
 }
 
 // List returns all cards from the data base.
-func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
-	query :=
-		`SELECT
-            ` + allFields + ` 
+func (cardsDB *cardsDB) List(ctx context.Context, pagination cards.Pagination) ([]cards.Card, error) {
+	query := fmt.Sprintf(`
+		SELECT
+            %s
         FROM 
             cards
-        `
+		LIMIT 
+			%s
+		OFFSET 
+			%s
+		`, allFields, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query)
 	if err != nil {
@@ -245,7 +249,7 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 }
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
-func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filters) ([]cards.Card, error) {
+func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filters, pagination cards.Pagination) ([]cards.Card, error) {
 	whereClause, valuesString := BuildWhereClauseDependsOnCardsFilters(filters)
 	valuesInterface := ValidDBParameters(valuesString)
 	query := fmt.Sprintf(`
@@ -256,8 +260,13 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
             forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
             tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
         FROM
-            cards %s`,
-		whereClause)
+            cards 
+		%s
+		LIMIT 
+			%s
+		OFFSET 
+			%s
+		`, whereClause, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
@@ -299,10 +308,20 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 }
 
 // ListByPlayerName returns all cards from DB by player name.
-func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filters) ([]cards.Card, error) {
+func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filters, pagination cards.Pagination) ([]cards.Card, error) {
 	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
 	valuesInterface := ValidDBParameters(valuesString)
-	query := fmt.Sprintf("SELECT %s FROM cards %s", allFields, whereClause)
+	query := fmt.Sprintf(`
+		SELECT 
+			%s 
+		FROM 
+			cards 
+		%s
+		LIMIT 
+			%s
+		OFFSET 
+			%s
+		`, allFields, whereClause, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
