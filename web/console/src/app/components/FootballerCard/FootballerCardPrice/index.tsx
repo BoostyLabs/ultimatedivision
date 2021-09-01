@@ -17,8 +17,8 @@ export const FootballerCardPrice: React.FC = () => {
 
     const priceData = useSelector((state: RootState) =>
         state.cardsReducer.cards[FIRST_CARD_INDEX].cardPrice);
-        //@ts-ignore
-    const prpValue: number  = priceData.prp;
+        // @ts-ignore
+    const prpValue: number = priceData.prp;
 
     return (
         <div className="footballer-card-price">

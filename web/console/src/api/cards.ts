@@ -10,10 +10,14 @@ export class CardClient extends APIClient {
 
     /** method calls get method from APIClient */
     public async get() {
-        return await this.http.get(this.ROOT_PATH);
+        const response = await this.http.get(this.ROOT_PATH);
+
+        return await response.json();
     }
     /** method post for implementing buying cards */
     public async buy(id: string) {
-        return await this.http.post(this.ROOT_PATH, id);
+        const response = await this.http.post(this.ROOT_PATH, id);
+
+        return await response.json();
     }
 }

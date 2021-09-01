@@ -21,9 +21,7 @@ export const useCards = () => {
 
     /** Calls method get from  ClubClient */
     async function getDataFromApi() {
-        const response = await cardService.get();
-        const cards = await response.json();
-        await dispatch(createCardList(cards));
+        await dispatch(createCardList());
 
         handleData({
             // @ts-ignore
