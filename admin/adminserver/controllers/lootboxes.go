@@ -88,8 +88,7 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	vars := mux.Vars(r)
-
-	if vars["userID"] == "" {
+	if vars["userID"] == "" || vars["lootboxID"] == "" {
 		http.Error(w, ErrLootBoxes.New("id parameter is empty").Error(), http.StatusBadRequest)
 		return
 	}
@@ -97,11 +96,6 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	userID, err := uuid.Parse(vars["userID"])
 	if err != nil {
 		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusBadRequest)
-		return
-	}
-
-	if vars["lootboxID"] == "" {
-		http.Error(w, ErrLootBoxes.New("id parameter is empty").Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -113,14 +107,14 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 
 	cards, err := controller.lootboxes.Open(ctx, lootboxID, userID)
 	if err != nil {
-		controller.log.Error("could not create loot box", ErrLootBoxes.Wrap(err))
+		controller.log.Error("could not open loot box", ErrLootBoxes.Wrap(err))
 		switch {
 		case lootboxes.ErrNoLootBox.Has(err):
 			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusNotFound)
 		default:
 			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
-			return
 		}
+		return
 	}
 
 	err = controller.templates.ListCards.Execute(w, cards)
@@ -143,8 +137,8 @@ func (controller *LootBoxes) List(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusUnauthorized)
 		default:
 			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
-			return
 		}
+		return
 	}
 
 	err = controller.templates.List.Execute(w, lootBoxes)

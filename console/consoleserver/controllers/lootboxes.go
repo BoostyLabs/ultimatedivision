@@ -60,7 +60,7 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 
 	err = controller.lootBoxes.Create(ctx, lootBox.Type, claims.ID)
 	if err != nil {
-		controller.log.Error("could not create lootbox for user", ErrLootBoxes.Wrap(err))
+		controller.log.Error("could not create loot box for user", ErrLootBoxes.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
 		return
 	}
@@ -73,7 +73,6 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	vars := mux.Vars(r)
-
 	if vars["lootboxID"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrLootBoxes.New("id parameter is empty"))
 		return
