@@ -202,11 +202,11 @@ func (cardsDB *cardsDB) List(ctx context.Context, pagination cards.Pagination) (
             %s
         FROM 
             cards
-		LIMIT 
-			%s
-		OFFSET 
-			%s
-		`, allFields, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
+        LIMIT 
+            %s
+        OFFSET 
+            %s
+        `, allFields, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query)
 	if err != nil {
@@ -261,12 +261,12 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
             tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
         FROM
             cards 
-		%s
-		LIMIT 
-			%s
-		OFFSET 
-			%s
-		`, whereClause, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
+        %s
+        LIMIT 
+            %s
+        OFFSET 
+            %s
+        `, whereClause, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
@@ -312,16 +312,16 @@ func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filte
 	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
 	valuesInterface := ValidDBParameters(valuesString)
 	query := fmt.Sprintf(`
-		SELECT 
-			%s 
-		FROM 
-			cards 
-		%s
-		LIMIT 
-			%s
-		OFFSET 
-			%s
-		`, allFields, whereClause, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
+        SELECT 
+            %s 
+        FROM 
+            cards 
+        %s
+        LIMIT 
+            %s
+        OFFSET 
+            %s
+        `, allFields, whereClause, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
