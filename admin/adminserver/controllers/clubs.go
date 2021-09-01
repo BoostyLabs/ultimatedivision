@@ -5,12 +5,12 @@ package controllers
 
 import (
 	"fmt"
-	"html/template"
-	"net/http"
-
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
+	"html/template"
+	"net/http"
+	"ultimatedivision/internal/auth"
 
 	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/clubs"
@@ -52,18 +52,23 @@ func NewClubs(log logger.Logger, clubs *clubs.Service, templates ClubsTemplates)
 
 // Create is an endpoint that will create club.
 func (controller *Clubs) Create(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	params := mux.Vars(r)
 	idParam := params["userID"]
 
 	id, err := uuid.Parse(idParam)
 	if err != nil {
-		http.Error(w, "could not parse uuid", http.StatusBadRequest)
+		http.Error(w, ErrClubs.New("could not parse uuid").Error(), http.StatusBadRequest)
 		return
 	}
 
-	ctx := clubs.SetUserID(r.Context(), id)
+	_, err = auth.GetClaims(ctx)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+	}
 
-	err = controller.clubs.Create(ctx)
+	err = controller.clubs.Create(ctx, id)
 	if err != nil {
 		controller.log.Error("could not create club", ErrClubs.Wrap(err))
 
@@ -95,9 +100,12 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx = clubs.SetUserID(ctx, id)
+	_, err = auth.GetClaims(ctx)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+	}
 
-	clubs, err := controller.clubs.Get(ctx)
+	club, err := controller.clubs.Get(ctx, id)
 	if err != nil {
 		controller.log.Error("could not get clubs list", ErrClubs.Wrap(err))
 		switch {
@@ -110,7 +118,7 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = controller.templates.List.Execute(w, clubs)
+	err = controller.templates.List.Execute(w, club)
 	if err != nil {
 		controller.log.Error("can not execute list clubs template", ErrClubs.Wrap(err))
 		http.Error(w, "can not execute list clubs template", http.StatusInternalServerError)
@@ -122,15 +130,21 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 func (controller *Clubs) GetSquad(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	params := mux.Vars(r)
-	idParam := params["clubID"]
-
-	fmt.Println(idParam)
-
-	id, err := uuid.Parse(idParam)
-	if err != nil {
-		http.Error(w, "could not parse uuid", http.StatusBadRequest)
+	vars := mux.Vars(r)
+	if vars["clubID"] == "" {
+		http.Error(w, ErrClubs.New("could not parse uuid").Error(), http.StatusBadRequest)
 		return
+	}
+
+	id, err := uuid.Parse(vars["clubID"])
+	if err != nil {
+		http.Error(w, ErrClubs.Wrap(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	_, err = auth.GetClaims(ctx)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 	}
 
 	squad, err := controller.clubs.GetSquad(ctx, id)
@@ -144,7 +158,6 @@ func (controller *Clubs) GetSquad(w http.ResponseWriter, r *http.Request) {
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
-
 		return
 	}
 
