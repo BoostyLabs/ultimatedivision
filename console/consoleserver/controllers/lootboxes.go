@@ -53,7 +53,6 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
-		controller.log.Error("user unauthorized", ErrLootBoxes.Wrap(err))
 		controller.serveError(w, http.StatusUnauthorized, ErrLootBoxes.Wrap(err))
 		return
 	}
@@ -86,7 +85,6 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
-		controller.log.Error("user unauthorized", ErrLootBoxes.Wrap(err))
 		controller.serveError(w, http.StatusUnauthorized, ErrLootBoxes.Wrap(err))
 		return
 	}
