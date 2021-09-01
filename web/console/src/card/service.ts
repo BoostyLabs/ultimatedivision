@@ -9,7 +9,7 @@ import { CardClient } from '@/api/cards';
 export class CardService {
     protected readonly card: CardClient;
     /** sets ClubClient into club field */
-    public constructor(club: CardClient = new CardClient()) {
+    public constructor(club: CardClient) {
         this.card = club;
     }
     /** get catds from api */

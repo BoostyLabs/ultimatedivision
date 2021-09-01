@@ -9,8 +9,10 @@ import { ClubCardsArea } from '@components/Club/ClubCardsArea';
 import { Paginator } from '@components/common/Paginator';
 
 import './index.scss';
+import { useCards } from '@/app/hooks/cards';
 
 const Club: React.FC = () => {
+    useCards();
     const cards = useSelector((state: RootState) => state.cardsReducer.cards);
 
     return (

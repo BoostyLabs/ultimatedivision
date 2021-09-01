@@ -2,8 +2,7 @@
 // See LICENSE for copying information.
 
 export const ADD_CARDS = 'AddCards';
-import { useCards } from '@/app/hooks/cards';
-import { CardDev } from '@/card/indexDev';
+import { Card } from '@/card';
 import { Dispatch } from 'redux';
 
 export const addCards = (cards: []) => ({
@@ -12,8 +11,7 @@ export const addCards = (cards: []) => ({
 });
 
 // thunk for creating cards list
-export const createCardList = () => async function(dispatch: Dispatch) {
-    const cards = await useCards();
+export const createCardList = (cards: any) => async function(dispatch: Dispatch) {
     // @ts-ignore
-    dispatch(addCards(cards.data.map(card => new CardDev(...card))));
+    dispatch(addCards(cards.data.map(card => new Card(...card))));
 };
