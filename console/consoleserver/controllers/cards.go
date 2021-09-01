@@ -62,12 +62,14 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		limit, err = strconv.Atoi(limitQuery)
 		if err != nil {
 			controller.serveError(w, http.StatusBadRequest, ErrCards.Wrap(err))
+			return
 		}
 	}
 	if pageQuery != "" {
 		page, err = strconv.Atoi(pageQuery)
 		if err != nil {
 			controller.serveError(w, http.StatusBadRequest, ErrCards.Wrap(err))
+			return
 		}
 	}
 
