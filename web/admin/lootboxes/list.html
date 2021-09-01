@@ -5,19 +5,13 @@
     <title>Admin Portal | Lootboxes</title>
 </head>
 <body>
-<nav>
-    <div>
-        <ul>
-            <li><a href="/lootboxes/create">Add lootbox</a></li>
-        </ul>
-    </div>
-</nav>
 <table style="width:100%">
     <thead>
     <tr>
         <th>User ID</th>
         <th>Lootbox ID</th>
         <th>Lootbox Type</th>
+        <th>Actions</th>
     </tr>
     </thead>
     {{range .}}
@@ -32,7 +26,7 @@
             {{.Type}}
         </td>
         <td>
-            <a href="/lootboxes/open">Open</a>
+            <a href="/lootboxes/open/{{.UserID}}/{{.LootBoxID}}">Open</a>
         </td>
     </tr>
     {{end}}

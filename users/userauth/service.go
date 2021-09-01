@@ -138,10 +138,10 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 	}
 
 	// TODO: uncommit when email verification is done
-	//if user.Status != users.StatusActive {
+	// if user.Status != users.StatusActive {
 	// TODO: return different errors on 0 and 2 statuses
 	//	return ErrUnauthenticated.New("authorization failed. no user with email: %s", claims.Email)
-	//}
+	// }
 
 	return nil
 }
@@ -188,12 +188,12 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 	}
 
 	// launch a goroutine that sends the email verification.
-	//go func() {
+	// go func() {
 	//	err = service.emailService.SendVerificationEmail(user.Email, token)
 	//	if err != nil {
 	//		service.log.Error("Unable to send account activation email", Error.Wrap(err))
 	//	}
-	//}()
+	// }()
 
 	return err
 }

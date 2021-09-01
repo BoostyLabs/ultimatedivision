@@ -7,8 +7,11 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
 )
@@ -48,7 +51,14 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := controller.lootBoxes.Create(ctx, lootBox)
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.log.Error("user unauthorized", ErrLootBoxes.Wrap(err))
+		controller.serveError(w, http.StatusUnauthorized, ErrLootBoxes.Wrap(err))
+		return
+	}
+
+	err = controller.lootBoxes.Create(ctx, lootBox.Type, claims.ID)
 	if err != nil {
 		controller.log.Error("could not create lootbox for user", ErrLootBoxes.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
@@ -56,23 +66,41 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Open is an endpoint that opens user lootbox.
+// Open is an endpoint that opens user loot box.
 func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	ctx := r.Context()
 
-	var lootBox lootboxes.LootBox
+	vars := mux.Vars(r)
 
-	if err := json.NewDecoder(r.Body).Decode(&lootBox); err != nil {
+	if vars["lootboxID"] == "" {
+		controller.serveError(w, http.StatusBadRequest, ErrLootBoxes.New("id parameter is empty"))
+		return
+	}
+
+	lootBoxID, err := uuid.Parse(vars["lootboxID"])
+	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrLootBoxes.Wrap(err))
 		return
 	}
 
-	cards, err := controller.lootBoxes.Open(ctx, lootBox)
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.log.Error("user unauthorized", ErrLootBoxes.Wrap(err))
+		controller.serveError(w, http.StatusUnauthorized, ErrLootBoxes.Wrap(err))
+		return
+	}
+
+	cards, err := controller.lootBoxes.Open(ctx, lootBoxID, claims.ID)
 	if err != nil {
 		controller.log.Error("could not open loot box", ErrLootBoxes.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
+		switch {
+		case lootboxes.ErrNoLootBox.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrLootBoxes.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
+		}
 		return
 	}
 

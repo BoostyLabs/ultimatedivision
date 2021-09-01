@@ -7,8 +7,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/google/uuid"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/lootboxes"
@@ -30,10 +30,10 @@ func (lootboxesDB *lootboxesDB) Create(ctx context.Context, lootBox lootboxes.Lo
 	if err != nil {
 		return ErrLootBoxes.Wrap(err)
 	}
-	query := `INSERT INTO lootboxes(lootbox_id, user_id, lootbox_name)
+	query := `INSERT INTO lootboxes(user_id, lootbox_id, lootbox_name)
               VALUES($1,$2,$3)`
 
-	_, err = lootboxesDB.conn.ExecContext(ctx, query, lootBox.UserID, lootBox.UserID, lootBox.Type)
+	_, err = lootboxesDB.conn.ExecContext(ctx, query, lootBox.UserID, lootBox.LootBoxID, lootBox.Type)
 
 	if err != nil {
 		err = tx.Rollback()
@@ -61,14 +61,13 @@ func (lootboxesDB *lootboxesDB) Delete(ctx context.Context, lootBox lootboxes.Lo
 	return ErrLootBoxes.Wrap(err)
 }
 
-// GetByUserID returns all users loot box by id.
-func (lootboxesDB *lootboxesDB) GetByUserID(ctx context.Context, id uuid.UUID) ([]lootboxes.LootBox, error) {
+// List returns all loot boxes.
+func (lootboxesDB *lootboxesDB) List(ctx context.Context) ([]lootboxes.LootBox, error) {
 	query := `SELECT user_id, lootbox_id, lootbox_name
-              FROM lootboxes
-              WHERE user_id = $1`
+              FROM lootboxes`
 
-	rows, err := lootboxesDB.conn.QueryContext(ctx, query, id)
-	if err != nil{
+	rows, err := lootboxesDB.conn.QueryContext(ctx, query)
+	if err != nil {
 		return nil, ErrLootBoxes.Wrap(err)
 	}
 
@@ -78,7 +77,7 @@ func (lootboxesDB *lootboxesDB) GetByUserID(ctx context.Context, id uuid.UUID) (
 
 	var userLootBoxes []lootboxes.LootBox
 
-	for rows.Next(){
+	for rows.Next() {
 		var userLootBox lootboxes.LootBox
 
 		err = rows.Scan(&userLootBox.UserID, &userLootBox.LootBoxID, &userLootBox.Type)
@@ -94,4 +93,26 @@ func (lootboxesDB *lootboxesDB) GetByUserID(ctx context.Context, id uuid.UUID) (
 	}
 
 	return userLootBoxes, nil
+}
+
+// GetTypeByLootBoxID returns type of loot box by user id.
+func (lootboxesDB *lootboxesDB) GetTypeByLootBoxID(ctx context.Context, lootboxID uuid.UUID) (lootboxes.Type, error) {
+	query := `SELECT lootbox_name
+              FROM lootboxes
+              WHERE lootbox_id = $1`
+
+	row := lootboxesDB.conn.QueryRowContext(ctx, query, lootboxID)
+
+	var lootBoxType lootboxes.Type
+
+	err := row.Scan(&lootBoxType)
+	if err != nil {
+		if errors.Is(sql.ErrNoRows, err) {
+			return lootBoxType, lootboxes.ErrNoLootBox.Wrap(err)
+		}
+
+		return lootBoxType, ErrLootBoxes.Wrap(err)
+	}
+
+	return lootBoxType, nil
 }

@@ -5,13 +5,11 @@ package lootboxes
 
 import (
 	"context"
-	"github.com/google/uuid"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
-	"ultimatedivision/internal/auth"
-	"ultimatedivision/users/userauth"
 )
 
 // ErrLootBoxes indicates that there was an error in the service.
@@ -36,37 +34,32 @@ func NewService(config Config, lootboxes DB, cards *cards.Service) *Service {
 }
 
 // Create creates LootBox.
-func (service *Service) Create(ctx context.Context, lootBoxType Type) error {
+func (service *Service) Create(ctx context.Context, lootBoxType Type, userID uuid.UUID) error {
 	userLootBox := LootBox{
+		UserID:    userID,
 		LootBoxID: uuid.New(),
 		Type:      lootBoxType,
 	}
-
-	claims, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
-
-	userLootBox.UserID = claims.ID
 
 	return ErrLootBoxes.Wrap(service.lootboxes.Create(ctx, userLootBox))
 }
 
 // Open opens lootbox by user.
-func (service *Service) Open(ctx context.Context, lootBoxID uuid.UUID) ([]cards.Card, error) {
+func (service *Service) Open(ctx context.Context, lootBoxID uuid.UUID, userID uuid.UUID) ([]cards.Card, error) {
 	userLootBox := LootBox{
+		UserID:    userID,
 		LootBoxID: lootBoxID,
 	}
 
-	claims, err := auth.GetClaims(ctx)
-	if err != nil {
-		return nil, userauth.ErrUnauthenticated.Wrap(err)
-	}
-
-	userLootBox.UserID = claims.ID
-
 	cardsNum := 0
 	probabilities := make([]int, 0, 4)
+
+	lootBoxType, err := service.lootboxes.GetTypeByLootBoxID(ctx, userLootBox.LootBoxID)
+	if err != nil {
+		return nil, ErrLootBoxes.Wrap(err)
+	}
+
+	userLootBox.Type = lootBoxType
 
 	if userLootBox.Type == RegularBox {
 		cardsNum = service.config.RegularBoxConfig.CardsNum
@@ -87,14 +80,16 @@ func (service *Service) Open(ctx context.Context, lootBoxID uuid.UUID) ([]cards.
 		lootBoxCards = append(lootBoxCards, card)
 	}
 
+	sortLootBoxCards(lootBoxCards)
+
 	err = service.lootboxes.Delete(ctx, userLootBox)
 
 	return lootBoxCards, ErrLootBoxes.Wrap(err)
 }
 
-// GetByUserID returns all users loot boxes.=
-func (service *Service) GetByUserID(ctx context.Context, userID uuid.UUID) ([]LootBox, error) {
-	userLootBoxes, err := service.GetByUserID(ctx, userID)
+// List returns all loot boxes.
+func (service *Service) List(ctx context.Context) ([]LootBox, error) {
+	userLootBoxes, err := service.lootboxes.List(ctx)
 
 	return userLootBoxes, ErrLootBoxes.Wrap(err)
 }

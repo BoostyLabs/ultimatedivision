@@ -10,18 +10,18 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/admin/adminauth"
-	"ultimatedivision/lootboxes"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver/controllers"
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
 )
 
@@ -111,9 +111,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter().StrictSlash(true)
 	lootBoxesController := controllers.NewLootBoxes(log, lootboxes, server.templates.lootbox)
-	lootBoxesRouter.HandleFunc("/open/{id}", lootBoxesController.Open).Methods(http.MethodGet)
-	lootBoxesRouter.HandleFunc("/create/{id}", lootBoxesController.Create).Methods(http.MethodGet, http.MethodPost)
 	lootBoxesRouter.HandleFunc("", lootBoxesController.List).Methods(http.MethodGet)
+	lootBoxesRouter.HandleFunc("/create/{id}", lootBoxesController.Create).Methods(http.MethodGet, http.MethodPost)
+	lootBoxesRouter.HandleFunc("/open/{userID}/{lootboxID}", lootBoxesController.Open).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,

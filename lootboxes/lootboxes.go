@@ -5,9 +5,12 @@ package lootboxes
 
 import (
 	"context"
-	"github.com/zeebo/errs"
+	"sort"
 
 	"github.com/google/uuid"
+	"github.com/zeebo/errs"
+
+	"ultimatedivision/cards"
 )
 
 // ErrNoLootBox indicates that loot box does not exist.
@@ -21,14 +24,16 @@ type DB interface {
 	Create(ctx context.Context, lootBox LootBox) error
 	// Delete deletes opened lootbox by user in db.
 	Delete(ctx context.Context, lootBox LootBox) error
-	// GetByUserID returns all users loot boxes.
-	GetByUserID(ctx context.Context, id uuid.UUID) ([]LootBox, error)
+	// List returns all loot boxes.
+	List(ctx context.Context) ([]LootBox, error)
+	// GetTypeByLootBoxID returns type of loot box by user id.
+	GetTypeByLootBoxID(ctx context.Context, lootboxID uuid.UUID) (Type, error)
 }
 
 // LootBox defines lootbox.
 type LootBox struct {
 	UserID    uuid.UUID `json:"-"`
-	LootBoxID uuid.UUID `json:"id"`
+	LootBoxID uuid.UUID `json:"-"`
 	Type      Type      `json:"name"`
 }
 
@@ -66,4 +71,20 @@ type UDReleaseCelebrationBoxConfig struct {
 type Config struct {
 	RegularBoxConfig              `json:"regular"`
 	UDReleaseCelebrationBoxConfig `json:"UDReleaseCelebration"`
+}
+
+// sortLootBoxCards sorts cards returned from loot box.
+func sortLootBoxCards(cards []cards.Card) {
+	sort.Slice(cards, func(i, j int) bool {
+		sortByQuality := cards[i].Quality.GetValueOfQuality() > cards[j].Quality.GetValueOfQuality()
+
+		if cards[i].Quality.GetValueOfQuality() != cards[j].Quality.GetValueOfQuality() {
+			return sortByQuality
+		}
+
+		parametersOfCard1 := cards[i].Tactics + cards[i].Physique + cards[i].Technique + cards[i].Offense + cards[i].Defence + cards[i].Goalkeeping
+		parametersOfCard2 := cards[j].Tactics + cards[j].Physique + cards[j].Technique + cards[j].Offense + cards[j].Defence + cards[j].Goalkeeping
+
+		return parametersOfCard1 > parametersOfCard2
+	})
 }

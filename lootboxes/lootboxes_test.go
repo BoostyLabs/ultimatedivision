@@ -5,12 +5,11 @@ package lootboxes_test
 
 import (
 	"context"
-	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"ultimatedivision"
@@ -41,7 +40,7 @@ func TestLootBox(t *testing.T) {
 	userLootBox2 := lootboxes.LootBox{
 		UserID:    user1.ID,
 		LootBoxID: uuid.New(),
-		Type:      lootboxes.RegularBox,
+		Type:      lootboxes.UDReleaseCelebrationBox,
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
@@ -54,28 +53,29 @@ func TestLootBox(t *testing.T) {
 
 			err = repositoryLootBoxes.Create(ctx, userLootBox1)
 			require.NoError(t, err)
-
-			err = repositoryLootBoxes.Create(ctx, userLootBox2)
-			require.NoError(t, err)
 		})
 
-		t.Run("get by user id", func(t *testing.T) {
-			userLootBoxes, err := repositoryLootBoxes.GetByUserID(ctx, user1.ID)
+		t.Run("List", func(t *testing.T) {
+			err := repositoryLootBoxes.Create(ctx, userLootBox2)
 			require.NoError(t, err)
 
-			fmt.Println(userLootBoxes)
-
-			fmt.Println("--------")
-
-			fmt.Println([]lootboxes.LootBox{userLootBox1, userLootBox2})
+			userLootBoxes, err := repositoryLootBoxes.List(ctx)
+			require.NoError(t, err)
 
 			compareLootBoxes(t, userLootBoxes, []lootboxes.LootBox{userLootBox1, userLootBox2})
 		})
 
-		/*t.Run("Delete", func(t *testing.T) {
+		t.Run("Get loot box type", func(t *testing.T) {
+			lootBoxType, err := repositoryLootBoxes.GetTypeByLootBoxID(ctx, userLootBox1.LootBoxID)
+			require.NoError(t, err)
+
+			assert.Equal(t, lootBoxType, userLootBox1.Type)
+		})
+
+		t.Run("Delete", func(t *testing.T) {
 			err := repositoryLootBoxes.Delete(ctx, userLootBox1)
 			require.NoError(t, err)
-		})*/
+		})
 	})
 }
 

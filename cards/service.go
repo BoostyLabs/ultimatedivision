@@ -35,11 +35,6 @@ func NewService(cards DB, config Config) *Service {
 
 // Create add card in DB.
 func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int) (Card, error) {
-	сlaims, err := auth.GetClaims(ctx)
-	if err != nil {
-		return Card{}, userauth.ErrUnauthenticated.Wrap(err)
-	}
-
 	qualities := map[string]int{
 		"wood":    percentageQualities[0],
 		"silver":  percentageQualities[1],
@@ -133,7 +128,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		IsTattoos:        isTattoos,
 		Status:           StatusActive,
 		Type:             TypeWon,
-		UserID:           сlaims.ID,
+		UserID:           userID,
 		Tactics:          tactics,
 		Positioning:      generateSkill(tactics),
 		Composure:        generateSkill(tactics),

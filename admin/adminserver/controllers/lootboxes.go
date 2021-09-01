@@ -4,15 +4,16 @@
 package controllers
 
 import (
+	"html/template"
+	"net/http"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
-	"html/template"
-	"net/http"
-	"ultimatedivision/users/userauth"
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
+	"ultimatedivision/users/userauth"
 )
 
 // ErrLootBoxes is an internal error type for loot boxes controller.
@@ -20,8 +21,8 @@ var ErrLootBoxes = errs.Class("lootboxes controller error")
 
 // LootBoxesTemplates holds all lootboxes related templates.
 type LootBoxesTemplates struct {
-	List   *template.Template
-	Create *template.Template
+	List      *template.Template
+	Create    *template.Template
 	ListCards *template.Template
 }
 
@@ -45,43 +46,8 @@ func NewLootBoxes(log logger.Logger, lootboxes *lootboxes.Service, templates Loo
 	return lootBoxesController
 }
 
-//  <a href="/lootboxes/create/{{.ID}}">Create lootboxes</a>
-
 // Create is an endpoint that creates loot box for user.
 func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		err := controller.templates.Create.Execute(w, nil)
-		if err != nil {
-			controller.log.Error("could not execute template", ErrLootBoxes.Wrap(err))
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-	case http.MethodPost:
-		// TODO: set userID in context.
-
-		ctx := r.Context()
-
-		lootBoxType := r.FormValue("lootbox")
-
-		err := controller.lootboxes.Create(ctx, lootBoxType)
-		if err != nil {
-			controller.log.Error("could not create loot box", ErrLootBoxes.Wrap(err))
-			switch {
-			case userauth.ErrUnauthenticated.Has(err):
-				http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusUnauthorized)
-			default:
-				http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
-				return
-			}
-		}
-
-		Redirect(w, r , "/lootboxes", http.MethodGet)
-	}
-}
-
-// Open is an endpoint that opens loot box by user.
-func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	vars := mux.Vars(r)
@@ -96,12 +62,59 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := controller.lootboxes.Open(ctx, id)
+	switch r.Method {
+	case http.MethodGet:
+		err = controller.templates.Create.Execute(w, id)
+		if err != nil {
+			controller.log.Error("could not execute template", ErrLootBoxes.Wrap(err))
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+	case http.MethodPost:
+		lootBoxType := r.FormValue("lootbox")
+
+		err = controller.lootboxes.Create(ctx, lootboxes.Type(lootBoxType), id)
+		if err != nil {
+			controller.log.Error("could not create loot box", ErrLootBoxes.Wrap(err))
+			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
+			return
+		}
+		Redirect(w, r, "/lootboxes", http.MethodGet)
+	}
+}
+
+// Open is an endpoint that opens loot box by user.
+func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	vars := mux.Vars(r)
+
+	if vars["userID"] == "" {
+		http.Error(w, ErrLootBoxes.New("id parameter is empty").Error(), http.StatusBadRequest)
+		return
+	}
+
+	userID, err := uuid.Parse(vars["userID"])
+	if err != nil {
+		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	if vars["lootboxID"] == "" {
+		http.Error(w, ErrLootBoxes.New("id parameter is empty").Error(), http.StatusBadRequest)
+		return
+	}
+
+	lootboxID, err := uuid.Parse(vars["lootboxID"])
+	if err != nil {
+		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	cards, err := controller.lootboxes.Open(ctx, lootboxID, userID)
 	if err != nil {
 		controller.log.Error("could not create loot box", ErrLootBoxes.Wrap(err))
 		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusUnauthorized)
 		case lootboxes.ErrNoLootBox.Has(err):
 			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusNotFound)
 		default:
@@ -122,21 +135,9 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 func (controller *LootBoxes) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	vars := mux.Vars(r)
-	if vars["id"] == "" {
-		http.Error(w, ErrLootBoxes.New("id parameter is empty").Error(), http.StatusBadRequest)
-		return
-	}
-
-	id, err := uuid.Parse(vars["id"])
+	lootBoxes, err := controller.lootboxes.List(ctx)
 	if err != nil {
-		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusBadRequest)
-		return
-	}
-
-	lootBoxes, err := controller.lootboxes.GetByUserID(ctx,id)
-	if err != nil {
-		controller.log.Error("could not create loot box", ErrLootBoxes.Wrap(err))
+		controller.log.Error("could not list loot boxes", ErrLootBoxes.Wrap(err))
 		switch {
 		case userauth.ErrUnauthenticated.Has(err):
 			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusUnauthorized)
