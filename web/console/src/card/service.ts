@@ -13,15 +13,15 @@ export class CardService {
         this.card = club;
     }
     /** get marketplace cards from api */
-    public async getSellingCards() {
+    public async getSellingCards(): Promise<Response> {
         return await this.card.getSellingCards();
     }
     /** get user cards from api */
-    public async getUserCards() {
+    public async getUserCards(): Promise<Response> {
         return await this.card.getUserCards();
     }
     /** sell card */
-    public async sellCard(id: string) {
+    public async sellCard(id: string): Promise<Response> {
         return await this.card.sellCard(id);
     }
 }

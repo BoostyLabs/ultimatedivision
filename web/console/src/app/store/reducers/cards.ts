@@ -20,7 +20,6 @@ const cardService = new CardService(cardClient);
 export const cardSetup = new CardSetup(cardService, [], []);
 
 export const cardsReducer = (cardState = cardSetup, action: any = {}) => {
-    /** will be enabled when api will be returning list of cards */
     switch (action.type) {
     case GET_USER_CARDS:
         cardState.clubCards = action.action;
