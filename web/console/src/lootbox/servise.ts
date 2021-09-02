@@ -17,5 +17,4 @@ export class LootboxService {
         const response = await this.lootboxes.buy(lootbox);
         return await response.json();
     };
-    /** handles lootbox opening */
 };
