@@ -19,11 +19,6 @@ var (
 	ErrCards = errs.Class("cards controller error")
 )
 
-const (
-	// numberPositionOfURLParameter is a number that shows the position of the url parameter.
-	numberPositionOfURLParameter = 0
-)
-
 // Cards is a mvc controller that handles all cards related views.
 type Cards struct {
 	log logger.Logger
