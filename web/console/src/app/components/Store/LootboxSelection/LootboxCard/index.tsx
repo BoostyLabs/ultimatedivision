@@ -1,7 +1,14 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { BoxData } from '@/lootBox';
+import { Dispatch, SetStateAction } from 'react';
+import { useDispatch } from 'react-redux';
+
+import { LootboxStats } from '@/app/types/lootBox';
+
+import { openLootbox } from '@/app/store/actions/lootboxes';
+
+import { LootboxCardQuality } from './LootboxCardQuality';
 
 import wood from '@static/img/StorePage/BoxCard/wood.svg';
 import silver from '@static/img/StorePage/BoxCard/silver.svg';
@@ -10,9 +17,9 @@ import diamond from '@static/img/StorePage/BoxCard/diamond.svg';
 import coin from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
 
 import './index.scss';
-import { BoxCardQuality } from './BoxCardQuality';
 
-export const BoxCard: React.FC<{ data: BoxData }> = ({ data }) => {
+export const LootboxCard: React.FC<{ data: LootboxStats; handleOpening: Dispatch<SetStateAction<boolean>> }> = ({ data, handleOpening }) => {
+    const dispatch = useDispatch();
     const qualities = [
         {
             name: 'Wood',
@@ -32,6 +39,11 @@ export const BoxCard: React.FC<{ data: BoxData }> = ({ data }) => {
         },
     ];
 
+    const handleAnimation = () => {
+        handleOpening(true);
+        dispatch(openLootbox({ uuid: data.id, name: data.title }));
+    };
+
     return (
         <div className="box-card">
             <div className="box-card__wrapper">
@@ -48,7 +60,7 @@ export const BoxCard: React.FC<{ data: BoxData }> = ({ data }) => {
                 </div>
                 <div className="box-card__qualities">
                     {data.dropChance.map((item, index) =>
-                        <BoxCardQuality
+                        <LootboxCardQuality
                             label={qualities[index]}
                             chance={item}
                             key={index}
@@ -56,9 +68,13 @@ export const BoxCard: React.FC<{ data: BoxData }> = ({ data }) => {
                     )}
                     <button
                         className="box-card__button"
+                        onClick={handleAnimation}
                     >
                         <span className="box-card__button-text">OPEN</span>
-                        <span className="box-card__button-value"><img src={coin} alt="" />{data.price}</span>
+                        <span className="box-card__button-value">
+                            <img src={coin} alt="coin" />
+                            {data.price}
+                        </span>
                     </button>
                 </div>
             </div>
