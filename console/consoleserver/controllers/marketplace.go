@@ -6,17 +6,16 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/sqlsearchoperators"
-	"ultimatedivision/users/userauth"
 )
 
 var (
@@ -47,41 +46,15 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 	var (
 		listActiveLots []marketplace.Lot
 		err            error
-		filters        []cards.Filters
+		filters        cards.SliceFilters
 	)
-
 	urlQuery := r.URL.Query()
 	playerName := urlQuery.Get(string(cards.FilterPlayerName))
+
 	if playerName == "" {
-		for key, value := range urlQuery {
-			filter := cards.Filters{
-				Name:           "",
-				Value:          value[numberPositionOfURLParameter],
-				SearchOperator: "",
-			}
-
-			for k, v := range sqlsearchoperators.SearchOperators {
-				if strings.HasSuffix(key, k) {
-					countName := len(key) - (1 + len(k))
-					filter.Name = cards.Filter(key[:countName])
-					filter.SearchOperator = v
-				}
-			}
-
-			keyFilter := cards.Filter(key)
-			if keyFilter == cards.FilterQuality || keyFilter == cards.FilterDominantFoot || keyFilter == cards.FilterType {
-				filter.Name = cards.Filter(key)
-				filter.SearchOperator = sqlsearchoperators.EQ
-			}
-
-			if filter.Name == "" {
-				controller.serveError(w, http.StatusBadRequest, cards.ErrInvalidFilter.New("invalid name parameter - "+key))
-				return
-			}
-
-			filters = append(filters, filter)
+		if err := filters.DecodingURLParameters(urlQuery); err != nil {
+			controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		}
-
 		if len(filters) > 0 {
 			listActiveLots, err = controller.marketplace.ListActiveLotsWithFilters(ctx, filters)
 		} else {
@@ -93,14 +66,11 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 			Value:          playerName,
 			SearchOperator: sqlsearchoperators.LIKE,
 		}
-
 		listActiveLots, err = controller.marketplace.ListActiveLotsByPlayerName(ctx, filter)
 	}
 	if err != nil {
 		controller.log.Error("could not get active lots list", ErrMarketplace.Wrap(err))
 		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
 		case marketplace.ErrNoLot.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrMarketplace.Wrap(err))
 		default:
@@ -136,8 +106,6 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		controller.log.Error("could not get lot by id", ErrMarketplace.Wrap(err))
 		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
 		case marketplace.ErrNoLot.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrMarketplace.Wrap(err))
 		default:
@@ -169,12 +137,18 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
+		return
+	}
 
 	var createLot marketplace.CreateLot
 	if err := json.NewDecoder(r.Body).Decode(&createLot); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
 	}
+	createLot.UserID = claims.ID
 
 	if err := createLot.ValidateCreateLot(); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
@@ -182,12 +156,6 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 
 	if err := controller.marketplace.CreateLot(ctx, createLot); err != nil {
 		controller.log.Error("could not create lot", ErrMarketplace.Wrap(err))
-
-		if userauth.ErrUnauthenticated.Has(err) {
-			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
-			return
-		}
-
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}
@@ -197,12 +165,18 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
+		return
+	}
 
 	var betLot marketplace.BetLot
 	if err := json.NewDecoder(r.Body).Decode(&betLot); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
 	}
+	betLot.UserID = claims.ID
 
 	if err := betLot.ValidateBetLot(); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
@@ -210,12 +184,6 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 
 	if err := controller.marketplace.PlaceBetLot(ctx, betLot); err != nil {
 		controller.log.Error("could not place bet lot", ErrMarketplace.Wrap(err))
-
-		if userauth.ErrUnauthenticated.Has(err) {
-			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
-			return
-		}
-
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}
