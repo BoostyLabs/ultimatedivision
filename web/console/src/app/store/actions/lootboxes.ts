@@ -18,7 +18,7 @@ export const buyLootbox = (lootbox: Lootbox) => ({
 const client = new LootboxClient();
 const service = new LootboxService(client);
 /** thunk that handles opening new lootbox */
-export const openLootbox = (lootbox: Lootbox) => async function (dispatch: Dispatch) {
+export const openLootbox = (lootbox: Lootbox) => async function(dispatch: Dispatch) {
     const response = await service.buy(lootbox);
     const openedLootbox = await response.json();
     dispatch(buyLootbox(openedLootbox));

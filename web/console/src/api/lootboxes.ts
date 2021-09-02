@@ -11,6 +11,7 @@ export class LootboxClient extends APIClient {
     public async buy(lootbox: Lootbox) {
         /** TODO: delete post http method after back-end reworks */
         await this.http.post(this.ROOT_PATH, JSON.stringify(lootbox));
+
         return await this.http.delete(this.ROOT_PATH, JSON.stringify(lootbox));
     };
 };

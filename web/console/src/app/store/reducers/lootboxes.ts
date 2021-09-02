@@ -24,13 +24,12 @@ export const lootboxReducer = (
     state = lootboxState,
     action: any = {}
 ) => {
-
     switch (action.type) {
-        case BUY_LOOTBOX:
-            state.lootbox = action.lootbox;
-            break;
-        default:
-            break;
+    case BUY_LOOTBOX:
+        state.lootbox = action.lootbox;
+        break;
+    default:
+        break;
     };
 
     return { ...state };
