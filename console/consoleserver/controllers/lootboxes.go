@@ -64,7 +64,7 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(userLootBox); err != nil{
+	if err = json.NewEncoder(w).Encode(userLootBox); err != nil {
 		controller.log.Error("could not response with json", ErrLootBoxes.Wrap(err))
 		return
 	}

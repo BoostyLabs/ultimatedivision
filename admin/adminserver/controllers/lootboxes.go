@@ -49,7 +49,6 @@ func NewLootBoxes(log logger.Logger, lootboxes *lootboxes.Service, templates Loo
 // Create is an endpoint that creates loot box for user.
 func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	vars := mux.Vars(r)
 	if vars["id"] == "" {
 		http.Error(w, ErrLootBoxes.New("id parameter is empty").Error(), http.StatusBadRequest)
@@ -86,7 +85,6 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 // Open is an endpoint that opens loot box by user.
 func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	vars := mux.Vars(r)
 	if vars["userID"] == "" || vars["lootboxID"] == "" {
 		http.Error(w, ErrLootBoxes.New("id parameter is empty").Error(), http.StatusBadRequest)
