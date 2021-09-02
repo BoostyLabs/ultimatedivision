@@ -4,8 +4,8 @@
 import { Lootbox } from '@/lootbox';
 
 /** Class for lootBox Cards in store */
-export class BoxData {
-    /** boxData implementation */
+export class LootboxStats {
+    /** LootboxStats implementation */
     constructor(
         public id: string,
         public icon: string,
