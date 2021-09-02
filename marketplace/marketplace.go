@@ -98,6 +98,7 @@ type Config struct {
 type CreateLot struct {
 	ItemID     uuid.UUID `json:"itemId"`
 	Type       Type      `json:"type"`
+	UserID     uuid.UUID `json:"userId"`
 	StartPrice float64   `json:"startPrice"`
 	MaxPrice   float64   `json:"maxPrice"`
 	Period     Period    `json:"period"`
@@ -106,6 +107,7 @@ type CreateLot struct {
 // BetLot entity that contains the values required to place bet the lot.
 type BetLot struct {
 	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"userId"`
 	BetAmount float64   `json:"betAmount"`
 }
 
