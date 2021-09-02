@@ -7,12 +7,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FootballFieldInformation } from '@components/FootballField/FootballFieldInformation';
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
+import { FootballFieldCard } from '@/app/types/footballField';
+
 import { RootState } from '@/app/store';
-import { cardSelectionVisibility, choseCardPosition, exchangeCards, removeCard, setDragStart, setDragTarget }
+import { cardSelectionVisibility, choosePosition, exchangeCards, removeCard, setDragStart, setDragTarget }
     from '@/app/store/actions/footballField';
 
 import './index.scss';
-import { FootballFieldCard } from '@/app/types/footballField';
 
 export const FootballFieldPlayingArea: React.FC = () => {
     const formation = useSelector((state: RootState) => state.fieldReducer.options.formation);
@@ -55,7 +56,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
 
     /** Add card position, and shows card selection */
     function handleClick(index: number) {
-        dispatch(choseCardPosition(index));
+        dispatch(choosePosition(index));
         dispatch(cardSelectionVisibility(true));
         setTimeout(() => {
             window.scroll(X_SCROLL_POINT, Y_SCROLL_POINT);

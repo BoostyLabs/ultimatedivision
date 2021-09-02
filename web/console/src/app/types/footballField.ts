@@ -8,7 +8,7 @@ export class FootballFieldCard {
     /** class which implements fotballField card */
     constructor(
         public id: number,
-        public cardData: null | Card,
+        public card: null | Card,
     ) { }
 }
 /* eslint-disable no-magic-numbers */
