@@ -67,7 +67,7 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 		err = controller.templates.Create.Execute(w, id)
 		if err != nil {
 			controller.log.Error("could not execute template", ErrLootBoxes.Wrap(err))
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
@@ -120,7 +120,7 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	err = controller.templates.ListCards.Execute(w, cards)
 	if err != nil {
 		controller.log.Error("could not execute template", ErrLootBoxes.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -144,7 +144,7 @@ func (controller *LootBoxes) List(w http.ResponseWriter, r *http.Request) {
 	err = controller.templates.List.Execute(w, lootBoxes)
 	if err != nil {
 		controller.log.Error("could not execute template", ErrLootBoxes.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }

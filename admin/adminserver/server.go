@@ -111,6 +111,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	cardsRouter.HandleFunc("/delete/{id}", cardsController.Delete).Methods(http.MethodGet)
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter().StrictSlash(true)
+	lootBoxesRouter.Use(server.withAuth)
 	lootBoxesController := controllers.NewLootBoxes(log, lootboxes, server.templates.lootbox)
 	lootBoxesRouter.HandleFunc("", lootBoxesController.List).Methods(http.MethodGet)
 	lootBoxesRouter.HandleFunc("/create/{id}", lootBoxesController.Create).Methods(http.MethodGet, http.MethodPost)
