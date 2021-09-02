@@ -8,7 +8,7 @@ import { Lootbox } from '@/lootbox';
 export class LootboxClient extends APIClient {
     private readonly ROOT_PATH: string = '/lootboxes';
     /** buys and opens lootbox */
-    public async buy(lootbox: Lootbox) {
+    public async buy(lootbox: Lootbox): Promise<Response> {
         /** TODO: delete post http method after back-end reworks */
         await this.http.post(this.ROOT_PATH, JSON.stringify(lootbox));
 
