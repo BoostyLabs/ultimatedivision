@@ -65,8 +65,6 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		controller.log.Error("could not lis lot by id", ErrMarketplace.Wrap(err))
 		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusUnauthorized)
 		case marketplace.ErrNoLot.Has(err):
 			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
 		default:
@@ -86,8 +84,8 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 // GetLotByID is an endpoint that will provide a web page with lot by id.
 func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	vars := mux.Vars(r)
+
 	if vars["id"] == "" {
 		http.Error(w, ErrMarketplace.New("id parameter is empty").Error(), http.StatusBadRequest)
 		return
@@ -102,8 +100,6 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		controller.log.Error("could not get lot by id", ErrMarketplace.Wrap(err))
 		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusUnauthorized)
 		case marketplace.ErrNoLot.Has(err):
 			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
 		default:
@@ -222,12 +218,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 
 		if err := controller.marketplace.CreateLot(ctx, createLot); err != nil {
 			controller.log.Error("could not create lot", ErrMarketplace.Wrap(err))
-			switch {
-			case userauth.ErrUnauthenticated.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusUnauthorized)
-			default:
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
-			}
+			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -238,8 +229,8 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 // PlaceBetLot is an endpoint that will add card to database.
 func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	vars := mux.Vars(r)
+
 	if vars["id"] == "" {
 		http.Error(w, ErrMarketplace.New("id parameter is empty").Error(), http.StatusBadRequest)
 		return
@@ -324,12 +315,7 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 
 		if err := controller.marketplace.PlaceBetLot(ctx, betLot); err != nil {
 			controller.log.Error("could not place bet lot", ErrMarketplace.Wrap(err))
-			switch {
-			case userauth.ErrUnauthenticated.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusUnauthorized)
-			default:
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
-			}
+			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
