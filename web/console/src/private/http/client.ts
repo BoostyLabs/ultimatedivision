@@ -5,13 +5,13 @@
  * HttpClient is a custom wrapper around fetch api.
  * Exposes get, post and delete methods for JSON strings.
  */
-export class HttpClient {
+ export class HttpClient {
     /**
      * Performs POST http request with JSON body.
      * @param path
      * @param body serialized JSON
      */
-    public async post(path: string, body: string | null): Promise<Response> {
+    public async post(path: string, body?: string): Promise<Response> {
         return await this.do('POST', path, body);
     }
 
@@ -20,7 +20,7 @@ export class HttpClient {
      * @param path
      * @param body serialized JSON
      */
-    public async patch(path: string, body: string | null): Promise<Response> {
+    public async patch(path: string, body?: string): Promise<Response> {
         return await this.do('PATCH', path, body);
     }
 
@@ -30,7 +30,7 @@ export class HttpClient {
      * @param body serialized JSON
      * @param _auth indicates if authentication is needed
      */
-    public async put(path: string, body: string | null, _auth = true): Promise<Response> {
+    public async put(path: string, body?: string, _auth = true): Promise<Response> {
         return await this.do('PUT', path, body);
     }
 
@@ -40,7 +40,7 @@ export class HttpClient {
      * @param _auth indicates if authentication is needed
      */
     public async get(path: string, _auth = true): Promise<Response> {
-        return await this.do('GET', path, null);
+        return await this.do('GET', path);
     }
 
     /**
@@ -50,7 +50,7 @@ export class HttpClient {
      */
     /** TODO: DELETE method will be reworked after back-end remarks.
      * Right now needs body here. */
-    public async delete(path: string, body: string | null, _auth = true): Promise<Response> {
+    public async delete(path: string, body?: string, _auth = true): Promise<Response> {
         return await this.do('DELETE', path, body);
     };
 
@@ -61,7 +61,7 @@ export class HttpClient {
      * @param body serialized JSON
      */
     /* eslint-disable-next-line */
-    private async do(method: string, path: string, body: string | null): Promise<Response> {
+    private async do(method: string, path: string, body?: string): Promise<Response> {
         const request: RequestInit = {
             method: method,
             body: body,
@@ -72,5 +72,5 @@ export class HttpClient {
         };
 
         return await fetch(path, request);
-    }
-}
+    };
+};
