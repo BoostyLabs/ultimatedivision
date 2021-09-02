@@ -57,10 +57,15 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = controller.lootBoxes.Create(ctx, lootBox.Type, claims.ID)
+	userLootBox, err := controller.lootBoxes.Create(ctx, lootBox.Type, claims.ID)
 	if err != nil {
 		controller.log.Error("could not create loot box for user", ErrLootBoxes.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(userLootBox); err != nil{
+		controller.log.Error("could not response with json", ErrLootBoxes.Wrap(err))
 		return
 	}
 }

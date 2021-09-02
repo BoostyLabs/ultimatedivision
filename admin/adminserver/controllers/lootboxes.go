@@ -73,7 +73,7 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		lootBoxType := r.FormValue("lootbox")
 
-		err = controller.lootboxes.Create(ctx, lootboxes.Type(lootBoxType), id)
+		_, err = controller.lootboxes.Create(ctx, lootboxes.Type(lootBoxType), id)
 		if err != nil {
 			controller.log.Error("could not create loot box", ErrLootBoxes.Wrap(err))
 			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)

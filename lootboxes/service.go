@@ -34,14 +34,14 @@ func NewService(config Config, lootboxes DB, cards *cards.Service) *Service {
 }
 
 // Create creates LootBox.
-func (service *Service) Create(ctx context.Context, lootBoxType Type, userID uuid.UUID) error {
+func (service *Service) Create(ctx context.Context, lootBoxType Type, userID uuid.UUID) (LootBox, error) {
 	userLootBox := LootBox{
 		UserID:    userID,
 		LootBoxID: uuid.New(),
 		Type:      lootBoxType,
 	}
 
-	return ErrLootBoxes.Wrap(service.lootboxes.Create(ctx, userLootBox))
+	return userLootBox, ErrLootBoxes.Wrap(service.lootboxes.Create(ctx, userLootBox))
 }
 
 // Open opens lootbox by user.
