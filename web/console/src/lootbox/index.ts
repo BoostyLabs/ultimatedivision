@@ -5,7 +5,7 @@
 export class Lootbox {
     /** receives base params: id and name */
     constructor(
-        public id: string,
+        public uuid: string,
         public name: string,
     ) { };
 };

@@ -1,12 +1,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { buyLootbox } from '@/app/store/actions/lootboxes';
+import { BoxCard } from '../BoxCard';
 import { BoxData } from '@/app/types/lootboxData';
 
 import box from '@static/img/StorePage/BoxCard/box.svg';
 import coolBox from '@static/img/StorePage/BoxCard/coolBox.svg';
-import { BoxCard } from '../BoxCard';
 
 import './index.scss';
 
@@ -23,7 +22,6 @@ export const BoxSelection = () => {
             // eslint-disable-next-line
             [80, 15, 4, 1],
             '200,000',
-            buyLootbox,
         ),
         new BoxData(
             '2',
@@ -33,7 +31,6 @@ export const BoxSelection = () => {
             // eslint-disable-next-line
             [70, 20, 8, 2],
             '500,000',
-            buyLootbox,
         ),
     ];
 

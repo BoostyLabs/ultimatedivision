@@ -12,7 +12,6 @@ export class BoxData {
         public title: string,
         public quantity: number,
         public dropChance: number[],
-        public price: string,
-        public buy: (lootbox: Lootbox) => { type: string; lootbox: Lootbox }
+        public price: string
     ) { }
 }

@@ -48,9 +48,11 @@ export class HttpClient {
      * @param path
      * @param _auth indicates if authentication is needed
      */
-    public async delete(path: string, _auth = true): Promise<Response> {
-        return await this.do('DELETE', path, null);
-    }
+    /** TODO: DELETE method will be reworked after back-end remarks.
+     * Right now needs body here. */
+    public async delete(path: string, body: string | null, _auth = true): Promise<Response> {
+        return await this.do('DELETE', path, body);
+    };
 
     /**
      * do sends an HTTP request and returns an HTTP response as configured on the client.

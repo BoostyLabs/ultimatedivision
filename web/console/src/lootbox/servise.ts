@@ -2,21 +2,19 @@
 // See LICENSE for copying information.
 
 import { LootboxClient } from '@/api/lootboxes';
+import { Card } from '@/card';
 import { Lootbox } from '.';
 
 /** exposes all lootbox related logic */
-export class Lootboxes {
+export class LootboxService {
     private readonly lootboxes: LootboxClient;
     /** receives LootboxClient */
     public constructor(lootboxes: LootboxClient) {
         this.lootboxes = lootboxes;
     };
     /** handles lootbox buying */
-    public async buy(lootbox: Lootbox): Promise<Response> {
+    public async buy(lootbox: Lootbox) {
         return await this.lootboxes.buy(lootbox);
     };
     /** handles lootbox opening */
-    public async open(id: string): Promise<Response> {
-        return await this.lootboxes.open(id);
-    };
 };
