@@ -3,13 +3,9 @@
 
 import { Card } from '@/card';
 import { SetStateAction, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { createCardList } from '../store/actions/cards';
+import { useDispatch } from 'react-redux';
 
-export const useCards = () => {
-    const cardService = useSelector((state: RootState) => state.cardsReducer.cardService);
-
+export const useCards = (thunk: any) => {
     type Data = {
         data: null | Card[];
         isLoading: boolean;
@@ -21,7 +17,7 @@ export const useCards = () => {
 
     /** Calls method get from  ClubClient */
     async function getDataFromApi() {
-        await dispatch(createCardList());
+        await dispatch(thunk());
 
         handleData({
             // @ts-ignore

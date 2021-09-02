@@ -6,18 +6,18 @@ import { APIClient } from '@/api/index';
 /** ClubClient base implementation */
 export class CardClient extends APIClient {
     /** To do: add exist endpoint for club */
-    private readonly ROOT_PATH: string = '/api/v0/cards';
+    private readonly ROOT_PATH: string = '/api/v0';
 
     /** method calls get method from APIClient */
-    public async get() {
-        const response = await this.http.get(this.ROOT_PATH);
-
-        return await response.json();
+    public async getUserCards() {
+        return await this.http.get(`${this.ROOT_PATH}/cards`);
     }
     /** method post for implementing buying cards */
-    public async buy(id: string) {
-        const response = await this.http.post(this.ROOT_PATH, id);
-
-        return await response.json();
+    public async sellCard(id: string) {
+        return await this.http.post(`${this.ROOT_PATH}/marketplace/bet`, id);
+    }
+    /** method calls get method from APIClient */
+    public async getSellingCards() {
+        return await this.http.get(`${this.ROOT_PATH}/marketplace`);
     }
 }

@@ -12,12 +12,16 @@ export class CardService {
     public constructor(club: CardClient) {
         this.card = club;
     }
-    /** get catds from api */
-    public async get() {
-        return await this.card.get();
+    /** get marketplace cards from api */
+    public async getSellingCards() {
+        return await this.card.getSellingCards();
     }
-    /** post cards into buyed cardlist */
-    public async buy(param: string) {
-        return await this.card.buy(param);
+    /** get user cards from api */
+    public async getUserCards() {
+        return await this.card.getUserCards();
+    }
+    /** sell card */
+    public async sellCard(id: string) {
+        return await this.card.sellCard(id);
     }
 }
