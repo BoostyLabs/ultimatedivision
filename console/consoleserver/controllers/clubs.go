@@ -6,6 +6,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"ultimatedivision/internal/auth"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -13,7 +14,6 @@ import (
 
 	"ultimatedivision/clubs"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/users/userauth"
 )
 
 var (
@@ -44,17 +44,15 @@ func (controller *Clubs) Create(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	err := controller.clubs.Create(ctx)
+	claims , err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+	}
+
+	err = controller.clubs.Create(ctx, claims.ID)
 	if err != nil {
 		controller.log.Error("could not create club", ErrClubs.Wrap(err))
-
-		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-		default:
-			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
-		}
-
+		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 }
@@ -65,9 +63,13 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
+	_ , err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+	}
+
 	params := mux.Vars(r)
 	idParam := params["clubId"]
-
 	if idParam == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
@@ -82,14 +84,7 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 	err = controller.clubs.CreateSquad(ctx, id)
 	if err != nil {
 		controller.log.Error("could not create squad", ErrClubs.Wrap(err))
-
-		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-		default:
-			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
-		}
-
+		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
 }
@@ -100,51 +95,44 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	club, err := controller.clubs.Get(ctx)
+	claims , err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+	}
+
+	club, err := controller.clubs.Get(ctx, claims.ID)
 	if err != nil {
 		controller.log.Error("could not get club", ErrClubs.Wrap(err))
-
 		switch {
 		case clubs.ErrNoClub.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
 		default:
 			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
-
 		return
 	}
 
 	squad, err := controller.clubs.GetSquad(ctx, club.ID)
 	if err != nil {
 		controller.log.Error("could not get squad", ErrClubs.Wrap(err))
-
 		switch {
 		case clubs.ErrNoSquad.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
 		default:
 			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
-
 		return
 	}
 
 	squadCard, err := controller.clubs.GetSquadCard(ctx, squad.ID)
 	if err != nil {
 		controller.log.Error("could not get squad card", ErrClubs.Wrap(err))
-
 		switch {
-		case clubs.ErrNoClub.Has(err):
+		case clubs.ErrNoSquad.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
 		default:
 			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
-
 		return
 	}
 
@@ -166,6 +154,11 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 
 	ctx := r.Context()
 
+	_ , err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+	}
+
 	var squadCard clubs.SquadCard
 
 	if err := json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
@@ -173,19 +166,15 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err := controller.clubs.UpdateCardPosition(ctx, squadCard)
+	err = controller.clubs.UpdateCardPosition(ctx, squadCard)
 	if err != nil {
 		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
-
 		switch {
 		case clubs.ErrNoSquad.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
 		default:
 			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
-
 		return
 	}
 }
@@ -196,26 +185,27 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
+	_ , err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+	}
+
 	var updatedSquad clubs.Squad
 
-	if err := json.NewDecoder(r.Body).Decode(&updatedSquad); err != nil {
+	if err = json.NewDecoder(r.Body).Decode(&updatedSquad); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
-	err := controller.clubs.UpdateSquad(ctx, updatedSquad)
+	err = controller.clubs.UpdateSquad(ctx, updatedSquad)
 	if err != nil {
 		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
-
 		switch {
 		case clubs.ErrNoSquad.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
 		default:
 			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
-
 		return
 	}
 }
@@ -226,6 +216,11 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
+	_ , err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+	}
+
 	var newSquadCard clubs.SquadCard
 
 	if err := json.NewDecoder(r.Body).Decode(&newSquadCard); err != nil {
@@ -233,19 +228,15 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := controller.clubs.Add(ctx, newSquadCard)
+	err = controller.clubs.Add(ctx, newSquadCard)
 	if err != nil {
 		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
-
 		switch {
 		case clubs.ErrNoSquad.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
 		default:
 			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
-
 		return
 	}
 }
@@ -256,6 +247,11 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
+	_ , err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+	}
+
 	var squadCard clubs.SquadCard
 
 	if err := json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
@@ -263,19 +259,15 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := controller.clubs.Delete(ctx, squadCard.SquadID, squadCard.CardID)
+	err = controller.clubs.Delete(ctx, squadCard.SquadID, squadCard.CardID)
 	if err != nil {
 		controller.log.Error("could not delete card from squad", ErrClubs.Wrap(err))
-
 		switch {
 		case clubs.ErrNoSquad.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
 		default:
 			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		}
-
 		return
 	}
 }

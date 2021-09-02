@@ -51,11 +51,6 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) error {
 
 // CreateSquad creates new squad for club.
 func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error {
-	/*_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}*/
-
 	newSquad := Squad{
 		ID:     uuid.New(),
 		ClubID: clubID,
