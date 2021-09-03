@@ -67,7 +67,7 @@ func (service *Service) Token(ctx context.Context, email string, password string
 	}
 
 	claims := auth.Claims{
-		ID:        user.ID,
+		UserID:    user.ID,
 		Email:     user.Email,
 		ExpiresAt: time.Now().Add(TokenExpirationTime),
 	}

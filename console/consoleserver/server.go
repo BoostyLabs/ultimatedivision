@@ -113,8 +113,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	squadCardsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.Delete))).Methods(http.MethodDelete)
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
-	lootBoxesRouter.Handle("", server.withAuth(http.HandlerFunc(lootBoxesController.Create))).Methods(http.MethodPost)
-	lootBoxesRouter.Handle("", server.withAuth(http.HandlerFunc(lootBoxesController.Open))).Methods(http.MethodDelete)
+	lootBoxesRouter.Use(server.withAuth)
+	lootBoxesRouter.Handle("", http.HandlerFunc(lootBoxesController.Create)).Methods(http.MethodPost)
+	lootBoxesRouter.Handle("/{id}", http.HandlerFunc(lootBoxesController.Open)).Methods(http.MethodDelete)
 
 	marketplaceRouter := apiRouter.PathPrefix("/marketplace").Subrouter()
 	marketplaceRouter.Handle("", server.withAuth(http.HandlerFunc(marketplaceController.ListActiveLots))).Methods(http.MethodGet)

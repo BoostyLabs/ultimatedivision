@@ -9,8 +9,6 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
-	"ultimatedivision/internal/auth"
-	"ultimatedivision/users/userauth"
 )
 
 // ErrLootBoxes indicates that there was an error in the service.
@@ -36,25 +34,11 @@ func NewService(config Config, lootboxes DB, cards *cards.Service) *Service {
 
 // Create creates LootBox.
 func (service *Service) Create(ctx context.Context, userLootBox LootBox) error {
-	claims, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
-
-	userLootBox.UserID = claims.ID
-
 	return ErrLootBoxes.Wrap(service.lootboxes.Create(ctx, userLootBox))
 }
 
 // Open opens lootbox by user.
 func (service *Service) Open(ctx context.Context, userLootBox LootBox) ([]cards.Card, error) {
-	claims, err := auth.GetClaims(ctx)
-	if err != nil {
-		return nil, userauth.ErrUnauthenticated.Wrap(err)
-	}
-
-	userLootBox.UserID = claims.ID
-
 	cardsNum := 0
 	probabilities := make([]int, 0, 4)
 
@@ -77,7 +61,7 @@ func (service *Service) Open(ctx context.Context, userLootBox LootBox) ([]cards.
 		lootBoxCards = append(lootBoxCards, card)
 	}
 
-	err = service.lootboxes.Delete(ctx, userLootBox)
+	err := service.lootboxes.Delete(ctx, userLootBox.LootBoxID)
 
 	return lootBoxCards, ErrLootBoxes.Wrap(err)
 }
