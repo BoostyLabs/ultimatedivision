@@ -227,7 +227,7 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Card, error)
 
 // List returns all cards from DB.
 func (service *Service) List(ctx context.Context, cursor Cursor) (Page, error) {
-	var page Page
+	var cardsListPage Page
 
 	if cursor.Limit <= 0 {
 		cursor.Limit = service.config.Cursor.Limit
@@ -237,21 +237,21 @@ func (service *Service) List(ctx context.Context, cursor Cursor) (Page, error) {
 	}
 	cards, err := service.cards.List(ctx, cursor)
 	if err != nil {
-		return page, ErrCards.Wrap(err)
+		return cardsListPage, ErrCards.Wrap(err)
 	}
 
-	page, err = service.listPaginated(ctx, cursor, cards)
-	return page, ErrCards.Wrap(err)
+	cardsListPage, err = service.listPaginated(ctx, cursor, cards)
+	return cardsListPage, ErrCards.Wrap(err)
 }
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
 func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, cursor Cursor) (Page, error) {
-	var page Page
+	var cardsListPage Page
 
 	for _, v := range filters {
 		err := v.Validate()
 		if err != nil {
-			return page, err
+			return cardsListPage, err
 		}
 	}
 
@@ -263,22 +263,22 @@ func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, 
 	}
 	cards, err := service.cards.ListWithFilters(ctx, filters, cursor)
 	if err != nil {
-		return page, ErrCards.Wrap(err)
+		return cardsListPage, ErrCards.Wrap(err)
 	}
 
-	page, err = service.listPaginated(ctx, cursor, cards)
-	return page, ErrCards.Wrap(err)
+	cardsListPage, err = service.listPaginated(ctx, cursor, cards)
+	return cardsListPage, ErrCards.Wrap(err)
 }
 
 // ListByPlayerName returns cards from DB by player name.
 func (service *Service) ListByPlayerName(ctx context.Context, filter Filters, cursor Cursor) (Page, error) {
-	var page Page
+	var cardsListPage Page
 	strings.ToValidUTF8(filter.Value, "")
 
 	// TODO: add best check
 	_, err := strconv.Atoi(filter.Value)
 	if err == nil {
-		return page, ErrInvalidFilter.New("%s %s", filter.Value, err)
+		return cardsListPage, ErrInvalidFilter.New("%s %s", filter.Value, err)
 	}
 
 	if cursor.Limit <= 0 {
@@ -289,21 +289,21 @@ func (service *Service) ListByPlayerName(ctx context.Context, filter Filters, cu
 	}
 	cards, err := service.cards.ListByPlayerName(ctx, filter, cursor)
 	if err != nil {
-		return page, ErrCards.Wrap(err)
+		return cardsListPage, ErrCards.Wrap(err)
 	}
 
-	page, err = service.listPaginated(ctx, cursor, cards)
-	return page, ErrCards.Wrap(err)
+	cardsListPage, err = service.listPaginated(ctx, cursor, cards)
+	return cardsListPage, ErrCards.Wrap(err)
 }
 
 // listPaginated returns paginated list of operators.
 func (service *Service) listPaginated(ctx context.Context, cursor Cursor, cards []Card) (Page, error) {
-	var page Page
+	var cardsListPage Page
 	offset := (cursor.Page - 1) * cursor.Limit
 
 	totalCount, err := service.cards.TotalCount(ctx)
 	if err != nil {
-		return page, ErrCards.Wrap(err)
+		return cardsListPage, ErrCards.Wrap(err)
 	}
 
 	pageCount := totalCount / cursor.Limit
@@ -311,7 +311,7 @@ func (service *Service) listPaginated(ctx context.Context, cursor Cursor, cards 
 		pageCount++
 	}
 
-	page = Page{
+	cardsListPage = Page{
 		Cards:       cards,
 		Offset:      offset,
 		Limit:       cursor.Limit,
@@ -320,7 +320,7 @@ func (service *Service) listPaginated(ctx context.Context, cursor Cursor, cards 
 		TotalCount:  totalCount,
 	}
 
-	return page, nil
+	return cardsListPage, nil
 }
 
 // UpdateStatus updates card status.
