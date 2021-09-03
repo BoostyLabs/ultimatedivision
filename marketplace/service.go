@@ -184,7 +184,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 	}
 
 	if betLot.BetAmount >= lot.MaxPrice && lot.MaxPrice != 0 {
-		if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, lot.MaxPrice); err != nil {
+		if err = service.UpdateCurrentPriceLot(ctx, betLot.ID, lot.MaxPrice); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
@@ -198,16 +198,16 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 			Amount:    lot.MaxPrice,
 		}
 
-		if err := service.WinLot(ctx, winLot); err != nil {
+		if err = service.WinLot(ctx, winLot); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
 	} else {
-		if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, betLot.BetAmount); err != nil {
+		if err = service.UpdateCurrentPriceLot(ctx, betLot.ID, betLot.BetAmount); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 		if lot.EndTime.Sub(time.Now().UTC()) < time.Minute {
-			if err := service.UpdateEndTimeLot(ctx, betLot.ID, time.Now().UTC().Add(time.Minute)); err != nil {
+			if err = service.UpdateEndTimeLot(ctx, betLot.ID, time.Now().UTC().Add(time.Minute)); err != nil {
 				return ErrMarketplace.Wrap(err)
 			}
 		}

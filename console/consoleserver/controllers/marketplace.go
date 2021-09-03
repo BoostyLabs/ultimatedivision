@@ -137,6 +137,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
+
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
 		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
@@ -144,17 +145,17 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 	}
 
 	var createLot marketplace.CreateLot
-	if err := json.NewDecoder(r.Body).Decode(&createLot); err != nil {
+	if err = json.NewDecoder(r.Body).Decode(&createLot); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
 	}
-	createLot.UserID = claims.ID
+	createLot.UserID = claims.UserID
 
-	if err := createLot.ValidateCreateLot(); err != nil {
+	if err = createLot.ValidateCreateLot(); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 	}
 
-	if err := controller.marketplace.CreateLot(ctx, createLot); err != nil {
+	if err = controller.marketplace.CreateLot(ctx, createLot); err != nil {
 		controller.log.Error("could not create lot", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
@@ -165,6 +166,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
+
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
 		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
@@ -172,17 +174,17 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 	}
 
 	var betLot marketplace.BetLot
-	if err := json.NewDecoder(r.Body).Decode(&betLot); err != nil {
+	if err = json.NewDecoder(r.Body).Decode(&betLot); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
 	}
-	betLot.UserID = claims.ID
+	betLot.UserID = claims.UserID
 
-	if err := betLot.ValidateBetLot(); err != nil {
+	if err = betLot.ValidateBetLot(); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 	}
 
-	if err := controller.marketplace.PlaceBetLot(ctx, betLot); err != nil {
+	if err = controller.marketplace.PlaceBetLot(ctx, betLot); err != nil {
 		controller.log.Error("could not place bet lot", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
