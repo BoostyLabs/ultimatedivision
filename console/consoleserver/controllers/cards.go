@@ -42,10 +42,10 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 	var (
-		cardsList   cards.Page
-		err         error
-		filters     cards.SliceFilters
-		limit, page int
+		cardsListPage cards.Page
+		err           error
+		filters       cards.SliceFilters
+		limit, page   int
 	)
 	urlQuery := r.URL.Query()
 	limitQuery := urlQuery.Get("limit")
@@ -76,9 +76,9 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 			controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		}
 		if len(filters) > 0 {
-			cardsList, err = controller.cards.ListWithFilters(ctx, filters, cursor)
+			cardsListPage, err = controller.cards.ListWithFilters(ctx, filters, cursor)
 		} else {
-			cardsList, err = controller.cards.List(ctx, cursor)
+			cardsListPage, err = controller.cards.List(ctx, cursor)
 		}
 	} else {
 		filter := cards.Filters{
@@ -86,7 +86,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 			Value:          playerName,
 			SearchOperator: sqlsearchoperators.LIKE,
 		}
-		cardsList, err = controller.cards.ListByPlayerName(ctx, filter, cursor)
+		cardsListPage, err = controller.cards.ListByPlayerName(ctx, filter, cursor)
 	}
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
@@ -99,7 +99,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(cardsList); err != nil {
+	if err = json.NewEncoder(w).Encode(cardsListPage); err != nil {
 		controller.log.Error("failed to write json response", ErrCards.Wrap(err))
 		return
 	}

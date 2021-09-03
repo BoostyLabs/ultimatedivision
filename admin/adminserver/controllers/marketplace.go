@@ -121,7 +121,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 
 	switch r.Method {
 	case http.MethodGet:
-		cardsList, err := controller.cards.List(ctx)
+		cardsListPage, err := controller.cards.List(ctx, cards.Cursor{})
 		if err != nil {
 			controller.log.Error("could not get list cards", ErrMarketplace.Wrap(err))
 			switch {
@@ -146,7 +146,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		}
 
 		responseCreateLot := marketplace.ResponseCreateLot{
-			Cards: cardsList,
+			Cards: cardsListPage,
 			Users: usersList,
 		}
 
