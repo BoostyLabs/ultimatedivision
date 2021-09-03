@@ -20,7 +20,7 @@ const service = new CardService(client);
 export const userCards = () => async function(dispatch: Dispatch) {
     const response = await service.getUserCards();
     const cards = await response.json();
-    //@ts-ignore
+    // @ts-ignore
     await dispatch(getCards(cards.map((card: Card) => new Card(...card))));
 };
 /** thunk for creating user cards list */

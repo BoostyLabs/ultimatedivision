@@ -19,19 +19,19 @@ import { Card } from '@/card';
 import './index.scss';
 
 export const MyCard: React.FC<{ card: Card }> = ({ card }) => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const [controlVisibility, changeControlVisibility] = useState<boolean>(false);
 
     const handleControls = (e: any) => {
-        e.preventDefault()
-        changeControlVisibility(prev => !prev)
-    }
+        e.preventDefault();
+        changeControlVisibility(prev => !prev);
+    };
     const handleSelling = (e: any) => {
         e.stopPropagation();
         e.nativeEvent.stopImmediatePropagation();
         dispatch(sellCard(card.id));
-    }
+    };
 
     return (
         <div
@@ -57,17 +57,17 @@ export const MyCard: React.FC<{ card: Card }> = ({ card }) => {
                     src={priceGoldIcon}
                     alt="Price icon"
                 />
-                {controlVisibility &&
-                    <div className="club-card__control"
-                    onClick={(e) => handleSelling(e)}>
-                        Sell card
-                    </div>
-                }
                 <PlayerCard
                     card={card}
                     parentClassName={'club-card'}
                 />
             </Link>
+            {controlVisibility &&
+                <div className="club-card__control"
+                    onClick={(e) => handleSelling(e)}>
+                    Sell card
+                </div>
+            }
         </div>
-    )
-}
+    );
+};
