@@ -10,9 +10,7 @@ import (
 	"github.com/google/uuid"
 
 	"ultimatedivision/cards"
-	"ultimatedivision/internal/auth"
 	"ultimatedivision/users"
-	"ultimatedivision/users/userauth"
 )
 
 // Service is handling marketplace related logic.
@@ -35,11 +33,6 @@ func NewService(marketplace DB, users *users.Service, cards *cards.Service) *Ser
 
 // CreateLot add lot in DB.
 func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) error {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
-
 	// TODO: add transaction
 	card, err := service.cards.Get(ctx, createLot.ItemID)
 	if err == nil {
@@ -93,10 +86,6 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 
 // GetLotByID returns lot by id from DB.
 func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return Lot{}, userauth.ErrUnauthenticated.Wrap(err)
-	}
 	lot, err := service.marketplace.GetLotByID(ctx, id)
 
 	return lot, ErrMarketplace.Wrap(err)
@@ -104,10 +93,6 @@ func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, erro
 
 // ListActiveLots returns active lots from DB.
 func (service *Service) ListActiveLots(ctx context.Context) ([]Lot, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return []Lot{}, userauth.ErrUnauthenticated.Wrap(err)
-	}
 	lots, err := service.marketplace.ListActiveLots(ctx)
 
 	return lots, ErrMarketplace.Wrap(err)
@@ -121,11 +106,6 @@ func (service *Service) ListExpiredLot(ctx context.Context) ([]Lot, error) {
 
 // PlaceBetLot checks the amount of money and makes a bet.
 func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
-
 	if _, err := service.users.Get(ctx, betLot.UserID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
@@ -157,7 +137,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 	}
 
 	if betLot.BetAmount >= lot.MaxPrice && lot.MaxPrice != 0 {
-		if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, lot.MaxPrice); err != nil {
+		if err = service.UpdateCurrentPriceLot(ctx, betLot.ID, lot.MaxPrice); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
@@ -171,16 +151,16 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 			Amount:    lot.MaxPrice,
 		}
 
-		if err := service.WinLot(ctx, winLot); err != nil {
+		if err = service.WinLot(ctx, winLot); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
 	} else {
-		if err := service.UpdateCurrentPriceLot(ctx, betLot.ID, betLot.BetAmount); err != nil {
+		if err = service.UpdateCurrentPriceLot(ctx, betLot.ID, betLot.BetAmount); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 		if lot.EndTime.Sub(time.Now().UTC()) < time.Minute {
-			if err := service.UpdateEndTimeLot(ctx, betLot.ID, time.Now().UTC().Add(time.Minute)); err != nil {
+			if err = service.UpdateEndTimeLot(ctx, betLot.ID, time.Now().UTC().Add(time.Minute)); err != nil {
 				return ErrMarketplace.Wrap(err)
 			}
 		}
