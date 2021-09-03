@@ -16,7 +16,7 @@ import (
 // ErrClubs indicates that there was an error in the service.
 var ErrClubs = errs.Class("clubs service error")
 
-// Service is handling users related logic.
+// Service is handling clubs related logic.
 //
 // architecture: Service
 type Service struct {
@@ -75,28 +75,22 @@ func (service *Service) UpdateSquad(ctx context.Context, updatedSquad Squad) err
 }
 
 // UpdateCardPosition updates position of card in the squad.
-func (service *Service) UpdateCardPosition(ctx context.Context, squadCard SquadCard) error {
-	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, squadCard.SquadID, squadCard.CardID, squadCard.Position))
+func (service *Service) UpdateCardPosition(ctx context.Context, position Position,  squadID, cardID uuid.UUID) error {
+	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, squadID, cardID, position))
 }
 
 // GetSquad returns all squads from club.
 func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, error) {
 	squad, err := service.clubs.GetSquad(ctx, clubID)
-	if err != nil {
-		return Squad{}, ErrClubs.Wrap(err)
-	}
 
-	return squad, nil
+	return squad, ErrClubs.Wrap(err)
 }
 
 // GetSquadCard returns all cards from squad.
 func (service *Service) GetSquadCard(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error) {
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
-	if err != nil {
-		return nil, ErrClubs.Wrap(err)
-	}
 
-	return squadCards, nil
+	return squadCards, ErrClubs.Wrap(err)
 }
 
 // Get returns user club.

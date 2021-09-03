@@ -41,10 +41,9 @@ func NewClubs(log logger.Logger, clubs *clubs.Service) *Clubs {
 // Create is an endpoint that creates new club.
 func (controller *Clubs) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
 
-	claims , err := auth.GetClaims(ctx)
+	claims, err := auth.GetClaims(ctx)
 	if err != nil {
 		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
 	}
@@ -60,22 +59,15 @@ func (controller *Clubs) Create(w http.ResponseWriter, r *http.Request) {
 // CreateSquad is an endpoint that creates new squad for club.
 func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
 
-	_ , err := auth.GetClaims(ctx)
-	if err != nil {
-		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-	}
-
 	params := mux.Vars(r)
-	idParam := params["clubId"]
-	if idParam == "" {
+	if params["clubId"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
 	}
 
-	id, err := uuid.Parse(idParam)
+	id, err := uuid.Parse(params["clubId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
@@ -92,10 +84,9 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 // Get is an endpoint that returns club, squad and squad cards by user id.
 func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
 
-	claims , err := auth.GetClaims(ctx)
+	claims, err := auth.GetClaims(ctx)
 	if err != nil {
 		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
 	}
@@ -143,7 +134,7 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = json.NewEncoder(w).Encode(userTeam); err != nil {
-		controller.log.Error("failed to write json response", ErrClubs.Wrap(err))
+		controller.log.Error("failed to response with json", ErrClubs.Wrap(err))
 		return
 	}
 }
@@ -151,13 +142,7 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 // UpdatePosition is an endpoint that updates card position in the squad.
 func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
-
-	_ , err := auth.GetClaims(ctx)
-	if err != nil {
-		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-	}
 
 	var squadCard clubs.SquadCard
 
@@ -166,7 +151,7 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err = controller.clubs.UpdateCardPosition(ctx, squadCard)
+	err := controller.clubs.UpdateCardPosition(ctx, squadCard)
 	if err != nil {
 		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
 		switch {
@@ -182,22 +167,16 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 // UpdateSquad is an endpoint that updates squad tactic, capitan and formation.
 func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
-
-	_ , err := auth.GetClaims(ctx)
-	if err != nil {
-		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-	}
 
 	var updatedSquad clubs.Squad
 
-	if err = json.NewDecoder(r.Body).Decode(&updatedSquad); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&updatedSquad); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
-	err = controller.clubs.UpdateSquad(ctx, updatedSquad)
+	err := controller.clubs.UpdateSquad(ctx, updatedSquad)
 	if err != nil {
 		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
 		switch {
@@ -213,13 +192,7 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 // Add is an endpoint that add new card to the squad.
 func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
-
-	_ , err := auth.GetClaims(ctx)
-	if err != nil {
-		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-	}
 
 	var newSquadCard clubs.SquadCard
 
@@ -228,7 +201,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = controller.clubs.Add(ctx, newSquadCard)
+	err := controller.clubs.Add(ctx, newSquadCard)
 	if err != nil {
 		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
 		switch {
@@ -244,13 +217,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 // Delete is an endpoint that removes card from squad.
 func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
-
-	_ , err := auth.GetClaims(ctx)
-	if err != nil {
-		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-	}
 
 	var squadCard clubs.SquadCard
 
@@ -259,7 +226,7 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = controller.clubs.Delete(ctx, squadCard.SquadID, squadCard.CardID)
+	err := controller.clubs.Delete(ctx, squadCard.SquadID, squadCard.CardID)
 	if err != nil {
 		controller.log.Error("could not delete card from squad", ErrClubs.Wrap(err))
 		switch {

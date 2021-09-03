@@ -110,13 +110,15 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	cardsRouter.HandleFunc("/delete/{id}", cardsController.Delete).Methods(http.MethodGet)
 
 	clubsRouter := router.PathPrefix("/clubs").Subrouter().StrictSlash(true)
-	// clubsRouter.Use(server.withAuth)
+	clubsRouter.Use(server.withAuth)
 	clubsController := controllers.NewClubs(log, clubs, server.templates.clubs)
 	clubsRouter.HandleFunc("/create/{userID}", clubsController.Create).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{userID}", clubsController.Get).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/squad/create/{clubID}", clubsController.CreateSquad).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/squad/{clubID}", clubsController.GetSquad).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/squad-card/{squadID}", clubsController.GetSquadCard).Methods(http.MethodGet)
+	//clubsRouter.HandleFunc("/squad-card/{squadID}", clubsController.GetSquadCard).Methods(http.MethodGet)
+	//clubsRouter.HandleFunc("/squad-card/{squadID}", clubsController.GetSquadCard).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
