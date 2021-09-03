@@ -228,20 +228,14 @@ func round(x, unit float64) float64 {
 
 // Get returns card from DB.
 func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Card, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return Card{}, userauth.ErrUnauthenticated.Wrap(err)
-	}
 	card, err := service.cards.Get(ctx, cardID)
 	return card, ErrCards.Wrap(err)
 }
 
 // List returns all cards from DB.
-func (service *Service) List(ctx context.Context, cursor Cursor) ([]Card, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return nil, userauth.ErrUnauthenticated.Wrap(err)
-	}
+func (service *Service) List(ctx context.Context, cursor Cursor) (Page, error) {
+	var page Page
+
 	if cursor.Limit == 0 {
 		cursor.Limit = service.config.Cursor.Limit
 	}
@@ -249,20 +243,22 @@ func (service *Service) List(ctx context.Context, cursor Cursor) ([]Card, error)
 		cursor.Page = service.config.Cursor.Page
 	}
 	cards, err := service.cards.List(ctx, cursor)
-	return cards, ErrCards.Wrap(err)
+	if err != nil {
+		return page, ErrCards.Wrap(err)
+	}
+
+	page, err = service.listPaginated(ctx, cursor, cards)
+	return page, ErrCards.Wrap(err)
 }
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
-func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, cursor Cursor) ([]Card, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return nil, userauth.ErrUnauthenticated.Wrap(err)
-	}
+func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, cursor Cursor) (Page, error) {
+	var page Page
 
 	for _, v := range filters {
 		err := v.Validate()
 		if err != nil {
-			return nil, err
+			return page, err
 		}
 	}
 
@@ -273,22 +269,23 @@ func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, 
 		cursor.Page = service.config.Cursor.Page
 	}
 	cards, err := service.cards.ListWithFilters(ctx, filters, cursor)
-	return cards, ErrCards.Wrap(err)
+	if err != nil {
+		return page, ErrCards.Wrap(err)
+	}
+
+	page, err = service.listPaginated(ctx, cursor, cards)
+	return page, ErrCards.Wrap(err)
 }
 
 // ListByPlayerName returns cards from DB by player name.
-func (service *Service) ListByPlayerName(ctx context.Context, filter Filters, cursor Cursor) ([]Card, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return nil, userauth.ErrUnauthenticated.Wrap(err)
-	}
-
+func (service *Service) ListByPlayerName(ctx context.Context, filter Filters, cursor Cursor) (Page, error) {
+	var page Page
 	strings.ToValidUTF8(filter.Value, "")
 
 	// TODO: add best check
-	_, err = strconv.Atoi(filter.Value)
+	_, err := strconv.Atoi(filter.Value)
 	if err == nil {
-		return nil, ErrInvalidFilter.New("%s %s", filter.Value, err)
+		return page, ErrInvalidFilter.New("%s %s", filter.Value, err)
 	}
 
 	if cursor.Limit <= 0 {
@@ -298,7 +295,12 @@ func (service *Service) ListByPlayerName(ctx context.Context, filter Filters, cu
 		cursor.Page = service.config.Cursor.Page
 	}
 	cards, err := service.cards.ListByPlayerName(ctx, filter, cursor)
-	return cards, ErrCards.Wrap(err)
+	if err != nil {
+		return page, ErrCards.Wrap(err)
+	}
+
+	page, err = service.listPaginated(ctx, cursor, cards)
+	return page, ErrCards.Wrap(err)
 }
 
 // listPaginated returns paginated list of operators.
@@ -340,9 +342,5 @@ func (service *Service) UpdateUserID(ctx context.Context, id, userID uuid.UUID) 
 
 // Delete destroy card in DB.
 func (service *Service) Delete(ctx context.Context, cardID uuid.UUID) error {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
 	return ErrCards.Wrap(service.cards.Delete(ctx, cardID))
 }
