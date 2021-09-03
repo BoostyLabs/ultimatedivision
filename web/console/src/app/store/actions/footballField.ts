@@ -31,7 +31,7 @@ export const cardSelectionVisibility = (isVisible: boolean) => ({
 /** Adding into cardList in reducer */
 export const addCard = (card: Card, index: number) => ({
     type: ADD_CARD,
-    player: {
+    fieldCard: {
         card,
         index,
     },

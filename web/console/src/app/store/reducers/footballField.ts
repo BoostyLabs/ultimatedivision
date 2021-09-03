@@ -20,7 +20,7 @@ const FieldSetup = new FootballField();
 
 export const fieldReducer = (cardState = FieldSetup, action: any = {}) => {
     const options = cardState.options;
-    const cardsList = cardState.cardsList;
+    const cards = cardState.cards;
 
     switch (action.type) {
         case FORMATION:
@@ -33,11 +33,11 @@ export const fieldReducer = (cardState = FieldSetup, action: any = {}) => {
             options.chosedCard = action.position;
             break;
         case ADD_CARD:
-            cardsList[action.player.index].card =
-                action.player.card;
+            cards[action.fieldCard.index].card =
+                action.fieldCard.card;
             break;
         case REMOVE_CARD:
-            cardsList[action.index].card = null;
+            cards[action.index].card = null;
             break;
         case DRAG_START:
             options.dragStart = action.index;
@@ -46,10 +46,10 @@ export const fieldReducer = (cardState = FieldSetup, action: any = {}) => {
             options.dragTarget = action.index;
             break;
         case EXCHANGE_CARDS:
-            const prevCard = cardsList[action.position.previous];
-            cardsList[action.position.previous] =
-                cardsList[action.position.current];
-            cardsList[action.position.current] = prevCard;
+            const prevCard = cards[action.position.previous];
+            cards[action.position.previous] =
+                cards[action.position.current];
+            cards[action.position.current] = prevCard;
             break;
         default:
             break;

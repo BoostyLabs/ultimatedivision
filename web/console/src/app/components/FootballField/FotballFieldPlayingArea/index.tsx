@@ -113,8 +113,8 @@ export const FootballFieldPlayingArea: React.FC = () => {
                     className={`playing-area__${formation}`}
                     onMouseUp={mouseUpOnArea}
                 >
-                    {fieldSetup.cardsList.map((card, index) => {
-                        const data = card.cardData;
+                    {fieldSetup.cards.map((fieldCard: FootballFieldCard, index: number) => {
+                        const card = fieldCard.card;
                         const equality = dragStartIndex === index;
                         // TODO: change style by some class to change style in card
 
@@ -126,29 +126,29 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                         : undefined
                                 }
                                 key={index}
-                                className={`playing-area__${formation}__${data ? 'card' : 'empty-card'}`}
+                                className={`playing-area__${formation}__${card ? 'card' : 'empty-card'}`}
                                 onClick={(e) => handleClick(index)}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
                                 draggable={true}
                             >
                                 {
-                                    data && <PlayingAreaFootballerCard card={data} index={index} place={'PlayingArea'} />
+                                    card && <PlayingAreaFootballerCard card={card} index={index} place={'PlayingArea'} />
                                 }
                             </div>
                         );
                     })}
                 </div>
                 <div className={`playing-area__${formation}-shadows`}>
-                    {fieldSetup.cardsList.map((card: FootballFieldCard, index: number) => {
-                        const data = card.cardData;
+                    {fieldSetup.cards.map((fieldCard: FootballFieldCard, index: number) => {
+                        const card = fieldCard.card;
 
                         return (
                             <div
                                 className={`playing-area__${formation}-shadows__card`}
                                 key={index}
                             >
-                                {data &&
+                                {card &&
                                     <img
                                         // If data exist it has maininfo, but TS do not let me use it even with check
                                         // @ts-ignore

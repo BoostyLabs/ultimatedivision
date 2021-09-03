@@ -26,7 +26,7 @@ export class FootballField {
         dragTarget: null,
     };
     /** football team implementation */
-    public cardsList = [
+    public cards = [
         new FootballFieldCard(0, null),
         new FootballFieldCard(1, null),
         new FootballFieldCard(2, null),
