@@ -41,7 +41,6 @@ func NewLootBoxes(log logger.Logger, lootBoxes *lootboxes.Service) *LootBoxes {
 // Create is an endpoint that creates new lootbox for user.
 func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
 
 	var lootBox lootboxes.LootBox
@@ -57,7 +56,7 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userLootBox, err := controller.lootBoxes.Create(ctx, lootBox.Type, claims.ID)
+	userLootBox, err := controller.lootBoxes.Create(ctx, lootBox.Type, claims.UserID)
 	if err != nil {
 		controller.log.Error("could not create loot box for user", ErrLootBoxes.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrLootBoxes.Wrap(err))
@@ -70,23 +69,10 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Open is an endpoint that opens user loot box.
+// Open is an endpoint that opens user lootbox.
 func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
-
-	vars := mux.Vars(r)
-	if vars["lootboxID"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrLootBoxes.New("id parameter is empty"))
-		return
-	}
-
-	lootBoxID, err := uuid.Parse(vars["lootboxID"])
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrLootBoxes.Wrap(err))
-		return
-	}
 
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
@@ -94,7 +80,14 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := controller.lootBoxes.Open(ctx, lootBoxID, claims.ID)
+	params := mux.Vars(r)
+	lootboxID, err := uuid.Parse(params["id"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrLootBoxes.New("lootbox id is missing or invalid"))
+		return
+	}
+
+	cards, err := controller.lootBoxes.Open(ctx, claims.UserID, lootboxID)
 	if err != nil {
 		controller.log.Error("could not open loot box", ErrLootBoxes.Wrap(err))
 		switch {
@@ -107,7 +100,7 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = json.NewEncoder(w).Encode(cards); err != nil {
-		controller.log.Error("could not encode cards", ErrLootBoxes.Wrap(err))
+		controller.log.Error("could not encode lootbox cards", ErrLootBoxes.Wrap(err))
 		return
 	}
 }

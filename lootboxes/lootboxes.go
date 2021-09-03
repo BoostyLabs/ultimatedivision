@@ -23,7 +23,7 @@ type DB interface {
 	// Create creates lootbox of user in db.
 	Create(ctx context.Context, lootBox LootBox) error
 	// Delete deletes opened lootbox by user in db.
-	Delete(ctx context.Context, lootBox LootBox) error
+	Delete(ctx context.Context, lootboxID uuid.UUID) error
 	// List returns all loot boxes.
 	List(ctx context.Context) ([]LootBox, error)
 	// GetTypeByLootBoxID returns type of loot box by user id.
@@ -33,7 +33,7 @@ type DB interface {
 // LootBox defines lootbox.
 type LootBox struct {
 	UserID    uuid.UUID `json:"-"`
-	LootBoxID uuid.UUID `json:"lootBoxID"`
+	LootBoxID uuid.UUID `json:"id"`
 	Type      Type      `json:"type"`
 }
 

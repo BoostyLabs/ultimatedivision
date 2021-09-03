@@ -45,34 +45,23 @@ func (service *Service) Create(ctx context.Context, lootBoxType Type, userID uui
 }
 
 // Open opens lootbox by user.
-func (service *Service) Open(ctx context.Context, lootBoxID uuid.UUID, userID uuid.UUID) ([]cards.Card, error) {
-	userLootBox := LootBox{
-		UserID:    userID,
-		LootBoxID: lootBoxID,
-	}
-
+func (service *Service) Open(ctx context.Context, userID, lootboxID uuid.UUID) ([]cards.Card, error) {
 	cardsNum := 0
 	probabilities := make([]int, 0, 4)
 
-	lootBoxType, err := service.lootboxes.GetTypeByLootBoxID(ctx, userLootBox.LootBoxID)
-	if err != nil {
-		return nil, ErrLootBoxes.Wrap(err)
-	}
-
-	userLootBox.Type = lootBoxType
-
-	if userLootBox.Type == RegularBox {
-		cardsNum = service.config.RegularBoxConfig.CardsNum
-		probabilities = []int{service.config.RegularBoxConfig.Wood, service.config.RegularBoxConfig.Silver, service.config.RegularBoxConfig.Gold, service.config.RegularBoxConfig.Diamond}
-	} else if userLootBox.Type == UDReleaseCelebrationBox {
-		cardsNum = service.config.UDReleaseCelebrationBoxConfig.CardsNum
-		probabilities = []int{service.config.UDReleaseCelebrationBoxConfig.Wood, service.config.UDReleaseCelebrationBoxConfig.Silver, service.config.UDReleaseCelebrationBoxConfig.Gold, service.config.UDReleaseCelebrationBoxConfig.Diamond}
-	}
+	// TODO: get from db.
+	// if userLootBox.Type == RegularBox {
+	//	cardsNum = service.config.RegularBoxConfig.CardsNum
+	//	probabilities = []int{service.config.RegularBoxConfig.Wood, service.config.RegularBoxConfig.Silver, service.config.RegularBoxConfig.Gold, service.config.RegularBoxConfig.Diamond}
+	// } else if userLootBox.Type == UDReleaseCelebrationBox {
+	//	cardsNum = service.config.UDReleaseCelebrationBoxConfig.CardsNum
+	//	probabilities = []int{service.config.UDReleaseCelebrationBoxConfig.Wood, service.config.UDReleaseCelebrationBoxConfig.Silver, service.config.UDReleaseCelebrationBoxConfig.Gold, service.config.UDReleaseCelebrationBoxConfig.Diamond}
+	// }
 
 	var lootBoxCards []cards.Card
 
 	for i := 0; i < cardsNum; i++ {
-		card, err := service.cards.Create(ctx, userLootBox.UserID, probabilities)
+		card, err := service.cards.Create(ctx, userID, probabilities)
 		if err != nil {
 			return lootBoxCards, ErrLootBoxes.Wrap(err)
 		}
@@ -82,7 +71,7 @@ func (service *Service) Open(ctx context.Context, lootBoxID uuid.UUID, userID uu
 
 	sortLootBoxCards(lootBoxCards)
 
-	err = service.lootboxes.Delete(ctx, userLootBox)
+	err := service.lootboxes.Delete(ctx, lootboxID)
 
 	return lootBoxCards, ErrLootBoxes.Wrap(err)
 }

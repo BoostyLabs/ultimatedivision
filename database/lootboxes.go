@@ -14,6 +14,9 @@ import (
 	"ultimatedivision/lootboxes"
 )
 
+// ensures that lootboxDB implements lootbox.DB.
+var _ lootboxes.DB = (*lootboxesDB)(nil)
+
 // ErrLootBoxes indicates that there was an error in the database.
 var ErrLootBoxes = errs.Class("lootboxes repository error")
 
@@ -52,11 +55,11 @@ func (lootboxesDB *lootboxesDB) Create(ctx context.Context, lootBox lootboxes.Lo
 }
 
 // Delete deletes opened lootbox by user in db.
-func (lootboxesDB *lootboxesDB) Delete(ctx context.Context, lootBox lootboxes.LootBox) error {
+func (lootboxesDB *lootboxesDB) Delete(ctx context.Context, lootboxID uuid.UUID) error {
 	query := `DELETE FROM lootboxes
-              WHERE user_id = $1 and lootbox_id = $2`
+              WHERE lootbox_id = $1`
 
-	_, err := lootboxesDB.conn.ExecContext(ctx, query, lootBox.UserID, lootBox.LootBoxID)
+	_, err := lootboxesDB.conn.ExecContext(ctx, query, lootboxID)
 
 	return ErrLootBoxes.Wrap(err)
 }
