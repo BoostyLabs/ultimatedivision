@@ -73,7 +73,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	pagination := cards.Pagination{
+	cursor := cards.Cursor{
 		Limit: limit,
 		Page:  page,
 	}
@@ -113,9 +113,9 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(filters) > 0 {
-			cardsList, err = controller.cards.ListWithFilters(ctx, filters, pagination)
+			cardsList, err = controller.cards.ListWithFilters(ctx, filters, cursor)
 		} else {
-			cardsList, err = controller.cards.List(ctx, pagination)
+			cardsList, err = controller.cards.List(ctx, cursor)
 		}
 	} else {
 		filter := cards.Filters{
@@ -123,7 +123,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 			Value:          playerName,
 			SearchOperator: sqlsearchoperators.LIKE,
 		}
-		cardsList, err = controller.cards.ListByPlayerName(ctx, filter, pagination)
+		cardsList, err = controller.cards.ListByPlayerName(ctx, filter, cursor)
 	}
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
