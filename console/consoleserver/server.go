@@ -100,9 +100,10 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	cardsRouter.Handle("", server.withAuth(http.HandlerFunc(cardsController.List))).Methods(http.MethodGet)
 
 	clubsRouter := apiRouter.PathPrefix("/clubs").Subrouter()
-	clubsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.Create))).Methods(http.MethodPost)
-	clubsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.Get))).Methods(http.MethodGet)
-	clubsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.UpdateSquad))).Methods(http.MethodPatch)
+	clubsRouter.Use(server.withAuth)
+	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
+	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("", clubsController.UpdateSquad).Methods(http.MethodPatch)
 
 	squadsRouter := clubsRouter.Path("/squads").Subrouter()
 	squadsRouter.Handle("/{clubId}", server.withAuth(http.HandlerFunc(clubsController.Create))).Methods(http.MethodPost)
@@ -114,8 +115,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
 	lootBoxesRouter.Use(server.withAuth)
-	lootBoxesRouter.Handle("", http.HandlerFunc(lootBoxesController.Create)).Methods(http.MethodPost)
-	lootBoxesRouter.Handle("/{id}", http.HandlerFunc(lootBoxesController.Open)).Methods(http.MethodDelete)
+	lootBoxesRouter.HandleFunc("", lootBoxesController.Create).Methods(http.MethodPost)
+	lootBoxesRouter.HandleFunc("/{id}", lootBoxesController.Open).Methods(http.MethodDelete)
 
 	marketplaceRouter := apiRouter.PathPrefix("/marketplace").Subrouter()
 	marketplaceRouter.Handle("", server.withAuth(http.HandlerFunc(marketplaceController.ListActiveLots))).Methods(http.MethodGet)
