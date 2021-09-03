@@ -40,14 +40,14 @@ func (service *Service) Create(ctx context.Context) error {
 		return userauth.ErrUnauthenticated.Wrap(err)
 	}
 
-	nickname, err := service.users.GetNickNameByID(ctx, claims.ID)
+	nickname, err := service.users.GetNickNameByID(ctx, claims.UserID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
 	}
 
 	newClub := Club{
 		ID:        uuid.New(),
-		OwnerID:   claims.ID,
+		OwnerID:   claims.UserID,
 		Name:      nickname,
 		CreatedAt: time.Now().UTC(),
 	}
@@ -107,7 +107,7 @@ func (service *Service) Get(ctx context.Context) (Club, error) {
 		return Club{}, userauth.ErrUnauthenticated.Wrap(err)
 	}
 
-	userID := claims.ID
+	userID := claims.UserID
 
 	club, err := service.clubs.GetByUserID(ctx, userID)
 	return club, ErrClubs.Wrap(err)

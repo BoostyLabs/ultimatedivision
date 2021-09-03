@@ -43,7 +43,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 	// TODO: add transaction
 	card, err := service.cards.Get(ctx, createLot.ItemID)
 	if err == nil {
-		if card.UserID != claims.ID {
+		if card.UserID != claims.UserID {
 			return ErrMarketplace.New("it is not the user's card")
 		}
 
@@ -63,7 +63,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 		return ErrMarketplace.New("not found item by id")
 	}
 
-	if _, err := service.users.Get(ctx, claims.ID); err != nil {
+	if _, err := service.users.Get(ctx, claims.UserID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 
@@ -79,7 +79,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 		ID:         uuid.New(),
 		ItemID:     createLot.ItemID,
 		Type:       createLot.Type,
-		UserID:     claims.ID,
+		UserID:     claims.UserID,
 		Status:     StatusActive,
 		StartPrice: createLot.StartPrice,
 		MaxPrice:   createLot.MaxPrice,
@@ -126,7 +126,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 		return userauth.ErrUnauthenticated.Wrap(err)
 	}
 
-	if _, err := service.users.Get(ctx, claims.ID); err != nil {
+	if _, err := service.users.Get(ctx, claims.UserID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 	// TODO: check if the user has the required amount of money.
@@ -152,7 +152,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 	// TODO: update status to `hold` for new user's money.
 	// TODO: unhold old user's money if exist.
 
-	if err := service.UpdateShopperIDLot(ctx, betLot.ID, claims.ID); err != nil {
+	if err := service.UpdateShopperIDLot(ctx, betLot.ID, claims.UserID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 
@@ -166,7 +166,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 			ItemID:    lot.ItemID,
 			Type:      TypeCard,
 			UserID:    lot.UserID,
-			ShopperID: claims.ID,
+			ShopperID: claims.UserID,
 			Status:    StatusSoldBuynow,
 			Amount:    lot.MaxPrice,
 		}
