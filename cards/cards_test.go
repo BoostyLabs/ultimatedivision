@@ -271,6 +271,12 @@ func TestCards(t *testing.T) {
 			compareCards(t, card1, allCards[0])
 		})
 
+		t.Run("total count", func(t *testing.T) {
+			count, err := repositoryCards.TotalCount(ctx)
+			assert.NoError(t, err)
+			assert.Equal(t, count, 2)
+		})
+
 		t.Run("build where string", func(t *testing.T) {
 			filters := []cards.Filters{}
 			filters = append(filters, filter1, filter2)
