@@ -51,7 +51,7 @@ func NewCards(log logger.Logger, cards *cards.Service, templates CardTemplates, 
 // List is an endpoint that will provide a web page with all cards.
 func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	listCards, err := controller.cards.List(ctx, cards.Cursor{})
+	listCardsPage, err := controller.cards.List(ctx, cards.Cursor{})
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
 		switch {
@@ -63,7 +63,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = controller.templates.List.Execute(w, listCards)
+	err = controller.templates.List.Execute(w, listCardsPage)
 	if err != nil {
 		controller.log.Error("can not execute list cards template", ErrCards.Wrap(err))
 		http.Error(w, ErrCards.Wrap(err).Error(), http.StatusInternalServerError)
