@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/users/userauth"

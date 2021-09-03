@@ -93,8 +93,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/email/confirm/{token}", authController.ConfirmEmail).Methods(http.MethodGet)
 	authRouter.Handle("/change-password", server.withAuth(http.HandlerFunc(authController.ChangePassword))).Methods(http.MethodPost)
 
-	profile := apiRouter.PathPrefix("/profile").Subrouter()
-	profile.Handle("", server.withAuth(http.HandlerFunc(userController.GetProfile))).Methods(http.MethodGet)
+	profileRouter := apiRouter.PathPrefix("/profile").Subrouter()
+	profileRouter.Use(server.withAuth)
+	profileRouter.HandleFunc("", userController.GetProfile).Methods(http.MethodGet)
 
 	cardsRouter := apiRouter.PathPrefix("/cards").Subrouter()
 	cardsRouter.Handle("", server.withAuth(http.HandlerFunc(cardsController.List))).Methods(http.MethodGet)
@@ -194,13 +195,13 @@ func (server *Server) withAuth(handler http.Handler) http.Handler {
 		token, err := server.cookieAuth.GetToken(r)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
 		}
 
-		ctx = auth.SetToken(ctx, []byte(token))
-
-		claims, err := server.authService.Authorize(ctx)
+		claims, err := server.authService.Authorize(ctx, token)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
 		}
 
 		ctx = auth.SetClaims(ctx, claims)
