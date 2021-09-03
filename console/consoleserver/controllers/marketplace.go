@@ -69,11 +69,6 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	vars := mux.Vars(r)
 	w.Header().Set("Content-Type", "application/json")
 
-	if vars["id"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.New("id parameter is empty"))
-		return
-	}
-
 	id, err := uuid.Parse(vars["id"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
@@ -84,8 +79,6 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		controller.log.Error("could not get lot by id", ErrMarketplace.Wrap(err))
 		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
 		case marketplace.ErrNoLot.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrMarketplace.Wrap(err))
 		default:
@@ -138,12 +131,6 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 
 	if err = controller.marketplace.CreateLot(ctx, createLot); err != nil {
 		controller.log.Error("could not create lot", ErrMarketplace.Wrap(err))
-
-		if userauth.ErrUnauthenticated.Has(err) {
-			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
-			return
-		}
-
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}
@@ -174,12 +161,6 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 
 	if err = controller.marketplace.PlaceBetLot(ctx, betLot); err != nil {
 		controller.log.Error("could not place bet lot", ErrMarketplace.Wrap(err))
-
-		if userauth.ErrUnauthenticated.Has(err) {
-			controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
-			return
-		}
-
 		controller.serveError(w, http.StatusInternalServerError, ErrMarketplace.Wrap(err))
 		return
 	}

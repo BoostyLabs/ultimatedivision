@@ -17,7 +17,6 @@ import (
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/users"
-	"ultimatedivision/users/userauth"
 )
 
 var (
@@ -128,8 +127,6 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 			switch {
 			case cards.ErrNoCard.Has(err):
 				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
-			case userauth.ErrUnauthenticated.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusUnauthorized)
 			default:
 				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
 			}
@@ -142,8 +139,6 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 			switch {
 			case users.ErrNoUser.Has(err):
 				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
-			case userauth.ErrUnauthenticated.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusUnauthorized)
 			default:
 				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
 			}
@@ -249,8 +244,6 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 			switch {
 			case cards.ErrNoCard.Has(err):
 				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
-			case userauth.ErrUnauthenticated.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusUnauthorized)
 			default:
 				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
 			}
@@ -263,8 +256,6 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 			switch {
 			case users.ErrNoUser.Has(err):
 				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
-			case userauth.ErrUnauthenticated.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusUnauthorized)
 			default:
 				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
 			}
