@@ -151,7 +151,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                     <img
                                         // If data exist it has maininfo, but TS do not let me use it even with check
                                         // @ts-ignore
-                                        src={data.mainInfo.shadowType}
+                                        src={data.style?.shadow}
                                         alt="card shadow"
                                         className={`playing-area__${formation}-shadows__shadow`}
                                     />

@@ -7,15 +7,18 @@ import { MyCard } from './MyCard';
 
 import './index.scss';
 
-export const ClubCardsArea: React.FC<{cards: Card[]}> = ({ cards }) =>
-    <div className="club-cards">
-        <div className="club-cards__wrapper">
-            {cards.map((card, index) =>
-                <MyCard
-                    card={card}
-                    key={index}
-                />,
-            )}
-        </div>
-    </div>;
+export const ClubCardsArea: React.FC<{ cards: Card[] }> = ({ cards }) => {
 
+    return (
+        <div className="club-cards">
+            <div className="club-cards__wrapper">
+                {cards.map((card, index) =>
+                    <MyCard
+                        card={card}
+                        key={index}
+                    />,
+                )}
+            </div>
+        </div>
+    )
+}
