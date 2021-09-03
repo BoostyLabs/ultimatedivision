@@ -119,10 +119,11 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	lootBoxesRouter.HandleFunc("/{id}", lootBoxesController.Open).Methods(http.MethodDelete)
 
 	marketplaceRouter := apiRouter.PathPrefix("/marketplace").Subrouter()
-	marketplaceRouter.Handle("", server.withAuth(http.HandlerFunc(marketplaceController.ListActiveLots))).Methods(http.MethodGet)
-	marketplaceRouter.Handle("/{id}", server.withAuth(http.HandlerFunc(marketplaceController.GetLotByID))).Methods(http.MethodGet)
-	marketplaceRouter.Handle("", server.withAuth(http.HandlerFunc(marketplaceController.CreateLot))).Methods(http.MethodPost)
-	marketplaceRouter.Handle("/bet", server.withAuth(http.HandlerFunc(marketplaceController.PlaceBetLot))).Methods(http.MethodPost)
+	marketplaceRouter.Use(server.withAuth)
+	marketplaceRouter.HandleFunc("", marketplaceController.ListActiveLots).Methods(http.MethodGet)
+	marketplaceRouter.HandleFunc("/{id}", marketplaceController.GetLotByID).Methods(http.MethodGet)
+	marketplaceRouter.HandleFunc("", marketplaceController.CreateLot).Methods(http.MethodPost)
+	marketplaceRouter.HandleFunc("/bet", marketplaceController.PlaceBetLot).Methods(http.MethodPost)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
