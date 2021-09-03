@@ -196,7 +196,7 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
 }
 
 // List returns all cards from the data base.
-func (cardsDB *cardsDB) List(ctx context.Context, pagination cards.Pagination) ([]cards.Card, error) {
+func (cardsDB *cardsDB) List(ctx context.Context, cursor cards.Cursor) ([]cards.Card, error) {
 	query := fmt.Sprintf(`
 		SELECT
             %s
@@ -206,7 +206,7 @@ func (cardsDB *cardsDB) List(ctx context.Context, pagination cards.Pagination) (
             %s
         OFFSET 
             %s
-        `, allFields, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
+        `, allFields, strconv.Itoa(cursor.Limit), strconv.Itoa((cursor.Page-1)*cursor.Limit))
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query)
 	if err != nil {
@@ -249,7 +249,7 @@ func (cardsDB *cardsDB) List(ctx context.Context, pagination cards.Pagination) (
 }
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
-func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filters, pagination cards.Pagination) ([]cards.Card, error) {
+func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filters, cursor cards.Cursor) ([]cards.Card, error) {
 	whereClause, valuesString := BuildWhereClauseDependsOnCardsFilters(filters)
 	valuesInterface := ValidDBParameters(valuesString)
 	query := fmt.Sprintf(`
@@ -266,7 +266,7 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
             %s
         OFFSET 
             %s
-        `, whereClause, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
+        `, whereClause, strconv.Itoa(cursor.Limit), strconv.Itoa((cursor.Page-1)*cursor.Limit))
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
@@ -308,20 +308,11 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 }
 
 // ListByPlayerName returns all cards from DB by player name.
-func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filters, pagination cards.Pagination) ([]cards.Card, error) {
+func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filters, cursor cards.Cursor) ([]cards.Card, error) {
 	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
 	valuesInterface := ValidDBParameters(valuesString)
-	query := fmt.Sprintf(`
-        SELECT 
-            %s 
-        FROM 
-            cards 
-        %s
-        LIMIT 
-            %s
-        OFFSET 
-            %s
-        `, allFields, whereClause, strconv.Itoa(pagination.Limit), strconv.Itoa((pagination.Page-1)*pagination.Limit))
+	offset := (cursor.Page - 1) * cursor.Limit
+	query := fmt.Sprintf(`SELECT %s FROM cards %s LIMIT %d OFFSET %d`, allFields, whereClause, cursor.Limit, offset)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
@@ -360,6 +351,23 @@ func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filte
 	}
 
 	return data, nil
+}
+
+// TotalCount counts all the cards in the table.
+func (cardsDB *cardsDB) TotalCount(ctx context.Context) (int, error) {
+	var count int
+	query := fmt.Sprintf(`SELECT COUNT(*) FROM cards`)
+
+	rows, err := cardsDB.conn.QueryContext(ctx, query)
+	if err != nil {
+		return 0, ErrCard.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	err = rows.Scan(&count)
+	return count, cards.ErrNoCard.Wrap(err)
 }
 
 // ValidDBParameters build valid parameter with string to sinterface.
