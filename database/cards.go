@@ -197,16 +197,8 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
 
 // List returns all cards from the data base.
 func (cardsDB *cardsDB) List(ctx context.Context, cursor cards.Cursor) ([]cards.Card, error) {
-	query := fmt.Sprintf(`
-		SELECT
-            %s
-        FROM 
-            cards
-        LIMIT 
-            %s
-        OFFSET 
-            %s
-        `, allFields, strconv.Itoa(cursor.Limit), strconv.Itoa((cursor.Page-1)*cursor.Limit))
+	offset := (cursor.Page - 1) * cursor.Limit
+	query := fmt.Sprintf(`SELECT %s FROM cards LIMIT %d OFFSET %d`, allFields, cursor.Limit, offset)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query)
 	if err != nil {
@@ -252,6 +244,7 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor cards.Cursor) ([]cards.
 func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filters, cursor cards.Cursor) ([]cards.Card, error) {
 	whereClause, valuesString := BuildWhereClauseDependsOnCardsFilters(filters)
 	valuesInterface := ValidDBParameters(valuesString)
+	offset := (cursor.Page - 1) * cursor.Limit
 	query := fmt.Sprintf(`
         SELECT
             cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
@@ -263,10 +256,10 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
             cards 
         %s
         LIMIT 
-            %s
+            %d
         OFFSET 
-            %s
-        `, whereClause, strconv.Itoa(cursor.Limit), strconv.Itoa((cursor.Page-1)*cursor.Limit))
+            %d
+        `, whereClause, cursor.Limit, offset)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
@@ -366,7 +359,15 @@ func (cardsDB *cardsDB) TotalCount(ctx context.Context) (int, error) {
 		err = errs.Combine(err, rows.Close())
 	}()
 
-	err = rows.Scan(&count)
+	for rows.Next() {
+		if err = rows.Scan(&count); err != nil {
+			return 0, cards.ErrNoCard.Wrap(err)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return 0, ErrCard.Wrap(err)
+	}
+
 	return count, cards.ErrNoCard.Wrap(err)
 }
 
