@@ -199,7 +199,7 @@ func TestCards(t *testing.T) {
 		SearchOperator: sqlsearchoperators.LIKE,
 	}
 
-	pagination1 := cards.Pagination{
+	cursor1 := cards.Cursor{
 		Limit: 2,
 		Page:  1,
 	}
@@ -235,7 +235,7 @@ func TestCards(t *testing.T) {
 			err = repositoryCards.Create(ctx, card2)
 			require.NoError(t, err)
 
-			allCards, err := repositoryCards.List(ctx, pagination1)
+			allCards, err := repositoryCards.List(ctx, cursor1)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 2)
 			compareCards(t, card1, allCards[0])
@@ -251,7 +251,7 @@ func TestCards(t *testing.T) {
 				assert.NoError(t, err)
 			}
 
-			allCards, err := repositoryCards.ListWithFilters(ctx, filters, pagination1)
+			allCards, err := repositoryCards.ListWithFilters(ctx, filters, cursor1)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 1)
 			compareCards(t, card1, allCards[0])
@@ -265,7 +265,7 @@ func TestCards(t *testing.T) {
 				assert.NoError(t, err)
 			}
 
-			allCards, err := repositoryCards.ListByPlayerName(ctx, filter3, pagination1)
+			allCards, err := repositoryCards.ListByPlayerName(ctx, filter3, cursor1)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 1)
 			compareCards(t, card1, allCards[0])
@@ -306,7 +306,7 @@ func TestCards(t *testing.T) {
 			err := repositoryCards.UpdateStatus(ctx, card1.ID, card1.Status)
 			require.NoError(t, err)
 
-			allCards, err := repositoryCards.List(ctx, pagination1)
+			allCards, err := repositoryCards.List(ctx, cursor1)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 2)
 			compareCards(t, card1, allCards[1])
@@ -327,7 +327,7 @@ func TestCards(t *testing.T) {
 			err := repositoryCards.Delete(ctx, card1.ID)
 			require.NoError(t, err)
 
-			allCards, err := repositoryCards.List(ctx, pagination1)
+			allCards, err := repositoryCards.List(ctx, cursor1)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards), 1)
 			compareCards(t, card2, allCards[0])

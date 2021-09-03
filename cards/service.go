@@ -237,23 +237,23 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Card, error)
 }
 
 // List returns all cards from DB.
-func (service *Service) List(ctx context.Context, pagination Pagination) ([]Card, error) {
+func (service *Service) List(ctx context.Context, cursor Cursor) ([]Card, error) {
 	_, err := auth.GetClaims(ctx)
 	if err != nil {
 		return nil, userauth.ErrUnauthenticated.Wrap(err)
 	}
-	if pagination.Limit == 0 {
-		pagination.Limit = service.config.Pagination.Limit
+	if cursor.Limit == 0 {
+		cursor.Limit = service.config.Cursor.Limit
 	}
-	if pagination.Page == 0 {
-		pagination.Page = service.config.Pagination.Page
+	if cursor.Page == 0 {
+		cursor.Page = service.config.Cursor.Page
 	}
-	cards, err := service.cards.List(ctx, pagination)
+	cards, err := service.cards.List(ctx, cursor)
 	return cards, ErrCards.Wrap(err)
 }
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
-func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, pagination Pagination) ([]Card, error) {
+func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, cursor Cursor) ([]Card, error) {
 	_, err := auth.GetClaims(ctx)
 	if err != nil {
 		return nil, userauth.ErrUnauthenticated.Wrap(err)
@@ -266,18 +266,18 @@ func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, 
 		}
 	}
 
-	if pagination.Limit == 0 {
-		pagination.Limit = service.config.Pagination.Limit
+	if cursor.Limit == 0 {
+		cursor.Limit = service.config.Cursor.Limit
 	}
-	if pagination.Page == 0 {
-		pagination.Page = service.config.Pagination.Page
+	if cursor.Page == 0 {
+		cursor.Page = service.config.Cursor.Page
 	}
-	cards, err := service.cards.ListWithFilters(ctx, filters, pagination)
+	cards, err := service.cards.ListWithFilters(ctx, filters, cursor)
 	return cards, ErrCards.Wrap(err)
 }
 
 // ListByPlayerName returns cards from DB by player name.
-func (service *Service) ListByPlayerName(ctx context.Context, filter Filters, pagination Pagination) ([]Card, error) {
+func (service *Service) ListByPlayerName(ctx context.Context, filter Filters, cursor Cursor) ([]Card, error) {
 	_, err := auth.GetClaims(ctx)
 	if err != nil {
 		return nil, userauth.ErrUnauthenticated.Wrap(err)
@@ -291,14 +291,41 @@ func (service *Service) ListByPlayerName(ctx context.Context, filter Filters, pa
 		return nil, ErrInvalidFilter.New("%s %s", filter.Value, err)
 	}
 
-	if pagination.Limit == 0 {
-		pagination.Limit = service.config.Pagination.Limit
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
 	}
-	if pagination.Page == 0 {
-		pagination.Page = service.config.Pagination.Page
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
 	}
-	cards, err := service.cards.ListByPlayerName(ctx, filter, pagination)
+	cards, err := service.cards.ListByPlayerName(ctx, filter, cursor)
 	return cards, ErrCards.Wrap(err)
+}
+
+// listPaginated returns paginated list of operators.
+func (service *Service) listPaginated(ctx context.Context, cursor Cursor, cards []Card) (Page, error) {
+	var page Page
+	offset := (cursor.Page - 1) * cursor.Limit
+
+	totalCount, err := service.cards.TotalCount(ctx)
+	if err != nil {
+		return page, ErrCards.Wrap(err)
+	}
+
+	pageCount := totalCount / cursor.Limit
+	if totalCount%cursor.Limit != 0 {
+		pageCount++
+	}
+
+	page = Page{
+		Cards:       cards,
+		Offset:      offset,
+		Limit:       cursor.Limit,
+		CurrentPage: cursor.Page,
+		PageCount:   pageCount,
+		TotalCount:  totalCount,
+	}
+
+	return page, nil
 }
 
 // UpdateStatus updates card status.
