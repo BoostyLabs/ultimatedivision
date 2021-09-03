@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
