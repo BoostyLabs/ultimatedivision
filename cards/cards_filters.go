@@ -149,6 +149,10 @@ type SliceFilters []Filters
 // DecodingURLParameters decodes url parameters to filters entity.
 func (filters *SliceFilters) DecodingURLParameters(urlQuery url.Values) error {
 	for key, value := range urlQuery {
+		if key == "limit" || key == "page" {
+			continue
+		}
+
 		filter := Filters{
 			Name:           "",
 			Value:          value[numberPositionOfURLParameter],
