@@ -12,9 +12,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-
-	"ultimatedivision/internal/auth"
-	"ultimatedivision/users/userauth"
 )
 
 // Service is handling cards related logic.
@@ -35,11 +32,6 @@ func NewService(cards DB, config Config) *Service {
 
 // Create add card in DB.
 func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int) (Card, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return Card{}, userauth.ErrUnauthenticated.Wrap(err)
-	}
-
 	qualities := map[string]int{
 		"wood":    percentageQualities[0],
 		"silver":  percentageQualities[1],
@@ -119,7 +111,8 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 	}
 
 	card := Card{
-		ID:               uuid.New(),
+		ID: uuid.New(),
+		// TODO: change it.
 		PlayerName:       "Dmytro",
 		Quality:          Quality(quality),
 		PictureType:      1,
@@ -236,10 +229,10 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Card, error)
 func (service *Service) List(ctx context.Context, cursor Cursor) (Page, error) {
 	var page Page
 
-	if cursor.Limit == 0 {
+	if cursor.Limit <= 0 {
 		cursor.Limit = service.config.Cursor.Limit
 	}
-	if cursor.Page == 0 {
+	if cursor.Page <= 0 {
 		cursor.Page = service.config.Cursor.Page
 	}
 	cards, err := service.cards.List(ctx, cursor)
@@ -262,10 +255,10 @@ func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, 
 		}
 	}
 
-	if cursor.Limit == 0 {
+	if cursor.Limit <= 0 {
 		cursor.Limit = service.config.Cursor.Limit
 	}
-	if cursor.Page == 0 {
+	if cursor.Page <= 0 {
 		cursor.Page = service.config.Cursor.Page
 	}
 	cards, err := service.cards.ListWithFilters(ctx, filters, cursor)
