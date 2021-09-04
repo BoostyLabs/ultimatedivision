@@ -124,7 +124,7 @@ func (usersDB *usersDB) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 // Update updates a status in the database.
-func (usersDB *usersDB) Update(ctx context.Context, status int, id uuid.UUID) error {
+func (usersDB *usersDB) Update(ctx context.Context, status users.Status, id uuid.UUID) error {
 	_, err := usersDB.conn.QueryContext(ctx, "UPDATE users SET status=$1 WHERE id=$2", status, id)
 	if err != nil {
 		return ErrUsers.Wrap(err)
@@ -152,4 +152,10 @@ func (usersDB *usersDB) GetNickNameByID(ctx context.Context, id uuid.UUID) (stri
 	}
 
 	return nickname, nil
+}
+
+// UpdatePassword updates a password in the database.
+func (usersDB *usersDB) UpdatePassword(ctx context.Context, passwordHash []byte, id uuid.UUID) error {
+	_, err := usersDB.conn.QueryContext(ctx, "UPDATE users SET password_hash=$1 WHERE id=$2", passwordHash, id)
+	return ErrUsers.Wrap(err)
 }

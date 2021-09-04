@@ -4,21 +4,22 @@
 import { lazy } from 'react';
 import { Switch } from 'react-router-dom';
 
-const MarketPlace = lazy(() => import('@/app/views/MarketPlace'));
-const Club = lazy(() => import('@/app/views/Club'));
-const FootballerCard = lazy(() => import('@/app/views/FootballerCard'));
-const FootballField = lazy(() => import('@/app/views/FootballField'));
-const WhitePaper = lazy(() => import('@/app/views/WhitePaper'));
-const Tokenomics = lazy(() => import('@/app/views/Tokenomics'));
+const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
+const Club = lazy(() => import('@/app/views/ClubPage'));
+const FootballerCard = lazy(() => import('@/app/views/FootballerCardPage'));
+const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
+const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
+const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
+const Store = lazy(() => import('@/app/views/StorePage'));
 
-import Summary from '@components/WhitePaperPage/Summary';
-import GameMechanics from '@components/WhitePaperPage/GameMechanics';
-import PayToEarnEconomy from '@components/WhitePaperPage/PayToEarnEconomy';
-import Technology from '@components/WhitePaperPage/Technology';
-import Fund from '@components/TokenomicsPage/Fund';
-import PlayToEarn from '@components/TokenomicsPage/PlayToEarn';
-import Spending from '@components/TokenomicsPage/Spending';
-import Staking from '@components/TokenomicsPage/Staking';
+import Summary from '@components/WhitePaper/Summary';
+import GameMechanics from '@components/WhitePaper/GameMechanics';
+import PayToEarnEconomy from '@components/WhitePaper/PayToEarnEconomy';
+import Technology from '@components/WhitePaper/Technology';
+import Fund from '@components/Tokenomics/Fund';
+import PlayToEarn from '@components/Tokenomics/PlayToEarn';
+import Spending from '@components/Tokenomics/Spending';
+import Staking from '@components/Tokenomics/Staking';
 
 /** Route base config implementation */
 export class ComponentRoutes {
@@ -68,6 +69,11 @@ export class RouteConfig {
     public static FootballField: ComponentRoutes = new ComponentRoutes(
         '/field',
         FootballField,
+        true,
+    );
+    public static Store: ComponentRoutes = new ComponentRoutes(
+        '/store',
+        Store,
         true,
     );
     public static Club: ComponentRoutes = new ComponentRoutes(
@@ -136,6 +142,7 @@ export class RouteConfig {
         RouteConfig.MarketPlace,
         RouteConfig.Club,
         RouteConfig.FootballerCard,
+        RouteConfig.Store,
         RouteConfig.Whitepaper.addChildren([
             RouteConfig.Summary,
             RouteConfig.GameMechanick,

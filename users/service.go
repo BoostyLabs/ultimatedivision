@@ -14,6 +14,9 @@ import (
 // ErrUsers indicates that there was an error in the service.
 var ErrUsers = errs.Class("users service error")
 
+// ErrUnauthenticated should be returned when user performs unauthenticated action.
+var ErrUnauthenticated = errs.Class("user unauthenticated error")
+
 // Service is handling users related logic.
 //
 // architecture: Service
@@ -30,17 +33,20 @@ func NewService(users DB) *Service {
 
 // Get returns user from DB.
 func (service *Service) Get(ctx context.Context, userID uuid.UUID) (User, error) {
-	return service.users.Get(ctx, userID)
+	user, err := service.users.Get(ctx, userID)
+	return user, ErrUsers.Wrap(err)
 }
 
 // GetByEmail returns user by email from DB.
 func (service *Service) GetByEmail(ctx context.Context, email string) (User, error) {
-	return service.users.GetByEmail(ctx, email)
+	user, err := service.users.GetByEmail(ctx, email)
+	return user, ErrUsers.Wrap(err)
 }
 
 // List returns all users from DB.
 func (service *Service) List(ctx context.Context) ([]User, error) {
-	return service.users.List(ctx)
+	users, err := service.users.List(ctx)
+	return users, ErrUsers.Wrap(err)
 }
 
 // Create creates a user and returns user email.
@@ -61,17 +67,31 @@ func (service *Service) Create(ctx context.Context, email, password, nickName, f
 		return ErrUsers.Wrap(err)
 	}
 
-	return service.users.Create(ctx, user)
+	return ErrUsers.Wrap(service.users.Create(ctx, user))
 }
 
 // Delete deletes a user.
 func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
-	return service.users.Delete(ctx, id)
+	return ErrUsers.Wrap(service.users.Delete(ctx, id))
 }
 
 // Update updates a users status.
-func (service *Service) Update(ctx context.Context, status int, id uuid.UUID) error {
-	return service.users.Update(ctx, status, id)
+func (service *Service) Update(ctx context.Context, status Status, id uuid.UUID) error {
+	return ErrUsers.Wrap(service.users.Update(ctx, status, id))
+}
+
+// GetProfile returns user profile.
+func (service *Service) GetProfile(ctx context.Context, userID uuid.UUID) (*Profile, error) {
+	user, err := service.users.Get(ctx, userID)
+	if err != nil {
+		return nil, ErrUsers.Wrap(err)
+	}
+
+	return &Profile{
+		Email:     user.Email,
+		NickName:  user.NickName,
+		CreatedAt: user.CreatedAt,
+	}, nil
 }
 
 // GetNickNameByID returns nickname of user.

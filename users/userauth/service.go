@@ -67,7 +67,7 @@ func (service *Service) Token(ctx context.Context, email string, password string
 	}
 
 	claims := auth.Claims{
-		ID:        user.ID,
+		UserID:    user.ID,
 		Email:     user.Email,
 		ExpiresAt: time.Now().Add(TokenExpirationTime),
 	}
@@ -81,13 +81,8 @@ func (service *Service) Token(ctx context.Context, email string, password string
 }
 
 // Authorize validates token from context and returns authorized Authorization.
-func (service *Service) Authorize(ctx context.Context) (_ auth.Claims, err error) {
-	tokenS, ok := auth.GetToken(ctx)
-	if !ok {
-		return auth.Claims{}, ErrUnauthenticated.Wrap(err)
-	}
-
-	token, err := auth.FromBase64URLString(string(tokenS))
+func (service *Service) Authorize(ctx context.Context, tokenS string) (_ auth.Claims, err error) {
+	token, err := auth.FromBase64URLString(tokenS)
 	if err != nil {
 		return auth.Claims{}, Error.Wrap(err)
 	}
@@ -132,15 +127,16 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 		return ErrUnauthenticated.Wrap(err)
 	}
 
-	user, err := service.users.GetByEmail(ctx, claims.Email)
+	_, err = service.users.GetByEmail(ctx, claims.Email)
 	if err != nil {
 		return ErrUnauthenticated.New("authorization failed. no user with email: %s", claims.Email)
 	}
 
-	if user.Status != users.StatusActive {
-		// TODO: return different errors on 0 and 2 statuses
-		return ErrUnauthenticated.New("authorization failed. no user with email: %s", claims.Email)
-	}
+	// TODO: uncommit when email verification is done
+	// if user.Status != users.StatusActive {
+	// TODO: return different errors on 0 and 2 statuses
+	// 	return ErrUnauthenticated.New("authorization failed. no user with email: %s", claims.Email)
+	// }
 
 	return nil
 }
@@ -150,12 +146,12 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 	// check if the user email address already exists.
 	_, err := service.users.GetByEmail(ctx, email)
 	if err == nil {
-		return Error.Wrap(errs.New("This email address is already in use."))
+		return Error.New("This email address is already in use.")
 	}
 
 	// check the password is valid.
 	if !users.IsPasswordValid(password) {
-		return Error.Wrap(errs.New("The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character."))
+		return Error.New("The password must contain at least one lowercase (a-z) letter, one uppercase (A-Z) letter, one digit (0-9) and one special character.")
 	}
 
 	user := users.User{
@@ -180,17 +176,18 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 		return Error.Wrap(err)
 	}
 
+	// TODO: I am testing and fixing this points.
 	_, err = service.Token(ctx, user.Email, password)
 	if err != nil {
 		return Error.Wrap(err)
 	}
 
-	// launch a goroutine that sends the email verification.
+	// TODO: launch a goroutine that sends the email verification.
 	// go func() {
-	//	err = service.emailService.SendVerificationEmail(user.Email, token)
-	//	if err != nil {
-	//		service.log.Error("Unable to send account activation email", Error.Wrap(err))
-	//	}
+	// 	err = service.emailService.SendVerificationEmail(user.Email, token)
+	// 	if err != nil {
+	// 		service.log.Error("Unable to send account activation email", Error.Wrap(err))
+	// 	}
 	// }()
 
 	return err
@@ -198,7 +195,6 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 
 // ConfirmUserEmail - parse token and confirm User.
 func (service *Service) ConfirmUserEmail(ctx context.Context, activationToken string) error {
-	status := int(users.StatusActive)
 	token, err := auth.FromBase64URLString(activationToken)
 	if err != nil {
 		return Error.Wrap(err)
@@ -222,5 +218,31 @@ func (service *Service) ConfirmUserEmail(ctx context.Context, activationToken st
 		return ErrPermission.Wrap(err)
 	}
 
-	return Error.Wrap(service.users.Update(ctx, status, user.ID))
+	return Error.Wrap(service.users.Update(ctx, users.StatusActive, user.ID))
+}
+
+// ChangePassword - change users password.
+func (service *Service) ChangePassword(ctx context.Context, password, newPassword string) error {
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	user, err := service.users.GetByEmail(ctx, claims.Email)
+	if err != nil {
+		return users.ErrUsers.Wrap(err)
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password))
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	user.PasswordHash = []byte(newPassword)
+	err = user.EncodePass()
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	return Error.Wrap(service.users.UpdatePassword(ctx, user.PasswordHash, user.ID))
 }

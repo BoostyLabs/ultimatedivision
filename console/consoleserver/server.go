@@ -21,6 +21,8 @@ import (
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
+	"ultimatedivision/marketplace"
+	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
 
@@ -60,7 +62,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, clubs *clubs.Service, userAuth *userauth.Service) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -73,9 +75,11 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	}
 
 	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
+	userController := controllers.NewUsers(server.log, users)
 	cardsController := controllers.NewCards(log, cards)
 	clubsController := controllers.NewClubs(log, clubs)
 	lootBoxesController := controllers.NewLootBoxes(log, lootBoxes)
+	marketplaceController := controllers.NewMarketplace(log, marketplace)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -87,8 +91,13 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
 	authRouter.HandleFunc("/email/confirm/{token}", authController.ConfirmEmail).Methods(http.MethodGet)
+	authRouter.Handle("/change-password", server.withAuth(http.HandlerFunc(authController.ChangePassword))).Methods(http.MethodPost)
 
-	cardsRouter := router.PathPrefix("/cards").Subrouter()
+	profileRouter := apiRouter.PathPrefix("/profile").Subrouter()
+	profileRouter.Use(server.withAuth)
+	profileRouter.HandleFunc("", userController.GetProfile).Methods(http.MethodGet)
+
+	cardsRouter := apiRouter.PathPrefix("/cards").Subrouter()
 	cardsRouter.Handle("", server.withAuth(http.HandlerFunc(cardsController.List))).Methods(http.MethodGet)
 
 	// TODO: refactor routes for club.
@@ -100,19 +109,22 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsRouter.Use(server.withAuth)
 	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
 	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
-	
-	squadsRouter := clubsRouter.Path("/squads").Subrouter()
-	squadsRouter.HandleFunc("/{clubId}", clubsController.CreateSquad).Methods(http.MethodPost)
-	squadsRouter.HandleFunc("", clubsController.UpdateSquad).Methods(http.MethodPatch)
+	clubsRouter.HandleFunc("/{club-id}/squads", clubsController.Get).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/{club-id}/squads", clubsController.CreateSquad).Methods(http.MethodGet)
 
-	squadCardsRouter := squadsRouter.Path("/squad-cards").Subrouter()
-	squadCardsRouter.HandleFunc("", clubsController.Add).Methods(http.MethodPost)
-	squadCardsRouter.HandleFunc("", clubsController.UpdatePosition).Methods(http.MethodPatch)
-	squadCardsRouter.HandleFunc("", clubsController.Delete).Methods(http.MethodDelete)
+
 
 	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
-	lootBoxesRouter.Handle("", server.withAuth(http.HandlerFunc(lootBoxesController.Create))).Methods(http.MethodPost)
-	lootBoxesRouter.Handle("", server.withAuth(http.HandlerFunc(lootBoxesController.Open))).Methods(http.MethodDelete)
+	lootBoxesRouter.Use(server.withAuth)
+	lootBoxesRouter.HandleFunc("", lootBoxesController.Create).Methods(http.MethodPost)
+	lootBoxesRouter.HandleFunc("/{id}", lootBoxesController.Open).Methods(http.MethodDelete)
+
+	marketplaceRouter := apiRouter.PathPrefix("/marketplace").Subrouter()
+	marketplaceRouter.Use(server.withAuth)
+	marketplaceRouter.HandleFunc("", marketplaceController.ListActiveLots).Methods(http.MethodGet)
+	marketplaceRouter.HandleFunc("/{id}", marketplaceController.GetLotByID).Methods(http.MethodGet)
+	marketplaceRouter.HandleFunc("", marketplaceController.CreateLot).Methods(http.MethodPost)
+	marketplaceRouter.HandleFunc("/bet", marketplaceController.PlaceBetLot).Methods(http.MethodPost)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
@@ -183,13 +195,13 @@ func (server *Server) withAuth(handler http.Handler) http.Handler {
 		token, err := server.cookieAuth.GetToken(r)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
 		}
 
-		ctx = auth.SetToken(ctx, []byte(token))
-
-		claims, err := server.authService.Authorize(ctx)
+		claims, err := server.authService.Authorize(ctx, token)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
 		}
 
 		ctx = auth.SetClaims(ctx, claims)

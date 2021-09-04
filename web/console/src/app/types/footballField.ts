@@ -1,14 +1,14 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Card } from '@/cards';
+import { Card } from '@/card';
 
 /** Base FootballField implementation */
 export class FootballFieldCard {
     /** class which implements fotballField card */
     constructor(
         public id: number,
-        public cardData: null | Card,
+        public card: null | Card,
     ) { }
 }
 /* eslint-disable no-magic-numbers */
@@ -26,7 +26,7 @@ export class FootballField {
         dragTarget: null,
     };
     /** football team implementation */
-    public cardsList = [
+    public cards = [
         new FootballFieldCard(0, null),
         new FootballFieldCard(1, null),
         new FootballFieldCard(2, null),

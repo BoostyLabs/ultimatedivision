@@ -11,6 +11,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/pkg/sqlsearchoperators"
 )
 
 var (
@@ -38,33 +39,59 @@ func NewCards(log logger.Logger, cards *cards.Service) *Cards {
 // List is an endpoint that allows will view cards.
 func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var cardsList []cards.Card
-	var err error
-	var filters cards.SliceFilters
+	w.Header().Set("Content-Type", "application/json")
+	var (
+		cardsList []cards.Card
+		err       error
+		filters   cards.SliceFilters
+	)
 	urlQuery := r.URL.Query()
-	tactics := urlQuery.Get(string(cards.Tactics))
-	minPhysique := urlQuery.Get(string(cards.MinPhysique))
-	maxPhysique := urlQuery.Get(string(cards.MaxPhysique))
-	playerName := urlQuery.Get(string(cards.PlayerName))
+	playerName := urlQuery.Get(string(cards.FilterPlayerName))
 
-	filters.Add(cards.Tactics, tactics)
-	filters.Add(cards.MinPhysique, minPhysique)
-	filters.Add(cards.MaxPhysique, maxPhysique)
-	filters.Add(cards.PlayerName, playerName)
-
-	if len(filters) > 0 {
-		cardsList, err = controller.cards.ListWithFilters(ctx, filters)
+	if playerName == "" {
+		if err := filters.DecodingURLParameters(urlQuery); err != nil {
+			controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
+		}
+		if len(filters) > 0 {
+			cardsList, err = controller.cards.ListWithFilters(ctx, filters)
+		} else {
+			cardsList, err = controller.cards.List(ctx)
+		}
 	} else {
-		cardsList, err = controller.cards.List(ctx)
+		filter := cards.Filters{
+			Name:           cards.FilterPlayerName,
+			Value:          playerName,
+			SearchOperator: sqlsearchoperators.LIKE,
+		}
+		cardsList, err = controller.cards.ListByPlayerName(ctx, filter)
 	}
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
-		http.Error(w, "could not get cards list", http.StatusInternalServerError)
+		switch {
+		case cards.ErrNoCard.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrCards.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrCards.Wrap(err))
+		}
 		return
 	}
 
 	if err = json.NewEncoder(w).Encode(cardsList); err != nil {
 		controller.log.Error("failed to write json response", ErrCards.Wrap(err))
 		return
+	}
+}
+
+// serveError replies to the request with specific code and error message.
+func (controller *Cards) serveError(w http.ResponseWriter, status int, err error) {
+	w.WriteHeader(status)
+	var response struct {
+		Error string `json:"error"`
+	}
+	response.Error = err.Error()
+
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		controller.log.Error("failed to write json error response", ErrCards.Wrap(err))
 	}
 }
