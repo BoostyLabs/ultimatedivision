@@ -91,11 +91,16 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	cardsRouter := router.PathPrefix("/cards").Subrouter()
 	cardsRouter.Handle("", server.withAuth(http.HandlerFunc(cardsController.List))).Methods(http.MethodGet)
 
+	// TODO: refactor routes for club.
+	// api/v0/clubs
+	// api/v0/clubs/{club-id}/squads
+	// api/v0/clubs/{club-id}/squads/{squad-id}/cards
+
 	clubsRouter := apiRouter.PathPrefix("/clubs").Subrouter()
 	clubsRouter.Use(server.withAuth)
 	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
 	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
-
+	
 	squadsRouter := clubsRouter.Path("/squads").Subrouter()
 	squadsRouter.HandleFunc("/{clubId}", clubsController.CreateSquad).Methods(http.MethodPost)
 	squadsRouter.HandleFunc("", clubsController.UpdateSquad).Methods(http.MethodPatch)
