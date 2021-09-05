@@ -4,7 +4,7 @@
 package mail
 
 // ensures that SMTPSender implements Sender.
-var _ Sender = (*MockSender)(nil)
+// var _ Sender = (*MockSender)(nil).
 
 // MockSender is mock implementation of Sender.
 type MockSender struct{}
@@ -18,6 +18,6 @@ func (sender *MockSender) FromAddress() Address {
 }
 
 // SendEmail sends email message to the given recipient.
-func (sender *MockSender) SendEmail(msg *Message) error {
-	return nil
-}
+// func (sender *MockSender) SendEmail(msg *Message) error {
+//	return nil
+// }.

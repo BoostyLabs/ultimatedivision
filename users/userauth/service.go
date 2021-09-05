@@ -21,6 +21,8 @@ import (
 const (
 	// TokenExpirationTime after passing this time token expires.
 	TokenExpirationTime = 24 * time.Hour
+	// PreAuthTokenExpirationTime after passing this time token expires.
+	PreAuthTokenExpirationTime = 2 * time.Hour
 )
 
 var (
@@ -70,6 +72,62 @@ func (service *Service) Token(ctx context.Context, email string, password string
 		ID:        user.ID,
 		Email:     user.Email,
 		ExpiresAt: time.Now().Add(TokenExpirationTime),
+	}
+
+	token, err = service.signer.CreateToken(ctx, &claims)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	return token, nil
+}
+
+// LoginToken authenticates User by credentials and returns login token.
+func (service *Service) LoginToken(ctx context.Context, email string, password string) (token string, err error) {
+	user, err := service.users.GetByEmail(ctx, email)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	if user.Status != users.StatusActive {
+		switch user.Status {
+		case users.StatusCreated:
+			return "", ErrPermission.New("Users email not confirmed")
+		case users.StatusSuspended:
+			return "", ErrPermission.New("User suspended")
+		}
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password))
+	if err != nil {
+		return "", ErrUnauthenticated.Wrap(err)
+	}
+
+	claims := auth.Claims{
+		ID:        user.ID,
+		Email:     user.Email,
+		ExpiresAt: time.Now().Add(TokenExpirationTime),
+	}
+
+	token, err = service.signer.CreateToken(ctx, &claims)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	return token, nil
+}
+
+// PreAuthToken authenticates User by credentials and returns pre auth token.
+func (service *Service) PreAuthToken(ctx context.Context, email string) (token string, err error) {
+	user, err := service.users.GetByEmail(ctx, email)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	claims := auth.Claims{
+		ID:        user.ID,
+		Email:     user.Email,
+		ExpiresAt: time.Now().Add(PreAuthTokenExpirationTime),
 	}
 
 	token, err = service.signer.CreateToken(ctx, &claims)
@@ -132,16 +190,19 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 		return ErrUnauthenticated.Wrap(err)
 	}
 
-	_, err = service.users.GetByEmail(ctx, claims.Email)
+	user, err := service.users.GetByEmail(ctx, claims.Email)
 	if err != nil {
 		return ErrUnauthenticated.New("authorization failed. no user with email: %s", claims.Email)
 	}
 
-	// TODO: uncommit when email verification is done
-	//if user.Status != users.StatusActive {
-	// TODO: return different errors on 0 and 2 statuses
-	//	return ErrUnauthenticated.New("authorization failed. no user with email: %s", claims.Email)
-	//}
+	if user.Status != users.StatusActive {
+		switch user.Status {
+		case users.StatusCreated:
+			return ErrPermission.New("Users email not confirmed")
+		case users.StatusSuspended:
+			return ErrPermission.New("User suspended")
+		}
+	}
 
 	return nil
 }
@@ -181,19 +242,18 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 		return Error.Wrap(err)
 	}
 
-	// @TODO I am testing and fixing this points.
-	_, err = service.Token(ctx, user.Email, password)
+	token, err := service.Token(ctx, user.Email, password)
 	if err != nil {
 		return Error.Wrap(err)
 	}
 
 	// launch a goroutine that sends the email verification.
-	//go func() {
-	//	err = service.emailService.SendVerificationEmail(user.Email, token)
-	//	if err != nil {
-	//		service.log.Error("Unable to send account activation email", Error.Wrap(err))
-	//	}
-	//}()
+	go func() {
+		err = service.emailService.SendVerificationEmail(user.Email, token)
+		if err != nil {
+			service.log.Error("Unable to send account activation email", Error.Wrap(err))
+		}
+	}()
 
 	return err
 }
@@ -254,25 +314,32 @@ func (service *Service) ChangePassword(ctx context.Context, password, newPasswor
 }
 
 // ResetPassword - change users password.
-func (service *Service) ResetPassword(ctx context.Context, email, password string) error {
+func (service *Service) ResetPassword(ctx context.Context, email string) error {
 	user, err := service.users.GetByEmail(ctx, email)
 	if err != nil {
 		return users.ErrUsers.Wrap(err)
 	}
 
-	// @TODO I am testing and fixing this points.
-	_, err = service.Token(ctx, user.Email, password)
+	if user.Status != users.StatusActive {
+		switch user.Status {
+		case users.StatusCreated:
+			return ErrPermission.New("Users email not confirmed")
+		case users.StatusSuspended:
+			return ErrPermission.New("User suspended")
+		}
+	}
+
+	token, err := service.PreAuthToken(ctx, user.Email)
 	if err != nil {
 		return Error.Wrap(err)
 	}
 
-	// launch a goroutine that sends the email verification.
-	//go func() {
-	//	err = service.emailService.SendVerificationEmail(user.Email, token)
-	//	if err != nil {
-	//		service.log.Error("Unable to send account activation email", Error.Wrap(err))
-	//	}
-	//}()
+	go func() {
+		err = service.emailService.SendResetPasswordEmail(user.Email, token)
+		if err != nil {
+			service.log.Error("Unable to send reset password email", Error.Wrap(err))
+		}
+	}()
 
 	return err
 }
