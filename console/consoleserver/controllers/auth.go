@@ -180,7 +180,7 @@ func (auth *Auth) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ResetPassword reset users password.
+// ResetPassword send email with token about reset users password.
 func (auth *Auth) ResetPassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
@@ -212,7 +212,7 @@ func (auth *Auth) ResetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// RecoveryPassword change users password.
+// RecoveryPassword authorize user and set auth cookie in browser for change users password.
 func (auth *Auth) RecoveryPassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
