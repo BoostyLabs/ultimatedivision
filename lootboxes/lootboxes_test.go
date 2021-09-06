@@ -62,14 +62,14 @@ func TestLootBox(t *testing.T) {
 			userLootBoxes, err := repositoryLootBoxes.List(ctx)
 			require.NoError(t, err)
 
-			compareLootBoxes(t, userLootBoxes, []lootboxes.LootBox{userLootBox1, userLootBox2})
+			compareLootBoxesSlice(t, userLootBoxes, []lootboxes.LootBox{userLootBox1, userLootBox2})
 		})
 
-		t.Run("Get loot box type", func(t *testing.T) {
-			lootBoxType, err := repositoryLootBoxes.GetTypeByLootBoxID(ctx, userLootBox1.LootBoxID)
+		t.Run("Get", func(t *testing.T) {
+			lootBoxDB, err := repositoryLootBoxes.Get(ctx, userLootBox1.LootBoxID)
 			require.NoError(t, err)
 
-			assert.Equal(t, lootBoxType, userLootBox1.Type)
+			compareLootBoxes(t, lootBoxDB, userLootBox1)
 		})
 
 		t.Run("Delete", func(t *testing.T) {
@@ -79,7 +79,7 @@ func TestLootBox(t *testing.T) {
 	})
 }
 
-func compareLootBoxes(t *testing.T, userLootBoxesDB, userLootBoxesTest []lootboxes.LootBox) {
+func compareLootBoxesSlice(t *testing.T, userLootBoxesDB, userLootBoxesTest []lootboxes.LootBox) {
 	assert.Equal(t, len(userLootBoxesDB), len(userLootBoxesTest))
 
 	for i := 0; i < len(userLootBoxesDB); i++ {
@@ -87,4 +87,10 @@ func compareLootBoxes(t *testing.T, userLootBoxesDB, userLootBoxesTest []lootbox
 		assert.Equal(t, userLootBoxesDB[i].LootBoxID, userLootBoxesTest[i].LootBoxID)
 		assert.Equal(t, userLootBoxesDB[i].Type, userLootBoxesTest[i].Type)
 	}
+}
+
+func compareLootBoxes(t *testing.T, userLootBoxDB, userLootBoxTest lootboxes.LootBox) {
+	assert.Equal(t, userLootBoxDB.UserID, userLootBoxTest.UserID)
+	assert.Equal(t, userLootBoxDB.LootBoxID, userLootBoxTest.LootBoxID)
+	assert.Equal(t, userLootBoxDB.Type, userLootBoxTest.Type)
 }

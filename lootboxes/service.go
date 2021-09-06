@@ -49,14 +49,17 @@ func (service *Service) Open(ctx context.Context, userID, lootboxID uuid.UUID) (
 	cardsNum := 0
 	probabilities := make([]int, 0, 4)
 
-	// TODO: get from db.
-	// if userLootBox.Type == RegularBox {
-	// 	cardsNum = service.config.RegularBoxConfig.CardsNum
-	// 	probabilities = []int{service.config.RegularBoxConfig.Wood, service.config.RegularBoxConfig.Silver, service.config.RegularBoxConfig.Gold, service.config.RegularBoxConfig.Diamond}
-	// } else if userLootBox.Type == UDReleaseCelebrationBox {
-	// 	cardsNum = service.config.UDReleaseCelebrationBoxConfig.CardsNum
-	// 	probabilities = []int{service.config.UDReleaseCelebrationBoxConfig.Wood, service.config.UDReleaseCelebrationBoxConfig.Silver, service.config.UDReleaseCelebrationBoxConfig.Gold, service.config.UDReleaseCelebrationBoxConfig.Diamond}
-	// }
+	userLootBox, err := service.lootboxes.Get(ctx, lootboxID)
+	if err != nil {
+		return nil, ErrLootBoxes.Wrap(err)
+	}
+	if userLootBox.Type == RegularBox {
+		cardsNum = service.config.RegularBoxConfig.CardsNum
+		probabilities = []int{service.config.RegularBoxConfig.Wood, service.config.RegularBoxConfig.Silver, service.config.RegularBoxConfig.Gold, service.config.RegularBoxConfig.Diamond}
+	} else if userLootBox.Type == UDReleaseCelebrationBox {
+		cardsNum = service.config.UDReleaseCelebrationBoxConfig.CardsNum
+		probabilities = []int{service.config.UDReleaseCelebrationBoxConfig.Wood, service.config.UDReleaseCelebrationBoxConfig.Silver, service.config.UDReleaseCelebrationBoxConfig.Gold, service.config.UDReleaseCelebrationBoxConfig.Diamond}
+	}
 
 	var lootBoxCards []cards.Card
 
@@ -71,7 +74,7 @@ func (service *Service) Open(ctx context.Context, userID, lootboxID uuid.UUID) (
 
 	sortLootBoxCards(lootBoxCards)
 
-	err := service.lootboxes.Delete(ctx, lootboxID)
+	err = service.lootboxes.Delete(ctx, lootboxID)
 
 	return lootBoxCards, ErrLootBoxes.Wrap(err)
 }

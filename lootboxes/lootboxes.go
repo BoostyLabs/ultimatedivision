@@ -26,8 +26,8 @@ type DB interface {
 	Delete(ctx context.Context, lootboxID uuid.UUID) error
 	// List returns all loot boxes.
 	List(ctx context.Context) ([]LootBox, error)
-	// GetTypeByLootBoxID returns type of loot box by user id.
-	GetTypeByLootBoxID(ctx context.Context, lootboxID uuid.UUID) (Type, error)
+	// Get returns lootbox by user id.
+	Get(ctx context.Context, lootboxID uuid.UUID) (LootBox, error)
 }
 
 // LootBox defines lootbox.

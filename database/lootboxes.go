@@ -33,7 +33,7 @@ func (lootboxesDB *lootboxesDB) Create(ctx context.Context, lootBox lootboxes.Lo
 	if err != nil {
 		return ErrLootBoxes.Wrap(err)
 	}
-	query := `INSERT INTO lootboxes(user_id, lootbox_id, lootbox_name)
+	query := `INSERT INTO lootboxes(user_id, lootbox_id, lootbox_type)
               VALUES($1,$2,$3)`
 
 	_, err = lootboxesDB.conn.ExecContext(ctx, query, lootBox.UserID, lootBox.LootBoxID, lootBox.Type)
@@ -66,7 +66,7 @@ func (lootboxesDB *lootboxesDB) Delete(ctx context.Context, lootboxID uuid.UUID)
 
 // List returns all loot boxes.
 func (lootboxesDB *lootboxesDB) List(ctx context.Context) ([]lootboxes.LootBox, error) {
-	query := `SELECT user_id, lootbox_id, lootbox_name
+	query := `SELECT user_id, lootbox_id, lootbox_type
               FROM lootboxes`
 
 	rows, err := lootboxesDB.conn.QueryContext(ctx, query)
@@ -98,24 +98,24 @@ func (lootboxesDB *lootboxesDB) List(ctx context.Context) ([]lootboxes.LootBox, 
 	return userLootBoxes, nil
 }
 
-// GetTypeByLootBoxID returns type of loot box by user id.
-func (lootboxesDB *lootboxesDB) GetTypeByLootBoxID(ctx context.Context, lootboxID uuid.UUID) (lootboxes.Type, error) {
-	query := `SELECT lootbox_name
+// Get returns lootbox by user id.
+func (lootboxesDB *lootboxesDB) Get(ctx context.Context, lootboxID uuid.UUID) (lootboxes.LootBox, error) {
+	query := `SELECT user_id, lootbox_id, lootbox_type
               FROM lootboxes
               WHERE lootbox_id = $1`
 
 	row := lootboxesDB.conn.QueryRowContext(ctx, query, lootboxID)
 
-	var lootBoxType lootboxes.Type
+	var userLootbox lootboxes.LootBox
 
-	err := row.Scan(&lootBoxType)
+	err := row.Scan(&userLootbox.UserID, &userLootbox.LootBoxID, &userLootbox.Type)
 	if err != nil {
 		if errors.Is(sql.ErrNoRows, err) {
-			return lootBoxType, lootboxes.ErrNoLootBox.Wrap(err)
+			return userLootbox, lootboxes.ErrNoLootBox.Wrap(err)
 		}
 
-		return lootBoxType, ErrLootBoxes.Wrap(err)
+		return userLootbox, ErrLootBoxes.Wrap(err)
 	}
 
-	return lootBoxType, nil
+	return userLootbox, nil
 }

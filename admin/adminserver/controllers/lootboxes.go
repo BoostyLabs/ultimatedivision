@@ -13,7 +13,6 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
-	"ultimatedivision/users/userauth"
 )
 
 // ErrLootBoxes is an internal error type for loot boxes controller.
@@ -57,7 +56,7 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 
 	id, err := uuid.Parse(vars["id"])
 	if err != nil {
-		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -66,7 +65,7 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 		err = controller.templates.Create.Execute(w, id)
 		if err != nil {
 			controller.log.Error("could not execute template", ErrLootBoxes.Wrap(err))
-			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
@@ -75,7 +74,7 @@ func (controller *LootBoxes) Create(w http.ResponseWriter, r *http.Request) {
 		_, err = controller.lootboxes.Create(ctx, lootboxes.Type(lootBoxType), id)
 		if err != nil {
 			controller.log.Error("could not create loot box", ErrLootBoxes.Wrap(err))
-			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		Redirect(w, r, "/lootboxes", http.MethodGet)
@@ -93,13 +92,13 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := uuid.Parse(vars["userID"])
 	if err != nil {
-		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	lootboxID, err := uuid.Parse(vars["lootboxID"])
 	if err != nil {
-		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -108,9 +107,9 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 		controller.log.Error("could not open loot box", ErrLootBoxes.Wrap(err))
 		switch {
 		case lootboxes.ErrNoLootBox.Has(err):
-			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 		default:
-			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
@@ -118,7 +117,7 @@ func (controller *LootBoxes) Open(w http.ResponseWriter, r *http.Request) {
 	err = controller.templates.ListCards.Execute(w, cards)
 	if err != nil {
 		controller.log.Error("could not execute template", ErrLootBoxes.Wrap(err))
-		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -130,19 +129,14 @@ func (controller *LootBoxes) List(w http.ResponseWriter, r *http.Request) {
 	lootBoxes, err := controller.lootboxes.List(ctx)
 	if err != nil {
 		controller.log.Error("could not list loot boxes", ErrLootBoxes.Wrap(err))
-		switch {
-		case userauth.ErrUnauthenticated.Has(err):
-			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusUnauthorized)
-		default:
-			http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
-		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = controller.templates.List.Execute(w, lootBoxes)
 	if err != nil {
 		controller.log.Error("could not execute template", ErrLootBoxes.Wrap(err))
-		http.Error(w, ErrLootBoxes.Wrap(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
