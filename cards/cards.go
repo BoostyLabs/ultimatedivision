@@ -16,9 +16,6 @@ var ErrNoCard = errs.Class("card does not exist")
 // ErrCards indicated that there was an error in service.
 var ErrCards = errs.Class("cards service error")
 
-// ErrInvalidFilter indicated that filter does not valid.
-var ErrInvalidFilter = errs.Class("invalid filter")
-
 // DB is exposing access to cards db.
 //
 // architecture: DB
@@ -29,7 +26,7 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Card, error)
 	// List returns all cards from the data base.
 	List(ctx context.Context) ([]Card, error)
-	// ListWithFilters returns all cards from the data base with filters.
+	// ListWithFilters returns cards from the data base with filters.
 	ListWithFilters(ctx context.Context, filters []Filters) ([]Card, error)
 	// ListByPlayerName returns cards from DB by player name.
 	ListByPlayerName(ctx context.Context, filters Filters) ([]Card, error)
