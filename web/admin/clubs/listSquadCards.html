@@ -9,7 +9,7 @@
     <thead>
     <tr>
         <th>Squad ID</th>
-        <th>Club ID</th>
+        <th>Card ID</th>
         <th>Position</th>
         <th>Operations</th>
     </tr>
@@ -25,6 +25,9 @@
         <td>
             {{.Position}}
         </td>
+        <th>
+            <a href = /squad-card/{{.SquadID}}/{{.CardID}}"></a>
+        </th>
     </tr>
     {{end}}
 </table>

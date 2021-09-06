@@ -60,23 +60,36 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) error
 }
 
 // Add add new card to the squad of the club.
-func (service *Service) Add(ctx context.Context, newSquadCard SquadCard) error {
+func (service *Service) Add(ctx context.Context, position Position, cardID, squadID uuid.UUID) error {
+	newSquadCard := SquadCard{
+		CardID:   cardID,
+		SquadID:  squadID,
+		Position: position,
+	}
+
 	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, newSquadCard))
 }
 
 // Delete deletes card from squad.
-func (service *Service) Delete(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error {
-	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, squadID, cardID))
+func (service *Service) Delete(ctx context.Context, cardID uuid.UUID) error {
+	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, cardID))
 }
 
 // UpdateSquad updates tactic and formation of the squad.
-func (service *Service) UpdateSquad(ctx context.Context, updatedSquad Squad) error {
+func (service *Service) UpdateSquad(ctx context.Context, formation Formation, tactic Tactic, squadID, captainID uuid.UUID) error {
+	updatedSquad := Squad{
+		ID:        squadID,
+		Formation: formation,
+		Tactic:    tactic,
+		CaptainID: captainID,
+	}
+
 	return ErrClubs.Wrap(service.clubs.UpdateTacticFormationCaptain(ctx, updatedSquad))
 }
 
 // UpdateCardPosition updates position of card in the squad.
-func (service *Service) UpdateCardPosition(ctx context.Context, position Position,  squadID, cardID uuid.UUID) error {
-	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, squadID, cardID, position))
+func (service *Service) UpdateCardPosition(ctx context.Context, position Position, cardID uuid.UUID) error {
+	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, cardID, position))
 }
 
 // GetSquad returns all squads from club.

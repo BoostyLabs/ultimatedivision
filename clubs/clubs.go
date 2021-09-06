@@ -36,11 +36,11 @@ type DB interface {
 	// AddSquadCard add new card to the squad.
 	AddSquadCard(ctx context.Context, squadCards SquadCard) error
 	// DeleteSquadCard deletes card from squad.
-	DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error
+	DeleteSquadCard(ctx context.Context, cardID uuid.UUID) error
 	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
 	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
 	// UpdatePosition updates position of card in the squad.
-	UpdatePosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition Position) error
+	UpdatePosition(ctx context.Context, cardID uuid.UUID, newPosition Position) error
 }
 
 // Club defines club entity.
@@ -71,7 +71,6 @@ type SquadCard struct {
 // Formation defines a list of possible formations.
 type Formation int
 
-// TODO: add others formations.
 const (
 	// FourFourTwo defines 4-4-2 scheme.
 	FourFourTwo Formation = 1
@@ -79,6 +78,20 @@ const (
 	FourTwoFour Formation = 2
 	// FourTwoTwoTwo defines 4-2-2-2 scheme.
 	FourTwoTwoTwo Formation = 3
+	// FourThreeOneTwo defines 4-3-1-2 scheme.
+	FourThreeOneTwo = 4
+	// FourThreeThree defines 4-3-3 scheme.
+	FourThreeThree = 5
+	// FourTwoThreeOne defines 4-2-3-1 scheme.
+	FourTwoThreeOne = 6
+	// FourThreeTwoOne defines 4-3-2-1 scheme.
+	FourThreeTwoOne = 7
+	// FourOneThreeTwo defines 4-1-3-2 scheme.
+	FourOneThreeTwo = 8
+	// FiveThreeTwo defines 5-3-2 scheme.
+	FiveThreeTwo = 9
+	// ThreeFiveTwo defines 4-5-2 scheme.
+	ThreeFiveTwo = 10
 )
 
 // Tactic defines a list of possible tactics.

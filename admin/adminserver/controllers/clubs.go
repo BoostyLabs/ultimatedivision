@@ -5,12 +5,13 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
-	"github.com/zeebo/errs"
 	"html/template"
 	"net/http"
 	"strconv"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
+	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
 	"ultimatedivision/internal/logger"
@@ -23,10 +24,10 @@ var (
 
 // ClubsTemplates holds all clubs related templates.
 type ClubsTemplates struct {
-	List           *template.Template
-	ListSquads     *template.Template
-	UpdateSquad    *template.Template
-	ListSquadCards *template.Template
+	List               *template.Template
+	ListSquads         *template.Template
+	UpdateSquad        *template.Template
+	ListSquadCards     *template.Template
 	UpdateCardPosition *template.Template
 }
 
@@ -223,7 +224,7 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["squadID"] == "" ||  params["cardID"] == "" {
+	if params["squadID"] == "" || params["cardID"] == "" {
 		http.Error(w, ErrClubs.New("empty id parameter").Error(), http.StatusBadRequest)
 		return
 	}
@@ -255,7 +256,7 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 
-		err = controller.clubs.UpdateCardPosition(ctx, clubs.Position(newPosition), squadID, cardID)
+		err = controller.clubs.UpdateCardPosition(ctx, clubs.Position(newPosition), cardID)
 		if err != nil {
 			controller.log.Error("could not execute update squad template", ErrClubs.Wrap(err))
 			switch {
@@ -268,8 +269,19 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		}
 
 		// TODO: update url.
-		url := fmt.Sprintf("/squad/%s", squadID )
+		url := fmt.Sprintf("/squad/%s", squadID)
 
-		Redirect(w, r , url, http.MethodGet)
+		Redirect(w, r, url, http.MethodGet)
 	}
 }
+
+func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+
+}
+
+
+// Users - get club
+// Clubs - get all clubs / create club / create squad
+// Cards - Add card to the squad

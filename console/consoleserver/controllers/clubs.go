@@ -141,7 +141,146 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
-	err := controller.clubs.UpdateSquad()
+	params := mux.Vars(r)
+	if params["squadID"] == "" {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
+		return
+	}
+
+	squadID, err := uuid.Parse(params["squadID"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	var squad clubs.Squad
+
+	if err = json.NewDecoder(r.Body).Decode(&squad); err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	err = controller.clubs.UpdateSquad(ctx, squad.Formation, squad.Tactic, squadID, squad.CaptainID)
+	if err != nil {
+		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
+		switch {
+		case clubs.ErrNoClub.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
+		}
+		return
+	}
+}
+
+// AddCardToSquad add card to the squad.
+func (controller *Clubs) AddCardToSquad(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	params := mux.Vars(r)
+	if params["squadID"] == "" || params["cardID"] == "" {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
+		return
+	}
+
+	squadID, err := uuid.Parse(params["squadID"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	cardID, err := uuid.Parse(params["cardID"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	var newSquadCard clubs.SquadCard
+
+	if err = json.NewDecoder(r.Body).Decode(&newSquadCard); err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	err = controller.clubs.Add(ctx, newSquadCard.Position, cardID, squadID)
+	if err != nil {
+		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
+		switch {
+		case clubs.ErrNoSquad.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
+		}
+		return
+	}
+}
+
+// DeleteCardFromSquad deletes card from the squad.
+func (controller *Clubs) DeleteCardFromSquad(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	params := mux.Vars(r)
+	if params["cardID"] == "" {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
+		return
+	}
+
+	cardID, err := uuid.Parse(params["cardID"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	err = controller.clubs.Delete(ctx, cardID)
+	if err != nil {
+		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
+		switch {
+		case clubs.ErrNoSquad.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
+		}
+		return
+	}
+}
+
+// UpdateCardPosition changes card position in the squad.
+func (controller *Clubs) UpdateCardPosition(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	params := mux.Vars(r)
+	if params["cardID"] == "" {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
+		return
+	}
+
+	cardID, err := uuid.Parse(params["cardID"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	var squadCard clubs.SquadCard
+
+	if err = json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	err = controller.clubs.UpdateCardPosition(ctx, squadCard.Position, cardID)
+	if err != nil {
+		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
+		switch {
+		case clubs.ErrNoSquad.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
+		}
+		return
+	}
 }
 
 // ClubResponse is a struct for response clubs, squad and squadCards.

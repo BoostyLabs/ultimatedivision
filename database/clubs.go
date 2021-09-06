@@ -61,11 +61,11 @@ func (clubsDB *clubsDB) AddSquadCard(ctx context.Context, squadCards clubs.Squad
 }
 
 // DeleteSquadCard deletes card from squad.
-func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error {
+func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, cardID uuid.UUID) error {
 	query := `DELETE FROM squad_cards
-              WHERE id = $1 AND card_id = $2`
+              WHERE card_id = $1`
 
-	_, err := clubsDB.conn.ExecContext(ctx, query, squadID, cardID)
+	_, err := clubsDB.conn.ExecContext(ctx, query, cardID)
 
 	return ErrSquad.Wrap(err)
 }
@@ -149,21 +149,21 @@ func (clubsDB *clubsDB) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 // UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
 func (clubsDB *clubsDB) UpdateTacticFormationCaptain(ctx context.Context, squad clubs.Squad) error {
 	query := `UPDATE squads
-			  SET tactic = $1, formation = $2
-  			  WHERE id = $3`
+			  SET tactic = $1, formation = $2, captain_id = $3
+  			  WHERE id = $4`
 
-	_, err := clubsDB.conn.ExecContext(ctx, query, squad.Tactic, squad.Formation, squad.ID)
+	_, err := clubsDB.conn.ExecContext(ctx, query, squad.Tactic, squad.Formation, squad.CaptainID, squad.ID)
 
 	return ErrSquad.Wrap(err)
 }
 
 // UpdatePosition updates position of card in the squad.
-func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition clubs.Position) error {
+func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, cardID uuid.UUID, newPosition clubs.Position) error {
 	query := `UPDATE squad_cards
 			  SET card_position = $1
-			  WHERE card_id = $2 AND id = $3`
+			  WHERE card_id = $2`
 
-	_, err := clubsDB.conn.ExecContext(ctx, query, newPosition, cardID, squadID)
+	_, err := clubsDB.conn.ExecContext(ctx, query, newPosition, cardID)
 
 	return ErrSquad.Wrap(err)
 }
@@ -171,7 +171,7 @@ func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, squadID uuid.UUID, c
 // GetCaptainID returns id of captain of the users team.
 func (clubsDB *clubsDB) GetCaptainID(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error) {
 	query := `SELECT captain_id
-			  FROM squads
+              FROM squads
               WHERE id = $1`
 
 	var id uuid.UUID

@@ -61,7 +61,7 @@ type Server struct {
 		card        controllers.CardTemplates
 		auth        controllers.AuthTemplates
 		marketplace controllers.MarketplaceTemplates
-		clubs controllers.ClubsTemplates
+		clubs       controllers.ClubsTemplates
 	}
 
 	cards.PercentageQualities
@@ -128,8 +128,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	clubsRouter.HandleFunc("/squad/create/{clubID}", clubsController.CreateSquad).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/squad/{clubID}", clubsController.GetSquad).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/squad-card/{squadID}", clubsController.GetSquadCard).Methods(http.MethodGet)
-	//clubsRouter.HandleFunc("/squad-card/{squadID}", clubsController.GetSquadCard).Methods(http.MethodGet)
-	//clubsRouter.HandleFunc("/squad-card/{squadID}", clubsController.GetSquadCard).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/squad-card/{squadID}/{cardID}", clubsController.UpdatePosition).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/squad-card/{squadID}/{cardID}", clubsController.GetSquadCard).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
