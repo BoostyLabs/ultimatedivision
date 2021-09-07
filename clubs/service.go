@@ -71,8 +71,8 @@ func (service *Service) Add(ctx context.Context, position Position, squadID, car
 }
 
 // Delete deletes card from squad.
-func (service *Service) Delete(ctx context.Context, cardID uuid.UUID) error {
-	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, cardID))
+func (service *Service) Delete(ctx context.Context, squadID, cardID uuid.UUID) error {
+	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, squadID, cardID))
 }
 
 // UpdateSquad updates tactic and formation of the squad.
@@ -88,8 +88,8 @@ func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, form
 }
 
 // UpdateCardPosition updates position of card in the squad.
-func (service *Service) UpdateCardPosition(ctx context.Context, cardID uuid.UUID, newPosition Position) error {
-	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, cardID, newPosition))
+func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition Position) error {
+	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, newPosition, squadID, cardID))
 }
 
 // GetSquad returns all squads from club.

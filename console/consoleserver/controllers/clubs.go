@@ -144,12 +144,18 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["cardID"] == "" {
+	if params["cardID"] == "" || params["squadID"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
 	}
 
 	cardID, err := uuid.Parse(params["cardID"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	squadID, err := uuid.Parse(params["squadID"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
@@ -162,7 +168,7 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err = controller.clubs.UpdateCardPosition(ctx, cardID, squadCard.Position)
+	err = controller.clubs.UpdateCardPosition(ctx, squadID, cardID, squadCard.Position)
 	if err != nil {
 		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
@@ -202,7 +208,7 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Add is an endpoint that add new card to the squad.
+// Add is an endpoint that adds new card to the squad.
 func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
@@ -246,7 +252,7 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["cardID"] == "" {
+	if params["cardID"] == "" || params["squadID"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
 	}
@@ -257,7 +263,13 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = controller.clubs.Delete(ctx, cardID)
+	squadID, err := uuid.Parse(params["squadID"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	err = controller.clubs.Delete(ctx, squadID, cardID)
 	if err != nil {
 		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))

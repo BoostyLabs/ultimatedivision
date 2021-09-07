@@ -133,12 +133,12 @@ func TestTeam(t *testing.T) {
 		})
 
 		t.Run("Update card position in squad", func(t *testing.T) {
-			err := repositoryClubs.UpdatePosition(ctx, testCard.ID, clubs.CM)
+			err := repositoryClubs.UpdatePosition(ctx, clubs.CM, testSquad.ID, testCard.ID)
 			require.NoError(t, err)
 		})
 
 		t.Run("Delete card from squad", func(t *testing.T) {
-			err := repositoryClubs.DeleteSquadCard(ctx, testCard.ID)
+			err := repositoryClubs.DeleteSquadCard(ctx, testSquad.ID, testCard.ID)
 			require.NoError(t, err)
 		})
 	})
