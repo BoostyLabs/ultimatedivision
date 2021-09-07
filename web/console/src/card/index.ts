@@ -239,11 +239,6 @@ export class Card {
                     background: diamond,
                     shadow: diamondShadow,
                 };
-            default:
-                return {
-                    background: diamond,
-                    shadow: diamondShadow,
-                };
         };
     }
     /** will be replaced by backend face implementation */
