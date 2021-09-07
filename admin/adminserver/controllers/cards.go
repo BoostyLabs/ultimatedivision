@@ -63,14 +63,14 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	if limitQuery != "" {
 		limit, err = strconv.Atoi(limitQuery)
 		if err != nil {
-			http.Error(w, ErrCards.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 	}
 	if pageQuery != "" {
 		page, err = strconv.Atoi(pageQuery)
 		if err != nil {
-			http.Error(w, ErrCards.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 	}
@@ -84,9 +84,9 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
 		switch {
 		case cards.ErrNoCard.Has(err):
-			http.Error(w, ErrCards.Wrap(err).Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 		default:
-			http.Error(w, ErrCards.Wrap(err).Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
@@ -94,7 +94,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	err = controller.templates.List.Execute(w, listCardsPage)
 	if err != nil {
 		controller.log.Error("can not execute list cards template", ErrCards.Wrap(err))
-		http.Error(w, ErrCards.Wrap(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -118,7 +118,7 @@ func (controller *Cards) Create(w http.ResponseWriter, r *http.Request) {
 
 	if _, err := controller.cards.Create(ctx, userID, percentageQualities); err != nil {
 		controller.log.Error("could not create card", ErrCards.Wrap(err))
-		http.Error(w, ErrCards.Wrap(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -141,7 +141,7 @@ func (controller *Cards) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := controller.cards.Delete(ctx, id); err != nil {
 		controller.log.Error("could not delete card", ErrCards.Wrap(err))
-		http.Error(w, ErrCards.Wrap(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
