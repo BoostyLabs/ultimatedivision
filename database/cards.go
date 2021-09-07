@@ -383,24 +383,7 @@ func (cardsDB *cardsDB) listPaginated(ctx context.Context, cursor cards.Cursor, 
 func (cardsDB *cardsDB) TotalCount(ctx context.Context) (int, error) {
 	var count int
 	query := fmt.Sprintf(`SELECT COUNT(*) FROM cards`)
-
-	rows, err := cardsDB.conn.QueryContext(ctx, query)
-	if err != nil {
-		return 0, ErrCard.Wrap(err)
-	}
-	defer func() {
-		err = errs.Combine(err, rows.Close())
-	}()
-
-	for rows.Next() {
-		if err = rows.Scan(&count); err != nil {
-			return 0, cards.ErrNoCard.Wrap(err)
-		}
-	}
-	if err = rows.Err(); err != nil {
-		return 0, ErrCard.Wrap(err)
-	}
-
+	err := cardsDB.conn.QueryRowContext(ctx, query).Scan(&count)
 	return count, cards.ErrNoCard.Wrap(err)
 }
 
