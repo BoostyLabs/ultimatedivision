@@ -30,6 +30,7 @@ type ClubsTemplates struct {
 	UpdateSquad        *template.Template
 	ListSquadCards     *template.Template
 	UpdateCardPosition *template.Template
+	ListUsersCards     *template.Template
 }
 
 // Clubs is a mvc controller that handles all clubs related views.
@@ -276,8 +277,6 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		Redirect(w, r, url, http.MethodGet)
 	}
 }
-
-
 
 // Users - get club
 // Clubs - get all clubs / create club / create squad
