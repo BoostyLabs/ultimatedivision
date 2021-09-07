@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -36,6 +37,7 @@ type Clubs struct {
 	log logger.Logger
 
 	clubs *clubs.Service
+	cards *cards.Service
 
 	templates ClubsTemplates
 }
@@ -184,7 +186,7 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	case http.MethodPost:
-
+		// TODO: finish this case.
 	}
 }
 
@@ -275,11 +277,6 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-
-}
 
 
 // Users - get club
