@@ -104,20 +104,16 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsRouter.Use(server.withAuth)
 	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
 	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
-	clubsRouter.HandleFunc("", clubsController.UpdateSquad).Methods(http.MethodPatch)
+	clubsRouter.HandleFunc("/{clubID}/squads", clubsController.CreateSquad).Methods(http.MethodPost)
+	clubsRouter.HandleFunc("/{clubID}/squads/{squadID}", clubsController.UpdateSquad).Methods(http.MethodPatch)
+	clubsRouter.HandleFunc("/{clubID}/squads/{squadID}/cards/{cardID}", clubsController.Add).Methods(http.MethodPost)
+	clubsRouter.HandleFunc("/{clubID}/squads/{squadID}/cards/{cardID}", clubsController.Delete).Methods(http.MethodDelete)
+	clubsRouter.HandleFunc("/{clubID}/squads/{squadID}/cards/{cardID}", clubsController.UpdatePosition).Methods(http.MethodPatch)
 
-	squadsRouter := clubsRouter.Path("/squads").Subrouter()
-	squadsRouter.Handle("/{clubId}", server.withAuth(http.HandlerFunc(clubsController.Create))).Methods(http.MethodPost)
-
-	squadCardsRouter := squadsRouter.Path("/squad-cards").Subrouter()
-	squadCardsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.Add))).Methods(http.MethodPost)
-	squadCardsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.UpdatePosition))).Methods(http.MethodPatch)
-	squadCardsRouter.Handle("", server.withAuth(http.HandlerFunc(clubsController.Delete))).Methods(http.MethodDelete)
-
-	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
+	lootBoxesRouter := apiRouter.PathPrefix("/lootboxes").Subrouter()
 	lootBoxesRouter.Use(server.withAuth)
 	lootBoxesRouter.HandleFunc("", lootBoxesController.Create).Methods(http.MethodPost)
-	lootBoxesRouter.HandleFunc("/{id}", lootBoxesController.Open).Methods(http.MethodDelete)
+	lootBoxesRouter.HandleFunc("/{id}", lootBoxesController.Open).Methods(http.MethodPost)
 
 	marketplaceRouter := apiRouter.PathPrefix("/marketplace").Subrouter()
 	marketplaceRouter.Use(server.withAuth)

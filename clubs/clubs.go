@@ -36,11 +36,11 @@ type DB interface {
 	// AddSquadCard add new card to the squad.
 	AddSquadCard(ctx context.Context, squadCards SquadCard) error
 	// DeleteSquadCard deletes card from squad.
-	DeleteSquadCard(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID) error
+	DeleteSquadCard(ctx context.Context, cardID uuid.UUID) error
 	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
 	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
 	// UpdatePosition updates position of card in the squad.
-	UpdatePosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition Position) error
+	UpdatePosition(ctx context.Context, cardID uuid.UUID, newPosition Position) error
 }
 
 // Club defines club entity.
