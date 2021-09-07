@@ -12,7 +12,7 @@ export const GET_SELLING_CARDS = ' GET_CARDS';
 
 export const getUserCards = (cards: []) => ({
     type: GET_USER_CARDS,
-    cards,
+    action: cards,
 });
 export const getSellingCards = (cards: []) => ({
     type: GET_SELLING_CARDS,
@@ -33,4 +33,11 @@ export const marketplaceCards = () => async function (dispatch: Dispatch) {
     const response = await service.getSellingCards();
     const cards = await response.json();
     await dispatch(getSellingCards(cards.map((card: Partial<CardInterface>) => new Card(card))));
+
+    await dispatch(getSellingCards(cards));
+};
+export const sellCard = (id: string) => async function(dispatch: any) {
+    await service.sellCard(id);
+    dispatch(userCards());
+    dispatch(marketplaceCards());
 };

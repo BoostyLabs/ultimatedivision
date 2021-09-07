@@ -16,9 +16,7 @@ export const useClub = () => {
 
     useEffect(() => {
         getCards();
-    });
+    }, []);
 
-    const rest = useSelector((state: RootState) => state.cardsReducer.club);
-    console.log(rest)
-    return rest
+    return useSelector((state: RootState) => state.cardsReducer.club);
 };
