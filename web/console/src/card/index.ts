@@ -73,7 +73,7 @@ export class CardStats {
     }
 }
 ​
-interface CardInterface {
+export interface CardInterface {
     id: string,
     playerName: string,
     quality: string,
@@ -142,138 +142,75 @@ interface CardInterface {
 ​
 /** Card base implementation */
 export class Card {
-    id: string;
-    playerName: string;
-    quality: string;
-    pictureType: number;
-    height: number;
-    weight: number;
-    skinColor: number;
-    hairStyle: number;
-    hairColor: number;
-    accessories: number[];
-    dominantFoot: string;
-    isTatoos: boolean;
-    status: number;
-    type: string;
-    userId: string;
-    tactics: number;
-    positioning: number;
-    composure: number;
-    aggression: number;
-    vision: number;
-    awareness: number;
-    crosses: number;
-    physique: number;
-    acceleration: number;
-    runningSpeed: number;
-    reactionSpeed: number;
-    agility: number;
-    stamina: number;
-    strength: number;
-    jumping: number;
-    balance: number;
-    technique: number;
-    dribbling: number;
-    ballControl: number;
-    weakFoot: number;
-    skillMoves: number;
-    finesse: number;
-    curve: number;
-    volleys: number;
-    shortPassing: number;
-    longPassing: number;
-    forwardPass: number;
-    offense: number;
-    finishingAbility: number;
-    shotPower: number;
-    accuracy: number;
-    distance: number;
-    penalty: number;
-    freeKicks: number;
-    corners: number;
-    headingAccuracy: number;
-    defence: number;
-    offsideTrap: number;
-    sliding: number;
-    tackles: number;
-    ballFocus: number;
-    interceptions: number;
-    vigilance: number;
-    goalkeeping: number;
-    reflexes: number;
-    diving: number;
-    handling: number;
-    sweeping: number;
-    throwing: number;
+    id: string = '';
+    playerName: string = '';
+    quality: string = '';
+    pictureType: number = 0;
+    height: number = 0;
+    weight: number = 0;
+    skinColor: number = 0;
+    hairStyle: number = 0;
+    hairColor: number = 0;
+    accessories: number[] = [];
+    dominantFoot: string = '';
+    isTatoos: boolean = false;
+    status: number = 0;
+    type: string = '';
+    userId: string = '';
+    tactics: number = 0;
+    positioning: number = 0;
+    composure: number = 0;
+    aggression: number = 0;
+    vision: number = 0;
+    awareness: number = 0;
+    crosses: number = 0;
+    physique: number = 0;
+    acceleration: number = 0;
+    runningSpeed: number = 0;
+    reactionSpeed: number = 0;
+    agility: number = 0;
+    stamina: number = 0;
+    strength: number = 0;
+    jumping: number = 0;
+    balance: number = 0;
+    technique: number = 0;
+    dribbling: number = 0;
+    ballControl: number = 0;
+    weakFoot: number = 0;
+    skillMoves: number = 0;
+    finesse: number = 0;
+    curve: number = 0;
+    volleys: number = 0;
+    shortPassing: number = 0;
+    longPassing: number = 0;
+    forwardPass: number = 0;
+    offense: number = 0;
+    finishingAbility: number = 0;
+    shotPower: number = 0;
+    accuracy: number = 0;
+    distance: number = 0;
+    penalty: number = 0;
+    freeKicks: number = 0;
+    corners: number = 0;
+    headingAccuracy: number = 0;
+    defence: number = 0;
+    offsideTrap: number = 0;
+    sliding: number = 0;
+    tackles: number = 0;
+    ballFocus: number = 0;
+    interceptions: number = 0;
+    vigilance: number = 0;
+    goalkeeping: number = 0;
+    reflexes: number = 0;
+    diving: number = 0;
+    handling: number = 0;
+    sweeping: number = 0;
+    throwing: number = 0;
     /** Card fields */
     constructor(
-        public card: CardInterface
+        card: Partial<CardInterface> = {}
     ) {
-        this.id = card.id
-        this.playerName = card.playerName
-        this.quality = card.quality
-        this.pictureType = card.pictureType
-        this.height = card.height
-        this.weight = card.weight
-        this.skinColor = card.skinColor
-        this.hairStyle = card.hairStyle
-        this.hairColor = card.hairColor
-        this.accessories = card.accessories
-        this.dominantFoot = card.dominantFoot
-        this.isTatoos = card.isTatoos
-        this.status = card.status
-        this.type = card.type
-        this.userId = card.userId
-        this.tactics = card.tactics
-        this.positioning = card.positioning
-        this.composure = card.composure
-        this.aggression = card.aggression
-        this.vision = card.vision
-        this.awareness = card.awareness
-        this.crosses = card.crosses
-        this.physique = card.physique
-        this.acceleration = card.acceleration
-        this.runningSpeed = card.runningSpeed
-        this.reactionSpeed = card.reactionSpeed
-        this.agility = card.agility
-        this.stamina = card.stamina
-        this.strength = card.strength
-        this.jumping = card.jumping
-        this.balance = card.balance
-        this.technique = card.technique
-        this.dribbling = card.dribbling
-        this.ballControl = card.ballControl
-        this.weakFoot = card.weakFoot
-        this.skillMoves = card.skillMoves
-        this.finesse = card.finesse
-        this.curve = card.curve
-        this.volleys = card.volleys
-        this.shortPassing = card.shortPassing
-        this.longPassing = card.longPassing
-        this.forwardPass = card.forwardPass
-        this.offense = card.offense
-        this.finishingAbility = card.finishingAbility
-        this.shotPower = card.shotPower
-        this.accuracy = card.accuracy
-        this.distance = card.distance
-        this.penalty = card.penalty
-        this.freeKicks = card.freeKicks
-        this.corners = card.corners
-        this.headingAccuracy = card.headingAccuracy
-        this.defence = card.defence
-        this.offsideTrap = card.offsideTrap
-        this.sliding = card.sliding
-        this.tackles = card.tackles
-        this.ballFocus = card.ballFocus
-        this.interceptions = card.interceptions
-        this.vigilance = card.vigilance
-        this.goalkeeping = card.goalkeeping
-        this.reflexes = card.reflexes
-        this.diving = card.diving
-        this.handling = card.handling
-        this.sweeping = card.sweeping
-        this.throwing = card.throwing
+        Object.assign(this, card);
     }
 ​
     /** returns background type and shadow type according to quality */
