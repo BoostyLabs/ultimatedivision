@@ -267,8 +267,8 @@ type PercentageQualities struct {
 
 // Cursor holds operator cursor entity which is used to create listed page.
 type Cursor struct {
-	Limit int
-	Page  int
+	Limit int `json:"limit"`
+	Page  int `json:"page"`
 }
 
 // Page holds operator page entity which is used to show listed page of cards.
