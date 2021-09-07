@@ -25,11 +25,11 @@ type DB interface {
 	// Get returns card by id from the data base.
 	Get(ctx context.Context, id uuid.UUID) (Card, error)
 	// List returns all cards from the data base.
-	List(ctx context.Context, cursor Cursor) ([]Card, error)
+	List(ctx context.Context, cursor Cursor) (Page, error)
 	// ListWithFilters returns all cards from the data base with filters.
-	ListWithFilters(ctx context.Context, filters []Filters, cursor Cursor) ([]Card, error)
+	ListWithFilters(ctx context.Context, filters []Filters, cursor Cursor) (Page, error)
 	// ListByPlayerName returns cards from DB by player name.
-	ListByPlayerName(ctx context.Context, filters Filters, cursor Cursor) ([]Card, error)
+	ListByPlayerName(ctx context.Context, filters Filters, cursor Cursor) (Page, error)
 	// TotalCount counts all the cards in the table.
 	TotalCount(ctx context.Context) (int, error)
 	// UpdateStatus updates status card in the database.
