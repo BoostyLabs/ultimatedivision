@@ -14,7 +14,6 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/users/userauth"
 )
 
 var (
@@ -64,12 +63,12 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["clubID"] == "" {
+	if params["clubId"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
 	}
 
-	id, err := uuid.Parse(params["clubID"])
+	id, err := uuid.Parse(params["clubId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
@@ -78,12 +77,6 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 	err = controller.clubs.CreateSquad(ctx, id)
 	if err != nil {
 		controller.log.Error("could not create club", ErrClubs.Wrap(err))
-
-		if userauth.ErrUnauthenticated.Has(err) {
-			controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-			return
-		}
-
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
@@ -144,18 +137,18 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["cardID"] == "" || params["squadID"] == "" {
+	if params["cardId"] == "" || params["squadId"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
 	}
 
-	cardID, err := uuid.Parse(params["cardID"])
+	cardID, err := uuid.Parse(params["cardId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
-	squadID, err := uuid.Parse(params["squadID"])
+	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
@@ -182,12 +175,12 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["squadID"] == "" {
+	if params["squadId"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
 	}
 
-	squadID, err := uuid.Parse(params["squadID"])
+	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
@@ -214,18 +207,18 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["squadID"] == "" || params["cardID"] == "" {
+	if params["squadId"] == "" || params["cardId"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
 	}
 
-	cardID, err := uuid.Parse(params["cardID"])
+	cardID, err := uuid.Parse(params["cardId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
-	squadID, err := uuid.Parse(params["squadID"])
+	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
@@ -252,18 +245,18 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["cardID"] == "" || params["squadID"] == "" {
+	if params["cardId"] == "" || params["squadId"] == "" {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
 		return
 	}
 
-	cardID, err := uuid.Parse(params["cardID"])
+	cardID, err := uuid.Parse(params["cardId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
-	squadID, err := uuid.Parse(params["squadID"])
+	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
