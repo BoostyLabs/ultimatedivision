@@ -6,6 +6,7 @@ package controllers
 import (
 	"html/template"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -51,7 +52,34 @@ func NewCards(log logger.Logger, cards *cards.Service, templates CardTemplates, 
 // List is an endpoint that will provide a web page with all cards.
 func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	listCardsPage, err := controller.cards.List(ctx, cards.Cursor{})
+	var (
+		err         error
+		limit, page int
+	)
+	urlQuery := r.URL.Query()
+	limitQuery := urlQuery.Get("limit")
+	pageQuery := urlQuery.Get("page")
+
+	if limitQuery != "" {
+		limit, err = strconv.Atoi(limitQuery)
+		if err != nil {
+			http.Error(w, ErrCards.Wrap(err).Error(), http.StatusBadRequest)
+			return
+		}
+	}
+	if pageQuery != "" {
+		page, err = strconv.Atoi(pageQuery)
+		if err != nil {
+			http.Error(w, ErrCards.Wrap(err).Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
+	cursor := cards.Cursor{
+		Limit: limit,
+		Page:  page,
+	}
+	listCardsPage, err := controller.cards.List(ctx, cursor)
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
 		switch {
