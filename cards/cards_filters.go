@@ -152,7 +152,7 @@ type Pagination string
 const (
 	// LimitPagination indicates the cards output limit parameter on the page.
 	LimitPagination Pagination = "limit"
-	// LimitPagination indicates to the current output page for cards.
+	// PagePagination indicates to the current output page for cards.
 	PagePagination Pagination = "page"
 )
 
