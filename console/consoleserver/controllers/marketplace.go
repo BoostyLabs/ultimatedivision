@@ -109,7 +109,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	responseLot := marketplace.ResponseLot{
+	responseLot := marketplace.ResponseGetLot{
 		ID:           lot.ID,
 		ItemID:       lot.ItemID,
 		Type:         lot.Type,
@@ -120,6 +120,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		StartTime:    lot.StartTime,
 		EndTime:      lot.EndTime,
 		Period:       lot.Period,
+		Card:         lot.Card,
 	}
 
 	if err = json.NewEncoder(w).Encode(responseLot); err != nil {
