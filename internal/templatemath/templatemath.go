@@ -15,12 +15,12 @@ func Iter(start, end int) (stream chan int) {
 	return
 }
 
-// Inc is unary operator that add one, to their operand.
+// Inc function - unary operator that add one, to their operand.
 func Inc(i int) int {
 	return i + 1
 }
 
-// Dec is unary operator that subtract one, from their operand.
+// Dec function - unary operator that subtract one, from their operand.
 func Dec(i int) int {
 	return i - 1
 }
