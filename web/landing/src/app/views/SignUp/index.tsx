@@ -4,6 +4,7 @@
 import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 
 import { registerUser } from '@/app/store/actions/users';
 import { RouteConfig } from '@/app/router';
@@ -17,6 +18,7 @@ import ultimate from '@static/images/registerPage/ultimate.svg';
 import './index.scss';
 
 const SignUp: React.FC = () => {
+    const browserHistory = useHistory();
     const dispatch = useDispatch();
     /** controlled values for form inputs */
     const [firstName, setFirstName] = useState('');
@@ -69,7 +71,11 @@ const SignUp: React.FC = () => {
     const handleSubmit = (e: any) => {
         e.preventDefault();
 
-        validateForm() && dispatch(registerUser({
+        if (!validateForm()) {
+            return;
+        };
+
+        dispatch(registerUser({
             email,
             password,
             nickName,

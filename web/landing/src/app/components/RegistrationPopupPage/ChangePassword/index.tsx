@@ -48,11 +48,11 @@ export const ChangePassword: React.FC<{ handleSignIn: any }> = ({
     const handleSubmit = (e: any) => {
         e.preventDefault();
 
-        if (validateForm() && dispatch(changeUserPassword(password, newPassword))) {
-            setIsRedirected(true);
+        if (!validateForm()) {
+            return;
         };
 
-        isRedirected && browserHistory.push('/marketplace');
+        dispatch(changeUserPassword(password, newPassword));
     };
     /** user datas for registration */
     const resetPasswordDatas = [

@@ -3,6 +3,8 @@
 
 import { Dispatch } from 'redux';
 
+import { RouteConfig } from '@/app/router';
+
 import { User } from '@/user';
 import { UserClient } from '@/api/user';
 import { UserService } from '@/user/service';
@@ -39,20 +41,43 @@ const service = new UserService(client);
 /** thunk that implements user registration */
 export const registerUser = (user: User) =>
     async function (dispatch: Dispatch) {
-        await service.register(user);
-        dispatch(register(user));
+        try {
+            await service.register(user);
+            dispatch(register(user));
+            location.pathname = RouteConfig.SignIn.path;
+        } catch (error: any) {
+            // TODO: rework catching errors
+            /* eslint-disable */
+            console.log(error.message);
+        };
     };
 
 /** thunk that implements user login */
 export const loginUser = (email: string, password: string) =>
     async function (dispatch: Dispatch) {
-        await service.login(email, password);
-        dispatch(login(email, password));
+        const whitepaperPath = '/whitepaper';
+        try {
+            await service.login(email, password);
+            dispatch(login(email, password));
+            location.pathname = whitepaperPath;
+        } catch (error: any) {
+            // TODO: rework catching errors
+            /* eslint-disable */
+            console.log(error.message);
+        };
     };
 
 /** thunk that implements user changing password */
 export const changeUserPassword = (password: string, newPassword: string) =>
     async function (dispatch: Dispatch) {
-        await service.changePassword(password, newPassword);
-        dispatch(changePassword(password, newPassword));
+        const marketplacePath = '/marketplace';
+        try {
+            await service.changePassword(password, newPassword);
+            dispatch(changePassword(password, newPassword));
+            location.pathname = marketplacePath;
+        } catch (error: any) {
+            // TODO: rework catching errors
+            /* eslint-disable */
+            console.log(error.message);
+        };
     };

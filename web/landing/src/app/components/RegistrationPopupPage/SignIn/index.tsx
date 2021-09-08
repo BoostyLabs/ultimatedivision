@@ -3,6 +3,7 @@
 
 import { SetStateAction, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 
 import { loginUser } from '@/app/store/actions/users';
 
@@ -17,6 +18,10 @@ export const SignIn: React.FC<{
     handleSignUp: any
 }> = ({ handleResetPassword, handleSignUp }) => {
     const dispatch = useDispatch();
+    const browserHistory = useHistory();
+    /** uses magic string variable, because project build
+     * return error when imports WhitePaper RouteConfig from ./console/ */
+    const whitePaperURL = '/whitepaper';
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
@@ -46,7 +51,12 @@ export const SignIn: React.FC<{
     const handleSubmit = (e: any) => {
         e.preventDefault();
 
-        validateForm() && dispatch(loginUser(email, password));
+
+        if (!validateForm()) {
+            return;
+        };
+
+        dispatch(loginUser(email, password));
     };
     /** user datas for registration */
     const signInDatas = [
