@@ -9,9 +9,15 @@ export class LootboxStats {
     constructor(
         public id: string,
         public icon: string,
-        public title: string,
+        public type: LootboxTypes,
         public quantity: number,
         public dropChance: number[],
         public price: string
     ) { }
+}
+
+/** Lootbox types */
+export enum LootboxTypes {
+    'Regular Box',
+    'UD Release Celebration Box'
 }
