@@ -4,15 +4,15 @@
 import { Dispatch } from 'redux';
 
 import { CardClient } from '@/api/cards';
-import { Card, CardInterface } from '@/card';
+import { Card, CardInterface, MarketplaceLot, CreatedLot } from '@/card';
 import { CardService } from '@/card/service';
 
-export const GET_USER_CARDS = ' GET_CARDS';
-export const GET_SELLING_CARDS = ' GET_CARDS';
+export const GET_USER_CARDS = ' GET_USER_CARDS';
+export const GET_SELLING_CARDS = ' GET_SELLING_CARDS';
 
 export const getUserCards = (cards: []) => ({
     type: GET_USER_CARDS,
-    action: cards,
+    cards,
 });
 export const getSellingCards = (cards: []) => ({
     type: GET_SELLING_CARDS,
@@ -31,13 +31,12 @@ export const userCards = () => async function (dispatch: Dispatch) {
 /** thunk for creating user cards list */
 export const marketplaceCards = () => async function (dispatch: Dispatch) {
     const response = await service.getSellingCards();
-    const cards = await response.json();
-    await dispatch(getSellingCards(cards.map((card: Partial<CardInterface>) => new Card(card))));
+    const lots = await response.json();
 
-    await dispatch(getSellingCards(cards));
+    dispatch(getSellingCards(lots.map((lot: Partial<MarketplaceLot>) => ({ ...lot, card: new Card(lot.card) }))));
 };
-export const sellCard = (id: string) => async function(dispatch: any) {
-    await service.sellCard(id);
+export const sellCard = (lot: CreatedLot) => async function (dispatch: any) {
+    await service.sellCard(lot);
     dispatch(userCards());
     dispatch(marketplaceCards());
 };

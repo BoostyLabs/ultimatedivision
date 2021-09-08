@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import { CardClient } from '@/api/cards';
+import { CreatedLot } from '@/card';
 
 /**
  * exposes all bandwidth related logic
@@ -21,7 +22,7 @@ export class CardService {
         return await this.card.getUserCards();
     }
     /** sell card */
-    public async sellCard(id: string): Promise<Response> {
-        return await this.card.sellCard(id);
+    public async sellCard(lot: CreatedLot): Promise<Response> {
+        return await this.card.sellCard(lot);
     }
 }
