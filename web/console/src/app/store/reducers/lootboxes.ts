@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { LootboxClient } from '@/api/lootboxes';
-import { LootboxService } from '@/lootbox/servise';
+import { LootboxService } from '@/lootbox/service';
 
 import { BUY_LOOTBOX } from '../actions/lootboxes';
 
@@ -25,11 +25,11 @@ export const lootboxReducer = (
     action: any = {}
 ) => {
     switch (action.type) {
-        case BUY_LOOTBOX:
-            state.lootbox = action.lootbox;
-            break;
-        default:
-            break;
+    case BUY_LOOTBOX:
+        state.lootbox = action.lootbox;
+        break;
+    default:
+        break;
     };
 
     return { ...state };
