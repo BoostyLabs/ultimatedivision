@@ -82,7 +82,7 @@ func (service *Service) Token(ctx context.Context, email string, password string
 	return token, nil
 }
 
-// LoginToken authenticates User by credentials and returns login token.
+// LoginToken authenticates user by credentials and returns login token.
 func (service *Service) LoginToken(ctx context.Context, email string, password string) (token string, err error) {
 	user, err := service.users.GetByEmail(ctx, email)
 	if err != nil {
@@ -342,4 +342,48 @@ func (service *Service) ResetPassword(ctx context.Context, email string) error {
 	}()
 
 	return err
+}
+
+// CheckAuthToken check auth token.
+func (service *Service) CheckAuthToken(ctx context.Context, tokenStr string) error {
+	token, err := auth.FromBase64URLString(tokenStr)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+	claims, err := service.authenticate(token)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	if !claims.ExpiresAt.IsZero() && claims.ExpiresAt.Before(time.Now()) {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	_, err = service.users.GetByEmail(ctx, claims.Email)
+	if err != nil {
+		return users.ErrUsers.Wrap(err)
+	}
+
+	return nil
+}
+
+// RecoveryPassword - change users password.
+func (service *Service) RecoveryPassword(ctx context.Context, newPassword string) error {
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	user, err := service.users.GetByEmail(ctx, claims.Email)
+	if err != nil {
+		return users.ErrUsers.Wrap(err)
+	}
+
+	user.PasswordHash = []byte(newPassword)
+	err = user.EncodePass()
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	return Error.Wrap(service.users.UpdatePassword(ctx, user.PasswordHash, user.ID))
 }

@@ -199,8 +199,6 @@ func (auth *Auth) ResetPassword(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case users.ErrNoUser.Has(err):
 			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
-		case userauth.ErrUnauthenticated.Has(err):
-			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
 		default:
 			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		}
@@ -212,18 +210,64 @@ func (auth *Auth) ResetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// RecoveryPassword authorize user and set auth cookie in browser for change users password.
-func (auth *Auth) RecoveryPassword(w http.ResponseWriter, r *http.Request) {
+// CheckAuthToken check auth token and set auth cookie in browser for change users password.
+func (auth *Auth) CheckAuthToken(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
 
 	params := mux.Vars(r)
 	preAuthToken := params["token"]
 	if preAuthToken == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(errors.New("Unable to reset password. Missing token")))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("Unable to reset password. Missing token"))
 		return
 	}
 
+	err := auth.userAuth.CheckAuthToken(ctx, preAuthToken)
+	if err != nil {
+		auth.log.Error("Unable to change password", AuthError.Wrap(err))
+		switch {
+		case users.ErrNoUser.Has(err):
+			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
+			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
+		default:
+			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
+		}
+	}
+
 	auth.cookie.SetTokenCookie(w, preAuthToken)
+}
+
+// RecoveryPassword change users password.
+func (auth *Auth) RecoveryPassword(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	var err error
+	var request users.Password
+
+	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		return
+	}
+
+	err = auth.userAuth.RecoveryPassword(ctx, request.NewPassword)
+	if err != nil {
+		auth.log.Error("Unable to recovery password", AuthError.Wrap(err))
+		switch {
+		case users.ErrNoUser.Has(err):
+			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
+			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
+		default:
+			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
+		}
+	}
+
+	if err = json.NewEncoder(w).Encode("success"); err != nil {
+		auth.log.Error("failed to write json response", ErrUsers.Wrap(err))
+		return
+	}
 }
 
 // LoginTemplateHandler is web app http handler function.
