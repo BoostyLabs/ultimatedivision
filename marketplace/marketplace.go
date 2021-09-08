@@ -156,8 +156,8 @@ func (betLot BetLot) ValidateBetLot() error {
 	return nil
 }
 
-// ResponseGetLot entity describes the values required to response for get lot by id.
-type ResponseGetLot struct {
+// GetLot entity describes the values required to response for get lot by id.
+type GetLot struct {
 	ID           uuid.UUID  `json:"id"`
 	ItemID       uuid.UUID  `json:"itemId"`
 	Type         Type       `json:"type"`

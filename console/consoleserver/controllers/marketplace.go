@@ -109,7 +109,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	responseLot := marketplace.ResponseGetLot{
+	getLot := marketplace.GetLot{
 		ID:           lot.ID,
 		ItemID:       lot.ItemID,
 		Type:         lot.Type,
@@ -123,7 +123,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		Card:         lot.Card,
 	}
 
-	if err = json.NewEncoder(w).Encode(responseLot); err != nil {
+	if err = json.NewEncoder(w).Encode(getLot); err != nil {
 		controller.log.Error("failed to write json response", ErrMarketplace.Wrap(err))
 		return
 	}
