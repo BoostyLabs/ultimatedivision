@@ -5,7 +5,7 @@ import { LootboxTypes } from "@/app/types/lootBox";
 
 /** domain entity Lootbox implementation */
 export class Lootbox {
-    /** receives base params: id, name and type */
+    /** receives base params: id and type */
     constructor(
         public uuid: string,
         public type: LootboxTypes,
