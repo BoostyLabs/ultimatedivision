@@ -52,7 +52,7 @@ export const LootboxCard: React.FC<{ data: LootboxStats; handleOpening: Dispatch
                         className="box-card__icon"
                         style={{ backgroundImage: `url(${data.icon})` }}
                     />
-                    <h2 className="box-card__title">{data.type}</h2>
+                    <h2 className="box-card__title">{data.type === 'Regular Box' ? 'Regular Box': 'Cool box' }</h2>
                     <div className="box-card__quantity">
                         <span className="box-card__quantity-label">Cards</span>
                         <span className="box-card__quantity-value">{data.quantity}</span>

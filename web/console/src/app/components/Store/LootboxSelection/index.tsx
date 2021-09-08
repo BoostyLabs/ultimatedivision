@@ -29,7 +29,7 @@ export const LootboxSelection: React.FC<{ handleOpening: Dispatch<SetStateAction
         new LootboxStats(
             '2',
             coolBox,
-            'Cool Box',
+            'UD Release Celebration Box',
             COOL_BOX_CARDS_QUANTITY,
             // eslint-disable-next-line
             [70, 20, 8, 2],
