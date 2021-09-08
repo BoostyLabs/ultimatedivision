@@ -384,7 +384,7 @@ func (cardsDB *cardsDB) TotalCount(ctx context.Context) (int, error) {
 	var count int
 	query := fmt.Sprintf(`SELECT COUNT(*) FROM cards`)
 	err := cardsDB.conn.QueryRowContext(ctx, query).Scan(&count)
-	return count, cards.ErrNoCard.Wrap(err)
+	return count, ErrCard.Wrap(err)
 }
 
 // ValidDBParameters build valid parameter with string to sinterface.
