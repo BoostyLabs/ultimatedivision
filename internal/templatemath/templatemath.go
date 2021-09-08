@@ -5,11 +5,11 @@ package templatemath
 
 // Iter function for creating a slice of iterable values from minimum and maximum values.
 func Iter(start, end int) []int {
-	var slice []int
+	var iterativeSlice []int
 	for i := start; i <= end; i++ {
-		slice = append(slice, i)
+		iterativeSlice = append(iterativeSlice, i)
 	}
-	return slice
+	return iterativeSlice
 }
 
 // Inc function - unary operator that add one, to their operand.
