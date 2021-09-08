@@ -18,4 +18,3 @@ export class LootboxStats {
         public price: string
     ) { }
 }
-
