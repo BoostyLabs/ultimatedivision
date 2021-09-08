@@ -60,16 +60,20 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	limitQuery := urlQuery.Get("limit")
 	pageQuery := urlQuery.Get("page")
 
-	limit, err = strconv.Atoi(limitQuery)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	if limitQuery != "" {
+		limit, err = strconv.Atoi(limitQuery)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	}
 
-	page, err = strconv.Atoi(pageQuery)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	if pageQuery != "" {
+		page, err = strconv.Atoi(pageQuery)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	}
 
 	cursor := cards.Cursor{
