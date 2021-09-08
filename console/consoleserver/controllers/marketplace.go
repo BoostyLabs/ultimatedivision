@@ -6,6 +6,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -109,7 +110,19 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	getLot := marketplace.GetLot{
+	getLot := struct {
+		ID           uuid.UUID          `json:"id"`
+		ItemID       uuid.UUID          `json:"itemId"`
+		Type         marketplace.Type   `json:"type"`
+		Status       marketplace.Status `json:"status"`
+		StartPrice   float64            `json:"startPrice"`
+		MaxPrice     float64            `json:"maxPrice"`
+		CurrentPrice float64            `json:"currentPrice"`
+		StartTime    time.Time          `json:"startTime"`
+		EndTime      time.Time          `json:"endTime"`
+		Period       marketplace.Period `json:"period"`
+		Card         cards.Card         `json:"card"`
+	}{
 		ID:           lot.ID,
 		ItemID:       lot.ItemID,
 		Type:         lot.Type,

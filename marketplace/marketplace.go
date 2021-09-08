@@ -156,21 +156,6 @@ func (betLot BetLot) ValidateBetLot() error {
 	return nil
 }
 
-// GetLot entity describes the values required to response for get lot by id.
-type GetLot struct {
-	ID           uuid.UUID  `json:"id"`
-	ItemID       uuid.UUID  `json:"itemId"`
-	Type         Type       `json:"type"`
-	Status       Status     `json:"status"`
-	StartPrice   float64    `json:"startPrice"`
-	MaxPrice     float64    `json:"maxPrice"`
-	CurrentPrice float64    `json:"currentPrice"`
-	StartTime    time.Time  `json:"startTime"`
-	EndTime      time.Time  `json:"endTime"`
-	Period       Period     `json:"period"`
-	Card         cards.Card `json:"card"`
-}
-
 // ResponseCreateLot entity describes the values required to response for create lot in admin.
 type ResponseCreateLot struct {
 	Cards []cards.Card
