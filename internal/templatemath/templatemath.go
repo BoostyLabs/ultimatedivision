@@ -4,15 +4,12 @@
 package templatemath
 
 // Iter function for creating a slice of iterable values from minimum and maximum values.
-func Iter(start, end int) (stream chan int) {
-	stream = make(chan int)
-	go func() {
-		for i := start; i <= end; i++ {
-			stream <- i
-		}
-		close(stream)
-	}()
-	return
+func Iter(start, end int) []int {
+	var slice []int
+	for i := start; i <= end; i++ {
+		slice = append(slice, i)
+	}
+	return slice
 }
 
 // Inc function - unary operator that add one, to their operand.
