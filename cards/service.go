@@ -12,9 +12,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-
-	"ultimatedivision/internal/auth"
-	"ultimatedivision/users/userauth"
 )
 
 // Service is handling cards related logic.
@@ -35,11 +32,6 @@ func NewService(cards DB, config Config) *Service {
 
 // Create add card in DB.
 func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int) (Card, error) {
-	сlaims, err := auth.GetClaims(ctx)
-	if err != nil {
-		return Card{}, userauth.ErrUnauthenticated.Wrap(err)
-	}
-
 	qualities := map[string]int{
 		"wood":    percentageQualities[0],
 		"silver":  percentageQualities[1],
@@ -119,7 +111,8 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 	}
 
 	card := Card{
-		ID:               uuid.New(),
+		ID: uuid.New(),
+		// TODO: change it.
 		PlayerName:       "Dmytro",
 		Quality:          Quality(quality),
 		PictureType:      1,
@@ -133,7 +126,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		IsTattoos:        isTattoos,
 		Status:           StatusActive,
 		Type:             TypeWon,
-		UserID:           сlaims.ID,
+		UserID:           userID,
 		Tactics:          tactics,
 		Positioning:      generateSkill(tactics),
 		Composure:        generateSkill(tactics),
@@ -228,58 +221,65 @@ func round(x, unit float64) float64 {
 
 // Get returns card from DB.
 func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Card, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return Card{}, userauth.ErrUnauthenticated.Wrap(err)
-	}
 	card, err := service.cards.Get(ctx, cardID)
 	return card, ErrCards.Wrap(err)
 }
 
 // List returns all cards from DB.
-func (service *Service) List(ctx context.Context) ([]Card, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return nil, userauth.ErrUnauthenticated.Wrap(err)
+func (service *Service) List(ctx context.Context, cursor Cursor) (Page, error) {
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
 	}
-	cards, err := service.cards.List(ctx)
-	return cards, ErrCards.Wrap(err)
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
+
+	cardsListPage, err := service.cards.List(ctx, cursor)
+	return cardsListPage, ErrCards.Wrap(err)
 }
 
 // ListWithFilters returns all cards from DB, taking the necessary filters.
-func (service *Service) ListWithFilters(ctx context.Context, filters []Filters) ([]Card, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return nil, userauth.ErrUnauthenticated.Wrap(err)
-	}
+func (service *Service) ListWithFilters(ctx context.Context, filters []Filters, cursor Cursor) (Page, error) {
+	var cardsListPage Page
 
 	for _, v := range filters {
 		err := v.Validate()
 		if err != nil {
-			return nil, err
+			return cardsListPage, err
 		}
 	}
-	cards, err := service.cards.ListWithFilters(ctx, filters)
-	return cards, ErrCards.Wrap(err)
+
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
+	}
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
+
+	cardsListPage, err := service.cards.ListWithFilters(ctx, filters, cursor)
+	return cardsListPage, ErrCards.Wrap(err)
 }
 
 // ListByPlayerName returns cards from DB by player name.
-func (service *Service) ListByPlayerName(ctx context.Context, filter Filters) ([]Card, error) {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return nil, userauth.ErrUnauthenticated.Wrap(err)
-	}
-
+func (service *Service) ListByPlayerName(ctx context.Context, filter Filters, cursor Cursor) (Page, error) {
+	var cardsListPage Page
 	strings.ToValidUTF8(filter.Value, "")
 
 	// TODO: add best check
-	_, err = strconv.Atoi(filter.Value)
+	_, err := strconv.Atoi(filter.Value)
 	if err == nil {
-		return nil, ErrInvalidFilter.New("%s %s", filter.Value, err)
+		return cardsListPage, ErrInvalidFilter.New("%s %s", filter.Value, err)
 	}
 
-	cards, err := service.cards.ListByPlayerName(ctx, filter)
-	return cards, ErrCards.Wrap(err)
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
+	}
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
+
+	cardsListPage, err = service.cards.ListByPlayerName(ctx, filter, cursor)
+	return cardsListPage, ErrCards.Wrap(err)
 }
 
 // UpdateStatus updates card status.
@@ -294,9 +294,5 @@ func (service *Service) UpdateUserID(ctx context.Context, id, userID uuid.UUID) 
 
 // Delete destroy card in DB.
 func (service *Service) Delete(ctx context.Context, cardID uuid.UUID) error {
-	_, err := auth.GetClaims(ctx)
-	if err != nil {
-		return userauth.ErrUnauthenticated.Wrap(err)
-	}
 	return ErrCards.Wrap(service.cards.Delete(ctx, cardID))
 }
