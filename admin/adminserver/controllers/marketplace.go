@@ -90,7 +90,7 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 	}
 	lotsPage, err = controller.marketplace.ListActiveLots(ctx, cursor)
 	if err != nil {
-		controller.log.Error("could not lis lot by id", ErrMarketplace.Wrap(err))
+		controller.log.Error("could not list lots", ErrMarketplace.Wrap(err))
 		switch {
 		case marketplace.ErrNoLot.Has(err):
 			http.Error(w, err.Error(), http.StatusNotFound)
@@ -175,7 +175,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		}
 		cardsListPage, err := controller.cards.List(ctx, cursor)
 		if err != nil {
-			controller.log.Error("could not get list cards", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not list cards", ErrMarketplace.Wrap(err))
 			switch {
 			case cards.ErrNoCard.Has(err):
 				http.Error(w, err.Error(), http.StatusNotFound)
@@ -187,7 +187,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 
 		usersList, err := controller.users.List(ctx)
 		if err != nil {
-			controller.log.Error("could not get list users", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not list users", ErrMarketplace.Wrap(err))
 			switch {
 			case users.ErrNoUser.Has(err):
 				http.Error(w, err.Error(), http.StatusNotFound)
@@ -203,7 +203,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		}
 
 		if err = controller.templates.Create.Execute(w, responseCreateLot); err != nil {
-			controller.log.Error("could not execute create marketplace template", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not execute create lot template", ErrMarketplace.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -292,7 +292,7 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 	case http.MethodGet:
 		_, err := controller.marketplace.GetLotByID(ctx, id)
 		if err != nil {
-			controller.log.Error("could not get list cards", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not list cards", ErrMarketplace.Wrap(err))
 			switch {
 			case cards.ErrNoCard.Has(err):
 				http.Error(w, err.Error(), http.StatusNotFound)
@@ -304,7 +304,7 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 
 		usersList, err := controller.users.List(ctx)
 		if err != nil {
-			controller.log.Error("could not get list users", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not list users", ErrMarketplace.Wrap(err))
 			switch {
 			case users.ErrNoUser.Has(err):
 				http.Error(w, err.Error(), http.StatusNotFound)
@@ -320,7 +320,7 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 		}
 
 		if err = controller.templates.Bet.Execute(w, responsePlaceBetLot); err != nil {
-			controller.log.Error("could not execute bet marketplace template", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not execute bet lot template", ErrMarketplace.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
