@@ -19,14 +19,16 @@ import (
 //
 // architecture: Service
 type Service struct {
+	config      Config
 	marketplace DB
 	users       *users.Service
 	cards       *cards.Service
 }
 
 // NewService is a constructor for marketplace service.
-func NewService(marketplace DB, users *users.Service, cards *cards.Service) *Service {
+func NewService(config Config, marketplace DB, users *users.Service, cards *cards.Service) *Service {
 	return &Service{
+		config:      config,
 		marketplace: marketplace,
 		users:       users,
 		cards:       cards,
@@ -93,23 +95,34 @@ func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, erro
 }
 
 // ListActiveLots returns active lots from DB.
-func (service *Service) ListActiveLots(ctx context.Context) ([]Lot, error) {
-	lots, err := service.marketplace.ListActiveLots(ctx)
-	return lots, ErrMarketplace.Wrap(err)
+func (service *Service) ListActiveLots(ctx context.Context, cursor Cursor) (Page, error) {
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
+	}
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
+	lotsPage, err := service.marketplace.ListActiveLots(ctx, cursor)
+	return lotsPage, ErrMarketplace.Wrap(err)
 }
 
 // ListActiveLotsWithFilters returns active lots from DB, taking the necessary filters.
-func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters []cards.Filters) ([]Lot, error) {
+func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters []cards.Filters, cursor Cursor) (Page, error) {
+	var lotsPage Page
 	for _, v := range filters {
 		err := v.Validate()
 		if err != nil {
-			return nil, ErrMarketplace.Wrap(err)
+			return lotsPage, ErrMarketplace.Wrap(err)
 		}
 	}
 
-	cardsListPage, err := service.cards.ListWithFilters(ctx, filters, cards.Cursor{})
+	cardsCursor := cards.Cursor{
+		Limit: 10000000000000,
+		Page:  1,
+	}
+	cardsListPage, err := service.cards.ListWithFilters(ctx, filters, cardsCursor)
 	if err != nil {
-		return nil, ErrMarketplace.Wrap(err)
+		return lotsPage, ErrMarketplace.Wrap(err)
 	}
 
 	var cardIds []uuid.UUID
@@ -117,23 +130,34 @@ func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters [
 		cardIds = append(cardIds, v.ID)
 	}
 
-	lots, err := service.marketplace.ListActiveLotsByItemID(ctx, cardIds)
-	return lots, ErrMarketplace.Wrap(err)
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
+	}
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
+	lotsPage, err = service.marketplace.ListActiveLotsByItemID(ctx, cardIds, cursor)
+	return lotsPage, ErrMarketplace.Wrap(err)
 }
 
 // ListActiveLotsByPlayerName returns active lots from DB by player name card.
-func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter cards.Filters) ([]Lot, error) {
+func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter cards.Filters, cursor Cursor) (Page, error) {
+	var lotsPage Page
 	strings.ToValidUTF8(filter.Value, "")
 
 	// TODO: add best check
 	_, err := strconv.Atoi(filter.Value)
 	if err == nil {
-		return nil, ErrMarketplace.Wrap(cards.ErrInvalidFilter.New("%s %s", filter.Value, err))
+		return lotsPage, ErrMarketplace.Wrap(cards.ErrInvalidFilter.New("%s %s", filter.Value, err))
 	}
 
-	cardsListPage, err := service.cards.ListByPlayerName(ctx, filter, cards.Cursor{})
+	cardsCursor := cards.Cursor{
+		Limit: 10000000000000,
+		Page:  1,
+	}
+	cardsListPage, err := service.cards.ListByPlayerName(ctx, filter, cardsCursor)
 	if err != nil {
-		return nil, ErrMarketplace.Wrap(err)
+		return lotsPage, ErrMarketplace.Wrap(err)
 	}
 
 	var cardIds []uuid.UUID
@@ -141,8 +165,8 @@ func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter c
 		cardIds = append(cardIds, v.ID)
 	}
 
-	lots, err := service.marketplace.ListActiveLotsByItemID(ctx, cardIds)
-	return lots, ErrMarketplace.Wrap(err)
+	lotsPage, err = service.marketplace.ListActiveLotsByItemID(ctx, cardIds, cursor)
+	return lotsPage, ErrMarketplace.Wrap(err)
 }
 
 // ListExpiredLot returns active lots from DB.
