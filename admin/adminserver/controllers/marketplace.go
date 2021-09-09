@@ -59,8 +59,36 @@ func NewMarketplace(log logger.Logger, marketplace *marketplace.Service, cards *
 // ListActiveLots is an endpoint that will provide a web page with active lots.
 func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	var (
+		lotsPage    marketplace.Page
+		err         error
+		limit, page int
+	)
+	urlQuery := r.URL.Query()
+	limitQuery := urlQuery.Get("limit")
+	pageQuery := urlQuery.Get("page")
 
-	lots, err := controller.marketplace.ListActiveLots(ctx)
+	if limitQuery != "" {
+		limit, err = strconv.Atoi(limitQuery)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
+	if pageQuery != "" {
+		page, err = strconv.Atoi(pageQuery)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
+	cursor := marketplace.Cursor{
+		Limit: limit,
+		Page:  page,
+	}
+	lotsPage, err = controller.marketplace.ListActiveLots(ctx, cursor)
 	if err != nil {
 		controller.log.Error("could not lis lot by id", ErrMarketplace.Wrap(err))
 		switch {
@@ -72,7 +100,7 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	err = controller.templates.List.Execute(w, lots)
+	err = controller.templates.List.Execute(w, lotsPage)
 	if err != nil {
 		controller.log.Error("can not execute list lots template", ErrMarketplace.Wrap(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
