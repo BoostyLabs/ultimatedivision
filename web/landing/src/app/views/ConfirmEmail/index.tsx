@@ -10,7 +10,7 @@ import { confirmUserEmail } from '@/app/store/actions/users';
 const ConfirmEmail: React.FC = () => {
     const dispatch = useDispatch();
     const currentLocation = useLocation();
-    /** TODO: IT SHOULD TO BE REWORKED. But it doesnt work with useParams */
+    /** TODO: IT SHOULD TO BE REWORKED. */
     const pathname = currentLocation.pathname;
     const TOKEN_INDEX = 3;
 
