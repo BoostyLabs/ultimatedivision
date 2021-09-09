@@ -278,13 +278,13 @@ type PercentageQualities struct {
 	Diamond int `json:"diamond"`
 }
 
-// Cursor holds operator cursor entity which is used to create listed page.
+// Cursor holds card cursor entity which is used to create listed page.
 type Cursor struct {
 	Limit int `json:"limit"`
 	Page  int `json:"page"`
 }
 
-// Page holds operator page entity which is used to show listed page of cards.
+// Page holds card page entity which is used to show listed page of cards.
 type Page struct {
 	Cards       []Card `json:"cards"`
 	Offset      int    `json:"offset"`
