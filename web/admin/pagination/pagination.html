@@ -1,7 +1,7 @@
 {{define "pagination"}}
     <div class="pagination">
-        {{$currentPage := .CurrentPage}}
-        {{$pageCount := .PageCount}}
+        {{$currentPage := .Page.CurrentPage}}
+        {{$pageCount := .Page.PageCount}}
 
         {{if gt $currentPage 1}}
             <a href="/cards?page={{Dec $currentPage}}">&laquo;</a>
