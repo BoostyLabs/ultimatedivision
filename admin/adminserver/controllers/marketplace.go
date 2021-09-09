@@ -15,6 +15,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/users"
 )
@@ -84,7 +85,7 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 		}
 	}
 
-	cursor := marketplace.Cursor{
+	cursor := pagination.Cursor{
 		Limit: limit,
 		Page:  page,
 	}
@@ -169,7 +170,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		cursor := cards.Cursor{
+		cursor := pagination.Cursor{
 			Limit: limit,
 			Page:  page,
 		}

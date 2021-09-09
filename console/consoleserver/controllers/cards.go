@@ -12,6 +12,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/pkg/sqlsearchoperators"
 )
 
@@ -63,7 +64,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cursor := cards.Cursor{
+	cursor := pagination.Cursor{
 		Limit: limit,
 		Page:  page,
 	}

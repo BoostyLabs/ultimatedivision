@@ -16,6 +16,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/sqlsearchoperators"
 )
@@ -72,7 +73,7 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 		}
 	}
 
-	cursor := marketplace.Cursor{
+	cursor := pagination.Cursor{
 		Limit: limit,
 		Page:  page,
 	}

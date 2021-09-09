@@ -14,6 +14,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/pagination"
 )
 
 var (
@@ -72,7 +73,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cursor := cards.Cursor{
+	cursor := pagination.Cursor{
 		Limit: limit,
 		Page:  page,
 	}
