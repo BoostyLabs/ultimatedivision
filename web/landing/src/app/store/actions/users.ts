@@ -36,13 +36,13 @@ export const changePassword = (password: string, newPassword: string) => ({
 });
 
 const client = new UserClient();
-const service = new UserService(client);
+const users = new UserService(client);
 
 /** thunk that implements user registration */
 export const registerUser = (user: User) =>
     async function (dispatch: Dispatch) {
         try {
-            await service.register(user);
+            await users.register(user);
             dispatch(register(user));
             location.pathname = RouteConfig.SignIn.path;
         } catch (error: any) {
@@ -57,7 +57,7 @@ export const loginUser = (email: string, password: string) =>
     async function (dispatch: Dispatch) {
         const whitepaperPath = '/whitepaper';
         try {
-            await service.login(email, password);
+            await users.login(email, password);
             dispatch(login(email, password));
             location.pathname = whitepaperPath;
         } catch (error: any) {
@@ -72,7 +72,7 @@ export const changeUserPassword = (password: string, newPassword: string) =>
     async function (dispatch: Dispatch) {
         const marketplacePath = '/marketplace';
         try {
-            await service.changePassword(password, newPassword);
+            await users.changePassword(password, newPassword);
             dispatch(changePassword(password, newPassword));
             location.pathname = marketplacePath;
         } catch (error: any) {
