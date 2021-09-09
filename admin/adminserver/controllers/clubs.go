@@ -8,7 +8,6 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
-	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -30,7 +29,7 @@ type ClubsTemplates struct {
 	UpdateSquad        *template.Template
 	ListSquadCards     *template.Template
 	UpdateCardPosition *template.Template
-	ListUsersCards     *template.Template
+	AddCard            *template.Template
 }
 
 // Clubs is a mvc controller that handles all clubs related views.
@@ -38,7 +37,6 @@ type Clubs struct {
 	log logger.Logger
 
 	clubs *clubs.Service
-	cards *cards.Service
 
 	templates ClubsTemplates
 }
@@ -54,230 +52,331 @@ func NewClubs(log logger.Logger, clubs *clubs.Service, templates ClubsTemplates)
 	return clubsController
 }
 
-// Create is an endpoint that will create club.
+// Create is an endpoint that creates club.
 func (controller *Clubs) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["userID"] == "" {
-		http.Error(w, ErrClubs.New("empty id parameter").Error(), http.StatusBadRequest)
-	}
 
-	id, err := uuid.Parse(params["userID"])
+	id, err := uuid.Parse(params["userId"])
 	if err != nil {
-		http.Error(w, ErrClubs.New("could not parse uuid").Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = controller.clubs.Create(ctx, id)
 	if err != nil {
 		controller.log.Error("could not create club", ErrClubs.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	url := fmt.Sprintf("/clubs/%s", id.String())
-
-	Redirect(w, r, url, http.MethodGet)
+	Redirect(w, r, "/clubs/"+id.String(), http.MethodGet)
 }
 
-// Get is an endpoint that will provide a web page with users club.
+// Get is an endpoint that provides a web page with users club.
 func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["userID"] == "" {
-		http.Error(w, "empty user id", http.StatusBadRequest)
+
+	userID, err := uuid.Parse(params["userId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	id, err := uuid.Parse(params["userID"])
+	club, err := controller.clubs.Get(ctx, userID)
 	if err != nil {
-		http.Error(w, "could not parse uuid", http.StatusBadRequest)
-		return
-	}
-
-	club, err := controller.clubs.Get(ctx, id)
-	if err != nil {
-		controller.log.Error("could not get clubs list", ErrClubs.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		controller.log.Error("could not get club", ErrClubs.Wrap(err))
+		switch {
+		case clubs.ErrNoClub.Has(err):
+			http.Error(w, err.Error(), http.StatusNotFound)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	err = controller.templates.List.Execute(w, club)
 	if err != nil {
-		controller.log.Error("can not execute list clubs template", ErrClubs.Wrap(err))
-		http.Error(w, "can not execute list clubs template", http.StatusInternalServerError)
+		controller.log.Error("could not parse template", ErrClubs.Wrap(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-// CreateSquad is an endpoint thar creates squad for club.
+// CreateSquad is an endpoint that creates squad for club.
 func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["clubID"] == "" {
-		http.Error(w, "empty club id", http.StatusBadRequest)
-	}
 
-	id, err := uuid.Parse(params["clubID"])
-	fmt.Println(id, err)
+	id, err := uuid.Parse(params["clubId"])
 	if err != nil {
-		http.Error(w, "could not parse uuid", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = controller.clubs.CreateSquad(ctx, id)
 	if err != nil {
 		controller.log.Error("could not create squad", ErrClubs.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	url := fmt.Sprintf("/clubs/squad/%s", id.String())
-
-	Redirect(w, r, url, http.MethodGet)
+	Redirect(w, r, "/clubs/"+id.String()+"/squad", http.MethodGet)
 }
 
-// GetSquad is an endpoint that will provide a web page with users squad of club.
+// GetSquad is an endpoint that provides a web page with squad.
 func (controller *Clubs) GetSquad(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["clubID"] == "" {
-		http.Error(w, ErrClubs.New("could not parse uuid").Error(), http.StatusBadRequest)
-		return
-	}
 
-	id, err := uuid.Parse(params["clubID"])
+	clubID, err := uuid.Parse(params["clubId"])
 	if err != nil {
-		http.Error(w, ErrClubs.Wrap(err).Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	squad, err := controller.clubs.GetSquad(ctx, id)
+	squad, err := controller.clubs.GetSquad(ctx, clubID)
 	if err != nil {
 		controller.log.Error("could not get squad", ErrClubs.Wrap(err))
 		switch {
 		case clubs.ErrNoSquad.Has(err):
-			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 		default:
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
 	err = controller.templates.ListSquads.Execute(w, squad)
 	if err != nil {
-		controller.log.Error("could not execute get squad template", ErrClubs.Wrap(err))
-		http.Error(w, "could not execute get squad template", http.StatusInternalServerError)
+		controller.log.Error("could not parse template", ErrClubs.Wrap(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-// UpdateSquad is an endpoint that updates squad formation, tactic.
+// UpdateSquad is an endpoint that updates squad.
 func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	params := mux.Vars(r)
+
+	squadID, err := uuid.Parse(params["squadId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	clubID, err := uuid.Parse(params["clubId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	switch r.Method {
 	case http.MethodGet:
-		err := controller.templates.UpdateSquad.Execute(w, nil)
+		squad, err := controller.clubs.GetSquad(ctx, clubID)
 		if err != nil {
-			controller.log.Error("could not execute update squad template", ErrClubs.Wrap(err))
-			http.Error(w, "could not execute update squad template", http.StatusInternalServerError)
+			controller.log.Error("could not get squad", ErrClubs.Wrap(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = controller.templates.UpdateSquad.Execute(w, squad)
+		if err != nil {
+			controller.log.Error("could not parse template", ErrClubs.Wrap(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
-		// TODO: finish this case.
+		err = r.ParseForm()
+		if err != nil {
+			http.Error(w, "could not parse form", http.StatusBadRequest)
+			return
+		}
+
+		newFormation, err := strconv.Atoi(r.FormValue("formation"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		newTactic, err := strconv.Atoi(r.FormValue("tactic"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		newCaptainID, err := uuid.Parse(r.FormValue("captainId"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = controller.clubs.UpdateSquad(ctx, squadID, clubs.Formation(newFormation), clubs.Tactic(newTactic), newCaptainID)
+		if err != nil {
+			controller.log.Error("could not update squad", ErrClubs.Wrap(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		url := fmt.Sprintf("/clubs/%s/squad", clubID.String())
+		Redirect(w, r, url, http.MethodGet)
 	}
 }
 
-// GetSquadCard is an endpoint that will provide a web page with cards of squad.
-func (controller *Clubs) GetSquadCard(w http.ResponseWriter, r *http.Request) {
+// ListSquadCards is an endpoint that list cards of the squad.
+func (controller *Clubs) ListSquadCards(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["squadID"] == "" {
-		http.Error(w, "empty squad id", http.StatusBadRequest)
+
+	squadID, err := uuid.Parse(params["squadId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	id, err := uuid.Parse(params["squadID"])
+	squadCards, err := controller.clubs.GetSquadCards(ctx, squadID)
 	if err != nil {
-		http.Error(w, "could not parse uuid", http.StatusBadRequest)
+		controller.log.Error("could not get squad cards", ErrClubs.Wrap(err))
+		switch {
+		case clubs.ErrNoSquad.Has(err):
+			http.Error(w, err.Error(), http.StatusNotFound)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
-	squadCard, err := controller.clubs.GetSquadCard(ctx, id)
+	err = controller.templates.ListSquadCards.Execute(w, squadCards)
 	if err != nil {
-		controller.log.Error("could not get squad card", ErrClubs.Wrap(err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-
-	err = controller.templates.ListSquadCards.Execute(w, squadCard)
-	if err != nil {
-		controller.log.Error("could not execute get card template", ErrClubs.Wrap(err))
-		http.Error(w, "could not execute get card template", http.StatusInternalServerError)
+		controller.log.Error("could not parse template", ErrClubs.Wrap(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-// UpdatePosition is an endpoint that updates position of card in squad.
-func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) {
+// Add is an endpoint that adds new card to the squad.
+func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["squadID"] == "" || params["cardID"] == "" {
-		http.Error(w, ErrClubs.New("empty id parameter").Error(), http.StatusBadRequest)
-		return
-	}
 
-	squadID, err := uuid.Parse(params["squadID"])
+	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
-		http.Error(w, ErrClubs.Wrap(err).Error(), http.StatusBadRequest)
-		return
-	}
-
-	cardID, err := uuid.Parse(params["cardID"])
-	if err != nil {
-		http.Error(w, ErrClubs.Wrap(err).Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	switch r.Method {
 	case http.MethodGet:
-		err = controller.templates.UpdateCardPosition.Execute(w, nil)
+		err = controller.templates.AddCard.Execute(w, squadID)
 		if err != nil {
-			controller.log.Error("could not execute update squad template", ErrClubs.Wrap(err))
-			http.Error(w, "could not execute update squad template", http.StatusInternalServerError)
+			controller.log.Error("could not parse template", ErrClubs.Wrap(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	case http.MethodPost:
+		err = r.ParseForm()
+		if err != nil {
+			http.Error(w, "could not parse form", http.StatusBadRequest)
+			return
+		}
+
+		position, err := strconv.Atoi(r.FormValue("position"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		cardID, err := uuid.Parse(r.FormValue("cardId"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = controller.clubs.Add(ctx, clubs.Position(position), squadID, cardID)
+		if err != nil {
+			controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		url := fmt.Sprintf("/clubs/squad/%s", squadID.String())
+		Redirect(w, r, url, http.MethodGet)
+	}
+}
+
+// UpdateCardPosition is an endpoint that updates card position in the squad.
+func (controller *Clubs) UpdateCardPosition(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	params := mux.Vars(r)
+
+	squadID, err := uuid.Parse(params["squadId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	cardID, err := uuid.Parse(params["cardId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		err = controller.templates.UpdateCardPosition.Execute(w, updateCardTemplateData{cardID, squadID})
+		if err != nil {
+			controller.log.Error("could not parse template", ErrClubs.Wrap(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
 		newPosition, err := strconv.Atoi(r.FormValue("position"))
 		if err != nil {
-			http.Error(w, "invalid new position value", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		err = controller.clubs.UpdateCardPosition(ctx, clubs.Position(newPosition), cardID)
+		err = controller.clubs.UpdateCardPosition(ctx, squadID, cardID, clubs.Position(newPosition))
 		if err != nil {
-			controller.log.Error("could not execute update squad template", ErrClubs.Wrap(err))
-			switch {
-			case clubs.ErrNoSquad.Has(err):
-				http.Error(w, "squad does noe exists", http.StatusNotFound)
-			default:
-				http.Error(w, "could not update position of card", http.StatusInternalServerError)
-			}
+			controller.log.Error("could not update card position", ErrClubs.Wrap(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		// TODO: update url.
-		url := fmt.Sprintf("/squad/%s", squadID)
-
+		url := fmt.Sprintf("/clubs/squad/%s", squadID.String())
 		Redirect(w, r, url, http.MethodGet)
 	}
 }
 
-// Users - get club
-// Clubs - get all clubs / create club / create squad
-// Cards - Add card to the squad
+// DeleteCard is an endpoint that deletes card from squad.
+func (controller *Clubs) DeleteCard(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	params := mux.Vars(r)
+
+	squadID, err := uuid.Parse(params["squadId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	cardID, err := uuid.Parse(params["cardId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = controller.clubs.Delete(ctx, squadID, cardID)
+	if err != nil {
+		controller.log.Error("could not delete card", ErrClubs.Wrap(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	url := fmt.Sprintf("/clubs/squad/%s", squadID.String())
+	Redirect(w, r, url, http.MethodGet)
+}
+
+// updateCardTemplateData combines cardID and squadID for transfer to update card position template.
+type updateCardTemplateData struct {
+	CardID  uuid.UUID
+	SquadID uuid.UUID
+}

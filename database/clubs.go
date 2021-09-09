@@ -14,6 +14,9 @@ import (
 	"ultimatedivision/clubs"
 )
 
+// ensures that clubsDB implements clubs.DB.
+var _ clubs.DB = (*clubsDB)(nil)
+
 // ErrClubs indicates that there was an error in the database.
 var ErrClubs = errs.Class("clubs repository error")
 
@@ -61,11 +64,11 @@ func (clubsDB *clubsDB) AddSquadCard(ctx context.Context, squadCards clubs.Squad
 }
 
 // DeleteSquadCard deletes card from squad.
-func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, cardID uuid.UUID) error {
+func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, squadID, cardID uuid.UUID) error {
 	query := `DELETE FROM squad_cards
-              WHERE card_id = $1`
+              WHERE card_id = $1 and id = $2`
 
-	_, err := clubsDB.conn.ExecContext(ctx, query, cardID)
+	_, err := clubsDB.conn.ExecContext(ctx, query, cardID, squadID)
 
 	return ErrSquad.Wrap(err)
 }
@@ -158,12 +161,12 @@ func (clubsDB *clubsDB) UpdateTacticFormationCaptain(ctx context.Context, squad 
 }
 
 // UpdatePosition updates position of card in the squad.
-func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, cardID uuid.UUID, newPosition clubs.Position) error {
+func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, newPosition clubs.Position, squadID, cardID uuid.UUID) error {
 	query := `UPDATE squad_cards
 			  SET card_position = $1
-			  WHERE card_id = $2`
+			  WHERE card_id = $2 and id = $3`
 
-	_, err := clubsDB.conn.ExecContext(ctx, query, newPosition, cardID)
+	_, err := clubsDB.conn.ExecContext(ctx, query, newPosition, cardID, squadID)
 
 	return ErrSquad.Wrap(err)
 }
@@ -171,7 +174,7 @@ func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, cardID uuid.UUID, ne
 // GetCaptainID returns id of captain of the users team.
 func (clubsDB *clubsDB) GetCaptainID(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error) {
 	query := `SELECT captain_id
-              FROM squads
+			  FROM squads
               WHERE id = $1`
 
 	var id uuid.UUID

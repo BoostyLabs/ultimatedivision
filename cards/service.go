@@ -257,6 +257,12 @@ func (service *Service) ListByPlayerName(ctx context.Context, filter Filters) ([
 	return cards, ErrCards.Wrap(err)
 }
 
+// ListByUserID returns all users cards.
+func (service *Service) ListByUserID(ctx context.Context, userID uuid.UUID) ([]Card, error) {
+	userCards, err := service.cards.ListByUserID(ctx, userID)
+	return userCards, ErrCards.Wrap(err)
+}
+
 // UpdateStatus updates card status.
 func (service *Service) UpdateStatus(ctx context.Context, id uuid.UUID, status Status) error {
 	return ErrCards.Wrap(service.cards.UpdateStatus(ctx, id, status))

@@ -24,6 +24,8 @@ type DB interface {
 	Create(ctx context.Context, card Card) error
 	// Get returns card by id from the data base.
 	Get(ctx context.Context, id uuid.UUID) (Card, error)
+	// ListByUserID returns all users cards from the database.
+	ListByUserID(ctx context.Context, id uuid.UUID) ([]Card, error)
 	// List returns all cards from the data base.
 	List(ctx context.Context) ([]Card, error)
 	// ListWithFilters returns cards from the data base with filters.
@@ -119,6 +121,19 @@ const (
 	// QualityDiamond indicates that card quality is diamond.
 	QualityDiamond Quality = "diamond"
 )
+
+// QualityToValue describes quality-to-value ratio.
+var QualityToValue = map[Quality]int{
+	QualityWood:    0,
+	QualitySilver:  1,
+	QualityGold:    2,
+	QualityDiamond: 3,
+}
+
+// GetValueOfQuality returns value of card by key.
+func (quality Quality) GetValueOfQuality() int {
+	return QualityToValue[quality]
+}
 
 // PictureType defines the list of possible card picture types.
 var PictureType = map[int]string{

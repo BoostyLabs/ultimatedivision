@@ -8,7 +8,7 @@
 <nav>
   <div>
     <ul>
-      <li><a href="/clubs/squad/create/{{.ID}}">Create squad</a></li>
+      <li><a href="/clubs/create/{{.OwnerID}}">Create club</a></li>
     </ul>
   </div>
 </nav>
@@ -36,7 +36,8 @@
       {{.CreatedAt}}
     </td>
     <td>
-      <a href = "/clubs/squad/{{.ID}}">Get squad</a>
+      <a href = "/clubs/{{.ID}}/squad">Get squad</a>
+      <a href = "/clubs/{{.ID}}/squad/create">Create squad</a>
     </td>
   </tr>
 </table>

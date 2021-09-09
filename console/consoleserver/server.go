@@ -104,16 +104,20 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsRouter.Use(server.withAuth)
 	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
 	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
-	clubsRouter.HandleFunc("/{club-id}/squads", clubsController.CreateSquad).Methods(http.MethodPost)
-	clubsRouter.HandleFunc("/{club-id}/squads/{squadID}", clubsController.UpdateSquad).Methods(http.MethodPatch)
-	clubsRouter.HandleFunc("/{club-id}/squads/{squadID}/cards/{cardID}", clubsController.AddCardToSquad).Methods(http.MethodPost)
-	clubsRouter.HandleFunc("/{club-id}/squads/{squadID}/cards/{cardID}", clubsController.DeleteCardFromSquad).Methods(http.MethodDelete)
-	clubsRouter.HandleFunc("/{club-id}/squads/{squadID}/cards/{cardID}", clubsController.UpdateCardPosition).Methods(http.MethodPatch)
 
-	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
+	squadRouter := clubsRouter.PathPrefix("/{clubId}/squads").Subrouter()
+	squadRouter.HandleFunc("", clubsController.CreateSquad).Methods(http.MethodPost)
+	squadRouter.HandleFunc("/{squadId}", clubsController.UpdateSquad).Methods(http.MethodPatch)
+
+	squadCardsRouter := squadRouter.PathPrefix("/{squadId}/cards").Subrouter()
+	squadCardsRouter.HandleFunc("/{cardId}", clubsController.Add).Methods(http.MethodPost)
+	squadCardsRouter.HandleFunc("/{cardId}", clubsController.Delete).Methods(http.MethodDelete)
+	squadCardsRouter.HandleFunc("/{cardId}", clubsController.UpdatePosition).Methods(http.MethodPatch)
+
+	lootBoxesRouter := apiRouter.PathPrefix("/lootboxes").Subrouter()
 	lootBoxesRouter.Use(server.withAuth)
 	lootBoxesRouter.HandleFunc("", lootBoxesController.Create).Methods(http.MethodPost)
-	lootBoxesRouter.HandleFunc("/{id}", lootBoxesController.Open).Methods(http.MethodDelete)
+	lootBoxesRouter.HandleFunc("/{id}", lootBoxesController.Open).Methods(http.MethodPost)
 
 	marketplaceRouter := apiRouter.PathPrefix("/marketplace").Subrouter()
 	marketplaceRouter.Use(server.withAuth)

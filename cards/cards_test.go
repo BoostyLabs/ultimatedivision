@@ -23,6 +23,29 @@ import (
 )
 
 func TestCards(t *testing.T) {
+	user1 := users.User{
+		ID:           uuid.New(),
+		Email:        "tarkovskynik@gmail.com",
+		PasswordHash: []byte{0},
+		NickName:     "Nik",
+		FirstName:    "Nikita",
+		LastName:     "Tarkovskyi",
+		LastLogin:    time.Now(),
+		Status:       0,
+		CreatedAt:    time.Now(),
+	}
+
+	user2 := users.User{
+		ID:           uuid.New(),
+		Email:        "3560876@gmail.com",
+		PasswordHash: []byte{1},
+		NickName:     "qwerty",
+		FirstName:    "Stas",
+		LastName:     "Isakov",
+		LastLogin:    time.Now(),
+		Status:       1,
+		CreatedAt:    time.Now(),
+	}
 
 	card1 := cards.Card{
 		ID:               uuid.New(),
@@ -39,7 +62,7 @@ func TestCards(t *testing.T) {
 		IsTattoos:        false,
 		Status:           cards.StatusActive,
 		Type:             cards.TypeWon,
-		UserID:           uuid.New(),
+		UserID:           user1.ID,
 		Tactics:          1,
 		Positioning:      2,
 		Composure:        3,
@@ -157,30 +180,6 @@ func TestCards(t *testing.T) {
 		Throwing:         49,
 	}
 
-	user1 := users.User{
-		ID:           uuid.New(),
-		Email:        "tarkovskynik@gmail.com",
-		PasswordHash: []byte{0},
-		NickName:     "Nik",
-		FirstName:    "Nikita",
-		LastName:     "Tarkovskyi",
-		LastLogin:    time.Now(),
-		Status:       0,
-		CreatedAt:    time.Now(),
-	}
-
-	user2 := users.User{
-		ID:           uuid.New(),
-		Email:        "3560876@gmail.com",
-		PasswordHash: []byte{1},
-		NickName:     "qwerty",
-		FirstName:    "Stas",
-		LastName:     "Isakov",
-		LastLogin:    time.Now(),
-		Status:       1,
-		CreatedAt:    time.Now(),
-	}
-
 	filter1 := cards.Filters{
 		Name:           cards.FilterTactics,
 		Value:          "1",
@@ -235,6 +234,13 @@ func TestCards(t *testing.T) {
 			assert.Equal(t, len(allCards), 2)
 			compareCards(t, card1, allCards[0])
 			compareCards(t, card2, allCards[1])
+		})
+
+		t.Run("list by user id", func(t *testing.T) {
+			userCard, err := repositoryCards.ListByUserID(ctx, user1.ID)
+			require.NoError(t, err)
+
+			compareCards(t, userCard[0], card1)
 		})
 
 		t.Run("list with filters", func(t *testing.T) {

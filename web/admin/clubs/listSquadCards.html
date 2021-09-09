@@ -25,9 +25,10 @@
         <td>
             {{.Position}}
         </td>
-        <th>
-            <a href = /squad-card/{{.SquadID}}/{{.CardID}}"></a>
-        </th>
+        <td>
+            <a href = "/clubs/squad/{{.SquadID}}/squad-cards/{{.CardID}}">Delete card</a>
+            <a href = "/clubs/squad/{{.SquadID}}/squad-cards/{{.CardID}}/update">Update card position</a>
+        </td>
     </tr>
     {{end}}
 </table>
