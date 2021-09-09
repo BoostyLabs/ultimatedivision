@@ -4,7 +4,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { LootboxStats } from '@/app/types/lootBox';
+import { LootboxStats } from '@/app/types/lootbox';
 
 import { openLootbox } from '@/app/store/actions/lootboxes';
 

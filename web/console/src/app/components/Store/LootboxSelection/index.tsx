@@ -3,7 +3,7 @@
 
 import { Dispatch, SetStateAction } from 'react';
 
-import { LootboxStats } from '@/app/types/lootBox';
+import { LootboxStats } from '@/app/types/lootbox';
 
 import { LootboxCard } from './LootboxCard';
 
