@@ -8,6 +8,7 @@ const WelcomePage = React.lazy(() => import('@components/WelcomePage'));
 const SignIn = React.lazy(() => import('@/app/views/SignIn'));
 const SignUp = React.lazy(() => import('@/app/views/SignUp'));
 const ChangePassword = React.lazy(() => import('@/app/views/ChangePassword'));
+const ConfirmEmail = React.lazy(() => import('@/app/views/ConfirmEmail'));
 
 export interface RouteItem {
     path: string,
@@ -70,11 +71,17 @@ export class RouteConfig {
         ChangePassword,
         true
     );
+    public static ConfirmEmail: ComponentRoutes = new ComponentRoutes(
+        '/email/confirm/:token',
+        ConfirmEmail,
+        true,
+    );
     public static routes: ComponentRoutes[] = [
         RouteConfig.WelcomePage,
         RouteConfig.SignIn,
         RouteConfig.SignUp,
         RouteConfig.ResetPassword,
+        RouteConfig.ConfirmEmail,
     ];
 };
 
