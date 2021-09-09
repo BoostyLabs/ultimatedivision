@@ -125,9 +125,9 @@ func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters [
 		return lotsPage, ErrMarketplace.Wrap(err)
 	}
 
-	var cardIds []uuid.UUID
+	var cardIDs []uuid.UUID
 	for _, v := range cardsListPage.Cards {
-		cardIds = append(cardIds, v.ID)
+		cardIDs = append(cardIDs, v.ID)
 	}
 
 	if cursor.Limit <= 0 {
@@ -136,7 +136,7 @@ func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters [
 	if cursor.Page <= 0 {
 		cursor.Page = service.config.Cursor.Page
 	}
-	lotsPage, err = service.marketplace.ListActiveLotsByItemID(ctx, cardIds, cursor)
+	lotsPage, err = service.marketplace.ListActiveLotsByItemID(ctx, cardIDs, cursor)
 	return lotsPage, ErrMarketplace.Wrap(err)
 }
 
@@ -160,12 +160,12 @@ func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter c
 		return lotsPage, ErrMarketplace.Wrap(err)
 	}
 
-	var cardIds []uuid.UUID
+	var cardIDs []uuid.UUID
 	for _, v := range cardsListPage.Cards {
-		cardIds = append(cardIds, v.ID)
+		cardIDs = append(cardIDs, v.ID)
 	}
 
-	lotsPage, err = service.marketplace.ListActiveLotsByItemID(ctx, cardIds, cursor)
+	lotsPage, err = service.marketplace.ListActiveLotsByItemID(ctx, cardIDs, cursor)
 	return lotsPage, ErrMarketplace.Wrap(err)
 }
 
