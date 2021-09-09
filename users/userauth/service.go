@@ -361,7 +361,7 @@ func (service *Service) CheckAuthToken(ctx context.Context, tokenStr string) err
 	return nil
 }
 
-// RecoveryPassword - changes users password.
+// ResetPassword - changes users password.
 func (service *Service) ResetPassword(ctx context.Context, newPassword string) error {
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
