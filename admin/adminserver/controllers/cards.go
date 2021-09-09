@@ -6,6 +6,7 @@ package controllers
 import (
 	"html/template"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -51,18 +52,46 @@ func NewCards(log logger.Logger, cards *cards.Service, templates CardTemplates, 
 // List is an endpoint that will provide a web page with all cards.
 func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	var (
+		err         error
+		limit, page int
+	)
+	urlQuery := r.URL.Query()
+	limitQuery := urlQuery.Get("limit")
+	pageQuery := urlQuery.Get("page")
 
-	cards, err := controller.cards.List(ctx)
+	limit, err = strconv.Atoi(limitQuery)
 	if err != nil {
-		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
-		http.Error(w, "could not get cards list", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = controller.templates.List.Execute(w, cards)
+	page, err = strconv.Atoi(pageQuery)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	cursor := cards.Cursor{
+		Limit: limit,
+		Page:  page,
+	}
+	listCardsPage, err := controller.cards.List(ctx, cursor)
+	if err != nil {
+		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
+		switch {
+		case cards.ErrNoCard.Has(err):
+			http.Error(w, err.Error(), http.StatusNotFound)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	err = controller.templates.List.Execute(w, listCardsPage)
 	if err != nil {
 		controller.log.Error("can not execute list cards template", ErrCards.Wrap(err))
-		http.Error(w, "can not execute list cards template", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -71,21 +100,22 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 func (controller *Cards) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
-	if vars["userID"] == "" {
-		http.Error(w, "userID parameter is empty", http.StatusBadRequest)
-		return
+	percentageQualities := []int{
+		controller.percentageQualities.Wood,
+		controller.percentageQualities.Silver,
+		controller.percentageQualities.Gold,
+		controller.percentageQualities.Diamond,
 	}
-	userID, err := uuid.Parse(vars["userID"])
+
+	userID, err := uuid.Parse(vars["userId"])
 	if err != nil {
 		http.Error(w, "could not parse user id", http.StatusBadRequest)
 		return
 	}
 
-	percentageQualities := []int{controller.percentageQualities.Wood, controller.percentageQualities.Silver, controller.percentageQualities.Gold, controller.percentageQualities.Diamond}
-
 	if _, err := controller.cards.Create(ctx, userID, percentageQualities); err != nil {
 		controller.log.Error("could not create card", ErrCards.Wrap(err))
-		http.Error(w, "could not create card", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -96,6 +126,7 @@ func (controller *Cards) Create(w http.ResponseWriter, r *http.Request) {
 func (controller *Cards) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
+
 	if vars["id"] == "" {
 		http.Error(w, "id parameter is empty", http.StatusBadRequest)
 		return
@@ -107,7 +138,7 @@ func (controller *Cards) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := controller.cards.Delete(ctx, id); err != nil {
 		controller.log.Error("could not delete card", ErrCards.Wrap(err))
-		http.Error(w, "could not delete card", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
