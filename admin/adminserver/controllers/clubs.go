@@ -4,7 +4,6 @@
 package controllers
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -219,8 +218,7 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		url := fmt.Sprintf("/clubs/%s/squad", clubID.String())
-		Redirect(w, r, url, http.MethodGet)
+		Redirect(w, r, "/clubs/"+clubID.String()+"/squad", http.MethodGet)
 	}
 }
 
@@ -299,8 +297,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		url := fmt.Sprintf("/clubs/squad/%s", squadID.String())
-		Redirect(w, r, url, http.MethodGet)
+		Redirect(w, r, "/clubs/squad/"+squadID.String(), http.MethodGet)
 	}
 }
 
@@ -342,8 +339,7 @@ func (controller *Clubs) UpdateCardPosition(w http.ResponseWriter, r *http.Reque
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		url := fmt.Sprintf("/clubs/squad/%s", squadID.String())
-		Redirect(w, r, url, http.MethodGet)
+		Redirect(w, r, "/clubs/squad/"+squadID.String(), http.MethodGet)
 	}
 }
 
@@ -371,8 +367,7 @@ func (controller *Clubs) DeleteCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := fmt.Sprintf("/clubs/squad/%s", squadID.String())
-	Redirect(w, r, url, http.MethodGet)
+	Redirect(w, r, "/clubs/squad/"+squadID.String(), http.MethodGet)
 }
 
 // updateCardTemplateData combines cardID and squadID for transfer to update card position template.
