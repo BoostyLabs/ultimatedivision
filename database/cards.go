@@ -16,6 +16,8 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/internal/pagination"
+	"ultimatedivision/marketplace"
 )
 
 // ensures that cardsDB implements cards.DB.
@@ -184,6 +186,9 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
 	for rows.Next() {
 		var cardID int
 		if err = rows.Scan(&cardID); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, cards.ErrNoCard.Wrap(err)
+			}
 			return nil, ErrCard.Wrap(err)
 		}
 		data = append(data, cardID)
@@ -196,17 +201,14 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
 }
 
 // List returns all cards from the data base.
-func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
-	query :=
-		`SELECT
-            ` + allFields + ` 
-        FROM 
-            cards
-        `
+func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (cards.Page, error) {
+	var cardsListPage cards.Page
+	offset := (cursor.Page - 1) * cursor.Limit
+	query := fmt.Sprintf(`SELECT %s FROM cards LIMIT %d OFFSET %d`, allFields, cursor.Limit, offset)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query)
 	if err != nil {
-		return nil, ErrCard.Wrap(err)
+		return cardsListPage, ErrCard.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -226,22 +228,26 @@ func (cardsDB *cardsDB) List(ctx context.Context) ([]cards.Card, error) {
 			&card.BallFocus, &card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping,
 			&card.Throwing,
 		); err != nil {
-			return nil, cards.ErrNoCard.Wrap(err)
+			if errors.Is(err, sql.ErrNoRows) {
+				return cardsListPage, cards.ErrNoCard.Wrap(err)
+			}
+			return cardsListPage, ErrCard.Wrap(err)
 		}
 
 		accessoryIds, err := listAccessoryIdsByCardID(ctx, cardsDB, card.ID)
 		if err != nil {
-			return nil, ErrCard.Wrap(err)
+			return cardsListPage, ErrCard.Wrap(err)
 		}
 		card.Accessories = accessoryIds
 
 		data = append(data, card)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, ErrCard.Wrap(err)
+		return cardsListPage, ErrCard.Wrap(err)
 	}
 
-	return data, nil
+	cardsListPage, err = cardsDB.listPaginated(ctx, cursor, data)
+	return cardsListPage, ErrCard.Wrap(err)
 }
 
 // ListByUserID returns all users cards from the database.
@@ -288,10 +294,12 @@ func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID) ([]cards
 	return userCards, nil
 }
 
-// ListWithFilters returns all cards from DB, taking the necessary filters.
-func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filters) ([]cards.Card, error) {
+// ListWithFilters returns cards from DB, taking the necessary filters.
+func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Filters, cursor pagination.Cursor) (cards.Page, error) {
+	var cardsListPage cards.Page
 	whereClause, valuesString := BuildWhereClauseDependsOnCardsFilters(filters)
 	valuesInterface := ValidDBParameters(valuesString)
+	offset := (cursor.Page - 1) * cursor.Limit
 	query := fmt.Sprintf(`
         SELECT
             cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
@@ -300,12 +308,17 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
             forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
             tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
         FROM
-            cards %s`,
-		whereClause)
+            cards 
+        %s
+        LIMIT 
+            %d
+        OFFSET 
+            %d
+        `, whereClause, cursor.Limit, offset)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
-		return nil, ErrCard.Wrap(err)
+		return cardsListPage, ErrCard.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -324,33 +337,79 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 			&card.FreeKicks, &card.Corners, &card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus,
 			&card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
 		); err != nil {
-			return nil, cards.ErrNoCard.Wrap(err)
+			if errors.Is(err, sql.ErrNoRows) {
+				return cardsListPage, cards.ErrNoCard.Wrap(err)
+			}
+			return cardsListPage, ErrCard.Wrap(err)
 		}
 
 		accessoryIds, err := listAccessoryIdsByCardID(ctx, cardsDB, card.ID)
 		if err != nil {
-			return nil, ErrCard.Wrap(err)
+			return cardsListPage, ErrCard.Wrap(err)
 		}
 		card.Accessories = accessoryIds
 
 		data = append(data, card)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, ErrCard.Wrap(err)
+		return cardsListPage, ErrCard.Wrap(err)
 	}
 
-	return data, nil
+	cardsListPage, err = cardsDB.listPaginated(ctx, cursor, data)
+	return cardsListPage, ErrCard.Wrap(err)
 }
 
-// ListByPlayerName returns all cards from DB by player name.
-func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filters) ([]cards.Card, error) {
-	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
+// ListCardIDsWithFiltersWhereActiveLot returns card ids where active lots from DB, taking the necessary filters.
+func (cardsDB *cardsDB) ListCardIDsWithFiltersWhereActiveLot(ctx context.Context, filters []cards.Filters) ([]uuid.UUID, error) {
+	whereClause, valuesString := BuildWhereClauseDependsOnCardsFilters(filters)
 	valuesInterface := ValidDBParameters(valuesString)
-	query := fmt.Sprintf("SELECT %s FROM cards %s", allFields, whereClause)
+	valuesInterface = append(valuesInterface, marketplace.StatusActive)
+	query := fmt.Sprintf(`
+        SELECT
+            cards.id
+        FROM
+            cards 
+		LEFT JOIN lots ON cards.id = lots.item_id
+		%s 
+		AND 
+			lots.status = $%d
+        `, whereClause, len(valuesInterface))
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
 		return nil, ErrCard.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	var cardIDs []uuid.UUID
+	for rows.Next() {
+		var cardID uuid.UUID
+		if err = rows.Scan(&cardID); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, cards.ErrNoCard.Wrap(err)
+			}
+			return nil, ErrCard.Wrap(err)
+		}
+
+		cardIDs = append(cardIDs, cardID)
+	}
+
+	return cardIDs, ErrCard.Wrap(err)
+}
+
+// ListByPlayerName returns all cards from DB by player name.
+func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filters, cursor pagination.Cursor) (cards.Page, error) {
+	var cardsListPage cards.Page
+	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
+	valuesInterface := ValidDBParameters(valuesString)
+	offset := (cursor.Page - 1) * cursor.Limit
+	query := fmt.Sprintf(`SELECT %s FROM cards %s LIMIT %d OFFSET %d`, allFields, whereClause, cursor.Limit, offset)
+
+	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
+	if err != nil {
+		return cardsListPage, ErrCard.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -369,22 +428,104 @@ func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filte
 			&card.FreeKicks, &card.Corners, &card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus,
 			&card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
 		); err != nil {
-			return nil, cards.ErrNoCard.Wrap(err)
+			if errors.Is(err, sql.ErrNoRows) {
+				return cardsListPage, cards.ErrNoCard.Wrap(err)
+			}
+			return cardsListPage, ErrCard.Wrap(err)
 		}
 
 		accessoryIds, err := listAccessoryIdsByCardID(ctx, cardsDB, card.ID)
 		if err != nil {
-			return nil, ErrCard.Wrap(err)
+			return cardsListPage, ErrCard.Wrap(err)
 		}
 		card.Accessories = accessoryIds
 
 		data = append(data, card)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, ErrCard.Wrap(err)
+		return cardsListPage, ErrCard.Wrap(err)
 	}
 
-	return data, nil
+	cardsListPage, err = cardsDB.listPaginated(ctx, cursor, data)
+	return cardsListPage, ErrCard.Wrap(err)
+}
+
+// ListCardIDsByPlayerNameWhereActiveLot returns card ids where active lot from DB by player name.
+func (cardsDB *cardsDB) ListCardIDsByPlayerNameWhereActiveLot(ctx context.Context, filter cards.Filters) ([]uuid.UUID, error) {
+	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
+	valuesInterface := ValidDBParameters(valuesString)
+	valuesInterface = append(valuesInterface, marketplace.StatusActive)
+	query := fmt.Sprintf(`
+        SELECT
+            cards.id
+        FROM
+            cards 
+		LEFT JOIN lots ON cards.id = lots.item_id
+		%s 
+		AND 
+			lots.status = $%d
+        `, whereClause, len(valuesInterface))
+
+	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
+	if err != nil {
+		return nil, ErrCard.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	var cardIDs []uuid.UUID
+	for rows.Next() {
+		var cardID uuid.UUID
+		if err = rows.Scan(&cardID); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, cards.ErrNoCard.Wrap(err)
+			}
+			return nil, ErrCard.Wrap(err)
+		}
+		cardIDs = append(cardIDs, cardID)
+	}
+	return cardIDs, ErrCard.Wrap(err)
+}
+
+// listPaginated returns paginated list of cards.
+func (cardsDB *cardsDB) listPaginated(ctx context.Context, cursor pagination.Cursor, cardsList []cards.Card) (cards.Page, error) {
+	var cardsListPage cards.Page
+	offset := (cursor.Page - 1) * cursor.Limit
+
+	totalCount, err := cardsDB.totalCount(ctx)
+	if err != nil {
+		return cardsListPage, ErrCard.Wrap(err)
+	}
+
+	pageCount := totalCount / cursor.Limit
+	if totalCount%cursor.Limit != 0 {
+		pageCount++
+	}
+
+	cardsListPage = cards.Page{
+		Cards: cardsList,
+		Page: pagination.Page{
+			Offset:      offset,
+			Limit:       cursor.Limit,
+			CurrentPage: cursor.Page,
+			PageCount:   pageCount,
+			TotalCount:  totalCount,
+		},
+	}
+
+	return cardsListPage, nil
+}
+
+// totalCount counts all the cards in the table.
+func (cardsDB *cardsDB) totalCount(ctx context.Context) (int, error) {
+	var count int
+	query := fmt.Sprintf(`SELECT COUNT(*) FROM cards`)
+	err := cardsDB.conn.QueryRowContext(ctx, query).Scan(&count)
+	if errors.Is(err, sql.ErrNoRows) {
+		return 0, cards.ErrNoCard.Wrap(err)
+	}
+	return count, ErrCard.Wrap(err)
 }
 
 // ValidDBParameters build valid parameter with string to sinterface.
