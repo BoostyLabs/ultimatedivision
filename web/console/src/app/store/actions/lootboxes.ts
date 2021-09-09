@@ -25,6 +25,7 @@ export const openLootbox = (lootbox: Lootbox) => async function(dispatch: Dispat
         dispatch(buyLootbox(opennedLootbox));
     }
     catch(e: any) {
+        /* eslint-disable */
         console.log(e.message);
     }
 };
