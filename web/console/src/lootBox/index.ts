@@ -1,14 +1,13 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-/** Class for lootBox Cards in store */
-export class BoxData {
-    /** boxData implementation */
+import { LootboxTypes } from '@/app/types/lootBox';
+
+/** domain entity Lootbox implementation */
+export class Lootbox {
+    /** receives base params: id and type */
     constructor(
-        public icon: string,
-        public title: string,
-        public quantity: number,
-        public dropChance: number[],
-        public price: string
-    ) { }
-}
+        public id: string,
+        public type: LootboxTypes,
+    ) { };
+};
