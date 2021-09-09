@@ -4,7 +4,6 @@
 import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
 
 import { registerUser } from '@/app/store/actions/users';
 import { RouteConfig } from '@/app/router';

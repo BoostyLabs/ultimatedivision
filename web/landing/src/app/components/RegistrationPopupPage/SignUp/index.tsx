@@ -3,9 +3,6 @@
 
 import { SetStateAction, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
-
-import { RouteConfig } from '@/app/router';
 
 import { registerUser } from '@/app/store/actions/users';
 
