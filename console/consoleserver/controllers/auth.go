@@ -172,6 +172,8 @@ func (auth *Auth) ChangePassword(w http.ResponseWriter, r *http.Request) {
 		default:
 			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		}
+
+		return
 	}
 
 	if err = json.NewEncoder(w).Encode("success"); err != nil {
@@ -202,6 +204,8 @@ func (auth *Auth) ResetPassword(w http.ResponseWriter, r *http.Request) {
 		default:
 			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		}
+
+		return
 	}
 
 	if err = json.NewEncoder(w).Encode("success"); err != nil {
@@ -210,7 +214,7 @@ func (auth *Auth) ResetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// CheckAuthToken check auth token and set auth cookie in browser for change users password.
+// CheckAuthToken checks auth token and sets auth cookie in browser for change users password.
 func (auth *Auth) CheckAuthToken(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
@@ -224,7 +228,7 @@ func (auth *Auth) CheckAuthToken(w http.ResponseWriter, r *http.Request) {
 
 	err := auth.userAuth.CheckAuthToken(ctx, preAuthToken)
 	if err != nil {
-		auth.log.Error("Unable to change password", AuthError.Wrap(err))
+		auth.log.Error("Unable to check auth token", AuthError.Wrap(err))
 		switch {
 		case users.ErrNoUser.Has(err):
 			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
@@ -233,6 +237,8 @@ func (auth *Auth) CheckAuthToken(w http.ResponseWriter, r *http.Request) {
 		default:
 			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		}
+
+		return
 	}
 
 	auth.cookie.SetTokenCookie(w, preAuthToken)
@@ -262,6 +268,8 @@ func (auth *Auth) RecoveryPassword(w http.ResponseWriter, r *http.Request) {
 		default:
 			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		}
+
+		return
 	}
 
 	if err = json.NewEncoder(w).Encode("success"); err != nil {
