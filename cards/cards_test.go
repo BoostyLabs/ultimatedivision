@@ -18,6 +18,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/database"
 	"ultimatedivision/database/dbtesting"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/pkg/sqlsearchoperators"
 	"ultimatedivision/users"
 )
@@ -199,7 +200,7 @@ func TestCards(t *testing.T) {
 		SearchOperator: sqlsearchoperators.LIKE,
 	}
 
-	cursor1 := cards.Cursor{
+	cursor1 := pagination.Cursor{
 		Limit: 2,
 		Page:  1,
 	}
