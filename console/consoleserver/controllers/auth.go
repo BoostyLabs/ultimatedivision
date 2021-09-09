@@ -182,8 +182,8 @@ func (auth *Auth) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ResetPassword send email with token about reset users password.
-func (auth *Auth) ResetPassword(w http.ResponseWriter, r *http.Request) {
+// ResetPasswordSendEmail send email with token about reset users password.
+func (auth *Auth) ResetPasswordSendEmail(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
@@ -195,7 +195,7 @@ func (auth *Auth) ResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.userAuth.ResetPassword(ctx, request.Email)
+	err = auth.userAuth.ResetPasswordSendEmail(ctx, request.Email)
 	if err != nil {
 		auth.log.Error("Unable to change password", AuthError.Wrap(err))
 		switch {
@@ -244,8 +244,8 @@ func (auth *Auth) CheckAuthToken(w http.ResponseWriter, r *http.Request) {
 	auth.cookie.SetTokenCookie(w, preAuthToken)
 }
 
-// RecoveryPassword change users password.
-func (auth *Auth) RecoveryPassword(w http.ResponseWriter, r *http.Request) {
+// ResetPassword reset password and change users password.
+func (auth *Auth) ResetPassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
@@ -257,7 +257,7 @@ func (auth *Auth) RecoveryPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.userAuth.RecoveryPassword(ctx, request.NewPassword)
+	err = auth.userAuth.ResetPassword(ctx, request.NewPassword)
 	if err != nil {
 		auth.log.Error("Unable to recovery password", AuthError.Wrap(err))
 		switch {

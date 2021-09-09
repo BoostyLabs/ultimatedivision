@@ -307,8 +307,8 @@ func (service *Service) ChangePassword(ctx context.Context, password, newPasswor
 	return Error.Wrap(service.users.UpdatePassword(ctx, user.PasswordHash, user.ID))
 }
 
-// ResetPassword - change users password.
-func (service *Service) ResetPassword(ctx context.Context, email string) error {
+// ResetPasswordSendEmail - send email with token for user.
+func (service *Service) ResetPasswordSendEmail(ctx context.Context, email string) error {
 	user, err := service.users.GetByEmail(ctx, email)
 	if err != nil {
 		return users.ErrUsers.Wrap(err)
@@ -362,7 +362,7 @@ func (service *Service) CheckAuthToken(ctx context.Context, tokenStr string) err
 }
 
 // RecoveryPassword - changes users password.
-func (service *Service) RecoveryPassword(ctx context.Context, newPassword string) error {
+func (service *Service) ResetPassword(ctx context.Context, newPassword string) error {
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
 		return ErrUnauthenticated.Wrap(err)
