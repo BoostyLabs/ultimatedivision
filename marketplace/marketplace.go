@@ -11,6 +11,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/users"
 )
 
@@ -29,9 +30,9 @@ type DB interface {
 	// GetLotByID returns lot by id from the data base.
 	GetLotByID(ctx context.Context, id uuid.UUID) (Lot, error)
 	// ListActiveLots returns active lots from the data base.
-	ListActiveLots(ctx context.Context, cursor Cursor) (Page, error)
+	ListActiveLots(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// ListActiveLotsByItemID returns active lots from the data base by item id.
-	ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID, cursor Cursor) (Page, error)
+	ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID, cursor pagination.Cursor) (Page, error)
 	// ListExpiredLot returns active lots where end time lower than or equal to time now UTC from the data base.
 	ListExpiredLot(ctx context.Context) ([]Lot, error)
 	// UpdateShopperIDLot updates shopper id of lot in the database.
@@ -96,7 +97,7 @@ const (
 // Config defines configuration for marketplace.
 type Config struct {
 	LotRenewalInterval time.Duration `json:"lotRenewalInterval"`
-	Cursor             `json:"cursor"`
+	pagination.Cursor  `json:"cursor"`
 }
 
 // CreateLot entity that contains the values required to create the lot.
@@ -169,18 +170,8 @@ type ResponsePlaceBetLot struct {
 	Users []users.User
 }
 
-// Cursor holds lot cursor entity which is used to create listed page.
-type Cursor struct {
-	Limit int `json:"limit"`
-	Page  int `json:"page"`
-}
-
 // Page holds lot page entity which is used to show listed page of lots.
 type Page struct {
-	Lots        []Lot `json:"lots"`
-	Offset      int   `json:"offset"`
-	Limit       int   `json:"limit"`
-	CurrentPage int   `json:"currentPage"`
-	PageCount   int   `json:"pageCount"`
-	TotalCount  int   `json:"totalCount"`
+	Lots []Lot           `json:"lots"`
+	Page pagination.Page `json:"page"`
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/users"
 )
 
@@ -95,7 +96,7 @@ func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, erro
 }
 
 // ListActiveLots returns active lots from DB.
-func (service *Service) ListActiveLots(ctx context.Context, cursor Cursor) (Page, error) {
+func (service *Service) ListActiveLots(ctx context.Context, cursor pagination.Cursor) (Page, error) {
 	if cursor.Limit <= 0 {
 		cursor.Limit = service.config.Cursor.Limit
 	}
@@ -107,7 +108,7 @@ func (service *Service) ListActiveLots(ctx context.Context, cursor Cursor) (Page
 }
 
 // ListActiveLotsWithFilters returns active lots from DB, taking the necessary filters.
-func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters []cards.Filters, cursor Cursor) (Page, error) {
+func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters []cards.Filters, cursor pagination.Cursor) (Page, error) {
 	var lotsPage Page
 	for _, v := range filters {
 		err := v.Validate()
@@ -116,18 +117,9 @@ func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters [
 		}
 	}
 
-	cardsCursor := cards.Cursor{
-		Limit: 10000000000000,
-		Page:  1,
-	}
-	cardsListPage, err := service.cards.ListWithFilters(ctx, filters, cardsCursor)
+	cardIDs, err := service.cards.ListCardIDsWithFiltersWhereActiveLot(ctx, filters)
 	if err != nil {
 		return lotsPage, ErrMarketplace.Wrap(err)
-	}
-
-	var cardIDs []uuid.UUID
-	for _, v := range cardsListPage.Cards {
-		cardIDs = append(cardIDs, v.ID)
 	}
 
 	if cursor.Limit <= 0 {
@@ -141,7 +133,7 @@ func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters [
 }
 
 // ListActiveLotsByPlayerName returns active lots from DB by player name card.
-func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter cards.Filters, cursor Cursor) (Page, error) {
+func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter cards.Filters, cursor pagination.Cursor) (Page, error) {
 	var lotsPage Page
 	strings.ToValidUTF8(filter.Value, "")
 
@@ -151,20 +143,17 @@ func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter c
 		return lotsPage, ErrMarketplace.Wrap(cards.ErrInvalidFilter.New("%s %s", filter.Value, err))
 	}
 
-	cardsCursor := cards.Cursor{
-		Limit: 10000000000000,
-		Page:  1,
-	}
-	cardsListPage, err := service.cards.ListByPlayerName(ctx, filter, cardsCursor)
+	cardIDs, err := service.cards.ListCardIDsByPlayerNameWhereActiveLot(ctx, filter)
 	if err != nil {
 		return lotsPage, ErrMarketplace.Wrap(err)
 	}
 
-	var cardIDs []uuid.UUID
-	for _, v := range cardsListPage.Cards {
-		cardIDs = append(cardIDs, v.ID)
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
 	}
-
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
 	lotsPage, err = service.marketplace.ListActiveLotsByItemID(ctx, cardIDs, cursor)
 	return lotsPage, ErrMarketplace.Wrap(err)
 }

@@ -15,6 +15,7 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/cards"
 	"ultimatedivision/database/dbtesting"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/users"
 )
@@ -205,7 +206,7 @@ func TestMarketplace(t *testing.T) {
 		Throwing:         49,
 	}
 
-	cursor1 := marketplace.Cursor{
+	cursor1 := pagination.Cursor{
 		Limit: 2,
 		Page:  1,
 	}
