@@ -3,12 +3,12 @@
 
 import { Dispatch, SetStateAction } from 'react';
 
-import { LootboxStats } from '@/app/types/lootbox';
+import { LootboxStats, LootboxTypes } from '@/app/types/lootbox';
 
-import { LootboxCard } from './LootboxCard';
 
 import box from '@static/img/StorePage/BoxCard/box.svg';
 import coolBox from '@static/img/StorePage/BoxCard/coolBox.svg';
+import { LootboxCard } from './LootboxCard';
 
 import './index.scss';
 
@@ -20,7 +20,7 @@ export const LootboxSelection: React.FC<{ handleOpening: Dispatch<SetStateAction
         new LootboxStats(
             '1',
             box,
-            'Regular Box',
+            LootboxTypes['Regular Box'],
             REGULAR_BOX_CARDS_QUANTITY,
             // eslint-disable-next-line
             [80, 15, 4, 1],
@@ -29,7 +29,7 @@ export const LootboxSelection: React.FC<{ handleOpening: Dispatch<SetStateAction
         new LootboxStats(
             '2',
             coolBox,
-            'Cool Box',
+            LootboxTypes['Cool box'],
             COOL_BOX_CARDS_QUANTITY,
             // eslint-disable-next-line
             [70, 20, 8, 2],
