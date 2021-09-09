@@ -14,6 +14,7 @@ import (
 	"github.com/lib/pq"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/marketplace"
 )
 
@@ -91,7 +92,7 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 }
 
 // ListActiveLots returns active lots from the data base.
-func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor marketplace.Cursor) (marketplace.Page, error) {
+func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor pagination.Cursor) (marketplace.Page, error) {
 	var lotsListPage marketplace.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 	query := fmt.Sprintf(
@@ -149,7 +150,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor m
 }
 
 // ListActiveLotsByItemID returns active lots from the data base by item id.
-func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID, cursor marketplace.Cursor) (marketplace.Page, error) {
+func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID, cursor pagination.Cursor) (marketplace.Page, error) {
 	var lotsListPage marketplace.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 	query := fmt.Sprintf(
@@ -206,7 +207,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, 
 }
 
 // listPaginated returns paginated list of lots.
-func (marketplaceDB *marketplaceDB) listPaginated(ctx context.Context, cursor marketplace.Cursor, lotsList []marketplace.Lot) (marketplace.Page, error) {
+func (marketplaceDB *marketplaceDB) listPaginated(ctx context.Context, cursor pagination.Cursor, lotsList []marketplace.Lot) (marketplace.Page, error) {
 	var lotsListPage marketplace.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 
@@ -221,12 +222,14 @@ func (marketplaceDB *marketplaceDB) listPaginated(ctx context.Context, cursor ma
 	}
 
 	lotsListPage = marketplace.Page{
-		Lots:        lotsList,
-		Offset:      offset,
-		Limit:       cursor.Limit,
-		CurrentPage: cursor.Page,
-		PageCount:   pageCount,
-		TotalCount:  totalActiveCount,
+		Lots: lotsList,
+		Page: pagination.Page{
+			Offset:      offset,
+			Limit:       cursor.Limit,
+			CurrentPage: cursor.Page,
+			PageCount:   pageCount,
+			TotalCount:  totalActiveCount,
+		},
 	}
 
 	return lotsListPage, nil
