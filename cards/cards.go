@@ -8,6 +8,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/internal/pagination"
 )
 
 // ErrNoCard indicated that card does not exist.
@@ -25,11 +27,15 @@ type DB interface {
 	// Get returns card by id from the data base.
 	Get(ctx context.Context, id uuid.UUID) (Card, error)
 	// List returns all cards from the data base.
-	List(ctx context.Context) ([]Card, error)
-	// ListWithFilters returns cards from the data base with filters.
-	ListWithFilters(ctx context.Context, filters []Filters) ([]Card, error)
+	List(ctx context.Context, cursor pagination.Cursor) (Page, error)
+	// ListWithFilters returns all cards from the data base with filters.
+	ListWithFilters(ctx context.Context, filters []Filters, cursor pagination.Cursor) (Page, error)
+	// ListCardIDsWithFiltersWhereActiveLot returns card ids where active lots from DB, taking the necessary filters.
+	ListCardIDsWithFiltersWhereActiveLot(ctx context.Context, filters []Filters) ([]uuid.UUID, error)
 	// ListByPlayerName returns cards from DB by player name.
-	ListByPlayerName(ctx context.Context, filters Filters) ([]Card, error)
+	ListByPlayerName(ctx context.Context, filters Filters, cursor pagination.Cursor) (Page, error)
+	// ListCardIDsByPlayerNameWhereActiveLot returns card ids where active lot from DB by player name.
+	ListCardIDsByPlayerNameWhereActiveLot(ctx context.Context, filter Filters) ([]uuid.UUID, error)
 	// UpdateStatus updates status card in the database.
 	UpdateStatus(ctx context.Context, id uuid.UUID, status Status) error
 	// UpdateUserID updates user id card in the database.
@@ -264,6 +270,8 @@ type Config struct {
 		Gold    int `json:"gold"`
 		Diamond int `json:"diamond"`
 	} `json:"tattoos"`
+
+	pagination.Cursor `json:"cursor"`
 }
 
 // PercentageQualities entity for probabilities generate cards.
@@ -272,4 +280,10 @@ type PercentageQualities struct {
 	Silver  int `json:"silver"`
 	Gold    int `json:"gold"`
 	Diamond int `json:"diamond"`
+}
+
+// Page holds card page entity which is used to show listed page of cards.
+type Page struct {
+	Cards []Card          `json:"cards"`
+	Page  pagination.Page `json:"page"`
 }

@@ -6,6 +6,8 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -14,6 +16,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/sqlsearchoperators"
 )
@@ -44,21 +47,44 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 	var (
-		listActiveLots []marketplace.Lot
-		err            error
-		filters        cards.SliceFilters
+		lotsPage    marketplace.Page
+		err         error
+		filters     cards.SliceFilters
+		limit, page int
 	)
 	urlQuery := r.URL.Query()
+	limitQuery := urlQuery.Get("limit")
+	pageQuery := urlQuery.Get("page")
 	playerName := urlQuery.Get(string(cards.FilterPlayerName))
 
+	if limitQuery != "" {
+		limit, err = strconv.Atoi(limitQuery)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
+	if pageQuery != "" {
+		page, err = strconv.Atoi(pageQuery)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
+	cursor := pagination.Cursor{
+		Limit: limit,
+		Page:  page,
+	}
 	if playerName == "" {
 		if err := filters.DecodingURLParameters(urlQuery); err != nil {
 			controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		}
 		if len(filters) > 0 {
-			listActiveLots, err = controller.marketplace.ListActiveLotsWithFilters(ctx, filters)
+			lotsPage, err = controller.marketplace.ListActiveLotsWithFilters(ctx, filters, cursor)
 		} else {
-			listActiveLots, err = controller.marketplace.ListActiveLots(ctx)
+			lotsPage, err = controller.marketplace.ListActiveLots(ctx, cursor)
 		}
 	} else {
 		filter := cards.Filters{
@@ -66,7 +92,7 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 			Value:          playerName,
 			SearchOperator: sqlsearchoperators.LIKE,
 		}
-		listActiveLots, err = controller.marketplace.ListActiveLotsByPlayerName(ctx, filter)
+		lotsPage, err = controller.marketplace.ListActiveLotsByPlayerName(ctx, filter, cursor)
 	}
 	if err != nil {
 		controller.log.Error("could not get active lots list", ErrMarketplace.Wrap(err))
@@ -79,7 +105,7 @@ func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(listActiveLots); err != nil {
+	if err = json.NewEncoder(w).Encode(lotsPage); err != nil {
 		controller.log.Error("failed to write json response", ErrMarketplace.Wrap(err))
 		return
 	}
@@ -109,7 +135,19 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	responseLot := marketplace.ResponseLot{
+	getLot := struct {
+		ID           uuid.UUID          `json:"id"`
+		ItemID       uuid.UUID          `json:"itemId"`
+		Type         marketplace.Type   `json:"type"`
+		Status       marketplace.Status `json:"status"`
+		StartPrice   float64            `json:"startPrice"`
+		MaxPrice     float64            `json:"maxPrice"`
+		CurrentPrice float64            `json:"currentPrice"`
+		StartTime    time.Time          `json:"startTime"`
+		EndTime      time.Time          `json:"endTime"`
+		Period       marketplace.Period `json:"period"`
+		Card         cards.Card         `json:"card"`
+	}{
 		ID:           lot.ID,
 		ItemID:       lot.ItemID,
 		Type:         lot.Type,
@@ -120,9 +158,10 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		StartTime:    lot.StartTime,
 		EndTime:      lot.EndTime,
 		Period:       lot.Period,
+		Card:         lot.Card,
 	}
 
-	if err = json.NewEncoder(w).Encode(responseLot); err != nil {
+	if err = json.NewEncoder(w).Encode(getLot); err != nil {
 		controller.log.Error("failed to write json response", ErrMarketplace.Wrap(err))
 		return
 	}

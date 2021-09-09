@@ -15,6 +15,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/users"
 )
@@ -59,23 +60,51 @@ func NewMarketplace(log logger.Logger, marketplace *marketplace.Service, cards *
 // ListActiveLots is an endpoint that will provide a web page with active lots.
 func (controller *Marketplace) ListActiveLots(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	var (
+		lotsPage    marketplace.Page
+		err         error
+		limit, page int
+	)
+	urlQuery := r.URL.Query()
+	limitQuery := urlQuery.Get("limit")
+	pageQuery := urlQuery.Get("page")
 
-	lots, err := controller.marketplace.ListActiveLots(ctx)
+	if limitQuery != "" {
+		limit, err = strconv.Atoi(limitQuery)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
+	if pageQuery != "" {
+		page, err = strconv.Atoi(pageQuery)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
+	cursor := pagination.Cursor{
+		Limit: limit,
+		Page:  page,
+	}
+	lotsPage, err = controller.marketplace.ListActiveLots(ctx, cursor)
 	if err != nil {
-		controller.log.Error("could not lis lot by id", ErrMarketplace.Wrap(err))
+		controller.log.Error("could not list lots", ErrMarketplace.Wrap(err))
 		switch {
 		case marketplace.ErrNoLot.Has(err):
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 		default:
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	err = controller.templates.List.Execute(w, lots)
+	err = controller.templates.List.Execute(w, lotsPage)
 	if err != nil {
 		controller.log.Error("can not execute list lots template", ErrMarketplace.Wrap(err))
-		http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -91,7 +120,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	}
 	id, err := uuid.Parse(vars["id"])
 	if err != nil {
-		http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -100,9 +129,9 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		controller.log.Error("could not get lot by id", ErrMarketplace.Wrap(err))
 		switch {
 		case marketplace.ErrNoLot.Has(err):
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 		default:
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
@@ -110,7 +139,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	err = controller.templates.Get.Execute(w, lot)
 	if err != nil {
 		controller.log.Error("can not execute get lot template", ErrMarketplace.Wrap(err))
-		http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -121,44 +150,72 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 
 	switch r.Method {
 	case http.MethodGet:
-		cardsList, err := controller.cards.List(ctx)
+		var (
+			err         error
+			limit, page int
+		)
+		urlQuery := r.URL.Query()
+		limitQuery := urlQuery.Get("limit")
+		pageQuery := urlQuery.Get("page")
+
+		if limitQuery != "" {
+			limit, err = strconv.Atoi(limitQuery)
+			if err != nil {
+				http.Error(w, ErrCards.Wrap(err).Error(), http.StatusBadRequest)
+				return
+			}
+		}
+
+		if pageQuery != "" {
+			page, err = strconv.Atoi(pageQuery)
+			if err != nil {
+				http.Error(w, ErrCards.Wrap(err).Error(), http.StatusBadRequest)
+				return
+			}
+		}
+
+		cursor := pagination.Cursor{
+			Limit: limit,
+			Page:  page,
+		}
+		cardsListPage, err := controller.cards.List(ctx, cursor)
 		if err != nil {
-			controller.log.Error("could not get list cards", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not list cards", ErrMarketplace.Wrap(err))
 			switch {
 			case cards.ErrNoCard.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
+				http.Error(w, err.Error(), http.StatusNotFound)
 			default:
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			return
 		}
 
 		usersList, err := controller.users.List(ctx)
 		if err != nil {
-			controller.log.Error("could not get list users", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not list users", ErrMarketplace.Wrap(err))
 			switch {
 			case users.ErrNoUser.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
+				http.Error(w, err.Error(), http.StatusNotFound)
 			default:
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			return
 		}
 
 		responseCreateLot := marketplace.ResponseCreateLot{
-			Cards: cardsList,
+			Cards: cardsListPage,
 			Users: usersList,
 		}
 
 		if err = controller.templates.Create.Execute(w, responseCreateLot); err != nil {
-			controller.log.Error("could not execute create marketplace template", ErrMarketplace.Wrap(err))
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+			controller.log.Error("could not execute create lot template", ErrMarketplace.Wrap(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
 		err := r.ParseForm()
 		if err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -166,7 +223,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		strings.ToValidUTF8(itemIDForm, "")
 		itemID, err := uuid.Parse(itemIDForm)
 		if err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -174,7 +231,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		strings.ToValidUTF8(userIDForm, "")
 		userID, err := uuid.Parse(userIDForm)
 		if err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -182,14 +239,14 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		strings.ToValidUTF8(startPriceForm, "")
 		startPrice, err := strconv.ParseFloat(startPriceForm, 64)
 		if err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
 		maxPriceForm := r.FormValue("maxPrice")
 		strings.ToValidUTF8(maxPriceForm, "")
 		maxPrice, err := strconv.ParseFloat(maxPriceForm, 64)
 		if err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
 		periodForm := r.FormValue("period")
@@ -208,12 +265,12 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		}
 
 		if err := createLot.ValidateCreateLot(); err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
 		if err := controller.marketplace.CreateLot(ctx, createLot); err != nil {
 			controller.log.Error("could not create lot", ErrMarketplace.Wrap(err))
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -232,7 +289,7 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 	}
 	id, err := uuid.Parse(vars["id"])
 	if err != nil {
-		http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -240,24 +297,24 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 	case http.MethodGet:
 		_, err := controller.marketplace.GetLotByID(ctx, id)
 		if err != nil {
-			controller.log.Error("could not get list cards", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not list cards", ErrMarketplace.Wrap(err))
 			switch {
 			case cards.ErrNoCard.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
+				http.Error(w, err.Error(), http.StatusNotFound)
 			default:
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			return
 		}
 
 		usersList, err := controller.users.List(ctx)
 		if err != nil {
-			controller.log.Error("could not get list users", ErrMarketplace.Wrap(err))
+			controller.log.Error("could not list users", ErrMarketplace.Wrap(err))
 			switch {
 			case users.ErrNoUser.Has(err):
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusNotFound)
+				http.Error(w, err.Error(), http.StatusNotFound)
 			default:
-				http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			return
 		}
@@ -268,14 +325,14 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 		}
 
 		if err = controller.templates.Bet.Execute(w, responsePlaceBetLot); err != nil {
-			controller.log.Error("could not execute bet marketplace template", ErrMarketplace.Wrap(err))
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+			controller.log.Error("could not execute bet lot template", ErrMarketplace.Wrap(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
 		err := r.ParseForm()
 		if err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -283,7 +340,7 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 		strings.ToValidUTF8(userIDForm, "")
 		userID, err := uuid.Parse(userIDForm)
 		if err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -291,7 +348,7 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 		strings.ToValidUTF8(betAmountForm, "")
 		betAmount, err := strconv.ParseFloat(betAmountForm, 64)
 		if err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
 		betLot := marketplace.BetLot{
@@ -301,12 +358,12 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 		}
 
 		if err := betLot.ValidateBetLot(); err != nil {
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
 		if err := controller.marketplace.PlaceBetLot(ctx, betLot); err != nil {
 			controller.log.Error("could not place bet lot", ErrMarketplace.Wrap(err))
-			http.Error(w, ErrMarketplace.Wrap(err).Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
