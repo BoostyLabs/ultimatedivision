@@ -19,7 +19,6 @@ export const SignUp: React.FC<{ handleSignUp: any }> = ({
     handleSignUp
 }) => {
     const dispatch = useDispatch();
-    const browserHistory = useHistory();
     /** controlled values for form inputs */
     const [firstName, setFirstName] = useState('');
     const [firstNameError, setFirstNameError]

@@ -18,7 +18,6 @@ import ultimate from '@static/images/registerPage/ultimate.svg';
 import './index.scss';
 
 const SignUp: React.FC = () => {
-    const browserHistory = useHistory();
     const dispatch = useDispatch();
     /** controlled values for form inputs */
     const [firstName, setFirstName] = useState('');

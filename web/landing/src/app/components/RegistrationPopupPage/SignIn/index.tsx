@@ -18,10 +18,6 @@ export const SignIn: React.FC<{
     handleSignUp: any
 }> = ({ handleResetPassword, handleSignUp }) => {
     const dispatch = useDispatch();
-    const browserHistory = useHistory();
-    /** uses magic string variable, because project build
-     * return error when imports WhitePaper RouteConfig from ./console/ */
-    const whitePaperURL = '/whitepaper';
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
