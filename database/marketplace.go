@@ -227,7 +227,7 @@ func (marketplaceDB *marketplaceDB) listPaginated(ctx context.Context, cursor ma
 	return lotsListPage, nil
 }
 
-// TotalActiveCount counts all the lots in the table.
+// TotalActiveCount counts active lots in the table.
 func (marketplaceDB *marketplaceDB) TotalActiveCount(ctx context.Context) (int, error) {
 	var count int
 	query := fmt.Sprintf(`SELECT COUNT(*) FROM lots WHERE lots.status = $1`)
