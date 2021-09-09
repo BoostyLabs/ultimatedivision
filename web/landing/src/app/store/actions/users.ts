@@ -39,7 +39,7 @@ export const changePassword = (password: string, newPassword: string) => ({
 export const confirmEmail = (token: string) => ({
     type: CONFIRM_EMAIL,
     token,
-})
+});
 
 const client = new UserClient();
 const users = new UserService(client);
