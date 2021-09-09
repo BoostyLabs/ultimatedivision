@@ -9,6 +9,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/cards"
+	"ultimatedivision/users"
 )
 
 // ErrNoLot indicated that lot does not exist.
@@ -27,6 +30,8 @@ type DB interface {
 	GetLotByID(ctx context.Context, id uuid.UUID) (Lot, error)
 	// ListActiveLots returns active lots from the data base.
 	ListActiveLots(ctx context.Context) ([]Lot, error)
+	// ListActiveLotsByItemID returns active lots from the data base by item id.
+	ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID) ([]Lot, error)
 	// ListExpiredLot returns active lots where end time lower than or equal to time now UTC from the data base.
 	ListExpiredLot(ctx context.Context) ([]Lot, error)
 	// UpdateShopperIDLot updates shopper id of lot in the database.
@@ -41,18 +46,19 @@ type DB interface {
 
 // Lot describes lot entity.
 type Lot struct {
-	ID           uuid.UUID `json:"id"`
-	ItemID       uuid.UUID `json:"itemId"`
-	Type         Type      `json:"type"`
-	UserID       uuid.UUID `json:"userId"`
-	ShopperID    uuid.UUID `json:"shopperId"`
-	Status       Status    `json:"status"`
-	StartPrice   float64   `json:"startPrice"`
-	MaxPrice     float64   `json:"maxPrice"`
-	CurrentPrice float64   `json:"currentPrice"`
-	StartTime    time.Time `json:"startTime"`
-	EndTime      time.Time `json:"endTime"`
-	Period       Period    `json:"period"`
+	ID           uuid.UUID  `json:"id"`
+	ItemID       uuid.UUID  `json:"itemId"`
+	Type         Type       `json:"type"`
+	UserID       uuid.UUID  `json:"userId"`
+	ShopperID    uuid.UUID  `json:"shopperId"`
+	Status       Status     `json:"status"`
+	StartPrice   float64    `json:"startPrice"`
+	MaxPrice     float64    `json:"maxPrice"`
+	CurrentPrice float64    `json:"currentPrice"`
+	StartTime    time.Time  `json:"startTime"`
+	EndTime      time.Time  `json:"endTime"`
+	Period       Period     `json:"period"`
+	Card         cards.Card `json:"card"`
 }
 
 // Type defines the list of possible lot types.
@@ -96,6 +102,7 @@ type Config struct {
 type CreateLot struct {
 	ItemID     uuid.UUID `json:"itemId"`
 	Type       Type      `json:"type"`
+	UserID     uuid.UUID `json:"userId"`
 	StartPrice float64   `json:"startPrice"`
 	MaxPrice   float64   `json:"maxPrice"`
 	Period     Period    `json:"period"`
@@ -104,6 +111,7 @@ type CreateLot struct {
 // BetLot entity that contains the values required to place bet the lot.
 type BetLot struct {
 	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"userId"`
 	BetAmount float64   `json:"betAmount"`
 }
 
@@ -148,16 +156,14 @@ func (betLot BetLot) ValidateBetLot() error {
 	return nil
 }
 
-// ResponseLot entity describes the values required to response for get lot by id.
-type ResponseLot struct {
-	ID           uuid.UUID `json:"id"`
-	ItemID       uuid.UUID `json:"itemId"`
-	Type         Type      `json:"type"`
-	Status       Status    `json:"status"`
-	StartPrice   float64   `json:"startPrice"`
-	MaxPrice     float64   `json:"maxPrice"`
-	CurrentPrice float64   `json:"currentPrice"`
-	StartTime    time.Time `json:"startTime"`
-	EndTime      time.Time `json:"endTime"`
-	Period       Period    `json:"period"`
+// ResponseCreateLot entity describes the values required to response for create lot in admin.
+type ResponseCreateLot struct {
+	Cards cards.Page
+	Users []users.User
+}
+
+// ResponsePlaceBetLot entity describes the values required to response for place bet lot in admin.
+type ResponsePlaceBetLot struct {
+	ID    uuid.UUID
+	Users []users.User
 }

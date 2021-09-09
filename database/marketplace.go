@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/marketplace"
@@ -53,15 +54,29 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 	lot := marketplace.Lot{}
 	query :=
 		`SELECT 
-			` + allLotOfFields + `
+			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
+			cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
+			cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
+			stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
+			forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
+			tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
 		FROM 
 			lots
+		LEFT JOIN 
+			cards ON lots.item_id = cards.id
 		WHERE 
-			id = $1
+			lots.id = $1
 		`
 	err := marketplaceDB.conn.QueryRowContext(ctx, query, id).Scan(
-		&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status,
-		&lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
+		&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status, &lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
+		&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.PictureType, &lot.Card.Height, &lot.Card.Weight, &lot.Card.SkinColor, &lot.Card.HairStyle,
+		&lot.Card.HairColor, &lot.Card.DominantFoot, &lot.Card.IsTattoos, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
+		&lot.Card.Composure, &lot.Card.Aggression, &lot.Card.Vision, &lot.Card.Awareness, &lot.Card.Crosses, &lot.Card.Physique, &lot.Card.Acceleration, &lot.Card.RunningSpeed,
+		&lot.Card.ReactionSpeed, &lot.Card.Agility, &lot.Card.Stamina, &lot.Card.Strength, &lot.Card.Jumping, &lot.Card.Balance, &lot.Card.Technique, &lot.Card.Dribbling,
+		&lot.Card.BallControl, &lot.Card.WeakFoot, &lot.Card.SkillMoves, &lot.Card.Finesse, &lot.Card.Curve, &lot.Card.Volleys, &lot.Card.ShortPassing, &lot.Card.LongPassing,
+		&lot.Card.ForwardPass, &lot.Card.Offense, &lot.Card.FinishingAbility, &lot.Card.ShotPower, &lot.Card.Accuracy, &lot.Card.Distance, &lot.Card.Penalty,
+		&lot.Card.FreeKicks, &lot.Card.Corners, &lot.Card.HeadingAccuracy, &lot.Card.Defence, &lot.Card.OffsideTrap, &lot.Card.Sliding, &lot.Card.Tackles, &lot.Card.BallFocus,
+		&lot.Card.Interceptions, &lot.Card.Vigilance, &lot.Card.Goalkeeping, &lot.Card.Reflexes, &lot.Card.Diving, &lot.Card.Handling, &lot.Card.Sweeping, &lot.Card.Throwing,
 	)
 
 	switch {
@@ -78,16 +93,23 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context) ([]marketplace.Lot, error) {
 	query :=
 		`SELECT 
-			` + allLotOfFields + ` 
+			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
+			cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
+            cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
+            stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
+            forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
+            tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
 		FROM 
 			lots
+		LEFT JOIN 
+			cards ON lots.item_id = cards.id
 		WHERE
-			status = $1
+			lots.status = $1
 		`
 
 	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive)
 	if err != nil {
-		return nil, ErrCard.Wrap(err)
+		return nil, ErrMarketplace.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -97,8 +119,15 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context) ([]marke
 	for rows.Next() {
 		lot := marketplace.Lot{}
 		if err = rows.Scan(
-			&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status,
-			&lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
+			&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status, &lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
+			&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.PictureType, &lot.Card.Height, &lot.Card.Weight, &lot.Card.SkinColor, &lot.Card.HairStyle,
+			&lot.Card.HairColor, &lot.Card.DominantFoot, &lot.Card.IsTattoos, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
+			&lot.Card.Composure, &lot.Card.Aggression, &lot.Card.Vision, &lot.Card.Awareness, &lot.Card.Crosses, &lot.Card.Physique, &lot.Card.Acceleration, &lot.Card.RunningSpeed,
+			&lot.Card.ReactionSpeed, &lot.Card.Agility, &lot.Card.Stamina, &lot.Card.Strength, &lot.Card.Jumping, &lot.Card.Balance, &lot.Card.Technique, &lot.Card.Dribbling,
+			&lot.Card.BallControl, &lot.Card.WeakFoot, &lot.Card.SkillMoves, &lot.Card.Finesse, &lot.Card.Curve, &lot.Card.Volleys, &lot.Card.ShortPassing, &lot.Card.LongPassing,
+			&lot.Card.ForwardPass, &lot.Card.Offense, &lot.Card.FinishingAbility, &lot.Card.ShotPower, &lot.Card.Accuracy, &lot.Card.Distance, &lot.Card.Penalty,
+			&lot.Card.FreeKicks, &lot.Card.Corners, &lot.Card.HeadingAccuracy, &lot.Card.Defence, &lot.Card.OffsideTrap, &lot.Card.Sliding, &lot.Card.Tackles, &lot.Card.BallFocus,
+			&lot.Card.Interceptions, &lot.Card.Vigilance, &lot.Card.Goalkeeping, &lot.Card.Reflexes, &lot.Card.Diving, &lot.Card.Handling, &lot.Card.Sweeping, &lot.Card.Throwing,
 		); err != nil {
 			return nil, marketplace.ErrNoLot.Wrap(err)
 		}
@@ -109,6 +138,57 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context) ([]marke
 		return nil, ErrMarketplace.Wrap(err)
 	}
 
+	return lots, nil
+}
+
+// ListActiveLotsByItemID returns active lots from the data base by item id.
+func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID) ([]marketplace.Lot, error) {
+	query :=
+		`SELECT 
+			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
+			cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
+			cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
+			stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
+			forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
+			tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
+		FROM 
+			lots
+		LEFT JOIN 
+			cards ON lots.item_id = cards.id
+		WHERE
+			lots.status = $1 AND item_id = ANY($2)
+		`
+
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, pq.Array(itemIds))
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	lots := []marketplace.Lot{}
+	for rows.Next() {
+		lot := marketplace.Lot{}
+		if err = rows.Scan(
+			&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status, &lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
+			&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.PictureType, &lot.Card.Height, &lot.Card.Weight, &lot.Card.SkinColor, &lot.Card.HairStyle,
+			&lot.Card.HairColor, &lot.Card.DominantFoot, &lot.Card.IsTattoos, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
+			&lot.Card.Composure, &lot.Card.Aggression, &lot.Card.Vision, &lot.Card.Awareness, &lot.Card.Crosses, &lot.Card.Physique, &lot.Card.Acceleration, &lot.Card.RunningSpeed,
+			&lot.Card.ReactionSpeed, &lot.Card.Agility, &lot.Card.Stamina, &lot.Card.Strength, &lot.Card.Jumping, &lot.Card.Balance, &lot.Card.Technique, &lot.Card.Dribbling,
+			&lot.Card.BallControl, &lot.Card.WeakFoot, &lot.Card.SkillMoves, &lot.Card.Finesse, &lot.Card.Curve, &lot.Card.Volleys, &lot.Card.ShortPassing, &lot.Card.LongPassing,
+			&lot.Card.ForwardPass, &lot.Card.Offense, &lot.Card.FinishingAbility, &lot.Card.ShotPower, &lot.Card.Accuracy, &lot.Card.Distance, &lot.Card.Penalty,
+			&lot.Card.FreeKicks, &lot.Card.Corners, &lot.Card.HeadingAccuracy, &lot.Card.Defence, &lot.Card.OffsideTrap, &lot.Card.Sliding, &lot.Card.Tackles, &lot.Card.BallFocus,
+			&lot.Card.Interceptions, &lot.Card.Vigilance, &lot.Card.Goalkeeping, &lot.Card.Reflexes, &lot.Card.Diving, &lot.Card.Handling, &lot.Card.Sweeping, &lot.Card.Throwing,
+		); err != nil {
+			return nil, marketplace.ErrNoLot.Wrap(err)
+		}
+
+		lots = append(lots, lot)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
 	return lots, nil
 }
 
@@ -127,7 +207,7 @@ func (marketplaceDB *marketplaceDB) ListExpiredLot(ctx context.Context) ([]marke
 
 	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, time.Now().UTC())
 	if err != nil {
-		return nil, ErrCard.Wrap(err)
+		return nil, ErrMarketplace.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
