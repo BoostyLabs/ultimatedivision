@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package templatemath
+package templatefuncs
 
 // Iter function for creating a slice of iterable values from minimum and maximum values.
 func Iter(start, end int) []int {
