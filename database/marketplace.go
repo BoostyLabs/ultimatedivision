@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -90,26 +91,32 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 }
 
 // ListActiveLots returns active lots from the data base.
-func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context) ([]marketplace.Lot, error) {
-	query :=
+func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor marketplace.Cursor) (marketplace.Page, error) {
+	var lotsListPage marketplace.Page
+	offset := (cursor.Page - 1) * cursor.Limit
+	query := fmt.Sprintf(
 		`SELECT 
 			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
 			cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
-            cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
-            stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
-            forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
-            tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
+			cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
+			stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
+			forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
+			tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing
 		FROM 
 			lots
 		LEFT JOIN 
 			cards ON lots.item_id = cards.id
 		WHERE
 			lots.status = $1
-		`
+		LIMIT 
+			%d 
+		OFFSET 
+			%d
+		`, cursor.Limit, offset)
 
 	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive)
 	if err != nil {
-		return nil, ErrMarketplace.Wrap(err)
+		return lotsListPage, ErrMarketplace.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -129,21 +136,20 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context) ([]marke
 			&lot.Card.FreeKicks, &lot.Card.Corners, &lot.Card.HeadingAccuracy, &lot.Card.Defence, &lot.Card.OffsideTrap, &lot.Card.Sliding, &lot.Card.Tackles, &lot.Card.BallFocus,
 			&lot.Card.Interceptions, &lot.Card.Vigilance, &lot.Card.Goalkeeping, &lot.Card.Reflexes, &lot.Card.Diving, &lot.Card.Handling, &lot.Card.Sweeping, &lot.Card.Throwing,
 		); err != nil {
-			return nil, marketplace.ErrNoLot.Wrap(err)
+			return lotsListPage, marketplace.ErrNoLot.Wrap(err)
 		}
 
 		lots = append(lots, lot)
 	}
-	if err = rows.Err(); err != nil {
-		return nil, ErrMarketplace.Wrap(err)
-	}
-
-	return lots, nil
+	lotsListPage, err = marketplaceDB.listPaginated(ctx, cursor, lots)
+	return lotsListPage, ErrMarketplace.Wrap(err)
 }
 
 // ListActiveLotsByItemID returns active lots from the data base by item id.
-func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID) ([]marketplace.Lot, error) {
-	query :=
+func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID, cursor marketplace.Cursor) (marketplace.Page, error) {
+	var lotsListPage marketplace.Page
+	offset := (cursor.Page - 1) * cursor.Limit
+	query := fmt.Sprintf(
 		`SELECT 
 			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
 			cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
@@ -157,11 +163,15 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, 
 			cards ON lots.item_id = cards.id
 		WHERE
 			lots.status = $1 AND item_id = ANY($2)
-		`
+		LIMIT 
+			%d 
+		OFFSET 
+			%d
+		`, cursor.Limit, offset)
 
 	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, pq.Array(itemIds))
 	if err != nil {
-		return nil, ErrMarketplace.Wrap(err)
+		return lotsListPage, ErrMarketplace.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -181,15 +191,48 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, 
 			&lot.Card.FreeKicks, &lot.Card.Corners, &lot.Card.HeadingAccuracy, &lot.Card.Defence, &lot.Card.OffsideTrap, &lot.Card.Sliding, &lot.Card.Tackles, &lot.Card.BallFocus,
 			&lot.Card.Interceptions, &lot.Card.Vigilance, &lot.Card.Goalkeeping, &lot.Card.Reflexes, &lot.Card.Diving, &lot.Card.Handling, &lot.Card.Sweeping, &lot.Card.Throwing,
 		); err != nil {
-			return nil, marketplace.ErrNoLot.Wrap(err)
+			return lotsListPage, marketplace.ErrNoLot.Wrap(err)
 		}
 
 		lots = append(lots, lot)
 	}
-	if err = rows.Err(); err != nil {
-		return nil, ErrMarketplace.Wrap(err)
+	lotsListPage, err = marketplaceDB.listPaginated(ctx, cursor, lots)
+	return lotsListPage, ErrMarketplace.Wrap(err)
+}
+
+// listPaginated returns paginated list of lots.
+func (marketplaceDB *marketplaceDB) listPaginated(ctx context.Context, cursor marketplace.Cursor, lotsList []marketplace.Lot) (marketplace.Page, error) {
+	var lotsListPage marketplace.Page
+	offset := (cursor.Page - 1) * cursor.Limit
+
+	totalActiveCount, err := marketplaceDB.TotalActiveCount(ctx)
+	if err != nil {
+		return lotsListPage, ErrCard.Wrap(err)
 	}
-	return lots, nil
+
+	pageCount := totalActiveCount / cursor.Limit
+	if totalActiveCount%cursor.Limit != 0 {
+		pageCount++
+	}
+
+	lotsListPage = marketplace.Page{
+		Lots:        lotsList,
+		Offset:      offset,
+		Limit:       cursor.Limit,
+		CurrentPage: cursor.Page,
+		PageCount:   pageCount,
+		TotalCount:  totalActiveCount,
+	}
+
+	return lotsListPage, nil
+}
+
+// TotalActiveCount counts all the lots in the table.
+func (marketplaceDB *marketplaceDB) TotalActiveCount(ctx context.Context) (int, error) {
+	var count int
+	query := fmt.Sprintf(`SELECT COUNT(*) FROM lots WHERE lots.status = $1`)
+	err := marketplaceDB.conn.QueryRowContext(ctx, query, marketplace.StatusActive).Scan(&count)
+	return count, ErrCard.Wrap(err)
 }
 
 // ListExpiredLot returns active lots where end time lower than or equal to time now UTC from the data base.
