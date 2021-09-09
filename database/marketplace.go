@@ -136,7 +136,10 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor m
 			&lot.Card.FreeKicks, &lot.Card.Corners, &lot.Card.HeadingAccuracy, &lot.Card.Defence, &lot.Card.OffsideTrap, &lot.Card.Sliding, &lot.Card.Tackles, &lot.Card.BallFocus,
 			&lot.Card.Interceptions, &lot.Card.Vigilance, &lot.Card.Goalkeeping, &lot.Card.Reflexes, &lot.Card.Diving, &lot.Card.Handling, &lot.Card.Sweeping, &lot.Card.Throwing,
 		); err != nil {
-			return lotsListPage, marketplace.ErrNoLot.Wrap(err)
+			if errors.Is(err, sql.ErrNoRows) {
+				return lotsListPage, marketplace.ErrNoLot.Wrap(err)
+			}
+			return lotsListPage, ErrMarketplace.Wrap(err)
 		}
 
 		lots = append(lots, lot)
@@ -191,9 +194,11 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, 
 			&lot.Card.FreeKicks, &lot.Card.Corners, &lot.Card.HeadingAccuracy, &lot.Card.Defence, &lot.Card.OffsideTrap, &lot.Card.Sliding, &lot.Card.Tackles, &lot.Card.BallFocus,
 			&lot.Card.Interceptions, &lot.Card.Vigilance, &lot.Card.Goalkeeping, &lot.Card.Reflexes, &lot.Card.Diving, &lot.Card.Handling, &lot.Card.Sweeping, &lot.Card.Throwing,
 		); err != nil {
-			return lotsListPage, marketplace.ErrNoLot.Wrap(err)
+			if errors.Is(err, sql.ErrNoRows) {
+				return lotsListPage, marketplace.ErrNoLot.Wrap(err)
+			}
+			return lotsListPage, ErrMarketplace.Wrap(err)
 		}
-
 		lots = append(lots, lot)
 	}
 	lotsListPage, err = marketplaceDB.listPaginated(ctx, cursor, lots)
@@ -205,9 +210,9 @@ func (marketplaceDB *marketplaceDB) listPaginated(ctx context.Context, cursor ma
 	var lotsListPage marketplace.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 
-	totalActiveCount, err := marketplaceDB.TotalActiveCount(ctx)
+	totalActiveCount, err := marketplaceDB.totalActiveCount(ctx)
 	if err != nil {
-		return lotsListPage, ErrCard.Wrap(err)
+		return lotsListPage, ErrMarketplace.Wrap(err)
 	}
 
 	pageCount := totalActiveCount / cursor.Limit
@@ -227,12 +232,15 @@ func (marketplaceDB *marketplaceDB) listPaginated(ctx context.Context, cursor ma
 	return lotsListPage, nil
 }
 
-// TotalActiveCount counts active lots in the table.
-func (marketplaceDB *marketplaceDB) TotalActiveCount(ctx context.Context) (int, error) {
+// totalActiveCount counts active lots in the table.
+func (marketplaceDB *marketplaceDB) totalActiveCount(ctx context.Context) (int, error) {
 	var count int
 	query := fmt.Sprintf(`SELECT COUNT(*) FROM lots WHERE lots.status = $1`)
 	err := marketplaceDB.conn.QueryRowContext(ctx, query, marketplace.StatusActive).Scan(&count)
-	return count, ErrCard.Wrap(err)
+	if errors.Is(err, sql.ErrNoRows) {
+		return 0, marketplace.ErrNoLot.Wrap(err)
+	}
+	return count, ErrMarketplace.Wrap(err)
 }
 
 // ListExpiredLot returns active lots where end time lower than or equal to time now UTC from the data base.
@@ -263,7 +271,10 @@ func (marketplaceDB *marketplaceDB) ListExpiredLot(ctx context.Context) ([]marke
 			&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status,
 			&lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
 		); err != nil {
-			return nil, marketplace.ErrNoLot.Wrap(err)
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, marketplace.ErrNoLot.Wrap(err)
+			}
+			return nil, ErrMarketplace.Wrap(err)
 		}
 
 		lots = append(lots, lot)

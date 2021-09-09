@@ -30,8 +30,6 @@ type DB interface {
 	ListWithFilters(ctx context.Context, filters []Filters, cursor Cursor) (Page, error)
 	// ListByPlayerName returns cards from DB by player name.
 	ListByPlayerName(ctx context.Context, filters Filters, cursor Cursor) (Page, error)
-	// TotalCount counts all the cards in the table.
-	TotalCount(ctx context.Context) (int, error)
 	// UpdateStatus updates status card in the database.
 	UpdateStatus(ctx context.Context, id uuid.UUID, status Status) error
 	// UpdateUserID updates user id card in the database.

@@ -184,6 +184,9 @@ func listAccessoryIdsByCardID(ctx context.Context, cardsDB *cardsDB, cardID uuid
 	for rows.Next() {
 		var cardID int
 		if err = rows.Scan(&cardID); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, cards.ErrNoCard.Wrap(err)
+			}
 			return nil, ErrCard.Wrap(err)
 		}
 		data = append(data, cardID)
@@ -223,7 +226,10 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor cards.Cursor) (cards.Pa
 			&card.BallFocus, &card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping,
 			&card.Throwing,
 		); err != nil {
-			return cardsListPage, cards.ErrNoCard.Wrap(err)
+			if errors.Is(err, sql.ErrNoRows) {
+				return cardsListPage, cards.ErrNoCard.Wrap(err)
+			}
+			return cardsListPage, ErrCard.Wrap(err)
 		}
 
 		accessoryIds, err := listAccessoryIdsByCardID(ctx, cardsDB, card.ID)
@@ -285,7 +291,10 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 			&card.FreeKicks, &card.Corners, &card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus,
 			&card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
 		); err != nil {
-			return cardsListPage, cards.ErrNoCard.Wrap(err)
+			if errors.Is(err, sql.ErrNoRows) {
+				return cardsListPage, cards.ErrNoCard.Wrap(err)
+			}
+			return cardsListPage, ErrCard.Wrap(err)
 		}
 
 		accessoryIds, err := listAccessoryIdsByCardID(ctx, cardsDB, card.ID)
@@ -333,7 +342,10 @@ func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filte
 			&card.FreeKicks, &card.Corners, &card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus,
 			&card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
 		); err != nil {
-			return cardsListPage, cards.ErrNoCard.Wrap(err)
+			if errors.Is(err, sql.ErrNoRows) {
+				return cardsListPage, cards.ErrNoCard.Wrap(err)
+			}
+			return cardsListPage, ErrCard.Wrap(err)
 		}
 
 		accessoryIds, err := listAccessoryIdsByCardID(ctx, cardsDB, card.ID)
@@ -357,7 +369,7 @@ func (cardsDB *cardsDB) listPaginated(ctx context.Context, cursor cards.Cursor, 
 	var cardsListPage cards.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 
-	totalCount, err := cardsDB.TotalCount(ctx)
+	totalCount, err := cardsDB.totalCount(ctx)
 	if err != nil {
 		return cardsListPage, ErrCard.Wrap(err)
 	}
@@ -379,11 +391,14 @@ func (cardsDB *cardsDB) listPaginated(ctx context.Context, cursor cards.Cursor, 
 	return cardsListPage, nil
 }
 
-// TotalCount counts all the cards in the table.
-func (cardsDB *cardsDB) TotalCount(ctx context.Context) (int, error) {
+// totalCount counts all the cards in the table.
+func (cardsDB *cardsDB) totalCount(ctx context.Context) (int, error) {
 	var count int
 	query := fmt.Sprintf(`SELECT COUNT(*) FROM cards`)
 	err := cardsDB.conn.QueryRowContext(ctx, query).Scan(&count)
+	if errors.Is(err, sql.ErrNoRows) {
+		return 0, cards.ErrNoCard.Wrap(err)
+	}
 	return count, ErrCard.Wrap(err)
 }
 
