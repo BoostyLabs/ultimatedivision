@@ -327,6 +327,12 @@ func (controller *Clubs) UpdateCardPosition(w http.ResponseWriter, r *http.Reque
 			return
 		}
 	case http.MethodPost:
+		err = r.ParseForm()
+		if err != nil {
+			http.Error(w, "could not parse form", http.StatusBadRequest)
+			return
+		}
+
 		newPosition, err := strconv.Atoi(r.FormValue("position"))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
