@@ -177,7 +177,12 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 		squad, err := controller.clubs.GetSquad(ctx, clubID)
 		if err != nil {
 			controller.log.Error("could not get squad", ErrClubs.Wrap(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			switch {
+			case clubs.ErrNoSquad.Has(err):
+				http.Error(w, err.Error(), http.StatusNotFound)
+			default:
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
 			return
 		}
 
