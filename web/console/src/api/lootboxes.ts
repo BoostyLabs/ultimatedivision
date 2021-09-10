@@ -9,18 +9,24 @@ export class LootboxClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/lootboxes';
     /** buys and opens lootbox */
     public async buy(lootbox: Lootbox): Promise<Response> {
-        const response = await this.http.post(this.ROOT_PATH, JSON.stringify({ type: lootbox.type }));
+        const lootboxResponse = await this.http.post(this.ROOT_PATH, JSON.stringify({ type: lootbox.type }));
         // TODO: temporary code for further testing.
-        if (!response.ok) {
-            throw this.handleError(response);
+        if (!lootboxResponse.ok) {
+            this.handleError(lootboxResponse);
         }
 
-        const lootboxData = await response.json();
+        const lootboxData = await lootboxResponse.json();
 
         if (!lootboxData) {
-            throw this.handleError(response);
+            this.handleError(lootboxResponse);
         }
 
-        return await this.http.post(`${this.ROOT_PATH}/${lootboxData.id}`);
+        const deleteLootbox = await this.http.post(`${this.ROOT_PATH}/${lootboxData.id}`);
+
+        if (!deleteLootbox.ok) {
+            this.handleError(deleteLootbox);
+        }
+
+        return deleteLootbox;
     };
 };
