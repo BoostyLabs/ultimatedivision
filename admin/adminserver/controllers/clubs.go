@@ -325,7 +325,15 @@ func (controller *Clubs) UpdateCardPosition(w http.ResponseWriter, r *http.Reque
 
 	switch r.Method {
 	case http.MethodGet:
-		err = controller.templates.UpdateCardPosition.Execute(w, updateCardTemplateData{cardID, squadID})
+		updateCardPosition := struct {
+			CardID  uuid.UUID
+			SquadID uuid.UUID
+		}{
+			CardID: cardID,
+			SquadID : squadID,
+		}
+
+		err = controller.templates.UpdateCardPosition.Execute(w, updateCardPosition)
 		if err != nil {
 			controller.log.Error("could not parse template", ErrClubs.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -379,10 +387,4 @@ func (controller *Clubs) DeleteCard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	Redirect(w, r, "/clubs/squad/"+squadID.String(), http.MethodGet)
-}
-
-// updateCardTemplateData combines cardID and squadID for transfer to update card position template.
-type updateCardTemplateData struct {
-	CardID  uuid.UUID
-	SquadID uuid.UUID
 }
