@@ -139,7 +139,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         CREATE TABLE IF NOT EXISTS clubs (
             id         BYTEA     PRIMARY KEY          NOT NULL,
             owner_id   BYTEA     REFERENCES users(id) NOT NULL,
-            club_name  VARCHAR                        NOT NULL,                                   
+            club_name  VARCHAR                        NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE       NOT NULL
         );
         CREATE TABLE IF NOT EXISTS squads (
