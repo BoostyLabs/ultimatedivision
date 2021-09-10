@@ -1,13 +1,9 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-// Copyright (C) 2021 Creditor Corp. Group.
-// See LICENSE for copying information.
-
 import { SetStateAction, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { changeUserPassword } from '@/app/store/actions/users';
 import { Validator } from '@/user/validation';
 
 import { UserDataArea } from '@components/common/UserDataArea';
