@@ -12,13 +12,13 @@ export class LootboxClient extends APIClient {
         const response = await this.http.post(this.ROOT_PATH, JSON.stringify({ type: lootbox.type }));
         // TODO: temporary code for further testing.
         if (!response.ok) {
-            throw this.handleError;
+            throw this.handleError(response);
         }
 
         const lootboxData = await response.json();
 
         if (!lootboxData) {
-            throw this.handleError;
+            throw this.handleError(response);
         }
 
         return await this.http.post(`${this.ROOT_PATH}/${lootboxData.id}`);
