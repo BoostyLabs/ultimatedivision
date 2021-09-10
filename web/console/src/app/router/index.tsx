@@ -64,7 +64,7 @@ export class RouteConfig {
     public static FootballerCard: ComponentRoutes = new ComponentRoutes(
         '/card',
         FootballerCard,
-        true,
+        false,
     );
     public static FootballField: ComponentRoutes = new ComponentRoutes(
         '/field',
