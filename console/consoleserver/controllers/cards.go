@@ -40,7 +40,7 @@ func NewCards(log logger.Logger, cards *cards.Service) *Cards {
 	return cardsController
 }
 
-// Get is an endpoint that allows will view detail card.
+// Get is an endpoint that allows to view details of cards.
 func (controller *Cards) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
@@ -48,7 +48,7 @@ func (controller *Cards) Get(w http.ResponseWriter, r *http.Request) {
 
 	id, err := uuid.Parse(vars["id"])
 	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusBadRequest, ErrCards.Wrap(err))
 		return
 	}
 
