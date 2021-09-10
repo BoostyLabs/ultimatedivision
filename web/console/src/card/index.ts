@@ -413,3 +413,25 @@ export class CreatedLot {
         public period: number,
     ) { }
 }
+
+export interface MarkeplaceResponse {
+    lots: MarketplaceLot[],
+    page: {
+        offset: number,
+        limit: number,
+        currentPage: number,
+        pageCount: number,
+        totalCount: number
+    }
+}
+
+export interface CardsResponse {
+    cards: CardInterface[],
+    page: {
+        offset: number,
+        limit: number,
+        currentPage: number,
+        pageCount: number,
+        totalCount: number
+    }
+}

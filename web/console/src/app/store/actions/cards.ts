@@ -10,11 +10,11 @@ import { CardService } from '@/card/service';
 export const GET_USER_CARDS = ' GET_USER_CARDS';
 export const GET_SELLING_CARDS = ' GET_SELLING_CARDS';
 
-export const getUserCards = (cards: []) => ({
+export const getUserCards = (cards: Card[]) => ({
     type: GET_USER_CARDS,
     cards,
 });
-export const getSellingCards = (cards: []) => ({
+export const getSellingCards = (cards: Partial<MarketplaceLot>[]) => ({
     type: GET_SELLING_CARDS,
     cards,
 });
@@ -25,14 +25,13 @@ const service = new CardService(client);
 /** thunk for creating user cards list */
 export const userCards = () => async function(dispatch: Dispatch) {
     const response = await service.getUserCards();
-    const cards = await response.json();
+    const cards = response.cards;
     dispatch(getUserCards(cards.map((card: Partial<CardInterface>) => new Card(card))));
 };
 /** thunk for creating user cards list */
 export const marketplaceCards = () => async function(dispatch: Dispatch) {
     const response = await service.getSellingCards();
-    const lots = await response.json();
-
+    const lots = response.lots;
     dispatch(getSellingCards(lots.map((lot: Partial<MarketplaceLot>) => ({ ...lot, card: new Card(lot.card) }))));
 };
 export const sellCard = (lot: CreatedLot) => async function(dispatch: any) {
