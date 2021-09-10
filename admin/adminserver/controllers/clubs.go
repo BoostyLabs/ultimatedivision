@@ -329,8 +329,8 @@ func (controller *Clubs) UpdateCardPosition(w http.ResponseWriter, r *http.Reque
 			CardID  uuid.UUID
 			SquadID uuid.UUID
 		}{
-			CardID: cardID,
-			SquadID : squadID,
+			CardID:  cardID,
+			SquadID: squadID,
 		}
 
 		err = controller.templates.UpdateCardPosition.Execute(w, updateCardPosition)
