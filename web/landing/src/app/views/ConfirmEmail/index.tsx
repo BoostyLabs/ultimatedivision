@@ -11,12 +11,15 @@ const ConfirmEmail: React.FC = () => {
     const dispatch = useDispatch();
     const currentLocation = useLocation();
     /** TODO: IT SHOULD TO BE REWORKED. */
-    const pathname = currentLocation.pathname;
-    const TOKEN_INDEX = 3;
+
+    const useQuery = () => {
+        return new URLSearchParams(useLocation().search);
+    };
+
+    const query = useQuery();
 
     const confirmEmail = () =>
-        dispatch(confirmUserEmail(pathname.split('/')[TOKEN_INDEX]));
-
+        dispatch(confirmUserEmail(query));
     ;
 
     return <div>

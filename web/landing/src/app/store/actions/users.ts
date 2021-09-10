@@ -36,7 +36,7 @@ export const changePassword = (password: string, newPassword: string) => ({
     }
 });
 /** user email confirm */
-export const confirmEmail = (token: string) => ({
+export const confirmEmail = (token: URLSearchParams) => ({
     type: CONFIRM_EMAIL,
     token,
 });
@@ -89,7 +89,7 @@ export const changeUserPassword = (password: string, newPassword: string) =>
     };
 
 /** thunk that implements user email confirm */
-export const confirmUserEmail = (token: string) =>
+export const confirmUserEmail = (token: URLSearchParams) =>
     async function (dispatch: Dispatch) {
         try {
             await users.confirmEmail(token);

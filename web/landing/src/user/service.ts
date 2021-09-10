@@ -22,7 +22,7 @@ export class UserService {
     public async changePassword(password: string, newPassword: string): Promise<void> {
         return await this.users.changePassword(password, newPassword);
     };
-    public async confirmEmail(token: string): Promise<Response> {
+    public async confirmEmail(token: URLSearchParams): Promise<Response> {
         return await this.users.confirmEmail(token);
     }
 };
