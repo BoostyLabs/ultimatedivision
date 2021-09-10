@@ -9,8 +9,6 @@ import { confirmUserEmail } from '@/app/store/actions/users';
 /** TODO: Rework this view after design solution */
 const ConfirmEmail: React.FC = () => {
     const dispatch = useDispatch();
-    const currentLocation = useLocation();
-    /** TODO: IT SHOULD TO BE REWORKED. */
 
     const useQuery = () => {
         return new URLSearchParams(useLocation().search);
