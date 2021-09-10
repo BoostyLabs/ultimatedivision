@@ -15,12 +15,12 @@ export class LootboxClient extends APIClient {
             throw this.handleError;
         }
 
-        const lootboxBD = await response.json();
+        const lootboxData = await response.json();
 
-        if (!lootboxBD) {
+        if (!lootboxData) {
             throw this.handleError;
         }
 
-        return await this.http.post(`${this.ROOT_PATH}/${lootboxBD.id}`);
+        return await this.http.post(`${this.ROOT_PATH}/${lootboxData.id}`);
     };
 };
