@@ -14,7 +14,7 @@ export const getUserCards = (cards: Card[]) => ({
     type: GET_USER_CARDS,
     cards,
 });
-export const getSellingCards = (cards: Partial<MarketplaceLot>[]) => ({
+export const getSellingCards = (cards: Array<Partial<MarketplaceLot>>) => ({
     type: GET_SELLING_CARDS,
     cards,
 });
@@ -29,13 +29,13 @@ export const userCards = () => async function(dispatch: Dispatch) {
     dispatch(getUserCards(cards.map((card: Partial<CardInterface>) => new Card(card))));
 };
 /** thunk for creating user cards list */
-export const marketplaceCards = () => async function(dispatch: Dispatch) {
-    const response = await service.getSellingCards();
+export const marketplaceLots = () => async function(dispatch: Dispatch) {
+    const response = await service.getLots();
     const lots = response.lots;
     dispatch(getSellingCards(lots.map((lot: Partial<MarketplaceLot>) => ({ ...lot, card: new Card(lot.card) }))));
 };
-export const sellCard = (lot: CreatedLot) => async function(dispatch: any) {
-    await service.sellCard(lot);
+
+export const createLot = (lot: CreatedLot) => async function(dispatch: any) {
+    await service.createLot(lot);
     dispatch(userCards());
-    dispatch(marketplaceCards());
 };

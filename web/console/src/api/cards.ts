@@ -14,11 +14,15 @@ export class CardClient extends APIClient {
         return await this.http.get(`${this.ROOT_PATH}/cards`);
     }
     /** method post for implementing buying cards */
-    public async sellCard(lot: CreatedLot): Promise<Response> {
+    public async createLot(lot: CreatedLot): Promise<Response> {
         return await this.http.post(`${this.ROOT_PATH}/marketplace`, JSON.stringify(lot));
     }
     /** method calls get method from APIClient */
-    public async getSellingCards(): Promise<Response> {
+    public async getLots(): Promise<Response> {
         return await this.http.get(`${this.ROOT_PATH}/marketplace`);
+    }
+    /** method calls get method from APIClient */
+    public async getLotById(id: string): Promise<Response> {
+        return await this.http.get(`${this.ROOT_PATH}/marketplace/${id}`);
     }
 }

@@ -44,11 +44,12 @@ export const PlayerCard: React.FC<{ card: Card; parentClassName: string }> = ({
                         key={index}>
                         {
                             /**
-                                * get only average value of player's game property
-                                */
+                                    * get only average value of player's game property
+                                    */
                             `${property.abbreviated} ${property.average} `
                         }
                     </li>,
             )}
         </ul>
     </>;
+
