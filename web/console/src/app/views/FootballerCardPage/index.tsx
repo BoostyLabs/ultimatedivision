@@ -9,14 +9,17 @@ import { FootballerCardInformation } from '@components/FootballerCard/Footballer
 import './index.scss';
 import { Card, MarketplaceLot } from '@/card';
 import { getLotFromApi } from '@/app/hooks/marketplace';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { RouteConfig } from '@/app/router';
 
 const FootballerCard: React.FC = () => {
     // @ts-ignore
-    const [cardData, handleData] = useState<SetStateAction<null | Card>>(null)
-
-    const id = location.pathname.slice(9)
-    getLotFromApi(id).then(result => handleData(result))
+    const [cardData, handleData] = useState<SetStateAction<null | Card>>(null);
+    const id = location.pathname.split(`/ud${RouteConfig.FootballerCard.path}/`).join('');
+    useEffect(() => {
+        getLotFromApi(id).then(data => handleData(data));
+    },[]);
+    // TODO: replace ud to needed path
 
 
     return (

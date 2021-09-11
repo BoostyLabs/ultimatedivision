@@ -31,5 +31,5 @@ export const useMarketplace = () => {
     export async function getLotFromApi(id: string): Promise<Card> {
         const response = await service.getLotById(id);
         const lot = await response.json();
-        return new Card(lot.card);
+        return await new Card(lot.card);
     }
