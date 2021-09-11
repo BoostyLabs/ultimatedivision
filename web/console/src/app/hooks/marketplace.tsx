@@ -17,7 +17,7 @@ export const useMarketplace = () => {
 
     /** Calls method get from  ClubClient */
     async function getCards() {
-        dispatch(marketplaceLots());
+        await dispatch(marketplaceLots());
     };
 
     useEffect(() => {
@@ -28,8 +28,10 @@ export const useMarketplace = () => {
 };
 
 
-    export async function getLotFromApi(id: string): Promise<Card> {
-        const response = await service.getLotById(id);
-        const lot = await response.json();
-        return await new Card(lot.card);
-    }
+/** Using for fetching data into FootballerCardPage, for reload posibility */
+export async function getLotFromApi(id: string): Promise<Card> {
+    const response = await service.getLotById(id);
+    const lot = await response.json();
+
+    return await new Card(lot.card);
+}

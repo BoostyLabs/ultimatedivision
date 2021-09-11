@@ -16,8 +16,8 @@ export const FootballerCardPrice: React.FC<{card: Card}> = ({ card }) => {
     const FIRST_CARD_INDEX = 0;
     const FULL_VALUE_STATISTIC_SCALE = 100;
 
-    const priceData = card.cardPrice
-        // @ts-ignore
+    const priceData = card.cardPrice;
+    // @ts-ignore
     const prpValue: number = priceData.prp;
 
     return (

@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { CardClient } from '@/api/cards';
-import { CreatedLot, MarkeplaceResponse, CardsResponse } from '@/card';
+import { CardsResponse, CreatedLot, MarkeplaceResponse } from '@/card';
 
 /**
  * exposes all bandwidth related logic
@@ -16,11 +16,13 @@ export class CardService {
     /** get marketplace cards from api */
     public async getLots(): Promise<MarkeplaceResponse> {
         const response = await this.card.getLots();
-        return await response.json()
+
+        return await response.json();
     }
     /** get user cards from api */
     public async getUserCards(): Promise<CardsResponse> {
-        const response = await this.card.getUserCards()
+        const response = await this.card.getUserCards();
+
         return await response.json();
     }
     /** create lot */
@@ -31,6 +33,5 @@ export class CardService {
     /** getting lot by id */
     public async getLotById(id: string): Promise<Response> {
         return await this.card.getLotById(id);
-
     }
 }

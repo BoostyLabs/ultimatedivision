@@ -18,7 +18,7 @@ const FootballerCard: React.FC = () => {
     const id = location.pathname.split(`/ud${RouteConfig.FootballerCard.path}/`).join('');
     useEffect(() => {
         getLotFromApi(id).then(data => handleData(data));
-    },[]);
+    }, []);
     // TODO: replace ud to needed path
 
 
