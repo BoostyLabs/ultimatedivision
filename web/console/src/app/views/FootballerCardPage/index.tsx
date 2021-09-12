@@ -16,8 +16,12 @@ const FootballerCard: React.FC = () => {
     // @ts-ignore
     const [cardData, handleData] = useState<SetStateAction<null | Card>>(null);
     const id = location.pathname.split(`/ud${RouteConfig.FootballerCard.path}/`).join('');
+
     useEffect(() => {
-        getLotFromApi(id).then(data => handleData(data));
+        (async function fetchCard() {
+            const card =  await getLotFromApi(id);
+            await handleData(card);
+        })()
     }, []);
 
     return (
