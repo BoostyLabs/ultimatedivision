@@ -20,12 +20,6 @@ const client = new LootboxClient();
 const service = new LootboxService(client);
 /** thunk that handles opening new lootbox */
 export const openLootbox = (lootbox: Lootbox) => async function(dispatch: Dispatch) {
-    try {
-        const opennedLootbox = await service.buy(lootbox);
-        dispatch(buyLootbox(opennedLootbox));
-    }
-    catch(e: any) {
-        /* eslint-disable */
-        console.log(e.message);
-    }
+    const opennedLootbox = await service.buy(lootbox);
+    dispatch(buyLootbox(opennedLootbox.map(card => new Card(card))));
 };

@@ -19,7 +19,10 @@
         font-size: 48px;
     }
     &__card-wrapper {
-        display: flex;
+        margin: 0 auto;
+        width: 80%;
+        display: grid;
+        grid-template-columns: repeat(5 , 1fr);
         justify-content: center;
     }
     &__card {

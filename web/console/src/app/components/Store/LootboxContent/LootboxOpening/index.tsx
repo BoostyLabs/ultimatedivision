@@ -15,9 +15,8 @@ import './index.scss';
 
 
 export const LootboxOpening = () => {
-    // TODO: will be replaced by backend data
-    // eslint-disable-next-line
-    const card = useSelector((state: RootState) => state.cardsReducer.club[0]);
+    const FIRST_CARD = 0;
+    const card = useSelector((state: RootState) => state.lootboxReducer.lootbox[FIRST_CARD]);
 
     return (
         <div className="box-animation">
@@ -47,9 +46,7 @@ export const LootboxOpening = () => {
             </div>
             <div className="box-animation__card-wrapper">
                 <div className="box-animation__card-wrapper-backlight">
-                    {card &&
-                        <MyCard card={card} />
-                    }
+                    <MyCard card={card} />
                 </div>
             </div>
         </div>

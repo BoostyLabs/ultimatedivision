@@ -19,9 +19,9 @@ const FootballerCard: React.FC = () => {
 
     useEffect(() => {
         (async function fetchCard() {
-            const card =  await getLotFromApi(id);
+            const card = await getLotFromApi(id);
             await handleData(card);
-        })()
+        })();
     }, []);
 
     return (
