@@ -22,7 +22,7 @@ var ErrCards = errs.Class("cards service error")
 //
 // architecture: DB
 type DB interface {
-	// Create add card in the data base.
+	// Create adds card in the data base.
 	Create(ctx context.Context, card Card) error
 	// Get returns card by id from the data base.
 	Get(ctx context.Context, id uuid.UUID) (Card, error)
