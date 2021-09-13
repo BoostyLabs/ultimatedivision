@@ -12,7 +12,7 @@ import { RouteConfig } from '@/app/router';
 
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { createLot } from '@/app/store/actions/cards';
+import { createLot, openUserCard } from '@/app/store/actions/cards';
 import { Card, CreatedLot } from '@/card';
 
 import './index.scss';
@@ -43,12 +43,7 @@ export const MyCard: React.FC<{ card: Card }> = ({ card }) => {
         >
             <Link
                 className="club-card__link"
-                to={{
-                    pathname: RouteConfig.FootballerCard.path,
-                    state: {
-                        card,
-                    },
-                }}
+                to={`${RouteConfig.Card.path}/${card.id}`}
             >
                 <img
                     className="club-card__confirm-icon"

@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
-import { openMarketplaceCard } from '@/app/store/actions/cards';
+import { openMarketplaceCard, openUserCard } from '@/app/store/actions/cards';
 
 import { FootballerCardIllustrations } from '@components/FootballerCard/FootballerCardIllustrations';
 import { FootballerCardPrice } from '@components/FootballerCard/FootballerCardPrice';
@@ -22,7 +22,11 @@ const FootballerCard: React.FC = () => {
         const LENGTH_INDEX_DIFFEFENCE = 1;
         const url = location.pathname.split('/');
         const id = url[url.length - LENGTH_INDEX_DIFFEFENCE];
-        dispatch(openMarketplaceCard(id));
+        console.log(id)
+        console.log(location.pathname.includes('lot'))
+        location.pathname.includes('lot')?
+        dispatch(openMarketplaceCard(id)):
+        dispatch(openUserCard(id));
     }, []);
 
     return (

@@ -61,7 +61,12 @@ export class RouteConfig {
         MarketPlace,
         true,
     );
-    public static FootballerCard: ComponentRoutes = new ComponentRoutes(
+    public static Lot: ComponentRoutes = new ComponentRoutes(
+        '/lot',
+        FootballerCard,
+        false,
+    );
+    public static Card: ComponentRoutes = new ComponentRoutes(
         '/card',
         FootballerCard,
         false,
@@ -141,7 +146,8 @@ export class RouteConfig {
         RouteConfig.FootballField,
         RouteConfig.MarketPlace,
         RouteConfig.Club,
-        RouteConfig.FootballerCard,
+        RouteConfig.Card,
+        RouteConfig.Lot,
         RouteConfig.Store,
         RouteConfig.Whitepaper.addChildren([
             RouteConfig.Summary,

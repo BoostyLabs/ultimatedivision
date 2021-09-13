@@ -13,15 +13,18 @@ export class CardService {
     public constructor(club: CardClient) {
         this.card = club;
     }
-    /** get marketplace cards from api */
-    public async getLots(): Promise<MarkeplaceResponse> {
-        const response = await this.card.getLots();
-
-        return await response.json();
-    }
     /** get user cards from api */
     public async getUserCards(): Promise<CardsResponse> {
         const response = await this.card.getUserCards();
+        return await response.json();
+    }
+    /** getting lot by id */
+    public async getCardById(id: string): Promise<Response> {
+        return await this.card.getCardById(id);
+    }
+    /** get marketplace cards from api */
+    public async getLots(): Promise<MarkeplaceResponse> {
+        const response = await this.card.getLots();
 
         return await response.json();
     }
