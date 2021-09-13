@@ -4,7 +4,9 @@
 import { SetStateAction, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { useAuth } from '@/app/hooks/auth';
 import { Validator } from '@/user/validation';
+import { recoverUserPassword } from '@/app/store/actions/users';
 
 import { UserDataArea } from '@components/common/UserDataArea';
 
@@ -13,6 +15,7 @@ import ultimate from '@static/images/registerPage/ultimate_recover.svg';
 import './index.scss';
 
 const RecoverPassword: React.FC = () => {
+    useAuth();
     const dispatch = useDispatch();
     /** controlled values for form inputs */
     const [password, setPassword] = useState('');
@@ -50,7 +53,10 @@ const RecoverPassword: React.FC = () => {
             return;
         };
 
-        /** TODO: implements dispatch logic */
+        dispatch(recoverUserPassword({
+            password,
+            confirmedPassword,
+        }));
 
     };
     /** user datas for recover password */
