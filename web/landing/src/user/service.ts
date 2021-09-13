@@ -31,10 +31,7 @@ export class UserService {
         return await this.users.checkToken(token);
     };
     /** handles user recover password */
-    public async recoverPassword(passwords: {
-        password: string,
-        confirmedPassword: string,
-    }): Promise<Response> {
-        return await this.users.recoverPassword(passwords);
+    public async recoverPassword(password: string): Promise<Response> {
+        return await this.users.recoverPassword(password);
     };
 };

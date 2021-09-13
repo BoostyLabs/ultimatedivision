@@ -34,7 +34,7 @@ const RecoverPassword: React.FC = () => {
         };
 
         if (!Validator.password(confirmedPassword)) {
-            setConfirmedPassword('Confirmed password is not valid');
+            setConfirmedPasswordError('Confirmed password is not valid');
             isValidForm = false;
         };
 
@@ -53,10 +53,7 @@ const RecoverPassword: React.FC = () => {
             return;
         };
 
-        dispatch(recoverUserPassword({
-            password,
-            confirmedPassword,
-        }));
+        dispatch(recoverUserPassword(password));
 
     };
     /** user datas for recover password */

@@ -61,12 +61,9 @@ export class UserClient extends APIClient {
         return response;
     };
     /** recover user password */
-    public async recoverPassword(passwords: {
-        password: string,
-        confirmedPassword: string,
-    }): Promise<Response> {
+    public async recoverPassword(newPassword: string): Promise<Response> {
         const path = `${this.ROOT_PATH}/reset-password`;
-        const response = await this.http.patch(path, JSON.stringify(passwords));
+        const response = await this.http.patch(path, JSON.stringify({ newPassword }));
 
         if (!response.ok) {
             await this.handleError(response);

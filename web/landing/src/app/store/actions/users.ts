@@ -42,12 +42,9 @@ export const confirmEmail = (token: string | null) => ({
     token,
 });
 /** recover user password */
-export const recoverPassword = (passwords: {
-    password: string,
-    confirmedPassword: string
-}) => ({
+export const recoverPassword = (password: string) => ({
     type: RECOVER_PASSWORD,
-    passwords,
+    password
 });
 
 const client = new UserClient();
@@ -111,14 +108,11 @@ export const confirmUserEmail = (token: string | null) =>
     };
 
 /** thunk that implements user reset password */
-export const recoverUserPassword = (passwords: {
-    password: string,
-    confirmedPassword: string
-}) =>
+export const recoverUserPassword = (password: string) =>
     async function (dispatch: Dispatch) {
         try {
-            await users.recoverPassword(passwords);
-            dispatch(recoverPassword(passwords));
+            await users.recoverPassword(password);
+            dispatch(recoverPassword(password));
         } catch (error: any) {
             /** TODO: rework catching errros */
             /* eslint-disable */

@@ -45,7 +45,7 @@ export const usersReducer = (
             user.status = action.token;
             break;
         case RECOVER_PASSWORD:
-            user.password = action.passwords.password;
+            user.password = action.password;
             break;
         default:
             break;
