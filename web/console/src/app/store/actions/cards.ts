@@ -9,6 +9,7 @@ import { CardService } from '@/card/service';
 
 export const GET_USER_CARDS = ' GET_USER_CARDS';
 export const GET_SELLING_CARDS = ' GET_SELLING_CARDS';
+export const MARKETPLACE_CARD = 'OPEN_MARKETPLACE_CARD';
 
 export const getUserCards = (cards: Card[]) => ({
     type: GET_USER_CARDS,
@@ -17,6 +18,10 @@ export const getUserCards = (cards: Card[]) => ({
 export const getSellingCards = (cards: Array<Partial<MarketplaceLot>>) => ({
     type: GET_SELLING_CARDS,
     cards,
+});
+export const marketplaceCard = (card: Card) => ({
+    type: MARKETPLACE_CARD,
+    card,
 });
 
 const client = new CardClient();
@@ -38,4 +43,11 @@ export const marketplaceLots = () => async function(dispatch: Dispatch) {
 export const createLot = (lot: CreatedLot) => async function(dispatch: any) {
     await service.createLot(lot);
     dispatch(userCards());
+};
+
+/** thunk for opening fotballerCardPage with reload possibility */
+export const openMarketplaceCard = (id: string) => async function(dispatch: any) {
+    const response = await service.getLotById(id);
+    const lot = await response.json();
+    dispatch(marketplaceCard(new Card(lot.card)));
 };

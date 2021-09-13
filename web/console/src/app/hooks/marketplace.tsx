@@ -26,12 +26,3 @@ export const useMarketplace = () => {
 
     return useSelector((state: RootState) => state.cardsReducer.marketplace);
 };
-
-
-/** Using for fetching data into FootballerCardPage, for reload posibility */
-export async function getLotFromApi(id: string): Promise<Card> {
-    const response = await service.getLotById(id);
-    const lot = await response.json();
-
-    return await new Card(lot.card);
-}

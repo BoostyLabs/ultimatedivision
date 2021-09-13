@@ -1,27 +1,28 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useEffect } from 'react';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/app/store';
+import { openMarketplaceCard } from '@/app/store/actions/cards';
+
 import { FootballerCardIllustrations } from '@components/FootballerCard/FootballerCardIllustrations';
 import { FootballerCardPrice } from '@components/FootballerCard/FootballerCardPrice';
 import { FootballerCardStatsArea } from '@components/FootballerCard/FootballerCardStatsArea';
 import { FootballerCardInformation } from '@components/FootballerCard/FootballerCardInformation';
 
 import './index.scss';
-import { Card, MarketplaceLot } from '@/card';
-import { getLotFromApi } from '@/app/hooks/marketplace';
-import { useEffect, useState } from 'react';
-import { RouteConfig } from '@/app/router';
 
 const FootballerCard: React.FC = () => {
-    // @ts-ignore
-    const [cardData, handleData] = useState<SetStateAction<null | Card>>(null);
-    const id = location.pathname.split(`/ud${RouteConfig.FootballerCard.path}/`).join('');
+    const dispatch = useDispatch();
+    const cardData = useSelector((state: RootState) => state.cardsReducer.openedCard);
 
     useEffect(() => {
-        (async function fetchCard() {
-            const card =  await getLotFromApi(id);
-            await handleData(card);
-        })()
+        const LENGTH_INDEX_DIFFEFENCE = 1;
+        const url = location.pathname.split('/');
+        const id = url[url.length - LENGTH_INDEX_DIFFEFENCE];
+        dispatch(openMarketplaceCard(id));
     }, []);
 
     return (
