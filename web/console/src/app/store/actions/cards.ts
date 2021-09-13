@@ -41,10 +41,8 @@ export const userCards = () => async function(dispatch: Dispatch) {
 /** thunk for opening fotballerCardPage with reload possibility */
 export const openUserCard = (id: string) => async function(dispatch: any) {
     const response = await service.getCardById(id);
-    console.log(response)
-    const card = await response;
-    console.log(card)
-    // dispatch(userCard(new Card(card)));
+    const card = await response.json();
+    dispatch(userCard(new Card(card)));
 };
 /** thunk for creating user cards list */
 export const marketplaceLots = () => async function(dispatch: Dispatch) {

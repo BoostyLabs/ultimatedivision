@@ -3,7 +3,7 @@
 
 import {
     GET_SELLING_CARDS, GET_USER_CARDS,
-    MARKETPLACE_CARD, USER_CARD
+    MARKETPLACE_CARD, USER_CARD,
 } from '@/app/store/actions/cards';
 import { CardService } from '@/card/service';
 import { CardClient } from '@/api/cards';
@@ -26,22 +26,20 @@ export const cardSetup = new CardSetup(cardService, [], [], new Card());
 
 export const cardsReducer = (cardState = cardSetup, action: any = {}) => {
     switch (action.type) {
-        case GET_USER_CARDS:
-            cardState.club = action.cards;
-            break;
-        case GET_SELLING_CARDS:
-            cardState.marketplace = action.cards;
-            break;
-        case MARKETPLACE_CARD:
-            cardState.openedCard = action.card;
-            console.log(cardState.openedCard)
-            break;
-        case USER_CARD:
-            cardState.openedCard = action.card;
-            console.log(cardState.openedCard)
-            break;
-        default:
-            break;
+    case GET_USER_CARDS:
+        cardState.club = action.cards;
+        break;
+    case GET_SELLING_CARDS:
+        cardState.marketplace = action.cards;
+        break;
+    case MARKETPLACE_CARD:
+        cardState.openedCard = action.card;
+        break;
+    case USER_CARD:
+        cardState.openedCard = action.card;
+        break;
+    default:
+        break;
     }
 
     return { ...cardState };

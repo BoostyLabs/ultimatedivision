@@ -16,6 +16,7 @@ export class CardService {
     /** get user cards from api */
     public async getUserCards(): Promise<CardsResponse> {
         const response = await this.card.getUserCards();
+
         return await response.json();
     }
     /** getting lot by id */

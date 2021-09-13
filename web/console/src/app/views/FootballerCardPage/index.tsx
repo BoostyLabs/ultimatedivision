@@ -22,11 +22,9 @@ const FootballerCard: React.FC = () => {
         const LENGTH_INDEX_DIFFEFENCE = 1;
         const url = location.pathname.split('/');
         const id = url[url.length - LENGTH_INDEX_DIFFEFENCE];
-        console.log(id)
-        console.log(location.pathname.includes('lot'))
         location.pathname.includes('lot')?
-        dispatch(openMarketplaceCard(id)):
-        dispatch(openUserCard(id));
+            dispatch(openMarketplaceCard(id)):
+            dispatch(openUserCard(id));
     }, []);
 
     return (
