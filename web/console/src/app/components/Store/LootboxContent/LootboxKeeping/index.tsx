@@ -14,9 +14,7 @@ import ribbons from '@static/img/StorePage/BoxContent/ribbons.svg';
 import './index.scss';
 
 export const LootboxKeeping: React.FC<{ handleOpening: Dispatch<SetStateAction<boolean>> }> = ({ handleOpening }) => {
-    // TODO: replace by backend data
-    /* eslint-disable-next-line */
-    const cards = useSelector((state: RootState) => state.cardsReducer.club.slice(0, 5));
+    const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
 
     return (
         <div className="box-keeping">
