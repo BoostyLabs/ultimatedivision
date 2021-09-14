@@ -29,14 +29,14 @@ type queueDB struct {
 }
 
 // Create adds place of queue in the database.
-func (queueDB *queueDB) Create(ctx context.Context, queue queue.Place) error {
+func (queueDB *queueDB) Create(ctx context.Context, place queue.Place) error {
 	query :=
 		`INSERT INTO
 			places(user_id, status) 
 		VALUES
 			($1, $2)`
 
-	_, err := queueDB.conn.ExecContext(ctx, query, queue.UserID, queue.Status)
+	_, err := queueDB.conn.ExecContext(ctx, query, place.UserID, place.Status)
 	return ErrQueue.Wrap(err)
 }
 
@@ -64,7 +64,7 @@ func (queueDB *queueDB) Get(ctx context.Context, id uuid.UUID) (queue.Place, err
 
 // ListPaginated returns places in page from the database.
 func (queueDB *queueDB) ListPaginated(ctx context.Context, cursor pagination.Cursor) (queue.Page, error) {
-	var queuesListPage queue.Page
+	var placesListPage queue.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 	query :=
 		`SELECT 
@@ -78,7 +78,7 @@ func (queueDB *queueDB) ListPaginated(ctx context.Context, cursor pagination.Cur
 
 	rows, err := queueDB.conn.QueryContext(ctx, query, cursor.Limit, offset)
 	if err != nil {
-		return queuesListPage, ErrQueue.Wrap(err)
+		return placesListPage, ErrQueue.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -89,28 +89,28 @@ func (queueDB *queueDB) ListPaginated(ctx context.Context, cursor pagination.Cur
 		Place := queue.Place{}
 		if err = rows.Scan(&Place.UserID, &Place.Status); err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				return queuesListPage, queue.ErrNoPlace.Wrap(err)
+				return placesListPage, queue.ErrNoPlace.Wrap(err)
 			}
-			return queuesListPage, ErrQueue.Wrap(err)
+			return placesListPage, ErrQueue.Wrap(err)
 		}
 		Places = append(Places, Place)
 	}
 	if err = rows.Err(); err != nil {
-		return queuesListPage, ErrQueue.Wrap(err)
+		return placesListPage, ErrQueue.Wrap(err)
 	}
 
-	queuesListPage, err = queueDB.listPaginated(ctx, cursor, Places)
-	return queuesListPage, ErrQueue.Wrap(err)
+	placesListPage, err = queueDB.listPaginated(ctx, cursor, Places)
+	return placesListPage, ErrQueue.Wrap(err)
 }
 
 // listPaginated returns paginated list of places.
 func (queueDB *queueDB) listPaginated(ctx context.Context, cursor pagination.Cursor, queuesList []queue.Place) (queue.Page, error) {
-	var queuesListPage queue.Page
+	var placesListPage queue.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 
 	totalCount, err := queueDB.totalCount(ctx)
 	if err != nil {
-		return queuesListPage, ErrQueue.Wrap(err)
+		return placesListPage, ErrQueue.Wrap(err)
 	}
 
 	pageCount := totalCount / cursor.Limit
@@ -118,7 +118,7 @@ func (queueDB *queueDB) listPaginated(ctx context.Context, cursor pagination.Cur
 		pageCount++
 	}
 
-	queuesListPage = queue.Page{
+	placesListPage = queue.Page{
 		Places: queuesList,
 		Page: pagination.Page{
 			Offset:      offset,
@@ -128,7 +128,7 @@ func (queueDB *queueDB) listPaginated(ctx context.Context, cursor pagination.Cur
 			TotalCount:  totalCount,
 		},
 	}
-	return queuesListPage, nil
+	return placesListPage, nil
 }
 
 // totalCount counts all places in the table.
