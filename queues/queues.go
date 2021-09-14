@@ -25,7 +25,7 @@ var ErrQueues = errs.Class("queues service error")
 type DB interface {
 	// Create adds queue in database.
 	Create(ctx context.Context, queue Queue) error
-	// Get returns queue by id of user from database.
+	// Get returns queue from database.
 	Get(ctx context.Context, id uuid.UUID) (Queue, error)
 	// ListPaginated returns page of queues from database.
 	ListPaginated(ctx context.Context, cursor pagination.Cursor) (Page, error)

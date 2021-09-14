@@ -40,7 +40,7 @@ func (queuesDB *queuesDB) Create(ctx context.Context, queue queues.Queue) error 
 	return ErrQueue.Wrap(err)
 }
 
-// Get returns queue by id of user from the database.
+// Get returns queue from the database.
 func (queuesDB *queuesDB) Get(ctx context.Context, id uuid.UUID) (queues.Queue, error) {
 	queue := queues.Queue{}
 	query :=
