@@ -45,9 +45,9 @@ func (queuesDB *queuesDB) Get(ctx context.Context, id uuid.UUID) (queues.Queue, 
 	queue := queues.Queue{}
 	query :=
 		`SELECT 
-            user_id, status
+			user_id, status
 		FROM 
-            queues
+			queues
 		WHERE 
 			user_id = $1`
 
@@ -68,13 +68,13 @@ func (queuesDB *queuesDB) ListPaginated(ctx context.Context, cursor pagination.C
 	offset := (cursor.Page - 1) * cursor.Limit
 	query :=
 		`SELECT 
-            user_id, status 
-        FROM 
-            queues 
-        LIMIT 
-            $1
-        OFFSET 
-            $2`
+			user_id, status 
+		FROM 
+			queues 
+		LIMIT 
+			$1
+		OFFSET 
+			$2`
 
 	rows, err := queuesDB.conn.QueryContext(ctx, query, cursor.Limit, offset)
 	if err != nil {
@@ -136,9 +136,9 @@ func (queuesDB *queuesDB) totalCount(ctx context.Context) (int, error) {
 	var count int
 	query :=
 		`SELECT 
-            COUNT(*) 
-        FROM 
-            queues`
+			COUNT(*) 
+		FROM 
+			queues`
 
 	err := queuesDB.conn.QueryRowContext(ctx, query).Scan(&count)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -151,11 +151,11 @@ func (queuesDB *queuesDB) totalCount(ctx context.Context) (int, error) {
 func (queuesDB *queuesDB) UpdateStatus(ctx context.Context, id uuid.UUID, status queues.Status) error {
 	query :=
 		`UPDATE
-            queues 
-        SET 
-            status = $1 
-        WHERE 
-            user_id = $2`
+			queues 
+		SET 
+			status = $1 
+		WHERE 
+			user_id = $2`
 
 	_, err := queuesDB.conn.ExecContext(ctx, query, status, id)
 	return ErrQueue.Wrap(err)
@@ -165,9 +165,9 @@ func (queuesDB *queuesDB) UpdateStatus(ctx context.Context, id uuid.UUID, status
 func (queuesDB *queuesDB) Delete(ctx context.Context, id uuid.UUID) error {
 	query :=
 		`DELETE FROM
-            queues
-        WHERE 
-            user_id = $1`
+			queues
+		WHERE 
+			user_id = $1`
 
 	_, err := queuesDB.conn.ExecContext(ctx, query, id)
 	return ErrQueue.Wrap(err)
