@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package queues_test
+package queue_test
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/internal/pagination"
-	"ultimatedivision/queues"
+	"ultimatedivision/queue"
 	"ultimatedivision/users"
 )
 
@@ -44,14 +44,14 @@ func TestQueues(t *testing.T) {
 		CreatedAt:    time.Now(),
 	}
 
-	queue1 := queues.Queue{
+	queuePlace1 := queue.Place{
 		UserID: user1.ID,
-		Status: queues.StatusSearches,
+		Status: queue.StatusSearches,
 	}
 
-	queue2 := queues.Queue{
+	queuePlace2 := queue.Place{
 		UserID: user2.ID,
-		Status: queues.StatusGames,
+		Status: queue.StatusGames,
 	}
 
 	cursor1 := pagination.Cursor{
@@ -60,66 +60,66 @@ func TestQueues(t *testing.T) {
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
-		repositoryQueues := db.Queues()
+		repositoryQueue := db.Queue()
 		repositoryUsers := db.Users()
 		id := uuid.New()
 		t.Run("get sql no rows", func(t *testing.T) {
-			_, err := repositoryQueues.Get(ctx, id)
+			_, err := repositoryQueue.Get(ctx, id)
 			require.Error(t, err)
-			assert.Equal(t, true, queues.ErrNoQueue.Has(err))
+			assert.Equal(t, true, queue.ErrNoPlace.Has(err))
 		})
 
 		t.Run("get", func(t *testing.T) {
 			err := repositoryUsers.Create(ctx, user1)
 			require.NoError(t, err)
 
-			err = repositoryQueues.Create(ctx, queue1)
+			err = repositoryQueue.Create(ctx, queuePlace1)
 			require.NoError(t, err)
 
-			queueFromDB, err := repositoryQueues.Get(ctx, user1.ID)
+			queueFromDB, err := repositoryQueue.Get(ctx, user1.ID)
 			require.NoError(t, err)
-			compareQueues(t, queue1, queueFromDB)
+			compareQueues(t, queuePlace1, queueFromDB)
 		})
 
 		t.Run("list paginated", func(t *testing.T) {
 			err := repositoryUsers.Create(ctx, user2)
 			require.NoError(t, err)
 
-			err = repositoryQueues.Create(ctx, queue2)
+			err = repositoryQueue.Create(ctx, queuePlace2)
 			require.NoError(t, err)
 
-			allQueues, err := repositoryQueues.ListPaginated(ctx, cursor1)
+			queueList, err := repositoryQueue.ListPaginated(ctx, cursor1)
 			assert.NoError(t, err)
-			assert.Equal(t, len(allQueues.Queues), 2)
-			compareQueues(t, queue1, allQueues.Queues[0])
-			compareQueues(t, queue2, allQueues.Queues[1])
+			assert.Equal(t, len(queueList.Places), 2)
+			compareQueues(t, queuePlace1, queueList.Places[0])
+			compareQueues(t, queuePlace2, queueList.Places[1])
 		})
 
 		t.Run("update status", func(t *testing.T) {
-			queue1.Status = queues.StatusGames
-			err := repositoryQueues.UpdateStatus(ctx, queue1.UserID, queue1.Status)
+			queuePlace1.Status = queue.StatusGames
+			err := repositoryQueue.UpdateStatus(ctx, queuePlace1.UserID, queuePlace1.Status)
 			require.NoError(t, err)
 
-			allQueues, err := repositoryQueues.ListPaginated(ctx, cursor1)
+			queueList, err := repositoryQueue.ListPaginated(ctx, cursor1)
 			assert.NoError(t, err)
-			assert.Equal(t, len(allQueues.Queues), 2)
-			compareQueues(t, queue1, allQueues.Queues[1])
-			compareQueues(t, queue2, allQueues.Queues[0])
+			assert.Equal(t, len(queueList.Places), 2)
+			compareQueues(t, queuePlace1, queueList.Places[1])
+			compareQueues(t, queuePlace2, queueList.Places[0])
 		})
 
 		t.Run("delete", func(t *testing.T) {
-			err := repositoryQueues.Delete(ctx, queue1.UserID)
+			err := repositoryQueue.Delete(ctx, queuePlace1.UserID)
 			require.NoError(t, err)
 
-			allQueues, err := repositoryQueues.ListPaginated(ctx, cursor1)
+			queueList, err := repositoryQueue.ListPaginated(ctx, cursor1)
 			assert.NoError(t, err)
-			assert.Equal(t, len(allQueues.Queues), 1)
-			compareQueues(t, queue2, allQueues.Queues[0])
+			assert.Equal(t, len(queueList.Places), 1)
+			compareQueues(t, queuePlace2, queueList.Places[0])
 		})
 	})
 }
 
-func compareQueues(t *testing.T, queue1, queue2 queues.Queue) {
+func compareQueues(t *testing.T, queue1, queue2 queue.Place) {
 	assert.Equal(t, queue1.UserID, queue2.UserID)
 	assert.Equal(t, queue1.Status, queue2.Status)
 }

@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package queues
+package queue
 
 import (
 	"context"
@@ -13,8 +13,8 @@ import (
 	"ultimatedivision/users"
 )
 
-// ErrQueues indicated that there was an error in service.
-var ErrQueues = errs.Class("queues service error")
+// ErrQueue indicated that there was an error in service.
+var ErrQueue = errs.Class("queue service error")
 
 // Service is handling queues related logic.
 //
@@ -34,21 +34,21 @@ func NewService(config Config, queues DB, users *users.Service) *Service {
 	}
 }
 
-// Create adds queue in database.
-func (service *Service) Create(ctx context.Context, queue Queue) error {
-	if _, err := service.users.Get(ctx, queue.UserID); err != nil {
-		return ErrQueues.Wrap(err)
+// Create adds place in database.
+func (service *Service) Create(ctx context.Context, place Place) error {
+	if _, err := service.users.Get(ctx, place.UserID); err != nil {
+		return ErrQueue.Wrap(err)
 	}
-	return ErrQueues.Wrap(service.queues.Create(ctx, queue))
+	return ErrQueue.Wrap(service.queues.Create(ctx, place))
 }
 
-// Get returns queue from database.
-func (service *Service) Get(ctx context.Context, id uuid.UUID) (Queue, error) {
+// Get returns place from database.
+func (service *Service) Get(ctx context.Context, id uuid.UUID) (Place, error) {
 	queue, err := service.queues.Get(ctx, id)
-	return queue, ErrQueues.Wrap(err)
+	return queue, ErrQueue.Wrap(err)
 }
 
-// ListPaginated returns queues in page from database.
+// ListPaginated returns places in page from database.
 func (service *Service) ListPaginated(ctx context.Context, cursor pagination.Cursor) (Page, error) {
 	if cursor.Limit <= 0 {
 		cursor.Limit = service.config.Cursor.Limit
@@ -58,15 +58,15 @@ func (service *Service) ListPaginated(ctx context.Context, cursor pagination.Cur
 	}
 
 	queuesListPage, err := service.queues.ListPaginated(ctx, cursor)
-	return queuesListPage, ErrQueues.Wrap(err)
+	return queuesListPage, ErrQueue.Wrap(err)
 }
 
-// UpdateStatus updates queue status in database.
+// UpdateStatus updates place status in database.
 func (service *Service) UpdateStatus(ctx context.Context, id uuid.UUID, status Status) error {
-	return ErrQueues.Wrap(service.queues.UpdateStatus(ctx, id, status))
+	return ErrQueue.Wrap(service.queues.UpdateStatus(ctx, id, status))
 }
 
-// Delete deletes queue record in database.
-func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
-	return ErrQueues.Wrap(service.queues.Delete(ctx, id))
+// Finish finishes place for user in database.
+func (service *Service) Finish(ctx context.Context, id uuid.UUID) error {
+	return ErrQueue.Wrap(service.queues.Delete(ctx, id))
 }
