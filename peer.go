@@ -24,6 +24,7 @@ import (
 	mail2 "ultimatedivision/internal/mail"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
+	"ultimatedivision/queues"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -49,6 +50,9 @@ type DB interface {
 
 	// Marketplace provides access to marketplace db.
 	Marketplace() marketplace.DB
+
+	// Queues provides access to queues db.
+	Queues() queues.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -90,6 +94,10 @@ type Config struct {
 	Marketplace struct {
 		marketplace.Config
 	} `json:"marketplace"`
+
+	Queues struct {
+		queues.Config
+	} `json:"queues"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -130,6 +138,11 @@ type Peer struct {
 	Marketplace struct {
 		Service            *marketplace.Service
 		ExpirationLotChore *marketplace.Chore
+	}
+
+	// exposes queues related logic
+	Queues struct {
+		Service *queues.Service
 	}
 
 	// Admin web server server with web UI.
@@ -245,6 +258,13 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Database.Marketplace(),
 			peer.Users.Service,
 			peer.Cards.Service,
+		)
+	}
+
+	{ // queues setup
+		peer.Queues.Service = queues.NewService(
+			config.Queues.Config,
+			peer.Database.Queues(),
 		)
 	}
 
