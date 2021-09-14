@@ -15,9 +15,6 @@ import (
 // ErrNoCard indicated that card does not exist.
 var ErrNoCard = errs.Class("card does not exist")
 
-// ErrCards indicated that there was an error in service.
-var ErrCards = errs.Class("cards service error")
-
 // DB is exposing access to cards db.
 //
 // architecture: DB

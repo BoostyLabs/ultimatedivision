@@ -7,10 +7,14 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/pagination"
 	"ultimatedivision/users"
 )
+
+// ErrQueues indicated that there was an error in service.
+var ErrQueues = errs.Class("queues service error")
 
 // Service is handling queues related logic.
 //

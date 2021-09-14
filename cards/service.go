@@ -12,9 +12,13 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/pagination"
 )
+
+// ErrCards indicated that there was an error in service.
+var ErrCards = errs.Class("cards service error")
 
 // Service is handling cards related logic.
 //

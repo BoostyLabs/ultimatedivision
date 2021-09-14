@@ -134,13 +134,13 @@ type Peer struct {
 		Service *lootboxes.Service
 	}
 
-	// exposes marketplace related logic
+	// exposes marketplace related logic.
 	Marketplace struct {
 		Service            *marketplace.Service
 		ExpirationLotChore *marketplace.Chore
 	}
 
-	// exposes queues related logic
+	// exposes queues related logic.
 	Queues struct {
 		Service *queues.Service
 	}

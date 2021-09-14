@@ -16,9 +16,6 @@ import (
 // ErrNoQueue indicated that queue does not exist.
 var ErrNoQueue = errs.Class("queue does not exist")
 
-// ErrQueues indicated that there was an error in service.
-var ErrQueues = errs.Class("queues service error")
-
 // DB is exposing access to queues database.
 //
 // architecture: DB
