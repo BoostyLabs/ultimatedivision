@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 
 	"ultimatedivision/internal/pagination"
+	"ultimatedivision/users"
 )
 
 // Service is handling queues related logic.
@@ -17,18 +18,23 @@ import (
 type Service struct {
 	config Config
 	queues DB
+	users  *users.Service
 }
 
 // NewService is a constructor for queues service.
-func NewService(config Config, queues DB) *Service {
+func NewService(config Config, queues DB, users *users.Service) *Service {
 	return &Service{
 		config: config,
 		queues: queues,
+		users:  users,
 	}
 }
 
 // Create adds queue in database.
 func (service *Service) Create(ctx context.Context, queue Queue) error {
+	if _, err := service.users.Get(ctx, queue.UserID); err != nil {
+		return ErrQueues.Wrap(err)
+	}
 	return ErrQueues.Wrap(service.queues.Create(ctx, queue))
 }
 

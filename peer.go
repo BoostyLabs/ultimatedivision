@@ -265,6 +265,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.Queues.Service = queues.NewService(
 			config.Queues.Config,
 			peer.Database.Queues(),
+			peer.Users.Service,
 		)
 	}
 
