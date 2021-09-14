@@ -84,7 +84,7 @@ func (queuesDB *queuesDB) ListPaginated(ctx context.Context, cursor pagination.C
 		err = errs.Combine(err, rows.Close())
 	}()
 
-	data := []queues.Queue{}
+	queuesList := []queues.Queue{}
 	for rows.Next() {
 		queue := queues.Queue{}
 		if err = rows.Scan(&queue.UserID, &queue.Status); err != nil {
@@ -93,13 +93,13 @@ func (queuesDB *queuesDB) ListPaginated(ctx context.Context, cursor pagination.C
 			}
 			return queuesListPage, ErrQueue.Wrap(err)
 		}
-		data = append(data, queue)
+		queuesList = append(queuesList, queue)
 	}
 	if err = rows.Err(); err != nil {
 		return queuesListPage, ErrQueue.Wrap(err)
 	}
 
-	queuesListPage, err = queuesDB.listPaginated(ctx, cursor, data)
+	queuesListPage, err = queuesDB.listPaginated(ctx, cursor, queuesList)
 	return queuesListPage, ErrQueue.Wrap(err)
 }
 
