@@ -2,16 +2,16 @@
 // See LICENSE for copying information.
 
 import { CardClient } from '@/api/cards';
-import { Card, CardInterface, CreatedLot, MarkeplaceResponse, CardsResponse } from '@/card';
+import { CreatedLot, MarkeplaceResponse, CardsResponse } from '@/card';
 
 /**
  * exposes all bandwidth related logic
  */
 export class CardService {
     protected readonly card: CardClient;
-    /** sets ClubClient into club field */
-    public constructor(club: CardClient) {
-        this.card = club;
+    /** sets CardClient into card field */
+    public constructor(card: CardClient) {
+        this.card = card;
     }
     /** get marketplace cards from api */
     public async getSellingCards(): Promise<MarkeplaceResponse> {

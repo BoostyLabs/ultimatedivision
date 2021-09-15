@@ -6,7 +6,6 @@ import { CreatedLot } from '@/card';
 
 /** ClubClient base implementation */
 export class CardClient extends APIClient {
-    /** To do: add exist endpoint for club */
     private readonly ROOT_PATH: string = '/api/v0';
 
     /** method calls get method from APIClient */
