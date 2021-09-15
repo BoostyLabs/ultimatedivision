@@ -6,7 +6,6 @@ package database
 import (
 	"context"
 	"database/sql"
-	"ultimatedivision/matches"
 
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
@@ -17,6 +16,8 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
+	"ultimatedivision/matches"
+	"ultimatedivision/queue"
 	"ultimatedivision/users"
 )
 
@@ -189,6 +190,10 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             user_id  BYTEA REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
             card_id  BYTEA REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
             minute   INTEGER                                        NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS places (
+            user_id BYTEA   PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            status  VARCHAR                                                    NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -234,7 +239,12 @@ func (db *database) Marketplace() marketplace.DB {
 	return &marketplaceDB{conn: db.conn}
 }
 
-// Matches provedes accedd to accounts db.
+// Matches provedes access to accounts db.
 func (db *database) Matches() matches.DB {
 	return &matchesDB{conn: db.conn}
+}
+
+// Queue provided access to accounts db.
+func (db *database) Queue() queue.DB {
+	return &queueDB{conn: db.conn}
 }
