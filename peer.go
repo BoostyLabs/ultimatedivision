@@ -24,6 +24,7 @@ import (
 	mail2 "ultimatedivision/internal/mail"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
+	"ultimatedivision/queue"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -49,6 +50,9 @@ type DB interface {
 
 	// Marketplace provides access to marketplace db.
 	Marketplace() marketplace.DB
+
+	// Queue provides access to queue db.
+	Queue() queue.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -90,6 +94,10 @@ type Config struct {
 	Marketplace struct {
 		marketplace.Config
 	} `json:"marketplace"`
+
+	Queue struct {
+		queue.Config
+	} `json:"queue"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -126,10 +134,15 @@ type Peer struct {
 		Service *lootboxes.Service
 	}
 
-	// exposes marketplace related logic
+	// exposes marketplace related logic.
 	Marketplace struct {
 		Service            *marketplace.Service
 		ExpirationLotChore *marketplace.Chore
+	}
+
+	// exposes queue related logic.
+	Queue struct {
+		Service *queue.Service
 	}
 
 	// Admin web server server with web UI.
@@ -248,6 +261,14 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // queue setup
+		peer.Queue.Service = queue.NewService(
+			config.Queue.Config,
+			peer.Database.Queue(),
+			peer.Users.Service,
+		)
+	}
+
 	{ // admin setup
 		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
 		if err != nil {
@@ -265,6 +286,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.Cards.PercentageQualities,
 			peer.Marketplace.Service,
 			peer.LootBoxes.Service,
+			peer.Clubs.Service,
 		)
 		if err != nil {
 			return nil, err

@@ -91,7 +91,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
 	authRouter.HandleFunc("/email/confirm/{token}", authController.ConfirmEmail).Methods(http.MethodGet)
-	authRouter.HandleFunc("/password", authController.ResetPasswordSendEmail).Methods(http.MethodGet)
+	authRouter.HandleFunc("/password/{email}", authController.ResetPasswordSendEmail).Methods(http.MethodGet)
 	authRouter.HandleFunc("/reset-password/{token}", authController.CheckAuthToken).Methods(http.MethodGet)
 	authRouter.Handle("/reset-password", server.withAuth(http.HandlerFunc(authController.ResetPassword))).Methods(http.MethodPatch)
 	authRouter.Handle("/change-password", server.withAuth(http.HandlerFunc(authController.ChangePassword))).Methods(http.MethodPost)
@@ -101,7 +101,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	profileRouter.HandleFunc("", userController.GetProfile).Methods(http.MethodGet)
 
 	cardsRouter := apiRouter.PathPrefix("/cards").Subrouter()
-	cardsRouter.Handle("", server.withAuth(http.HandlerFunc(cardsController.List))).Methods(http.MethodGet)
+	cardsRouter.Use(server.withAuth)
+	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
+	cardsRouter.HandleFunc("/{id}", cardsController.Get).Methods(http.MethodGet)
 
 	clubsRouter := apiRouter.PathPrefix("/clubs").Subrouter()
 	clubsRouter.Use(server.withAuth)
