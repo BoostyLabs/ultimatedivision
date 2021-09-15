@@ -43,7 +43,7 @@ export class ClubService {
         return await this.changeCardPosition(path, position);
     };
 
-    /** deletind dars from squad cards list */
+    /** delete card from squad cards list */
     public async deleteCard(path: string): Promise<Response> {
         return await this.deleteCard(path);
     };
