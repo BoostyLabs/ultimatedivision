@@ -6,6 +6,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"ultimatedivision/matches"
 
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
@@ -175,6 +176,19 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             start_time    TIMESTAMP WITH TIME ZONE                                        NOT NULL,
             end_time      TIMESTAMP WITH TIME ZONE                                        NOT NULL,
             period        INTEGER                                                         NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS matches (
+            id       BYTEA PRIMARY KEY                            NOT NULL,
+            user1_id BYTEA REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            user2_id BYTEA REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            score    VARCHAR                                      NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS match_goals(
+            id       BYTEA PRIMARY KEY                              NOT NULL,
+            match_id BYTEA REFERENCES matches(id) ON DELETE CASCADE NOT NULL,
+            user_id  BYTEA REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
+            card_id  BYTEA REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
+            minute   INTEGER                                        NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -205,12 +219,12 @@ func (db *database) Cards() cards.DB {
 	return &cardsDB{conn: db.conn}
 }
 
-// Clubs provide access to clubs db.
+// Clubs provide access to accounts db.
 func (db *database) Clubs() clubs.DB {
 	return &clubsDB{conn: db.conn}
 }
 
-// LootBoxes provide access to lootboxes db.
+// LootBoxes provide access to accounts db.
 func (db *database) LootBoxes() lootboxes.DB {
 	return &lootboxesDB{conn: db.conn}
 }
@@ -218,4 +232,9 @@ func (db *database) LootBoxes() lootboxes.DB {
 // Marketplace provided access to accounts db.
 func (db *database) Marketplace() marketplace.DB {
 	return &marketplaceDB{conn: db.conn}
+}
+
+// Matches provedes accedd to accounts db.
+func (db *database) Matches() matches.DB {
+	return &matchesDB{conn: db.conn}
 }

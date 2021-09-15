@@ -24,6 +24,7 @@ import (
 	mail2 "ultimatedivision/internal/mail"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
+	"ultimatedivision/matches"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -49,6 +50,9 @@ type DB interface {
 
 	// Marketplace provides access to marketplace db.
 	Marketplace() marketplace.DB
+
+	// Matches provides access to matches db.
+	Matches() matches.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -126,10 +130,15 @@ type Peer struct {
 		Service *lootboxes.Service
 	}
 
-	// exposes marketplace related logic
+	// exposes marketplace related logic.
 	Marketplace struct {
 		Service            *marketplace.Service
 		ExpirationLotChore *marketplace.Chore
+	}
+
+	// exposes matches related logic.
+	Matches struct {
+		Service *matches.Service
 	}
 
 	// Admin web server server with web UI.
@@ -245,6 +254,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Database.Marketplace(),
 			peer.Users.Service,
 			peer.Cards.Service,
+		)
+	}
+
+	{ // matches setup
+		peer.Matches.Service = matches.NewService(
+			peer.Database.Matches(),
 		)
 	}
 
