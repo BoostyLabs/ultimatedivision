@@ -47,7 +47,6 @@ export const SignIn: React.FC<{
     const handleSubmit = (e: any) => {
         e.preventDefault();
 
-
         if (!validateForm()) {
             return;
         };
