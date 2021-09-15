@@ -17,16 +17,19 @@ export class ClubService {
     /** creating club */
     public async createClub(): Promise<Response> {
         const response = await this.createClub();
+
         return await response.json();
     };
     /** returning club with existing squads */
     public async getClub(): Promise<Response> {
         const response = await this.getClub();
+
         return await response.json();
     };
     /** creating squad in selected club */
     public async createSquad(clubId: string): Promise<Response> {
         const response = await this.createSquad(clubId);
+
         return await response.json();
     };
 

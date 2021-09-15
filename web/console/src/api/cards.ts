@@ -4,7 +4,7 @@
 import { APIClient } from '@/api/index';
 import { CreatedLot } from '@/card';
 
-/** ClubClient base implementation */
+/** CardClient base implementation */
 export class CardClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0';
 

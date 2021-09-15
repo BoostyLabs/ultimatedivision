@@ -3,6 +3,7 @@
 
 import { APIClient } from '@/api/index';
 
+/** ClubClient base implementation */
 export class ClubClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0';
 
