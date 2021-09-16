@@ -37,7 +37,7 @@ const RecoverPassword: React.FC = () => {
             await users.checkRecoverToken(token);
         } catch (error: any) {
             /** TODO: handles error */
-            setErrorMessage('PAGE 404 NOT FOUND');
+            setErrorMessage('Cannot get access');
         };
     };
     /** controlled values for form inputs */

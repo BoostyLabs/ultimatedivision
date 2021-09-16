@@ -26,7 +26,7 @@ const ConfirmEmail: React.FC = () => {
             await users.checkEmailToken(token);
         } catch (error: any) {
             /** TODO: handles error */
-            setErrorMessage('PAGE 404 NOT FOUND');
+            setErrorMessage('Email verification failed');
         };
     };
 
