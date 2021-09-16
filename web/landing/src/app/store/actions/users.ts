@@ -35,7 +35,6 @@ export const changePassword = (password: string, newPassword: string) => ({
         newPassword,
     }
 });
-
 /** recover user password */
 export const recoverPassword = (password: string) => ({
     type: RECOVER_PASSWORD,
@@ -87,4 +86,17 @@ export const changeUserPassword = (password: string, newPassword: string) =>
             /* eslint-disable */
             console.log(error.message);
         };
+    };
+
+/** thunk that implements user reset password */
+export const recoverUserPassword = (password: string) =>
+    async function (dispatch: Dispatch) {
+        try {
+            await users.recoverPassword(password);
+            dispatch(recoverPassword(password));
+        } catch (error: any) {
+            /** TODO: rework catching errros */
+            /* eslint-disable */
+            console.log(error.message);
+        }
     };
