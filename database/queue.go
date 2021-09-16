@@ -62,6 +62,35 @@ func (queueDB *queueDB) Get(ctx context.Context, id uuid.UUID) (queue.Place, err
 	}
 }
 
+// List returns places from the database.
+func (queueDB *queueDB) List(ctx context.Context) ([]queue.Place, error) {
+	query :=
+		`SELECT 
+			user_id, status 
+		FROM 
+			places`
+
+	rows, err := queueDB.conn.QueryContext(ctx, query)
+	if err != nil {
+		return nil, ErrQueue.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	places := []queue.Place{}
+	for rows.Next() {
+		place := queue.Place{}
+		if err = rows.Scan(&place.UserID, &place.Status); err != nil {
+			return nil, ErrQueue.Wrap(err)
+		}
+		places = append(places, place)
+	}
+	err = rows.Err()
+
+	return places, ErrQueue.Wrap(err)
+}
+
 // ListPaginated returns places in page from the database.
 func (queueDB *queueDB) ListPaginated(ctx context.Context, cursor pagination.Cursor) (queue.Page, error) {
 	var placesListPage queue.Page

@@ -24,6 +24,8 @@ type DB interface {
 	Create(ctx context.Context, place Place) error
 	// Get returns place from database.
 	Get(ctx context.Context, id uuid.UUID) (Place, error)
+	// List returns places from database.
+	List(ctx context.Context) ([]Place, error)
 	// ListPaginated returns page of places from database.
 	ListPaginated(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// UpdateStatus updates status place in database.

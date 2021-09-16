@@ -48,6 +48,12 @@ func (service *Service) Get(ctx context.Context, id uuid.UUID) (Place, error) {
 	return queue, ErrQueue.Wrap(err)
 }
 
+// List returns places from database.
+func (service *Service) List(ctx context.Context) ([]Place, error) {
+	queuesListPage, err := service.queues.List(ctx)
+	return queuesListPage, ErrQueue.Wrap(err)
+}
+
 // ListPaginated returns places in page from database.
 func (service *Service) ListPaginated(ctx context.Context, cursor pagination.Cursor) (Page, error) {
 	if cursor.Limit <= 0 {
