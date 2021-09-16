@@ -1,7 +1,5 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-
-import { APIClient } from '@/api/index';
 import { LootboxClient } from '@/api/lootboxes';
 import { Card } from '@/card';
 import { Lootbox } from '.';
