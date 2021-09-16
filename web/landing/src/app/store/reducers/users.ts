@@ -4,7 +4,11 @@
 import { UserClient } from '@/api/user';
 import { UserService } from '@/user/service';
 
-import { CHANGE_PASSWORD, LOGIN } from '../actions/users';
+import {
+    CHANGE_PASSWORD,
+    LOGIN,
+    RECOVER_PASSWORD
+} from '../actions/users';
 
 /** implementation of user state */
 export class UsersState {
@@ -34,6 +38,9 @@ export const usersReducer = (
             break;
         case CHANGE_PASSWORD:
             user.password = action.passwords.newPassword;
+            break;
+        case RECOVER_PASSWORD:
+            user.password = action.password;
             break;
         default:
             break;

@@ -13,6 +13,7 @@ import { UserService } from '@/user/service';
 export const REGISTER = 'REGISTER';
 export const LOGIN = 'LOGIN';
 export const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
+export const RECOVER_PASSWORD = 'RECOVER_PASSWORD';
 /** implement registration of new user */
 export const register = (user: User) => ({
     type: REGISTER,
@@ -33,6 +34,12 @@ export const changePassword = (password: string, newPassword: string) => ({
         password,
         newPassword,
     }
+});
+
+/** recover user password */
+export const recoverPassword = (password: string) => ({
+    type: RECOVER_PASSWORD,
+    password
 });
 
 const client = new UserClient();
