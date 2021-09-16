@@ -121,7 +121,6 @@ func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
-		controller.log.Error("could not authorize user", ErrQueue.Wrap(err))
 		controller.serveError(w, http.StatusUnauthorized, ErrQueue.Wrap(err))
 		return
 	}
