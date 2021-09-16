@@ -7,11 +7,10 @@ import { Card } from '@/card';
 import { Lootbox } from '.';
 
 /** exposes all lootbox related logic */
-export class LootboxService extends APIClient {
+export class LootboxService {
     private readonly lootboxes: LootboxClient;
     /** receives LootboxClient */
     public constructor(lootboxes: LootboxClient) {
-        super();
         this.lootboxes = lootboxes;
     };
 
@@ -19,16 +18,7 @@ export class LootboxService extends APIClient {
     public async buy(lootbox: Lootbox): Promise<Card[]> {
         const responseCards = await this.lootboxes.buy(lootbox);
 
-        if (!responseCards.ok) {
-            this.handleError(responseCards);
-        }
-
-        const cards = await responseCards.json();
-
-        if(!cards) {
-            this.handleError(cards);
-        }
-
-        return cards;
+        return await responseCards.json();
     };
 };
+
