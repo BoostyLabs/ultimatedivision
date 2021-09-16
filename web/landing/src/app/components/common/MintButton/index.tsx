@@ -12,10 +12,8 @@ export const MintButton: React.FC<MintButtonTypes> = (
     { text }) => {
 
     return (
-        <>
-            <button className="ultimatedivision-mint-btn">
-                <span className="ultimatedivision-mint-btn__text">{text}</span>
-            </button>
-        </>
+        <button className="ultimatedivision-mint-btn">
+            <span className="ultimatedivision-mint-btn__text">{text}</span>
+        </button>
     );
 };
