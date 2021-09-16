@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { lazy } from 'react';
-import { Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
 const Club = lazy(() => import('@/app/views/ClubPage'));
@@ -45,16 +45,6 @@ export class ComponentRoutes {
     }
 };
 
-/** interfafe fot AboutPage subroutes */
-interface RouteItem {
-    path: string;
-    component: React.FC<any>;
-    exact: boolean;
-    children?: ComponentRoutes[];
-    with?: (child: ComponentRoutes, parrent: ComponentRoutes) => ComponentRoutes;
-    addChildren?: (children: ComponentRoutes[]) => ComponentRoutes;
-}
-
 /** Route config implementation */
 export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
@@ -63,12 +53,12 @@ export class RouteConfig {
         true,
     );
     public static Lot: ComponentRoutes = new ComponentRoutes(
-        '/lot',
+        '/lot/:id',
         Lot,
-        false,
+        true,
     );
     public static Card: ComponentRoutes = new ComponentRoutes(
-        '/card',
+        '/card/:id',
         Card,
         false,
     );
@@ -165,11 +155,6 @@ export class RouteConfig {
     ];
 };
 
-export const Route: React.FC<RouteItem> = ({
-    component: Component,
-    ...children
-}) => <Component {...children} />;
-
 export const Routes = () =>
     <Switch>
         {RouteConfig.routes.map((route, index) =>
@@ -178,7 +163,6 @@ export const Routes = () =>
                 path={route.path}
                 component={route.component}
                 exact={route.exact}
-                children={route.children}
             />
         )}
     </Switch>;

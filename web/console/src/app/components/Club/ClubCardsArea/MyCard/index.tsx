@@ -8,7 +8,6 @@ import confirmIcon from '@static/img/MarketPlacePage/MyCard/ok.svg';
 import priceGoldIcon from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
 
 import { Link } from 'react-router-dom';
-import { RouteConfig } from '@/app/router';
 
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -43,7 +42,7 @@ export const MyCard: React.FC<{ card: Card }> = ({ card }) => {
         >
             <Link
                 className="club-card__link"
-                to={`${RouteConfig.Card.path}/${card.id}`}
+                to={`/card/${card.id}`}
             >
                 <img
                     className="club-card__confirm-icon"

@@ -17,7 +17,7 @@ export class CardClient extends APIClient {
     public async getCardById(id: string): Promise<Response> {
         return await this.http.get(`${this.ROOT_PATH}/cards/${id}`);
     }
-
+    /** method returns filtered card list */
     public async getFilteredCards(filterParam: string): Promise<Response> {
         return await this.http.get(`${this.ROOT_PATH}/cards/?${filterParam}`);
     }
@@ -33,7 +33,7 @@ export class CardClient extends APIClient {
     public async getLotById(id: string): Promise<Response> {
         return await this.http.get(`${this.ROOT_PATH}/marketplace/${id}`);
     }
-
+    /** method returns filtered lot list */
     public async getFilteredLots(filterParam: string): Promise<Response> {
         return await this.http.get(`${this.ROOT_PATH}/lots/?${filterParam}`);
     }

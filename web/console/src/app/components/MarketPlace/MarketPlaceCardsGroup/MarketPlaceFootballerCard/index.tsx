@@ -3,7 +3,6 @@
 
 import { PlayerCard } from '@components/common/PlayerCard';
 
-import { RouteConfig } from '@/app/router';
 import { Link } from 'react-router-dom';
 
 import { MarketplaceLot } from '@/card';
@@ -16,7 +15,7 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: MarketplaceLot; place?: 
     >
         <Link
             className="marketplace-playerCard__link"
-            to={`${RouteConfig.Lot.path}/${lot.id}`}
+            to={`/lot/${lot.id}`}
         >
             <PlayerCard
                 card={lot.card}
