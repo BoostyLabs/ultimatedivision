@@ -63,7 +63,7 @@ export class RouteConfig {
         true,
     );
     public static Lot: ComponentRoutes = new ComponentRoutes(
-        '/lot/:id',
+        '/lot',
         Lot,
         false,
     );

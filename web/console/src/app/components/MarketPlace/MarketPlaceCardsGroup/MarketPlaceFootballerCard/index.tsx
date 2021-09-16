@@ -16,7 +16,7 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: MarketplaceLot; place?: 
     >
         <Link
             className="marketplace-playerCard__link"
-            to={`${RouteConfig.Lot.path}${lot.id}`}
+            to={`${RouteConfig.Lot.path}/${lot.id}`}
         >
             <PlayerCard
                 card={lot.card}
