@@ -7,6 +7,7 @@ import { UserClient } from '@/api/user';
 import { UserService } from '@/user/service';
 
 import { useQueryToken } from '@/app/hooks/useQueryToken';
+import { RouteConfig } from '@/app/router';
 
 /** TODO: Rework this view after design solution */
 const ConfirmEmail: React.FC = () => {
@@ -24,6 +25,7 @@ const ConfirmEmail: React.FC = () => {
     async function checkEmailToken() {
         try {
             await users.checkEmailToken(token);
+            location.pathname = RouteConfig.SignIn.path;
         } catch (error: any) {
             /** TODO: handles error */
             setErrorMessage('Email verification failed');

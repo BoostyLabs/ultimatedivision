@@ -94,6 +94,7 @@ export const recoverUserPassword = (password: string) =>
         try {
             await users.recoverPassword(password);
             dispatch(recoverPassword(password));
+            location.pathname = RouteConfig.SignIn.path;
         } catch (error: any) {
             /** TODO: rework catching errros */
             /* eslint-disable */
