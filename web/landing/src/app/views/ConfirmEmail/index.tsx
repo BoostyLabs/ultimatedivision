@@ -25,7 +25,9 @@ const ConfirmEmail: React.FC = () => {
     async function checkEmailToken() {
         try {
             await users.checkEmailToken(token);
-            location.pathname = RouteConfig.SignIn.path;
+            await setTimeout(() => {
+                location.pathname = RouteConfig.SignIn.path;
+            }, 3000);
         } catch (error: any) {
             /** TODO: handles error */
             setErrorMessage('Email verification failed');
@@ -37,7 +39,10 @@ const ConfirmEmail: React.FC = () => {
     };
 
     return <div>
-        <h1>Your email has been successfully verified</h1>
+        <h1>
+            Your email has been successfully verified.
+            You will be redirected to the sign-in page in 3 seconds.
+        </h1>
     </div>;
 };
 
