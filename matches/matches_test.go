@@ -92,6 +92,12 @@ func TestMatches(t *testing.T) {
 			require.NoError(t, err)
 		})
 
+		t.Run("List matches", func(t *testing.T) {
+			allMatchesDB, err := repositoryMatches.ListMatches(ctx)
+			require.NoError(t, err)
+			compareMatchesSlice(t, allMatchesDB, []matches.Match{updatedTestMatch})
+		})
+
 		t.Run("Get", func(t *testing.T) {
 			matchDB, err := repositoryMatches.Get(ctx, updatedTestMatch.ID)
 			require.NoError(t, err)
@@ -124,6 +130,17 @@ func compareMatches(t *testing.T, matchDB, matchTest matches.Match) {
 	assert.Equal(t, matchDB.User1ID, matchTest.User1ID)
 	assert.Equal(t, matchDB.User2ID, matchTest.User2ID)
 	assert.Equal(t, matchDB.Score, matchTest.Score)
+}
+
+func compareMatchesSlice(t *testing.T, matchesDB, matchesTest []matches.Match) {
+	assert.Equal(t, len(matchesDB), len(matchesTest))
+
+	for i := 0; i < len(matchesDB); i++ {
+		assert.Equal(t, matchesDB[i].ID, matchesTest[i].ID)
+		assert.Equal(t, matchesDB[i].User1ID, matchesTest[i].User1ID)
+		assert.Equal(t, matchesDB[i].User2ID, matchesTest[i].User2ID)
+		assert.Equal(t, matchesDB[i].Score, matchesTest[i].Score)
+	}
 }
 
 func compareMatchGoals(t *testing.T, matchGoalsDB, matchGoalsTest []matches.MatchGoals) {

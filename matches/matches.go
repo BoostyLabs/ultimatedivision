@@ -23,6 +23,8 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Match, error)
 	// Update updates score in the match in the database.
 	Update(ctx context.Context, matchID uuid.UUID, score string) error
+	// ListMatches returns all matches from the database.
+	ListMatches(ctx context.Context) ([]Match, error)
 	// Delete deletes match from the database.
 	Delete(ctx context.Context, id uuid.UUID) error
 	// AddGoal adds new goal in the match.

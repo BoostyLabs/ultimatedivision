@@ -70,6 +70,37 @@ func (matchesDB *matchesDB) Update(ctx context.Context, matchID uuid.UUID, score
 	return ErrMatches.Wrap(err)
 }
 
+// ListMatches returns all matches from the database.
+func (matchesDB *matchesDB) ListMatches(ctx context.Context) ([]matches.Match, error) {
+	query := `SELECT id, user1_id, user2_id, score
+             FROM matches`
+
+	rows, err := matchesDB.conn.QueryContext(ctx, query)
+	if err != nil {
+		return nil, ErrMatches.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	var allMatches []matches.Match
+
+	for rows.Next() {
+		var match matches.Match
+		err = rows.Scan(&match.ID, &match.User1ID, &match.User2ID, &match.Score)
+		if err != nil {
+			return nil, ErrMatches.Wrap(err)
+		}
+
+		allMatches = append(allMatches, match)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, ErrMatches.Wrap(err)
+	}
+
+	return allMatches, ErrMatches.Wrap(err)
+}
+
 // Delete deletes match from the database.
 func (matchesDB *matchesDB) Delete(ctx context.Context, id uuid.UUID) error {
 	query := `DELETE FROM matches

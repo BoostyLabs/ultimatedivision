@@ -51,6 +51,13 @@ func (service *Service) Update(ctx context.Context, matchID uuid.UUID, score str
 	return ErrMatches.Wrap(service.matches.Update(ctx, matchID, score))
 }
 
+// List returns all matches.
+func (service *Service) List(ctx context.Context) ([]Match, error) {
+	allMatches, err := service.matches.ListMatches(ctx)
+
+	return allMatches, ErrMatches.Wrap(err)
+}
+
 // Delete deletes match.
 func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
 	return ErrMatches.Wrap(service.matches.Delete(ctx, id))
