@@ -16,6 +16,7 @@ import './index.scss';
 
 const RecoverPassword: React.FC = () => {
     useAuth();
+
     const dispatch = useDispatch();
     /** controlled values for form inputs */
     const [password, setPassword] = useState('');
@@ -42,6 +43,7 @@ const RecoverPassword: React.FC = () => {
             setConfirmedPasswordError('Passwords does not match, please try again');
             isValidForm = false;
         }
+
         return isValidForm;
     };
 
