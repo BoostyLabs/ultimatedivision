@@ -6,7 +6,8 @@ import { Switch } from 'react-router-dom';
 
 const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
 const Club = lazy(() => import('@/app/views/ClubPage'));
-const FootballerCard = lazy(() => import('@/app/views/FootballerCardPage'));
+const Card = lazy(() => import('@/app/views/CardPage'));
+const Lot = lazy(() => import('@/app/views/LotPage'));
 const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
 const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
 const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
@@ -62,13 +63,13 @@ export class RouteConfig {
         true,
     );
     public static Lot: ComponentRoutes = new ComponentRoutes(
-        '/lot',
-        FootballerCard,
+        '/lot/:id',
+        Lot,
         false,
     );
     public static Card: ComponentRoutes = new ComponentRoutes(
         '/card',
-        FootballerCard,
+        Card,
         false,
     );
     public static FootballField: ComponentRoutes = new ComponentRoutes(
