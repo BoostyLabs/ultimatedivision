@@ -29,18 +29,18 @@ export const usersReducer = (
     const user = state.user;
 
     switch (action.type) {
-        case LOGIN:
-            user.email = action.user.email;
-            user.password = action.user.password;
-            break;
-        case CHANGE_PASSWORD:
-            user.password = action.passwords.newPassword;
-            break;
-        case CONFIRM_EMAIL:
-            user.status = action.token;
-            break;
-        default:
-            break;
+    case LOGIN:
+        user.email = action.user.email;
+        user.password = action.user.password;
+        break;
+    case CHANGE_PASSWORD:
+        user.password = action.passwords.newPassword;
+        break;
+    case CONFIRM_EMAIL:
+        user.status = action.token;
+        break;
+    default:
+        break;
     };
 
     return { ...state };

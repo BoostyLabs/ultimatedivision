@@ -10,6 +10,14 @@
     font-weight: lighter;
 }
 
+@font-face {
+    font-family: 'Roboto';
+    src: local('Roboto'),
+        url('@static/fonts/Roboto-Regular.ttf') format('truetype');
+    font-display: swap;
+}
+
+
 html {
     font-family: "BebasNeue";
 }
