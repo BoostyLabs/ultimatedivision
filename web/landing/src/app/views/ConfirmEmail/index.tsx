@@ -17,7 +17,8 @@ const ConfirmEmail: React.FC = () => {
     const query = useQuery();
 
     const confirmEmail = () =>
-        dispatch(confirmUserEmail(query.get("token")));
+        dispatch(confirmUserEmail(query.get('token')));
+
     ;
 
     return <div>
