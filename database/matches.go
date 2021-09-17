@@ -8,11 +8,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"ultimatedivision/internal/pagination"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/matches"
 )
 

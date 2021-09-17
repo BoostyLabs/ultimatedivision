@@ -7,7 +7,6 @@ import (
 	"context"
 	"testing"
 	"time"
-	"ultimatedivision/internal/pagination"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -16,6 +15,7 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/cards"
 	"ultimatedivision/database/dbtesting"
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/matches"
 	"ultimatedivision/users"
 )

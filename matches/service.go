@@ -5,10 +5,11 @@ package matches
 
 import (
 	"context"
-	"ultimatedivision/internal/pagination"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/internal/pagination"
 )
 
 // ErrMatches indicates that there was an error in the service.
