@@ -16,6 +16,7 @@ import './index.scss';
 
 const RecoverPassword: React.FC = () => {
     useAuth();
+
     const dispatch = useDispatch();
     /** controlled values for form inputs */
     const [password, setPassword] = useState('');
