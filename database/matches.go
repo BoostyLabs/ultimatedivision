@@ -7,6 +7,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"ultimatedivision/internal/pagination"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -71,13 +73,18 @@ func (matchesDB *matchesDB) Update(ctx context.Context, matchID uuid.UUID, score
 }
 
 // ListMatches returns all matches from the database.
-func (matchesDB *matchesDB) ListMatches(ctx context.Context) ([]matches.Match, error) {
-	query := `SELECT id, user1_id, user2_id, score
-             FROM matches`
+func (matchesDB *matchesDB) ListMatches(ctx context.Context, cursor pagination.Cursor) (matches.Page, error) {
+	var matchesListPage matches.Page
+	offset := (cursor.Page - 1) * cursor.Limit
+
+	query := fmt.Sprintf(`SELECT id, user1_id, user2_id, score
+             FROM matches
+             LIMIT %d
+             OFFSET %d`, cursor.Limit, offset)
 
 	rows, err := matchesDB.conn.QueryContext(ctx, query)
 	if err != nil {
-		return nil, ErrMatches.Wrap(err)
+		return matchesListPage, ErrMatches.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -89,16 +96,61 @@ func (matchesDB *matchesDB) ListMatches(ctx context.Context) ([]matches.Match, e
 		var match matches.Match
 		err = rows.Scan(&match.ID, &match.User1ID, &match.User2ID, &match.Score)
 		if err != nil {
-			return nil, ErrMatches.Wrap(err)
+			return matchesListPage, ErrMatches.Wrap(err)
 		}
 
 		allMatches = append(allMatches, match)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, ErrMatches.Wrap(err)
+		return matchesListPage, ErrMatches.Wrap(err)
 	}
 
-	return allMatches, ErrMatches.Wrap(err)
+	matchesListPage, err = matchesDB.listPaginated(ctx, cursor, allMatches)
+
+	return matchesListPage, ErrMatches.Wrap(err)
+}
+
+// listPaginated returns paginated list of matches.
+func (matchesDB matchesDB) listPaginated(ctx context.Context, cursor pagination.Cursor, matchesList []matches.Match) (matches.Page, error) {
+	var matchesPage matches.Page
+	offset := (cursor.Page - 1) * cursor.Limit
+
+	totalMatchesCount, err := matchesDB.countMatches(ctx)
+	if err != nil {
+		return matchesPage, ErrMatches.Wrap(err)
+	}
+
+	pageCount := totalMatchesCount / cursor.Limit
+	if totalMatchesCount%cursor.Limit != 0 {
+		pageCount++
+	}
+
+	matchPages := matches.Page{
+		Matches: matchesList,
+		Page: pagination.Page{
+			Offset:      offset,
+			Limit:       cursor.Limit,
+			CurrentPage: cursor.Page,
+			PageCount:   pageCount,
+			TotalCount:  totalMatchesCount,
+		},
+	}
+
+	return matchPages, ErrMatches.Wrap(err)
+}
+
+// listMatches counts all matches from the database.
+func (matchesDB matchesDB) countMatches(ctx context.Context) (int, error) {
+	query := `SELECT count(*) FROM matches`
+
+	var count int
+
+	err := matchesDB.conn.QueryRowContext(ctx, query).Scan(&count)
+	if err != nil {
+		return count, ErrMatches.Wrap(err)
+	}
+
+	return count, ErrMatches.Wrap(err)
 }
 
 // Delete deletes match from the database.

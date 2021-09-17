@@ -7,6 +7,7 @@ import (
 	"context"
 	"testing"
 	"time"
+	"ultimatedivision/internal/pagination"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -71,6 +72,11 @@ func TestMatches(t *testing.T) {
 		Minute:  25,
 	}
 
+	newCursor := pagination.Cursor{
+		Limit: 10,
+		Page:  1,
+	}
+
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
 		repositoryCards := db.Cards()
 		repositoryUsers := db.Users()
@@ -93,9 +99,9 @@ func TestMatches(t *testing.T) {
 		})
 
 		t.Run("List matches", func(t *testing.T) {
-			allMatchesDB, err := repositoryMatches.ListMatches(ctx)
+			allMatchesDB, err := repositoryMatches.ListMatches(ctx, newCursor)
 			require.NoError(t, err)
-			compareMatchesSlice(t, allMatchesDB, []matches.Match{updatedTestMatch})
+			compareMatchesSlice(t, allMatchesDB.Matches, []matches.Match{updatedTestMatch})
 		})
 
 		t.Run("Get", func(t *testing.T) {

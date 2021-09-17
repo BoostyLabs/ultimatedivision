@@ -5,6 +5,7 @@ package matches
 
 import (
 	"context"
+	"ultimatedivision/internal/pagination"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -18,12 +19,14 @@ var ErrMatches = errs.Class("matches service error")
 // architecture: Service
 type Service struct {
 	matches DB
+	config  Config
 }
 
 // NewService is a constructor for matches service.
-func NewService(clubs DB) *Service {
+func NewService(clubs DB, config Config) *Service {
 	return &Service{
 		matches: clubs,
+		config:  config,
 	}
 }
 
@@ -52,8 +55,15 @@ func (service *Service) Update(ctx context.Context, matchID uuid.UUID, score str
 }
 
 // List returns all matches.
-func (service *Service) List(ctx context.Context) ([]Match, error) {
-	allMatches, err := service.matches.ListMatches(ctx)
+func (service *Service) List(ctx context.Context, cursor pagination.Cursor) (Page, error) {
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
+	}
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
+
+	allMatches, err := service.matches.ListMatches(ctx, cursor)
 
 	return allMatches, ErrMatches.Wrap(err)
 }

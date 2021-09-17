@@ -5,6 +5,7 @@ package matches
 
 import (
 	"context"
+	"ultimatedivision/internal/pagination"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -24,7 +25,7 @@ type DB interface {
 	// Update updates score in the match in the database.
 	Update(ctx context.Context, matchID uuid.UUID, score string) error
 	// ListMatches returns all matches from the database.
-	ListMatches(ctx context.Context) ([]Match, error)
+	ListMatches(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// Delete deletes match from the database.
 	Delete(ctx context.Context, id uuid.UUID) error
 	// AddGoal adds new goal in the match.
@@ -33,12 +34,17 @@ type DB interface {
 	ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]MatchGoals, error)
 }
 
+// Config defines configuration for marketplace.
+type Config struct {
+	pagination.Cursor `json:"cursor"`
+}
+
 // Match describes match entity.
 type Match struct {
 	ID      uuid.UUID `json:"Id"`
 	User1ID uuid.UUID `json:"user1Id"`
 	User2ID uuid.UUID `json:"user2Id"`
-	Score   string    `json:"score"`
+	Score   string    `json:"score"` // TODO: change this attribute to two different int values.
 }
 
 // MatchGoals defines goals scored by clubs.
@@ -48,4 +54,10 @@ type MatchGoals struct {
 	UserID  uuid.UUID `json:"user1Id"`
 	CardID  uuid.UUID `json:"user2Id"`
 	Minute  int       `json:"minute"`
+}
+
+// Page holds match page entity which is used to show listed page of matches.
+type Page struct {
+	Matches []Match         `json:"matches"`
+	Page    pagination.Page `json:"page"`
 }

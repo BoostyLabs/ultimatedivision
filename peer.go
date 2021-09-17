@@ -102,6 +102,10 @@ type Config struct {
 	Queue struct {
 		queue.Config
 	} `json:"queue"`
+
+	Matches struct {
+		matches.Config
+	} `json:"matches"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -273,6 +277,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // matches setup
 		peer.Matches.Service = matches.NewService(
 			peer.Database.Matches(),
+			config.Matches.Config,
 		)
 	}
 
