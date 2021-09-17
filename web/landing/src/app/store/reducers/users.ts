@@ -43,7 +43,7 @@ export const usersReducer = (
             user.password = action.password;
             break;
         default:
-            break;
+            break
     };
 
     return { ...state };
