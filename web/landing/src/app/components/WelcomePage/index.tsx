@@ -7,11 +7,13 @@ import { Roadmap } from '@components/WelcomePage/Roadmap';
 import { Projects } from '@components/WelcomePage/Projects';
 import { Authors } from '@components/WelcomePage/Authors';
 import { Footer } from '@components/WelcomePage/Footer';
+import { LaunchDate } from '@components/WelcomePage/LaunchDate';
 
 const WelcomePage: React.FC = () => {
     return (
         <>
             <Heading />
+            <LaunchDate />
             <Capabilities />
             <Roadmap />
             <Projects />
