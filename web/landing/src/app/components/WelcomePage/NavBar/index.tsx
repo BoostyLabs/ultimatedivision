@@ -19,8 +19,6 @@ export const Navbar: React.FC = () => {
                     <img src={NavBarLogo} alt="Ultimate-division logo"></img>
                 </picture>
                 <div className="ultimatedivision-navbar__dropdown" onClick={() => setDropdownMenu(!dropdownMenu)}>
-                    {/* <DropdownNavBar />
-                    <Cross/> */}
                     {dropdownMenu ? <Cross/> : <DropdownNavBar />}
                 </div>
                 <ul className={`ultimatedivision-navbar__items${dropdownMenu ? '-active' : ''}`}>
