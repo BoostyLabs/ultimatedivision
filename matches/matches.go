@@ -23,8 +23,8 @@ type DB interface {
 	Create(ctx context.Context, match Match) error
 	// Get returns match from the database.
 	Get(ctx context.Context, id uuid.UUID) (Match, error)
-	// Update updates score in the match in the database.
-	Update(ctx context.Context, matchID uuid.UUID, score string) error
+	// GetGoals counts goals for user's squad in the match.
+	GetGoals(ctx context.Context, matchID uuid.UUID, userID uuid.UUID) (int, error)
 	// ListMatches returns all matches from the database.
 	ListMatches(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// Delete deletes match from the database.
@@ -45,7 +45,6 @@ type Match struct {
 	ID      uuid.UUID `json:"Id"`
 	User1ID uuid.UUID `json:"user1Id"`
 	User2ID uuid.UUID `json:"user2Id"`
-	Score   string    `json:"score"` // TODO: change this attribute to two different int values.
 }
 
 // MatchGoals defines goals scored by clubs.

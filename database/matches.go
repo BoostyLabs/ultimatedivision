@@ -31,17 +31,17 @@ type matchesDB struct {
 
 // Create inserts match in the database.
 func (matchesDB *matchesDB) Create(ctx context.Context, match matches.Match) error {
-	query := `INSERT INTO matches(id, user1_id, user2_id, score)
-              VALUES($1,$2,$3,$4)`
+	query := `INSERT INTO matches(id, user1_id, user2_id)
+              VALUES($1,$2,$3)`
 
-	_, err := matchesDB.conn.ExecContext(ctx, query, match.ID, match.User1ID, match.User2ID, match.Score)
+	_, err := matchesDB.conn.ExecContext(ctx, query, match.ID, match.User1ID, match.User2ID)
 
 	return ErrMatches.Wrap(err)
 }
 
 // Get returns match from the database.
 func (matchesDB *matchesDB) Get(ctx context.Context, id uuid.UUID) (matches.Match, error) {
-	query := `SELECT id, user1_id, user2_id, score
+	query := `SELECT id, user1_id, user2_id
               FROM matches
               WHERE id = $1`
 
@@ -49,7 +49,7 @@ func (matchesDB *matchesDB) Get(ctx context.Context, id uuid.UUID) (matches.Matc
 
 	row := matchesDB.conn.QueryRowContext(ctx, query, id)
 
-	err := row.Scan(&match.ID, &match.User1ID, &match.User2ID, &match.Score)
+	err := row.Scan(&match.ID, &match.User1ID, &match.User2ID)
 	if err != nil {
 		if errors.Is(sql.ErrNoRows, err) {
 			return match, matches.ErrNoMatch.Wrap(err)
@@ -61,15 +61,17 @@ func (matchesDB *matchesDB) Get(ctx context.Context, id uuid.UUID) (matches.Matc
 	return match, ErrMatches.Wrap(err)
 }
 
-// Update updates score in the match in the database.
-func (matchesDB *matchesDB) Update(ctx context.Context, matchID uuid.UUID, score string) error {
-	query := `UPDATE matches
-              SET score = $1
-              WHERE id = $2`
+// GetGoals counts goals for user's squad in the match.
+func (matchesDB matchesDB) GetGoals(ctx context.Context, matchID uuid.UUID, userID uuid.UUID) (int, error) {
+	query := `SELECT count(*)
+              FROM match_goals
+              WHERE match_id = $1 and user_id = $2`
 
-	_, err := matchesDB.conn.ExecContext(ctx, query, score, matchID)
+	var count int
 
-	return ErrMatches.Wrap(err)
+	err := matchesDB.conn.QueryRowContext(ctx, query, matchID, userID).Scan(&count)
+
+	return count, ErrMatches.Wrap(err)
 }
 
 // ListMatches returns all matches from the database.
@@ -77,7 +79,7 @@ func (matchesDB *matchesDB) ListMatches(ctx context.Context, cursor pagination.C
 	var matchesListPage matches.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 
-	query := fmt.Sprintf(`SELECT id, user1_id, user2_id, score
+	query := fmt.Sprintf(`SELECT id, user1_id, user2_id
              FROM matches
              LIMIT %d
              OFFSET %d`, cursor.Limit, offset)
@@ -94,7 +96,7 @@ func (matchesDB *matchesDB) ListMatches(ctx context.Context, cursor pagination.C
 
 	for rows.Next() {
 		var match matches.Match
-		err = rows.Scan(&match.ID, &match.User1ID, &match.User2ID, &match.Score)
+		err = rows.Scan(&match.ID, &match.User1ID, &match.User2ID)
 		if err != nil {
 			return matchesListPage, ErrMatches.Wrap(err)
 		}
@@ -146,9 +148,6 @@ func (matchesDB matchesDB) countMatches(ctx context.Context) (int, error) {
 	var count int
 
 	err := matchesDB.conn.QueryRowContext(ctx, query).Scan(&count)
-	if err != nil {
-		return count, ErrMatches.Wrap(err)
-	}
 
 	return count, ErrMatches.Wrap(err)
 }

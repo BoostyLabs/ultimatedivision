@@ -54,19 +54,11 @@ func TestMatches(t *testing.T) {
 		ID:      uuid.New(),
 		User1ID: testUser1.ID,
 		User2ID: testUser2.ID,
-		Score:   "0:0",
-	}
-
-	updatedTestMatch := matches.Match{
-		ID:      testMatch.ID,
-		User1ID: testUser1.ID,
-		User2ID: testUser2.ID,
-		Score:   "0:1",
 	}
 
 	testMatchGoal := matches.MatchGoals{
 		ID:      uuid.New(),
-		MatchID: updatedTestMatch.ID,
+		MatchID: testMatch.ID,
 		UserID:  testUser1.ID,
 		CardID:  testCard.ID,
 		Minute:  25,
@@ -93,21 +85,16 @@ func TestMatches(t *testing.T) {
 			require.NoError(t, err)
 		})
 
-		t.Run("Update", func(t *testing.T) {
-			err := repositoryMatches.Update(ctx, testMatch.ID, "0:1")
-			require.NoError(t, err)
-		})
-
 		t.Run("List matches", func(t *testing.T) {
 			allMatchesDB, err := repositoryMatches.ListMatches(ctx, newCursor)
 			require.NoError(t, err)
-			compareMatchesSlice(t, allMatchesDB.Matches, []matches.Match{updatedTestMatch})
+			compareMatchesSlice(t, allMatchesDB.Matches, []matches.Match{testMatch})
 		})
 
 		t.Run("Get", func(t *testing.T) {
-			matchDB, err := repositoryMatches.Get(ctx, updatedTestMatch.ID)
+			matchDB, err := repositoryMatches.Get(ctx, testMatch.ID)
 			require.NoError(t, err)
-			compareMatches(t, matchDB, updatedTestMatch)
+			compareMatches(t, matchDB, testMatch)
 		})
 
 		t.Run("Add goal in the match", func(t *testing.T) {
@@ -118,14 +105,20 @@ func TestMatches(t *testing.T) {
 			require.NoError(t, err)
 		})
 
+		t.Run("get goals", func(t *testing.T) {
+			count, err := repositoryMatches.GetGoals(ctx, testMatch.ID, testUser1.ID)
+			require.NoError(t, err)
+			assert.Equal(t, count, 1)
+		})
+
 		t.Run("List match goals", func(t *testing.T) {
-			matchGoalsDB, err := repositoryMatches.ListMatchGoals(ctx, updatedTestMatch.ID)
+			matchGoalsDB, err := repositoryMatches.ListMatchGoals(ctx, testMatch.ID)
 			require.NoError(t, err)
 			compareMatchGoals(t, matchGoalsDB, []matches.MatchGoals{testMatchGoal})
 		})
 
 		t.Run("delete", func(t *testing.T) {
-			err := repositoryMatches.Delete(ctx, updatedTestMatch.ID)
+			err := repositoryMatches.Delete(ctx, testMatch.ID)
 			require.NoError(t, err)
 		})
 	})
@@ -135,7 +128,6 @@ func compareMatches(t *testing.T, matchDB, matchTest matches.Match) {
 	assert.Equal(t, matchDB.ID, matchTest.ID)
 	assert.Equal(t, matchDB.User1ID, matchTest.User1ID)
 	assert.Equal(t, matchDB.User2ID, matchTest.User2ID)
-	assert.Equal(t, matchDB.Score, matchTest.Score)
 }
 
 func compareMatchesSlice(t *testing.T, matchesDB, matchesTest []matches.Match) {
@@ -145,7 +137,6 @@ func compareMatchesSlice(t *testing.T, matchesDB, matchesTest []matches.Match) {
 		assert.Equal(t, matchesDB[i].ID, matchesTest[i].ID)
 		assert.Equal(t, matchesDB[i].User1ID, matchesTest[i].User1ID)
 		assert.Equal(t, matchesDB[i].User2ID, matchesTest[i].User2ID)
-		assert.Equal(t, matchesDB[i].Score, matchesTest[i].Score)
 	}
 }
 

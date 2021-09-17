@@ -37,7 +37,6 @@ func (service *Service) Create(ctx context.Context, user1ID, user2ID uuid.UUID) 
 		ID:      uuid.New(),
 		User1ID: user1ID,
 		User2ID: user2ID,
-		Score:   "",
 	}
 
 	return ErrMatches.Wrap(service.matches.Create(ctx, newMatch))
@@ -48,11 +47,6 @@ func (service *Service) Get(ctx context.Context, matchID uuid.UUID) (Match, erro
 	match, err := service.matches.Get(ctx, matchID)
 
 	return match, ErrMatches.Wrap(err)
-}
-
-// Update updates score in the match.
-func (service *Service) Update(ctx context.Context, matchID uuid.UUID, score string) error {
-	return ErrMatches.Wrap(service.matches.Update(ctx, matchID, score))
 }
 
 // List returns all matches.
@@ -67,6 +61,13 @@ func (service *Service) List(ctx context.Context, cursor pagination.Cursor) (Pag
 	allMatches, err := service.matches.ListMatches(ctx, cursor)
 
 	return allMatches, ErrMatches.Wrap(err)
+}
+
+// GetGoalsByUserID returns number of goals scored by user's squad.
+func (service *Service) GetGoalsByUserID(ctx context.Context, userID, matchID uuid.UUID) (int, error) {
+	number, err := service.matches.GetGoals(ctx, userID, matchID)
+
+	return number, ErrMatches.Wrap(err)
 }
 
 // Delete deletes match.
