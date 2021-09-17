@@ -1,5 +1,5 @@
-@import '/src/index.scss';
-@import 'aos/dist/aos.css';
+@import "/src/index.scss";
+@import "aos/dist/aos.css";
 
 .roadmap {
     padding: 100px;
@@ -7,6 +7,7 @@
     color: white;
     min-height: 1200px;
     overflow-x: hidden;
+
     &__title {
         color: $roadmapHighlightColor;
         font-size: 36px;
@@ -15,7 +16,7 @@
     }
 
     &__road {
-        margin:  0 auto;
+        margin: 0 auto;
         position: relative;
         height: 5px;
         width: 120%;
@@ -28,51 +29,63 @@
     }
 }
 
-
 @media (max-width: $tabletBreakPoint) {
+
     .roadmap {
+
         &__title {
             margin-bottom: 100px;
         }
+
         &__road {
             justify-content: flex-end;
             flex-direction: column;
             width: 5px;
             height: 800px;
             margin-bottom: 200px;
+
             .roadmap-circle {
+
                 &:nth-child(2n - 1) {
+
                     .roadmap-point {
                         left: -250px;
+                    }
+                }
+
+                &:nth-child(2n) {
+
+                    .roadmap-point {
+                        right: -300px;
+                    }
                 }
             }
-            &:nth-child(2n) {
-                .roadmap-point {
-                    right: -300px;
-                }
-            }
-        }
         }
     }
 }
+
 @media (max-width: $phoneBreakPoint) {
+
     .roadmap {
+
         &__title {
             margin-bottom: 80px;
         }
+
         &__road {
             right: 150px;
             height: 950px;
+
             .roadmap-circle {
+
                 &:nth-child(1n) {
+
                     .roadmap-point {
                         left: unset;
                         right: -300px;
+                    }
                 }
             }
         }
-        }
     }
 }
-
-
