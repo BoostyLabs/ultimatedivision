@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 import React, { useState } from 'react';
 import NavBarLogo from '@static/images/navbar/navbar-logo.png';
-import {DropdownNavBar} from '@static/images/navbar/svg'
+import {Cross, DropdownNavBar} from '@static/images/navbar/svg'
 
 import './index.scss';
 import { MintButton } from '@components/common/MintButton';
@@ -12,24 +12,24 @@ export const Navbar: React.FC = () => {
 
     const navBarItems: Array<string> = ['Home', 'Metaverse', 'About', 'Cards', 'Roadmap'];
 
-    const handleOpenMenu = () => {
-        setDropdownMenu(!dropdownMenu)
-    }
-
     return (
         <div className="ultimatedivision-navbar">
             <div className="wrapper">
                 <picture className="ultimatedivision-navbar__logo">
                     <img src={NavBarLogo} alt="Ultimate-division logo"></img>
                 </picture>
-                <div className="ultimatedivision-navbar__dropdown" onClick={() => setDropdownMenu(!dropdownMenu)}><DropdownNavBar /></div>
+                <div className="ultimatedivision-navbar__dropdown" onClick={() => setDropdownMenu(!dropdownMenu)}>
+                    {/* <DropdownNavBar />
+                    <Cross/> */}
+                    {dropdownMenu ? <Cross/> : <DropdownNavBar />}
+                </div>
                 <ul className={`ultimatedivision-navbar__items${dropdownMenu ? '-active' : ''}`}>
                     {navBarItems.map((item, index) => 
                         <li key={index} className="ultimatedivision-navbar__item">
                             <a
-                                href="/"
-                                className={`ultimatedivision-navbar__item__
-                                ${item.toLocaleLowerCase()}`}
+                                href={`#${item.toLocaleLowerCase()}`}
+                                className="ultimatedivision-navbar__item"
+                                onClick={() => setDropdownMenu(false)}
                             >
                                 {item}
                             </a>
