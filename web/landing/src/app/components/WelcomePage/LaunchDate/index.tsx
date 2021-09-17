@@ -4,6 +4,8 @@
 import { useState, useEffect } from "react";
 import Aos from "aos";
 
+import { Modal } from "./Modal";
+
 import ball from '@static/images/headingPage/ball.png';
 
 import './index.scss';
@@ -53,6 +55,7 @@ export const LaunchDate: React.FC = () => {
                     </a>
                 </div>
             </section>
+            {isShowModal && <Modal handleModal={handleModal} />}
         </>
     )
 };
