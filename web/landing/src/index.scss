@@ -11,24 +11,10 @@
 }
 
 @font-face {
-    font-family: 'Russo One';
-    src: local('Russo One'),
-        url('@static/fonts/RussoOne-Regular.ttf') format('truetype');
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Hanson';
-    src: local('Hanson'),
-        url('@static/fonts/Hanson-Bold.ttf') format('truetype');
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Montserrat';
-    src: local('Montserrat'),
-        url('@static/fonts/Montserrat-Regular.ttf') format('truetype');
-    font-display: swap;
+    font-family: "Thorletto";
+    src: url('@static/fonts/Thorletto.ttf');
+    font-style: normal;
+    font-weight: lighter;
 }
 
 html {
