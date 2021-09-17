@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 @import "@/index.scss";
-=======
-@import '@/index.scss';
->>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209
 
 .description-about {
     max-width: 1280px;
@@ -11,27 +7,20 @@
     display: flex;
     justify-content: center;
     position: relative;
-<<<<<<< HEAD
 
-=======
->>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209
     &__image-area {
         position: relative;
         display: flex;
         flex-direction: column;
         max-width: 500px;
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209
     &__stats-image {
         position: absolute;
         right: -220px;
         top: 400px;
         transition: all 0.3s;
     }
-<<<<<<< HEAD
 
     &__text-area {
         margin-left: 100px;
@@ -41,20 +30,11 @@
         margin-top: 40px;
     }
 
-=======
-    &__text-area {
-        margin-left: 100px;
-    }
-    &__text {
-        margin-top: 40px;
-    }
->>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209
     &__title {
         color: $highlightColor;
         font-size: 36px;
     }
 }
-<<<<<<< HEAD
 
 @media (max-width: $desktopBreakPoint) {
 
@@ -65,14 +45,6 @@
             width: 50%;
         }
 
-=======
-@media (max-width: $desktopBreakPoint) {
-    .description-about {
-        padding: 10px 30px;
-        &__image-area {
-            width: 50%;
-        }
->>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209
         &__stats-image {
             width: 50%;
             right: -20%;
@@ -81,32 +53,23 @@
         }
     }
 }
-<<<<<<< HEAD
 
 @media (max-width: $tabletBreakPoint) {
 
     .description-about {
 
-=======
-@media (max-width: $tabletBreakPoint) {
-    .description-about {
->>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209
         &__stats-image {
             width: 50%;
             right: -15%;
             bottom: unset;
             top: 200px;
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209
         &__text-area {
             margin-left: 50px;
         }
     }
 }
-<<<<<<< HEAD
 
 @media (max-width: $phoneBreakPoint) {
 
@@ -125,38 +88,20 @@
             bottom: -40px;
         }
 
-=======
-@media (max-width: $phoneBreakPoint) {
-    .description-about {
-        flex-direction: column;
-        align-items: center;
-        &__image-area {
-            width: 70%;
-        }
-        &__stats-image {
-            width: 40%;
-            right: -15%;
-            bottom: unset;
-            top: unset;
-            bottom: -40px;
-        }
->>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209
         &__text-area {
             margin-left: 0;
             margin-top: 40px;
         }
-<<<<<<< HEAD
 
-        &__mirrored {
+        <<<<<<< head &__mirrored {
             display: none;
         }
 
-=======
-        &__mirrored {
+        ======= &__mirrored {
             display: none;
         }
->>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209
-        &__title {
+
+        >>>>>>> cabd124a880a959bc55cad1e9ab326fa70ab3209 &__title {
             position: absolute;
             top: -80px;
         }
