@@ -1,8 +1,6 @@
-
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Capabilities } from '@components/WelcomePage/Capabilities';
 import { Roadmap } from '@components/WelcomePage/Roadmap';
 import { Projects } from '@components/WelcomePage/Projects';
 import { Authors } from '@components/WelcomePage/Authors';
@@ -16,7 +14,6 @@ const Main: React.FC = () => {
         <>
             <Navbar />
             <Home />
-            <Capabilities />
             <LaunchRoadmap />
             <Roadmap />
             <Projects />
