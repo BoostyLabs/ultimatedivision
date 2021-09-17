@@ -4,11 +4,11 @@ import React from 'react';
 
 import './index.scss';
 
-type MintButtonTypes = {
+type MintButtonProps = {
     text: string,
 }
 
-export const MintButton: React.FC<MintButtonTypes> = (
+export const MintButton: React.FC<MintButtonProps> = (
     { text }) => {
 
     return (

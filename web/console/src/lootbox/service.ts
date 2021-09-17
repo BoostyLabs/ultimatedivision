@@ -14,9 +14,7 @@ export class LootboxService {
 
     /** handles lootbox buying */
     public async buy(lootbox: Lootbox): Promise<Card[]> {
-        const responseCards = await this.lootboxes.buy(lootbox);
-
-        return await responseCards.json();
+        return await this.lootboxes.buy(lootbox)
     };
 };
 
