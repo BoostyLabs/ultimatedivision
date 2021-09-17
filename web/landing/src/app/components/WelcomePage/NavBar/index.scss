@@ -18,7 +18,7 @@
         .ultimatedivision-navbar__dropdown {
             display: none;
         }
-
+      
         .ultimatedivision-navbar__items {
             display: flex;
             flex-direction: row;
@@ -69,7 +69,7 @@
     }
 }
 
-@media (max-width: $desktopBreakPoint) {
+@media screen and (max-width: 834px) {
 
     .ultimatedivision-navbar {
 
@@ -150,7 +150,7 @@
     }
 }
 
-@media (max-width: $tabletBreakPoint) {
+@media screen and (max-width: 414px)  {
 
     .ultimatedivision-navbar {
 
