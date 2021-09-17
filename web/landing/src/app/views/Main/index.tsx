@@ -6,6 +6,7 @@ import { Roadmap } from '@components/WelcomePage/Roadmap';
 import { Projects } from '@components/WelcomePage/Projects';
 import { Authors } from '@components/WelcomePage/Authors';
 import { Footer } from '@components/WelcomePage/Footer';
+import { Description } from '@components/WelcomePage/Description';
 import { LaunchRoadmap } from '@components/WelcomePage/LaunchRoadmap';
 import { Navbar } from '@components/WelcomePage/NavBar';
 import { Home } from '@components/WelcomePage/Home';
@@ -17,6 +18,7 @@ const Main: React.FC = () => {
             <Navbar />
             <Home />
             <LaunchDate />
+            <Description />
             <LaunchRoadmap />
             <Roadmap />
             <Projects />
