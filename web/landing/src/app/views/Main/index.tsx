@@ -8,10 +8,14 @@ import { Projects } from '@components/WelcomePage/Projects';
 import { Authors } from '@components/WelcomePage/Authors';
 import { Footer } from '@components/WelcomePage/Footer';
 import { LaunchRoadmap } from '@components/WelcomePage/LaunchRoadmap';
+import { Navbar } from '@components/WelcomePage/NavBar';
+import { Home } from '@components/WelcomePage/Home';
 
 const Main: React.FC = () => {
     return (
         <>
+            <Navbar />
+            <Home />
             <Capabilities />
             <LaunchRoadmap />
             <Roadmap />
