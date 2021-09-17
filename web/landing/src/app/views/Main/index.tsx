@@ -9,12 +9,14 @@ import { Footer } from '@components/WelcomePage/Footer';
 import { LaunchRoadmap } from '@components/WelcomePage/LaunchRoadmap';
 import { Navbar } from '@components/WelcomePage/NavBar';
 import { Home } from '@components/WelcomePage/Home';
+import { LaunchDate } from '@components/WelcomePage/LaunchDate';
 
 const Main: React.FC = () => {
     return (
         <>
             <Navbar />
             <Home />
+            <LaunchDate />
             <LaunchRoadmap />
             <Roadmap />
             <Projects />
