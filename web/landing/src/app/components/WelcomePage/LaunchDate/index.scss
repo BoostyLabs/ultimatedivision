@@ -3,140 +3,172 @@
 .launch-date {
     display: flex;
     flex-direction: row;
+    width: 100%;
+    height: 413px;
     justify-content: space-between;
-    padding: 0 5%;
     position: relative;
     background: #001236;
 
-    &__represent {
+    .wrapper {
+        display: flex;
+        width: 1440px;
+        margin: auto;
 
-        &__ball {
-            transition: all, 0.3s;
-            height: 110%;
-            left: 50px;
-            position: absolute;
-            animation: bounce 5s ease-in-out both infinite;
-
-            @keyframes bounce {
-
-                0% {
-                    transform: translateY(-40px);
-                }
-
-                50% {
-                    transform: translateY(20px);
-                }
-
-                100% {
-                    transform: translateY(-40px);
-                }
-            }
-        }
-    }
-
-    &__information {
-        width: 60%;
-        display: block;
-
-        &__subtitle {
-            margin-top: 10%;
-            color: white;
-            font-size: 28px;
-        }
-
-        &__title {
-            margin-top: 5%;
-            font-size: 56px;
-            color: $highlightColor;
-        }
-
-        &__remind {
-            display: inline-block;
-            margin: 5% auto;
-            height: 72px;
-            line-height: 72px;
-            width: 270px;
-            font-size: 26px;
-            text-align: center;
-            vertical-align: middle;
-            background: $highlightColor;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    }
-
-    @media (max-width: $desktopBreakPoint) {
-
-        &__represent {
+        .launch-date__represent {
+            width: 444px;
+            height: 444px;
 
             &__ball {
-                top: -10px;
+                transition: all, 0.3s;
+                height: 110%;
+                position: absolute;
+                margin-left: 77px;
+                animation: bounce 5s ease-in-out both infinite;
+
+                @keyframes bounce {
+
+                    0% {
+                        transform: translateY(-40px);
+                    }
+
+                    50% {
+                        transform: translateY(20px);
+                    }
+
+                    100% {
+                        transform: translateY(-40px);
+                    }
+                }
             }
         }
 
-        &__information {
+        .launch-date__information {
+            display: block;
+            width: 800px;
+            margin-left: 77px;
 
             &__subtitle {
+                margin: 94px 372px 5.76px 117px;
+                color: white;
+                font-size: 28px;
+                font-family: "Rubic", sans-serif;
+            }
+
+            &__title {
+                margin-left: 117px;
+                font-size: 56px;
+                color: $highlightColor;
+                font-family: "Russo One", sans-serif;
+            }
+
+            &__remind {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 72px;
+                width: 269px;
+                margin: 43px auto auto 117px;
+                padding: 5px;
+                font-family: "Hanson", sans-serif;
+                font-style: normal;
+                font-weight: bold;
                 font-size: 24px;
-            }
-
-            &__title {
-                font-size: 42px;
-            }
-
-            &__remind {
-                height: 48px;
-                line-height: 48px;
-                font-size: 20px;
-                width: 150px;
+                line-height: 25px;
+                color: #fff;
+                background: $highlightColor;
+                cursor: pointer;
             }
         }
     }
+}
 
-    @media (max-width: $tabletBreakPoint) {
+@media screen and (max-width: 834px) {
 
-        &__information {
+    .launch-date {
+        height: 240px;
 
-            &__subtitle {
-                font-size: 22px;
-                margin-left: 20px;
+        .wrapper {
+            width: 834px;
+
+            .launch-date__represent {
+                width: 258px;
+                height: 258px;
+
+                &__ball {
+                    margin-left: 49.6px;
+                }
             }
 
-            &__title {
-                font-size: 36px;
-                margin-left: 20px;
-            }
+            .launch-date__information {
+                display: block;
+                width: auto;
+                margin-left: 49.6px;
 
-            &__remind {
-                margin-left: 20px;
-                height: 36px;
-                line-height: 36px;
-                font-size: 18px;
-                width: 120px;
+                &__subtitle {
+                    margin: 54.44px 210px 3.33px 66.91px;
+                    font-size: 16px;
+                    line-height: 19px;
+                }
+
+                &__title {
+                    margin-left: 66.91px;
+                    font-size: 32px;
+                    line-height: 39px;
+                }
+
+                &__remind {
+                    height: 42px;
+                    width: 156px;
+                    margin: 24.9px auto auto 66.91px;
+                    font-size: 13.9px;
+                    line-height: 14px;
+                }
             }
         }
     }
+}
 
-    @media (max-width: $phoneBreakPoint) {
-        overflow: hidden;
+@media screen and (max-width: 414px) {
 
-        &__represent {
+    .launch-date {
+        height: 413px;
 
-            &__ball {
-                top: 40px;
-                height: 80%;
-                right: -80px;
-                left: unset;
+        .wrapper {
+            width: 414px;
+
+            .launch-date__represent {
+                position: absolute;
+                width: 382px;
+                height: 382px;
+                margin-left: 227px;
             }
-        }
 
-        &__information {
-            width: 100%;
-            z-index: 2;
+            .launch-date__information {
+                display: block;
+                width: auto;
+                margin: 0;
+                order: 0;
 
-            &__remind {
-                width: 180px;
+                &__subtitle {
+                    margin: 67px 0 27px 30px;
+                    font-size: 28px;
+                    line-height: 33px;
+                }
+
+                &__title {
+                    width: 354px;
+                    margin-left: 30px;
+                    font-size: 36px;
+                    line-height: 43px;
+                }
+
+                &__remind {
+                    width: 269px;
+                    height: 72px;
+                    margin: 63px auto auto 30px;
+                    font-size: 24px;
+                    line-height: 25px;
+                }
             }
         }
     }

@@ -16,14 +16,15 @@ export const LaunchDate: React.FC = () => {
             duration: 500,
         });
     });
-    const [isShowModal, setIsShowModal] = useState(true);
+    const [isShowModal, setIsShowModal] = useState(true); 
 
     const handleModal = () => setIsShowModal(prev => !prev);
 
     return (
         <>
             <section className="launch-date">
-                <div className="launch-date__represent">
+               <div className="wrapper">
+               <div className="launch-date__represent">
                     <img
                         className="launch-date__represent__ball"
                         src={ball}
@@ -54,6 +55,7 @@ export const LaunchDate: React.FC = () => {
                         Remind Me
                     </a>
                 </div>
+               </div>
             </section>
             {isShowModal && <Modal handleModal={handleModal} />}
         </>
