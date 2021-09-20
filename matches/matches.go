@@ -35,8 +35,67 @@ type DB interface {
 	ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]MatchGoals, error)
 }
 
-// Config defines configuration for marketplace.
+// Config defines configuration for matches.
 type Config struct {
+	Periods struct{
+		First struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"first"`
+		Second struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"second"`
+		Third struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"third"`
+		Fourth struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"fourth"`
+		Fifth struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"fifth"`
+		Sixth struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"sixth"`
+		Seventh struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"seventh"`
+		Eighth struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"eighth"`
+		Ninth struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"ninth"`
+		Tenth struct{
+			Begin int `json:"begin"`
+			End int `json:"end"`
+		} `json:"tenth"`
+	}
+
+	GoalProbability int `json:"goalProbability"`
+
+	GoalProbabilityByPosition struct {
+		ST int `json:"st"`
+		RW int `json:"rw"`
+		LW int `json:"lw"`
+		CAM int `json:"cam"`
+		CM int `json:"cm"`
+		RM int `json:"rm"`
+		LM int `json:"lm"`
+		CDM int `json:"cdm"`
+		CD int `json:"cd"`
+		LB int `json:"lb"`
+		RB int `json:"rb"`
+	} `json:"goalProbabilityByPosition"`
+
 	pagination.Cursor `json:"cursor"`
 }
 
