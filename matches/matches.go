@@ -51,7 +51,7 @@ type Match struct {
 type MatchGoals struct {
 	ID      uuid.UUID `json:"id"`
 	MatchID uuid.UUID `json:"matchId"`
-	UserID  uuid.UUID `json:"user1Id"`
+	UserID  uuid.UUID `json:"userId"`
 	CardID  uuid.UUID `json:"cardId"`
 	Minute  int       `json:"minute"`
 }
