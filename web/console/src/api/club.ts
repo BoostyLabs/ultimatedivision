@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '@/api/index';
+import { CardPath } from '@/app/types/club';
 
 /** ClubClient base implementation */
 export class ClubClient extends APIClient {
@@ -20,15 +21,23 @@ export class ClubClient extends APIClient {
         return await this.http.post(`${this.ROOT_PATH}/clubs/${clubId}/squads`);
     }
     /** method calls get method from APIClient */
-    public async addCard(path: string, position: {position: number}): Promise<Response> {
-        return await this.http.post(`${this.ROOT_PATH}/${path}`, JSON.stringify(position));
+    public async addCard(cardPath: CardPath, position: number): Promise<Response> {
+        return await this.http.post(
+            `${this.ROOT_PATH}/clubs/${cardPath.clubId}/squads/${cardPath.squadId}/cards/${cardPath.cardId}`,
+            JSON.stringify({ position })
+        );
     }
     /** method calls get method from APIClient */
-    public async changeCardPosition(path: string, position: {position: number}): Promise<Response> {
-        return await this.http.patch(`${this.ROOT_PATH}/${path}`, JSON.stringify(position));
+    public async changeCardPosition(cardPath: CardPath, position: number): Promise<Response> {
+        return await this.http.patch(
+            `${this.ROOT_PATH}/clubs/${cardPath.clubId}/squads/${cardPath.squadId}/cards/${cardPath.cardId}`,
+            JSON.stringify({ position })
+        );
     }
     /** method calls get method from APIClient */
-    public async deleteCard(path: string): Promise<Response> {
-        return await this.http.delete(`${this.ROOT_PATH}/${path}`);
+    public async deleteCard(cardPath: CardPath): Promise<Response> {
+        return await this.http.delete(
+            `${this.ROOT_PATH}/clubs/${cardPath.clubId}/squads/${cardPath.squadId}/cards/${cardPath.cardId}`
+        );
     }
 }
