@@ -10,6 +10,8 @@ import { Navbar } from '@components/WelcomePage/NavBar';
 import { Home } from '@components/WelcomePage/Home';
 import { LaunchDate } from '@components/WelcomePage/LaunchDate';
 import { Description } from '@components/WelcomePage/Description';
+import { Metaverse } from '@components/WelcomePage/Metaverse';
+
 
 const Main: React.FC = () => {
     return (
@@ -17,6 +19,7 @@ const Main: React.FC = () => {
             <Navbar />
             <Home />
             <LaunchDate />
+            <Metaverse />
             <Description />
             <LaunchRoadmap />
             <Roadmap />
