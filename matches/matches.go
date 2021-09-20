@@ -25,7 +25,7 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Match, error)
 	// GetGoals counts goals for user's squad in the match.
 	GetGoals(ctx context.Context, matchID uuid.UUID, userID uuid.UUID) (int, error)
-	// ListMatches returns all matches from the database.
+	// ListMatches returns page of matches from the database.
 	ListMatches(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// Delete deletes match from the database.
 	Delete(ctx context.Context, id uuid.UUID) error
@@ -52,7 +52,7 @@ type MatchGoals struct {
 	ID      uuid.UUID `json:"id"`
 	MatchID uuid.UUID `json:"matchId"`
 	UserID  uuid.UUID `json:"user1Id"`
-	CardID  uuid.UUID `json:"user2Id"`
+	CardID  uuid.UUID `json:"cardId"`
 	Minute  int       `json:"minute"`
 }
 

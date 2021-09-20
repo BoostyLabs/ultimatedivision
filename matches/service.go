@@ -49,7 +49,7 @@ func (service *Service) Get(ctx context.Context, matchID uuid.UUID) (Match, erro
 	return match, ErrMatches.Wrap(err)
 }
 
-// List returns all matches.
+// List returns page of matches.
 func (service *Service) List(ctx context.Context, cursor pagination.Cursor) (Page, error) {
 	if cursor.Limit <= 0 {
 		cursor.Limit = service.config.Cursor.Limit
