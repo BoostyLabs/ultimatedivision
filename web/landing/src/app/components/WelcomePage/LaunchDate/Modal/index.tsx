@@ -34,7 +34,7 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
         };
         /** closes modal window */
         handleModal();
-        /** TODO: send email to server */
+        /** TODO: send email for gets notifications to server */
     };
 
     const formValue = {
