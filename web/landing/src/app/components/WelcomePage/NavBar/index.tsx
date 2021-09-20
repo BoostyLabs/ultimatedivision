@@ -27,9 +27,8 @@ export const Navbar: React.FC = () => {
                     {navBarItems.map((item, index) => 
                         <li key={index} className="ultimatedivision-navbar__item">
                             <a
-                                href={`#${item.toLocaleLowerCase()}`}
+                                href="/"
                                 className="ultimatedivision-navbar__item"
-                                onClick={() => setDropdownMenu(false)}
                             >
                                 {item}
                             </a>
