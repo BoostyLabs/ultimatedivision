@@ -15,7 +15,7 @@
         .metaverse__title {
             margin-top: 147px;
             padding: 5px;
-            font-family: "Hanson";
+            font-family: "Hanson", sans-serif;
             font-style: normal;
             font-weight: bold;
             font-size: 64px;
@@ -26,7 +26,7 @@
 
         .metaverse__subtitle {
             padding: 5px;
-            font-family: "Hanson";
+            font-family: "Hanson", sans-serif;
             font-style: normal;
             font-weight: bold;
             font-size: 48px;
@@ -68,7 +68,7 @@
 
             &-text {
                 position: absolute;
-                font-family: "Roboto";
+                font-family: "Roboto", sans-serif;
                 font-style: normal;
                 font-weight: 300;
                 font-size: 24px;
