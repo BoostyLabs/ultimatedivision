@@ -35,17 +35,17 @@ export class ClubService {
     };
 
     /** adding card to squad cards list */
-    public async addCard(path: CardPath, position: number): Promise<Response> {
-        return await this.addCard(path, position);
+    public async addCard(clubId: string, squadId: string, cardId: string, position: number): Promise<Response> {
+        return await this.addCard(clubId, squadId, cardId, position);
     };
 
     /** change position of existing card */
-    public async changeCardPosition(path: CardPath, position: number): Promise<Response> {
-        return await this.changeCardPosition(path, position);
+    public async changeCardPosition(clubId: string, squadId: string, cardId: string, position: number): Promise<Response> {
+        return await this.changeCardPosition(clubId, squadId, cardId, position);
     };
 
     /** delete card from squad cards list */
-    public async deleteCard(path: CardPath): Promise<Response> {
-        return await this.deleteCard(path);
+    public async deleteCard(clubId: string, squadId: string, cardId: string): Promise<Response> {
+        return await this.deleteCard(clubId, squadId, cardId);
     };
 }
