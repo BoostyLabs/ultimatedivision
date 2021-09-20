@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
+import { CardPath } from '@/app/types/club';
 
 /**
  * exposes all bandwidth related logic
@@ -34,17 +35,17 @@ export class ClubService {
     };
 
     /** adding card to squad cards list */
-    public async addCard(path: string, position: { position: number }): Promise<Response> {
+    public async addCard(path: CardPath, position: number): Promise<Response> {
         return await this.addCard(path, position);
     };
 
     /** change position of existing card */
-    public async changeCardPosition(path: string, position: { position: number }): Promise<Response> {
+    public async changeCardPosition(path: CardPath, position: number): Promise<Response> {
         return await this.changeCardPosition(path, position);
     };
 
     /** delete card from squad cards list */
-    public async deleteCard(path: string): Promise<Response> {
+    public async deleteCard(path: CardPath): Promise<Response> {
         return await this.deleteCard(path);
     };
 }
