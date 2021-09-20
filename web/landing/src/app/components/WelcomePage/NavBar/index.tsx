@@ -21,8 +21,7 @@ export const Navbar: React.FC = () => {
                         <li key={index} className="ultimatedivision-navbar__item">
                             <a
                                 href="/"
-                                className={`ultimatedivision-navbar__item__
-                                ${item.toLocaleLowerCase()}`}
+                                className="ultimatedivision-navbar__item"
                             >
                                 {item}
                             </a>
