@@ -112,28 +112,30 @@ type Position int
 const (
 	// GK defines goalkeeper.
 	GK Position = 1
-	// CB defines central defenders.
-	CB Position = 2
+	// CD defines central defenders.
+	CD Position = 2
 	// LB defines left defenders.
 	LB Position = 3
 	// RB defines right defenders.
 	RB Position = 4
+	// CDM defines central defensive midfielder.
+	CDM Position = 5
 	// CM defines central midfielder.
-	CM Position = 5
+	CM Position = 6
 	// LM defines left midfielder.
-	LM Position = 6
+	LM Position = 7
 	// RM defines right midfielder.
-	RM Position = 7
+	RM Position = 8
 	// CAM defines central attacking midfielder.
-	CAM Position = 8
+	CAM Position = 9
 	// LWB defines left attacking defenders.
-	LWB Position = 9
+	LWB Position = 10
 	// RWB defines right attacking defenders.
-	RWB Position = 10
+	RWB Position = 11
 	// RW defines right forward.
-	RW Position = 11
+	RW Position = 12
 	// LW defines left forward.
-	LW Position = 12
+	LW Position = 13
 	// ST defines central forward.
-	ST Position = 13
+	ST Position = 14
 )

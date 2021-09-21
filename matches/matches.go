@@ -37,63 +37,65 @@ type DB interface {
 
 // Config defines configuration for matches.
 type Config struct {
-	Periods struct{
-		First struct{
+	Periods struct {
+		First struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"first"`
-		Second struct{
+		Second struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"second"`
-		Third struct{
+		Third struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"third"`
-		Fourth struct{
+		Fourth struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"fourth"`
-		Fifth struct{
+		Fifth struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"fifth"`
-		Sixth struct{
+		Sixth struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"sixth"`
-		Seventh struct{
+		Seventh struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"seventh"`
-		Eighth struct{
+		Eighth struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"eighth"`
-		Ninth struct{
+		Ninth struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"ninth"`
-		Tenth struct{
+		Tenth struct {
 			Begin int `json:"begin"`
-			End int `json:"end"`
+			End   int `json:"end"`
 		} `json:"tenth"`
 	}
 
 	GoalProbability int `json:"goalProbability"`
 
+	SquadPowerAccuracy int `json:"squadPowerAccuracy"`
+
 	GoalProbabilityByPosition struct {
-		ST int `json:"st"`
-		RW int `json:"rw"`
-		LW int `json:"lw"`
+		ST  int `json:"st"`
+		RW  int `json:"rw"`
+		LW  int `json:"lw"`
 		CAM int `json:"cam"`
-		CM int `json:"cm"`
-		RM int `json:"rm"`
-		LM int `json:"lm"`
+		CM  int `json:"cm"`
+		RM  int `json:"rm"`
+		LM  int `json:"lm"`
 		CDM int `json:"cdm"`
-		CD int `json:"cd"`
-		LB int `json:"lb"`
-		RB int `json:"rb"`
+		CD  int `json:"cd"`
+		LB  int `json:"lb"`
+		RB  int `json:"rb"`
 	} `json:"goalProbabilityByPosition"`
 
 	pagination.Cursor `json:"cursor"`
