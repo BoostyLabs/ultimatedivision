@@ -8,10 +8,18 @@ import { Authors } from '@components/WelcomePage/Authors';
 import { Footer } from '@components/WelcomePage/Footer';
 import { Description } from '@components/WelcomePage/Description';
 import { LaunchRoadmap } from '@components/WelcomePage/LaunchRoadmap';
+import { Navbar } from '@components/WelcomePage/NavBar';
+import { Home } from '@components/WelcomePage/Home';
+import { LaunchDate } from '@components/WelcomePage/LaunchDate';
+import { Metaverse } from '@components/WelcomePage/Metaverse';
 
 const Main: React.FC = () => {
     return (
         <>
+            <Navbar />
+            <Home />
+            <LaunchDate />
+            <Metaverse />
             <Description />
             <LaunchRoadmap />
             <Roadmap />
