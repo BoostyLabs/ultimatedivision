@@ -136,8 +136,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 
 	queueRouter := apiRouter.PathPrefix("/queue").Subrouter()
 	queueRouter.Use(server.withAuth)
-	queueRouter.HandleFunc("", queueController.ListPaginated).Methods(http.MethodGet)
-	queueRouter.HandleFunc("/сreate", queueController.Create).Methods(http.MethodGet)
+	queueRouter.HandleFunc("", queueController.Create).Methods(http.MethodGet)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
