@@ -19,7 +19,7 @@ import (
 	"ultimatedivision/users"
 )
 
-func TestQueues(t *testing.T) {
+func TestQueue(t *testing.T) {
 	user1 := users.User{
 		ID:           uuid.New(),
 		Email:        "tarkovskynik@gmail.com",
