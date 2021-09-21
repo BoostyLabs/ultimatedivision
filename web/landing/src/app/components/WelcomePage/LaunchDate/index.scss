@@ -35,7 +35,7 @@
     }
 
     &__information {
-        width: 60%;
+        width: 55%;
         display: block;
 
         &__subtitle {
@@ -91,7 +91,7 @@
                 height: 48px;
                 line-height: 48px;
                 font-size: 20px;
-                width: 150px;
+                width: 200px;
             }
         }
     }
@@ -99,6 +99,7 @@
     @media (max-width: $tabletBreakPoint) {
 
         &__information {
+            width: 47%;
 
             &__subtitle {
                 font-size: 22px;
@@ -115,7 +116,7 @@
                 height: 36px;
                 line-height: 36px;
                 font-size: 18px;
-                width: 120px;
+                width: 180px;
             }
         }
     }
