@@ -5,17 +5,20 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/pagination"
 	"ultimatedivision/queue"
+	"ultimatedivision/queue/queuehub"
 )
 
 var (
@@ -27,13 +30,15 @@ var (
 type Queue struct {
 	log   logger.Logger
 	queue *queue.Service
+	hub   *queuehub.Hub
 }
 
 // NewQueue is a constructor for queue controller.
-func NewQueue(log logger.Logger, queue *queue.Service) *Queue {
+func NewQueue(log logger.Logger, queue *queue.Service, hub *queuehub.Hub) *Queue {
 	queueController := &Queue{
 		log:   log,
 		queue: queue,
+		hub:   hub,
 	}
 
 	return queueController
@@ -118,6 +123,17 @@ func (controller *Queue) Get(w http.ResponseWriter, r *http.Request) {
 func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+	}
+	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
@@ -125,15 +141,30 @@ func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	place := queue.Place{
+	client := queuehub.Client{
 		UserID: claims.UserID,
-		Status: queue.StatusSearches,
+		Conn:   conn,
+	}
+	isSearch, err := controller.hub.ReadSearch(client)
+	if err != nil {
+		controller.log.Error("could not read searches for client", ErrQueue.Wrap(err))
+		return
 	}
 
-	if err = controller.queue.Create(ctx, place); err != nil {
-		controller.log.Error("could not create place", ErrQueue.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrQueue.Wrap(err))
-		return
+	if !isSearch {
+		if err = controller.queue.Finish(ctx, claims.UserID); err != nil {
+			controller.log.Error("could not create place", ErrQueue.Wrap(err))
+			return
+		}
+	} else {
+		place := queue.Place{
+			UserID: claims.UserID,
+			Status: queue.StatusSearches,
+		}
+		if err = controller.queue.Create(ctx, place); err != nil {
+			controller.log.Error("could not create place", ErrQueue.Wrap(err))
+			return
+		}
 	}
 }
 

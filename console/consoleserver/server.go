@@ -23,6 +23,7 @@ import (
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
+	"ultimatedivision/queue/queuehub"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -63,7 +64,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service, queue *queue.Service) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service, queue *queue.Service, hub *queuehub.Hub) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -81,7 +82,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsController := controllers.NewClubs(log, clubs)
 	lootBoxesController := controllers.NewLootBoxes(log, lootBoxes)
 	marketplaceController := controllers.NewMarketplace(log, marketplace)
-	queueController := controllers.NewQueue(log, queue)
+	queueController := controllers.NewQueue(log, queue, hub)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -136,8 +137,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	queueRouter := apiRouter.PathPrefix("/queue").Subrouter()
 	queueRouter.Use(server.withAuth)
 	queueRouter.HandleFunc("", queueController.ListPaginated).Methods(http.MethodGet)
-	queueRouter.HandleFunc("/{id}", queueController.Get).Methods(http.MethodGet)
-	queueRouter.HandleFunc("", queueController.Create).Methods(http.MethodPost)
+	queueRouter.HandleFunc("/сreate", queueController.Create).Methods(http.MethodGet)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
