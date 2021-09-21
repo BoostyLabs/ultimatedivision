@@ -117,14 +117,15 @@ func (h *Hub) ReadPlay(userID uuid.UUID) (bool, error) {
 		return false, ErrHub.Wrap(err)
 	}
 
-	if request.Action != ActionPlay {
-		message = NewMessage(http.StatusBadRequest, "action not plays!")
-		if err = h.SendMessage(client, *message); err != nil {
-			return false, ErrWriteHub.Wrap(err)
-		}
-		return false, ErrHub.New("action not plays!")
+	if request.Action == ActionPlay {
+		return request.Value, nil
 	}
-	return request.Value, nil
+
+	message = NewMessage(http.StatusBadRequest, "action not play!")
+	if err = h.SendMessage(client, *message); err != nil {
+		return false, ErrWriteHub.Wrap(err)
+	}
+	return false, ErrHub.New("action not play!")
 }
 
 // addClient addes user to hub.
