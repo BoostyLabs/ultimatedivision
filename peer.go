@@ -25,6 +25,7 @@ import (
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
+	"ultimatedivision/queue/queuehub"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -142,8 +143,9 @@ type Peer struct {
 
 	// exposes queue related logic.
 	Queue struct {
-		Service              *queue.Service
-		ExpirationPlaceChore *queue.Chore
+		Service    *queue.Service
+		Hub        *queuehub.Hub
+		PlaceChore *queue.Chore
 	}
 
 	// Admin web server server with web UI.
@@ -269,11 +271,14 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Service,
 		)
 
-		peer.Queue.ExpirationPlaceChore = queue.NewChore(
+		peer.Queue.Hub = queuehub.NewHub()
+
+		peer.Queue.PlaceChore = queue.NewChore(
 			peer.Log,
 			config.Queue.Config,
 			peer.Database.Queue(),
 			peer.Users.Service,
+			peer.Queue.Hub,
 		)
 	}
 
@@ -318,6 +323,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Auth,
 			peer.Users.Service,
 			peer.Queue.Service,
+			peer.Queue.Hub,
 		)
 	}
 
@@ -339,7 +345,7 @@ func (peer *Peer) Run(ctx context.Context) error {
 		return ignoreCancel(peer.Marketplace.ExpirationLotChore.Run(ctx))
 	})
 	group.Go(func() error {
-		return ignoreCancel(peer.Queue.ExpirationPlaceChore.Run(ctx))
+		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
 	})
 
 	return group.Wait()
