@@ -2,6 +2,8 @@
 // See LICENSE for copying information.
 
 import cards from '@static/images/Description/cardsGroup.svg';
+import tabletCards from '@static/images/Description/cards-834.png';
+import phoneCards from '@static/images/Description/cards-414.png';
 
 import './index.scss';
 
@@ -20,12 +22,13 @@ export const DescriptionCards = () => {
                     that will determine how good the footballer is.
                 </p>
             </div>
-            <div className="description-cards__wrapper">
-                <img
-                    className="description-cards__card"
-                    src={cards}
-                    alt="cards"
-                />
+            <div className="description-cards__cards">
+                <picture className="description-cards__card" >
+                    <source media="(max-width: 414px)" srcSet={phoneCards} />
+                    <source media="(max-width: 834px)" srcSet={tabletCards} />
+                    <source media="(min-width: 1440px)" srcSet={cards}/>
+                    <img src={cards} alt="cards" />
+                </picture>
             </div>
         </div>
     );

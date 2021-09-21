@@ -1,66 +1,115 @@
 @import "@/index.scss";
 
 .description-cards {
-    max-width: 1280px;
-    margin: 100px auto;
-    min-height: 300px;
     display: flex;
     align-items: center;
+    width: 1440px;
+    margin: auto;
     overflow-x: hidden;
 
-    &__text-area {
-        padding-left: 50px;
-        width: 50%;
+    &__title {
+        width: 627px;
+        margin: 46px auto 0 93px;
+        font-family: "Hanson", sans-serif;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 43px;
+        line-height: 45px;
+        color: $highlightColor;
     }
 
-    &__title {
-        color: $highlightColor;
-        font-size: 36px;
-        margin-bottom: 40px;
+    &__text {
+        width: 590px;
+        margin: 46px auto 0 93px;
+        font-family: "Roboto", sans-serif;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 24px;
+        line-height: 28px;
+        color: #fff;
     }
 
     &__card {
         width: 100%;
+        margin-left: 0;
         transition: all 0.3s;
     }
 
-    &__wrapper {
+    &__cards {
         position: absolute;
-        right: 0;
-        width: 50%;
-        max-width: 450px;
         overflow: hidden;
+        margin: 0 auto 0 762px;
     }
 }
 
-@media (max-width: $tabletBreakPoint) {
+@media screen and (max-width: 834px) {
 
     .description-cards {
+        width: 834px;
+
+        &__title {
+            width: 407px;
+            margin: 46px auto 0 38px;
+            font-size: 26px;
+            line-height: 27px;
+        }
+
+        &__text {
+            width: 329px;
+            margin: 30px auto 0 38px;
+            font-size: 15px;
+            line-height: 18px;
+        }
 
         &__card {
-            transform: translateX(50px);
+            width: 100%;
+            margin-left: 0;
+        }
+
+        &__cards {
+            position: absolute;
+            overflow: hidden;
+            margin: 100px auto 0 402px;
         }
     }
 }
 
-@media (max-width: $phoneBreakPoint) {
+@media screen and (max-width: 414px) {
 
     .description-cards {
+        position: relative;
+        width: 414px;
+        height: 700px;
+        display: flex;
         flex-direction: column;
 
         &__text-area {
-            padding: 0 30px;
             width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        &__title {
+            width: 356px;
+            margin: 122px auto 0 30px;
+            font-size: 36px;
+            line-height: 37px;
         }
 
         &__text {
             display: none;
         }
 
-        &__wrapper {
+        &__card {
             width: 100%;
-            position: relative;
-            right: -50px;
+            margin-left: 0;
+        }
+
+        &__cards {
+            position: absolute;
+            width: 525px;
+            height: 440.74px;
+            margin: 150px auto auto 110px;
         }
     }
 }

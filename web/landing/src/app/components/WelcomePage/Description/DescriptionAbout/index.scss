@@ -1,18 +1,16 @@
 @import "@/index.scss";
 
 .description-about {
-    max-width: 1280px;
-    margin: 200px auto;
-    padding: 10px 50px;
     display: flex;
-    justify-content: center;
     position: relative;
+    margin: auto;
+    width: 1440px;
 
     &__image-area {
         position: relative;
         display: flex;
         flex-direction: column;
-        max-width: 500px;
+        margin: 206px 0 auto 85.67px;
     }
 
     &__stats-image {
@@ -22,84 +20,133 @@
         transition: all 0.3s;
     }
 
+    &__cards-field {
+        width: 560.98px;
+        height: 526.37px;
+    }
+
+    &__mirrored {
+        width: 560.98px;
+        height: 526.37px;
+        margin-top: -15px;
+    }
+
     &__text-area {
-        margin-left: 100px;
+        margin: 322px 150px auto 110px;
     }
 
     &__text {
         margin-top: 40px;
+        font-family: "Roboto", sans-serif;
+        font-weight: bold;
     }
 
     &__title {
-        color: $highlightColor;
+        font-family: "Hanson", sans-serif;
+        font-weight: bold;
         font-size: 36px;
+        color: $highlightColor;
     }
 }
 
-@media (max-width: $desktopBreakPoint) {
+@media screen and (max-width: 834px) {
 
     .description-about {
-        padding: 10px 30px;
+        position: relative;
+        width: 834px;
 
         &__image-area {
-            width: 50%;
+            position: relative;
+            margin: 97px 0 auto 35.37px;
         }
 
         &__stats-image {
-            width: 50%;
-            right: -20%;
-            bottom: unset;
-            top: 300px;
+            position: absolute;
+            right: -140px;
+            top: 250px;
+            width: 202px;
+            height: 260px;
         }
-    }
-}
 
-@media (max-width: $tabletBreakPoint) {
+        &__cards-field {
+            width: 340.72px;
+            height: 319.7px;
+        }
 
-    .description-about {
-
-        &__stats-image {
-            width: 50%;
-            right: -15%;
-            bottom: unset;
-            top: 200px;
+        &__mirrored {
+            width: 340.72px;
+            height: 319.7px;
+            margin-top: -15px;
         }
 
         &__text-area {
-            margin-left: 50px;
+            margin: 118px 150px auto 67.02px;
+        }
+
+        &__title {
+            width: 323px;
+            font-size: 26px;
+            line-height: 27px;
+        }
+
+        &__text {
+            width: 362px;
+            margin-top: 22px;
+            font-size: 15px;
+            line-height: 18px;
         }
     }
 }
 
-@media (max-width: $phoneBreakPoint) {
+@media screen and (max-width: 414px) {
 
     .description-about {
-        flex-direction: column;
-        align-items: center;
+        position: relative;
+        width: 414px;
+        margin: 0;
+        padding: 0;
 
         &__image-area {
-            width: 70%;
+            order: 1;
+            position: absolute;
+            display: flex;
+            flex-direction: row;
+            margin: 0;
         }
 
-        &__stats-image {
-            width: 40%;
-            right: -15%;
-            top: unset;
-            bottom: -40px;
-        }
-
-        &__text-area {
-            margin-left: 0;
-            margin-top: 40px;
+        &__cards-field {
+            width: 252.78px;
+            height: 237.19px;
+            margin: 210px 0 auto 30.05px;
         }
 
         &__mirrored {
             display: none;
         }
 
+        &__stats-image {
+            width: 149.6px;
+            height: 192.86px;
+            margin: 90px 35px 0 auto;
+        }
+
+        &__text-area {
+            order: 0;
+            margin: 0;
+        }
+
         &__title {
-            position: absolute;
-            top: -80px;
+            width: 352px;
+            margin: 96px 30px 0 32px;
+            font-size: 36px;
+            line-height: 37px;
+        }
+
+        &__text {
+            width: 353px;
+            margin: 429px 30px 0 32px;
+            font-size: 18px;
+            line-height: 21px;
         }
     }
 }
