@@ -2,7 +2,6 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
-import { CardPath } from '@/app/types/club';
 
 /**
  * exposes all bandwidth related logic
@@ -16,36 +15,30 @@ export class ClubService {
     };
 
     /** creating club */
-    public async createClub(): Promise<Response> {
-        const response = await this.createClub();
-
-        return await response.json();
+    public async createClub(): Promise<string> {
+        return await this.club.createClub();
     };
     /** returning club with existing squads */
-    public async getClub(): Promise<Response> {
-        const response = await this.getClub();
-
-        return await response.json();
+    public async getClub(): Promise<string> {
+        return await this.club.getClub();
     };
     /** creating squad in selected club */
-    public async createSquad(clubId: string): Promise<Response> {
-        const response = await this.createSquad(clubId);
-
-        return await response.json();
+    public async createSquad(clubId: string): Promise<string> {
+        return await this.club.createSquad(clubId);
     };
 
     /** adding card to squad cards list */
     public async addCard(clubId: string, squadId: string, cardId: string, position: number): Promise<Response> {
-        return await this.addCard(clubId, squadId, cardId, position);
+        return await this.club.addCard({ clubId, squadId, cardId, position });
     };
 
     /** change position of existing card */
     public async changeCardPosition(clubId: string, squadId: string, cardId: string, position: number): Promise<Response> {
-        return await this.changeCardPosition(clubId, squadId, cardId, position);
+        return await this.club.changeCardPosition({ clubId, squadId, cardId, position });
     };
 
     /** delete card from squad cards list */
     public async deleteCard(clubId: string, squadId: string, cardId: string): Promise<Response> {
-        return await this.deleteCard(clubId, squadId, cardId);
+        return await this.club.deleteCard({ clubId, squadId, cardId });
     };
-}
+};
