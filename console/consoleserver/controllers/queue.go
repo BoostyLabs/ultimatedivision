@@ -6,15 +6,11 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/internal/pagination"
 	"ultimatedivision/queue"
 )
 
@@ -37,81 +33,6 @@ func NewQueue(log logger.Logger, queue *queue.Service) *Queue {
 	}
 
 	return queueController
-}
-
-// ListPaginated is an endpoint that returns places list.
-func (controller *Queue) ListPaginated(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	w.Header().Set("Content-Type", "application/json")
-	var (
-		err         error
-		limit, page int
-	)
-	urlQuery := r.URL.Query()
-	limitQuery := urlQuery.Get("limit")
-	pageQuery := urlQuery.Get("page")
-
-	if limitQuery != "" {
-		limit, err = strconv.Atoi(limitQuery)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	}
-
-	if pageQuery != "" {
-		page, err = strconv.Atoi(pageQuery)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	}
-
-	cursor := pagination.Cursor{
-		Limit: limit,
-		Page:  page,
-	}
-	placesPage, err := controller.queue.ListPaginated(ctx, cursor)
-	if err != nil {
-		controller.log.Error("could not get places list", ErrQueue.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrQueue.Wrap(err))
-		return
-	}
-
-	if err = json.NewEncoder(w).Encode(placesPage); err != nil {
-		controller.log.Error("failed to write json response", ErrQueue.Wrap(err))
-		return
-	}
-}
-
-// Get is an endpoint that returns place.
-func (controller *Queue) Get(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	vars := mux.Vars(r)
-	w.Header().Set("Content-Type", "application/json")
-
-	id, err := uuid.Parse(vars["id"])
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrQueue.Wrap(err))
-		return
-	}
-
-	place, err := controller.queue.Get(ctx, id)
-	if err != nil {
-		controller.log.Error("could not get place by id", ErrQueue.Wrap(err))
-		switch {
-		case queue.ErrNoPlace.Has(err):
-			controller.serveError(w, http.StatusNotFound, ErrQueue.Wrap(err))
-		default:
-			controller.serveError(w, http.StatusInternalServerError, ErrQueue.Wrap(err))
-		}
-		return
-	}
-
-	if err = json.NewEncoder(w).Encode(place); err != nil {
-		controller.log.Error("failed to write json response", ErrQueue.Wrap(err))
-		return
-	}
 }
 
 // Create is an endpoint that creates place.
