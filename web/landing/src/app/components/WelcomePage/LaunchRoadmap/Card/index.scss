@@ -2,10 +2,11 @@
 
 .card {
     display: block;
-    margin: 2% auto;
+    margin: 20px 79px;
     background: #19215e;
     border: 1px solid #3f4ba7;
-    width: 80%;
+    width: 1282px;
+    height: 546px;
     justify-content: space-between;
     padding: 5%;
     float: left;
@@ -19,7 +20,7 @@
 
     &__description {
         margin-top: 5%;
-        width: 40%;
+        width: 650px;
         font-size: 24px;
         text-align: left;
         color: white;
@@ -39,103 +40,137 @@
     }
 
     &__diagram {
-        display: block;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         float: right;
         height: 260px;
         width: 260px;
+        margin: -40px 0 140px auto;
         cursor: pointer;
-        position: relative;
 
         &__value {
-            font-size: 42px;
+            margin-top: 10px;
+            font-family: "Rubik", sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 36px;
+            line-height: 45px;
             color: white;
-            font-weight: bold;
             position: absolute;
-            top: 110px;
-            left: 105px;
         }
     }
+}
 
-    @media (max-width: $desktopBreakPoint) {
+@media screen and (max-width: 834px) {
+
+    .card {
+        margin: 25px 38px;
+        width: 758px;
+        height: 534px;
+        padding: 0;
 
         &__title {
-            font-size: 32px;
+            padding: 107px 0 11px 59px;
+            font-size: 36px;
         }
 
         &__description {
-            width: 70%;
-            font-size: 20px;
-        }
-
-        &__box {
-
-            &__subtitle {
-                margin-top: 5%;
-                font-size: 18px;
-            }
-        }
-
-        &__diagram {
-            height: 160px;
-            width: 160px;
-
-            &__value {
-                font-size: 28px;
-                top: 70px;
-                left: 65px;
-            }
-        }
-    }
-
-    @media (max-width: $tabletBreakPoint) {
-
-        &__title {
+            margin: 0 0 52px 59px;
+            width: 480px;
             font-size: 24px;
         }
 
-        &__description {
-            font-size: 16px;
-        }
-
         &__box {
+            margin: auto 0 70px 59px;
+            display: flex;
+            flex-direction: row;
 
             &__subtitle {
-                margin-top: 7.5%;
-                font-size: 16px;
+                margin-left: 5%;
+                font-size: 24px;
             }
         }
 
         &__diagram {
-            height: 140px;
-            width: 140px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            float: right;
+            width: 154px;
+            height: 154px;
+            margin: -200px 30px 140px auto;
+            cursor: pointer;
 
             &__value {
-                font-size: 24px;
-                color: white;
-                font-weight: bold;
+                font-size: 20px;
+                line-height: 25px;
                 position: absolute;
-                top: 60px;
-                left: 55px;
+                margin-top: 10px;
             }
         }
     }
+}
 
-    @media (max-width: $phoneBreakPoint) {
+@media screen and (max-width: 414px) {
+
+    .card {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
+        margin: 25px 38px;
+        width: 354px;
+        height: 557px;
+        padding: 0;
+
+        &__title {
+            order: 0;
+            width: 350px;
+            padding: 32px 0 0 22px;
+            text-align: center;
+            font-size: 24px;
+            line-height: 77px;
+        }
+
+        &__description {
+            order: 2;
+            margin: 0 28px 52px 22px;
+            width: 304px;
+            font-size: 18px;
+            line-height: 21px;
+        }
 
         &__box {
-            margin-top: 5%;
-
-            &__present {
-                width: 15%;
-            }
+            order: 3;
+            margin: 0 0 50px 24px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
 
             &__subtitle {
-                margin-top: 5%;
+                margin-left: 5%;
                 font-size: 14px;
+                line-height: 17px;
+            }
+        }
+
+        &__diagram {
+            order: 2;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 44px auto;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &__value {
+                font-size: 20.3008px;
+                line-height: 25px;
+                position: absolute;
+                margin-top: 10px;
             }
         }
     }

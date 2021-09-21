@@ -9,7 +9,7 @@ import './index.scss';
 
 export const DescriptionCards = () => {
     return (
-        <div className="description-cards">
+        <div className="description-cards" id="cards">
             <div className="description-cards__text-area">
                 <h2 className="description-cards__title">
                     The Player Cards - Become UD Founder
@@ -23,7 +23,7 @@ export const DescriptionCards = () => {
                 </p>
             </div>
             <div className="description-cards__cards">
-                <picture className="description-cards__card" >
+                <picture className="description-cards__card">
                     <source media="(max-width: 414px)" srcSet={phoneCards} />
                     <source media="(max-width: 834px)" srcSet={tabletCards} />
                     <source media="(min-width: 1440px)" srcSet={cards}/>

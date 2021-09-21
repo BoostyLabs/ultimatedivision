@@ -5,24 +5,50 @@
     flex-direction: column;
     background: #202552;
 
-    &__title {
-        font-size: 64px;
-        text-align: center;
-        color: $highlightColor;
-        margin: 5%;
-    }
+    .wrapper {
+        width: 1440px;
+        margin: 0 auto 156px auto;
 
-    @media (max-width: $desktopBreakPoint) {
-
-        &__title {
-            font-size: 42px;
+        .launch-roadmap__title {
+            margin: 115px 435px 104px 444px;
+            font-family: "Russo One", sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 64px;
+            line-height: 77px;
+            color: $highlightColor;
         }
     }
+}
 
-    @media (max-width: $phoneBreakPoint) {
+@media screen and (max-width: 834px) {
 
-        &__title {
-            font-size: 36px;
+    .launch-roadmap {
+
+        .wrapper {
+            width: 834px;
+
+            .launch-roadmap__title {
+                margin: 81px 234px 68px 235px;
+                font-size: 42px;
+                line-height: 51px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 414px) {
+
+    .launch-roadmap {
+
+        .wrapper {
+            width: 414px;
+
+            .launch-roadmap__title {
+                margin: 70px 49px 32px 49px;
+                font-size: 36px;
+                line-height: 43px;
+            }
         }
     }
 }

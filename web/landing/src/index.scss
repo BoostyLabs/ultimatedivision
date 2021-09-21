@@ -28,8 +28,16 @@
 }
 
 @font-face {
-    font-family: "Hanson";
+    font-family: "Rubik";
     src: url("@static/fonts/Rubik-Regular.ttf");
+    font-style: normal;
+    font-weight: lighter;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Hanson";
+    src: url("@static/fonts/Hanson-Bold.ttf");
     font-style: normal;
     font-weight: lighter;
     font-display: swap;

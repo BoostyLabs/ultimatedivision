@@ -2,35 +2,53 @@
 @import "aos/dist/aos.css";
 
 .footer {
-    background-color: black;
+    width: 100%;
+    background-color: #001b4f;
 
     &__wrapper {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        max-width: 800px;
-        padding: 40px 30px;
+        width: 1440px;
+        padding: 40px 83px;
         margin: 0 auto;
     }
 
     &__links {
-        width: 200px;
         display: flex;
+        width: 200px;
         gap: 30px;
         text-transform: none;
     }
 
     &__link {
-        color: #999;
+        font-family: "Russo One", sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 18px;
+        line-height: 22px;
+        color: #e6ffee;
+        text-decoration: none;
         transition: color 0.3s;
 
         &:hover {
-            color: white;
+            text-decoration: underline;
         }
     }
 
     &__social {
+        margin-right: 276px;
         color: $highlightColor;
+
+        p {
+            font-family: "BebasNeue", sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 26px;
+            line-height: 31px;
+            text-align: center;
+            text-transform: uppercase;
+        }
     }
 
     &__list {
@@ -55,18 +73,38 @@
     }
 }
 
-@media (max-width: $tabletBreakPoint) {
+@media screen and (max-width: 834px) {
 
     .footer {
 
-        &__links {
-            justify-content: center;
+        &__wrapper {
+            width: 834px;
+            height: 139px;
+            padding: 57px 38px 57px 40px;
+            margin: 0 auto;
         }
 
-        &__wrapper {
-            justify-content: center;
-            gap: 20px;
-            flex-direction: column;
+        &__links {
+            gap: 33px;
+        }
+
+        &__link {
+            font-size: 18px;
+            line-height: 22px;
+        }
+
+        &__social {
+            margin-right: 38px;
+
+            p {
+                font-size: 26px;
+                line-height: 31px;
+            }
+        }
+
+        &__social-img {
+            width: 29.95px;
+            height: 25.12px;
         }
     }
 }

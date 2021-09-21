@@ -3,7 +3,7 @@
 .launch-date-modal {
     position: fixed;
     z-index: 3;
-    top: 0;
+    top: 0%;
     width: 100vw;
     height: 100vh;
     background: linear-gradient(#0b2774c7, #030024d8);
@@ -65,10 +65,6 @@
             margin-top: 7.5%;
             outline: none;
             cursor: pointer;
-
-            &:focus {
-                box-shadow: 0 0 10px white;
-            }
 
             &__error {
                 color: red;

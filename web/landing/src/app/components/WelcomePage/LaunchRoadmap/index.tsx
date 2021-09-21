@@ -34,20 +34,24 @@ export const LaunchRoadmap: React.FC = () => {
         {
             title: 'Game On',
             subTitle: '50 ETH have been deposited to the treasury',
-            description: `The UD Metaverse is now unstoppable and the first
-            competition will soon begin. Prepare your NFTs to become 1 of 10000 UD
-            founders and join the game before anyone else. Will your club reach
-            the top of Ultimate Division?`,
+            description: `It’s almost time to get to the field. 
+            Get one of 20 founder kits for your club that your fans will absolutely love. `,
             value: 100,
         },
     ];
 
-    return <div className="launch-roadmap">
-        <h1 className="launch-roadmap__title">
-            Launch Roadmap
-        </h1>
-        {roadmap.map((card, index) => (
-            <Card card={card} key={index} />
-        ))}
-    </div>
+    return <section className="launch-roadmap" id="roadmap">
+       <div className="wrapper"> 
+            <h1 className="launch-roadmap__title"
+                data-aos="fade-right"
+                data-aos-duration="600"
+                data-aos-easing="ease-in-out-cubic"
+            >
+                Launch Roadmap
+            </h1>
+            {roadmap.map((card, index) => (
+                <Card card={card} key={index} />
+            ))}
+       </div>
+    </section>
 };

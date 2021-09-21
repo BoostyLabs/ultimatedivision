@@ -1,42 +1,108 @@
 @import "@/index.scss";
 
 .description-pay {
-    max-width: 1280px;
-    margin: 100px auto;
-    padding: 10px 50px;
+    margin: 250px 0 264px auto;
     display: flex;
-    justify-content: space-between;
     position: relative;
 
     &__radar {
-        width: 40%;
-        margin-right: 100px;
+        margin: 0 0 auto 135px;
+    }
+
+    &__text-area {
+        align-self: center;
+        margin-left: 199px;
     }
 
     &__title {
-        font-size: 36px;
+        width: 575px;
+        font-family: "Hanson", sans-serif;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 43px;
+        line-height: 45px;
         color: $highlightColor;
-        margin-bottom: 40px;
+    }
+
+    &__text {
+        width: 605px;
+        margin-top: 44px;
+        font-family: "Roboto", sans-serif;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 24px;
+        line-height: 28px;
     }
 }
 
-@media (max-width: $phoneBreakPoint) {
+@media screen and (max-width: 834px) {
 
     .description-pay {
+        margin: 250px 0 138px auto;
+        position: relative;
+
+        &__radar {
+            width: 291.61px;
+            height: 367px;
+            margin: 0 0 auto 38px;
+        }
+
+        &__text-area {
+            align-self: center;
+            margin-left: 117px;
+        }
+
+        &__title {
+            width: 351px;
+            font-size: 26px;
+            line-height: 27px;
+        }
+
+        &__text {
+            width: 349px;
+            margin-top: 26px;
+            font-size: 15px;
+            line-height: 18px;
+        }
+    }
+}
+
+@media screen and (max-width: 414px) {
+
+    .description-pay {
+        margin: 0;
+        position: relative;
         flex-direction: column;
 
         &__radar {
+            position: absolute;
+            order: 1;
+            width: 354px;
+            height: 445.52px;
+            margin: 104px 0 auto 30px;
+        }
+
+        &__text-area {
             width: 100%;
+            padding: 0;
             margin: 0;
         }
 
         &__title {
+            order: 0;
             position: absolute;
-            top: -60px;
+            width: 353px;
+            margin-left: 30px;
+            font-size: 36px;
+            line-height: 37px;
         }
 
         &__text {
-            margin-top: 40px;
+            order: 2;
+            width: 354px;
+            margin: 606px auto 142px 30px;
+            font-size: 24px;
+            line-height: 28px;
         }
     }
 }

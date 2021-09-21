@@ -11,14 +11,31 @@ import CardRightMedium from '@static/images/metaverse/card-right-834.png';
 import CardRightSmall from '@static/images/metaverse/card-right-414.png';
 
 import './index.scss';
+import { MintButton } from '@components/common/MintButton';
 
 export const Metaverse: React.FC = () => {
     return (
         <section className="metaverse" id="metaverse">
             <div className="wrapper">
-                <span className="metaverse__title">Ultimate Divison</span>
-                <span className="metaverse__subtitle">Football Metaverse</span>
-                <div className="metaverse__cards">
+                <span className="metaverse__title"
+                    data-aos="fade-right"
+                    data-aos-duration="600"
+                    data-aos-easing="ease-in-out-cubic"
+                >
+                    Ultimate Divison
+                </span>
+                <span className="metaverse__subtitle" 
+                    data-aos="fade-right"
+                    data-aos-duration="600"
+                    data-aos-easing="ease-in-out-cubic"
+                >
+                    Football Metaverse
+                </span>
+                <div className="metaverse__cards" 
+                    data-aos="fade-right"
+                    data-aos-duration="600"
+                    data-aos-easing="ease-in-out-cubic"
+                >
                     <picture className="left-card">
                         <source media="(max-width: 414px)" srcSet={CardLeftSmall} />
                         <source media="(max-width: 834px)" srcSet={CardLeftMedium} />
@@ -38,11 +55,14 @@ export const Metaverse: React.FC = () => {
                         <img src={CardRight} alt="Right player"></img>
                     </picture>
                 </div>
-                <div className="metaverse__sold-scale">
+                <div className="metaverse__sold-scale" 
+                    data-aos="fade-left"
+                    data-aos-duration="600"
+                    data-aos-easing="ease-in-out-cubic"
+                >
                     <span className="metaverse__sold-scale-text">Cards Sold 0/10000</span>
                 </div>
-                {/**TODO: Need merge with PR #194 */}
-                {/* <MintButton text="Mint"/> */}
+                <MintButton text="MINT"/>
             </div>
         </section>
     );

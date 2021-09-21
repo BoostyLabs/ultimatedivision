@@ -13,7 +13,7 @@ import cardStatsPhone from '@static/images/Description/card-stats-414.png';
 
 export const DescriptionAbout = () => {
     return (
-        <div className="description-about">
+        <div className="description-about" id="about">
             <div className="description-about__image-area">
                 <picture className="description-about__cards-field">
                     <source media="(max-width: 414px)" srcSet={fieldPhone} />

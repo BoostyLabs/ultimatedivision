@@ -20,7 +20,11 @@ export const Card: React.FC<{
     const LOWER_BREAKPOINT_COLOR = '#37FB63';
     const UPPER_BREAKPOINT_COLOR = '#323c92';
     return (
-        <div className="card">
+        <div className="card"
+            data-aos="fade-right"
+            data-aos-duration="600"
+            data-aos-easing="ease-in-out-cubic"
+        >
             <h1 className="card__title">
                 {card.title}
             </h1>
