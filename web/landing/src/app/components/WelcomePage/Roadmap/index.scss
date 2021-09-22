@@ -32,22 +32,23 @@
     }
 }
 
-@media (max-width: $desktopBreakPoint) { 
+@media (max-width: $desktopBreakPoint) {
+
     .roadmap {
+
         &__road {
             margin-left: 40px;
             flex-direction: column;
             align-items: flex-start;
-            &::before {
-                content: '';
+
+            &:before {
+                content: "";
                 height: 100%;
                 position: absolute;
                 left: -25px;
                 width: 5px;
-                background: linear-gradient(90deg, #00FFA3 0%, #00FFA3 135.85%);
-
+                background: linear-gradient(90deg, #00ffa3 0%, #00ffa3 135.85%);
             }
-
         }
     }
 }
@@ -55,21 +56,20 @@
 @media (max-width: $tabletBreakPoint) {
 
     .roadmap {
+
         &__title {
             margin-bottom: 100px;
         }
     }
 }
 
-
-
 @media (max-width: $phoneBreakPoint) {
 
     .roadmap {
         padding: 100px 20px;
+
         &__title {
             margin-bottom: 80px;
         }
-
     }
 }
