@@ -63,7 +63,19 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 	return squadID, ErrClubs.Wrap(err)
 }
 
-// Add add new card to the squad of the club.
+// AddSquadCards adds cards to the squad.
+func (service *Service) AddSquadCards(ctx context.Context, squadID uuid.UUID, formation Formation, squadCards []SquadCard) error {
+	var err error
+	for i := 0; i < len(squadCards); i++ {
+		squadCards[i].SquadID = squadID
+		squadCards[i].Position = FormationToPosition[formation][squadCards[i].Position]
+		err = service.clubs.AddSquadCard(ctx, squadCards[i])
+	}
+
+	return ErrClubs.Wrap(err)
+}
+
+// Add adds new card to the squad of the club.
 func (service *Service) Add(ctx context.Context, position Position, squadID, cardID uuid.UUID) error {
 	newSquadCard := SquadCard{
 		SquadID:  squadID,
@@ -93,6 +105,13 @@ func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, form
 
 // UpdateCardPosition updates position of card in the squad.
 func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition Position) error {
+	formation, err := service.clubs.GetFormation(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	newPosition = FormationToPosition[formation][newPosition]
+
 	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, newPosition, squadID, cardID))
 }
 
@@ -105,6 +124,14 @@ func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, 
 // GetSquadCards returns al cards from squad.
 func (service *Service) GetSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error) {
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
+	if len(squadCards) < 11 {
+		var squadCard = SquadCard{
+			SquadID: squadID,
+		}
+
+		squadCards = append(squadCards, squadCard)
+	}
+
 	return squadCards, ErrClubs.Wrap(err)
 }
 
