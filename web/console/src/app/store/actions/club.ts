@@ -1,8 +1,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { ClubClient } from '@/api/club';
 import { Card } from '@/card';
 import { ClubFromApi } from '@/club';
+import { ClubService } from '@/club/service';
+import { Dispatch } from 'redux';
 
 export const CREATE_CLUB = 'CREATE_CLUB';
 export const FORMATION = 'FORMATION';
@@ -19,10 +22,13 @@ export const EXCHANGE_CARDS = 'EXCHANGE_CARDS';
 type dragParamType = number | null;
 const DEFAULT_CARD_INDEX = null;
 
+const client = new ClubClient();
+const service = new ClubService(client);
+
 export const createClub = (club: ClubFromApi) => ({
     type: CREATE_CLUB,
-    club
-})
+    club,
+});
 
 /** Chose type of cards positioning on football field */
 export const setFormation = (formation: string) => ({

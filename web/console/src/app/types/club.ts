@@ -2,44 +2,25 @@
 // See LICENSE for copying information.
 
 import { Card } from '@/card';
+import { SquadCard } from '@/club';
 
-/** Base FootballField implementation */
+const DEFAULT_INDEX = 0;
+/** class created to get card data from exist cardList */
 export class FootballFieldCard {
+    public squadId: string = '';
+    public cardId: string = '';
+    public position: number = DEFAULT_INDEX;
     /** class which implements fotballField card */
     constructor(
-        public id: number,
-        public card: null | Card,
-    ) { }
-}
-/* eslint-disable no-magic-numbers */
+        public cardFromApi: SquadCard
+    ) {
+        Object.assign(this, cardFromApi);
+    }
 
-
-/** class which implements field setup */
-export class FootballField {
-    public options = {
-        formation: '4-4-2',
-        captain: '',
-        tactics: '',
-        chosedCard: 0,
-        showCardSeletion: false,
-        dragStart: null,
-        dragTarget: null,
-    };
-    /** football team implementation */
-    public cards = [
-        new FootballFieldCard(0, null),
-        new FootballFieldCard(1, null),
-        new FootballFieldCard(2, null),
-        new FootballFieldCard(3, null),
-        new FootballFieldCard(4, null),
-        new FootballFieldCard(5, null),
-        new FootballFieldCard(6, null),
-        new FootballFieldCard(7, null),
-        new FootballFieldCard(8, null),
-        new FootballFieldCard(9, null),
-        new FootballFieldCard(10, null),
-
-    ];
+    /** get card data from cards */
+    public cardData(cards: Card[]) {
+        return cards.find(card => card.id === this.cardId);
+    }
 }
 
 /** implementation for each field in
@@ -57,3 +38,53 @@ export class FootballFieldInformationLine {
         this.options = options;
     }
 };
+
+
+/** initial value for clubReducer, will be replaced after fetch */
+export class InitialClubValue {
+    /** local options for dNd functionality */
+    public options = {
+        chosedCard: 0,
+        showCardSeletion: false,
+        dragStart: null,
+        dragTarget: null,
+    };
+    public clubs = {
+        id: '',
+        name: '',
+        createdAt: '',
+    };
+    public squad = {
+        id: '',
+        clubId: '',
+        formation: '4-4-2',
+        tactic: 0,
+        captainId: '',
+    };
+    /* eslint-disable */
+    squadCards = [
+        new InitialCard(1),
+        new InitialCard(2),
+        new InitialCard(3),
+        new InitialCard(4),
+        new InitialCard(5),
+        new InitialCard(6),
+        new InitialCard(7),
+        new InitialCard(8),
+        new InitialCard(9),
+        new InitialCard(10),
+        new InitialCard(11),
+    ];
+}
+
+/** initial card before fetch, will be replaced by FootballFieldCard */
+export class InitialCard {
+    constructor(public position: number) { }
+    public squadId = '';
+    public cardId = '';
+
+    /** gets card data from cardList */
+    public cardData(cards: Card[]) {
+        return cards.find(card => card.id === this.cardId);
+    }
+}
