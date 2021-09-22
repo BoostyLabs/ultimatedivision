@@ -47,35 +47,39 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
         clearError: setEmailError,
     };
 
-    return <div className="launch-date-modal">
-        <a
-            onClick={handleModal}
-            className="launch-date-modal__close"
-        >
-            <p className="launch-date-modal__close__text">
-                &#215;
-            </p>
-        </a>
-        <div className="launch-date-modal__window">
-            <h1 className="launch-date-modal__description">
-                Get notified on the launch
-            </h1>
-            <div>
-                <form
-                    className="launch-date-modal__notification"
-                    onSubmit={handleSubmit}
-                >
-                    <UserDataArea {...formValue} />
-                    <input
-                        value="SEND"
-                        className="launch-date-modal__notification__confirm"
-                        type="submit"
-                    />
-                </form>
+    return (
+        <div className="launch-date-modal">
+            <div className="launch-date-modal__window">
+                <div className="launch-date-modal__header"> 
+                    <a onClick={handleModal}
+                        className="launch-date-modal__close"
+                    >
+                        <p className="launch-date-modal__close__text">
+                            &#215;
+                        </p>
+                    </a>
+                    <h1 className="launch-date-modal__description">
+                        Get notified on the launch
+                    </h1>
+                </div>
+                <div>
+                    <form
+                        className="launch-date-modal__notification"
+                        onSubmit={handleSubmit}
+                    >
+                        <label className="launch-date-modal__notification__label" htmlFor="email">Email</label>
+                        <UserDataArea {...formValue} />
+                        <input
+                            value="SEND"
+                            className="launch-date-modal__notification__confirm"
+                            type="submit"
+                        />
+                    </form>
+                </div>
+                <div
+                    className="launch-date-modal__wrapper"
+                />
             </div>
-            <div
-                className="launch-date-modal__wrapper"
-            />
         </div>
-    </div>;
+    )
 };
