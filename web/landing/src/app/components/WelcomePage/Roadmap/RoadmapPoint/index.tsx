@@ -7,43 +7,43 @@ import Aos from 'aos';
 import './index.scss';
 
 export const RoadmapPoint: React.FC<{
-    date: string,
-    points: string[],
-    id: number,
-    done: boolean
+    item: {
+        date: string,
+        points: string[],
+        id: number,
+        done: boolean
+    }
 }> = ({
-    date,
-    points,
-    id
+    item
 }) => {
-    useEffect(() => {
-        Aos.init({
-            duration: 1000,
-        });
-    }, []);
+        useEffect(() => {
+            Aos.init({
+                duration: 1000,
+            });
+        }, []);
 
-    return (
-        <div
-            className="roadmap-point"
-            data-aos={id % 2 === 0 ? 'zoom-in-left-custom' : 'zoom-in-right-custom'}
-            data-aos-delay={200 * id}
-            data-aos-duration="600"
-            data-aos-easing="ease-in-out-cubic"
-        >
-            <p className="roadmap-point__date">
-                {date}
-            </p>
-            <ul className="roadmap-point__list">
-                {points.map((point) => (
-                    <li
-                        className="roadmap-point__item"
-                        key={points.indexOf(point)}
-                    >
-                        {point}
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-};
+        return (
+            <div
+                className="roadmap-point"
+                data-aos={item.id % 2 === 0 ? 'zoom-in-left-custom' : 'zoom-in-right-custom'}
+                data-aos-delay={200 * item.id}
+                data-aos-duration="600"
+                data-aos-easing="ease-in-out-cubic"
+            >
+                <p className="roadmap-point__date">
+                    {item.date}
+                </p>
+                <ul className="roadmap-point__list">
+                    {item.points.map((point, index) => (
+                        <li
+                            className="roadmap-point__item"
+                            key={index}
+                        >
+                            {point}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+    };
 
