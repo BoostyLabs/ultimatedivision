@@ -2,12 +2,13 @@
 @import "aos/dist/aos.css";
 
 .roadmap {
-    padding: 100px;
+    padding: 100px 50px;
     background: #2c3c8f;
     color: white;
     min-height: 1200px;
     overflow-x: hidden;
     position: relative;
+    transition: all 0.3s;
 
     &__title {
         color: $roadmapHighlightColor;
@@ -31,32 +32,44 @@
     }
 }
 
-@media (max-width: $tabletBreakPoint) {
-
+@media (max-width: $desktopBreakPoint) { 
     .roadmap {
-
-        &__title {
-            margin-bottom: 100px;
-        }
-
         &__road {
-            justify-content: flex-end;
+            margin-left: 40px;
             flex-direction: column;
+            align-items: flex-start;
+            &::before {
+                content: '';
+                height: 100%;
+                position: absolute;
+                left: -25px;
+                width: 5px;
+                background: linear-gradient(90deg, #00FFA3 0%, #00FFA3 135.85%);
+
+            }
+
         }
     }
 }
 
+@media (max-width: $tabletBreakPoint) {
+
+    .roadmap {
+        &__title {
+            margin-bottom: 100px;
+        }
+    }
+}
+
+
+
 @media (max-width: $phoneBreakPoint) {
 
     .roadmap {
-
+        padding: 100px 20px;
         &__title {
             margin-bottom: 80px;
         }
 
-        &__road {
-            right: 150px;
-            height: 950px;
-        }
     }
 }

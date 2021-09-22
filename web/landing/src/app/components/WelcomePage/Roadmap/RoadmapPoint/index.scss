@@ -18,7 +18,7 @@
     &:after {
         content: "";
         position: absolute;
-        width: 340px;
+        width: 82%;
         top: 158px;
         left: 80px;
         height: 5px;
@@ -27,13 +27,14 @@
     }
     &:nth-child(3) {
         &::after {
-            width: 1000px;
+            width: 100vw;
             background: linear-gradient(90deg, rgba(0, 255, 162, 0.891) 0%, rgba(0, 255, 163, 0) 135.85%);
 
         }
     }
 
     &__date {
+        position: relative;
         font-size: 50px;
         top: 0;
         margin-bottom: 15px;
@@ -61,35 +62,47 @@
     }
 }
 
-@media (max-width: $tabletBreakPoint) {
+@media (max-width: $desktopBreakPoint) {
 
     .roadmap-point {
-
+        height: 360px;
+        width: 100%;
+        &::after {
+            display: none;
+        }
+        &::before {
+            top: 70px;
+        }
         &__date {
-            top: -30px;
+            top: 12px;
+            left: 30px;
+            font-size: 28px;
         }
-
-        &__item {
-
-            &:before {
-                display: none;
-            }
+        &__list {
+            margin-top: 50px;
         }
     }
 }
-
-@media (max-width: $tabletBreakPoint) {
+@media (max-width: $desktopBreakPoint) {
 
     .roadmap-point {
-
-        &__item {
-
-            &:before {
-                display: inline-block;
-            }
+        padding: 55px 15px 55px 40px;
+        &::after {
+            display: none;
+        }
+        &::before {
+            top: 70px;
+        }
+        &__date {
+            top: 12px;
+            left: 30px;
+            font-size: 28px;
         }
     }
 }
+
+
+
 
 [data-aos="zoom-in-right-custom"] {
     @media (max-width: $tabletBreakPoint) {
