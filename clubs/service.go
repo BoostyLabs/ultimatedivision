@@ -16,6 +16,9 @@ import (
 // ErrClubs indicates that there was an error in the service.
 var ErrClubs = errs.Class("clubs service error")
 
+// totalSquadCards defines number of players in the full squad.
+const totalSquadCards = 11
+
 // Service is handling clubs related logic.
 //
 // architecture: Service
@@ -64,26 +67,16 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 }
 
 // AddSquadCards adds cards to the squad.
-func (service *Service) AddSquadCards(ctx context.Context, squadID uuid.UUID, formation Formation, squadCards []SquadCard) error {
-	var err error
-	for i := 0; i < len(squadCards); i++ {
-		squadCards[i].SquadID = squadID
-		squadCards[i].Position = FormationToPosition[formation][squadCards[i].Position]
-		err = service.clubs.AddSquadCard(ctx, squadCards[i])
+func (service *Service) AddSquadCards(ctx context.Context, squadID uuid.UUID, squadCards SquadCard) error {
+	formation, err := service.clubs.GetFormation(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
 	}
 
-	return ErrClubs.Wrap(err)
-}
+	squadCards.SquadID = squadID
+	squadCards.Position = FormationToPosition[formation][squadCards.Position]
 
-// Add adds new card to the squad of the club.
-func (service *Service) Add(ctx context.Context, position Position, squadID, cardID uuid.UUID) error {
-	newSquadCard := SquadCard{
-		SquadID:  squadID,
-		CardID:   cardID,
-		Position: position,
-	}
-
-	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, newSquadCard))
+	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, squadCards))
 }
 
 // Delete deletes card from squad.
@@ -124,12 +117,31 @@ func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, 
 // GetSquadCards returns al cards from squad.
 func (service *Service) GetSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error) {
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
-	if len(squadCards) < 11 {
-		var squadCard = SquadCard{
-			SquadID: squadID,
-		}
+	if err != nil {
+		return squadCards, ErrClubs.Wrap(err)
+	}
 
-		squadCards = append(squadCards, squadCard)
+	if len(squadCards) < totalSquadCards {
+		for i := len(squadCards); i < totalSquadCards; i++ {
+			var squadCard = SquadCard{
+				SquadID: squadID,
+			}
+
+			squadCards = append(squadCards, squadCard)
+		}
+	}
+
+	formation, err := service.clubs.GetFormation(ctx, squadID)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	for i := 0; i < len(squadCards); i++ {
+		for j := 0; j < len(FormationToPosition[formation]); j++ {
+			if squadCards[i].Position == FormationToPosition[formation][j] {
+				squadCards[i].Position = Position(j)
+			}
+		}
 	}
 
 	return squadCards, ErrClubs.Wrap(err)

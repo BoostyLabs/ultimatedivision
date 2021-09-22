@@ -184,6 +184,11 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	if squadCard.Position < 0 || squadCard.Position > 11 {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid  number of position"))
+		return
+	}
+
 	err = controller.clubs.UpdateCardPosition(ctx, squadID, cardID, squadCard.Position)
 	if err != nil {
 		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
@@ -236,29 +241,27 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	squadCards := struct {
-		Formation clubs.Formation   `json:"formation"`
-		Cards     []clubs.SquadCard `json:"cards"`
-	}{}
-
-	if err = json.NewDecoder(r.Body).Decode(&squadCards); err != nil {
+	cardID, err := uuid.Parse(params["cardId"])
+	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
-	if len(squadCards.Cards) > 11 {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid number of cards"))
+	var squadCard clubs.SquadCard
+
+	if err = json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
-	for _, card := range squadCards.Cards {
-		if card.Position < 0 || card.Position > 11 {
-			controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid position"))
-			return
-		}
+	squadCard.CardID = cardID
+
+	if squadCard.Position < 0 || squadCard.Position > 11 {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid position"))
+		return
 	}
 
-	err = controller.clubs.AddSquadCards(ctx, squadID, squadCards.Formation, squadCards.Cards)
+	err = controller.clubs.AddSquadCards(ctx, squadID, squadCard)
 	if err != nil {
 		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
