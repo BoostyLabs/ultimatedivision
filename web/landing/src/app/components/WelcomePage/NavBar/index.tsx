@@ -13,7 +13,7 @@ export const Navbar: React.FC = () => {
     const navBarItems: Array<string> = ['Home', 'Metaverse', 'About', 'Cards', 'Roadmap'];
 
     return (
-        <div className="ultimatedivision-navbar">
+        <nav className="ultimatedivision-navbar">
             <div className="wrapper">
                 <picture className="ultimatedivision-navbar__logo">
                     <img src={NavBarLogo} alt="Ultimate-division logo"></img>
@@ -34,6 +34,6 @@ export const Navbar: React.FC = () => {
                 </ul>
                 <MintButton text="MINT"/>
             </div>
-        </div>
+        </nav>
     );
 };

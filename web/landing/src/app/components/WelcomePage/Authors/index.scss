@@ -24,8 +24,9 @@
 
         &-projects {
             display: flex;
-            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
             gap: 10px;
             margin-top: 80px;
         }
@@ -74,6 +75,11 @@
             &-projects {
                 gap: 6px;
                 margin-top: 46px;
+
+                svg {
+                    width: 139px;
+                    height: 64px;
+                }
             }
 
             &-created-by {
@@ -117,6 +123,11 @@
 
             &-projects {
                 margin-top: 72px;
+
+                svg {
+                    width: 110px;
+                    height: 50px;
+                }
             }
 
             &-created-by {

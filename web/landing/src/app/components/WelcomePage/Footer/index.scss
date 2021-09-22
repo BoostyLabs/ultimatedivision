@@ -108,3 +108,43 @@
         }
     }
 }
+
+@media screen and (max-width: 414px) {
+
+    .footer {
+
+        &__wrapper {
+            flex-direction: column;
+            align-items: flex-start;
+            width: 414px;
+            height: 271px;
+            padding: 57px 0 57px 30px;
+            margin: 0 auto;
+        }
+
+        &__links {
+            gap: 30px;
+        }
+
+        &__link {
+            font-size: 18px;
+            line-height: 22px;
+        }
+
+        &__social {
+            margin-top: 24px;
+
+            p {
+                text-align: left;
+                font-size: 26px;
+                line-height: 31px;
+            }
+        }
+
+        &__social-img {
+            margin-top: 24px;
+            width: 29.95px;
+            height: 25.12px;
+        }
+    }
+}
