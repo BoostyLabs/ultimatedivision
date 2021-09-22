@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { FootballField } from '@/app/types/club';
+import { InitialClubValue } from '@/app/types/club';
 
 import {
     ADD_CARD,
@@ -16,15 +16,17 @@ import {
     TACTICS,
 } from '@/app/store/actions/club';
 
-const FieldSetup = new FootballField();
+/** TODO: replace by initial object */
+const FieldSetup = new InitialClubValue();
 
 export const clubReducer = (cardState = FieldSetup, action: any = {}) => {
     const options = cardState.options;
-    const cards = cardState.cards;
+    const squad = cardState.squad;
+    const cards = cardState.squadCards;
 
     switch (action.type) {
     case FORMATION:
-        options.formation = action.formation;
+        squad.formation = action.formation;
         break;
     case SELECTION_VISIBILITY:
         options.showCardSeletion = action.isVisible;
@@ -33,11 +35,11 @@ export const clubReducer = (cardState = FieldSetup, action: any = {}) => {
         options.chosedCard = action.index;
         break;
     case ADD_CARD:
-        cards[action.fieldCard.index].card =
-                action.fieldCard.card;
+        cards[action.fieldCard.index].cardId =
+                action.fieldCard.card.cardId;
         break;
     case REMOVE_CARD:
-        cards[action.index].card = null;
+        cards[action.index].cardId = '';
         break;
     case DRAG_START:
         options.dragStart = action.index;

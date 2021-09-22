@@ -7,16 +7,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FootballFieldInformation } from '@components/FootballField/FootballFieldInformation';
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
-import { FootballFieldCard } from '@/app/types/club';
+import { FootballFieldCard, InitialCard } from '@/app/types/club';
 
 import { RootState } from '@/app/store';
-import {cardSelectionVisibility, choosePosition, exchangeCards, removeCard, setDragStart, setDragTarget }
+import { cardSelectionVisibility, choosePosition, exchangeCards, removeCard, setDragStart, setDragTarget }
     from '@/app/store/actions/club';
 
 import './index.scss';
 
 export const FootballFieldPlayingArea: React.FC = () => {
-    const formation = useSelector((state: RootState) => state.clubReducer.options.formation);
+    const cards = useSelector((state: RootState) => state.cardsReducer.club);
+    const formation = useSelector((state: RootState) => state.clubReducer.squad.formation);
     const dragStartIndex = useSelector((state: RootState) => state.clubReducer.options.dragStart);
 
     const dispatch = useDispatch();
@@ -113,8 +114,8 @@ export const FootballFieldPlayingArea: React.FC = () => {
                     className={`playing-area__${formation}`}
                     onMouseUp={mouseUpOnArea}
                 >
-                    {fieldSetup.cards.map((fieldCard: FootballFieldCard, index: number) => {
-                        const card = fieldCard.card;
+                    {fieldSetup.squadCards.map((fieldCard: FootballFieldCard | InitialCard, index: number) => {
+                        const card = fieldCard.cardData(cards);
                         const equality = dragStartIndex === index;
                         // TODO: change style by some class to change style in card
 
@@ -140,8 +141,8 @@ export const FootballFieldPlayingArea: React.FC = () => {
                     })}
                 </div>
                 <div className={`playing-area__${formation}-shadows`}>
-                    {fieldSetup.cards.map((fieldCard: FootballFieldCard, index: number) => {
-                        const card = fieldCard.card;
+                    {fieldSetup.squadCards.map((fieldCard: FootballFieldCard | InitialCard, index: number) => {
+                        const card = fieldCard.cardData(cards);
 
                         return (
                             <div
