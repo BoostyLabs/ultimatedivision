@@ -5,12 +5,12 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
 import { cardsReducer } from '@/app/store/reducers/cards';
-import { fieldReducer } from '@/app/store/reducers/footballField';
+import { clubReducer } from '@/app/store/reducers/club';
 import { lootboxReducer } from './reducers/lootboxes';
 
 const reducer = combineReducers({
     cardsReducer,
-    fieldReducer,
+    clubReducer,
     lootboxReducer,
 });
 

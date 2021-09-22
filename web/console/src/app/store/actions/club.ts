@@ -2,7 +2,9 @@
 // See LICENSE for copying information.
 
 import { Card } from '@/card';
+import { ClubFromApi } from '@/club';
 
+export const CREATE_CLUB = 'CREATE_CLUB';
 export const FORMATION = 'FORMATION';
 export const SELECTION_VISIBILITY = 'SELECTION_VISIBILITY';
 export const TACTICS = 'TACTICS';
@@ -16,6 +18,11 @@ export const EXCHANGE_CARDS = 'EXCHANGE_CARDS';
 
 type dragParamType = number | null;
 const DEFAULT_CARD_INDEX = null;
+
+export const createClub = (club: ClubFromApi) => ({
+    type: CREATE_CLUB,
+    club
+})
 
 /** Chose type of cards positioning on football field */
 export const setFormation = (formation: string) => ({

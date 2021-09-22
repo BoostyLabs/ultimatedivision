@@ -4,8 +4,8 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { FootballFieldInformationLine } from '@/app/types/footballField';
-import { setTactic } from '@/app/store/actions/footballField';
+import { FootballFieldInformationLine } from '@/app/types/club';
+import { setTactic } from '@/app/store/actions/club';
 
 import { DropdownStyle } from '@/app/utils/dropdownStyle';
 

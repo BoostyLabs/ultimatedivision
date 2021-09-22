@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { FootballField } from '@/app/types/footballField';
+import { FootballField } from '@/app/types/club';
 
 import {
     ADD_CARD,
@@ -14,11 +14,11 @@ import {
     REMOVE_CARD,
     SELECTION_VISIBILITY,
     TACTICS,
-} from '@/app/store/actions/footballField';
+} from '@/app/store/actions/club';
 
 const FieldSetup = new FootballField();
 
-export const fieldReducer = (cardState = FieldSetup, action: any = {}) => {
+export const clubReducer = (cardState = FieldSetup, action: any = {}) => {
     const options = cardState.options;
     const cards = cardState.cards;
 

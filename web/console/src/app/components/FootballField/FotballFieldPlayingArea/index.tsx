@@ -7,20 +7,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FootballFieldInformation } from '@components/FootballField/FootballFieldInformation';
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
-import { FootballFieldCard } from '@/app/types/footballField';
+import { FootballFieldCard } from '@/app/types/club';
 
 import { RootState } from '@/app/store';
-import { cardSelectionVisibility, choosePosition, exchangeCards, removeCard, setDragStart, setDragTarget }
-    from '@/app/store/actions/footballField';
+import {cardSelectionVisibility, choosePosition, exchangeCards, removeCard, setDragStart, setDragTarget }
+    from '@/app/store/actions/club';
 
 import './index.scss';
 
 export const FootballFieldPlayingArea: React.FC = () => {
-    const formation = useSelector((state: RootState) => state.fieldReducer.options.formation);
-    const dragStartIndex = useSelector((state: RootState) => state.fieldReducer.options.dragStart);
+    const formation = useSelector((state: RootState) => state.clubReducer.options.formation);
+    const dragStartIndex = useSelector((state: RootState) => state.clubReducer.options.dragStart);
 
     const dispatch = useDispatch();
-    const fieldSetup = useSelector((state: RootState) => state.fieldReducer);
+    const fieldSetup = useSelector((state: RootState) => state.clubReducer);
 
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });

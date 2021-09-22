@@ -1,6 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import { FootballFieldInformationLine } from '@/app/types/footballField';
+import { FootballFieldInformationLine } from '@/app/types/club';
 import { FootballFieldInformationCaptain } from
     '@components/FootballField/FootballFieldInformation/FootballFieldInformationCaptain';
 import { FootballFieldInformationFormation } from
