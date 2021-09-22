@@ -30,6 +30,7 @@
     }
 
     &__description {
+        font-family: "Russo One";
         margin-top: 5%;
         max-width: 80%;
         text-align: left;
@@ -59,7 +60,6 @@
         &__send-error {
             width: 70%;
             border: none;
-            border-radius: 5px;
             line-height: 40px;
             padding-left: 20px;
             margin-top: 7.5%;
@@ -67,8 +67,10 @@
             cursor: pointer;
 
             &__error {
+                width: 70%;
                 color: red;
                 font-size: 20px;
+                text-align: right;
             }
         }
 
@@ -77,12 +79,12 @@
         }
 
         &__confirm {
+            font-family: "Hanson";
             z-index: 1;
             font-size: 18px;
             text-align: center;
             border: none;
             width: 30%;
-            border-radius: 5px;
             line-height: 40px;
             margin-top: 10%;
             color: white;
@@ -125,6 +127,11 @@
             &__send-error {
                 width: 75%;
                 line-height: 32px;
+
+                &__error {
+                    width: 75%;
+                    font-size: 16px;
+                }
             }
 
             &__confirm {
@@ -151,10 +158,16 @@
 
         &__notification {
 
-            &__send {
+            &__send,
+            &__send-error {
                 width: 70%;
                 padding-left: 5px;
                 font-size: 12px;
+
+                &__error {
+                    width: 70%;
+                    font-size: 12px;
+                }
             }
 
             &__confirm {
@@ -178,8 +191,13 @@
 
         &__notification {
 
-            &__send {
+            &__send,
+            &__send-error {
                 width: 95%;
+
+                &__error {
+                    width: 95%;
+                }
             }
 
             &__confirm {
