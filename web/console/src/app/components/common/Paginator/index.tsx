@@ -150,8 +150,6 @@ export const Paginator: React.FC<{ getCardsOnPage: (page: number) => void }> = (
             default:
                 populatePages();
         };
-
-        getCards(currentPage);
     };
 
     return (
