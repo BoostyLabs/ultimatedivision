@@ -82,26 +82,27 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 
 	for _, key := range periodName {
 		randNumber := rand.Intn(100) + 1
-		if randNumber > 0 && randNumber <= goalProbability {
-			period := periods[key]
+		if randNumber > goalProbability {
+			continue
+		}
+		period := periods[key]
 
-			minute := generateMinute(period[periodBegin], period[periodEnd])
-			userID, cardID, err := service.chooseSquad(ctx, goalProbabilityByPosition,
-				squadPowerAccuracy, user1, user2, squadCards1, squadCards2)
-			if err != nil {
-				return ErrMatches.Wrap(err)
-			}
+		minute := generateMinute(period[periodBegin], period[periodEnd])
+		userID, cardID, err := service.chooseSquad(ctx, goalProbabilityByPosition,
+			squadPowerAccuracy, user1, user2, squadCards1, squadCards2)
+		if err != nil {
+			return ErrMatches.Wrap(err)
+		}
 
-			err = service.AddGoal(ctx, MatchGoals{
-				ID:      uuid.New(),
-				MatchID: matchID,
-				UserID:  userID,
-				CardID:  cardID,
-				Minute:  minute,
-			})
-			if err != nil {
-				return ErrMatches.Wrap(err)
-			}
+		err = service.AddGoal(ctx, MatchGoals{
+			ID:      uuid.New(),
+			MatchID: matchID,
+			UserID:  userID,
+			CardID:  cardID,
+			Minute:  minute,
+		})
+		if err != nil {
+			return ErrMatches.Wrap(err)
 		}
 	}
 	return nil
@@ -110,6 +111,7 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 // sortMapKey returns sorted slice names of periods.
 func sortMapKey(periodMap map[string][]int) []string {
 	periodsName := make([]string, 0, len(periodMap))
+
 	for periodName := range periodMap {
 		periodsName = append(periodsName, periodName)
 	}
