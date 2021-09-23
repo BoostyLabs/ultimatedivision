@@ -1,13 +1,13 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { FootballFieldCard, InitialClubValue } from '@/app/types/club';
+import { InitialClubValue } from '@/app/types/club';
 
 import {
-    CREATE_CLUB,
     ADD_CARD,
     CAPTAIN,
     CARD_POSITION,
+    CREATE_CLUB,
     DRAG_START,
     DRAG_TARGET,
     EXCHANGE_CARDS,
@@ -26,41 +26,39 @@ export const clubReducer = (clubState = FieldSetup, action: any = {}) => {
     const cards = clubState.squadCards;
 
     switch (action.type) {
-        case CREATE_CLUB:
-            clubState = Object.assign(clubState, action.club);
-            clubState.squadCards = clubState.squadCards.map(card => new FootballFieldCard(card));
-            console.log(clubState)
-            break;
-        case FORMATION:
-            squad.formation = action.formation;
-            break;
-        case SELECTION_VISIBILITY:
-            options.showCardSeletion = action.isVisible;
-            break;
-        case CARD_POSITION:
-            options.chosedCard = action.index;
-            break;
-        case ADD_CARD:
-            cards[action.fieldCard.index].cardId =
+    case CREATE_CLUB:
+        clubState = Object.assign(clubState, action.club);
+        break;
+    case FORMATION:
+        squad.formation = action.formation;
+        break;
+    case SELECTION_VISIBILITY:
+        options.showCardSeletion = action.isVisible;
+        break;
+    case CARD_POSITION:
+        options.chosedCard = action.index;
+        break;
+    case ADD_CARD:
+        cards[action.fieldCard.index].cardId =
                 action.fieldCard.card.cardId;
-            break;
-        case REMOVE_CARD:
-            cards[action.index].cardId = '';
-            break;
-        case DRAG_START:
-            options.dragStart = action.index;
-            break;
-        case DRAG_TARGET:
-            options.dragTarget = action.index;
-            break;
-        case EXCHANGE_CARDS:
-            const prevCard = cards[action.position.previous];
-            cards[action.position.previous] =
+        break;
+    case REMOVE_CARD:
+        cards[action.index].cardId = '';
+        break;
+    case DRAG_START:
+        options.dragStart = action.index;
+        break;
+    case DRAG_TARGET:
+        options.dragTarget = action.index;
+        break;
+    case EXCHANGE_CARDS:
+        const prevCard = cards[action.position.previous];
+        cards[action.position.previous] =
                 cards[action.position.current];
-            cards[action.position.current] = prevCard;
-            break;
-        default:
-            break;
+        cards[action.position.current] = prevCard;
+        break;
+    default:
+        break;
     }
 
     return { ...clubState };
