@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FootballFieldInformation } from '@components/FootballField/FootballFieldInformation';
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
-import { FootballFieldCard, InitialCard } from '@/app/types/club';
+import { SquadCard } from '@/club';
 
 import { RootState } from '@/app/store';
 import { cardSelectionVisibility, choosePosition, exchangeCards, removeCard, setDragStart, setDragTarget }
@@ -54,6 +54,11 @@ export const FootballFieldPlayingArea: React.FC = () => {
     const useMousePosition = (ev: any) => {
         setMousePosition({ x: ev.pageX, y: ev.pageY });
     };
+
+    /** returns card data for card */
+    function getCard(id: string) {
+        return cards.find(card => card.id === id);
+    }
 
     /** Add card position, and shows card selection */
     function handleClick(index: number) {
@@ -114,8 +119,8 @@ export const FootballFieldPlayingArea: React.FC = () => {
                     className={`playing-area__${formation}`}
                     onMouseUp={mouseUpOnArea}
                 >
-                    {fieldSetup.squadCards.map((fieldCard: FootballFieldCard | InitialCard, index: number) => {
-                        const card = fieldCard.cardData(cards);
+                    {fieldSetup.squadCards.map((fieldCard: SquadCard, index: number) => {
+                        const card = getCard(fieldCard.cardId);
                         const equality = dragStartIndex === index;
                         // TODO: change style by some class to change style in card
 
@@ -141,8 +146,8 @@ export const FootballFieldPlayingArea: React.FC = () => {
                     })}
                 </div>
                 <div className={`playing-area__${formation}-shadows`}>
-                    {fieldSetup.squadCards.map((fieldCard: FootballFieldCard | InitialCard, index: number) => {
-                        const card = fieldCard.cardData(cards);
+                    {fieldSetup.squadCards.map((fieldCard: SquadCard, index: number) => {
+                        const card = getCard(fieldCard.cardId);
 
                         return (
                             <div

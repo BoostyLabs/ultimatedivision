@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
-import { ClubFromApi } from '.';
+import { Club } from '.';
 
 /**
  * exposes all bandwidth related logic
@@ -16,11 +16,11 @@ export class ClubService {
     };
 
     /** creating club */
-    public async createClub(): Promise<ClubFromApi> {
+    public async createClub(): Promise<string> {
         return await this.club.createClub();
     };
     /** returning club with existing squads */
-    public async getClub(): Promise<string> {
+    public async getClub(): Promise<Club> {
         return await this.club.getClub();
     };
     /** creating squad in selected club */
@@ -39,7 +39,7 @@ export class ClubService {
     };
 
     /** delete card from squad cards list */
-    public async deleteCard({ clubId, squadId, cardId }: { clubId: string, squadId: string, cardId: string; }): Promise<Response> {
+    public async deleteCard({ clubId, squadId, cardId }: { clubId: string, squadId: string, cardId: string }): Promise<Response> {
         return await this.club.deleteCard({ clubId, squadId, cardId });
     };
 };

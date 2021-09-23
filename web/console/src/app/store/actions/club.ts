@@ -3,7 +3,7 @@
 
 import { ClubClient } from '@/api/club';
 import { Card } from '@/card';
-import { ClubFromApi } from '@/club';
+import { Club } from '@/club';
 import { ClubService } from '@/club/service';
 import { Dispatch } from 'redux';
 
@@ -25,7 +25,7 @@ const DEFAULT_CARD_INDEX = null;
 const client = new ClubClient();
 const service = new ClubService(client);
 
-export const createClub = (club: ClubFromApi) => ({
+export const createClub = (club: Club) => ({
     type: CREATE_CLUB,
     club,
 });
@@ -90,10 +90,16 @@ export const setCaptain = (captain: string) => ({
 });
 
 
-
 // Thunks
 
-export const  getClub = () => async function (dispatch: Dispatch) {
-    const club = await service.createClub();
-    dispatch(createClub(club))
-}
+export const getClub = () => async function(dispatch: Dispatch) {
+    try {
+        const club = await service.getClub();
+        dispatch(createClub(club));
+    } catch (error: any) {
+        const clubId = await service.createClub();
+        const squadId = await service.createSquad(clubId);
+        const club = await service.getClub();
+        dispatch(createClub(club));
+    }
+};

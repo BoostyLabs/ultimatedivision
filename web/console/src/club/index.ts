@@ -1,15 +1,17 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+const DEFAULT_POSITION = 0;
 /** backend card interface */
-export interface SquadCard {
-    squadId: string;
-    cardId: string;
-    position: number;
+export class SquadCard {
+    public squadId = '';
+    public cardId = '';
+    public position = DEFAULT_POSITION;
+    data: any;
 }
 
 /** backend club interface */
-export interface ClubFromApi {
+export interface Club {
     clubs: {
         id: string;
         name: string;
