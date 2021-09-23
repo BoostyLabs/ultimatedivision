@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cards"
 	"ultimatedivision/users"
 )
 
@@ -22,13 +23,15 @@ var ErrClubs = errs.Class("clubs service error")
 type Service struct {
 	clubs DB
 	users *users.Service
+	cards *cards.Service
 }
 
 // NewService is a constructor for clubs service.
-func NewService(clubs DB, users *users.Service) *Service {
+func NewService(clubs DB, users *users.Service, cards *cards.Service) *Service {
 	return &Service{
 		clubs: clubs,
 		users: users,
+		cards: cards,
 	}
 }
 
@@ -112,4 +115,35 @@ func (service *Service) GetSquadCards(ctx context.Context, squadID uuid.UUID) ([
 func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error) {
 	club, err := service.clubs.GetByUserID(ctx, userID)
 	return club, ErrClubs.Wrap(err)
+}
+
+// CalculateEffectivenessOfSquad calculates effectiveness of user's squad.
+func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squadCards []SquadCard) (float64, error) {
+	var effectiveness float64
+
+	for _, squadCard := range squadCards {
+		card, err := service.cards.Get(ctx, squadCard.CardID)
+		if err != nil {
+			return effectiveness, ErrClubs.Wrap(err)
+		}
+
+		var cardEffectivenessByPosition = map[Position]func() float64{
+			GK:  card.EfficientGK,
+			LB:  card.EfficientLB,
+			CD:  card.EfficientCD,
+			RB:  card.EfficientLB,
+			CDM: card.EfficientCDM,
+			CM:  card.EfficientCM,
+			CAM: card.EfficientCAM,
+			LM:  card.EfficientLM,
+			RM:  card.EfficientLM,
+			LW:  card.EfficientLW,
+			RW:  card.EfficientLW,
+			ST:  card.EfficientST,
+		}
+
+		effectiveness += cardEffectivenessByPosition[squadCard.Position]()
+	}
+
+	return effectiveness, nil
 }

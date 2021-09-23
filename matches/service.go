@@ -8,12 +8,11 @@ import (
 	"math/rand"
 	"sort"
 	"time"
-	"ultimatedivision/cards"
-	"ultimatedivision/clubs"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/clubs"
 	"ultimatedivision/internal/pagination"
 )
 
@@ -26,13 +25,15 @@ var ErrMatches = errs.Class("matches service error")
 type Service struct {
 	matches DB
 	config  Config
+	clubs   *clubs.Service
 }
 
 // NewService is a constructor for matches service.
-func NewService(clubs DB, config Config) *Service {
+func NewService(matches DB, config Config, clubs *clubs.Service) *Service {
 	return &Service{
-		matches: clubs,
+		matches: matches,
 		config:  config,
+		clubs:   clubs,
 	}
 }
 
@@ -43,7 +44,7 @@ const periodBegin = 0
 const periodEnd = 1
 
 // Play initiates match between users, calls methods to generate result.
-func (service *Service) Play(ctx context.Context, formationSquad1 clubs.Formation, formationSquad2 clubs.Formation, squadCards1 []clubs.SquadCard, squadCards2 []clubs.SquadCard, user1, user2 uuid.UUID) {
+func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1 []clubs.SquadCard, squadCards2 []clubs.SquadCard, user1, user2 uuid.UUID) error {
 	periods := map[string][]int{
 		"period1":  {service.config.Periods.First.Begin, service.config.Periods.First.End},
 		"period2":  {service.config.Periods.Second.Begin, service.config.Periods.Second.End},
@@ -83,12 +84,29 @@ func (service *Service) Play(ctx context.Context, formationSquad1 clubs.Formatio
 		randNumber := rand.Intn(100) + 1
 		if randNumber > 0 && randNumber <= goalProbability {
 			period := periods[key]
+
 			minute := generateMinute(period[periodBegin], period[periodEnd])
-			// TODO: call choose squad func
-			chooseGoalscorer(squadCards1, goalProbabilityByPosition)
+			userID, cardID, err := service.chooseSquad(ctx, goalProbabilityByPosition,
+				squadPowerAccuracy, user1, user2, squadCards1, squadCards2)
+			if err != nil {
+				return ErrMatches.Wrap(err)
+			}
+
+			err = service.AddGoal(ctx, MatchGoals{
+				ID:      uuid.New(),
+				MatchID: matchID,
+				UserID:  userID,
+				CardID:  cardID,
+				Minute:  minute,
+			})
+			if err != nil {
+				return ErrMatches.Wrap(err)
+			}
+		} else {
+			continue
 		}
 	}
-
+	return nil
 }
 
 // sortMapKey returns sorted slice names of periods.
@@ -112,45 +130,110 @@ func generateMinute(begin, end int) int {
 }
 
 // choseGoalscorer returns id of cards which scored goal.
-func chooseGoalscorer(squadCards []clubs.SquadCard, probabilityByPosition map[clubs.Position]int) cards.Card {
+func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Position]int) uuid.UUID {
 	rand.Seed(time.Now().UTC().UnixNano())
-	var goalscorer []cards.Card
+	var cardsByPosition []uuid.UUID
 	randNumber := rand.Intn(100) + 1
 
+	// TODO: refactor positions.
+
 	switch {
-	case randNumber > 0 && randNumber <= probabilityByPosition[clubs.ST]:
-		for _, card := range squadCards{
-			var squadCard cards.Card
+	case randNumber > 0 && randNumber <= goalByPosition[clubs.ST]:
+		for _, card := range squadCards {
 			if card.Position == clubs.ST {
-				goalscorer = append(goalscorer, squadCard)
+				cardsByPosition = append(cardsByPosition, card.CardID)
 			}
 		}
-	case randNumber > probabilityByPosition[clubs.ST] && randNumber < probabilityByPosition[clubs.ST] + probabilityByPosition[clubs.RW]:
-		for _, card := range squadCards{
-			var squadCard cards.Card
-			if card.Position == clubs.RW || card.Position == clubs.LW || card.Position == clubs.CM || card.Position == clubs.CAM  {
-				goalscorer = append(goalscorer, squadCard)
+
+		if len(cardsByPosition) > 0 {
+			break
+		}
+
+		fallthrough
+	case randNumber > goalByPosition[clubs.ST] &&
+		randNumber < goalByPosition[clubs.ST]+goalByPosition[clubs.RW]:
+		for _, card := range squadCards {
+			if card.Position == clubs.RW || card.Position == clubs.LW ||
+				card.Position == clubs.CM || card.Position == clubs.CAM {
+				cardsByPosition = append(cardsByPosition, card.CardID)
+			}
+		}
+
+		if len(cardsByPosition) > 0 {
+			break
+		}
+
+		fallthrough
+	case randNumber > goalByPosition[clubs.ST]+goalByPosition[clubs.RW] &&
+		randNumber < 100-goalByPosition[clubs.CD]:
+		for _, card := range squadCards {
+			if card.Position == clubs.RM || card.Position == clubs.LM ||
+				card.Position == clubs.CDM || card.Position == clubs.CAM {
+				cardsByPosition = append(cardsByPosition, card.CardID)
+			}
+		}
+
+		if len(cardsByPosition) > 0 {
+			break
+		}
+
+		fallthrough
+	case randNumber >= 100-goalByPosition[clubs.CD] && randNumber < 100:
+		for _, card := range squadCards {
+			if card.Position == clubs.CD || card.Position == clubs.LB ||
+				card.Position == clubs.RB {
+				cardsByPosition = append(cardsByPosition, card.CardID)
 			}
 		}
 	}
-	return cards.Card{}
+
+	randIndex := rand.Intn(len(squadCards))
+	goalscorer := cardsByPosition[randIndex]
+
+	return goalscorer
 }
 
 // chooseSquad returns the squad which is stronger in the period.
-func chooseSquad(squadPowerAccuracy int, squad1, squad2 clubs.Squad) clubs.Squad {
-	// TODO: call method to count power of squads, generate accuracy.
-	return clubs.Squad{}
+func (service *Service) chooseSquad(ctx context.Context, goalByPosition map[clubs.Position]int, squadPowerAccuracy int, user1 uuid.UUID, user2 uuid.UUID, squadCards1, squadCards2 []clubs.SquadCard) (uuid.UUID, uuid.UUID, error) {
+	squad1Effectiveness, err := service.clubs.CalculateEffectivenessOfSquad(ctx, squadCards1)
+	if err != nil {
+		return uuid.Nil, uuid.Nil, ErrMatches.Wrap(err)
+	}
+
+	squad2Effectiveness, err := service.clubs.CalculateEffectivenessOfSquad(ctx, squadCards2)
+	if err != nil {
+		return uuid.Nil, uuid.Nil, ErrMatches.Wrap(err)
+	}
+
+	randAccuracy1 := float64(rand.Intn(2*squadPowerAccuracy)+1-squadPowerAccuracy) / 100
+	randAccuracy2 := float64(rand.Intn(2*squadPowerAccuracy)+1-squadPowerAccuracy) / 100
+
+	squad1Effectiveness += squad1Effectiveness * randAccuracy1
+	squad2Effectiveness += squad1Effectiveness * randAccuracy2
+
+	if squad1Effectiveness > squad2Effectiveness {
+		return user1, chooseGoalscorer(squadCards1, goalByPosition), nil
+	}
+
+	return user2, chooseGoalscorer(squadCards2, goalByPosition), nil
 }
 
 // Create creates new match.
-func (service *Service) Create(ctx context.Context, user1ID, user2ID uuid.UUID) error {
+func (service *Service) Create(ctx context.Context, squadCards1 []clubs.SquadCard, squadCards2 []clubs.SquadCard, user1ID, user2ID uuid.UUID) error {
 	newMatch := Match{
 		ID:      uuid.New(),
 		User1ID: user1ID,
 		User2ID: user2ID,
 	}
 
-	return ErrMatches.Wrap(service.matches.Create(ctx, newMatch))
+	err := service.matches.Create(ctx, newMatch)
+	if err != nil {
+		return ErrMatches.Wrap(err)
+	}
+
+	err = service.Play(ctx, newMatch.ID, squadCards1, squadCards2, newMatch.User1ID, newMatch.User2ID)
+
+	return ErrMatches.Wrap(err)
 }
 
 // Get returns match by id.

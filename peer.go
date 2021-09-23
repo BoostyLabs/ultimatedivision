@@ -246,6 +246,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.Clubs.Service = clubs.NewService(
 			peer.Database.Clubs(),
 			peer.Users.Service,
+			peer.Cards.Service,
 		)
 	}
 
@@ -278,6 +279,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.Matches.Service = matches.NewService(
 			peer.Database.Matches(),
 			config.Matches.Config,
+			peer.Clubs.Service,
 		)
 	}
 

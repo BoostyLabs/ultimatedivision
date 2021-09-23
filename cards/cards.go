@@ -188,7 +188,7 @@ const (
 	StatusSale Status = 1
 )
 
-// Type defines the list of possible card Typees.
+// Type defines the list of possible card Types.
 type Type string
 
 const (
@@ -285,4 +285,56 @@ type PercentageQualities struct {
 type Page struct {
 	Cards []Card          `json:"cards"`
 	Page  pagination.Page `json:"page"`
+}
+
+// EfficientGK determines the effectiveness of the card in the GK position.
+func (card *Card) EfficientGK() float64 {
+	return 0.9*float64(card.Goalkeeping) + 0.05*float64(card.Physique) + 0.05*float64(card.Tactics)
+}
+
+// EfficientCD determines the effectiveness of the card in the CD position.
+func (card *Card) EfficientCD() float64 {
+	return 0.65*float64(card.Defence) + 0.2*float64(card.Physique) + 0.15*float64(card.Tactics)
+}
+
+// EfficientLB determines the effectiveness of the card in the LB/RB position.
+func (card *Card) EfficientLB() float64 {
+	return 0.55*float64(card.Defence) + 0.1*float64(card.Physique) +
+		0.2*float64(card.Tactics) + 0.15*float64(card.Technique)
+}
+
+// EfficientCDM determines the effectiveness of the card in the CDM position.
+func (card *Card) EfficientCDM() float64 {
+	return 0.3*float64(card.Defence) + 0.15*float64(card.Physique) +
+		0.3*float64(card.Tactics) + 0.15*float64(card.Technique) + 0.1*float64(card.Offense)
+}
+
+// EfficientCM determines the effectiveness of the card in the CM position.
+func (card *Card) EfficientCM() float64 {
+	return 0.2*float64(card.Defence) + 0.1*float64(card.Physique) +
+		0.4*float64(card.Tactics) + 0.2*float64(card.Technique) + 0.1*float64(card.Offense)
+}
+
+// EfficientCAM determines the effectiveness of the card in the CAM position.
+func (card *Card) EfficientCAM() float64 {
+	return 0.05*float64(card.Defence) + 0.1*float64(card.Physique) +
+		0.3*float64(card.Tactics) + 0.35*float64(card.Technique) + 0.2*float64(card.Offense)
+}
+
+// EfficientLM determines the effectiveness of the card in the LM/RM position.
+func (card *Card) EfficientLM() float64 {
+	return 0.05*float64(card.Defence) + 0.1*float64(card.Physique) +
+		0.2*float64(card.Tactics) + 0.45*float64(card.Technique) + 0.2*float64(card.Offense)
+}
+
+// EfficientLW determines the effectiveness of the card in the LW/RW position.
+func (card *Card) EfficientLW() float64 {
+	return 0.05*float64(card.Physique) + 0.15*float64(card.Tactics) +
+		0.5*float64(card.Technique) + 0.3*float64(card.Offense)
+}
+
+// EfficientST determines the effectiveness of the card in the ST position.
+func (card *Card) EfficientST() float64 {
+	return 0.2*float64(card.Physique) + 0.1*float64(card.Tactics) +
+		0.2*float64(card.Technique) + 0.5*float64(card.Offense)
 }
