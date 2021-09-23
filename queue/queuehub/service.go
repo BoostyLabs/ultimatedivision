@@ -51,11 +51,11 @@ func (h *Hub) ReadSearch(client Client) (bool, error) {
 	}
 
 	if request.Action != ActionSearch {
-		message = NewMessage(http.StatusBadRequest, "action not searches!")
+		message = NewMessage(http.StatusBadRequest, "action not search!")
 		if err = h.SendMessage(client, *message); err != nil {
 			return false, ErrWriteHub.Wrap(err)
 		}
-		return false, ErrHub.New("action not searches!")
+		return false, ErrHub.New("action not search!")
 	}
 
 	if request.Value {
