@@ -2,9 +2,7 @@
 // See LICENSE for copying information.
 /* eslint-disable */
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { RootState } from '@/app/store';
+import { useDispatch } from 'react-redux';
 
 import { PaginatorBlockPages } from '@components/common/Paginator/PaginatorBlockPages';
 
@@ -13,9 +11,11 @@ import previous from '@static/img/UltimateDivisionPaginator/previous.svg';
 
 import './index.scss';
 
-export const Paginator: React.FC<{ getCardsOnPage: (page: number) => void }> = ({ getCardsOnPage }) => {
-    const pagesCount =
-        useSelector((state: RootState) => state.cardsReducer.pagesCount);
+export const Paginator: React.FC<{ getCardsOnPage: (page: number) => void, pagesCount: number, page: number }> = ({
+    getCardsOnPage,
+    pagesCount,
+    page,
+}) => {
     const dispatch = useDispatch();
 
     /** Calls method get from  ClubClient */
@@ -23,8 +23,7 @@ export const Paginator: React.FC<{ getCardsOnPage: (page: number) => void }> = (
         await dispatch(getCardsOnPage(page));
     };
 
-    const FIRST_ITEM_PAGINATON = 1;
-    const [currentPage, setCurrentPage] = useState<number>(FIRST_ITEM_PAGINATON);
+    const [currentPage, setCurrentPage] = useState<number>(page);
     /**
     * split the page into 3 blocks that can be needed
     * to separate page numbers

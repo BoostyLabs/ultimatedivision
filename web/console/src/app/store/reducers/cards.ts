@@ -17,7 +17,10 @@ class CardSetup {
         public marketplace: MarketplaceLot[],
         public club: Card[],
         public openedCard: Card,
-        public pagesCount: number = 1,
+        public marketplacePagesCount: number = 1,
+        public clubPagesCount: number = 1,
+        public marketplaceCurrentPage: number = 1,
+        public clubCurrentPage: number = 1,
     ) { };
 };
 
@@ -29,11 +32,13 @@ export const cardsReducer = (cardState = cardSetup, action: any = {}) => {
     switch (action.type) {
         case GET_USER_CARDS:
             cardState.club = action.cards.cards;
-            cardState.pagesCount = action.cards.pagesCount;
+            cardState.clubPagesCount = action.cards.pagesCount;
+            cardState.clubCurrentPage = action.cards.currentPage;
             break;
         case GET_SELLING_CARDS:
             cardState.marketplace = action.lots.lots;
-            cardState.pagesCount = action.lots.pagesCount;
+            cardState.marketplacePagesCount = action.lots.pagesCount;
+            cardState.marketplaceCurrentPage = action.lots.currentPage;
             break;
         case MARKETPLACE_CARD:
             cardState.openedCard = action.card;

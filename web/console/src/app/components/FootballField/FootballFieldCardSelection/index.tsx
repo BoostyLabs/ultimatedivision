@@ -18,6 +18,8 @@ import './index.scss';
 export const FootballFieldCardSelection = () => {
     const cards =
         useSelector((state: RootState) => state.cardsReducer.club);
+    const currentPage = useSelector((state: RootState) => state.cardsReducer.clubCurrentPage);
+    const pagesCount = useSelector((state: RootState) => state.cardsReducer.marketplacePagesCount);
     const dispatch = useDispatch();
     const fieldSetup = useSelector((state: RootState) => state.fieldReducer);
 
@@ -51,7 +53,11 @@ export const FootballFieldCardSelection = () => {
                     </div>,
                 )}
             </div>
-            <Paginator getCardsOnPage={userCards} />
+            <Paginator
+                getCardsOnPage={userCards}
+                pagesCount={pagesCount}
+                page={currentPage}
+            />
         </div>
     );
 };

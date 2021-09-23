@@ -12,19 +12,29 @@ export const GET_SELLING_CARDS = ' GET_SELLING_CARDS';
 export const MARKETPLACE_CARD = 'OPEN_MARKETPLACE_CARD';
 export const USER_CARD = 'OPEN_USER_CARD';
 
-export const getCards = ({ cards, pagesCount }: { cards: Card[], pagesCount: number }) => ({
+export const getCards = ({ cards, pagesCount, currentPage }: {
+    cards: Card[],
+    pagesCount: number,
+    currentPage: number,
+}) => ({
     type: GET_USER_CARDS,
     cards: {
         cards,
         pagesCount,
+        currentPage,
     },
 });
-export const getLots = ({ lots, pagesCount }: { lots: Array<Partial<MarketplaceLot>>, pagesCount: number }) => ({
+export const getLots = ({ lots, pagesCount, currentPage }: {
+    lots: Array<Partial<MarketplaceLot>>,
+    pagesCount: number,
+    currentPage: number,
+}) => ({
     type: GET_SELLING_CARDS,
     lots: {
         lots,
         pagesCount,
-    }
+        currentPage,
+    },
 });
 export const marketplaceCard = (card: Card) => ({
     type: MARKETPLACE_CARD,
@@ -42,9 +52,10 @@ const service = new CardService(client);
 export const userCards = (page: number) => async function (dispatch: Dispatch) {
     const response = await service.getCards(page);
     const pagesCount = response.page.pageCount;
+    const currentPage = response.page.currentPage;
     const cards = response.cards.
         map((card: Partial<CardInterface>) => new Card(card));
-    dispatch(getCards({ cards, pagesCount }));
+    dispatch(getCards({ cards, pagesCount, currentPage }));
 };
 /** thunk for opening fotballerCardPage with reload possibility */
 export const openUserCard = (id: string) => async function (dispatch: any) {
@@ -56,9 +67,10 @@ export const openUserCard = (id: string) => async function (dispatch: any) {
 export const marketplaceLots = (page: number) => async function (dispatch: Dispatch) {
     const response = await service.getLots(page);
     const pagesCount = response.page.pageCount;
+    const currentPage = response.page.currentPage;
     const lots = response.lots.
         map((lot: Partial<MarketplaceLot>) => ({ ...lot, card: new Card(lot.card) }));
-    dispatch(getLots({ lots, pagesCount }));
+    dispatch(getLots({ lots, pagesCount, currentPage }));
 };
 
 export const createLot = (lot: CreatedLot) => async function (dispatch: Dispatch) {
