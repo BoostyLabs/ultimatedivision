@@ -5,7 +5,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -52,13 +51,13 @@ func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		controller.log.Error("could not connect to websocket", ErrQueue.Wrap(err))
 		return
 	}
 
 	claims, err := auth.GetClaims(ctx)
 	if err != nil {
-		controller.serveError(w, http.StatusUnauthorized, ErrQueue.Wrap(err))
+		controller.log.Error("could not unauthorized user", ErrQueue.Wrap(err))
 		return
 	}
 
