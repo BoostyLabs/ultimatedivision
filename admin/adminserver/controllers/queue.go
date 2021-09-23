@@ -98,10 +98,6 @@ func (controller *Queue) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
 
-	if vars["id"] == "" {
-		http.Error(w, ErrQueue.New("id parameter is empty").Error(), http.StatusBadRequest)
-		return
-	}
 	id, err := uuid.Parse(vars["id"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
