@@ -102,8 +102,6 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 			if err != nil {
 				return ErrMatches.Wrap(err)
 			}
-		} else {
-			continue
 		}
 	}
 	return nil
