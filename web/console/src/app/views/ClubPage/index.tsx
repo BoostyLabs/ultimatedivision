@@ -20,7 +20,7 @@ const Club: React.FC = () => {
                 thunk={filteredCards}
             />
             <ClubCardsArea />
-            <Paginator thunk={userCards} />
+            <Paginator getCardsOnPage={userCards} />
         </section>
     );
 };

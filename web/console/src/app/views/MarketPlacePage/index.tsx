@@ -17,7 +17,7 @@ const MarketPlace: React.FC = () => {
                 thunk={filteredLots}
             />
             <MarketPlaceCardsGroup />
-            <Paginator thunk={marketplaceLots} />
+            <Paginator getCardsOnPage={marketplaceLots} />
         </section>
     );
 };

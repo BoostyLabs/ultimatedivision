@@ -51,7 +51,7 @@ export const FootballFieldCardSelection = () => {
                     </div>,
                 )}
             </div>
-            <Paginator thunk={userCards} />
+            <Paginator getCardsOnPage={userCards} />
         </div>
     );
 };

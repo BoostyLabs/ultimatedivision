@@ -13,14 +13,14 @@ import previous from '@static/img/UltimateDivisionPaginator/previous.svg';
 
 import './index.scss';
 
-export const Paginator: React.FC<{ thunk: any }> = ({ thunk }) => {
+export const Paginator: React.FC<{ getCardsOnPage: (page: number) => void }> = ({ getCardsOnPage }) => {
     const pagesCount =
         useSelector((state: RootState) => state.cardsReducer.pagesCount);
     const dispatch = useDispatch();
 
     /** Calls method get from  ClubClient */
     async function getCards(page: number) {
-        await dispatch(thunk(page));
+        await dispatch(getCardsOnPage(page));
     };
 
     const FIRST_ITEM_PAGINATON = 1;
