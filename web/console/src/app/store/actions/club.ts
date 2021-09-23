@@ -88,3 +88,12 @@ export const setCaptain = (captain: string) => ({
     type: CAPTAIN,
     captain,
 });
+
+
+
+// Thunks
+
+export const  getClub = () => async function (dispatch: Dispatch) {
+    const club = await service.createClub();
+    dispatch(createClub(club))
+}

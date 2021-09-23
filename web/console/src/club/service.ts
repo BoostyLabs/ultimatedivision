@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
+import { ClubFromApi } from '.';
 
 /**
  * exposes all bandwidth related logic
@@ -15,7 +16,7 @@ export class ClubService {
     };
 
     /** creating club */
-    public async createClub(): Promise<string> {
+    public async createClub(): Promise<ClubFromApi> {
         return await this.club.createClub();
     };
     /** returning club with existing squads */

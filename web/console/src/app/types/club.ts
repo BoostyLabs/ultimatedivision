@@ -40,7 +40,7 @@ export class FootballFieldInformationLine {
 };
 
 
-/** initial value for clubReducer, will be replaced after fetch */
+/** initial value for clubReducer */
 export class InitialClubValue {
     /** local options for dNd functionality */
     public options = {
@@ -63,17 +63,17 @@ export class InitialClubValue {
     };
     /* eslint-disable */
     squadCards = [
-        new InitialCard(1),
-        new InitialCard(2),
-        new InitialCard(3),
-        new InitialCard(4),
-        new InitialCard(5),
-        new InitialCard(6),
-        new InitialCard(7),
-        new InitialCard(8),
-        new InitialCard(9),
-        new InitialCard(10),
-        new InitialCard(11),
+        new FootballFieldCard(new InitialCard(1)),
+        new FootballFieldCard(new InitialCard(2)),
+        new FootballFieldCard(new InitialCard(3)),
+        new FootballFieldCard(new InitialCard(4)),
+        new FootballFieldCard(new InitialCard(5)),
+        new FootballFieldCard(new InitialCard(6)),
+        new FootballFieldCard(new InitialCard(7)),
+        new FootballFieldCard(new InitialCard(8)),
+        new FootballFieldCard(new InitialCard(9)),
+        new FootballFieldCard(new InitialCard(10)),
+        new FootballFieldCard(new InitialCard(11)),
     ];
 }
 
@@ -83,8 +83,4 @@ export class InitialCard {
     public squadId = '';
     public cardId = '';
 
-    /** gets card data from cardList */
-    public cardData(cards: Card[]) {
-        return cards.find(card => card.id === this.cardId);
-    }
 }

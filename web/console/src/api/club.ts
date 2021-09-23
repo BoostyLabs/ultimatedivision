@@ -2,13 +2,14 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '@/api/index';
+import { ClubFromApi } from '@/club';
 
 /** ClubClient base implementation */
 export class ClubClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0';
 
     /** method calls get method from APIClient */
-    public async createClub(): Promise<string> {
+    public async createClub(): Promise<ClubFromApi> {
         const response = await this.http.post(`${this.ROOT_PATH}/clubs`);
 
         return await response.json();
