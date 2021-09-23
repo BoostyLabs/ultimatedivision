@@ -9,9 +9,9 @@ export class CardClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0';
 
     /** method calls get method from APIClient */
-    public async getCards(): Promise<Response> {
-        return await this.http.get(`${this.ROOT_PATH}/cards`);
-    }
+    public async getCards(page: number, limit: number = 24): Promise<Response> {
+        return await this.http.get(`${this.ROOT_PATH}/cards?limit=${limit}&page=${page}`);
+    };
     /** method calls get method from APIClient */
     public async getCardById(id: string): Promise<Response> {
         return await this.http.get(`${this.ROOT_PATH}/cards/${id}`);
@@ -25,9 +25,9 @@ export class CardClient extends APIClient {
         return await this.http.post(`${this.ROOT_PATH}/marketplace`, JSON.stringify(lot));
     }
     /** method calls get method from APIClient */
-    public async getLots(): Promise<Response> {
-        return await this.http.get(`${this.ROOT_PATH}/marketplace`);
-    }
+    public async getLots(page: number, limit: number = 24): Promise<Response> {
+        return await this.http.get(`${this.ROOT_PATH}/marketplace?limit=${limit}&page=${page}`);
+    };
     /** method calls get method from APIClient */
     public async getLotById(id: string): Promise<Response> {
         return await this.http.get(`${this.ROOT_PATH}/marketplace/${id}`);

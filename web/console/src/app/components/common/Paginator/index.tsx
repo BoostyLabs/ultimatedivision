@@ -2,29 +2,43 @@
 // See LICENSE for copying information.
 /* eslint-disable */
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { RootState } from '@/app/store';
+
+import { PaginatorBlockPages } from '@components/common/Paginator/PaginatorBlockPages';
 
 import next from '@static/img/UltimateDivisionPaginator/next.svg';
 import previous from '@static/img/UltimateDivisionPaginator/previous.svg';
-import { PaginatorBlockPages } from '@components/common/Paginator/PaginatorBlockPages';
 
 import './index.scss';
 
-export const Paginator: React.FC<{ itemCount: number }> = ({ itemCount }) => {
+export const Paginator: React.FC<{ thunk: any }> = ({ thunk }) => {
+    const pagesCount =
+        useSelector((state: RootState) => state.cardsReducer.pagesCount);
+    const dispatch = useDispatch();
+
+    /** Calls method get from  ClubClient */
+    async function getCards(page: number) {
+        await dispatch(thunk(page));
+    };
+
     const FIRST_ITEM_PAGINATON = 1;
     const [currentPage, setCurrentPage] = useState<number>(FIRST_ITEM_PAGINATON);
     /**
     * split the page into 3 blocks that can be needed
     * to separate page numbers
      */
+
+    useEffect(() => {
+        getCards(currentPage);
+        populatePages();
+    }, [currentPage, pagesCount]);
+
     const [firstBlockPages, setFirstBlockPages] = useState<number[]>([]);
     const [middleBlockPages, setMiddleBlockPages] = useState<number[]>([]);
     const [lastBlockPages, setLastBlockPages] = useState<number[]>([]);
 
-    useEffect(() => {
-        populatePages();
-    }, [currentPage]);
-
-    const CARDS_ON_PAGE: number = 8;
     const MAX_PAGES_PER_BLOCK: number = 5;
     const MAX_PAGES_OFF_BLOCKS: number = 10;
     const FIRST_PAGE_INDEX: number = 0;
@@ -34,9 +48,9 @@ export const Paginator: React.FC<{ itemCount: number }> = ({ itemCount }) => {
     const POS_STEP_FROM_CURRENT_PAGE: number = 2;
 
     const pages: number[] = [];
-    for (let i = 1; i <= Math.ceil(itemCount / CARDS_ON_PAGE); i++) {
+    for (let i = 1; i <= Math.ceil(pagesCount); i++) {
         pages.push(i);
-    }
+    };
     /** set block pages depends on current page */
     const setBlocksIfCurrentInFirstBlock = () => {
         setFirstBlockPages(pages.slice(FIRST_PAGE_INDEX, MAX_PAGES_PER_BLOCK));
@@ -135,7 +149,9 @@ export const Paginator: React.FC<{ itemCount: number }> = ({ itemCount }) => {
                 return;
             default:
                 populatePages();
-        }
+        };
+
+        getCards(currentPage);
     };
 
     return (

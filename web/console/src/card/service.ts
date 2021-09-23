@@ -25,11 +25,11 @@ export class CardService {
         return await response.json();
     }
     /** get user cards from api */
-    public async getCards(): Promise<CardsResponse> {
-        const response = await this.card.getCards();
+    public async getCards(page: number): Promise<CardsResponse> {
+        const response = await this.card.getCards(page);
 
         return await response.json();
-    }
+    };
     /** create lot */
     public async createLot(lot: CreatedLot): Promise<Response> {
         return await this.card.createLot(lot);
@@ -40,11 +40,11 @@ export class CardService {
         return await this.card.getLotById(id);
     }
     /** get lots from api */
-    public async getLots(): Promise<MarkeplaceResponse> {
-        const response = await this.card.getLots();
+    public async getLots(page: number): Promise<MarkeplaceResponse> {
+        const response = await this.card.getLots(page);
 
         return await response.json();
-    }
+    };
     /** get filtered lots from api */
     public async getFilteredLots(filterParam: string) {
         const response = await this.card.getFilteredLots(filterParam);
