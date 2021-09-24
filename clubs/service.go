@@ -57,8 +57,10 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 // CreateSquad creates new squad for club.
 func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid.UUID, error) {
 	newSquad := Squad{
-		ID:     uuid.New(),
-		ClubID: clubID,
+		ID:        uuid.New(),
+		ClubID:    clubID,
+		Formation: FourFourTwo,
+		Tactic:    Balanced,
 	}
 
 	squadID, err := service.clubs.CreateSquad(ctx, newSquad)
