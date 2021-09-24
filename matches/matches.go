@@ -78,7 +78,7 @@ type Config struct {
 			Begin int `json:"begin"`
 			End   int `json:"end"`
 		} `json:"tenth"`
-	}
+	}`json:"periods"`
 
 	GoalProbability int `json:"goalProbability"`
 
@@ -103,7 +103,7 @@ type Config struct {
 
 // Match describes match entity.
 type Match struct {
-	ID      uuid.UUID `json:"Id"`
+	ID      uuid.UUID `json:"id"`
 	User1ID uuid.UUID `json:"user1Id"`
 	User2ID uuid.UUID `json:"user2Id"`
 }
