@@ -12,8 +12,21 @@ import './index.scss';
 
 export const FootballFieldInformation: React.FC = () => {
     const INFORMATION_FIELDS = {
-        formation: new FootballFieldInformationLine('0', 'formation', ['4-4-2', '4-2-4', '4-3-3']),
-        tactics: new FootballFieldInformationLine('1', 'tactics', ['attack', 'defence', 'regular']),
+        formation: new FootballFieldInformationLine('0', 'formation',
+            [
+                '4-4-2',
+                '4-2-4',
+                '4-2-2-2',
+                '4-3-1-2',
+                '4-3-3',
+                '4-2-3-1',
+                '4-3-2-1',
+                '4-1-3-2',
+                '5-3-2',
+                '4-5-2',
+            ]
+        ),
+        tactics: new FootballFieldInformationLine('1', 'tactics', ['attack', 'defence', 'balanced']),
         captain: new FootballFieldInformationLine('2', 'captain', ['4-4-2', '4-2-4', '4-3-3']),
     };
 

@@ -15,7 +15,7 @@ import './index.scss';
 
 export const FootballFieldInformationFormation: React.FC<{ props: FootballFieldInformationLine }> = ({ props }) => {
     const [optionVisibility, changeVisibility] = useState(false);
-    const LIST_HEIGHT = 90;
+    const LIST_HEIGHT = 260;
     const optionStyle = new DropdownStyle(optionVisibility, LIST_HEIGHT);
 
     const dispatch = useDispatch();
@@ -42,14 +42,21 @@ export const FootballFieldInformationFormation: React.FC<{ props: FootballFieldI
                 className="football-field-information-option__list"
                 id={props.id}
             >
-                {props.options.map((item, index) =>
-                    <li
-                        key={index}
-                        className="football-field-information-option__item"
-                        onClick={() => dispatch(setFormation(item))}
-                    >
-                        {item}
-                    </li>,
+                {props.options.map((item, index) => {
+                    /** TODO: decide add or not self formation index */
+                    const INDEX_FORMATION_DIFFERENCE = 1;
+                    const fotmation = index + INDEX_FORMATION_DIFFERENCE;
+
+                    return (
+                        <li
+                            key={index}
+                            className="football-field-information-option__item"
+                            onClick={() => dispatch(setFormation(fotmation))}
+                        >
+                            {item}
+                        </li>
+                    );
+                }
                 )}
             </ul>
         </div>

@@ -31,7 +31,7 @@ export const createClub = (club: Club) => ({
 });
 
 /** Chose type of cards positioning on football field */
-export const setFormation = (formation: string) => ({
+export const setFormation = (formation: number) => ({
     type: FORMATION,
     formation,
 });

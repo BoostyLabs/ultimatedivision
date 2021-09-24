@@ -1,7 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { SquadCard } from '@/club';
 
 /** implementation for each field in
  * FootballFieldInformation component
