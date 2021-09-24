@@ -26,21 +26,21 @@ export class ClubClient extends APIClient {
         return await response.json();
     }
     /** method calls get method from APIClient */
-    public async addCard({ clubId, squadId, cardId, position }: { clubId: string, squadId: string, cardId: string, position: number }): Promise<Response> {
+    public async addCard({ clubId, squadId, cardId, position }: { clubId: string; squadId: string; cardId: string; position: number }): Promise<Response> {
         return await this.http.post(
             `${this.ROOT_PATH}/clubs/${clubId}/squads/${squadId}/cards/${cardId}`,
             JSON.stringify({ position })
         );
     }
     /** method calls get method from APIClient */
-    public async changeCardPosition({ clubId, squadId, cardId, position }: { clubId: string, squadId: string, cardId: string, position: number }): Promise<Response> {
+    public async changeCardPosition({ clubId, squadId, cardId, position }: { clubId: string; squadId: string; cardId: string; position: number }): Promise<Response> {
         return await this.http.patch(
             `${this.ROOT_PATH}/clubs/${clubId}/squads/${squadId}/cards/${cardId}`,
             JSON.stringify({ position })
         );
     }
     /** method calls get method from APIClient */
-    public async deleteCard({ clubId, squadId, cardId }: { clubId: string, squadId: string, cardId: string }): Promise<Response> {
+    public async deleteCard({ clubId, squadId, cardId }: { clubId: string; squadId: string; cardId: string }): Promise<Response> {
         return await this.http.delete(
             `${this.ROOT_PATH}/clubs/${clubId}/squads/${squadId}/cards/${cardId}`
         );

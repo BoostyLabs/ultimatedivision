@@ -11,33 +11,33 @@ import previous from '@static/img/UltimateDivisionPaginator/previous.svg';
 
 import './index.scss';
 
-export const Paginator: React.FC<{ getCardsOnPage: (page: number) => void, pagesCount: number, page: number }> = ({
+export const Paginator: React.FC<{ getCardsOnPage: ({ page, limit }: { page: number, limit: number }) => void, pagesCount: number, page: number }> = ({
     getCardsOnPage,
     pagesCount,
     page,
 }) => {
     const dispatch = useDispatch();
-
-    /** Calls method get from  ClubClient */
-    async function getCards(page: number) {
-        await dispatch(getCardsOnPage(page));
-    };
-
     const [currentPage, setCurrentPage] = useState<number>(page);
-    /**
-    * split the page into 3 blocks that can be needed
-    * to separate page numbers
-     */
 
     useEffect(() => {
         getCards(currentPage);
         populatePages();
     }, [currentPage, pagesCount]);
 
+    /** Calls method get from  ClubClient */
+    async function getCards(page: number) {
+        await dispatch(getCardsOnPage({ page, limit: CARDS_ON_PAGE }));
+    };
+
+    /**
+    * split the page into 3 blocks that can be needed
+    * to separate page numbers
+     */
     const [firstBlockPages, setFirstBlockPages] = useState<number[]>([]);
     const [middleBlockPages, setMiddleBlockPages] = useState<number[]>([]);
     const [lastBlockPages, setLastBlockPages] = useState<number[]>([]);
 
+    const CARDS_ON_PAGE: number = 24;
     const MAX_PAGES_PER_BLOCK: number = 5;
     const MAX_PAGES_OFF_BLOCKS: number = 10;
     const FIRST_PAGE_INDEX: number = 0;

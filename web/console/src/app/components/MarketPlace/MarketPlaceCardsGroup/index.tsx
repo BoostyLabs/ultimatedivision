@@ -12,11 +12,12 @@ import './index.scss';
 export const MarketPlaceCardsGroup: React.FC = () => {
     const lots =
         useSelector((state: RootState) => state.cardsReducer.marketplace);
+
     return <div className="marketplace-cards">
         <div className="marketplace-cards__wrapper">
             {lots.map((lot, index) =>
                 <MarketPlaceFootballerCard lot={lot} key={index} />
             )}
         </div>
-    </div>
+    </div>;
 };

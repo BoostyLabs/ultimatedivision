@@ -16,6 +16,7 @@ import './index.scss';
 const MarketPlace: React.FC = () => {
     const currentPage = useSelector((state: RootState) => state.cardsReducer.marketplaceCurrentPage);
     const pagesCount = useSelector((state: RootState) => state.cardsReducer.marketplacePagesCount);
+
     return (
         <section className="marketplace">
             <FilterField

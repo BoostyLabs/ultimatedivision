@@ -9,7 +9,7 @@ export class CardClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0';
 
     /** method calls get method from APIClient */
-    public async getCards(page: number, limit: number = 24): Promise<Response> {
+    public async getCards({ page, limit }: { page: number, limit: number }): Promise<Response> {
         return await this.http.get(`${this.ROOT_PATH}/cards?limit=${limit}&page=${page}`);
     };
     /** method calls get method from APIClient */
@@ -25,7 +25,7 @@ export class CardClient extends APIClient {
         return await this.http.post(`${this.ROOT_PATH}/marketplace`, JSON.stringify(lot));
     }
     /** method calls get method from APIClient */
-    public async getLots(page: number, limit: number = 24): Promise<Response> {
+    public async getLots({ page, limit }: { page: number, limit: number }): Promise<Response> {
         return await this.http.get(`${this.ROOT_PATH}/marketplace?limit=${limit}&page=${page}`);
     };
     /** method calls get method from APIClient */

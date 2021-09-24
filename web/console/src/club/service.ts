@@ -38,7 +38,7 @@ export class ClubService {
     };
 
     /** delete card from squad cards list */
-    public async deleteCard({ clubId, squadId, cardId }: { clubId: string, squadId: string, cardId: string; }): Promise<Response> {
+    public async deleteCard({ clubId, squadId, cardId }: { clubId: string, squadId: string, cardId: string }): Promise<Response> {
         return await this.club.deleteCard({ clubId, squadId, cardId });
     };
 };

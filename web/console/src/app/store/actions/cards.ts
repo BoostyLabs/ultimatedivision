@@ -48,9 +48,13 @@ export const userCard = (card: Card) => ({
 const client = new CardClient();
 const service = new CardService(client);
 
+const DEFAULT_PAGE_NUMBER: number = 1;
 /** thunk for creating user cards list */
-export const userCards = (page: number) => async function (dispatch: Dispatch) {
-    const response = await service.getCards(page);
+export const userCards = ({ page = DEFAULT_PAGE_NUMBER, limit }: {
+    page: number,
+    limit: number,
+}) => async function(dispatch: Dispatch) {
+    const response = await service.getCards({ page, limit });
     const pagesCount = response.page.pageCount;
     const currentPage = response.page.currentPage;
     const cards = response.cards.
@@ -58,14 +62,17 @@ export const userCards = (page: number) => async function (dispatch: Dispatch) {
     dispatch(getCards({ cards, pagesCount, currentPage }));
 };
 /** thunk for opening fotballerCardPage with reload possibility */
-export const openUserCard = (id: string) => async function (dispatch: any) {
+export const openUserCard = (id: string) => async function(dispatch: any) {
     const response = await service.getCardById(id);
     const card = await response.json();
     dispatch(userCard(new Card(card)));
 };
 /** thunk for creating user cards list */
-export const marketplaceLots = (page: number) => async function (dispatch: Dispatch) {
-    const response = await service.getLots(page);
+export const marketplaceLots = ({ page = DEFAULT_PAGE_NUMBER, limit }: {
+    page: number,
+    limit: number,
+}) => async function(dispatch: Dispatch) {
+    const response = await service.getLots({ page, limit });
     const pagesCount = response.page.pageCount;
     const currentPage = response.page.currentPage;
     const lots = response.lots.
@@ -73,19 +80,19 @@ export const marketplaceLots = (page: number) => async function (dispatch: Dispa
     dispatch(getLots({ lots, pagesCount, currentPage }));
 };
 
-export const createLot = (lot: CreatedLot) => async function (dispatch: Dispatch) {
+export const createLot = (lot: CreatedLot) => async function(dispatch: Dispatch) {
     await service.createLot(lot);
 };
 
 /** thunk for opening fotballerCardPage with reload possibility */
-export const openMarketplaceCard = (id: string) => async function (dispatch: Dispatch) {
+export const openMarketplaceCard = (id: string) => async function(dispatch: Dispatch) {
     const response = await service.getLotById(id);
     const lot = await response.json();
     dispatch(marketplaceCard(new Card(lot.card)));
 };
 
 /** thunk returns filtered cards */
-export const filteredCards = (lowRange: string, topRange: string) => async function (dispatch: Dispatch) {
+export const filteredCards = (lowRange: string, topRange: string) => async function(dispatch: Dispatch) {
     const filterParam = `${lowRange}&${topRange}`;
     const response = await service.getFilteredCards(filterParam);
     const cards = await response.json();
@@ -93,7 +100,7 @@ export const filteredCards = (lowRange: string, topRange: string) => async funct
 };
 
 /** thunk returns filtered lots */
-export const filteredLots = (lowRange: string, topRange: string) => async function (dispatch: Dispatch) {
+export const filteredLots = (lowRange: string, topRange: string) => async function(dispatch: Dispatch) {
     const filterParam = `${lowRange}&${topRange}`;
     const response = await service.getFilteredLots(filterParam);
     const lots = await response.json();

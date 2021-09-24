@@ -9,7 +9,9 @@ import { CardService } from '@/card/service';
 import { CardClient } from '@/api/cards';
 import { Card, MarketplaceLot } from '@/card';
 
-/** class for data from backent (test) */
+const DEFAULT_CURRENT_PAGE_NUMBER: number = 1;
+const DEFAULT_PAGES_COUNT: number = 1;
+/** Card state base implementation */
 class CardSetup {
     /** class implementation */
     constructor(
@@ -17,10 +19,10 @@ class CardSetup {
         public marketplace: MarketplaceLot[],
         public club: Card[],
         public openedCard: Card,
-        public marketplacePagesCount: number = 1,
-        public clubPagesCount: number = 1,
-        public marketplaceCurrentPage: number = 1,
-        public clubCurrentPage: number = 1,
+        public marketplacePagesCount: number = DEFAULT_PAGES_COUNT,
+        public clubPagesCount: number = DEFAULT_PAGES_COUNT,
+        public marketplaceCurrentPage: number = DEFAULT_CURRENT_PAGE_NUMBER,
+        public clubCurrentPage: number = DEFAULT_CURRENT_PAGE_NUMBER,
     ) { };
 };
 

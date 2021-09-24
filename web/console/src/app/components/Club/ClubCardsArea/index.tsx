@@ -12,6 +12,7 @@ import './index.scss';
 export const ClubCardsArea: React.FC = () => {
     const cards =
         useSelector((state: RootState) => state.cardsReducer.club);
+
     return <div className="club-cards">
         <div className="club-cards__wrapper">
             {cards.map((card, index) =>
@@ -21,5 +22,5 @@ export const ClubCardsArea: React.FC = () => {
                 />,
             )}
         </div>
-    </div>
+    </div>;
 };

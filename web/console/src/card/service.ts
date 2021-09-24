@@ -25,8 +25,8 @@ export class CardService {
         return await response.json();
     }
     /** get user cards from api */
-    public async getCards(page: number): Promise<CardsResponse> {
-        const response = await this.card.getCards(page);
+    public async getCards({ page, limit }: { page: number; limit: number }): Promise<CardsResponse> {
+        const response = await this.card.getCards({ page, limit });
 
         return await response.json();
     };
@@ -40,8 +40,8 @@ export class CardService {
         return await this.card.getLotById(id);
     }
     /** get lots from api */
-    public async getLots(page: number): Promise<MarkeplaceResponse> {
-        const response = await this.card.getLots(page);
+    public async getLots({ page, limit }: { page: number; limit: number }): Promise<MarkeplaceResponse> {
+        const response = await this.card.getLots({ page, limit });
 
         return await response.json();
     };
