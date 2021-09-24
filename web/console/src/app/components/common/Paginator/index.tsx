@@ -24,7 +24,7 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ page, limit }: { page: num
         populatePages();
     }, [currentPage, pagesCount]);
 
-    /** dispatch getCardsOnPage thunk with params page and default limit value */
+    /** dispatch getCardsOnPage thunk with parameters: page and default limit value */
     async function getCards(page: number) {
         await dispatch(getCardsOnPage({ page, limit: CARDS_ON_PAGE }));
     };
