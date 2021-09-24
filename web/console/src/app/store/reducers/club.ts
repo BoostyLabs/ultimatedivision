@@ -18,16 +18,16 @@ import {
 } from '@/app/store/actions/club';
 
 /** TODO: replace by initial object */
-const FieldSetup = new ClubState();
+const clubState = new ClubState();
 
-export const clubReducer = (clubState = FieldSetup, action: any = {}) => {
-    const options = clubState.options;
-    const squad = clubState.squad;
-    const cards = clubState.squadCards;
+export const clubReducer = (state = clubState, action: any = {}) => {
+    const options = state.options;
+    const squad = state.squad;
+    const cards = state.squadCards;
 
     switch (action.type) {
     case CREATE_CLUB:
-        clubState = Object.assign(clubState, action.club);
+        state = Object.assign(clubState, action.club);
         break;
         // next cases will be replaced
     case FORMATION:
@@ -62,5 +62,5 @@ export const clubReducer = (clubState = FieldSetup, action: any = {}) => {
         break;
     }
 
-    return clubState;
+    return state;
 };
