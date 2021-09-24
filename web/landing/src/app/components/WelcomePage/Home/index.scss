@@ -10,7 +10,7 @@
     .wrapper {
         position: relative;
         display: flex;
-        width: 1440px;
+        width: 80%;
         margin: auto;
 
         .ultimatedivision-home__text-left {
@@ -18,7 +18,7 @@
             flex-direction: column;
 
             .value {
-                margin: 212px auto auto 72px;
+                margin: 212px auto auto 5%;
                 padding: 5px;
                 font-family: "Russo One", sans-serif;
                 font-style: normal;
@@ -29,8 +29,8 @@
             }
 
             .title {
-                width: 639px;
-                margin: 12px auto auto 72px;
+                width: 60%;
+                margin: 12px auto auto 5%;
                 padding: 5px;
                 font-family: "Montserrat", sans-serif;
                 font-style: normal;
@@ -41,8 +41,8 @@
             }
 
             .description {
-                width: 584px;
-                margin: 34px auto auto 72px;
+                width: 50%;
+                margin: 34px auto auto 5%;
                 padding: 5px;
                 font-family: "Rubik", sans-serif;
                 font-style: normal;
@@ -54,43 +54,43 @@
         }
 
         .ultimatedivision-home__player-image {
-            width: 1440px;
+            width: auto;
 
             img {
                 position: absolute;
-                margin: 58px 120px auto auto;
+                margin: 58px 5% auto auto;
             }
         }
     }
 }
 
-@media screen and (max-width: 834px) {
+@media (max-width: $tabletBreakPoint) {
 
     .ultimatedivision-home {
         height: 667.27px;
 
         .wrapper {
-            width: 834px;
+            width: 90%;
             position: relative;
 
             .ultimatedivision-home__text-left {
 
                 .value {
-                    margin: 195px auto auto 47px;
+                    margin: 195px auto auto 5%;
                     font-size: 64px;
                     line-height: 77px;
                 }
 
                 .title {
                     width: 476px;
-                    margin: 12px auto auto 47px;
+                    margin: 12px auto auto 5%;
                     font-size: 36px;
                     line-height: 44px;
                 }
 
                 .description {
                     width: 440px;
-                    margin: 19px auto auto 47px;
+                    margin: 19px auto auto 5%;
                     font-size: 18px;
                     line-height: 21px;
                 }
@@ -98,12 +98,12 @@
 
             .ultimatedivision-home__player-image {
                 position: absolute;
-                width: 834px;
+                width: auto;
                 height: 450px;
                 z-index: 1;
                 background-image: url("@static/images/home/Player illustration-834.png");
                 background-repeat: no-repeat;
-                margin: 141px 51px auto 357px;
+                margin: 141px 5% auto 357px;
 
                 img {
                     display: none;
@@ -113,7 +113,7 @@
     }
 }
 
-@media screen and (max-width: 414px) {
+@media (max-width: $phoneBreakPoint) {
 
     .ultimatedivision-home {
         height: 852px;
