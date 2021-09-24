@@ -97,9 +97,14 @@ export const getClub = () => async function(dispatch: Dispatch) {
         const club = await service.getClub();
         dispatch(createClub(club));
     } catch (error: any) {
-        const clubId = await service.createClub();
-        const squadId = await service.createSquad(clubId);
-        const club = await service.getClub();
-        dispatch(createClub(club));
+        try {
+            const clubId = await service.createClub();
+            const squadId = await service.createSquad(clubId);
+            const club = await service.getClub();
+            dispatch(createClub(club));
+        } catch (error: any) {
+            /* eslint-disable */
+            console.log(error.message);
+        }
     }
 };

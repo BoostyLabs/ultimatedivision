@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { InitialClubValue } from '@/app/types/club';
+import { ClubState } from '@/club';
 
 import {
     ADD_CARD,
@@ -18,7 +18,7 @@ import {
 } from '@/app/store/actions/club';
 
 /** TODO: replace by initial object */
-const FieldSetup = new InitialClubValue();
+const FieldSetup = new ClubState();
 
 export const clubReducer = (clubState = FieldSetup, action: any = {}) => {
     const options = clubState.options;
@@ -29,6 +29,7 @@ export const clubReducer = (clubState = FieldSetup, action: any = {}) => {
     case CREATE_CLUB:
         clubState = Object.assign(clubState, action.club);
         break;
+        // next cases will be replaced
     case FORMATION:
         squad.formation = action.formation;
         break;
@@ -61,5 +62,5 @@ export const clubReducer = (clubState = FieldSetup, action: any = {}) => {
         break;
     }
 
-    return { ...clubState };
+    return clubState;
 };
