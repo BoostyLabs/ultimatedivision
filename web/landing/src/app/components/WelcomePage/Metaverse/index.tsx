@@ -21,20 +21,20 @@ export const Metaverse: React.FC = () => {
                 <span className="metaverse__subtitle">Football Metaverse</span>
                 <div className="metaverse__cards">
                     <picture className="left-card">
-                        <source media="(max-width: 414px)" srcSet={CardLeftSmall} />
-                        <source media="(max-width: 834px)" srcSet={CardLeftMedium} />
+                        <source media="(max-width: 600px)" srcSet={CardLeftSmall} />
+                        <source media="(max-width: 800px)" srcSet={CardLeftMedium} />
                         <source media="(min-width: 1440px)" srcSet={CardLeft}/>
                         <img src={CardLeft} alt="Left player"></img>
                     </picture>
                     <picture className="center-card">
-                        <source media="(max-width: 414px)" srcSet={CardCenterSmall} />
-                        <source media="(max-width: 834px)" srcSet={CardCenterMedium} />
+                        <source media="(max-width: 600px)" srcSet={CardCenterSmall} />
+                        <source media="(max-width: 800px)" srcSet={CardCenterMedium} />
                         <source media="(min-width: 1440px)" srcSet={CardCenter}/>
                         <img src={CardCenter} alt="Main player"></img>
                     </picture>
                     <picture className="right-card">
-                        <source media="(max-width: 414px)" srcSet={CardRightSmall} />
-                        <source media="(max-width: 834px)" srcSet={CardRightMedium} />
+                        <source media="(max-width: 600px)" srcSet={CardRightSmall} />
+                        <source media="(max-width: 800px)" srcSet={CardRightMedium} />
                         <source media="(min-width: 1440px)" srcSet={CardRight}/>    
                         <img src={CardRight} alt="Right player"></img>
                     </picture>
