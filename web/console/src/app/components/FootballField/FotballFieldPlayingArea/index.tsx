@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { FootballFieldInformation } from '@components/FootballField/FootballFieldInformation';
+import { FootballFieldControlsArea } from '@/app/components/FootballField/FootballFieldControlsArea';
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
 import { SquadCard } from '@/club';
@@ -168,7 +168,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                     })}
                 </div>
             </div>
-            <FootballFieldInformation />
+            <FootballFieldControlsArea />
         </div>
     );
 };
