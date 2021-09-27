@@ -59,23 +59,21 @@ func (h *Hub) ReadSearch(client Client) (bool, error) {
 	}
 
 	if request.Value {
-		if ok, err := h.isAdded(client); ok {
-			if err != nil {
-				return false, ErrHub.Wrap(err)
+		if ok := h.isAdded(client); ok {
+			if err = h.SendMessage(client, *NewMessage(http.StatusInternalServerError, "you have already been added!")); err != nil {
+				return false, ErrWriteHub.Wrap(err)
 			}
 			return false, nil
 		}
-
 		if err = h.addClient(client); err != nil {
 			return false, ErrHub.Wrap(err)
 		}
-
 		return true, nil
 	}
 
-	if ok, err := h.isAdded(client); !ok {
-		if err != nil {
-			return false, ErrHub.Wrap(err)
+	if ok := h.isAdded(client); !ok {
+		if err = h.SendMessage(client, *NewMessage(http.StatusInternalServerError, "you don't have been added!")); err != nil {
+			return false, ErrWriteHub.Wrap(err)
 		}
 		return false, nil
 	}
@@ -146,11 +144,9 @@ func (h *Hub) SendMessage(client Client, message Message) error {
 }
 
 // isAdded checks if the user has been added.
-func (h *Hub) isAdded(client Client) (bool, error) {
-	if _, ok := h.Clients[client.UserID]; ok {
-		return ok, h.SendMessage(client, *NewMessage(http.StatusInternalServerError, "you have already been added!"))
-	}
-	return false, h.SendMessage(client, *NewMessage(http.StatusInternalServerError, "you don't have been added!"))
+func (h *Hub) isAdded(client Client) bool {
+	_, ok := h.Clients[client.UserID]
+	return ok
 }
 
 // SendInvite sends invite for play to user.
