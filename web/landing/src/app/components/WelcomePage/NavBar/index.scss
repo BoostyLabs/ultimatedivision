@@ -150,7 +150,7 @@
 
             .ultimatedivision-navbar__items-active {
                 position: absolute;
-                z-index: 1;
+                z-index: 9999;
                 order: 0;
                 flex-direction: column;
                 width: 100%;
@@ -160,8 +160,8 @@
 
                 li {
                     list-style-type: none;
-                    text-align: left;
-                    margin-left: 50px;
+                    text-align: center;
+                    margin-left: 0;
                     padding: 10px;
 
                     a {

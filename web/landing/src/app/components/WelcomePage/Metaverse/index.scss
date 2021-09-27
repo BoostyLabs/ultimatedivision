@@ -50,7 +50,7 @@
 
             .right-card {
                 position: absolute;
-                margin: 114px  50% 0 56%;
+                margin: 129px  50% 0 55.5%;
             }
 
             .center-card {
@@ -76,6 +76,7 @@
             background-repeat: no-repeat;
 
             &-text {
+                margin-bottom: 0;
                 position: absolute;
                 font-family: "Roboto", sans-serif;
                 font-style: normal;
@@ -92,6 +93,7 @@
             margin: 46px auto auto auto;
 
             &__text {
+                margin-bottom: 6px;
                 font-family: "Hanson", sans-serif;
                 font-style: normal;
                 font-weight: bold;
@@ -138,6 +140,7 @@
                 background-image: url("../../../static/images/metaverse/sold-progress-scale-834.png");
 
                 &-text {
+                    margin-bottom: 6px;
                     font-size: 24px;
                     line-height: 28px;
                 }
@@ -254,10 +257,11 @@
 
             .metaverse__sold-scale {
                 width: 90%;
-                height: 55px;
+                height: 75px;
                 background-image: url("../../../static/images/metaverse/sold-progress-scale-414.png");
 
                 &-text {
+                    margin-bottom: 0;
                     font-size: 24px;
                     line-height: 28px;
                 }
@@ -267,6 +271,26 @@
                 width: 90%;
                 height: 72px;
                 margin: 18px auto auto auto;
+            }
+        }
+    }
+}
+
+@media (max-width: 414px) {
+
+    .metaverse {
+        height: 769px;
+
+        .wrapper {
+            width: 90%;
+
+            .metaverse__sold-scale {
+                width: 90%;
+                height: 75px;
+
+                &-text {
+                    margin-bottom: 18px;
+                }
             }
         }
     }
