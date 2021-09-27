@@ -40,7 +40,7 @@ export class CardClient extends APIClient {
         const card = cardJSON.card;
 
         return new Card(card);
-    }
+    };
     /** method returns filtered card list */
     public async filteredList(filterParam: string): Promise<Cards> {
         const path = `${this.ROOT_PATH}/?${filterParam}`;
