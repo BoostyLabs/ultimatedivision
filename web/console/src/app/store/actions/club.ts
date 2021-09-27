@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
+import { Formations } from '@/app/types/club';
 import { Card } from '@/card';
 import { Club } from '@/club';
 import { ClubService } from '@/club/service';
@@ -33,7 +34,7 @@ export const createClub = (club: Club) => ({
 /** Chose type of cards positioning on football field */
 export const setFormation = (formation: number) => ({
     type: FORMATION,
-    formation,
+    formation: Formations[formation],
 });
 
 export const cardSelectionVisibility = (isVisible: boolean) => ({
