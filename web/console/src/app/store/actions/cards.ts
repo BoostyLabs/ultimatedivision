@@ -35,7 +35,7 @@ export const listOfCards = ({ selectedPage, limit }: Pagination) => async functi
     dispatch(getCards({ cards, page }));
 };
 /** thunk for opening fotballerCardPage with reload possibility */
-export const openUserCard = (id: string) => async function(dispatch: any) {
+export const openUserCard = (id: string) => async function(dispatch: Dispatch) {
     const card = await service.getCardById(id);
     dispatch(userCard(new Card(card)));
 };
