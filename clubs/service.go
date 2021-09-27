@@ -5,10 +5,9 @@ package clubs
 
 import (
 	"context"
-	"time"
-
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+	"time"
 
 	"ultimatedivision/users"
 )
@@ -22,13 +21,19 @@ var ErrClubs = errs.Class("clubs service error")
 type Service struct {
 	clubs DB
 	users *users.Service
+	card  card
+}
+
+type card interface {
+	CardsWithNewPositions(ctx context.Context, cards []SquadCard, positions []Position) (map[Position]uuid.UUID, error)
 }
 
 // NewService is a constructor for clubs service.
-func NewService(clubs DB, users *users.Service) *Service {
+func NewService(clubs DB, users *users.Service, card card) *Service {
 	return &Service{
 		clubs: clubs,
 		users: users,
+		card:  card,
 	}
 }
 
@@ -54,8 +59,10 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 // CreateSquad creates new squad for club.
 func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid.UUID, error) {
 	newSquad := Squad{
-		ID:     uuid.New(),
-		ClubID: clubID,
+		ID:        uuid.New(),
+		ClubID:    clubID,
+		Formation: FourFourTwo,
+		Tactic:    Balanced,
 	}
 
 	squadID, err := service.clubs.CreateSquad(ctx, newSquad)
@@ -63,15 +70,16 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 	return squadID, ErrClubs.Wrap(err)
 }
 
-// Add add new card to the squad of the club.
-func (service *Service) Add(ctx context.Context, position Position, squadID, cardID uuid.UUID) error {
-	newSquadCard := SquadCard{
-		SquadID:  squadID,
-		CardID:   cardID,
-		Position: position,
+// AddSquadCards adds cards to the squad.
+func (service *Service) AddSquadCards(ctx context.Context, squadID uuid.UUID, squadCards SquadCard) error {
+	formation, err := service.clubs.GetFormation(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
 	}
+	squadCards.SquadID = squadID
+	squadCards.Position = FormationToPosition[formation][squadCards.Position]
 
-	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, newSquadCard))
+	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, squadCards))
 }
 
 // Delete deletes card from squad.
@@ -93,6 +101,13 @@ func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, form
 
 // UpdateCardPosition updates position of card in the squad.
 func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition Position) error {
+	formation, err := service.clubs.GetFormation(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	newPosition = FormationToPosition[formation][newPosition]
+
 	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, newPosition, squadID, cardID))
 }
 
@@ -112,4 +127,38 @@ func (service *Service) GetSquadCards(ctx context.Context, squadID uuid.UUID) ([
 func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error) {
 	club, err := service.clubs.GetByUserID(ctx, userID)
 	return club, ErrClubs.Wrap(err)
+}
+
+// ChangeFormation is an endpoint that change formation and card position.
+func (service *Service) ChangeFormation(ctx context.Context, newFormationID, squadID uuid.UUID) (map[Position]uuid.UUID, error) {
+	var cardsWithNewPositions map[Position]uuid.UUID
+
+	formation, err := service.clubs.GetFormation(ctx, squadID)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	err = service.clubs.UpdateFormation(ctx, newFormationID, squadID)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	cardsWithNewPositions, err = service.card.CardsWithNewPositions(ctx, squadCards, FormationToPosition[formation])
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	for position, card := range cardsWithNewPositions {
+		err = service.clubs.UpdatePosition(ctx, position, squadID, card)
+		if err != nil {
+			return nil, ErrClubs.Wrap(err)
+		}
+	}
+
+	return cardsWithNewPositions, nil
 }

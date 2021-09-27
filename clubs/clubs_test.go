@@ -55,13 +55,13 @@ func TestTeam(t *testing.T) {
 	testSquadCards := clubs.SquadCard{
 		SquadID:  testSquad.ID,
 		CardID:   testCard.ID,
-		Position: clubs.CAM,
+		Position: clubs.CCAM,
 	}
 
 	updatedSquadCards := []clubs.SquadCard{{
 		SquadID:  testSquad.ID,
 		CardID:   testCard.ID,
-		Position: clubs.CAM,
+		Position: clubs.CCAM,
 	}}
 
 	updatedSquad := clubs.Squad{
@@ -134,7 +134,7 @@ func TestTeam(t *testing.T) {
 		})
 
 		t.Run("Update card position in squad", func(t *testing.T) {
-			err := repositoryClubs.UpdatePosition(ctx, clubs.CM, testSquad.ID, testCard.ID)
+			err := repositoryClubs.UpdatePosition(ctx, clubs.CCM, testSquad.ID, testCard.ID)
 			require.NoError(t, err)
 		})
 

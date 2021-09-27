@@ -184,6 +184,11 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	if squadCard.Position < 0 || squadCard.Position > 11 {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid  number of position"))
+		return
+	}
+
 	err = controller.clubs.UpdateCardPosition(ctx, squadID, cardID, squadCard.Position)
 	if err != nil {
 		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
@@ -224,14 +229,15 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Add is an endpoint that adds new card to the squad.
+// Add is an endpoint that adds new cards to the squad.
 func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["squadId"] == "" || params["cardId"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
+	squadID, err := uuid.Parse(params["squadId"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
@@ -241,20 +247,21 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	squadID, err := uuid.Parse(params["squadId"])
-	if err != nil {
+	var squadCard clubs.SquadCard
+
+	if err = json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
 
-	var newSquadCard clubs.SquadCard
+	squadCard.CardID = cardID
 
-	if err = json.NewDecoder(r.Body).Decode(&newSquadCard); err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+	if squadCard.Position < 0 || squadCard.Position > 11 {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid position"))
 		return
 	}
 
-	err = controller.clubs.Add(ctx, newSquadCard.Position, squadID, cardID)
+	err = controller.clubs.AddSquadCards(ctx, squadID, squadCard)
 	if err != nil {
 		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
@@ -321,5 +328,41 @@ func (controller *Clubs) serveError(w http.ResponseWriter, status int, err error
 	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
 		controller.log.Error("failed to write json error response", ErrClubs.Wrap(err))
+	}
+}
+
+// ChangeFormation is an endpoint that change formation and card position.
+func (controller *Clubs) ChangeFormation(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	params := mux.Vars(r)
+	if params["formationID"] == "" || params["squadId"] == "" {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
+		return
+	}
+
+	newFormationID, err := uuid.Parse(params["formationID"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	squadID, err := uuid.Parse(params["squadId"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
+		return
+	}
+
+	data, err := controller.clubs.ChangeFormation(ctx, newFormationID, squadID)
+	if err != nil {
+		controller.log.Error("could not change formation", ErrClubs.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(data); err != nil {
+		controller.log.Error("failed to write json response", ErrUsers.Wrap(err))
+		return
 	}
 }
