@@ -3,7 +3,7 @@
 
 import { Card } from '@/card';
 
-import { MarketPlace } from '@/marketplace';
+import { MarketPlacePage } from '@/marketplace';
 
 import { GET_SELLING_CARDS, MARKETPLACE_CARD } from '../actions/marketplace';
 
@@ -11,7 +11,7 @@ import { GET_SELLING_CARDS, MARKETPLACE_CARD } from '../actions/marketplace';
 class MarketplaceState {
     /** default state implementation */
     constructor(
-        public marketplace: MarketPlace,
+        public marketplacePage: MarketPlacePage,
         public openedCard: Card,
     ) { };
 };
@@ -30,15 +30,15 @@ const page = {
     totalCount: LOTS_TOTAL_COUNT,
 };
 
-const marketplace = new MarketPlace([], page);
+const marketplacePage = new MarketPlacePage([], page);
 const openedCard = new Card();
 
-export const marketplaceReducer = (marketplaceState: MarketplaceState = new MarketplaceState(marketplace, openedCard), action: any = {}) => {
+export const marketplaceReducer = (marketplaceState: MarketplaceState = new MarketplaceState(marketplacePage, openedCard), action: any = {}) => {
     switch (action.type) {
         case GET_SELLING_CARDS:
             return {
                 ...marketplaceState,
-                marketplace: action.marketplace,
+                marketplacePage: action.marketplacePage,
             };
         case MARKETPLACE_CARD:
             return {

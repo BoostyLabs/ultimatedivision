@@ -15,7 +15,7 @@ import { Card } from '@/card';
 import './index.scss';
 
 export const FootballFieldCardSelection = () => {
-    const { cards } = useSelector((state: RootState) => state.cardsReducer.cards);
+    const { cards } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
     const dispatch = useDispatch();
     const fieldSetup = useSelector((state: RootState) => state.fieldReducer);
 
