@@ -13,6 +13,7 @@ import { Lot, MarketPlacePage } from '.';
  */
 export class Marketplaces {
     protected readonly marketplace: MarketplaceClient;
+
     /** default marketplaceClient implementation */
     public constructor(marketplace: MarketplaceClient) {
         this.marketplace = marketplace;
@@ -22,14 +23,17 @@ export class Marketplaces {
     public async list({ selectedPage, limit }: Pagination): Promise<MarketPlacePage> {
         return await this.marketplace.list({ selectedPage, limit });
     };
+
     /** creates lot */
     public async createLot(lot: CreatedLot): Promise<void> {
         await this.marketplace.createLot(lot);
     };
+
     /** returns list of lots by filter parameters */
     public async filteredList(filterParam: string): Promise<MarketPlacePage> {
         return await this.marketplace.filteredList(filterParam);
     };
+
     /** returns lot by id */
     public async getLotById(id: string): Promise<Lot> {
         return await this.marketplace.getLotById(id);

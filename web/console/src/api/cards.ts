@@ -27,6 +27,7 @@ export class CardClient extends APIClient {
             cardsJSON.page,
         );
     };
+
     /** method calls get method from APIClient */
     public async getCardById(id: string): Promise<Card> {
         const path = `${this.ROOT_PATH}/${id}`;
@@ -41,6 +42,7 @@ export class CardClient extends APIClient {
 
         return new Card(card);
     };
+
     /** method returns filtered card list */
     public async filteredList(filterParam: string): Promise<CardsPage> {
         const path = `${this.ROOT_PATH}/?${filterParam}`;

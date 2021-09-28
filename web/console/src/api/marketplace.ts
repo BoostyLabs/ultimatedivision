@@ -42,6 +42,7 @@ export class MarketplaceClient extends APIClient {
             marketplaceJSON.page,
         );
     };
+
     /** implements opening lot */
     public async getLotById(id: string): Promise<Lot> {
         const path = `${this.ROOT_PATH}/${id}`;
@@ -70,6 +71,7 @@ export class MarketplaceClient extends APIClient {
             lot.card,
         );
     };
+
     /** implements creating lot (selling card) */
     public async createLot(lot: CreatedLot): Promise<void> {
         const path = `${this.ROOT_PATH}`;
@@ -79,6 +81,7 @@ export class MarketplaceClient extends APIClient {
             await this.handleError(response);
         };
     };
+
     /** method returns filtered lot list */
     public async filteredList(filterParam: string): Promise<MarketPlacePage> {
         const path = `${this.ROOT_PATH}/lots/?${filterParam}`;
