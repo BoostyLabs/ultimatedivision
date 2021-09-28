@@ -14,6 +14,7 @@ import (
 
 	"ultimatedivision"
 	"ultimatedivision/cards"
+	"ultimatedivision/clubs"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/internal/pagination"
 	"ultimatedivision/matches"
@@ -50,10 +51,42 @@ func TestMatches(t *testing.T) {
 		UserID: testUser1.ID,
 	}
 
+	testClub1 := clubs.Club{
+		ID:        uuid.New(),
+		OwnerID:   testUser1.ID,
+		Name:      testUser1.NickName,
+		CreatedAt: time.Now().UTC(),
+	}
+
+	testSquad1 := clubs.Squad{
+		ID:        uuid.New(),
+		Name:      "test squad",
+		ClubID:    testClub1.ID,
+		Tactic:    clubs.Balanced,
+		Formation: clubs.FourTwoFour,
+	}
+
+	testClub2 := clubs.Club{
+		ID:        uuid.New(),
+		OwnerID:   testUser1.ID,
+		Name:      testUser1.NickName,
+		CreatedAt: time.Now().UTC(),
+	}
+
+	testSquad2 := clubs.Squad{
+		ID:        uuid.New(),
+		Name:      "test squad",
+		ClubID:    testClub2.ID,
+		Tactic:    clubs.Balanced,
+		Formation: clubs.FourTwoFour,
+	}
+
 	testMatch := matches.Match{
-		ID:      uuid.New(),
-		User1ID: testUser1.ID,
-		User2ID: testUser2.ID,
+		ID:       uuid.New(),
+		User1ID:  testUser1.ID,
+		Squad1ID: testSquad1.ID,
+		User2ID:  testUser2.ID,
+		Squad2ID: testSquad2.ID,
 	}
 
 	testMatchGoal := matches.MatchGoals{
@@ -72,6 +105,7 @@ func TestMatches(t *testing.T) {
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
 		repositoryCards := db.Cards()
 		repositoryUsers := db.Users()
+		repositoryClubs := db.Clubs()
 		repositoryMatches := db.Matches()
 
 		t.Run("Create", func(t *testing.T) {
@@ -79,6 +113,18 @@ func TestMatches(t *testing.T) {
 			require.NoError(t, err)
 
 			err = repositoryUsers.Create(ctx, testUser2)
+			require.NoError(t, err)
+
+			_, err = repositoryClubs.Create(ctx, testClub1)
+			require.NoError(t, err)
+
+			_, err = repositoryClubs.CreateSquad(ctx, testSquad1)
+			require.NoError(t, err)
+
+			_, err = repositoryClubs.Create(ctx, testClub2)
+			require.NoError(t, err)
+
+			_, err = repositoryClubs.CreateSquad(ctx, testSquad2)
 			require.NoError(t, err)
 
 			err = repositoryMatches.Create(ctx, testMatch)

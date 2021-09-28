@@ -319,6 +319,13 @@ func (service *Service) ListByUserID(ctx context.Context, userID uuid.UUID) ([]C
 	return userCards, ErrCards.Wrap(err)
 }
 
+// GetCardsFromSquadCards returns all card with characteristics from the squad.
+func (service *Service) GetCardsFromSquadCards(ctx context.Context, id uuid.UUID) ([]Card, error) {
+	cards, err := service.cards.GetCardsFromSquadCards(ctx, id)
+
+	return cards, ErrCards.Wrap(err)
+}
+
 // UpdateStatus updates status of card in database.
 func (service *Service) UpdateStatus(ctx context.Context, id uuid.UUID, status Status) error {
 	return ErrCards.Wrap(service.cards.UpdateStatus(ctx, id, status))

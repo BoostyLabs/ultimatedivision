@@ -31,17 +31,17 @@ type matchesDB struct {
 
 // Create inserts match in the database.
 func (matchesDB *matchesDB) Create(ctx context.Context, match matches.Match) error {
-	query := `INSERT INTO matches(id, user1_id, user2_id)
-              VALUES($1,$2,$3)`
+	query := `INSERT INTO matches(id, user1_id, squad1_id, user2_id, squad2_id)
+              VALUES($1,$2,$3, $4, $5)`
 
-	_, err := matchesDB.conn.ExecContext(ctx, query, match.ID, match.User1ID, match.User2ID)
+	_, err := matchesDB.conn.ExecContext(ctx, query, match.ID, match.User1ID, match.Squad1ID, match.User2ID, match.Squad2ID)
 
 	return ErrMatches.Wrap(err)
 }
 
 // Get returns match from the database.
 func (matchesDB *matchesDB) Get(ctx context.Context, id uuid.UUID) (matches.Match, error) {
-	query := `SELECT id, user1_id, user2_id
+	query := `SELECT id, user1_id, squad1_id, user2_id, squad2_id
               FROM matches
               WHERE id = $1`
 
@@ -49,7 +49,7 @@ func (matchesDB *matchesDB) Get(ctx context.Context, id uuid.UUID) (matches.Matc
 
 	row := matchesDB.conn.QueryRowContext(ctx, query, id)
 
-	err := row.Scan(&match.ID, &match.User1ID, &match.User2ID)
+	err := row.Scan(&match.ID, &match.User1ID, &match.Squad1ID, &match.User2ID, &match.Squad2ID)
 	if err != nil {
 		if errors.Is(sql.ErrNoRows, err) {
 			return match, matches.ErrNoMatch.Wrap(err)
@@ -62,7 +62,7 @@ func (matchesDB *matchesDB) Get(ctx context.Context, id uuid.UUID) (matches.Matc
 }
 
 // GetGoals counts goals for user's squad in the match.
-func (matchesDB matchesDB) GetGoals(ctx context.Context, matchID uuid.UUID, userID uuid.UUID) (int, error) {
+func (matchesDB *matchesDB) GetGoals(ctx context.Context, matchID uuid.UUID, userID uuid.UUID) (int, error) {
 	query := `SELECT count(*)
               FROM match_goals
               WHERE match_id = $1 and user_id = $2`
@@ -79,10 +79,10 @@ func (matchesDB *matchesDB) ListMatches(ctx context.Context, cursor pagination.C
 	var matchesListPage matches.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 
-	query := fmt.Sprintf(`SELECT id, user1_id, user2_id
-             FROM matches
-             LIMIT %d
-             OFFSET %d`, cursor.Limit, offset)
+	query := fmt.Sprintf(`SELECT id, user1_id, squad1_id, user2_id, squad2_id
+                                 FROM matches
+                                 LIMIT %d
+                                 OFFSET %d`, cursor.Limit, offset)
 
 	rows, err := matchesDB.conn.QueryContext(ctx, query)
 	if err != nil {
@@ -96,7 +96,7 @@ func (matchesDB *matchesDB) ListMatches(ctx context.Context, cursor pagination.C
 
 	for rows.Next() {
 		var match matches.Match
-		err = rows.Scan(&match.ID, &match.User1ID, &match.User2ID)
+		err = rows.Scan(&match.ID, &match.User1ID, &match.Squad1ID, &match.User2ID, &match.Squad2ID)
 		if err != nil {
 			return matchesListPage, ErrMatches.Wrap(err)
 		}

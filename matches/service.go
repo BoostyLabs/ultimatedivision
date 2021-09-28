@@ -187,7 +187,7 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 		}
 	}
 
-	randIndex := rand.Intn(len(squadCards))
+	randIndex := rand.Intn(len(cardsByPosition))
 	goalscorer := cardsByPosition[randIndex]
 
 	return goalscorer
@@ -219,14 +219,26 @@ func (service *Service) chooseSquad(ctx context.Context, goalByPosition map[club
 }
 
 // Create creates new match.
-func (service *Service) Create(ctx context.Context, squadCards1 []clubs.SquadCard, squadCards2 []clubs.SquadCard, user1ID, user2ID uuid.UUID) error {
-	newMatch := Match{
-		ID:      uuid.New(),
-		User1ID: user1ID,
-		User2ID: user2ID,
+func (service *Service) Create(ctx context.Context, squad1ID uuid.UUID, squad2ID uuid.UUID, user1ID, user2ID uuid.UUID) error {
+	squadCards1, err := service.clubs.GetSquadCards(ctx, squad1ID)
+	if err != nil {
+		return ErrMatches.Wrap(err)
 	}
 
-	err := service.matches.Create(ctx, newMatch)
+	squadCards2, err := service.clubs.GetSquadCards(ctx, squad2ID)
+	if err != nil {
+		return ErrMatches.Wrap(err)
+	}
+
+	newMatch := Match{
+		ID:       uuid.New(),
+		User1ID:  user1ID,
+		Squad1ID: squad1ID,
+		User2ID:  user2ID,
+		Squad2ID: squad2ID,
+	}
+
+	err = service.matches.Create(ctx, newMatch)
 	if err != nil {
 		return ErrMatches.Wrap(err)
 	}

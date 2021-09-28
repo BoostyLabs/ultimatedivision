@@ -35,6 +35,8 @@ type DB interface {
 	ListByPlayerName(ctx context.Context, filters Filters, cursor pagination.Cursor) (Page, error)
 	// ListCardIDsByPlayerNameWhereActiveLot returns card ids where active lot from DB by player name.
 	ListCardIDsByPlayerNameWhereActiveLot(ctx context.Context, filter Filters) ([]uuid.UUID, error)
+	// GetCardsFromSquadCards returns all card with characteristics from the squad from the database.
+	GetCardsFromSquadCards(ctx context.Context, id uuid.UUID) ([]Card, error)
 	// UpdateStatus updates status card in the database.
 	UpdateStatus(ctx context.Context, id uuid.UUID, status Status) error
 	// UpdateUserID updates user id card in the database.

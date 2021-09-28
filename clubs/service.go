@@ -121,28 +121,42 @@ func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error)
 func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squadCards []SquadCard) (float64, error) {
 	var effectiveness float64
 
-	for _, squadCard := range squadCards {
-		card, err := service.cards.Get(ctx, squadCard.CardID)
-		if err != nil {
-			return effectiveness, ErrClubs.Wrap(err)
-		}
+	if len(squadCards) == 0 {
+		return float64(0), nil
+	}
 
-		var cardEffectivenessByPosition = map[Position]func() float64{
-			GK:  card.EfficientGK,
-			LB:  card.EfficientLB,
-			CD:  card.EfficientCD,
-			RB:  card.EfficientLB,
-			CDM: card.EfficientCDM,
-			CM:  card.EfficientCM,
-			CAM: card.EfficientCAM,
-			LM:  card.EfficientLM,
-			RM:  card.EfficientLM,
-			LW:  card.EfficientLW,
-			RW:  card.EfficientLW,
-			ST:  card.EfficientST,
-		}
+	cardsFromSquad, err := service.cards.GetCardsFromSquadCards(ctx, squadCards[0].SquadID)
+	if err != nil {
+		return float64(0), ErrClubs.Wrap(err)
+	}
 
-		effectiveness += cardEffectivenessByPosition[squadCard.Position]()
+	for index, squadCard := range squadCards {
+		switch squadCard.Position {
+		case GK:
+			effectiveness += cardsFromSquad[index].EfficientGK()
+		case LB:
+			effectiveness += cardsFromSquad[index].EfficientLB()
+		case CD:
+			effectiveness += cardsFromSquad[index].EfficientCD()
+		case RB:
+			effectiveness += cardsFromSquad[index].EfficientLB()
+		case CDM:
+			effectiveness += cardsFromSquad[index].EfficientCDM()
+		case CM:
+			effectiveness += cardsFromSquad[index].EfficientCM()
+		case CAM:
+			effectiveness += cardsFromSquad[index].EfficientCAM()
+		case LM:
+			effectiveness += cardsFromSquad[index].EfficientLM()
+		case RM:
+			effectiveness += cardsFromSquad[index].EfficientLM()
+		case LW:
+			effectiveness += cardsFromSquad[index].EfficientLW()
+		case RW:
+			effectiveness += cardsFromSquad[index].EfficientLW()
+		case ST:
+			effectiveness += cardsFromSquad[index].EfficientST()
+		}
 	}
 
 	return effectiveness, nil
