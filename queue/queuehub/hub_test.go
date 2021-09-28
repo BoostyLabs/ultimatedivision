@@ -119,39 +119,31 @@ func TestQueueHub(t *testing.T) {
 		c, _, err := dialer.Dial("ws://localhost:8088/api/v0/queue", nil)
 		require.NoError(t, err)
 
-		// write to searches
 		request := Request{
 			Action: "search",
 			Value:  true,
 		}
 		err = c.WriteJSON(request)
 		require.NoError(t, err)
-		////////////////////////
 
-		// read answer
 		var message Message
 		err = c.ReadJSON(&message)
 		require.NoError(t, err)
 		fmt.Println(message)
 		assert.Equal(t, 200, message.Status)
-		/////////////////////////
 
-		// read invite
 		var user users.User
 		err = c.ReadJSON(&user)
 		require.NoError(t, err)
 		assert.Equal(t, userDB2.Email, user.Email)
 		assert.Equal(t, userDB2.NickName, user.NickName)
-		////////////////////////
 
-		// write answer invite
 		request2 := Request{
 			Action: ActionPlay,
 			Value:  true,
 		}
 		err = c.WriteJSON(request2)
 		require.NoError(t, err)
-		///////////////////////
 	})
 
 	t.Run("login user2", func(t *testing.T) {
@@ -233,38 +225,30 @@ func TestQueueHub(t *testing.T) {
 		c, _, err := dialer.Dial("ws://localhost:8088/api/v0/queue", nil)
 		require.NoError(t, err)
 
-		// write to searches
 		request := Request{
 			Action: "search",
 			Value:  true,
 		}
 		err = c.WriteJSON(request)
 		require.NoError(t, err)
-		////////////////////////
 
-		// read answer
 		var message Message
 		err = c.ReadJSON(&message)
 		require.NoError(t, err)
 		fmt.Println(message)
 		assert.Equal(t, 200, message.Status)
-		/////////////////////////
 
-		// read invite
 		var user users.User
 		err = c.ReadJSON(&user)
 		require.NoError(t, err)
 		assert.Equal(t, userDB1.Email, user.Email)
 		assert.Equal(t, userDB1.NickName, user.NickName)
-		////////////////////////
 
-		// write answer invite
 		request2 := Request{
 			Action: ActionPlay,
 			Value:  true,
 		}
 		err = c.WriteJSON(request2)
 		require.NoError(t, err)
-		/////
 	})
 }
