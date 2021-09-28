@@ -28,3 +28,9 @@ export enum Formations {
     '5-3-2' = 9,
     '4-5-2' = 10
 }
+
+export enum Tactic {
+    'attack' = 1,
+    'defence' = 2,
+    'balanced' = 3,
+}
