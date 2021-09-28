@@ -14,9 +14,10 @@ import { cardSelectionVisibility, choosePosition, exchangeCards, removeCard, set
     from '@/app/store/actions/club';
 
 import './index.scss';
+import { Card } from '@/card';
 
 export const FootballFieldPlayingArea: React.FC = () => {
-    const cards = useSelector((state: RootState) => state.cardsReducer.club);
+    const cards = useSelector((state: RootState) => state.cardsReducer.cards);
     const formation = useSelector((state: RootState) => state.clubReducer.squad.formation);
     const dragStartIndex = useSelector((state: RootState) => state.clubReducer.options.dragStart);
 
@@ -57,7 +58,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
 
     /** returns card data for card */
     function getCard(id: string) {
-        return cards.find(card => card.id === id);
+        return cards.find((card: Card) => card.id === id);
     }
 
     /** Add card position, and shows card selection */
