@@ -17,7 +17,7 @@ import './index.scss';
 import { Card } from '@/card';
 
 export const FootballFieldPlayingArea: React.FC = () => {
-    const cards = useSelector((state: RootState) => state.cardsReducer.cards);
+    const {cards} = useSelector((state: RootState) => state.cardsReducer.cards);
     const formation = useSelector((state: RootState) => state.clubReducer.squad.formation);
     const dragStartIndex = useSelector((state: RootState) => state.clubReducer.options.dragStart);
 
