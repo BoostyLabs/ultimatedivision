@@ -13,7 +13,7 @@ import { Paginator } from '@components/common/Paginator';
 import './index.scss';
 
 const MarketPlace: React.FC = () => {
-    const { lots, page } = useSelector((state: RootState) => state.marketplaceReducer.marketplace);
+    const { lots, page } = useSelector((state: RootState) => state.marketplaceReducer.marketplacePage);
 
     return (
         <section className="marketplace">

@@ -13,7 +13,7 @@ import { Paginator } from '@components/common/Paginator';
 import './index.scss';
 
 const Club: React.FC = () => {
-    const { page } = useSelector((state: RootState) => state.cardsReducer.cards);
+    const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
 
     return (
         <section className="club">

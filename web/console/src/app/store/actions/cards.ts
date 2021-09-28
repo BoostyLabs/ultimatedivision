@@ -5,7 +5,7 @@ import { Dispatch } from 'redux';
 
 import { CardClient } from '@/api/cards';
 
-import { Card, Cards, ICard } from '@/card';
+import { Card, CardsPage, ICard } from '@/card';
 import { CardService } from '@/card/service';
 
 import { Pagination } from '@/app/types/pagination';
@@ -13,9 +13,9 @@ import { Pagination } from '@/app/types/pagination';
 export const GET_USER_CARDS = ' GET_USER_CARDS';
 export const USER_CARD = 'OPEN_USER_CARD';
 
-const getCards = (cards: Cards) => ({
+const getCards = (cardsPage: CardsPage) => ({
     type: GET_USER_CARDS,
-    cards,
+    cardsPage,
 });
 const userCard = (card: Card) => ({
     type: USER_CARD,

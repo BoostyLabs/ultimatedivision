@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 
-import { Lot, MarketPlace } from '@/marketplace';
+import { Lot, MarketPlacePage } from '@/marketplace';
 
 import { CreatedLot } from '@/app/types/marketplace';
 import { Pagination } from '@/app/types/pagination';
@@ -13,7 +13,7 @@ export class MarketplaceClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/marketplace';
 
     /** returns marketplace domain entity with list of lots*/
-    public async list({ selectedPage, limit }: Pagination): Promise<MarketPlace> {
+    public async list({ selectedPage, limit }: Pagination): Promise<MarketPlacePage> {
         const path = `${this.ROOT_PATH}?page=${selectedPage}&limit=${limit}`;
         const response = await this.http.get(path);
 
@@ -23,7 +23,7 @@ export class MarketplaceClient extends APIClient {
 
         const marketplaceJSON = await response.json();
 
-        return new MarketPlace(
+        return new MarketPlacePage(
             marketplaceJSON.lots.map((lot: Lot) => new Lot(
                 lot.id,
                 lot.itemId,
@@ -80,7 +80,7 @@ export class MarketplaceClient extends APIClient {
         };
     };
     /** method returns filtered lot list */
-    public async filteredList(filterParam: string): Promise<MarketPlace> {
+    public async filteredList(filterParam: string): Promise<MarketPlacePage> {
         const path = `${this.ROOT_PATH}/lots/?${filterParam}`;
         const response = await this.http.get(path);
 
@@ -90,7 +90,7 @@ export class MarketplaceClient extends APIClient {
 
         const marketplaceJSON = await response.json();
 
-        return new MarketPlace(
+        return new MarketPlacePage(
             marketplaceJSON.lots.map((lot: Lot) => new Lot(
                 lot.id,
                 lot.itemId,
