@@ -6,8 +6,6 @@ package queuehub
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -21,6 +19,7 @@ import (
 	"ultimatedivision/users"
 )
 
+// UserDB entity describes user from DB.
 type UserDB struct {
 	Email    string `json:"email"`
 	NickName string `json:"nickName"`
@@ -40,17 +39,20 @@ func TestQueueHub(t *testing.T) {
 	var userDB1, userDB2 UserDB
 
 	t.Run("login user1", func(t *testing.T) {
-		json_data, err := json.Marshal(userLogin1)
+		jsonData, err := json.Marshal(userLogin1)
 		require.NoError(t, err)
 
-		resp, err := http.Post("http://localhost:8088/api/v0/auth/login", "application/json", bytes.NewBuffer(json_data))
+		resp, err := http.Post("http://localhost:8088/api/v0/auth/login", "application/json", bytes.NewBuffer(jsonData))
 		require.NoError(t, err)
+		defer func() {
+			err = resp.Body.Close()
+			require.NoError(t, err)
+		}()
 
 		if resp.Status != "200 OK" {
 			var res map[string]interface{}
-			json.NewDecoder(resp.Body).Decode(&res)
-			fmt.Println(res)
-			require.NoError(t, fmt.Errorf("status not 200 OK"))
+			err = json.NewDecoder(resp.Body).Decode(&res)
+			require.NoError(t, err)
 		} else {
 			cookie1 = resp.Cookies()[0].Value
 		}
@@ -71,7 +73,7 @@ func TestQueueHub(t *testing.T) {
 		}
 		jar, err := cookiejar.New(&cookiejar.Options{})
 		if err != nil {
-			log.Fatal(err)
+			require.NoError(t, err)
 		}
 		jar.SetCookies(urlObj, []*http.Cookie{cookie})
 		client := &http.Client{
@@ -80,14 +82,18 @@ func TestQueueHub(t *testing.T) {
 
 		resp, err := client.Get("http://localhost:8088/api/v0/profile")
 		require.NoError(t, err)
+		defer func() {
+			err = resp.Body.Close()
+			require.NoError(t, err)
+		}()
 
 		if resp.Status != "200 OK" {
 			var res map[string]interface{}
-			json.NewDecoder(resp.Body).Decode(&res)
-			fmt.Println(res)
-			require.NoError(t, fmt.Errorf("status not 200 OK"))
+			err = json.NewDecoder(resp.Body).Decode(&res)
+			require.NoError(t, err)
 		} else {
-			json.NewDecoder(resp.Body).Decode(&userDB1)
+			err = json.NewDecoder(resp.Body).Decode(&userDB1)
+			require.NoError(t, err)
 		}
 	})
 
@@ -108,7 +114,7 @@ func TestQueueHub(t *testing.T) {
 
 		jar, err := cookiejar.New(&cookiejar.Options{})
 		if err != nil {
-			log.Fatal(err)
+			require.NoError(t, err)
 		}
 		jar.SetCookies(urlObj, []*http.Cookie{cookie})
 		var dialer = &websocket.Dialer{
@@ -116,8 +122,13 @@ func TestQueueHub(t *testing.T) {
 			Jar:              jar,
 		}
 
-		c, _, err := dialer.Dial("ws://localhost:8088/api/v0/queue", nil)
+		c, r, err := dialer.Dial("ws://localhost:8088/api/v0/queue", nil)
 		require.NoError(t, err)
+		defer func() {
+			err = c.Close()
+			err = r.Body.Close()
+			require.NoError(t, err)
+		}()
 
 		request := Request{
 			Action: "search",
@@ -129,7 +140,6 @@ func TestQueueHub(t *testing.T) {
 		var message Message
 		err = c.ReadJSON(&message)
 		require.NoError(t, err)
-		fmt.Println(message)
 		assert.Equal(t, 200, message.Status)
 
 		var user users.User
@@ -147,16 +157,20 @@ func TestQueueHub(t *testing.T) {
 	})
 
 	t.Run("login user2", func(t *testing.T) {
-		json_data, err := json.Marshal(userLogin2)
+		jsonData, err := json.Marshal(userLogin2)
 		require.NoError(t, err)
 
-		resp, err := http.Post("http://localhost:8088/api/v0/auth/login", "application/json", bytes.NewBuffer(json_data))
+		resp, err := http.Post("http://localhost:8088/api/v0/auth/login", "application/json", bytes.NewBuffer(jsonData))
+		require.NoError(t, err)
+		defer func() {
+			err = resp.Body.Close()
+			require.NoError(t, err)
+		}()
 
 		if resp.Status != "200 OK" {
 			var res map[string]interface{}
-			json.NewDecoder(resp.Body).Decode(&res)
-			fmt.Println(res)
-			require.NoError(t, fmt.Errorf("status not 200 OK"))
+			err = json.NewDecoder(resp.Body).Decode(&res)
+			require.NoError(t, err)
 		} else {
 			cookie2 = resp.Cookies()[0].Value
 		}
@@ -177,7 +191,7 @@ func TestQueueHub(t *testing.T) {
 		}
 		jar, err := cookiejar.New(&cookiejar.Options{})
 		if err != nil {
-			log.Fatal(err)
+			require.NoError(t, err)
 		}
 		jar.SetCookies(urlObj, []*http.Cookie{cookie})
 		client := &http.Client{
@@ -186,14 +200,18 @@ func TestQueueHub(t *testing.T) {
 
 		resp, err := client.Get("http://localhost:8088/api/v0/profile")
 		require.NoError(t, err)
+		defer func() {
+			err = resp.Body.Close()
+			require.NoError(t, err)
+		}()
 
 		if resp.Status != "200 OK" {
 			var res map[string]interface{}
-			json.NewDecoder(resp.Body).Decode(&res)
-			fmt.Println(res)
-			require.NoError(t, fmt.Errorf("status not 200 OK"))
+			err = json.NewDecoder(resp.Body).Decode(&res)
+			require.NoError(t, err)
 		} else {
-			json.NewDecoder(resp.Body).Decode(&userDB2)
+			err = json.NewDecoder(resp.Body).Decode(&userDB2)
+			require.NoError(t, err)
 		}
 	})
 
@@ -214,7 +232,7 @@ func TestQueueHub(t *testing.T) {
 
 		jar, err := cookiejar.New(&cookiejar.Options{})
 		if err != nil {
-			log.Fatal(err)
+			require.NoError(t, err)
 		}
 		jar.SetCookies(urlObj, []*http.Cookie{cookie})
 		var dialer = &websocket.Dialer{
@@ -222,8 +240,13 @@ func TestQueueHub(t *testing.T) {
 			Jar:              jar,
 		}
 
-		c, _, err := dialer.Dial("ws://localhost:8088/api/v0/queue", nil)
+		c, r, err := dialer.Dial("ws://localhost:8088/api/v0/queue", nil)
 		require.NoError(t, err)
+		defer func() {
+			err = c.Close()
+			err = r.Body.Close()
+			require.NoError(t, err)
+		}()
 
 		request := Request{
 			Action: "search",
@@ -235,7 +258,6 @@ func TestQueueHub(t *testing.T) {
 		var message Message
 		err = c.ReadJSON(&message)
 		require.NoError(t, err)
-		fmt.Println(message)
 		assert.Equal(t, 200, message.Status)
 
 		var user users.User
