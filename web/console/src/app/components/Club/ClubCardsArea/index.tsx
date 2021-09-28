@@ -13,7 +13,7 @@ import './index.scss';
 
 export const ClubCardsArea: React.FC = () => {
     const { cards } =
-        useSelector((state: RootState) => state.cardsReducer.cards);
+        useSelector((state: RootState) => state.cardsReducer.cardsPage);
 
     return <div className="club-cards">
         <div className="club-cards__wrapper">
