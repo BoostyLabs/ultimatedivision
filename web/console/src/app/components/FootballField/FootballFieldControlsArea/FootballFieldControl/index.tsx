@@ -28,7 +28,7 @@ export const FootballFieldControl: React.FC<{ props: FieldControl }> = ({ props 
                     {props.title}
                 </h4>
                 <img
-                    className="ffootball-field-control__image"
+                    className="football-field-control__image"
                     src={triangle}
                     style={{ transform: optionStyle.triangleRotate }}
                     alt="triangle img"
