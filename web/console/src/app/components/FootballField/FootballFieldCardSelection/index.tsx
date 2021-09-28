@@ -2,9 +2,8 @@
 // See LICENSE for copying information.
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
-import { addCard, cardSelectionVisibility } from '@/app/store/actions/footballField';
+import { addCard, cardSelectionVisibility } from '@/app/store/actions/club';
 
-import { useClub } from '@/app/hooks/club';
 
 import { FilterField } from
     '@components/FootballField/FootballFieldCardSelection/FilterField';
@@ -16,9 +15,9 @@ import { Card } from '@/card';
 import './index.scss';
 
 export const FootballFieldCardSelection = () => {
-    const cards = useClub();
+    const { cards } = useSelector((state: RootState) => state.cardsReducer.cards);
     const dispatch = useDispatch();
-    const fieldSetup = useSelector((state: RootState) => state.fieldReducer);
+    const fieldSetup = useSelector((state: RootState) => state.clubReducer);
 
     const Y_SCROLL_POINT = 200;
     const X_SCROLL_POINT = 0;
@@ -37,7 +36,7 @@ export const FootballFieldCardSelection = () => {
         <div id="cardList" className="card-selection">
             <FilterField />
             <div className="card-selection__list">
-                {cards.map((card, index) =>
+                {cards.map((card: Card, index: number) =>
                     <div
                         key={index}
                         className="card-selection__card"
