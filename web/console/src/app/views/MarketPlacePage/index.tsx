@@ -24,7 +24,7 @@ const MarketPlace: React.FC = () => {
             <MarketPlaceCardsGroup lots={lots} />
             <Paginator
                 getCardsOnPage={listOfLots}
-                pagesCount={page.pagesCount}
+                pagesCount={page.pageCount}
                 selectedPage={page.currentPage}
             />
         </section>
