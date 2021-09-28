@@ -6,12 +6,14 @@ import thunk from 'redux-thunk';
 
 import { cardsReducer } from '@/app/store/reducers/cards';
 import { clubReducer } from '@/app/store/reducers/club';
-import { lootboxReducer } from './reducers/lootboxes';
+import { lootboxReducer } from '@/app/store/reducers/lootboxes';
+import { marketplaceReducer } from '@/app/store/reducers/marketplace';
 
 const reducer = combineReducers({
     cardsReducer,
     clubReducer,
     lootboxReducer,
+    marketplaceReducer,
 });
 
 export const store = createStore(reducer, applyMiddleware(thunk));
