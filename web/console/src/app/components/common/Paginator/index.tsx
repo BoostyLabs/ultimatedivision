@@ -1,6 +1,5 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-/* eslint-disable */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -68,14 +67,14 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
         setLastBlockPages(pages.slice(-MAX_PAGES_PER_BLOCK));
     };
     /**
-    * Indicates visibility of dots after first pages block
+     * Indicates visibility of dots after first pages block
      */
     const isFirstDotsShown: boolean =
         middleBlockPages.length <= MAX_PAGES_PER_BLOCK
         && pages.length > MAX_PAGES_OFF_BLOCKS;
     /*
     * Indicates visibility of dots after middle pages block
-     */
+    */
     const isSecondDotsShown: boolean = !!middleBlockPages.length;
     /**
      * indicates in which block current page
@@ -86,6 +85,8 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
      * change page blocks reorganization depends
      * on current page
      */
+    const isOneBlockRequired: boolean = pages.length <= MAX_PAGES_OFF_BLOCKS;
+
     const reorganizePagesBlock = () => {
         if (isOneBlockRequired) {
             return;
@@ -108,7 +109,6 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
     * indicates if dots delimiter is needed
     * to separate page numbers
     */
-    const isOneBlockRequired: boolean = pages.length <= MAX_PAGES_OFF_BLOCKS;
     const populatePages = () => {
         if (!pages.length) {
             return;
@@ -122,34 +122,38 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
         }
         reorganizePagesBlock();
     };
+
+    useEffect(() => {
+        populatePages();
+    }, [currentPage]);
     /**
      * change current page and set pages block
      */
     const onPageChange = (type: string, pageNumber: number = currentPage): void => {
         const STEP_FROM_CURRENT_PAGE = 1;
         switch (type) {
-            case 'next page':
-                if (pageNumber < pages.length) {
-                    setCurrentPage(pageNumber + STEP_FROM_CURRENT_PAGE);
-                }
-                populatePages();
+        case 'next page':
+            if (pageNumber < pages.length) {
+                setCurrentPage(pageNumber + STEP_FROM_CURRENT_PAGE);
+            }
+            populatePages();
 
-                return;
-            case 'previous page':
-                if (pageNumber > SECOND_PAGE_INDEX) {
-                    setCurrentPage(pageNumber - STEP_FROM_CURRENT_PAGE);
-                }
-                populatePages();
+            return;
+        case 'previous page':
+            if (pageNumber > SECOND_PAGE_INDEX) {
+                setCurrentPage(pageNumber - STEP_FROM_CURRENT_PAGE);
+            }
+            populatePages();
 
-                return;
-            case 'change page':
-                setCurrentPage(pageNumber);
-                populatePages();
+            return;
+        case 'change page':
+            setCurrentPage(pageNumber);
+            populatePages();
 
-                return;
-            default:
-                populatePages();
-        };
+            return;
+        default:
+            populatePages();
+        }
     };
 
     return (
