@@ -4,8 +4,7 @@
 import { useSelector } from 'react-redux';
 
 import { RootState } from '@/app/store';
-
-import { filteredLots, marketplaceLots } from '@/app/store/actions/cards';
+import { filteredLots } from '@/app/store/actions/marketplace';
 
 import { MarketPlaceCardsGroup } from '@components/MarketPlace/MarketPlaceCardsGroup';
 import { FilterField } from '@components/common/FilterField';
@@ -14,8 +13,7 @@ import { Paginator } from '@components/common/Paginator';
 import './index.scss';
 
 const MarketPlace: React.FC = () => {
-    const currentPage = useSelector((state: RootState) => state.cardsReducer.marketplaceCurrentPage);
-    const pagesCount = useSelector((state: RootState) => state.cardsReducer.marketplacePagesCount);
+    const { lots } = useSelector((state: RootState) => state.marketplaceReducer.marketplace);
 
     return (
         <section className="marketplace">
@@ -25,9 +23,7 @@ const MarketPlace: React.FC = () => {
             />
             <MarketPlaceCardsGroup />
             <Paginator
-                getCardsOnPage={marketplaceLots}
-                page={currentPage}
-                pagesCount={pagesCount}
+                itemCount={lots.length}
             />
         </section>
     );
