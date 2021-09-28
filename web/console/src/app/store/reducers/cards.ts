@@ -11,7 +11,7 @@ const PAGES_COUNT: number = 1;
 const CARDS_TOTAL_COUNT: number = 1;
 
 /** class for data from backent (test) */
-class CardState {
+class CardsState {
     /** class implementation */
     constructor(
         public cards: Cards,
@@ -30,19 +30,19 @@ const page = {
 const cards = new Cards([], page);
 const openedCard = new Card();
 
-export const cardsReducer = (cardState: CardState = new CardState(cards, openedCard), action: any = {}) => {
+export const cardsReducer = (cardsState: CardsState = new CardsState(cards, openedCard), action: any = {}) => {
     switch (action.type) {
         case GET_USER_CARDS:
             return {
-                ...cardState,
+                ...cardsState,
                 cards: action.cards,
             };
         case USER_CARD:
             return {
-                ...cardState,
+                ...cardsState,
                 openedCard: action.card,
             };
         default:
-            return cardState;
+            return cardsState;
     };
 };

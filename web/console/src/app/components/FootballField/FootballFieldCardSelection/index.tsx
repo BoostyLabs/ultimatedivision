@@ -36,7 +36,7 @@ export const FootballFieldCardSelection = () => {
         <div id="cardList" className="card-selection">
             <FilterField />
             <div className="card-selection__list">
-                {cards.map((card, index) =>
+                {cards.map((card: Card, index: number) =>
                     <div
                         key={index}
                         className="card-selection__card"
