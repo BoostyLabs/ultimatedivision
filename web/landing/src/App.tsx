@@ -13,4 +13,4 @@ export const App = () => (
             <Routes />
         </Suspense>
     </BrowserRouter>
-);
+); 

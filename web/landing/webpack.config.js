@@ -1,4 +1,3 @@
-
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -23,7 +22,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Ultimate Division',
             template: './public/index.html',
-            favicon: './src/app/static/images/favicon.jpg'
+            favicon: './src/app/static/images/favicon.jpg',
         }),
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin(),
@@ -32,7 +31,7 @@ module.exports = {
     devServer: {
         port: 3000,
         open: true,
-        historyApiFallback: true
+        historyApiFallback: true 
     },
     resolve: {
         alias: {
@@ -49,14 +48,6 @@ module.exports = {
         ],
         modules: ['node_modules']
     },
-    optimization: {
-        splitChunks: {
-            chunks: 'all',
-        },
-        minimizer: [
-            new CssMinimizerPlugin(),
-        ],
-    },
     module: {
         rules: [
             {
@@ -70,6 +61,7 @@ module.exports = {
             },
             {
                 test: /\.(s[c]ss|css)$/,
+                exclude: /(node_modules)/,
                 use: [
                     //for dev style-loader, for production
                     // MiniCssExtractPlugin.loader

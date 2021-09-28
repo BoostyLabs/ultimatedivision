@@ -2,13 +2,13 @@
 // See LICENSE for copying information.
 import React, { useState } from 'react';
 import NavBarLogo from '@static/images/navbar/navbar-logo.png';
-import { Cross, DropdownNavBar } from '@static/images/navbar/svg'
-
-import './index.scss';
+import { Cross, DropdownNavBar } from '@static/images/navbar/svg';
 import { MintButton } from '@components/common/MintButton';
 
+import './index.scss';
+
 export const Navbar: React.FC = () => {
-    const [dropdownMenu, setDropdownMenu] = useState<boolean>(false)
+    const [dropdownMenu, setDropdownMenu] = useState<boolean>(false);
 
     const navBarItems: Array<string> = ['Home', 'Metaverse', 'About', 'Cards', 'Roadmap'];
 
@@ -21,20 +21,20 @@ export const Navbar: React.FC = () => {
                     </a>
                 </picture>
                 <div className="ultimatedivision-navbar__dropdown" onClick={() => setDropdownMenu(!dropdownMenu)}>
-                    {dropdownMenu ? <Cross/> : <DropdownNavBar />}
+                    {dropdownMenu ? <Cross /> : <DropdownNavBar />}
                 </div>
                 <ul className={`ultimatedivision-navbar__items${dropdownMenu ? '-active' : ''}`}>
-                    {navBarItems.map((item, index) => 
+                    {navBarItems.map((item, index) =>
                         <li key={index} className="ultimatedivision-navbar__item">
                             <a
                                 href={`#${item.toLowerCase()}`}
                                 className="ultimatedivision-navbar__item"
                             >
-                                {item}
+                                {item} 
                             </a>
                         </li>)}
                 </ul>
-                <MintButton text="MINT"/>
+                <MintButton text="MINT" />
             </div>
         </nav>
     );

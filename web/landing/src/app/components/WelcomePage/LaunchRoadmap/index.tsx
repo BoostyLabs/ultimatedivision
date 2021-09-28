@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Card } from "./Card";
+import { Card } from './Card';
 
 import './index.scss';
 
@@ -41,7 +41,7 @@ export const LaunchRoadmap: React.FC = () => {
     ];
 
     return <section className="launch-roadmap" id="roadmap">
-       <div className="wrapper"> 
+        <div className="wrapper"> 
             <h1 className="launch-roadmap__title"
                 data-aos="fade-right"
                 data-aos-duration="600"
@@ -52,6 +52,6 @@ export const LaunchRoadmap: React.FC = () => {
             {roadmap.map((card, index) => (
                 <Card card={card} key={index} />
             ))}
-       </div>
-    </section>
+        </div>
+    </section>;
 };
