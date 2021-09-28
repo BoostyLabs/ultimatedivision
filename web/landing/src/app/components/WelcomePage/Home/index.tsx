@@ -2,9 +2,9 @@
 // See LICENSE for copying information.
 import React from 'react';
 import PlayerIllustration from '@static/images/home/Player-Illustration.png';
+import { ScrollTop } from '../ScrollTop';
 
 import './index.scss';
-import { ScrollTop } from '../ScrollTop';
 
 export const Home: React.FC = () => {
 
