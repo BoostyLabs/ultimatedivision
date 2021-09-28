@@ -15,11 +15,7 @@ export const USER_CARD = 'OPEN_USER_CARD';
 
 const getCards = (cards: Cards) => ({
     type: GET_USER_CARDS,
-    cards: {
-        cards,
-        pagesCount,
-        currentPage,
-    },
+    cards,
 });
 const userCard = (card: Card) => ({
     type: USER_CARD,

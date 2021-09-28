@@ -3,7 +3,7 @@
 
 import { useSelector } from 'react-redux';
 
-import { filteredCards } from '@/app/store/actions/cards';
+import { filteredCards, listOfCards } from '@/app/store/actions/cards';
 import { RootState } from '@/app/store';
 
 import { ClubCardsArea } from '@components/Club/ClubCardsArea';
@@ -13,7 +13,7 @@ import { Paginator } from '@components/common/Paginator';
 import './index.scss';
 
 const Club: React.FC = () => {
-    const { cards } = useSelector((state: RootState) => state.cardsReducer.cards);
+    const { page } = useSelector((state: RootState) => state.cardsReducer.cards);
 
     return (
         <section className="club">
@@ -23,9 +23,9 @@ const Club: React.FC = () => {
             />
             <ClubCardsArea />
             <Paginator
-                getCardsOnPage={userCards}
-                pagesCount={pagesCount}
-                page={currentPage}
+                getCardsOnPage={listOfCards}
+                pagesCount={page.pageCount}
+                selectedPage={page.currentPage}
             />
         </section>
     );
