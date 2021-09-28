@@ -6,6 +6,7 @@ package queuehub
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -53,6 +54,7 @@ func TestQueueHub(t *testing.T) {
 			var res map[string]interface{}
 			err = json.NewDecoder(resp.Body).Decode(&res)
 			require.NoError(t, err)
+			require.NoError(t, fmt.Errorf(fmt.Sprint(res)))
 		} else {
 			cookie1 = resp.Cookies()[0].Value
 		}
@@ -91,6 +93,7 @@ func TestQueueHub(t *testing.T) {
 			var res map[string]interface{}
 			err = json.NewDecoder(resp.Body).Decode(&res)
 			require.NoError(t, err)
+			require.NoError(t, fmt.Errorf(fmt.Sprint(res)))
 		} else {
 			err = json.NewDecoder(resp.Body).Decode(&userDB1)
 			require.NoError(t, err)
@@ -171,6 +174,7 @@ func TestQueueHub(t *testing.T) {
 			var res map[string]interface{}
 			err = json.NewDecoder(resp.Body).Decode(&res)
 			require.NoError(t, err)
+			require.NoError(t, fmt.Errorf(fmt.Sprint(res)))
 		} else {
 			cookie2 = resp.Cookies()[0].Value
 		}
@@ -209,6 +213,7 @@ func TestQueueHub(t *testing.T) {
 			var res map[string]interface{}
 			err = json.NewDecoder(resp.Body).Decode(&res)
 			require.NoError(t, err)
+			require.NoError(t, fmt.Errorf(fmt.Sprint(res)))
 		} else {
 			err = json.NewDecoder(resp.Body).Decode(&userDB2)
 			require.NoError(t, err)
