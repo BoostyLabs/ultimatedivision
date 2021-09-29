@@ -113,7 +113,7 @@ func (matchesDB *matchesDB) ListMatches(ctx context.Context, cursor pagination.C
 }
 
 // listPaginated returns paginated list of matches.
-func (matchesDB matchesDB) listPaginated(ctx context.Context, cursor pagination.Cursor, matchesList []matches.Match) (matches.Page, error) {
+func (matchesDB *matchesDB) listPaginated(ctx context.Context, cursor pagination.Cursor, matchesList []matches.Match) (matches.Page, error) {
 	var matchesPage matches.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 
@@ -142,7 +142,7 @@ func (matchesDB matchesDB) listPaginated(ctx context.Context, cursor pagination.
 }
 
 // listMatches counts all matches from the database.
-func (matchesDB matchesDB) countMatches(ctx context.Context) (int, error) {
+func (matchesDB *matchesDB) countMatches(ctx context.Context) (int, error) {
 	query := `SELECT count(*) FROM matches`
 
 	var count int

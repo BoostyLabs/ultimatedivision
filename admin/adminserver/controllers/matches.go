@@ -161,7 +161,7 @@ func (controller *Matches) ListMatchGoals(w http.ResponseWriter, r *http.Request
 
 	matchGoals, err := controller.matches.ListMatchGoals(ctx, matchID)
 	if err != nil {
-		controller.log.Error("could not list matches", ErrMatches.Wrap(err))
+		controller.log.Error("could not list match goals", ErrMatches.Wrap(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
