@@ -32,13 +32,31 @@ type clubsDB struct {
 
 // Create creates empty club in the db.
 func (clubsDB *clubsDB) Create(ctx context.Context, club clubs.Club) (uuid.UUID, error) {
+	tx, err := clubsDB.conn.BeginTx(ctx, nil)
+	if err != nil {
+		return uuid.Nil, ErrClubs.Wrap(err)
+	}
+
 	query := `INSERT INTO clubs(id, owner_id, club_name, created_at)
               VALUES($1,$2,$3,$4)
               RETURNING id`
 
 	var clubID uuid.UUID
-	err := clubsDB.conn.QueryRowContext(ctx, query,
+	err = clubsDB.conn.QueryRowContext(ctx, query,
 		club.ID, club.OwnerID, club.Name, club.CreatedAt).Scan(&clubID)
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return uuid.Nil, ErrClubs.Wrap(err)
+		}
+
+		return uuid.Nil, ErrClubs.Wrap(err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return uuid.Nil, ErrClubs.Wrap(err)
+	}
 
 	return clubID, ErrClubs.Wrap(err)
 }
