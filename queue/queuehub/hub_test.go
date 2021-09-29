@@ -16,15 +16,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"ultimatedivision/users"
 )
-
-// UserDB entity describes user from DB.
-type UserDB struct {
-	Email    string `json:"email"`
-	NickName string `json:"nickName"`
-}
 
 func TestQueueHub(t *testing.T) {
 	userLogin1 := map[string]string{
@@ -37,7 +29,6 @@ func TestQueueHub(t *testing.T) {
 	}
 
 	var cookie1, cookie2 string
-	var userDB1, userDB2 UserDB
 
 	t.Run("login user1", func(t *testing.T) {
 		jsonData, err := json.Marshal(userLogin1)
@@ -57,46 +48,6 @@ func TestQueueHub(t *testing.T) {
 			require.NoError(t, fmt.Errorf(fmt.Sprint(res)))
 		} else {
 			cookie1 = resp.Cookies()[0].Value
-		}
-	})
-
-	t.Run("get profile user1", func(t *testing.T) {
-		urlObj, err := url.Parse("http://localhost:8088/")
-		require.NoError(t, err)
-		cookie := &http.Cookie{
-			Name:     "ultimatedivision_console",
-			Value:    cookie1,
-			Path:     "/",
-			Domain:   "localhost",
-			Expires:  time.Now().Add(time.Hour * 24),
-			HttpOnly: true,
-			SameSite: http.SameSiteStrictMode,
-			Secure:   false,
-		}
-		jar, err := cookiejar.New(&cookiejar.Options{})
-		if err != nil {
-			require.NoError(t, err)
-		}
-		jar.SetCookies(urlObj, []*http.Cookie{cookie})
-		client := &http.Client{
-			Jar: jar,
-		}
-
-		resp, err := client.Get("http://localhost:8088/api/v0/profile")
-		require.NoError(t, err)
-		defer func() {
-			err = resp.Body.Close()
-			require.NoError(t, err)
-		}()
-
-		if resp.Status != "200 OK" {
-			var res map[string]interface{}
-			err = json.NewDecoder(resp.Body).Decode(&res)
-			require.NoError(t, err)
-			require.NoError(t, fmt.Errorf(fmt.Sprint(res)))
-		} else {
-			err = json.NewDecoder(resp.Body).Decode(&userDB1)
-			require.NoError(t, err)
 		}
 	})
 
@@ -145,11 +96,10 @@ func TestQueueHub(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 200, message.Status)
 
-		var user users.User
-		err = c.ReadJSON(&user)
+		var message2 Message
+		err = c.ReadJSON(&message2)
 		require.NoError(t, err)
-		assert.Equal(t, userDB2.Email, user.Email)
-		assert.Equal(t, userDB2.NickName, user.NickName)
+		assert.Equal(t, 200, message2.Status)
 
 		request2 := Request{
 			Action: ActionPlay,
@@ -177,46 +127,6 @@ func TestQueueHub(t *testing.T) {
 			require.NoError(t, fmt.Errorf(fmt.Sprint(res)))
 		} else {
 			cookie2 = resp.Cookies()[0].Value
-		}
-	})
-
-	t.Run("get profile user2", func(t *testing.T) {
-		urlObj, err := url.Parse("http://localhost:8088/")
-		require.NoError(t, err)
-		cookie := &http.Cookie{
-			Name:     "ultimatedivision_console",
-			Value:    cookie2,
-			Path:     "/",
-			Domain:   "localhost",
-			Expires:  time.Now().Add(time.Hour * 24),
-			HttpOnly: true,
-			SameSite: http.SameSiteStrictMode,
-			Secure:   false,
-		}
-		jar, err := cookiejar.New(&cookiejar.Options{})
-		if err != nil {
-			require.NoError(t, err)
-		}
-		jar.SetCookies(urlObj, []*http.Cookie{cookie})
-		client := &http.Client{
-			Jar: jar,
-		}
-
-		resp, err := client.Get("http://localhost:8088/api/v0/profile")
-		require.NoError(t, err)
-		defer func() {
-			err = resp.Body.Close()
-			require.NoError(t, err)
-		}()
-
-		if resp.Status != "200 OK" {
-			var res map[string]interface{}
-			err = json.NewDecoder(resp.Body).Decode(&res)
-			require.NoError(t, err)
-			require.NoError(t, fmt.Errorf(fmt.Sprint(res)))
-		} else {
-			err = json.NewDecoder(resp.Body).Decode(&userDB2)
-			require.NoError(t, err)
 		}
 	})
 
@@ -265,11 +175,10 @@ func TestQueueHub(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 200, message.Status)
 
-		var user users.User
-		err = c.ReadJSON(&user)
+		var message2 Message
+		err = c.ReadJSON(&message2)
 		require.NoError(t, err)
-		assert.Equal(t, userDB1.Email, user.Email)
-		assert.Equal(t, userDB1.NickName, user.NickName)
+		assert.Equal(t, 200, message2.Status)
 
 		request2 := Request{
 			Action: ActionPlay,
