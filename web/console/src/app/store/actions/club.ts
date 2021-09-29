@@ -2,9 +2,7 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
-import { Formations, FormationsType, Tactic, TacticsType } from '@/club';
-import { Card } from '@/card';
-import { Club, Squad } from '@/club';
+import { Formations, FormationsType, Tactic, TacticsType, Club, Squad } from '@/club';
 import { ClubService } from '@/club/service';
 import { Dispatch } from 'redux';
 

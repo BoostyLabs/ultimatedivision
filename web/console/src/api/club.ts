@@ -64,6 +64,7 @@ export class ClubClient extends APIClient {
             await this.handleError(response);
         }
     }
+    /** method updates squad position, formation and captain */
     public async updateSquad(squad: Squad): Promise<void> {
         const { tactic, formation, captainId, clubId, id } = squad;
         const response = await this.http.patch(
