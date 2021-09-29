@@ -6,7 +6,7 @@ import { MarketplaceClient } from '@/api/marketplace';
 
 import { CreatedLot } from '@/app/types/marketplace';
 import { Pagination } from '@/app/types/pagination';
-import { Lot, MarketPlace } from '.';
+import { Lot, MarketPlacePage } from '.';
 
 /**
  * exposes all arketplace domain entity related logic
@@ -19,17 +19,20 @@ export class Marketplaces {
     };
 
     /** returns marketplace domain entity with list of lots */
-    public async list({ selectedPage, limit }: Pagination): Promise<MarketPlace> {
+    public async list({ selectedPage, limit }: Pagination): Promise<MarketPlacePage> {
         return await this.marketplace.list({ selectedPage, limit });
     };
+
     /** creates lot */
     public async createLot(lot: CreatedLot): Promise<void> {
         await this.marketplace.createLot(lot);
     };
+
     /** returns list of lots by filter parameters */
-    public async filteredList(filterParam: string): Promise<MarketPlace> {
+    public async filteredList(filterParam: string): Promise<MarketPlacePage> {
         return await this.marketplace.filteredList(filterParam);
     };
+
     /** returns lot by id */
     public async getLotById(id: string): Promise<Lot> {
         return await this.marketplace.getLotById(id);

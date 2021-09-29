@@ -1,4 +1,5 @@
 @import "/src/index.scss";
+@import "aos/dist/aos.css";
 
 .launch-date {
     display: flex;
@@ -8,6 +9,7 @@
     justify-content: space-between;
     position: relative;
     background: #001236;
+    overflow: hidden;
 
     .wrapper {
         display: flex;
@@ -18,12 +20,40 @@
             width: 444px;
             height: 444px;
 
-            &__ball {
-                transition: all, 0.3s;
-                height: 110%;
-                position: absolute;
-                margin-left: 77px;
-                animation: bounce 5s ease-in-out both infinite;
+            @keyframes bounce {
+
+                0% {
+                    transform: translateY(-40px);
+                }
+
+                50% {
+                    transform: translateY(20px);
+                }
+
+                100% {
+                    transform: translateY(-40px);
+                }
+            }
+        }
+    }
+
+    &__information {
+        width: 55%;
+        display: block;
+
+        &__subtitle {
+            font-family: "Rubik";
+            margin-top: 10%;
+            color: white;
+            font-size: 28px;
+        }
+
+        &__title {
+            font-family: "Russo One";
+            margin-top: 5%;
+            font-size: 56px;
+            color: $highlightColor;
+        }
 
                 @keyframes bounce {
 
@@ -62,21 +92,10 @@
             }
 
             &__remind {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 72px;
-                width: 269px;
-                margin: 43px auto auto 117px;
-                padding: 5px;
-                font-family: "Hanson", sans-serif;
-                font-style: normal;
-                font-weight: bold;
-                font-size: 24px;
-                line-height: 25px;
-                color: #fff;
-                background: $highlightColor;
-                cursor: pointer;
+                height: 48px;
+                line-height: 48px;
+                font-size: 20px;
+                width: 200px;
             }
         }
     }
@@ -84,8 +103,8 @@
 
 @media screen and (max-width: 834px) {
 
-    .launch-date {
-        height: 240px;
+        &__information {
+            width: 47%;
 
         .wrapper {
             width: 834px;
@@ -99,30 +118,12 @@
                 }
             }
 
-            .launch-date__information {
-                display: block;
-                width: auto;
-                margin-left: 49.6px;
-
-                &__subtitle {
-                    margin: 54.44px 210px 3.33px 66.91px;
-                    font-size: 16px;
-                    line-height: 19px;
-                }
-
-                &__title {
-                    margin-left: 66.91px;
-                    font-size: 32px;
-                    line-height: 39px;
-                }
-
-                &__remind {
-                    height: 42px;
-                    width: 156px;
-                    margin: 24.9px auto auto 66.91px;
-                    font-size: 13.9px;
-                    line-height: 14px;
-                }
+            &__remind {
+                margin-left: 20px;
+                height: 36px;
+                line-height: 36px;
+                font-size: 18px;
+                width: 180px;
             }
         }
     }

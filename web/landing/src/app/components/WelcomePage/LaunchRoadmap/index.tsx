@@ -40,18 +40,12 @@ export const LaunchRoadmap: React.FC = () => {
         },
     ];
 
-    return <section className="launch-roadmap" id="roadmap">
-        <div className="wrapper"> 
-            <h1 className="launch-roadmap__title"
-                data-aos="fade-right"
-                data-aos-duration="600"
-                data-aos-easing="ease-in-out-cubic"
-            >
-                Launch Roadmap
-            </h1>
-            {roadmap.map((card, index) => (
-                <Card card={card} key={index} />
-            ))}
-        </div>
-    </section>;
+    return <div className="launch-roadmap" id="roadmap">
+        <h1 className="launch-roadmap__title">
+            Launch Roadmap
+        </h1>
+        {roadmap.map((card, index) => (
+            <Card card={card} key={index} />
+        ))}
+    </div>;
 };

@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import NavBarLogo from '@static/images/navbar/navbar-logo.png';
 import { Cross, DropdownNavBar } from '@static/images/navbar/svg';
-import { MintButton } from '@components/common/MintButton';
 
 import './index.scss';
 
@@ -16,9 +15,7 @@ export const Navbar: React.FC = () => {
         <nav className="ultimatedivision-navbar">
             <div className="wrapper">
                 <picture className="ultimatedivision-navbar__logo">
-                    <a href="/">
-                        <img src={NavBarLogo} alt="Ultimate-division logo"></img>
-                    </a>
+                    <a href="/"><img src={NavBarLogo} alt="Ultimate-division logo"></img></a>
                 </picture>
                 <div className="ultimatedivision-navbar__dropdown" onClick={() => setDropdownMenu(!dropdownMenu)}>
                     {dropdownMenu ? <Cross /> : <DropdownNavBar />}

@@ -4,7 +4,7 @@
     width: auto;
     position: fixed;
     bottom: 50px;
-    left: 1500px;
+    left: 85%;
     z-index: 6;
     opacity: 50%;
     cursor: pointer;
@@ -21,18 +21,18 @@
     }
 }
 
-@media screen and (max-width: 834px) {
+@media screen and (max-width: 800px) {
 
     .scroll-to-top {
         bottom: 30px;
-        left: 730px;
+        left: 85%;
     }
 }
 
-@media screen and (max-width: 414px) {
+@media screen and (max-width: 600px) {
 
     .scroll-to-top {
         bottom: 20px;
-        left: 320px;
+        left: 80%;
     }
 }

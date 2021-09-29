@@ -7,7 +7,7 @@
     &__wrapper {
         display: flex;
         flex-direction: column;
-        width: 1440px;
+        width: 90%;
         margin: auto;
 
         &-title {
@@ -42,7 +42,8 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin: 20px auto 112px auto;
+                width: 90%;
+                margin: 20px auto 5% auto;
                 font-family: "Russo One", sans-serif;
                 font-style: normal;
                 font-weight: normal;
@@ -59,12 +60,11 @@
     }
 }
 
-@media screen and (max-width: 834px) {
+@media screen and (max-width: 1024px) {
 
     .authors {
 
         &__wrapper {
-            width: 834px;
 
             &-title {
                 margin: 84px auto 0 auto;
@@ -92,7 +92,7 @@
                 }
 
                 &__name {
-                    margin: 11px auto 71px auto;
+                    margin: 11px auto 5% auto;
                     font-size: 14px;
                     line-height: 36px;
 
@@ -105,13 +105,12 @@
     }
 }
 
-@media screen and (max-width: 414px) {
+@media screen and (max-width: 600px) {
 
     .authors {
-        height: 1150px;
+        height: 700px;
 
         &__wrapper {
-            width: 414px;
             position: relative;
 
             &-title {

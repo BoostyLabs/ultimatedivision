@@ -1,26 +1,12 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { BoostyLogo, ChickenfishLogo, Projects } from '@static/images/authorsPage/authors';
+import { BoostyLogo, ChickenfishLogo } from '@static/images/authorsPage/authors';
 import './index.scss';
 
 export const Authors: React.FC = () => (
     <section className="authors">
         <div className="authors__wrapper">
-            <span className="authors__wrapper-title"  
-                data-aos="fade-right"
-                data-aos-duration="600"
-                data-aos-easing="ease-in-out-cubic"
-            >
-                The game was created by a team involved in the development of well-know crypto projects
-            </span>
-            <div className="authors__wrapper-projects"  
-                data-aos="fade-right"
-                data-aos-duration="600"
-                data-aos-easing="ease-in-out-cubic"
-            >
-                <Projects /> 
-            </div>
             <span className="authors__wrapper-title"  
                 data-aos="fade-right"
                 data-aos-duration="600"

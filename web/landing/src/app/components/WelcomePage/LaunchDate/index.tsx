@@ -17,7 +17,7 @@ export const LaunchDate: React.FC = () => {
         });
     });
 
-    const [isShowModal, setIsShowModal] = useState(false); 
+    const [isShowModal, setIsShowModal] = useState(false);
 
     const handleModal = () => setIsShowModal(prev => !prev);
 

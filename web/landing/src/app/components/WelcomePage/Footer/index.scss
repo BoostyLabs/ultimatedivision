@@ -9,8 +9,9 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 1440px;
-        padding: 40px 83px;
+        width: 90%;
+        // max-width: 800px;
+        padding: 40px 30px;
         margin: 0 auto;
     }
 
@@ -19,36 +20,24 @@
         width: 200px;
         gap: 30px;
         text-transform: none;
+        margin-left: 5%;
     }
 
     &__link {
-        font-family: "Russo One", sans-serif;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 18px;
-        line-height: 22px;
-        color: #e6ffee;
-        text-decoration: none;
+        color: #fff;
         transition: color 0.3s;
+        text-decoration: none;
 
         &:hover {
             text-decoration: underline;
+            color: white;
         }
     }
 
     &__social {
         margin-right: 276px;
         color: $highlightColor;
-
-        p {
-            font-family: "BebasNeue", sans-serif;
-            font-style: normal;
-            font-weight: normal;
-            font-size: 26px;
-            line-height: 31px;
-            text-align: center;
-            text-transform: uppercase;
-        }
+        margin-right: 5%;
     }
 
     &__list {
@@ -85,7 +74,8 @@
         }
 
         &__links {
-            gap: 33px;
+            margin: 0;
+            justify-content: center;
         }
 
         &__link {

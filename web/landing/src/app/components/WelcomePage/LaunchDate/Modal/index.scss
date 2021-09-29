@@ -228,15 +228,19 @@
     .launch-date-modal {
 
         &__window {
-            width: 383px;
-            height: 562px;
+            top: 10%;
+            width: 70%;
         }
 
-        &__description {
-            width: 310px;
-            margin: 52px auto 0 23px;
-            font-size: 48px;
-            line-height: 58px;
+        &__close {
+            top: 3%;
+            margin-top: -7%;
+
+            p {
+                width: 32px;
+                height: 32px;
+                color: #ffff;
+            }
         }
 
         &__close {
@@ -252,12 +256,11 @@
 
         &__notification {
 
-            &__label {
-                margin: 65px auto 0 23px;
-                font-size: 24px;
-                line-height: 28px;
-                color: #0df45c;
-            }
+        &__close {
+            width: 32px;
+            height: 32px;
+            top: 5%;
+        }
 
             &__send {
                 width: 336px;

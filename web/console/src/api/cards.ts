@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Card, Cards } from '@/card';
+import { Card, CardsPage } from '@/card';
 
 import { APIClient } from '@/api/index';
 
@@ -12,7 +12,7 @@ export class CardClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/cards';
 
     /** method calls get method from APIClient */
-    public async list({ selectedPage, limit }: Pagination): Promise<Cards> {
+    public async list({ selectedPage, limit }: Pagination): Promise<CardsPage> {
         const path = `${this.ROOT_PATH}?page=${selectedPage}&limit=${limit}`;
         const response = await this.http.get(path);
 
@@ -22,7 +22,7 @@ export class CardClient extends APIClient {
 
         const cardsJSON = await response.json();
 
-        return new Cards(
+        return new CardsPage(
             cardsJSON.cards.map((card: Partial<Card>) => new Card(card)),
             cardsJSON.page,
         );
@@ -41,8 +41,9 @@ export class CardClient extends APIClient {
 
         return new Card(card);
     };
+
     /** method returns filtered card list */
-    public async filteredList(filterParam: string): Promise<Cards> {
+    public async filteredList(filterParam: string): Promise<CardsPage> {
         const path = `${this.ROOT_PATH}/?${filterParam}`;
         const response = await this.http.get(path);
 
@@ -52,7 +53,7 @@ export class CardClient extends APIClient {
 
         const cardsJSON = await response.json();
 
-        return new Cards(
+        return new CardsPage(
             cardsJSON.cards.map((card: Partial<Card>) => new Card(card)),
             cardsJSON.page,
         );
