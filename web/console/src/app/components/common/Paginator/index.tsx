@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 
 import { PaginatorBlockPages } from '@components/common/Paginator/PaginatorBlockPages';
 
+import { Pagination } from '@/app/types/pagination';
+
 import next from '@static/img/UltimateDivisionPaginator/next.svg';
 import previous from '@static/img/UltimateDivisionPaginator/previous.svg';
 
@@ -29,6 +31,14 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
         await dispatch(getCardsOnPage({ selectedPage, limit: CARDS_ON_PAGE }));
     };
 
+export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pagination) => void, pagesCount: number, selectedPage: number }> = ({
+    getCardsOnPage,
+    pagesCount,
+    selectedPage,
+}) => {
+    const dispatch = useDispatch();
+    const [currentPage, setCurrentPage] = useState<number>(selectedPage);
+
     /**
     * split the page into 3 blocks that can be needed
     * to separate page numbers
@@ -45,6 +55,11 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
     const FIRST_PAGE_INDEX_FROM_END: number = -1;
     const NEG_STEP_FROM_CURRENT_PAGE: number = -3;
     const POS_STEP_FROM_CURRENT_PAGE: number = 2;
+
+    /** dispatch getCardsOnPage thunk with parameters: page and default limit value */
+    async function getCards(selectedPage: number) {
+        await dispatch(getCardsOnPage({ selectedPage, limit: CARDS_ON_PAGE }));
+    };
 
     const pages: number[] = [];
     for (let i = 1; i <= Math.ceil(pagesCount); i++) {
@@ -124,35 +139,36 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
     };
 
     useEffect(() => {
+        getCards(currentPage);
         populatePages();
-    }, [currentPage]);
+    }, [currentPage, pagesCount]);
     /**
      * change current page and set pages block
      */
     const onPageChange = (type: string, pageNumber: number = currentPage): void => {
         const STEP_FROM_CURRENT_PAGE = 1;
         switch (type) {
-        case 'next page':
-            if (pageNumber < pages.length) {
-                setCurrentPage(pageNumber + STEP_FROM_CURRENT_PAGE);
-            }
-            populatePages();
+            case 'next page':
+                if (pageNumber < pages.length) {
+                    setCurrentPage(pageNumber + STEP_FROM_CURRENT_PAGE);
+                }
+                populatePages();
 
-            return;
-        case 'previous page':
-            if (pageNumber > SECOND_PAGE_INDEX) {
-                setCurrentPage(pageNumber - STEP_FROM_CURRENT_PAGE);
-            }
-            populatePages();
+                return;
+            case 'previous page':
+                if (pageNumber > SECOND_PAGE_INDEX) {
+                    setCurrentPage(pageNumber - STEP_FROM_CURRENT_PAGE);
+                }
+                populatePages();
 
-            return;
-        case 'change page':
-            setCurrentPage(pageNumber);
-            populatePages();
+                return;
+            case 'change page':
+                setCurrentPage(pageNumber);
+                populatePages();
 
-            return;
-        default:
-            populatePages();
+                return;
+            default:
+                populatePages();
         }
     };
 
