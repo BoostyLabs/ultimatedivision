@@ -5,11 +5,12 @@ import { useDispatch } from 'react-redux';
 
 import { PaginatorBlockPages } from '@components/common/Paginator/PaginatorBlockPages';
 
+import { Pagination } from '@/app/types/pagination';
+
 import next from '@static/img/UltimateDivisionPaginator/next.svg';
 import previous from '@static/img/UltimateDivisionPaginator/previous.svg';
 
 import './index.scss';
-import { Pagination } from '@/app/types/pagination';
 
 export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pagination) => void, pagesCount: number, selectedPage: number }> = ({
     getCardsOnPage,
@@ -18,11 +19,6 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
 }) => {
     const dispatch = useDispatch();
     const [currentPage, setCurrentPage] = useState<number>(selectedPage);
-
-    useEffect(() => {
-        getCards(currentPage);
-        populatePages();
-    }, [currentPage, pagesCount]);
 
     /** dispatch getCardsOnPage thunk with parameters: page and default limit value */
     async function getCards(selectedPage: number) {
@@ -124,8 +120,9 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
     };
 
     useEffect(() => {
+        getCards(currentPage);
         populatePages();
-    }, [currentPage]);
+    }, [currentPage, pagesCount]);
     /**
      * change current page and set pages block
      */
