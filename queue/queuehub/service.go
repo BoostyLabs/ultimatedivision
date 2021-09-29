@@ -9,8 +9,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
-
-	"ultimatedivision/users"
 )
 
 // ErrHub indicated that there was an error in service.
@@ -147,9 +145,4 @@ func (h *Hub) SendMessage(client Client, message Message) error {
 func (h *Hub) isAdded(client Client) bool {
 	_, ok := h.Clients[client.UserID]
 	return ok
-}
-
-// SendInvite sends invite for play to user.
-func (h *Hub) SendInvite(userID uuid.UUID, user users.User) error {
-	return h.Clients[userID].WriteJSON(user)
 }

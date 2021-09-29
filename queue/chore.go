@@ -58,22 +58,20 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				firstUserID := places[k].UserID
 				secondUserID := places[k+1].UserID
 
-				firstUser, err := chore.service.users.Get(ctx, firstUserID)
-				if err != nil {
-					return ChoreError.Wrap(err)
+				firstClient := queuehub.Client{
+					UserID: firstUserID,
+					Conn:   chore.Hub.Clients[firstUserID],
 				}
-				secondUser, err := chore.service.users.Get(ctx, secondUserID)
-				if err != nil {
-					return ChoreError.Wrap(err)
+				secondClient := queuehub.Client{
+					UserID: secondUserID,
+					Conn:   chore.Hub.Clients[secondUserID],
 				}
 
-				// TODO: maybe send squad
-				err = chore.Hub.SendInvite(firstUserID, secondUser)
-				if err != nil {
+				message := queuehub.NewMessage(http.StatusOK, "you can play")
+				if err = chore.Hub.SendMessage(firstClient, *message); err != nil {
 					return ChoreError.Wrap(err)
 				}
-				err = chore.Hub.SendInvite(secondUserID, firstUser)
-				if err != nil {
+				if err = chore.Hub.SendMessage(secondClient, *message); err != nil {
 					return ChoreError.Wrap(err)
 				}
 
@@ -84,15 +82,6 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				secondIsInvite, err := chore.Hub.ReadPlay(secondUserID)
 				if err != nil {
 					return ChoreError.Wrap(err)
-				}
-
-				firstClient := queuehub.Client{
-					UserID: firstUserID,
-					Conn:   chore.Hub.Clients[firstUserID],
-				}
-				secondClient := queuehub.Client{
-					UserID: secondUserID,
-					Conn:   chore.Hub.Clients[secondUserID],
 				}
 
 				if !firstIsInvite || !secondIsInvite {

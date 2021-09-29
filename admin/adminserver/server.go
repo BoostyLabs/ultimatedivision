@@ -218,7 +218,7 @@ func (server *Server) initializeTemplates() (err error) {
 		"Dec":  templatefuncs.Dec,
 	}).ParseFiles(
 		filepath.Join(server.config.StaticDir, "cards", "list.html"),
-		filepath.Join(server.config.StaticDir, "pagination", "pagination.html"))
+		filepath.Join(server.config.StaticDir, "cards", "pagination.html"))
 	if err != nil {
 		return err
 	}
@@ -229,7 +229,7 @@ func (server *Server) initializeTemplates() (err error) {
 		"Dec":  templatefuncs.Dec,
 	}).ParseFiles(
 		filepath.Join(server.config.StaticDir, "marketplace", "list.html"),
-		filepath.Join(server.config.StaticDir, "pagination", "pagination.html"))
+		filepath.Join(server.config.StaticDir, "marketplace", "pagination.html"))
 	if err != nil {
 		return err
 	}
@@ -298,7 +298,7 @@ func (server *Server) initializeTemplates() (err error) {
 		"Dec":  templatefuncs.Dec,
 	}).ParseFiles(
 		filepath.Join(server.config.StaticDir, "queue", "list.html"),
-		filepath.Join(server.config.StaticDir, "pagination", "pagination.html"))
+		filepath.Join(server.config.StaticDir, "queue", "pagination.html"))
 	if err != nil {
 		return err
 	}

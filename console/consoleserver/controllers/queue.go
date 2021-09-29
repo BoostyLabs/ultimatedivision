@@ -16,6 +16,13 @@ import (
 	"ultimatedivision/queue/queuehub"
 )
 
+const (
+	// ReadBufferSize is buffer sizes for read.
+	ReadBufferSize int = 1024
+	// WriteBufferSize is buffer sizes for write.
+	WriteBufferSize int = 1024
+)
+
 var (
 	// ErrQueue is an internal error type for queue controller.
 	ErrQueue = errs.Class("queue controller error")
@@ -44,8 +51,8 @@ func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 	upgrader := websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
+		ReadBufferSize:  ReadBufferSize,
+		WriteBufferSize: WriteBufferSize,
 	}
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
@@ -76,15 +83,15 @@ func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 			controller.log.Error("could not create place", ErrQueue.Wrap(err))
 			return
 		}
-	} else {
-		place := queue.Place{
-			UserID: claims.UserID,
-			Status: queue.StatusSearches,
-		}
-		if err = controller.queue.Create(ctx, place); err != nil {
-			controller.log.Error("could not create place", ErrQueue.Wrap(err))
-			return
-		}
+	}
+
+	place := queue.Place{
+		UserID: claims.UserID,
+		Status: queue.StatusSearches,
+	}
+	if err = controller.queue.Create(ctx, place); err != nil {
+		controller.log.Error("could not create place", ErrQueue.Wrap(err))
+		return
 	}
 }
 
