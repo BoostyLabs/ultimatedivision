@@ -12,29 +12,87 @@
     align-items: center;
     text-align: center;
     justify-content: space-between;
-    padding-top: 30px;
 
     &__list {
         width: 60%;
         display: flex;
         align-items: center;
+        margin: auto 5%;
+        gap: 5%;
     }
 
     &__logo {
-        margin-left: 40px;
+        margin-left: 5%;
     }
 
     &__item {
         list-style: none;
         color: white;
-        margin-right: 40px;
         font-size: 24px;
         cursor: pointer;
         text-decoration: none;
 
+        :hover {
+            text-decoration: underline;
+        }
+
         &__active {
             text-decoration: none;
             color: white;
+        }
+    }
+
+    &__dropdown {
+        display: none;
+    }
+}
+
+@media (max-width: $phoneBreakPoint) {
+
+    .ultimatedivision-navbar {
+        position: relative;
+        padding: 5px;
+
+        &__list {
+            display: none;
+        }
+
+        &__list-active {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            width: 94%;
+            height: 500px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 580px;
+            border-radius: 0 0 15px 15px;
+            background: #404064;
+        }
+
+        &__item {
+            margin: 0;
+            padding: 5%;
+        }
+
+        &__dropdown {
+            z-index: 1;
+            display: block;
+            padding-right: 5%;
+            cursor: pointer;
+
+            :hover {
+
+                svg {
+
+                    rect {
+                        fill: #5cff79;
+                    }
+                }
+            }
         }
     }
 }
