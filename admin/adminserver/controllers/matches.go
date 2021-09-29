@@ -53,7 +53,7 @@ func (controller *Matches) Create(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		err := controller.templates.Create.Execute(w, nil)
 		if err != nil {
-			controller.log.Error("could not execute create matches template", ErrAdmins.Wrap(err))
+			controller.log.Error("could not execute create matches template", ErrMatches.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -92,7 +92,7 @@ func (controller *Matches) Create(w http.ResponseWriter, r *http.Request) {
 
 		err = controller.matches.Create(ctx, squad1ID, squad2ID, user1ID, user2ID)
 		if err != nil {
-			controller.log.Error("could not create match", ErrAdmins.Wrap(err))
+			controller.log.Error("could not create match", ErrMatches.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
