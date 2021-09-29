@@ -11,25 +11,6 @@ import next from '@static/img/UltimateDivisionPaginator/next.svg';
 import previous from '@static/img/UltimateDivisionPaginator/previous.svg';
 
 import './index.scss';
-import { Pagination } from '@/app/types/pagination';
-
-export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pagination) => void, pagesCount: number, selectedPage: number }> = ({
-    getCardsOnPage,
-    pagesCount,
-    selectedPage,
-}) => {
-    const dispatch = useDispatch();
-    const [currentPage, setCurrentPage] = useState<number>(selectedPage);
-
-    useEffect(() => {
-        getCards(currentPage);
-        populatePages();
-    }, [currentPage, pagesCount]);
-
-    /** dispatch getCardsOnPage thunk with parameters: page and default limit value */
-    async function getCards(selectedPage: number) {
-        await dispatch(getCardsOnPage({ selectedPage, limit: CARDS_ON_PAGE }));
-    };
 
 export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pagination) => void, pagesCount: number, selectedPage: number }> = ({
     getCardsOnPage,
