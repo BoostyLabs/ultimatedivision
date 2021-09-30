@@ -11,7 +11,6 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/sync"
-	"ultimatedivision/queue/queuehub"
 	"ultimatedivision/users"
 )
 
@@ -27,11 +26,10 @@ type Chore struct {
 	log     logger.Logger
 	service *Service
 	Loop    *sync.Cycle
-	Hub     *queuehub.Hub
 }
 
 // NewChore instantiates Chore.
-func NewChore(log logger.Logger, config Config, queue DB, users *users.Service, hub *queuehub.Hub) *Chore {
+func NewChore(log logger.Logger, config Config, queue DB, users *users.Service) *Chore {
 	return &Chore{
 		log: log,
 		service: NewService(
@@ -40,84 +38,80 @@ func NewChore(log logger.Logger, config Config, queue DB, users *users.Service, 
 			users,
 		),
 		Loop: sync.NewCycle(config.PlaceRenewalInterval),
-		Hub:  hub,
 	}
 }
 
-// Run starts the chore for re-check the expiration time of the place.
+// Run starts the chore for re-check the expiration time of the token.
 func (chore *Chore) Run(ctx context.Context) (err error) {
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
-		places, err := chore.service.List(ctx)
+		clients := chore.service.List()
 
-		if len(places) >= 2 {
-			for k := range places {
-				if k%2 != 0 || (places[k] == Place{} && places[k+1] == Place{}) {
+		if len(clients) >= 2 {
+			for k := range clients {
+				firstUser := clients[k]
+				secondUser := clients[k+1]
+
+				if k%2 != 0 || (firstUser == Client{} && secondUser == Client{}) {
 					continue
 				}
 
-				firstUserID := places[k].UserID
-				secondUserID := places[k+1].UserID
-
-				firstClient := queuehub.Client{
-					UserID: firstUserID,
-					Conn:   chore.Hub.Clients[firstUserID],
+				firstClient := Client{
+					UserID: firstUser.UserID,
+					Conn:   firstUser.Conn,
 				}
-				secondClient := queuehub.Client{
-					UserID: secondUserID,
-					Conn:   chore.Hub.Clients[secondUserID],
+				secondClient := Client{
+					UserID: secondUser.UserID,
+					Conn:   secondUser.Conn,
 				}
 
-				message := queuehub.NewMessage(http.StatusOK, "you can play")
-				if err = chore.Hub.SendMessage(firstClient, *message); err != nil {
+				if err := firstClient.WriteJSON(http.StatusOK, "you confirm play?"); err != nil {
 					return ChoreError.Wrap(err)
 				}
-				if err = chore.Hub.SendMessage(secondClient, *message); err != nil {
+				if err := secondClient.WriteJSON(http.StatusOK, "you confirm play?"); err != nil {
 					return ChoreError.Wrap(err)
 				}
 
-				firstIsInvite, err := chore.Hub.ReadPlay(firstUserID)
+				firstRequest, err := firstClient.ReadJSON()
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
-				secondIsInvite, err := chore.Hub.ReadPlay(secondUserID)
+				secondRequest, err := secondClient.ReadJSON()
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 
-				if !firstIsInvite || !secondIsInvite {
-					message := queuehub.NewMessage(http.StatusOK, "you are still in search!")
-					if err = chore.Hub.SendMessage(firstClient, *message); err != nil {
+				if firstRequest.Action != ActionConfirm && firstRequest.Action != ActionReject {
+					if err := firstClient.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
 						return ChoreError.Wrap(err)
 					}
+				}
+				if secondRequest.Action != ActionConfirm && secondRequest.Action != ActionReject {
+					if err := firstClient.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
+						return ChoreError.Wrap(err)
+					}
+				}
 
-					if err = chore.Hub.SendMessage(secondClient, *message); err != nil {
+				if firstRequest.Action == ActionReject || secondRequest.Action == ActionReject {
+					if err := firstClient.WriteJSON(http.StatusOK, "you are still in search!"); err != nil {
+						return ChoreError.Wrap(err)
+					}
+					if err := secondClient.WriteJSON(http.StatusOK, "you are still in search!"); err != nil {
 						return ChoreError.Wrap(err)
 					}
 					continue
 				}
 
-				if err = chore.Hub.RemoveClient(firstClient); err != nil {
-					return ChoreError.Wrap(err)
-				}
-				if err = chore.Hub.RemoveClient(secondClient); err != nil {
-					return ChoreError.Wrap(err)
-				}
+				chore.service.Finish(firstClient.UserID)
+				chore.service.Finish(secondClient.UserID)
 
-				if err = chore.service.UpdateStatus(ctx, firstUserID, StatusPlays); err != nil {
-					return ChoreError.Wrap(err)
-				}
-				if err = chore.service.UpdateStatus(ctx, secondUserID, StatusPlays); err != nil {
-					return ChoreError.Wrap(err)
-				}
+				defer func() {
+					chore.log.Error("could not close websocket", ErrQueue.Wrap(firstClient.Conn.Close()))
+				}()
+				defer func() {
+					chore.log.Error("could not close websocket", ErrQueue.Wrap(secondClient.Conn.Close()))
+				}()
 
 				// TODO: add to match and send result
-
-				if err = chore.service.Finish(ctx, firstUserID); err != nil {
-					return ChoreError.Wrap(err)
-				}
-				if err = chore.service.Finish(ctx, secondUserID); err != nil {
-					return ChoreError.Wrap(err)
-				}
 			}
 		}
 		return ChoreError.Wrap(err)
