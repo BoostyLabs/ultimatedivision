@@ -7,25 +7,38 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    margin-right: 60px;
+    height: 100%;
+    margin-top: -12%;
 
-    &:after {
-        @extend %pseudoelementsInFootballerCard;
-
-        top: 32%;
+    &__divider {
+        height: 1px;
+        width: 80%;
+        margin: 10% auto;
+        background: linear-gradient(
+            270deg,
+            rgba(41, 41, 72, 0) -11.8%,
+            #675eae 46.61%,
+            rgba(41, 41, 71, 0) 111.17%
+        );
     }
 
-    &:before {
-        @extend %pseudoelementsInFootballerCard;
+    // &:after {
+    //     @extend %pseudoelementsInFootballerCard;
 
-        top: 55%;
-    }
+    //     top: 35%;
+    // }
+
+    // &:before {
+    //     @extend %pseudoelementsInFootballerCard;
+
+    //     top: 70%;
+    // }
 
     &__card {
-        width: 280px;
-        height: 500px;
+        width: 100%;
+        height: auto;
         position: relative;
-        bottom: 100px;
+        bottom: 9%;
 
         &__background-type {
             position: absolute;
@@ -44,7 +57,9 @@
         }
 
         &__list {
-            margin: 275px 40px 200px 80px;
+            width: 60%;
+            margin: 100% auto 100% auto;
+            text-align: center;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             list-style: none;
@@ -67,3 +82,12 @@
         }
     }
 }
+
+// @media screen and (max-width: $desktopBreakPoint) {
+// }
+
+// @media screen and (max-width: $tabletBreakPoint) {
+// }
+
+// @media screen and (max-width: $phoneBreakPoint) {
+// }

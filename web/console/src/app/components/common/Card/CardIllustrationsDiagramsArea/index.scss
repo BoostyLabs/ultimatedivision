@@ -2,9 +2,10 @@
 // See LICENSE for copying information.
 
 .footballer-card-illustrations-diagram-area {
-    margin-top: 50px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     justify-items: center;
-    gap: 60px;
+    row-gap: 15%;
+    column-gap: 10%;
+    margin: 30% 7% 0 7%;
 }

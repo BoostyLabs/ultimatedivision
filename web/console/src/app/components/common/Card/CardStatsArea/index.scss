@@ -4,10 +4,10 @@
     width: 100%;
     position: relative;
     display: grid;
-    grid-template-columns: repeat(3, 200px);
+    grid-template-columns: repeat(3, 20%);
     padding: 50px 0;
-    row-gap: 120px;
-    column-gap: 40px;
+    row-gap: 5%;
+    column-gap: 10%;
     justify-content: center;
 
     &:after {
@@ -19,6 +19,15 @@
     &:before {
         @extend %pseudoelementsInFootballerCard;
 
-        bottom: 50%;
+        bottom: 0%;
     }
 }
+
+// @media screen and (max-width: $desktopBreakPoint) {
+// }
+
+// @media screen and (max-width: $tabletBreakPoint) {
+// }
+
+// @media screen and (max-width: $phoneBreakPoint) {
+// }

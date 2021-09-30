@@ -1,7 +1,7 @@
 @import "@/index.scss";
 
 .footballer-card-stats-item {
-    width: 200px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -46,3 +46,12 @@
         top: 0;
     }
 }
+
+// @media screen and (max-width: $desktopBreakPoint) {
+// }
+
+// @media screen and (max-width: $tabletBreakPoint) {
+// }
+
+// @media screen and (max-width: $phoneBreakPoint) {
+// }
