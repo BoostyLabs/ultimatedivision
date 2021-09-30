@@ -4,26 +4,59 @@
 
 .footballer-card-illustrations-radar {
     width: 100%;
-    height: 100%;
-    // position: relative;
-    margin-top: -55%;
+    height: auto;
+    margin: 10% 0;
 
     canvas {
-        margin: 0 5% 0 5%;
+        margin: 0 5%;
         width: 90%;
+    }
+}
+
+@media screen and (min-width: $desktopBreakPoint + 700px) {
+
+    .footballer-card-illustrations-radar {
+        width: 200px;
+        height: 200px;
+        margin: 5% auto;
+
+        canvas {
+            margin: 0;
+        }
     }
 }
 
 @media screen and (max-width: $desktopBreakPoint) {
 
     .footballer-card-illustrations-radar {
-        position: relative;
         bottom: 7%;
     }
 }
 
-// @media screen and (max-width: $tabletBreakPoint) {
-// }
+@media screen and (max-width: $phoneBreakPoint) {
 
-// @media screen and (max-width: $phoneBreakPoint) {
-// }
+    .footballer-card-illustrations-radar {
+        width: 70%;
+        margin: 600px auto 0 auto;
+
+        canvas {
+            margin: 0 5%;
+            width: 205px;
+            height: 258px;
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint - 100px) {
+
+    .footballer-card-illustrations-radar {
+        margin: 500px auto 0 auto;
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint - 200px) {
+
+    .footballer-card-illustrations-radar {
+        margin: 500px auto 0 auto;
+    }
+}

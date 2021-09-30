@@ -1,33 +1,85 @@
 @import "@/index.scss";
 
 .footballer-card-stats {
-    width: 100%;
+    width: 90%;
+    height: 750px;
     position: relative;
     display: grid;
-    grid-template-columns: repeat(3, 20%);
-    padding: 50px 0;
+    grid-template-columns: repeat(3, 26.5%);
+    margin: 5%;
     row-gap: 5%;
     column-gap: 10%;
-    justify-content: center;
+    justify-content: flex-start;
 
     &:after {
         @extend %pseudoelementsInFootballerCard;
 
-        bottom: 0;
+        bottom: 47%;
+        width: 90%;
     }
 
     &:before {
         @extend %pseudoelementsInFootballerCard;
 
-        bottom: 0%;
+        bottom: -3%;
+        width: 90%;
     }
 }
 
-// @media screen and (max-width: $desktopBreakPoint) {
-// }
+@media screen and (max-width: $desktopBreakPoint) {
 
-// @media screen and (max-width: $tabletBreakPoint) {
-// }
+    .footballer-card-stats {
+        grid-template-columns: repeat(3, 29.5%);
+        row-gap: 5%;
+        column-gap: 5%;
+
+        &:after {
+            bottom: 48%;
+        }
+
+        &:before {
+            bottom: -1%;
+        }
+    }
+}
+
+@media screen and (max-width: $tabletBreakPoint) {
+
+    .footballer-card-stats {
+        grid-template-columns: repeat(3, 29.5%);
+        row-gap: 5%;
+        column-gap: 5%;
+
+        &:after {
+            @extend %pseudoelementsInFootballerCard;
+
+            bottom: 49%;
+        }
+
+        &:before {
+            @extend %pseudoelementsInFootballerCard;
+
+            bottom: -2%;
+        }
+    }
+}
+
+@media screen and (max-width: $tabletBreakPoint - 100px) {
+
+    .footballer-card-stats {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+
+        &:after {
+            bottom: 45%;
+        }
+
+        &:before {
+            bottom: -3%;
+        }
+    }
+}
 
 // @media screen and (max-width: $phoneBreakPoint) {
 // }

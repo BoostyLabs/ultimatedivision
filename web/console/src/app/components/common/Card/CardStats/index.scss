@@ -5,6 +5,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    margin: 5% 0;
 
     &__heading {
         display: flex;
@@ -32,12 +33,18 @@
     &__row {
         display: flex;
         justify-content: space-between;
+        align-items: center;
     }
 
     &__row-name {
         font-family: "Montserrat", sans-serif;
         text-transform: capitalize;
         color: $textColor;
+        padding-right: 2px;
+    }
+
+    &__row-value {
+        padding-top: 2.5px;
     }
 
     .bar {
@@ -47,11 +54,58 @@
     }
 }
 
-// @media screen and (max-width: $desktopBreakPoint) {
-// }
+@media screen and (max-width: $tabletBreakPoint) {
 
-// @media screen and (max-width: $tabletBreakPoint) {
-// }
+    .footballer-card-stats-item {
 
-// @media screen and (max-width: $phoneBreakPoint) {
-// }
+        &__heading {
+            display: flex;
+            justify-content: space-between;
+            font-size: 22px;
+            margin-bottom: 40px;
+        }
+
+        &__row-name {
+            font-size: 10px;
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint) {
+
+    .footballer-card-stats-item {
+        margin: 5% 0;
+
+        &__heading {
+            font-size: 24px;
+            line-height: 29px;
+        }
+
+        &__diagram {
+            position: relative;
+            width: 100%;
+            height: 2px;
+            background-color: #5758a0;
+            bottom: 19px;
+        }
+
+        &__diagram-value {
+            position: absolute;
+            z-index: 2;
+            height: 2px;
+            top: 0;
+            left: 0;
+        }
+
+        &__row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        &__row-name {
+            font-size: 14px;
+            line-height: 17px;
+        }
+    }
+}
