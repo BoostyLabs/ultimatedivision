@@ -7,8 +7,14 @@ import { PaginatorBlockPages } from '@components/common/Paginator/PaginatorBlock
 
 import { Pagination } from '@/app/types/pagination';
 
-import next from '@static/img/UltimateDivisionPaginator/next.svg';
-import previous from '@static/img/UltimateDivisionPaginator/previous.svg';
+import next
+    from '@static/img/UltimateDivisionPaginator/next.svg';
+import notActiveNext
+    from '@static/img/UltimateDivisionPaginator/not_active_next.svg';
+import previous
+    from '@static/img/UltimateDivisionPaginator/previous.svg';
+import notActivePrevious
+    from '@static/img/UltimateDivisionPaginator/not_active_previous.svg';
 
 import './index.scss';
 
@@ -35,6 +41,7 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
     const FIRST_PAGE_INDEX_FROM_END: number = -1;
     const NEG_STEP_FROM_CURRENT_PAGE: number = -3;
     const POS_STEP_FROM_CURRENT_PAGE: number = 2;
+    const FIRST_PAGE: number = 1;
 
     /** dispatch getCardsOnPage thunk with parameters: page and default limit value */
     async function getCards(selectedPage: number) {
@@ -45,6 +52,11 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
     for (let i = 1; i <= Math.ceil(pagesCount); i++) {
         pages.push(i);
     };
+    /**
+    * indicates if current page is first page or last page
+    */
+    const isFirstPageSelected: boolean = currentPage === FIRST_PAGE;
+    const isLastPageSelected: boolean = currentPage === pagesCount;
     /** set block pages depends on current page */
     const setBlocksIfCurrentInFirstBlock = () => {
         setFirstBlockPages(pages.slice(FIRST_PAGE_INDEX, MAX_PAGES_PER_BLOCK));
@@ -155,18 +167,36 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
     return (
         <section className="ultimatedivision-paginator">
             <div className="ultimatedivision-paginator__wrapper">
-                <a className="ultimatedivision-paginator__previous"
-                    onClick={() => onPageChange('previous page')}>
-                    <img className="ultimatedivision-paginator__previous__arrow"
-                        src={previous}
-                        alt="Previous page" />
-                    <p className="ultimatedivision-paginator__previous__title">
-                        Previous page
-                    </p>
-                </a>
+                {isFirstPageSelected ?
+                    <a className="ultimatedivision-paginator__previous-not-active" >
+                        <img
+                            className="ultimatedivision-paginator__previous-not-active__arrow"
+                            src={notActivePrevious}
+                            alt="Previous page"
+                        />
+                        <p className="ultimatedivision-paginator__previous-not-active__title" >
+                            Previous page
+                        </p>
+                    </a>
+                    :
+                    <a
+                        className="ultimatedivision-paginator__previous"
+                        onClick={() => onPageChange('previous page')}
+                    >
+                        <img
+                            className="ultimatedivision-paginator__previous__arrow"
+                            src={previous}
+                            alt="Previous page"
+                        />
+                        <p className="ultimatedivision-paginator__previous__title" >
+                            Previous page
+                        </p>
+                    </a>
+                }
                 <PaginatorBlockPages
                     blockPages={firstBlockPages}
                     onPageChange={onPageChange}
+                    currentPage={currentPage}
                 />
                 {isFirstDotsShown
                     && <span className="ultimatedivision-paginator__pages__dots">
@@ -174,6 +204,7 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
                 <PaginatorBlockPages
                     blockPages={middleBlockPages}
                     onPageChange={onPageChange}
+                    currentPage={currentPage}
                 />
                 {isSecondDotsShown
                     && <span className="ultimatedivision-paginator__pages__dots">
@@ -181,16 +212,37 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
                 <PaginatorBlockPages
                     blockPages={lastBlockPages}
                     onPageChange={onPageChange}
+                    currentPage={currentPage}
                 />
-                <a className="ultimatedivision-paginator__next"
-                    onClick={() => onPageChange('next page')}>
-                    <p className="ultimatedivision-paginator__next__title">
-                        Next page
-                    </p>
-                    <img className="ultimatedivision-paginator__next__arrow"
-                        src={next}
-                        alt="Next page" />
-                </a>
+                {isLastPageSelected ?
+                    <a
+                        className="ultimatedivision-paginator__next-not-active"
+                        onClick={() => onPageChange('next page')}
+                    >
+                        <p className="ultimatedivision-paginator__next__title">
+                            Next page
+                        </p>
+                        <img
+                            className="ultimatedivision-paginator__next__arrow"
+                            src={notActiveNext}
+                            alt="Next page"
+                        />
+                    </a>
+                    :
+                    <a
+                        className="ultimatedivision-paginator__next"
+                        onClick={() => onPageChange('next page')}
+                    >
+                        <p className="ultimatedivision-paginator__next__title">
+                            Next page
+                        </p>
+                        <img
+                            className="ultimatedivision-paginator__next__arrow"
+                            src={next}
+                            alt="Next page"
+                        />
+                    </a>
+                }
             </div>
         </section>
     );
