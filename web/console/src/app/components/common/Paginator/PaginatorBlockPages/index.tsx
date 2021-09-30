@@ -6,17 +6,17 @@ export const PaginatorBlockPages: React.FC<{
     onPageChange: (type: string, pageNumber?: number) => void,
     currentPage: number,
 }> = ({ blockPages, onPageChange, currentPage }) =>
-        <ul className="ultimatedivision-paginator__pages">
-            {blockPages.map((page, index) =>
-                <li
-                    className={
-                        currentPage === page ? "ultimatedivision-paginator__pages__item-active" :
-                            "ultimatedivision-paginator__pages__item"
-                    }
-                    key={index}
-                    onClick={() => onPageChange('change page', page)}
-                >
-                    {page}
-                </li>,
-            )}
-        </ul>;
+    <ul className="ultimatedivision-paginator__pages">
+        {blockPages.map((page, index) =>
+            <li
+                className={
+                    currentPage === page ? 'ultimatedivision-paginator__pages__item-active' :
+                        'ultimatedivision-paginator__pages__item'
+                }
+                key={index}
+                onClick={() => onPageChange('change page', page)}
+            >
+                {page}
+            </li>,
+        )}
+    </ul>;
