@@ -148,7 +148,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	queueRouter := router.PathPrefix("/queue").Subrouter().StrictSlash(true)
 	queueRouter.Use(server.withAuth)
 	queueController := controllers.NewQueue(log, queue, server.templates.queue)
-	queueRouter.HandleFunc("", queueController.ListPaginated).Methods(http.MethodGet)
+	queueRouter.HandleFunc("", queueController.List).Methods(http.MethodGet)
 	queueRouter.HandleFunc("/{id}", queueController.Get).Methods(http.MethodGet)
 
 	server.server = http.Server{
@@ -292,13 +292,7 @@ func (server *Server) initializeTemplates() (err error) {
 		return err
 	}
 
-	server.templates.queue.List, err = template.New("list.html").Funcs(template.FuncMap{
-		"Iter": templatefuncs.Iter,
-		"Inc":  templatefuncs.Inc,
-		"Dec":  templatefuncs.Dec,
-	}).ParseFiles(
-		filepath.Join(server.config.StaticDir, "queue", "list.html"),
-		filepath.Join(server.config.StaticDir, "queue", "pagination.html"))
+	server.templates.queue.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "queue", "list.html"))
 	if err != nil {
 		return err
 	}

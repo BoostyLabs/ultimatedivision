@@ -19,17 +19,14 @@
         <thead>
             <tr>
                 <th>UserID</th>
-                <th>Status</th>
             </tr>
         </thead>
-        {{range .Places}}
+        {{range .}}
         <tr>
             <td><a href="/queue/{{.UserID}}"></a>{{.UserID}}</a></td>
-            <td>{{.Status}}</td>
         </tr>
         {{end}}
     </table>
-    {{template "pagination" .}}
 </body>
 </html>
 

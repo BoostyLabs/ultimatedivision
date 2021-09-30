@@ -6,14 +6,12 @@ package controllers
 import (
 	"html/template"
 	"net/http"
-	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/internal/pagination"
 	"ultimatedivision/queue"
 )
 
@@ -46,56 +44,19 @@ func NewQueue(log logger.Logger, queue *queue.Service, templates QueueTemplates)
 	return queueController
 }
 
-// ListPaginated is an endpoint that will provide a web page with places.
-func (controller *Queue) ListPaginated(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	var (
-		placesPage  queue.Page
-		err         error
-		limit, page int
-	)
-	urlQuery := r.URL.Query()
-	limitQuery := urlQuery.Get("limit")
-	pageQuery := urlQuery.Get("page")
-
-	if limitQuery != "" {
-		limit, err = strconv.Atoi(limitQuery)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	}
-
-	if pageQuery != "" {
-		page, err = strconv.Atoi(pageQuery)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	}
-
-	cursor := pagination.Cursor{
-		Limit: limit,
-		Page:  page,
-	}
-	placesPage, err = controller.queue.ListPaginated(ctx, cursor)
+// List is an endpoint that will provide a web page with clients.
+func (controller *Queue) List(w http.ResponseWriter, r *http.Request) {
+	clients := controller.queue.List()
+	err := controller.templates.List.Execute(w, clients)
 	if err != nil {
-		controller.log.Error("could not list places", ErrQueue.Wrap(err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = controller.templates.List.Execute(w, placesPage)
-	if err != nil {
-		controller.log.Error("can not execute list places template", ErrQueue.Wrap(err))
+		controller.log.Error("can not execute list clients template", ErrQueue.Wrap(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-// Get is an endpoint that will provide a web page with place by id.
+// Get is an endpoint that will provide a web page with client by id.
 func (controller *Queue) Get(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
 	vars := mux.Vars(r)
 
 	id, err := uuid.Parse(vars["id"])
@@ -104,11 +65,11 @@ func (controller *Queue) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	place, err := controller.queue.Get(ctx, id)
+	client, err := controller.queue.Get(id)
 	if err != nil {
-		controller.log.Error("could not get place by id", ErrQueue.Wrap(err))
+		controller.log.Error("could not get client by id", ErrQueue.Wrap(err))
 		switch {
-		case queue.ErrNoPlace.Has(err):
+		case queue.ErrNoClient.Has(err):
 			http.Error(w, err.Error(), http.StatusNotFound)
 		default:
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -116,9 +77,9 @@ func (controller *Queue) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = controller.templates.Get.Execute(w, place)
+	err = controller.templates.Get.Execute(w, client)
 	if err != nil {
-		controller.log.Error("can not execute get place template", ErrQueue.Wrap(err))
+		controller.log.Error("can not execute get client template", ErrQueue.Wrap(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
