@@ -25,7 +25,6 @@ import (
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
-	"ultimatedivision/queue/queuehub"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -144,7 +143,6 @@ type Peer struct {
 	// exposes queue related logic.
 	Queue struct {
 		Service    *queue.Service
-		Hub        *queuehub.Hub
 		PlaceChore *queue.Chore
 	}
 
@@ -271,14 +269,11 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Service,
 		)
 
-		peer.Queue.Hub = queuehub.NewHub()
-
 		peer.Queue.PlaceChore = queue.NewChore(
 			peer.Log,
 			config.Queue.Config,
 			peer.Database.Queue(),
 			peer.Users.Service,
-			peer.Queue.Hub,
 		)
 	}
 
@@ -324,7 +319,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Auth,
 			peer.Users.Service,
 			peer.Queue.Service,
-			peer.Queue.Hub,
 		)
 	}
 
