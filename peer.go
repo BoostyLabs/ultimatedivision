@@ -272,8 +272,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.Queue.PlaceChore = queue.NewChore(
 			peer.Log,
 			config.Queue.Config,
-			peer.Database.Queue(),
-			peer.Users.Service,
+			peer.Queue.Service,
 		)
 	}
 

@@ -11,7 +11,6 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/sync"
-	"ultimatedivision/users"
 )
 
 var (
@@ -29,15 +28,11 @@ type Chore struct {
 }
 
 // NewChore instantiates Chore.
-func NewChore(log logger.Logger, config Config, queue DB, users *users.Service) *Chore {
+func NewChore(log logger.Logger, config Config, service *Service) *Chore {
 	return &Chore{
-		log: log,
-		service: NewService(
-			config,
-			queue,
-			users,
-		),
-		Loop: sync.NewCycle(config.PlaceRenewalInterval),
+		log:     log,
+		service: service,
+		Loop:    sync.NewCycle(config.PlaceRenewalInterval),
 	}
 }
 
@@ -45,16 +40,14 @@ func NewChore(log logger.Logger, config Config, queue DB, users *users.Service) 
 func (chore *Chore) Run(ctx context.Context) (err error) {
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
 		clients := chore.service.List()
-
 		if len(clients) >= 2 {
 			for k := range clients {
-				firstUser := clients[k]
-				secondUser := clients[k+1]
-
-				if k%2 != 0 || (firstUser == Client{} && secondUser == Client{}) {
+				if k%2 != 0 || (clients[k] == Client{} && clients[k+1] == Client{}) {
 					continue
 				}
 
+				firstUser := clients[k]
+				secondUser := clients[k+1]
 				firstClient := Client{
 					UserID: firstUser.UserID,
 					Conn:   firstUser.Conn,
@@ -105,10 +98,14 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				chore.service.Finish(secondClient.UserID)
 
 				defer func() {
-					chore.log.Error("could not close websocket", ErrQueue.Wrap(firstClient.Conn.Close()))
+					if err = firstClient.Conn.Close(); err != nil {
+						chore.log.Error("could not close websocket", ErrQueue.Wrap(err))
+					}
 				}()
 				defer func() {
-					chore.log.Error("could not close websocket", ErrQueue.Wrap(secondClient.Conn.Close()))
+					if err = secondClient.Conn.Close(); err != nil {
+						chore.log.Error("could not close websocket", ErrQueue.Wrap(err))
+					}
 				}()
 
 				// TODO: add to match and send result

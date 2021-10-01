@@ -88,8 +88,10 @@ func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			controller.serveError(client.Conn, http.StatusOK, "you added!")
+			return
 		}
 		controller.serveError(client.Conn, http.StatusBadRequest, "you have already been added!")
+		return
 	case queue.ActionFinishSearch:
 		if _, err = controller.queue.Get(client.UserID); err == nil {
 			controller.queue.Finish(client.UserID)
@@ -101,6 +103,7 @@ func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		controller.serveError(client.Conn, http.StatusBadRequest, "you don't have been added!")
+		return
 	default:
 		controller.serveError(client.Conn, http.StatusBadRequest, "wrong action")
 		controller.log.Error("wrong action", ErrQueue.Wrap(err))
