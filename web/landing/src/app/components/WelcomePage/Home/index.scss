@@ -4,9 +4,9 @@
     margin: 0;
     padding: 0;
     background: $home-background;
-    overflow-y: hidden;
 
     &__wrapper {
+        overflow: hidden;
         height: 880px;
         position: relative;
         display: flex;
