@@ -196,35 +196,26 @@ func (clubsDB *clubsDB) GetFormation(ctx context.Context, squadID uuid.UUID) (cl
 	return formation, ErrClubs.Wrap(err)
 }
 
-// UpdatePosition updates position of card in the squad.
-func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, newPosition clubs.Position, squadID, cardID uuid.UUID) error {
+// UpdatePosition updates position of cards in the squad.
+func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, squadCards []clubs.SquadCard) error {
 	query := `UPDATE squad_cards
 			  SET card_position = $1
 			  WHERE card_id = $2 and id = $3`
 
-	_, err := clubsDB.conn.ExecContext(ctx, query, newPosition, cardID, squadID)
-
-	return ErrSquad.Wrap(err)
-}
-
-// GetCaptainID returns id of captain of the users team.
-func (clubsDB *clubsDB) GetCaptainID(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error) {
-	query := `SELECT captain_id
-			  FROM squads
-              WHERE id = $1`
-
-	var id uuid.UUID
-
-	row := clubsDB.conn.QueryRowContext(ctx, query, squadID)
-
-	err := row.Scan(&id)
+	preparedQuery, err := clubsDB.conn.PrepareContext(ctx, query)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return uuid.New(), clubs.ErrNoSquad.Wrap(err)
-		}
+		return ErrClubs.Wrap(err)
+	}
+	defer func() {
+		err = preparedQuery.Close()
+	}()
 
-		return uuid.New(), ErrSquad.Wrap(err)
+	for _, squadCard := range squadCards {
+		_, err = preparedQuery.ExecContext(ctx, squadCard.Position, squadCard.CardID, squadCard.SquadID)
+		if err != nil {
+			return ErrClubs.Wrap(err)
+		}
 	}
 
-	return id, nil
+	return ErrSquad.Wrap(err)
 }

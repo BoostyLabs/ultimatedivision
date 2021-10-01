@@ -29,8 +29,6 @@ type DB interface {
 	GetByUserID(ctx context.Context, userID uuid.UUID) (Club, error)
 	// GetSquad returns squad.
 	GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, error)
-	// GetCaptainID returns id of captain.
-	GetCaptainID(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error)
 	// GetFormation returns formation of the squad.
 	GetFormation(ctx context.Context, squadID uuid.UUID) (Formation, error)
 	// ListSquadCards returns all cards from squad.
@@ -41,8 +39,8 @@ type DB interface {
 	DeleteSquadCard(ctx context.Context, squadID, cardID uuid.UUID) error
 	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
 	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
-	// UpdatePosition updates position of card in the squad.
-	UpdatePosition(ctx context.Context, newPosition Position, squadID, cardID uuid.UUID) error
+	// UpdatePosition updates position of cards in the squad.
+	UpdatePosition(ctx context.Context, squadCards []SquadCard) error
 }
 
 // Club defines club entity.

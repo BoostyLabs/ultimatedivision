@@ -47,15 +47,38 @@ func TestTeam(t *testing.T) {
 		Formation: clubs.FourTwoFour,
 	}
 
-	testCard := cards.Card{
+	testCard1 := cards.Card{
 		ID:     uuid.New(),
 		UserID: testUser.ID,
 	}
 
-	testSquadCards := clubs.SquadCard{
+	testCard2 := cards.Card{
+		ID:     uuid.New(),
+		UserID: testUser.ID,
+	}
+
+	testSquadCard1 := clubs.SquadCard{
 		SquadID:  testSquad.ID,
-		CardID:   testCard.ID,
+		CardID:   testCard1.ID,
 		Position: clubs.CCAM,
+	}
+
+	testSquadCard2 := clubs.SquadCard{
+		SquadID:  testSquad.ID,
+		CardID:   testCard2.ID,
+		Position: clubs.RB,
+	}
+
+	updatedSquadCard1 := clubs.SquadCard{
+		SquadID:  testSquad.ID,
+		CardID:   testCard1.ID,
+		Position: clubs.CST,
+	}
+
+	updatedSquadCard2 := clubs.SquadCard{
+		SquadID:  testSquad.ID,
+		CardID:   testCard2.ID,
+		Position: clubs.CCD,
 	}
 
 	updatedSquad := clubs.Squad{
@@ -63,7 +86,7 @@ func TestTeam(t *testing.T) {
 		ClubID:    testClub.ID,
 		Formation: clubs.FourFourTwo,
 		Tactic:    clubs.Attack,
-		CaptainID: testCard.ID,
+		CaptainID: testCard1.ID,
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
@@ -106,26 +129,25 @@ func TestTeam(t *testing.T) {
 			assert.Equal(t, formation, testSquad.Formation)
 		})
 
-		t.Run("Add card to the squad", func(t *testing.T) {
-			err := repositoryCards.Create(ctx, testCard)
+		t.Run("Add cards to the squad", func(t *testing.T) {
+			err := repositoryCards.Create(ctx, testCard1)
 			require.NoError(t, err)
 
-			err = repositoryClubs.AddSquadCard(ctx, testSquadCards)
-			require.NoError(t, err)
-		})
-
-		t.Run("Get capitan", func(t *testing.T) {
-			capitan, err := repositoryClubs.GetCaptainID(ctx, testSquad.ID)
+			err = repositoryCards.Create(ctx, testCard2)
 			require.NoError(t, err)
 
-			assert.Equal(t, capitan, uuid.Nil)
+			err = repositoryClubs.AddSquadCard(ctx, testSquadCard1)
+			require.NoError(t, err)
+
+			err = repositoryClubs.AddSquadCard(ctx, testSquadCard2)
+			require.NoError(t, err)
 		})
 
 		t.Run("List cards from squad", func(t *testing.T) {
 			squadCardsDB, err := repositoryClubs.ListSquadCards(ctx, testSquad.ID)
 			require.NoError(t, err)
 
-			comparePlayers(t, squadCardsDB, []clubs.SquadCard{testSquadCards})
+			comparePlayers(t, squadCardsDB, []clubs.SquadCard{testSquadCard2, testSquadCard1})
 		})
 
 		t.Run("Update tactic and formation in squad", func(t *testing.T) {
@@ -134,12 +156,14 @@ func TestTeam(t *testing.T) {
 		})
 
 		t.Run("Update card position in squad", func(t *testing.T) {
-			err := repositoryClubs.UpdatePosition(ctx, clubs.LCAM, testSquad.ID, testCard.ID)
+			err := repositoryClubs.UpdatePosition(ctx, []clubs.SquadCard{updatedSquadCard1, updatedSquadCard2})
 			require.NoError(t, err)
 		})
 
 		t.Run("Delete card from squad", func(t *testing.T) {
-			err := repositoryClubs.DeleteSquadCard(ctx, testSquad.ID, testCard.ID)
+			err := repositoryClubs.DeleteSquadCard(ctx, testSquad.ID, testCard1.ID)
+			require.NoError(t, err)
+			err = repositoryClubs.DeleteSquadCard(ctx, testSquad.ID, testCard2.ID)
 			require.NoError(t, err)
 		})
 	})
