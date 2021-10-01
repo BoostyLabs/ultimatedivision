@@ -364,7 +364,7 @@ func TestCards(t *testing.T) {
 			err = repositoryClubs.AddSquadCard(ctx, testSquadCard)
 			require.NoError(t, err)
 
-			card, err := repositoryCards.GetCardsFromSquadCards(ctx, testSquad.ID)
+			card, err := repositoryCards.GetSquadCards(ctx, testSquad.ID)
 			require.NoError(t, err)
 			compareCards(t, card[0], card1)
 		})

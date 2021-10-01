@@ -45,6 +45,8 @@ const periodEnd = 1
 
 // Play initiates match between users, calls methods to generate result.
 func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1 []clubs.SquadCard, squadCards2 []clubs.SquadCard, user1, user2 uuid.UUID) error {
+	// TODO: refactor map to slice.
+
 	periods := map[string][]int{
 		"period1":  {service.config.Periods.First.Begin, service.config.Periods.First.End},
 		"period2":  {service.config.Periods.Second.Begin, service.config.Periods.Second.End},
@@ -80,6 +82,8 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 
 	periodName := sortMapKey(periods)
 
+	goals := make([]MatchGoals, 0, 10)
+
 	for _, key := range periodName {
 		randNumber := rand.Intn(100) + 1
 		if randNumber > goalProbability {
@@ -94,17 +98,20 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 			return ErrMatches.Wrap(err)
 		}
 
-		err = service.AddGoal(ctx, MatchGoals{
+		goals = append(goals, MatchGoals{
 			ID:      uuid.New(),
 			MatchID: matchID,
 			UserID:  userID,
 			CardID:  cardID,
 			Minute:  minute,
 		})
-		if err != nil {
-			return ErrMatches.Wrap(err)
-		}
 	}
+
+	err := service.matches.AddGoals(ctx, goals)
+	if err != nil {
+		return ErrMatches.Wrap(err)
+	}
+
 	return nil
 }
 
@@ -269,21 +276,9 @@ func (service *Service) List(ctx context.Context, cursor pagination.Cursor) (Pag
 	return allMatches, ErrMatches.Wrap(err)
 }
 
-// GetGoalsByUserID returns number of goals scored by user's squad.
-func (service *Service) GetGoalsByUserID(ctx context.Context, userID, matchID uuid.UUID) (int, error) {
-	number, err := service.matches.GetGoals(ctx, userID, matchID)
-
-	return number, ErrMatches.Wrap(err)
-}
-
 // Delete deletes match.
 func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
 	return ErrMatches.Wrap(service.matches.Delete(ctx, id))
-}
-
-// AddGoal adds goal in the match.
-func (service *Service) AddGoal(ctx context.Context, matchGoal MatchGoals) error {
-	return ErrMatches.Wrap(service.matches.AddGoal(ctx, matchGoal))
 }
 
 // ListMatchGoals returns all goals scored in the match.

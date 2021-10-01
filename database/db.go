@@ -14,9 +14,9 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
-	"ultimatedivision/matches"
 	"ultimatedivision/queue"
 	"ultimatedivision/users"
 )

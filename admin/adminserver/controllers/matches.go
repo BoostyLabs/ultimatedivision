@@ -12,9 +12,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/pagination"
-	"ultimatedivision/matches"
 )
 
 // ErrMatches is an internal error type for matches controller.

@@ -23,14 +23,12 @@ type DB interface {
 	Create(ctx context.Context, match Match) error
 	// Get returns match from the database.
 	Get(ctx context.Context, id uuid.UUID) (Match, error)
-	// GetGoals counts goals for user's squad in the match.
-	GetGoals(ctx context.Context, matchID uuid.UUID, userID uuid.UUID) (int, error)
 	// ListMatches returns page of matches from the database.
 	ListMatches(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// Delete deletes match from the database.
 	Delete(ctx context.Context, id uuid.UUID) error
-	// AddGoal adds new goal in the match.
-	AddGoal(ctx context.Context, matchGoal MatchGoals) error
+	// AddGoals adds new goal in the match.
+	AddGoals(ctx context.Context, matchGoals []MatchGoals) error
 	// ListMatchGoals returns all goals from the match from the database.
 	ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]MatchGoals, error)
 }

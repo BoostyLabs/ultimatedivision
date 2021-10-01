@@ -623,7 +623,7 @@ func (cardsDB *cardsDB) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 // GetCardsFromSquadCards returns all card with characteristics from the squad from the database.
-func (cardsDB *cardsDB) GetCardsFromSquadCards(ctx context.Context, id uuid.UUID) ([]cards.Card, error) {
+func (cardsDB *cardsDB) GetSquadCards(ctx context.Context, id uuid.UUID) ([]cards.Card, error) {
 	var cardsFromSquad []cards.Card
 	query := `SELECT ` + allFields + `
         FROM cards

@@ -12,8 +12,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/pagination"
-	"ultimatedivision/matches"
 )
 
 // ensures that matchesDB implements matches.DB.
@@ -59,19 +59,6 @@ func (matchesDB *matchesDB) Get(ctx context.Context, id uuid.UUID) (matches.Matc
 	}
 
 	return match, ErrMatches.Wrap(err)
-}
-
-// GetGoals counts goals for user's squad in the match.
-func (matchesDB *matchesDB) GetGoals(ctx context.Context, matchID uuid.UUID, userID uuid.UUID) (int, error) {
-	query := `SELECT count(*)
-              FROM match_goals
-              WHERE match_id = $1 and user_id = $2`
-
-	var count int
-
-	err := matchesDB.conn.QueryRowContext(ctx, query, matchID, userID).Scan(&count)
-
-	return count, ErrMatches.Wrap(err)
 }
 
 // ListMatches returns all matches from the database.
@@ -162,15 +149,30 @@ func (matchesDB *matchesDB) Delete(ctx context.Context, id uuid.UUID) error {
 	return ErrMatches.Wrap(err)
 }
 
-// AddGoal adds new goal in the match.
-func (matchesDB *matchesDB) AddGoal(ctx context.Context, matchGoal matches.MatchGoals) error {
+// AddGoals adds goals in the match.
+func (matchesDB *matchesDB) AddGoals(ctx context.Context, matchGoals []matches.MatchGoals) error {
 	query := `INSERT INTO match_goals(id, match_id, user_id, card_id, minute)
               VALUES($1,$2,$3,$4,$5)`
 
-	_, err := matchesDB.conn.ExecContext(ctx, query,
-		matchGoal.ID, matchGoal.MatchID, matchGoal.UserID, matchGoal.CardID, matchGoal.Minute)
+	preparedQuery, err := matchesDB.conn.PrepareContext(ctx, query)
+	if err != nil {
+		return ErrMatches.Wrap(err)
+	}
 
-	return ErrMatches.Wrap(err)
+	for _, matchGoal := range matchGoals {
+		_, err = preparedQuery.ExecContext(ctx, matchGoal.ID, matchGoal.MatchID,
+			matchGoal.UserID, matchGoal.CardID, matchGoal.Minute)
+
+		if err != nil {
+			return ErrMatches.Wrap(err)
+		}
+	}
+
+	if err = preparedQuery.Close(); err != nil {
+		return ErrMatches.Wrap(err)
+	}
+
+	return nil
 }
 
 // ListMatchGoals returns all goals from the match from the database.

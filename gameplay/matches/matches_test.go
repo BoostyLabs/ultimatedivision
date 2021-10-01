@@ -16,8 +16,8 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/database/dbtesting"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/pagination"
-	"ultimatedivision/matches"
 	"ultimatedivision/users"
 )
 
@@ -89,12 +89,20 @@ func TestMatches(t *testing.T) {
 		Squad2ID: testSquad2.ID,
 	}
 
-	testMatchGoal := matches.MatchGoals{
+	testMatchGoal1 := matches.MatchGoals{
 		ID:      uuid.New(),
 		MatchID: testMatch.ID,
 		UserID:  testUser1.ID,
 		CardID:  testCard.ID,
 		Minute:  25,
+	}
+
+	testMatchGoal2 := matches.MatchGoals{
+		ID:      uuid.New(),
+		MatchID: testMatch.ID,
+		UserID:  testUser1.ID,
+		CardID:  testCard.ID,
+		Minute:  41,
 	}
 
 	newCursor := pagination.Cursor{
@@ -147,20 +155,14 @@ func TestMatches(t *testing.T) {
 			err := repositoryCards.Create(ctx, testCard)
 			require.NoError(t, err)
 
-			err = repositoryMatches.AddGoal(ctx, testMatchGoal)
+			err = repositoryMatches.AddGoals(ctx, []matches.MatchGoals{testMatchGoal1, testMatchGoal2})
 			require.NoError(t, err)
-		})
-
-		t.Run("get goals", func(t *testing.T) {
-			count, err := repositoryMatches.GetGoals(ctx, testMatch.ID, testUser1.ID)
-			require.NoError(t, err)
-			assert.Equal(t, count, 1)
 		})
 
 		t.Run("List match goals", func(t *testing.T) {
 			matchGoalsDB, err := repositoryMatches.ListMatchGoals(ctx, testMatch.ID)
 			require.NoError(t, err)
-			compareMatchGoals(t, matchGoalsDB, []matches.MatchGoals{testMatchGoal})
+			compareMatchGoals(t, matchGoalsDB, []matches.MatchGoals{testMatchGoal1, testMatchGoal2})
 		})
 
 		t.Run("delete", func(t *testing.T) {
