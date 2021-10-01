@@ -10,15 +10,16 @@
         width: 40%;
         margin-right: 100px;
     }
+
     &__text-area {
         margin-top: 70px;
         transition: all 0.3s linear;
     }
+
     &__text {
-        font-family: 'Roboto';
+        font-family: "Roboto";
         font-weight: bold;
         font-size: 24px;
-
     }
 
     &__title {
@@ -29,20 +30,24 @@
     }
 }
 
-
 @media (max-width: $desktopBreakPoint) {
+
     .description-pay {
+
         &__text-area {
             margin-top: 80px;
         }
+
         &__title {
             font-size: 26px;
         }
+
         &__text {
             font-size: 15px;
         }
     }
 }
+
 @media (max-width: $tabletBreakPoint - 100px) {
 
     .description-pay {
@@ -60,10 +65,10 @@
             position: absolute;
             top: 20px;
         }
+
         &__text {
             font-size: 18px;
             text-align: justify;
         }
-
     }
 }

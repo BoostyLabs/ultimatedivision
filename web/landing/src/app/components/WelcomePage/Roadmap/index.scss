@@ -7,6 +7,7 @@
     min-height: 1000px;
     position: relative;
     overflow: hidden;
+
     &__wrapper {
         position: relative;
         padding: 100px 90px;
@@ -32,6 +33,7 @@
         align-items: center;
         gap: 30px;
     }
+
     &__flag {
         height: 273px;
         position: absolute;
@@ -52,6 +54,7 @@
 @media (max-width: $desktopBreakPoint) {
 
     .roadmap {
+
         &__wrapper {
             padding: 70px;
         }
@@ -70,6 +73,7 @@
                 background: linear-gradient(90deg, #00ffa3 0%, #00ffa3 135.85%);
             }
         }
+
         &__flag {
             height: 237px;
             bottom: 0;
@@ -80,9 +84,11 @@
 @media (max-width: $tabletBreakPoint) {
 
     .roadmap {
+
         &__wrapper {
             padding: 70px 40px;
         }
+
         &__flag {
             right: 50px;
         }
@@ -96,10 +102,11 @@
 @media (max-width: $phoneBreakPoint) {
 
     .roadmap {
+
         &__wrapper {
             padding: 70px 20px;
-
         }
+
         &__flag {
             right: 30px;
         }

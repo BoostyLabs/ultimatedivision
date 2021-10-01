@@ -10,8 +10,8 @@
         max-width: 1440px;
         margin: auto;
         padding: 40px 80px;
-
     }
+
     &__title {
         margin: 0 auto;
         padding: 5px;
@@ -64,9 +64,11 @@
 @media (max-width: $desktopBreakPoint) {
 
     .authors {
+
         &__wrapper {
             padding: 20px 40px;
         }
+
         &__title {
             font-size: 28px;
             line-height: 36px;
@@ -111,8 +113,8 @@
 
         &__wrapper {
             position: relative;
-
         }
+
         &__projects {
             margin-top: 72px;
 

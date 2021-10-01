@@ -14,12 +14,13 @@
         flex-direction: row;
         justify-content: space-between;
     }
+
     &__represent {
         display: flex;
         justify-content: flex-start;
         align-items: center;
+
         &__ball {
-            transition: all, 0.3s;
             height: 110%;
             position: absolute;
             animation: bounce 5s ease-in-out both infinite;
@@ -94,9 +95,9 @@
     }
 
     @media (max-width: $desktopBreakPoint) {
+
         &__wrapper {
             padding: 70px 50px;
-
         }
 
         &__information {
@@ -115,7 +116,9 @@
                 font-size: 18px;
             }
         }
+
         &__represent {
+
             &__ball {
                 height: 100%;
             }
@@ -124,6 +127,7 @@
 
     @media (max-width: $tabletBreakPoint) {
         overflow: hidden;
+
         &__wrapper {
             min-height: 440px;
             padding: 70px 30px;
@@ -131,6 +135,7 @@
 
         &__represent {
             overflow-y: hidden;
+
             &__ball {
                 right: -190px;
                 z-index: 2;
@@ -142,6 +147,7 @@
             position: absolute;
             width: 90%;
             z-index: 2;
+
             &__subtitle {
                 margin-bottom: 30px;
                 font-size: 38px;

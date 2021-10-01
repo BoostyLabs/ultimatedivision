@@ -1,3 +1,4 @@
+/* eslint-disable */
 export function ChickenfishLogo () {
     return (
         <svg className="chickenfish-logo" width="630" height="302" viewBox="0 0 630 302" fill="none" xmlns="http://www.w3.org/2000/svg">

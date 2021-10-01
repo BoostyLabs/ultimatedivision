@@ -68,7 +68,6 @@
     }
 }
 
-
 @media (max-width: $desktopBreakPoint) {
 
     .roadmap-point {
@@ -92,36 +91,39 @@
         }
 
         &__list {
-            margin-top: 0px;
+            margin-top: 0;
             margin-left: 20px;
         }
     }
 }
 
 @media (max-width: $phoneBreakPoint) {
+
     .roadmap-point {
         padding: 50px 10px 50px 20px;
         width: 100%;
-        &::before {
+
+        &:before {
             left: 10px;
         }
+
         &__date {
             bottom: 11px;
             left: 30px;
         }
+
         &__list {
             margin-left: 8px;
         }
+
         &__item {
-            font-family: Roboto;
+            font-family: "Roboto";
             font-size: 15px;
             line-height: 18px;
             text-align: left;
-
         }
     }
 }
-
 
 [data-aos="zoom-in-right-custom"] {
     @media (max-width: $tabletBreakPoint) {

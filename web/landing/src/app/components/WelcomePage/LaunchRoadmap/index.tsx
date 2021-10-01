@@ -2,10 +2,10 @@
 // See LICENSE for copying information.
 
 import { Card } from './Card';
-import fifteen from '@static/images/launchRoadmap/15.svg'
-import fifty from '@static/images/launchRoadmap/50.svg'
-import eighty from '@static/images/launchRoadmap/80.svg'
-import hundred from '@static/images/launchRoadmap/100.svg'
+import fifteen from '@static/images/launchRoadmap/15.svg';
+import fifty from '@static/images/launchRoadmap/50.svg';
+import eighty from '@static/images/launchRoadmap/80.svg';
+import hundred from '@static/images/launchRoadmap/100.svg';
 
 import './index.scss';
 

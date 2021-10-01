@@ -12,8 +12,8 @@
         max-width: 1440px;
         margin: auto;
         padding: 80px 70px;
-
     }
+
     &__title {
         margin-top: 80px;
         font-family: "Hanson", sans-serif;
@@ -44,7 +44,6 @@
         object-fit: cover;
         margin: auto;
         position: relative;
-
     }
 
     &__sold-scale {
@@ -73,37 +72,48 @@
 }
 
 @media (max-width: $desktopBreakPoint) {
+
     .metaverse {
+
         &__title {
             margin-top: 0;
             font-size: 40px;
         }
+
         &__subtitle {
             font-size: 28px;
             line-height: unset;
         }
+
         &__sold-scale {
             height: 55px;
             width: 100%;
         }
     }
 }
+
 @media (max-width: $phoneBreakPoint) {
+
     .metaverse {
+
         &__wrapper {
             padding: 80px 30px;
         }
+
         &__title {
             font-size: 28px;
         }
+
         &__subtitle {
             font-size: 22px;
             line-height: unset;
             margin-bottom: 40px;
         }
+
         &__cards {
             width: 100%;
         }
+
         &__sold-scale {
             height: 40px;
         }
