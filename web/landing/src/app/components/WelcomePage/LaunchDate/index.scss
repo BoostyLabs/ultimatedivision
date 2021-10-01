@@ -2,27 +2,33 @@
 @import "aos/dist/aos.css";
 
 .launch-date {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 0 5%;
-    position: relative;
     background: #001236;
-    overflow: hidden;
 
+    &__wrapper {
+        width: 100%;
+        max-width: 1440px;
+        position: relative;
+        margin: 0 auto;
+        display: flex;
+        padding: 90px 70px;
+        flex-direction: row;
+        justify-content: space-between;
+    }
     &__represent {
-
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
         &__ball {
             transition: all, 0.3s;
             height: 110%;
-            left: 50px;
             position: absolute;
             animation: bounce 5s ease-in-out both infinite;
+            transition: all 0.3s linear;
 
             @keyframes bounce {
 
                 0% {
-                    transform: translateY(-40px);
+                    transform: translateY(-20px);
                 }
 
                 50% {
@@ -30,37 +36,34 @@
                 }
 
                 100% {
-                    transform: translateY(-40px);
+                    transform: translateY(-20px);
                 }
             }
         }
     }
 
     &__information {
-        width: 55%;
         display: block;
 
         &__subtitle {
             font-family: "Rubik";
-            margin-top: 10%;
             color: white;
             font-size: 28px;
         }
 
         &__title {
             font-family: "Russo One";
-            margin-top: 5%;
             font-size: 56px;
-            color: $highlightColor;
+            color: $roadmapHighlightColor;
+            letter-spacing: 2px;
+            font-weight: lighter;
         }
 
         &__remind {
-            font-family: "Hanson";
             display: inline-block;
-            margin: 5% auto;
-            height: 72px;
-            line-height: 72px;
-            width: 270px;
+            font-family: "Hanson";
+            margin-top: 40px;
+            padding: 26px 43px;
             font-size: 26px;
             text-align: center;
             vertical-align: middle;
@@ -70,14 +73,7 @@
         }
     }
 
-    @media (max-width: $desktopBreakPoint) {
-
-        &__represent {
-
-            &__ball {
-                top: -10px;
-            }
-        }
+    @media (max-width: $desktopBreakPoint + 200px) {
 
         &__information {
 
@@ -90,58 +86,78 @@
             }
 
             &__remind {
-                height: 48px;
-                line-height: 48px;
                 font-size: 20px;
-                width: 200px;
+                padding: 15px 25px;
+                line-height: 48px;
+            }
+        }
+    }
+
+    @media (max-width: $desktopBreakPoint) {
+        &__wrapper {
+            padding: 70px 50px;
+
+        }
+
+        &__information {
+
+            &__subtitle {
+                font-size: 22px;
+            }
+
+            &__title {
+                font-size: 36px;
+            }
+
+            &__remind {
+                padding: 12px 25px;
+                line-height: 36px;
+                font-size: 18px;
+            }
+        }
+        &__represent {
+            &__ball {
+                height: 100%;
             }
         }
     }
 
     @media (max-width: $tabletBreakPoint) {
-
-        &__information {
-            width: 47%;
-
-            &__subtitle {
-                font-size: 22px;
-                margin-left: 20px;
-            }
-
-            &__title {
-                font-size: 36px;
-                margin-left: 20px;
-            }
-
-            &__remind {
-                margin-left: 20px;
-                height: 36px;
-                line-height: 36px;
-                font-size: 18px;
-                width: 180px;
-            }
-        }
-    }
-
-    @media (max-width: $phoneBreakPoint) {
         overflow: hidden;
+        &__wrapper {
+            min-height: 440px;
+            padding: 70px 30px;
+        }
 
         &__represent {
-
+            overflow-y: hidden;
             &__ball {
-                top: 40px;
-                height: 80%;
-                right: -80px;
+                right: -190px;
+                z-index: 2;
                 left: unset;
             }
         }
 
         &__information {
-            width: 100%;
+            position: absolute;
+            width: 90%;
             z-index: 2;
+            &__subtitle {
+                margin-bottom: 30px;
+                font-size: 38px;
+                line-height: 31px;
+            }
+
+            &__title {
+                font-size: 36px;
+                line-height: 43px;
+                margin-bottom: 60px;
+            }
 
             &__remind {
-                width: 180px;
+                margin-top: 0;
+                font-size: 24px;
+                padding: 26px 43px;
             }
         }
     }

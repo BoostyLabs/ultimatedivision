@@ -7,14 +7,14 @@ import './index.scss';
 export const Authors: React.FC = () => (
     <section className="authors">
         <div className="authors__wrapper">
-            <span className="authors__wrapper-title"  
+            <span className="authors__title"
                 data-aos="fade-right"
                 data-aos-duration="600"
                 data-aos-easing="ease-in-out-cubic"
             >
                 Created by
             </span>
-            <div className="authors__wrapper-created-by"  
+            <div className="authors__created-by"
                 data-aos="fade-right"
                 data-aos-duration="600"
                 data-aos-easing="ease-in-out-cubic"
@@ -22,7 +22,7 @@ export const Authors: React.FC = () => (
                 <ChickenfishLogo />
                 <BoostyLogo />
             </div>
-            <div className="authors__wrapper-created-by__name"  
+            <div className="authors__created-by__name"
                 data-aos="fade-right"
                 data-aos-duration="600"
                 data-aos-easing="ease-in-out-cubic"
