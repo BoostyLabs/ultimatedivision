@@ -34,13 +34,13 @@
     &__previous,
     &__next {
         cursor: pointer;
-        color: white;
+        color: $paginatorActivePageColor;
     }
 
     &__previous-not-active,
     &__next-not-active {
         cursor: not-allowed;
-        color: grey;
+        color: $paginatorNotActivePageColor;
     }
 
     &__pages {
@@ -54,7 +54,7 @@
             margin-left: 20px;
             font-size: 13px;
             cursor: pointer;
-            color: white;
+            color: $paginatorActivePageColor;
         }
 
         &__item-active {
@@ -64,7 +64,7 @@
         }
 
         &__dots {
-            color: white;
+            color: $paginatorActivePageColor;
             margin-left: 20px;
         }
     }
