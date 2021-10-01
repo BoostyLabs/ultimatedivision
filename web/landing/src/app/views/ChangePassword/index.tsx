@@ -58,7 +58,7 @@ const ChangePassword: React.FC = () => {
     const resetPasswordDatas = [
         {
             value: password,
-            placeHolder: 'Enter a old password',
+            placeHolder: 'Enter the old password',
             handleChange: setPassword,
             className: 'register__reset__sign-form__password',
             type: 'password',
