@@ -62,8 +62,8 @@ export class RouteConfig {
   );
   public static Card: ComponentRoutes = new ComponentRoutes(
     //TODO: Need delete this
-    "/card/:id",
-    // "/card/",
+    // "/card/:id",
+    "/card/",
     Card,
     false
   );

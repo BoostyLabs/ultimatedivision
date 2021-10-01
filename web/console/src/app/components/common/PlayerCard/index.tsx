@@ -15,14 +15,12 @@ export const PlayerCard: React.FC<{ card: Card; parentClassName: string }> = ({
       alt="background img"
       draggable={false}
     />
-    <div className={`${parentClassName}__wrapper`}>
-      <img
-        className={`${parentClassName}__wrapper-face-picture`}
-        src={card.face}
-        alt="Player face"
-        draggable={false}
-      />
-    </div>
+    <img
+      className={`${parentClassName}__face-picture`}
+      src={card.face}
+      alt="Player face"
+      draggable={false}
+    />
     <span className={`${parentClassName}__name`}>{card.playerName}</span>
     <ul className={`${parentClassName}__list`}>
       {card.statsArea.map((property, index) => (

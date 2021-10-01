@@ -139,7 +139,7 @@ export interface ICard {
 /** Card base implementation */
 export class Card {
   id: string = "";
-  playerName: string = "";
+  playerName: string = "taras";
   quality: string = "";
   pictureType: number = 0;
   height: number = 0;
@@ -228,6 +228,12 @@ export class Card {
       case "diamond":
         return {
           background: diamond,
+          shadow: diamondShadow,
+        };
+
+      default:
+        return {
+          background: silver,
           shadow: diamondShadow,
         };
     }
