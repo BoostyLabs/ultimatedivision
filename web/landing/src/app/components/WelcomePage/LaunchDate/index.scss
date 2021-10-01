@@ -10,34 +10,31 @@
         position: relative;
         margin: 0 auto;
         display: flex;
-        padding: 90px 70px;
+        padding: 0 70px;
         flex-direction: row;
         justify-content: space-between;
-    }
-    &__represent {
-        display: flex;
-        justify-content: flex-start;
         align-items: center;
-        &__ball {
-            transition: all, 0.3s;
-            height: 110%;
-            position: absolute;
-            animation: bounce 5s ease-in-out both infinite;
-            transition: all 0.3s linear;
+    }
 
-            @keyframes bounce {
+    &__ball {
+        width: 440px;
+        height: 440px;
+        position: relative;
+        animation: bounce 5s ease-in-out both infinite;
+        transition: all 0.3s linear;
 
-                0% {
-                    transform: translateY(-20px);
-                }
+        @keyframes bounce {
 
-                50% {
-                    transform: translateY(20px);
-                }
+            0% {
+                transform: translateY(-20px);
+            }
 
-                100% {
-                    transform: translateY(-20px);
-                }
+            50% {
+                transform: translateY(20px);
+            }
+
+            100% {
+                transform: translateY(-20px);
             }
         }
     }
@@ -60,16 +57,19 @@
         }
 
         &__remind {
-            display: inline-block;
+            width: 290px;
+            height: 72px;
             font-family: "Hanson";
             margin-top: 40px;
-            padding: 26px 43px;
             font-size: 26px;
             text-align: center;
             vertical-align: middle;
             background: $highlightColor;
             color: white;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 
@@ -94,9 +94,9 @@
     }
 
     @media (max-width: $desktopBreakPoint) {
-        &__wrapper {
-            padding: 70px 50px;
 
+        &__wrapper {
+            padding: 0 50px;
         }
 
         &__information {
@@ -110,55 +110,33 @@
             }
 
             &__remind {
-                padding: 12px 25px;
+                width: 156px;
+                height: 42px;
                 line-height: 36px;
-                font-size: 18px;
+                font-size: 14px;
             }
         }
-        &__represent {
-            &__ball {
-                height: 100%;
-            }
+
+        &__ball {
+            width: 250px;
+            height: 250px;
         }
     }
 
     @media (max-width: $tabletBreakPoint) {
         overflow: hidden;
+
         &__wrapper {
+            background-image: url("../../../static/images/headingPage/ball-mobile.svg");
+            background-position: 100% 50%;
+            background-size: contain;
+            background-repeat: no-repeat;
             min-height: 440px;
             padding: 70px 30px;
         }
 
-        &__represent {
-            overflow-y: hidden;
-            &__ball {
-                right: -190px;
-                z-index: 2;
-                left: unset;
-            }
-        }
-
-        &__information {
-            position: absolute;
-            width: 90%;
-            z-index: 2;
-            &__subtitle {
-                margin-bottom: 30px;
-                font-size: 38px;
-                line-height: 31px;
-            }
-
-            &__title {
-                font-size: 36px;
-                line-height: 43px;
-                margin-bottom: 60px;
-            }
-
-            &__remind {
-                margin-top: 0;
-                font-size: 24px;
-                padding: 26px 43px;
-            }
+        &__ball {
+            display: none;
         }
     }
 }

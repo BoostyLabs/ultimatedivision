@@ -19,16 +19,22 @@ export const Authors: React.FC = () => (
                 data-aos-duration="600"
                 data-aos-easing="ease-in-out-cubic"
             >
-                <ChickenfishLogo />
-                <BoostyLogo />
-            </div>
-            <div className="authors__created-by__name"
-                data-aos="fade-right"
-                data-aos-duration="600"
-                data-aos-easing="ease-in-out-cubic"
-            >
-                <span className="chickenfish">CHICKENFISH GAMES</span>
-                <span className="boosty-labs">BOOSTY LABS</span>
+                <a
+                    className="authors__chikenfish"
+                    href="https://chickenfish.games/"
+                    target="_blank" rel="noreferrer"
+                >
+                    <ChickenfishLogo />
+                    <span className="authors__chikenfish__text">CHICKENFISH GAMES</span>
+                </a>
+                <a
+                    className="authors__boostylabs"
+                    href="https://boostylabs.com/"
+                    target="_blank" rel="noreferrer"
+                >
+                    <BoostyLogo />
+                    <span className="authors__boostylabs__text">BOOSTY LABS</span>
+                </a>
             </div>
         </div>
     </section>

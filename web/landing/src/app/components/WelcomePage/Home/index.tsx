@@ -31,12 +31,12 @@ export const Home: React.FC = () => {
                     data-aos-duration="600"
                     data-aos-easing="ease-in-out-cubic"
                 />
-                                    <p className="home__description-mobile">
+                <p className="home__description-mobile">
                         Get one to become UD founder and join the Play-to-Earn game.
                         Build your club in the metaverse.
-                    </p>
-            <ScrollTop />
-        </div>
+                </p>
+                <ScrollTop />
+            </div>
         </section >
     );
 };

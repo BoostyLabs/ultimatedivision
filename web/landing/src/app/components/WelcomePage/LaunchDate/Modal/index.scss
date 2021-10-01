@@ -6,13 +6,15 @@
     top: 0;
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
     background: linear-gradient(#0b2774c7, #030024d8);
     text-align: center;
     backdrop-filter: blur(8px);
 
     &__window {
-        padding-bottom: 5%;
-        width: 40%;
+        padding: 100px 40px;
+        width: 90%;
+        max-width: 800px;
         position: fixed;
         z-index: 3;
         margin: auto;
@@ -31,7 +33,6 @@
 
     &__description {
         font-family: "Russo One";
-        margin-top: 5%;
         max-width: 80%;
         text-align: left;
         font-size: 56px;
@@ -40,9 +41,9 @@
     }
 
     &__close {
-        position: fixed;
-        left: 70%;
-        top: 5%;
+        position: absolute;
+        right: -8%;
+        top: -6%;
         cursor: pointer;
 
         &__text {
@@ -100,25 +101,25 @@
 
     @media (max-width: $desktopBreakPoint) {
 
-        &__window {
-            width: 60%;
+        &__description {
+            font-size: 50px;
         }
 
         &__close {
-            left: 80%;
-            top: 12.5%;
+            right: 0;
+            top: -80px;
         }
     }
 
     @media (max-width: $tabletBreakPoint) {
 
         &__window {
-            width: 60%;
-            padding-bottom: 5%;
+            padding: 100px 40px;
         }
 
         &__close {
-            top: 10%;
+            right: 0;
+            top: -80px;
         }
 
         &__notification {
@@ -149,75 +150,35 @@
     @media (max-width: $phoneBreakPoint) {
 
         &__window {
-            top: 10%;
-            width: 70%;
-        }
-
-        &__close {
-            top: 3%;
-            margin-top: -7%;
-
-            p {
-                width: 32px;
-                height: 32px;
-                color: #ffff;
-            }
+            top: 50%;
+            padding: 40px 20px;
         }
 
         &__notification {
+            width: 100%;
 
             &__send,
             &__send-error {
-                width: 70%;
-                padding-left: 5px;
-                font-size: 12px;
+                width: 100%;
 
                 &__error {
-                    width: 70%;
-                    font-size: 12px;
+                    width: 100%;
                 }
             }
 
-            &__confirm {
-                font-size: 14px;
-            }
-        }
-    }
-
-    @media (max-width: $phoneBreakPoint - 200px) {
-
-        &__window {
-            top: 40%;
-            width: 80%;
-            padding-bottom: 2%;
-        }
-
-        &__close {
-            width: 32px;
-            height: 32px;
-            top: 5%;
-        }
-
-        &__notification {
-
-            &__send,
-            &__send-error {
-                width: 95%;
-
-                &__error {
-                    width: 95%;
-                }
+            &__send {
+                padding: 15px;
             }
 
             &__confirm {
                 line-height: 32px;
-                width: 95%;
+                width: 100%;
+                padding: 24px;
             }
         }
 
         &__description {
-            font-size: 46px;
-            width: 70%;
+            font-size: 44px;
         }
     }
 

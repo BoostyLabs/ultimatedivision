@@ -2,8 +2,8 @@
 @import "aos/dist/aos.css";
 
 .footer {
-    background-color: #001B4F;
-    
+    background-color: #001b4f;
+
     &__wrapper {
         display: flex;
         justify-content: space-between;
@@ -12,7 +12,7 @@
         padding: 40px 80px;
         margin: 0 auto;
     }
-    
+
     &__links {
         font-family: "Russo One";
         width: 200px;
@@ -27,7 +27,6 @@
         text-decoration: none;
         font-size: 18px;
         line-height: 22px;
-
 
         &:hover {
             text-decoration: underline;
@@ -73,15 +72,19 @@
 @media (max-width: $phoneBreakPoint + 100px) {
 
     .footer {
+
         &__wrapper {
             flex-direction: column;
             align-items: flex-start;
+            justify-content: center;
+            gap: 20px;
         }
 
         &__links {
             margin: 0;
             margin-bottom: 40px;
         }
+
         &__social {
             display: flex;
             flex-direction: column;
@@ -89,9 +92,11 @@
             width: 100%;
             text-align: left;
         }
+
         &__list {
             width: 100%;
         }
+
         &__text {
             transform: scale(1);
             position: relative;
@@ -99,20 +104,17 @@
             width: 100%;
             text-align: left;
         }
-
-        &__wrapper {
-            justify-content: center;
-            gap: 20px;
-            flex-direction: column;
-        }
     }
 }
 
 @media (max-width: $phoneBreakPoint) {
+
     .footer {
+
         &__wrapper {
             padding: 40px 30px;
         }
+
         &__text {
             font-size: 18px;
         }

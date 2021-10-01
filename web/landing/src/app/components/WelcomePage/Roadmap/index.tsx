@@ -72,11 +72,11 @@ export const Roadmap: React.FC = () => {
                     alt=""
                 />
             </div>
-                <img
-                    className="roadmap__bottom"
-                    src={footer}
-                    alt="bottom texture"
-                />
+            <img
+                className="roadmap__bottom"
+                src={footer}
+                alt="bottom texture"
+            />
         </section>
     );
 };

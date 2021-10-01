@@ -25,13 +25,11 @@ export const LaunchDate: React.FC = () => {
         <>
             <section className="launch-date">
                 <div className="launch-date__wrapper">
-                    <div className="launch-date__represent">
-                        <img
-                            className="launch-date__represent__ball"
-                            src={ball}
-                            alt="ultimate division ball"
-                        />
-                    </div>
+                    <img
+                        className="launch-date__ball"
+                        src={ball}
+                        alt="ultimate division ball"
+                    />
                     <div className="launch-date__information">
                         <p
                             data-aos="fade-left"

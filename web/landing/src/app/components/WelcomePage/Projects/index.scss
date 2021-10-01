@@ -4,6 +4,7 @@
 .projects {
     background-color: #162574;
     overflow: hidden;
+
     &__wrapper {
         padding: 100px;
     }
@@ -12,12 +13,12 @@
         max-width: 1200px;
         margin: 50px auto 80px;
         color: white;
-        font-family: Russo One;
+        font-family: "Russo One";
         font-size: 48px;
         font-style: normal;
         font-weight: 400;
         line-height: 63px;
-        letter-spacing: 0em;
+        letter-spacing: 0;
         text-align: center;
     }
 
@@ -79,16 +80,15 @@
 @media (max-width: $desktopBreakPoint + 100px) {
 
     .projects {
+
         &__wrapper {
             padding: 50px;
-
         }
 
         &__title {
             margin: 30px auto 50px;
             font-size: 28px;
             line-height: 36px;
-
         }
 
         &__area {
@@ -126,6 +126,7 @@
 @media (max-width: $phoneBreakPoint) {
 
     .projects {
+
         &__wrapper {
             padding: 50px 20px;
         }
