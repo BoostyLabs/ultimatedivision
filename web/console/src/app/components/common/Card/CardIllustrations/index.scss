@@ -33,49 +33,146 @@
             height: 100%;
         }
 
-        &__face-picture {
+        &__wrapper {
             z-index: 2;
             position: absolute;
-            left: 0;
+            left: 2%;
             right: 0;
             margin: 0 auto;
-            top: 97px;
+            top: 5%;
             width: 60%;
+            height: 45%;
+            overflow: hidden;
+
+            &-face-picture {
+                display: flex;
+                align-items: center;
+                margin: 20% auto 0;
+                height: 100%;
+            }
         }
 
         &__list {
             width: 60%;
-            margin: 100% auto 0 auto;
+            margin: -55% auto 0 auto;
             text-align: center;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             list-style: none;
 
+            :nth-child(odd) {
+                border-right: 1px solid #555d76;
+            }
+
             &__item {
-                color: rgb(87, 86, 86);
                 z-index: 2;
-                font-size: 20px;
+                color: rgb(87, 86, 86);
+                font-size: 24px;
             }
         }
 
         &__name {
+            z-index: 2;
+            margin: 13% 0 0 -100%;
+            position: absolute;
             color: rgb(87, 86, 86);
             text-align: center;
             width: 100%;
             font-size: 24px;
-            z-index: 2;
-            margin-top: 60px;
-            position: absolute;
         }
     }
 }
 
-@media screen and (min-width: $desktopBreakPoint + 700px) {
+@media screen and (min-width: $desktopBreakPoint) {
 
     .footballer-card-illustrations {
 
         &__divider {
             margin: 5% auto;
+        }
+
+        &__card {
+
+            &__list {
+                margin: -65% auto 10% auto;
+
+                &__item {
+                    font-size: 20px;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: $desktopBreakPoint + 200px) {
+
+    .footballer-card-illustrations {
+
+        &__card {
+
+            &__list {
+                margin: -60% auto 10% auto;
+
+                &__item {
+                    font-size: 20px;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $desktopBreakPoint) {
+
+    .footballer-card-illustrations {
+
+        &__card {
+
+            &__list {
+                margin: -62% auto 10% auto;
+
+                &__item {
+                    font-size: 14px;
+                }
+            }
+
+            &__name {
+                font-size: 20px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $tabletBreakPoint) {
+
+    .footballer-card-illustrations {
+
+        &__card {
+
+            &__list {
+                margin: -60% auto 0 auto;
+
+                &__item {
+                    font-size: 10px;
+                }
+            }
+
+            &__name {
+                font-size: 16px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint + 100px) {
+
+    .footballer-card-illustrations {
+
+        &__card {
+
+            &__face-picture {
+                top: 50px;
+                width: 60%;
+            }
         }
     }
 }
@@ -84,6 +181,10 @@
 
     .footballer-card-illustrations {
         gap: 0;
+
+        &__divider {
+            height: 0;
+        }
 
         &__card {
             margin: 0;
@@ -101,6 +202,40 @@
                 margin-top: 40px;
                 font-size: 22.9091px;
                 line-height: 23px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint - 100px) {
+
+    .footballer-card-illustrations {
+
+        &__card {
+
+            &__face-picture {
+                top: 40px;
+            }
+
+            &__list {
+                margin: 60% auto 0 auto;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint - 200px) {
+
+    .footballer-card-illustrations {
+
+        &__card {
+
+            &__face-picture {
+                top: 40px;
+            }
+
+            &__list {
+                margin: 60% auto 0 auto;
             }
         }
     }

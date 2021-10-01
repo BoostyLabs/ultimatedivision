@@ -61,8 +61,8 @@
         &:after {
             @extend %pseudoelementsInFootballerCard;
 
-            width: 70%;
-            top: 65%;
+            width: 90%;
+            top: 60%;
             margin-left: 0;
         }
     }
@@ -73,7 +73,7 @@
 
     &__additional-info {
         font-size: 18px;
-        width: 100%;
+        width: 70%;
         display: flex;
         justify-content: space-between;
 
@@ -98,13 +98,14 @@
             &:after {
                 @extend %pseudoelementsInFootballerCard;
 
-                width: 70%;
+                width: 90%;
                 top: 50%;
                 margin-left: 0;
             }
         }
 
         &__additional-info {
+            width: 80%;
             padding-left: 4px;
             font-size: 18px;
             text-align: center;
@@ -138,13 +139,14 @@
             font-size: 32px;
 
             &:after {
-                width: 70%;
-                top: 48%;
+                width: 90%;
+                top: 50%;
                 margin-left: 0;
             }
         }
 
         &__additional-info {
+            width: 90%;
             padding-left: 4px;
             font-size: 12px;
             text-align: center;
@@ -174,6 +176,15 @@
             background: none;
         }
 
+        &__info-area {
+            width: 90%;
+            position: relative;
+            margin: 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         &__diagram {
             width: 224px;
             height: 224px;
@@ -188,6 +199,12 @@
         &__price {
             font-size: 64px;
             line-height: 77px;
+
+            &:after {
+                width: 70%;
+                top: 50%;
+                margin: auto;
+            }
         }
 
         &__additional-info {
@@ -195,6 +212,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            width: 100%;
             padding-left: 0;
             font-size: 24px;
             line-height: 29px;
@@ -215,7 +233,7 @@
 @media screen and (max-width: $phoneBreakPoint - 100px) {
 
     .footballer-card-price {
-        margin: -1150px 5% auto 5%;
+        margin: -1100px 5% auto 5%;
     }
 }
 

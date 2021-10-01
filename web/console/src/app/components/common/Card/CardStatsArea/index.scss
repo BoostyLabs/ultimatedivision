@@ -14,14 +14,14 @@
     &:after {
         @extend %pseudoelementsInFootballerCard;
 
-        bottom: 47%;
+        bottom: 46%;
         width: 90%;
     }
 
     &:before {
         @extend %pseudoelementsInFootballerCard;
 
-        bottom: -3%;
+        bottom: -5%;
         width: 90%;
     }
 }
@@ -34,11 +34,11 @@
         column-gap: 5%;
 
         &:after {
-            bottom: 48%;
+            bottom: 46%;
         }
 
         &:before {
-            bottom: -1%;
+            bottom: -5%;
         }
     }
 }
@@ -53,7 +53,7 @@
         &:after {
             @extend %pseudoelementsInFootballerCard;
 
-            bottom: 49%;
+            bottom: 47%;
         }
 
         &:before {
@@ -72,14 +72,25 @@
         height: auto;
 
         &:after {
-            bottom: 45%;
+            bottom: 44.5%;
         }
 
         &:before {
-            bottom: -3%;
+            bottom: 0%;
         }
     }
 }
 
-// @media screen and (max-width: $phoneBreakPoint) {
-// }
+@media screen and (max-width: $phoneBreakPoint) {
+
+    .footballer-card-stats {
+
+        &:after {
+            bottom: 45%;
+        }
+
+        &:before {
+            bottom: -1%;
+        }
+    }
+}
