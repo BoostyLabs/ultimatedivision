@@ -143,8 +143,8 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 	updatedCards := make([]SquadCard, 0, 2)
 
 	updatedSquadCard := SquadCard{
-		SquadID: squadID,
-		CardID: cardID,
+		SquadID:  squadID,
+		CardID:   cardID,
 		Position: newPosition,
 	}
 
