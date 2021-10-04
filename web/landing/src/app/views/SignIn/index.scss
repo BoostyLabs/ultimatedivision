@@ -195,7 +195,7 @@
 
             &__ultimate {
                 height: 10%;
-                margin: 40% auto;
+                margin: 65% auto;
             }
         }
 
@@ -206,10 +206,11 @@
             padding-left: 55px;
 
             &__description {
-                margin-top: 30px;
+                margin-top: 25px;
             }
 
             &__title {
+                margin-top: 50%;
                 font-size: 40px;
             }
 
@@ -238,7 +239,23 @@
         &__sign-up {
 
             &__title {
-                margin-top: 50px;
+                margin-top: 20%;
+            }
+
+            &__sign-form {
+
+                &__email,
+                &__name,
+                &__surname,
+                &__password,
+                &__confirm,
+                &__email-error,
+                &__name-error,
+                &__surname-error,
+                &__password-error,
+                &__confirm-error {
+                    margin-top: 10px;
+                }
             }
         }
     }
@@ -327,7 +344,7 @@
         &__sign-up {
 
             &__title {
-                margin-top: 50%;
+                margin-top: 25%;
             }
         }
     }
@@ -371,7 +388,7 @@
 
             &__title {
                 font-size: 48px;
-                margin-top: 70px;
+                margin-top: 60px;
             }
 
             &__description {
@@ -411,7 +428,7 @@
                 &__confirm {
                     line-height: 40px;
                     font-size: 14px;
-                    margin-top: 15px;
+                    margin-top: 30px;
                 }
 
                 &__confirm {
@@ -424,42 +441,49 @@
 
                 &__forgot-password {
                     margin-top: 20px;
-                    font-size: 10px;
                     float: right;
                     text-decoration: none;
+                    font-size: 12px;
+                    bottom: 75px;
+                }
+            }
+        }
+
+        &__sign-up {
+
+            &__title {
+                margin-top: 5px;
+            }
+
+            &__sign-form {
+
+                &__email,
+                &__name,
+                &__surname,
+                &__password,
+                &__confirm {
+                    margin-top: 20px;
+                }
+            }
+        }
+
+        &__sign-in,
+        &__sign-up {
+
+            &__description {
+
+                &__information:nth-child(1) {
+                    display: block;
+                    width: 100%;
+                    text-align: center;
                 }
             }
         }
 
         &__sign-in {
 
-            &__description {
-
-                &__information {
-                    display: block;
-                    width: 100%;
-                    text-align: center;
-                }
-            }
-
             &__title {
-                margin-top: 90px;
-            }
-
-            &__sign-form {
-
-                &__email,
-                &__password,
-                &__confirm,
-                &__email-error,
-                &__password-error {
-                    margin-top: 30px;
-                }
-
-                &__forgot-password {
-                    font-size: 12px;
-                    bottom: 75px;
-                }
+                margin-top: 100px;
             }
         }
 
@@ -499,6 +523,26 @@
                 &__password-error,
                 &__confirm {
                     margin-top: 35px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: $phoneBreakPoint - 240px) {
+
+    .register {
+
+        &__sign-up {
+
+            &__sign-form {
+
+                &__email,
+                &__name,
+                &__surname,
+                &__password,
+                &__confirm {
+                    margin-top: 7.5px;
                 }
             }
         }
