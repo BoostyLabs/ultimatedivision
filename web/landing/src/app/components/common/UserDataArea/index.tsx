@@ -26,29 +26,29 @@ export const UserDataArea: React.FC<{
     clearError,
     validate,
 }) => {
-        const DELAY: number = 500;
-        /**
-        * The value string from input returned by the useDebounce method after 500 milliseconds.
-        */
-        const debouncedValue: string = useDebounce(value, DELAY);
+    const DELAY: number = 500;
+    /**
+    * The value string from input returned by the useDebounce method after 500 milliseconds.
+    */
+    const debouncedValue: string = useDebounce(value, DELAY);
 
-        /** inline styles for valid input field */
-        const [trueCheckStyle, setTrueCheckStyle] =
-            useState({});
+    /** inline styles for valid input field */
+    const [trueCheckStyle, setTrueCheckStyle] =
+        useState({});
 
-        useEffect(() => {
-            if (!validate(debouncedValue)) {
-                setTrueCheckStyle({ backgroundImage: '' });
-            } else {
-                setTrueCheckStyle({ backgroundImage: `url(${check})` });
-            };
-
-        }, [debouncedValue]);
-
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            onChange(e.target.value);
-            clearError(null);
+    useEffect(() => {
+        if (!validate(debouncedValue)) {
+            setTrueCheckStyle({ backgroundImage: '' });
+        } else {
+            setTrueCheckStyle({ backgroundImage: `url(${check})` });
         };
+
+    }, [debouncedValue]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange(e.target.value);
+        clearError(null);
+    };
 
     return (
         <div className={`${className}__ wrapper`}>
