@@ -27,20 +27,21 @@ export const UserDataArea: React.FC<{
     validate,
 }) => {
     const DELAY: number = 500;
+    const SUCCESS_BACKGROUND_IMAGE_PATH : string = `url(${check})`;
     /**
     * The value string from input returned by the useDebounce method after 500 milliseconds.
     */
     const debouncedValue: string = useDebounce(value, DELAY);
 
     /** inline styles for valid input field */
-    const [trueCheckStyle, setTrueCheckStyle] =
+    const [successLabelStyle , setSuccessLabelStyle] =
         useState({});
 
     useEffect(() => {
         if (!validate(debouncedValue)) {
-            setTrueCheckStyle({ backgroundImage: '' });
+            setSuccessLabelStyle({});
         } else {
-            setTrueCheckStyle({ backgroundImage: `url(${check})` });
+            setSuccessLabelStyle({ backgroundImage: SUCCESS_BACKGROUND_IMAGE_PATH });
         };
 
     }, [debouncedValue]);
@@ -57,7 +58,7 @@ export const UserDataArea: React.FC<{
                 value={value}
                 placeholder={placeHolder}
                 onChange={handleChange}
-                style={trueCheckStyle}
+                style={successLabelStyle}
                 type={type}
             />
             {error && <label className={`${className}__error`} htmlFor={value}>
