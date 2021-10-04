@@ -40,7 +40,7 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
 
     const formValue = {
         value: email,
-        placeHolder: 'Email',
+        placeHolder: 'Your Email',
         handleChange: setEmail,
         className: 'launch-date-modal__notification__send',
         type: 'email',
@@ -55,7 +55,7 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
                 className="launch-date-modal__close"
             >
                 <p className="launch-date-modal__close__text">
-                &#215;
+                    &#215;
                 </p>
             </a>
             <h1 className="launch-date-modal__description">
