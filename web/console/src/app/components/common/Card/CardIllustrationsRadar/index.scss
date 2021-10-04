@@ -43,7 +43,6 @@
         height: 400px;
         margin: 500px auto 0 auto;
         border-top: 1px solid #675eae;
-        border-bottom: 1px solid #675eae;
         border-image: linear-gradient(
             270deg,
             rgba(41, 41, 72, 0) -11.8%,
@@ -53,7 +52,7 @@
         border-image-slice: 1;
 
         canvas {
-            margin: auto 5%;
+            margin: 10% 5% 0;
             width: 205px;
             height: 258px;
         }

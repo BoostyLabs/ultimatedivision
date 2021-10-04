@@ -16,9 +16,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist/"),
     filename: "[name].[hash].js",
-    // publicPath: "/static/dist/",
-    //TODO: test code
-    publicPath: "/",
+    publicPath: "/static/dist/",
   },
   plugins: [
     new HtmlWebpackPlugin({

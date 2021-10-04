@@ -45,7 +45,7 @@
             &-face-picture {
                 display: flex;
                 align-items: center;
-                margin: 5px auto 0;
+                margin: 5px auto 0 2px;
                 width: 100%;
             }
         }
@@ -126,6 +126,13 @@
 
         &__card {
 
+            &__wrapper {
+
+                &-face-picture {
+                    margin: 3px auto 0;
+                }
+            }
+
             &__list {
 
                 &__item {
@@ -141,6 +148,22 @@
     }
 }
 
+@media screen and (max-width: $tabletBreakPoint - 100px) {
+
+    .footballer-card-illustrations {
+
+        &__card {
+
+            &__wrapper {
+
+                &-face-picture {
+                    margin: 5px auto 0;
+                }
+            }
+        }
+    }
+}
+
 @media screen and (max-width: $phoneBreakPoint) {
 
     .footballer-card-illustrations {
@@ -148,16 +171,10 @@
         &__card {
 
             &__wrapper {
-                order: 1;
-                z-index: 2;
-                padding: 0 20px;
                 width: 55%;
 
                 &-face-picture {
-                    display: flex;
-                    align-items: center;
                     margin: 5px auto 0;
-                    width: 100%;
                 }
             }
 
@@ -172,6 +189,35 @@
             &__name {
                 margin: 12% 0 0 0%;
                 font-size: 32px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint - 200px) {
+
+    .footballer-card-illustrations {
+
+        &__card {
+
+            &__wrapper {
+
+                &-face-picture {
+                    margin: 14px auto 0;
+                }
+            }
+
+            &__list {
+                margin: 2% auto 0 auto;
+
+                &__item {
+                    font-size: 22px;
+                }
+            }
+
+            &__name {
+                margin: 12% 0 0 0%;
+                font-size: 22px;
             }
         }
     }

@@ -72,15 +72,10 @@
     }
 
     &__additional-info {
-        font-size: 18px;
         width: 70%;
         display: flex;
         justify-content: space-between;
-
-        div {
-            display: flex;
-            flex-direction: column;
-        }
+        font-size: 18px;
     }
 
     &__value {
@@ -94,14 +89,6 @@
 
         &__price {
             font-size: 48px;
-
-            &:after {
-                @extend %pseudoelementsInFootballerCard;
-
-                width: 90%;
-                top: 50%;
-                margin-left: 0;
-            }
         }
 
         &__additional-info {
@@ -109,11 +96,6 @@
             padding-left: 4px;
             font-size: 18px;
             text-align: center;
-
-            div {
-                display: flex;
-                flex-direction: column;
-            }
         }
     }
 }
@@ -128,10 +110,7 @@
         }
 
         &__diagram-value {
-            position: absolute;
             top: calc(50% - 5px);
-            text-align: center;
-            font-weight: lighter;
             font-size: 20px;
         }
 
@@ -168,20 +147,10 @@
         background: none;
 
         &__wrapper {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 24px 4%;
             background: none;
         }
 
         &__info-area {
-            width: 90%;
-            position: relative;
-            margin: 5%;
-            display: flex;
-            flex-direction: column;
             align-items: center;
         }
 
@@ -208,7 +177,6 @@
         }
 
         &__additional-info {
-            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
