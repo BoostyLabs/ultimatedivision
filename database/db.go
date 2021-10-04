@@ -185,7 +185,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             user2_id  BYTEA REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
             squad2_id BYTEA REFERENCES squads(id) ON DELETE CASCADE NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS match_goals(
+        CREATE TABLE IF NOT EXISTS match_results(
             id       BYTEA PRIMARY KEY                              NOT NULL,
             match_id BYTEA REFERENCES matches(id) ON DELETE CASCADE NOT NULL,
             user_id  BYTEA REFERENCES users(id) ON DELETE CASCADE   NOT NULL,

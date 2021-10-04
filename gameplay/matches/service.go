@@ -6,7 +6,6 @@ package matches
 import (
 	"context"
 	"math/rand"
-	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -45,20 +44,16 @@ const periodEnd = 1
 
 // Play initiates match between users, calls methods to generate result.
 func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1 []clubs.SquadCard, squadCards2 []clubs.SquadCard, user1, user2 uuid.UUID) error {
-	// TODO: refactor map to slice.
-
-	periods := map[string][]int{
-		"period1":  {service.config.Periods.First.Begin, service.config.Periods.First.End},
-		"period2":  {service.config.Periods.Second.Begin, service.config.Periods.Second.End},
-		"period3":  {service.config.Periods.Third.Begin, service.config.Periods.Third.End},
-		"period4":  {service.config.Periods.Fourth.Begin, service.config.Periods.Fourth.End},
-		"period5":  {service.config.Periods.Fifth.Begin, service.config.Periods.Fifth.End},
-		"period6":  {service.config.Periods.Sixth.Begin, service.config.Periods.Sixth.End},
-		"period7":  {service.config.Periods.Seventh.Begin, service.config.Periods.Seventh.End},
-		"period8":  {service.config.Periods.Eighth.Begin, service.config.Periods.Eighth.End},
-		"period9":  {service.config.Periods.Ninth.Begin, service.config.Periods.Ninth.End},
-		"period10": {service.config.Periods.Tenth.Begin, service.config.Periods.Tenth.End},
-	}
+	periods := []int{service.config.Periods.First.Begin, service.config.Periods.First.End,
+		service.config.Periods.Second.Begin, service.config.Periods.Second.End,
+		service.config.Periods.Third.Begin, service.config.Periods.Third.End,
+		service.config.Periods.Fourth.Begin, service.config.Periods.Fourth.End,
+		service.config.Periods.Fifth.Begin, service.config.Periods.Fifth.End,
+		service.config.Periods.Sixth.Begin, service.config.Periods.Sixth.End,
+		service.config.Periods.Seventh.Begin, service.config.Periods.Seventh.End,
+		service.config.Periods.Eighth.Begin, service.config.Periods.Eighth.End,
+		service.config.Periods.Ninth.Begin, service.config.Periods.Ninth.End,
+		service.config.Periods.Tenth.Begin, service.config.Periods.Tenth.End}
 
 	goalProbability := service.config.GoalProbability
 
@@ -80,18 +75,15 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	periodName := sortMapKey(periods)
-
 	goals := make([]MatchGoals, 0, 10)
 
-	for _, key := range periodName {
+	for i := 0; i < len(periods); i += 2 {
 		randNumber := rand.Intn(100) + 1
 		if randNumber > goalProbability {
 			continue
 		}
-		period := periods[key]
 
-		minute := generateMinute(period[periodBegin], period[periodEnd])
+		minute := generateMinute(periods[i+periodBegin], periods[i+periodEnd])
 		userID, cardID, err := service.chooseSquad(ctx, goalProbabilityByPosition,
 			squadPowerAccuracy, user1, user2, squadCards1, squadCards2)
 		if err != nil {
@@ -113,19 +105,6 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 	}
 
 	return nil
-}
-
-// sortMapKey returns sorted slice names of periods.
-func sortMapKey(periodMap map[string][]int) []string {
-	periodsName := make([]string, 0, len(periodMap))
-
-	for periodName := range periodMap {
-		periodsName = append(periodsName, periodName)
-	}
-
-	sort.Strings(periodsName)
-
-	return periodsName
 }
 
 // generateMinute generates the minute at which the goal was scored.
@@ -212,8 +191,8 @@ func (service *Service) chooseSquad(ctx context.Context, goalByPosition map[club
 		return uuid.Nil, uuid.Nil, ErrMatches.Wrap(err)
 	}
 
-	randAccuracy1 := float64(rand.Intn(2*squadPowerAccuracy)+1-squadPowerAccuracy) / 100
-	randAccuracy2 := float64(rand.Intn(2*squadPowerAccuracy)+1-squadPowerAccuracy) / 100
+	randAccuracy1 := float64(rand.Intn(2*squadPowerAccuracy+1)-squadPowerAccuracy) / 100
+	randAccuracy2 := float64(rand.Intn(2*squadPowerAccuracy+1)-squadPowerAccuracy) / 100
 
 	squad1Effectiveness += squad1Effectiveness * randAccuracy1
 	squad2Effectiveness += squad1Effectiveness * randAccuracy2

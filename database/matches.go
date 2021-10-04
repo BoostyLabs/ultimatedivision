@@ -151,13 +151,16 @@ func (matchesDB *matchesDB) Delete(ctx context.Context, id uuid.UUID) error {
 
 // AddGoals adds goals in the match.
 func (matchesDB *matchesDB) AddGoals(ctx context.Context, matchGoals []matches.MatchGoals) error {
-	query := `INSERT INTO match_goals(id, match_id, user_id, card_id, minute)
+	query := `INSERT INTO match_results(id, match_id, user_id, card_id, minute)
               VALUES($1,$2,$3,$4,$5)`
 
 	preparedQuery, err := matchesDB.conn.PrepareContext(ctx, query)
 	if err != nil {
 		return ErrMatches.Wrap(err)
 	}
+	defer func() {
+		err = preparedQuery.Close()
+	}()
 
 	for _, matchGoal := range matchGoals {
 		_, err = preparedQuery.ExecContext(ctx, matchGoal.ID, matchGoal.MatchID,
@@ -172,13 +175,13 @@ func (matchesDB *matchesDB) AddGoals(ctx context.Context, matchGoals []matches.M
 		return ErrMatches.Wrap(err)
 	}
 
-	return nil
+	return ErrMatches.Wrap(err)
 }
 
 // ListMatchGoals returns all goals from the match from the database.
 func (matchesDB *matchesDB) ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]matches.MatchGoals, error) {
 	query := `SELECT id, match_id, user_id, card_id, minute
-              FROM match_goals
+              FROM match_results
               WHERE match_id = $1`
 
 	rows, err := matchesDB.conn.QueryContext(ctx, query, matchID)
