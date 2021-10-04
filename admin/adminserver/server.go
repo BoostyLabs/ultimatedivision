@@ -20,7 +20,6 @@ import (
 	"ultimatedivision/admin/adminserver/controllers"
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
-	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/templatefuncs"
@@ -66,14 +65,13 @@ type Server struct {
 		lootbox     controllers.LootBoxesTemplates
 		marketplace controllers.MarketplaceTemplates
 		clubs       controllers.ClubsTemplates
-		matches     controllers.MatchesTemplate
 	}
 
 	cards.PercentageQualities
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service, matches *matches.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -144,14 +142,6 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	clubsRouter.HandleFunc("/squad/{squadId}/squad-cards", clubsController.Add).Methods(http.MethodGet, http.MethodPost)
 	clubsRouter.HandleFunc("/squad/{squadId}/squad-cards/{cardId}/update", clubsController.UpdateCardPosition).Methods(http.MethodGet, http.MethodPost)
 	clubsRouter.HandleFunc("/squad/{squadId}/squad-cards/{cardId}", clubsController.DeleteCard).Methods(http.MethodGet)
-
-	matchesRouter := router.PathPrefix("/matches").Subrouter().StrictSlash(true)
-	matchesRouter.Use(server.withAuth)
-	matchesController := controllers.NewMatches(log, matches, server.templates.matches)
-	matchesRouter.HandleFunc("/create", matchesController.Create).Methods(http.MethodGet, http.MethodPost)
-	matchesRouter.HandleFunc("/", matchesController.ListMatches).Methods(http.MethodGet)
-	matchesRouter.HandleFunc("/delete/{id}", matchesController.Delete).Methods(http.MethodGet)
-	matchesRouter.HandleFunc("/{id}/goals", matchesController.ListMatchGoals).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -290,25 +280,6 @@ func (server *Server) initializeTemplates() (err error) {
 		return err
 	}
 	server.templates.clubs.UpdateCardPosition, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "updateCardPosition.html"))
-	if err != nil {
-		return err
-	}
-
-	server.templates.matches.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "matches", "create.html"))
-	if err != nil {
-		return err
-	}
-	server.templates.matches.List, err = template.New("list.html").Funcs(template.FuncMap{
-		"Iter": templatefuncs.Iter,
-		"Inc":  templatefuncs.Inc,
-		"Dec":  templatefuncs.Dec,
-	}).ParseFiles(
-		filepath.Join(server.config.StaticDir, "matches", "list.html"),
-		filepath.Join(server.config.StaticDir, "matches", "pagination.html"))
-	if err != nil {
-		return err
-	}
-	server.templates.matches.ListGoals, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "matches", "listGoals.html"))
 	if err != nil {
 		return err
 	}

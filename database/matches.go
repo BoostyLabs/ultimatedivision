@@ -182,7 +182,8 @@ func (matchesDB *matchesDB) AddGoals(ctx context.Context, matchGoals []matches.M
 func (matchesDB *matchesDB) ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]matches.MatchGoals, error) {
 	query := `SELECT id, match_id, user_id, card_id, minute
               FROM match_results
-              WHERE match_id = $1`
+              WHERE match_id = $1
+              ORDER BY minute`
 
 	rows, err := matchesDB.conn.QueryContext(ctx, query, matchID)
 	if err != nil {
