@@ -50,7 +50,8 @@ export const UserDataArea: React.FC<{
             clearError(null);
         };
 
-        return <>
+    return (
+        <div className={`${className}__ wrapper`}>
             <input
                 className={error ? `${className}-error` : className}
                 value={value}
@@ -62,5 +63,6 @@ export const UserDataArea: React.FC<{
             {error && <label className={`${className}__error`} htmlFor={value}>
                 {error}
             </label>}
-        </>;
-    };
+        </div>
+    );
+};

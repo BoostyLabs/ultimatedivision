@@ -116,11 +116,11 @@ const RecoverPassword: React.FC = () => {
                 <img
                     src={ultimate}
                     alt="utlimate division logo"
-                    className="register__represent-reset__ultimate-recover"
+                    className="register__represent-reset__ultimate"
                 />
             </div>
             <div className="register__recover">
-                <h1 className="register__recover__title">RECOVER PASSWORD</h1>
+                <h1 className="register__recover__title">Recover password</h1>
                 <form
                     className="register__recover__sign-form"
                     onSubmit={handleSubmit}
@@ -140,7 +140,7 @@ const RecoverPassword: React.FC = () => {
                     })}
                     <input
                         className="register__recover__sign-form__confirm"
-                        value="RECOVER PASSWORD"
+                        value="RECOVER YOUR PASSWORD"
                         type="submit"
                     />
                 </form>

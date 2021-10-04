@@ -98,7 +98,7 @@ const ChangePassword: React.FC = () => {
                         GO BACK
                     </span>
                 </Link>
-                <h1 className="register__reset__title">CHANGE PASSWORD</h1>
+                <h1 className="register__reset__title">Change your password</h1>
                 <form
                     className="register__reset__sign-form"
                     onSubmit={handleSubmit}
