@@ -289,7 +289,7 @@ const (
 	// minimumPositionValue defines the minimal value of the position in the squad.
 	minimumPositionValue clubs.Position = 0
 	// maximumPositionValue defines the maximal value of the position in the squad.
-	maximumPositionValue = 10
+	maximumPositionValue clubs.Position = 10
 )
 
 // UpdateRequest is struct for update body payload.
