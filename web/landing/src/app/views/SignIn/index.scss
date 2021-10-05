@@ -43,7 +43,7 @@
         float: right;
         width: 50%;
         height: 100vh;
-        padding-left: 100px;
+        padding-left: 90px;
 
         &__go-back {
             display: inline-block;
@@ -70,7 +70,7 @@
         }
 
         &__description {
-            margin-top: 40px;
+            margin-top: 7%;
 
             &__title {
                 font-size: 27px;
@@ -89,11 +89,16 @@
                     cursor: pointer;
                     margin-left: 5px;
                 }
+
+                &:nth-child(1) {
+                    display: block;
+                    width: 100%;
+                }
             }
         }
 
         &__sign-form {
-            width: 310px;
+            width: 340px;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -118,7 +123,6 @@
                 background: $signInInputBackgroundColor;
                 font-size: 14px;
                 background-repeat: no-repeat;
-                padding-right: 25px;
                 background-position: 97.5% 50%;
 
                 &__error {
@@ -206,7 +210,10 @@
             padding-left: 55px;
 
             &__description {
-                margin-top: 25px;
+
+                &__information {
+                    width: 80%;
+                }
             }
 
             &__title {
@@ -239,23 +246,7 @@
         &__sign-up {
 
             &__title {
-                margin-top: 20%;
-            }
-
-            &__sign-form {
-
-                &__email,
-                &__name,
-                &__surname,
-                &__password,
-                &__confirm,
-                &__email-error,
-                &__name-error,
-                &__surname-error,
-                &__password-error,
-                &__confirm-error {
-                    margin-top: 10px;
-                }
+                margin-top: 15%;
             }
         }
     }
@@ -297,7 +288,6 @@
             }
 
             &__description {
-                margin-top: 30px;
 
                 &__title {
                     font-size: 22px;
@@ -392,7 +382,6 @@
             }
 
             &__description {
-                margin-top: 15px;
 
                 &__title {
                     font-size: 22px;
@@ -473,8 +462,6 @@
             &__description {
 
                 &__information:nth-child(1) {
-                    display: block;
-                    width: 100%;
                     text-align: center;
                 }
             }

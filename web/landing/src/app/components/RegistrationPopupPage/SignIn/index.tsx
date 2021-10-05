@@ -143,7 +143,7 @@ export const SignIn: React.FC<{
                         className="register__sign-in__description__information__sign"
                         onClick={() => handleSignUp()}
                     >
-                        sign up
+                        Sign up
                     </span>
                 </p>
             </div>
