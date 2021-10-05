@@ -96,6 +96,7 @@ func (service *Service) AddSquadCards(ctx context.Context, squadID uuid.UUID, ne
 		if err != nil {
 			return ErrClubs.Wrap(err)
 		}
+		break
 	}
 
 	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, newSquadCard))
@@ -130,6 +131,7 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 	for _, card := range squadCards {
 		if card.CardID == cardID {
 			oldPosition = card.Position
+			break
 		}
 	}
 
@@ -157,6 +159,7 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 
 		card.Position = oldPosition
 		updatedCards = append(updatedCards, card)
+		break
 	}
 
 	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, updatedCards))
@@ -194,6 +197,7 @@ func (service *Service) GetSquadCards(ctx context.Context, squadID uuid.UUID) ([
 		for j := 0; j < len(FormationToPosition[formation]); j++ {
 			if squadCards[i].Position == FormationToPosition[formation][j] {
 				squadCards[i].Position = Position(j)
+				break
 			}
 		}
 	}

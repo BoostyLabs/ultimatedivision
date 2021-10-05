@@ -81,7 +81,7 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 
 	squadID, err := controller.clubs.CreateSquad(ctx, id)
 	if err != nil {
-		controller.log.Error("could not create club", ErrClubs.Wrap(err))
+		controller.log.Error("could not create squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
@@ -158,12 +158,7 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["cardId"] == "" || params["squadId"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
-		return
-	}
 
 	cardID, err := uuid.Parse(params["cardId"])
 	if err != nil {
@@ -184,8 +179,8 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if squadCard.Position < 0 || squadCard.Position > 11 {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid  number of position"))
+	if squadCard.Position < minimumPositionValue || squadCard.Position > maximumPositionValue {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid value of position"))
 		return
 	}
 
@@ -201,12 +196,7 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["squadId"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
-		return
-	}
 
 	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
@@ -256,8 +246,8 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 
 	squadCard.CardID = cardID
 
-	if squadCard.Position < 0 || squadCard.Position > 11 {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid position"))
+	if squadCard.Position < minimumPositionValue || squadCard.Position > maximumPositionValue {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid value of position"))
 		return
 	}
 
@@ -273,12 +263,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["cardId"] == "" || params["squadId"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
-		return
-	}
 
 	cardID, err := uuid.Parse(params["cardId"])
 	if err != nil {
@@ -299,6 +284,13 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+const (
+	// minimumPositionValue defines the minimal value of the position in the squad.
+	minimumPositionValue clubs.Position = 0
+	// maximumPositionValue defines the maximal value of the position in the squad.
+	maximumPositionValue = 10
+)
 
 // UpdateRequest is struct for update body payload.
 type UpdateRequest struct {
