@@ -33,7 +33,7 @@ export const Navbar: React.FC = () => {
                             </a>
                         </li>)}
                 </ul>
-                <MintButton text="MINT" />
+                <MintButton />
             </div>
         </div>
     );

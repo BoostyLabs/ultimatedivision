@@ -12,6 +12,7 @@ export const MintButton: React.FC = () => {
 
     const service = ServicePlugin.create();
     const connect = async () => {
+        //@ts-ignore
         const account = await service.connect();
 
         account && changeText('Connected');
