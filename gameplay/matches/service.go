@@ -13,6 +13,7 @@ import (
 
 	"ultimatedivision/clubs"
 	"ultimatedivision/internal/pagination"
+	rand2 "ultimatedivision/pkg/rand"
 )
 
 // ErrMatches indicates that there was an error in the service.
@@ -83,7 +84,7 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 			continue
 		}
 
-		minute := generateMinute(periods[i+periodBegin], periods[i+periodEnd])
+		minute := rand2.Minute(periods[i+periodBegin], periods[i+periodEnd])
 		userID, cardID, err := service.chooseSquad(ctx, goalProbabilityByPosition,
 			squadPowerAccuracy, user1, user2, squadCards1, squadCards2)
 		if err != nil {
@@ -105,14 +106,6 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 	}
 
 	return nil
-}
-
-// generateMinute generates the minute at which the goal was scored.
-func generateMinute(begin, end int) int {
-	rand.Seed(time.Now().UnixNano())
-	minute := begin + rand.Intn(end-begin+1)
-
-	return minute
 }
 
 // choseGoalscorer returns id of cards which scored goal.
