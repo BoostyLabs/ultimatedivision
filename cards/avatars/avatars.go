@@ -13,6 +13,9 @@ import (
 // ErrNoAvatar indicated that avatar does not exist.
 var ErrNoAvatar = errs.Class("avatar does not exist")
 
+// ErrNoAvatarFile indicated that avatar does not exist.
+var ErrNoAvatarFile = errs.Class("avatar does not exist")
+
 // DB is exposing access to avatars db.
 //
 // architecture: DB
@@ -23,7 +26,7 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Avatar, error)
 }
 
-// Avatar entity describes the values that make up the avatar, and contains the photo itself.
+// Avatar entity describes the values that make up the avatar.
 type Avatar struct {
 	CardID         uuid.UUID   `json:"cardId"`
 	PictureType    PictureType `json:"pictureType"`
@@ -38,7 +41,7 @@ type Avatar struct {
 	Beard          int         `json:"beard"`
 	Lips           int         `json:"lips"`
 	Tattoo         int         `json:"tattoo"`
-	Image          []byte      `json:"image"`
+	Image          string      `json:"image"`
 }
 
 // PictureType defines the list of possible type of picture.
@@ -49,9 +52,18 @@ const (
 	PictureTypeFirst PictureType = 1
 )
 
+// PictureType defines the list of possible type of avatar image.
+type TypeImage string
+
+const (
+	// TypeImagePNG indicates that the type image avatar is png.
+	TypeImagePNG = "png"
+)
+
 // Config defines values needed by generate avatars.
 type Config struct {
-	PathToAvarars string `json:"pathToAvarars"`
+	PathToAvararsComponents string `json:"pathToAvararsComponents"`
+	PathToOutputAvatars     string `json:"pathToOutputAvatars"`
 
 	FaceColorFolder string `json:"faceColorFolder"`
 

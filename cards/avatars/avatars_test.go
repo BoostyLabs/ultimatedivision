@@ -181,7 +181,6 @@ func TestCards(t *testing.T) {
 		Beard:          1,
 		Lips:           2,
 		Tattoo:         1,
-		Image:          []byte{},
 	}
 
 	avatar2 := avatars.Avatar{
@@ -198,7 +197,6 @@ func TestCards(t *testing.T) {
 		Beard:          1,
 		Lips:           2,
 		Tattoo:         1,
-		Image:          []byte{},
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
@@ -259,5 +257,4 @@ func compareAvatar(t *testing.T, avatar1, avatar2 avatars.Avatar) {
 	assert.Equal(t, avatar1.Beard, avatar2.Beard)
 	assert.Equal(t, avatar1.Lips, avatar2.Lips)
 	assert.Equal(t, avatar1.Tattoo, avatar2.Tattoo)
-	assert.Equal(t, avatar1.Image, avatar2.Image)
 }

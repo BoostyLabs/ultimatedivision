@@ -6,6 +6,7 @@ package avatars
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"image"
 	"image/draw"
@@ -14,14 +15,10 @@ import (
 	"math/rand"
 	"os"
 	"regexp"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 )
-
-// ErrNoAvatarFile indicated that avatar does not exist.
-var ErrNoAvatarFile = errs.Class("avatar does not exist")
 
 // ErrAvatar indicated that there was an error in service.
 var ErrAvatar = errs.Class("avatar service error")
@@ -51,7 +48,7 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, isTattoo b
 	}
 
 	// FaceColor
-	pathToFaceColor := service.config.PathToAvarars
+	pathToFaceColor := service.config.PathToAvararsComponents
 	nameFile := service.config.FaceColorFolder
 	if avatar.FaceColor, err = randomNumber(pathToFaceColor, nameFile); err != nil {
 		return Avatar{}, ErrAvatar.New("search random number in %s, error - %s", nameFile, err)
@@ -144,31 +141,33 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, isTattoo b
 }
 
 // randomNumber randomizes numbers in the specified range.
-func randomNumber(pathToAvarars, nameFile string) (int, error) {
-	count, err := searchCountFiles(pathToAvarars, nameFile)
+func randomNumber(pathToAvararsCPathToAvararsComponents, nameFile string) (int, error) {
+	count, err := searchCountFiles(pathToAvararsCPathToAvararsComponents, nameFile)
 	if err != nil {
 		return 0, ErrAvatar.Wrap(err)
 	}
 
-	if count == 1 {
+	switch {
+	case count == 1:
 		return 1, nil
-	} else if count > 0 {
+	case count > 0:
 		return rand.Intn(count-1) + 1, nil
+	default:
+		return 0, ErrNoAvatarFile.New(nameFile)
 	}
-	return 0, ErrNoAvatarFile.New(nameFile)
 }
 
 // searchCountFiles searches count files in the specified path and by name of file.
-func searchCountFiles(pathToAvarars, nameFile string) (int, error) {
-	files, _ := ioutil.ReadDir(pathToAvarars)
+func searchCountFiles(pathToAvararsCPathToAvararsComponents, nameFile string) (int, error) {
+	files, _ := ioutil.ReadDir(pathToAvararsCPathToAvararsComponents)
 
 	var count int
 	for _, file := range files {
-		matched, err := regexp.Match(fmt.Sprintf(nameFile, `\d`), []byte(file.Name()))
+		isMatched, err := regexp.Match(fmt.Sprintf(nameFile, `\d`), []byte(file.Name()))
 		if err != nil {
 			return 0, err
 		}
-		if matched {
+		if isMatched {
 			count++
 		}
 	}
@@ -177,25 +176,25 @@ func searchCountFiles(pathToAvarars, nameFile string) (int, error) {
 }
 
 // generateAvatar generates a common avatar from different layers of photos.
-func (avatar *Avatar) generateAvatar(config Config) ([]byte, error) {
+func (avatar *Avatar) generateAvatar(config Config) (string, error) {
 	var (
 		faceTypeLayer, tattooLayer, eyeBrowsLayer, hairstylesLayer, noseLayer, beardLayer, lipsLayer, tshirtLayer image.Image
 	)
 
 	// FaceColor
-	pathToFaceColor := config.PathToAvarars + "/" + fmt.Sprintf(config.FaceColorFolder, avatar.FaceColor)
+	pathToFaceColor := config.PathToAvararsComponents + "/" + fmt.Sprintf(config.FaceColorFolder, avatar.FaceColor)
 
 	// FaceType
 	pathToFaceType := pathToFaceColor + "/" + fmt.Sprintf(config.FaceTypeFolder, avatar.FaceType)
 	nameFaceTypeFile := fmt.Sprintf(config.FaceTypeFile, avatar.FaceType)
 	faceTypeFile, err := os.Open(pathToFaceType + "/" + nameFaceTypeFile)
 	if err != nil {
-		return nil, ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameFaceTypeFile, err)
+		return "", ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameFaceTypeFile, err)
 
 	}
 	faceTypeLayer, err = png.Decode(faceTypeFile)
 	if err != nil {
-		return nil, ErrAvatar.Wrap(err)
+		return "", ErrAvatar.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, ErrAvatar.Wrap(faceTypeFile.Close()))
@@ -203,15 +202,15 @@ func (avatar *Avatar) generateAvatar(config Config) ([]byte, error) {
 
 	// Tattoo
 	if avatar.Tattoo != 0 {
-		pathToTattoo := config.PathToAvarars + "/" + config.TattooFolder + "/" + fmt.Sprintf(config.TattooTypeFolder, avatar.Tattoo)
+		pathToTattoo := config.PathToAvararsComponents + "/" + config.TattooFolder + "/" + fmt.Sprintf(config.TattooTypeFolder, avatar.Tattoo)
 		nameTattooFile := fmt.Sprintf(config.TattooFile, avatar.Tattoo)
 		tattooFile, err := os.Open(pathToTattoo + "/" + nameTattooFile)
 		if err != nil {
-			return nil, ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameTattooFile, err)
+			return "", ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameTattooFile, err)
 		}
 		tattooLayer, err = png.Decode(tattooFile)
 		if err != nil {
-			return nil, ErrAvatar.Wrap(err)
+			return "", ErrAvatar.Wrap(err)
 		}
 		defer func() {
 			err = errs.Combine(err, ErrAvatar.Wrap(tattooFile.Close()))
@@ -223,11 +222,11 @@ func (avatar *Avatar) generateAvatar(config Config) ([]byte, error) {
 	nameEyeBrowsColorFile := fmt.Sprintf(config.EyeBrowsColorFile, avatar.EyeBrowsColor)
 	eyeBrowsFile, err := os.Open(pathToEyeBrows + "/" + nameEyeBrowsColorFile)
 	if err != nil {
-		return nil, ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameEyeBrowsColorFile, err)
+		return "", ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameEyeBrowsColorFile, err)
 	}
 	eyeBrowsLayer, err = png.Decode(eyeBrowsFile)
 	if err != nil {
-		return nil, ErrAvatar.Wrap(err)
+		return "", ErrAvatar.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, ErrAvatar.Wrap(eyeBrowsFile.Close()))
@@ -239,11 +238,11 @@ func (avatar *Avatar) generateAvatar(config Config) ([]byte, error) {
 		nameHairstylesTypeFile := fmt.Sprintf(config.HairstyleTypeFile, avatar.HairstyleType)
 		hairstylesTypeFile, err := os.Open(pathToHairstyles + "/" + nameHairstylesTypeFile)
 		if err != nil {
-			return nil, ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameHairstylesTypeFile, err)
+			return "", ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameHairstylesTypeFile, err)
 		}
 		hairstylesLayer, err = png.Decode(hairstylesTypeFile)
 		if err != nil {
-			return nil, ErrAvatar.Wrap(err)
+			return "", ErrAvatar.Wrap(err)
 		}
 		defer func() {
 			err = errs.Combine(err, ErrAvatar.Wrap(hairstylesTypeFile.Close()))
@@ -255,11 +254,11 @@ func (avatar *Avatar) generateAvatar(config Config) ([]byte, error) {
 	nameNoseTypeFile := fmt.Sprintf(config.NoseFile, avatar.Nose)
 	noseFile, err := os.Open(pathToNose + "/" + nameNoseTypeFile)
 	if err != nil {
-		return nil, ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameNoseTypeFile, err)
+		return "", ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameNoseTypeFile, err)
 	}
 	noseLayer, err = png.Decode(noseFile)
 	if err != nil {
-		return nil, ErrAvatar.Wrap(err)
+		return "", ErrAvatar.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, ErrAvatar.Wrap(noseFile.Close()))
@@ -271,11 +270,11 @@ func (avatar *Avatar) generateAvatar(config Config) ([]byte, error) {
 		nameBeardTypeFile := fmt.Sprintf(config.BeardFile, avatar.Beard)
 		beardFile, err := os.Open(pathToBeard + "/" + nameBeardTypeFile)
 		if err != nil {
-			return nil, ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameBeardTypeFile, err)
+			return "", ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameBeardTypeFile, err)
 		}
 		beardLayer, err = png.Decode(beardFile)
 		if err != nil {
-			return nil, ErrAvatar.Wrap(err)
+			return "", ErrAvatar.Wrap(err)
 		}
 		defer func() {
 			err = errs.Combine(err, ErrAvatar.Wrap(beardFile.Close()))
@@ -287,11 +286,11 @@ func (avatar *Avatar) generateAvatar(config Config) ([]byte, error) {
 	nameLipsTypeFile := fmt.Sprintf(config.LipsFile, avatar.Lips)
 	lipsFile, err := os.Open(pathToLips + "/" + nameLipsTypeFile)
 	if err != nil {
-		return nil, ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameLipsTypeFile, err)
+		return "", ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameLipsTypeFile, err)
 	}
 	lipsLayer, err = png.Decode(lipsFile)
 	if err != nil {
-		return nil, ErrAvatar.Wrap(err)
+		return "", ErrAvatar.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, ErrAvatar.Wrap(lipsFile.Close()))
@@ -302,11 +301,11 @@ func (avatar *Avatar) generateAvatar(config Config) ([]byte, error) {
 	nameTshirtTypeFile := fmt.Sprintf(config.TshirtFile, avatar.Tshirt)
 	tshirtFile, err := os.Open(pathToTshirt + "/" + nameTshirtTypeFile)
 	if err != nil {
-		return nil, ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameTshirtTypeFile, err)
+		return "", ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameTshirtTypeFile, err)
 	}
 	tshirtLayer, err = png.Decode(tshirtFile)
 	if err != nil {
-		return nil, ErrAvatar.Wrap(err)
+		return "", ErrAvatar.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, ErrAvatar.Wrap(tshirtFile.Close()))
@@ -329,21 +328,21 @@ func (avatar *Avatar) generateAvatar(config Config) ([]byte, error) {
 	}
 	draw.Draw(baseImage, tshirtLayer.Bounds(), tshirtLayer, image.Point{}, draw.Over)
 
-	if err = saveImage(baseImage); err != nil {
-		return nil, ErrAvatar.Wrap(err)
+	if err = saveImage(config.PathToOutputAvatars, avatar.CardID, baseImage); err != nil {
+		return "", ErrAvatar.Wrap(err)
 	}
 
 	buf := new(bytes.Buffer)
 	if err = png.Encode(buf, baseImage); err != nil {
-		return nil, ErrAvatar.Wrap(err)
+		return "", ErrAvatar.Wrap(err)
 	}
 
-	return buf.Bytes(), nil
+	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
 }
 
-// saveImage saves image to disk.
-func saveImage(baseImage *image.RGBA) error {
-	resultImage, err := os.Create(fmt.Sprintf("./assets/output/%v.png", time.Now().UTC().Unix()))
+// saveImage saves image by path.
+func saveImage(path string, cardID uuid.UUID, baseImage *image.RGBA) error {
+	resultImage, err := os.Create(path + "/" + cardID.String() + "." + TypeImagePNG)
 	if err != nil {
 		return ErrAvatar.Wrap(err)
 	}
@@ -361,5 +360,31 @@ func saveImage(baseImage *image.RGBA) error {
 // Get returns avatar from DB.
 func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Avatar, error) {
 	avatar, err := service.avatars.Get(ctx, cardID)
+	if err != nil {
+		return Avatar{}, ErrAvatar.Wrap(err)
+	}
+	avatar.Image, err = readImage(service.config.PathToOutputAvatars, avatar.CardID)
 	return avatar, ErrAvatar.Wrap(err)
+}
+
+// readImage saves image by path.
+func readImage(path string, cardID uuid.UUID) (string, error) {
+	image, err := os.Open(path + "/" + cardID.String() + "." + TypeImagePNG)
+	if err != nil {
+		return "", ErrNoAvatarFile.Wrap(err)
+	}
+	decodeImage, err := png.Decode(image)
+	if err != nil {
+		return "", ErrAvatar.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, ErrAvatar.Wrap(image.Close()))
+	}()
+
+	buf := new(bytes.Buffer)
+	if err = png.Encode(buf, decodeImage); err != nil {
+		return "", ErrAvatar.Wrap(err)
+	}
+
+	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
 }

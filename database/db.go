@@ -136,8 +136,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             tshirt           INTEGER                                                    NOT NULL,
             beard            INTEGER                                                    NOT NULL,
             lips             INTEGER                                                    NOT NULL,
-            tattoo           INTEGER                                                    NOT NULL,
-            image            BYTEA                                                      NOT NULL
+            tattoo           INTEGER                                                    NOT NULL
         );
         CREATE TABLE IF NOT EXISTS admins (
             id            BYTEA     PRIMARY KEY    NOT NULL,
