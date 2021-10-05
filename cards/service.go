@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cards/avatars"
 	"ultimatedivision/internal/pagination"
 )
 
@@ -24,15 +25,17 @@ var ErrCards = errs.Class("cards service error")
 //
 // architecture: Service
 type Service struct {
-	cards  DB
-	config Config
+	cards   DB
+	config  Config
+	avatars *avatars.Service
 }
 
 // NewService is a constructor for cards service.
-func NewService(cards DB, config Config) *Service {
+func NewService(cards DB, config Config, avatars *avatars.Service) *Service {
 	return &Service{
-		cards:  cards,
-		config: config,
+		cards:   cards,
+		config:  config,
+		avatars: avatars,
 	}
 }
 
@@ -96,7 +99,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		"right": service.config.DominantFoots.Right,
 	}
 
-	var isTattoos bool
+	var isTattoo bool
 	var tattoos = map[string]int{
 		"gold":    service.config.Tattoos.Gold,
 		"diamond": service.config.Tattoos.Diamond,
@@ -113,7 +116,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 	goalkeeping := generateGroupSkill(skills[quality])
 
 	if result := searchValueByPercent(tattoos); result != "" {
-		isTattoos = true
+		isTattoo = true
 	}
 
 	card := Card{
@@ -121,15 +124,10 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		// TODO: change it.
 		PlayerName:       "Dmytro",
 		Quality:          Quality(quality),
-		PictureType:      1,
 		Height:           round(rand.Float64()*(maxHeight-minHeight)+minHeight, 0.01),
 		Weight:           round(rand.Float64()*(maxWeight-minWeight)+minWeight, 0.01),
-		SkinColor:        1,
-		HairStyle:        1,
-		HairColor:        1,
-		Accessories:      []int{1, 2},
 		DominantFoot:     DominantFoot(searchValueByPercent(dominantFoots)),
-		IsTattoos:        isTattoos,
+		IsTattoo:         isTattoo,
 		Status:           StatusActive,
 		Type:             TypeWon,
 		UserID:           userID,
@@ -183,7 +181,14 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		Sweeping:         generateSkill(goalkeeping),
 		Throwing:         generateSkill(goalkeeping),
 	}
-	return card, ErrCards.Wrap(service.cards.Create(ctx, card))
+
+	var err error
+	if err = service.cards.Create(ctx, card); err != nil {
+		return card, ErrCards.Wrap(err)
+	}
+
+	card.Avatar, err = service.avatars.Create(ctx, card.ID, card.IsTattoo)
+	return card, ErrCards.Wrap(err)
 }
 
 // searchValueByPercent search value string by percent.
