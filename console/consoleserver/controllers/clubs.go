@@ -6,6 +6,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -184,7 +185,7 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if squadCard.Position < 0 || squadCard.Position > 11 {
+	if !squadCard.Position.IsValid() {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid  number of position"))
 		return
 	}
@@ -256,7 +257,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 
 	squadCard.CardID = cardID
 
-	if squadCard.Position < 0 || squadCard.Position > 11 {
+	if !squadCard.Position.IsValid() {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid position"))
 		return
 	}
@@ -337,15 +338,17 @@ func (controller *Clubs) ChangeFormation(w http.ResponseWriter, r *http.Request)
 	ctx := r.Context()
 
 	params := mux.Vars(r)
-	if params["formationID"] == "" || params["squadId"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
-		return
-	}
 
-	newFormationID, err := uuid.Parse(params["formationID"])
+	newFormationID, err := strconv.Atoi(params["formationID"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
+	}
+
+	formation := clubs.Formation(newFormationID)
+
+	if !clubs.Formation(newFormationID).IsValid() {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("Formation ID is not correct"))
 	}
 
 	squadID, err := uuid.Parse(params["squadId"])
@@ -354,7 +357,7 @@ func (controller *Clubs) ChangeFormation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	data, err := controller.clubs.ChangeFormation(ctx, newFormationID, squadID)
+	data, err := controller.clubs.ChangeFormation(ctx, formation, squadID)
 	if err != nil {
 		controller.log.Error("could not change formation", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
@@ -362,7 +365,7 @@ func (controller *Clubs) ChangeFormation(w http.ResponseWriter, r *http.Request)
 	}
 
 	if err = json.NewEncoder(w).Encode(data); err != nil {
-		controller.log.Error("failed to write json response", ErrUsers.Wrap(err))
+		controller.log.Error("failed to write json response", ErrClubs.Wrap(err))
 		return
 	}
 }

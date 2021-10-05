@@ -142,6 +142,11 @@ func TestTeam(t *testing.T) {
 			err := repositoryClubs.DeleteSquadCard(ctx, testSquad.ID, testCard.ID)
 			require.NoError(t, err)
 		})
+
+		t.Run("Updates formation in the squad", func(t *testing.T) {
+			err := repositoryClubs.UpdateFormation(ctx, updatedSquad.Formation, updatedSquad.ID)
+			require.NoError(t, err)
+		})
 	})
 }
 

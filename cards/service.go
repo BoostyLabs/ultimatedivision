@@ -412,7 +412,6 @@ func (service *Service) EffectivenessST(card Card) float64 {
 // EffectiveCardForPosition determines the effective card in the position.
 func (service *Service) EffectiveCardForPosition(ctx context.Context, position clubs.Position, cards []clubs.SquadCard) (Card, error) {
 	cardCoefficients := make(map[float64]Card)
-	var max float64
 
 	for _, card := range cards {
 		card, err := service.Get(ctx, card.CardID)
@@ -431,9 +430,7 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position c
 			cardCoefficients[coefficient] = card
 
 		case clubs.LW,
-			clubs.RW,
-			clubs.RWB,
-			clubs.LWB:
+			clubs.RW:
 			coefficient := service.EffectivenessRWorLW(card)
 			cardCoefficients[coefficient] = card
 
@@ -461,7 +458,9 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position c
 			cardCoefficients[coefficient] = card
 
 		case clubs.LB,
-			clubs.RB:
+			clubs.RB,
+			clubs.RWB,
+			clubs.LWB:
 			coefficient := service.EffectivenessLBorRB(card)
 			cardCoefficients[coefficient] = card
 
@@ -472,6 +471,8 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position c
 			cardCoefficients[coefficient] = card
 		}
 	}
+
+	var max float64
 
 	for coeff := range cardCoefficients {
 		max = coeff
@@ -490,7 +491,7 @@ func (service *Service) CardsWithNewPositions(ctx context.Context, cards []clubs
 	for _, position := range positions {
 		card, err := service.EffectiveCardForPosition(ctx, position, cards)
 		if err != nil {
-			return positionMap, err
+			return positionMap, ErrCards.Wrap(err)
 		}
 		positionMap[position] = card.ID
 	}

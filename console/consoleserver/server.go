@@ -109,6 +109,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsRouter.Use(server.withAuth)
 	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
 	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("{squadId}/formation/{formationId}", clubsController.ChangeFormation).Methods(http.MethodPut)
 
 	squadRouter := clubsRouter.PathPrefix("/{clubId}/squads").Subrouter()
 	squadRouter.HandleFunc("", clubsController.CreateSquad).Methods(http.MethodPost)
@@ -118,8 +119,6 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	squadCardsRouter.HandleFunc("/{cardId}", clubsController.Add).Methods(http.MethodPost)
 	squadCardsRouter.HandleFunc("/{cardId}", clubsController.Delete).Methods(http.MethodDelete)
 	squadCardsRouter.HandleFunc("/{cardId}", clubsController.UpdatePosition).Methods(http.MethodPatch)
-
-	clubsRouter.HandleFunc("{squadID}/formation/{formationID}", clubsController.ChangeFormation).Methods(http.MethodPut)
 
 	lootBoxesRouter := apiRouter.PathPrefix("/lootboxes").Subrouter()
 	lootBoxesRouter.Use(server.withAuth)

@@ -44,7 +44,7 @@ type DB interface {
 	// UpdatePosition updates position of card in the squad.
 	UpdatePosition(ctx context.Context, newPosition Position, squadID, cardID uuid.UUID) error
 	// UpdateFormation updates formation in the squad.
-	UpdateFormation(ctx context.Context, newFormation, squadID uuid.UUID) error
+	UpdateFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) error
 }
 
 // Club defines club entity.
@@ -97,6 +97,25 @@ const (
 	// ThreeFiveTwo defines 4-5-2 scheme.
 	ThreeFiveTwo Formation = 10
 )
+
+// IsValid check that formation ID is valid.
+func (f Formation) IsValid() bool {
+	switch f {
+	case FourFourTwo,
+		FourTwoFour,
+		FourTwoTwoTwo,
+		FourThreeOneTwo,
+		FourThreeThree,
+		FourTwoThreeOne,
+		FourThreeTwoOne,
+		FourOneThreeTwo,
+		FiveThreeTwo,
+		ThreeFiveTwo:
+		return true
+	default:
+		return false
+	}
+}
 
 // Tactic defines a list of possible tactics.
 type Tactic int
@@ -163,6 +182,39 @@ const (
 	// CST defines center central forward.
 	CST Position = 24
 )
+
+// IsValid check that position ID is valid.
+func (f Position) IsValid() bool {
+	switch f {
+	case GK,
+		LB,
+		LCD,
+		CCD,
+		RCD,
+		RB,
+		LCDM,
+		CCDM,
+		RCDM,
+		LCM,
+		CCM,
+		RCM,
+		LM,
+		RM,
+		LCAM,
+		CCAM,
+		RCAM,
+		LWB,
+		RWB,
+		RW,
+		LW,
+		LST,
+		RST,
+		CST:
+		return true
+	default:
+		return false
+	}
+}
 
 // FormationToPosition defines positions that are present in the formation.
 var FormationToPosition = map[Formation][]Position{

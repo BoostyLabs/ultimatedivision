@@ -5,9 +5,10 @@ package clubs
 
 import (
 	"context"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
-	"time"
 
 	"ultimatedivision/users"
 )
@@ -21,15 +22,16 @@ var ErrClubs = errs.Class("clubs service error")
 type Service struct {
 	clubs DB
 	users *users.Service
-	card  card
+	card  CardsWithNewPositions
 }
 
-type card interface {
+// CardsWithNewPositions is exposing access to method CardsWithNewPositions in cards service.
+type CardsWithNewPositions interface {
 	CardsWithNewPositions(ctx context.Context, cards []SquadCard, positions []Position) (map[Position]uuid.UUID, error)
 }
 
 // NewService is a constructor for clubs service.
-func NewService(clubs DB, users *users.Service, card card) *Service {
+func NewService(clubs DB, users *users.Service, card CardsWithNewPositions) *Service {
 	return &Service{
 		clubs: clubs,
 		users: users,
@@ -130,25 +132,20 @@ func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error)
 }
 
 // ChangeFormation is an endpoint that change formation and card position.
-func (service *Service) ChangeFormation(ctx context.Context, newFormationID, squadID uuid.UUID) (map[Position]uuid.UUID, error) {
+func (service *Service) ChangeFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) (map[Position]uuid.UUID, error) {
 	var cardsWithNewPositions map[Position]uuid.UUID
-
-	formation, err := service.clubs.GetFormation(ctx, squadID)
-	if err != nil {
-		return nil, ErrClubs.Wrap(err)
-	}
 
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
 	if err != nil {
 		return nil, ErrClubs.Wrap(err)
 	}
 
-	err = service.clubs.UpdateFormation(ctx, newFormationID, squadID)
+	err = service.clubs.UpdateFormation(ctx, newFormation, squadID)
 	if err != nil {
 		return nil, ErrClubs.Wrap(err)
 	}
 
-	cardsWithNewPositions, err = service.card.CardsWithNewPositions(ctx, squadCards, FormationToPosition[formation])
+	cardsWithNewPositions, err = service.card.CardsWithNewPositions(ctx, squadCards, FormationToPosition[newFormation])
 	if err != nil {
 		return nil, ErrClubs.Wrap(err)
 	}

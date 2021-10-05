@@ -167,7 +167,7 @@ func (clubsDB *clubsDB) UpdateTacticFormationCaptain(ctx context.Context, squad 
 }
 
 // UpdateFormation updates formation in the squad.
-func (clubsDB *clubsDB) UpdateFormation(ctx context.Context, newFormation, squadID uuid.UUID) error {
+func (clubsDB *clubsDB) UpdateFormation(ctx context.Context, newFormation clubs.Formation, squadID uuid.UUID) error {
 	query := `UPDATE squads
 			  SET formation = $1
   			  WHERE id = $2`

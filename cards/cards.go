@@ -272,6 +272,7 @@ type Config struct {
 
 	pagination.Cursor `json:"cursor"`
 
+	// CardEfficiencyParameters coefficients for calculating the efficiency of the card.
 	CardEfficiencyParameters struct {
 		GK struct {
 			Goalkeeping float64 `json:"goalkeeping"`
