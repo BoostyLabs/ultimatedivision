@@ -52,7 +52,7 @@ const (
 	PictureTypeFirst PictureType = 1
 )
 
-// PictureType defines the list of possible type of avatar image.
+// TypeImage defines the list of possible type of avatar image.
 type TypeImage string
 
 const (
