@@ -34,6 +34,7 @@ type Avatar struct {
 	FaceType       int         `json:"faceType"`
 	EyeBrowsType   int         `json:"eyeBrowsType"`
 	EyeBrowsColor  int         `json:"eyeBrowsColor"`
+	EyeLaserType   int         `json:"eyeLaserType"`
 	HairstyleColor int         `json:"hairstyleColor"`
 	HairstyleType  int         `json:"hairstyleType"`
 	Nose           int         `json:"nose"`
@@ -77,6 +78,10 @@ type Config struct {
 	EyeBrowsFolder     string `json:"eyeBrowsFolder"`
 	EyeBrowsTypeFolder string `json:"eyeBrowsTypeFolder"`
 	EyeBrowsColorFile  string `json:"eyeBrowsColorFile"`
+
+	EyeLaserFolder     string `json:"eyeLaserFolder"`
+	EyeLaserTypeFolder string `json:"eyeLaserTypeFolder"`
+	EyeLaserTypeFile   string `json:"eyeLaserTypeFile"`
 
 	HairstyleFolder      string `json:"hairstyleFolder"`
 	HairstyleColorFolder string `json:"hairstyleColorFolder"`

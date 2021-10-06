@@ -130,6 +130,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             face_type        INTEGER                                                    NOT NULL,
             eyebrows_type    INTEGER                                                    NOT NULL,
             eyebrows_color   INTEGER                                                    NOT NULL,
+            eyelaser_type    INTEGER                                                    NOT NULL,
             hairstyle_color  INTEGER                                                    NOT NULL,
             hairstyle_type   INTEGER                                                    NOT NULL,
             nose             INTEGER                                                    NOT NULL,

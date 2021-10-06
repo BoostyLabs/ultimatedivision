@@ -174,6 +174,7 @@ func TestCards(t *testing.T) {
 		FaceType:       2,
 		EyeBrowsType:   1,
 		EyeBrowsColor:  2,
+		EyeLaserType:   1,
 		HairstyleColor: 1,
 		HairstyleType:  2,
 		Nose:           1,
@@ -190,6 +191,7 @@ func TestCards(t *testing.T) {
 		FaceType:       2,
 		EyeBrowsType:   1,
 		EyeBrowsColor:  2,
+		EyeLaserType:   1,
 		HairstyleColor: 1,
 		HairstyleType:  2,
 		Nose:           1,
@@ -250,6 +252,7 @@ func compareAvatar(t *testing.T, avatar1, avatar2 avatars.Avatar) {
 	assert.Equal(t, avatar1.FaceType, avatar2.FaceType)
 	assert.Equal(t, avatar1.EyeBrowsType, avatar2.EyeBrowsType)
 	assert.Equal(t, avatar1.EyeBrowsColor, avatar2.EyeBrowsColor)
+	assert.Equal(t, avatar1.EyeLaserType, avatar2.EyeLaserType)
 	assert.Equal(t, avatar1.HairstyleColor, avatar2.HairstyleColor)
 	assert.Equal(t, avatar1.HairstyleType, avatar2.HairstyleType)
 	assert.Equal(t, avatar1.Nose, avatar2.Nose)
