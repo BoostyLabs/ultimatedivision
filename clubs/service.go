@@ -233,6 +233,8 @@ func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squad
 			effectiveness += cardsFromSquad[index].EfficientGK()
 		case LB:
 			effectiveness += cardsFromSquad[index].EfficientLB()
+		case LWB:
+			effectiveness += cardsFromSquad[index].EfficientLB()
 		case CCD:
 			effectiveness += cardsFromSquad[index].EfficientCD()
 		case LCD:
@@ -240,6 +242,8 @@ func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squad
 		case RCD:
 			effectiveness += cardsFromSquad[index].EfficientCD()
 		case RB:
+			effectiveness += cardsFromSquad[index].EfficientLB()
+		case RWB:
 			effectiveness += cardsFromSquad[index].EfficientLB()
 		case CCDM:
 			effectiveness += cardsFromSquad[index].EfficientCDM()
