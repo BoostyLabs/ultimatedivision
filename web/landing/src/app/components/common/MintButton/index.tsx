@@ -3,20 +3,46 @@
 
 import React, { useState } from 'react';
 
-import { ServicePlugin } from '@/app/plugins/service';
+import MetaMaskOnboarding from '@metamask/onboarding';
 
 import './index.scss';
 
+declare global {
+    interface Window {
+        ethereum: any;
+    }
+}
+
 export const MintButton: React.FC = () => {
-    const [text, changeText] = useState('Mint');
+    const onboarding = React.useRef<MetaMaskOnboarding>();
+    const [connectError, handleError] = useState(false);
+    const [text, setButtonText] = useState('Mint');
 
-    const service = ServicePlugin.create();
+    React.useEffect(() => {
+        if (!onboarding.current) {
+            onboarding.current = new MetaMaskOnboarding();
+        }
+    }, []);
+
     const connect = async () => {
-        //@ts-ignore
-        const account = await service.connect();
 
-        account && changeText('Connected');
-    };
+        if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+            try {
+                const request = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                setButtonText('Connected');
+                return request
+            } catch (error: any) {
+                handleError(true);
+                console.log(error.message);
+                setTimeout(() => {
+                    handleError(false)
+                }, 5000);
+            }
+
+        } else {
+            onboarding.current?.startOnboarding();
+        }
+    }
 
     return (
         <button className="ultimatedivision-mint-btn"
@@ -25,6 +51,10 @@ export const MintButton: React.FC = () => {
             data-aos-easing="ease-in-out-cubic"
             onClick={connect}
         >
+            {
+                connectError &&
+                <span className="error">Please open metamask manually!</span>
+            }
             <span className="ultimatedivision-mint-btn__text">{text}</span>
         </button>
     );
