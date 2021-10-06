@@ -96,7 +96,7 @@ export class RouteConfig {
         true
     );
     public static GameMechanics: ComponentRoutes = new ComponentRoutes(
-        'game-mechanicks',
+        'game-mechanics',
         GameMechanics,
         true
     );
