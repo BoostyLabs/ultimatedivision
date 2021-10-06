@@ -10,7 +10,6 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/gameplay/matches"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -21,6 +20,7 @@ import (
 	"ultimatedivision/admin/adminserver/controllers"
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/templatefuncs"
