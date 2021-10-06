@@ -26,7 +26,7 @@ var Error = errs.Class("nftdrop cli error")
 
 // Config contains configurable values for nftdrop project.
 type Config struct {
-	Database                string `json:"database"`
+	Database string `json:"database"`
 	// TODO:
 	ultimatedivision.Config `json:"config"`
 }
