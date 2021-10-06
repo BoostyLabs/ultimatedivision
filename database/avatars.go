@@ -30,7 +30,7 @@ type avatarsDB struct {
 
 const (
 	allAvatarFields = `card_id, picture_type, face_color, face_type, eyebrows_type, eyebrows_color,
-		hairstyle_color, hairstyle_type, nose, tshirt, beard, lips, tattoo`
+		eyelaser_type, hairstyle_color, hairstyle_type, nose, tshirt, beard, lips, tattoo`
 )
 
 // Create adds avatar in the data base.
@@ -39,11 +39,11 @@ func (avatarsDB *avatarsDB) Create(ctx context.Context, avatar avatars.Avatar) e
 		`INSERT INTO
 			avatars(` + allAvatarFields + `) 
 		VALUES 
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 		`
 	_, err := avatarsDB.conn.ExecContext(ctx, query,
 		avatar.CardID, avatar.PictureType, avatar.FaceColor, avatar.FaceType, avatar.EyeBrowsType, avatar.EyeBrowsColor, avatar.HairstyleColor,
-		avatar.HairstyleType, avatar.Nose, avatar.Tshirt, avatar.Beard, avatar.Lips, avatar.Tattoo)
+		avatar.EyeLaserType, avatar.HairstyleType, avatar.Nose, avatar.Tshirt, avatar.Beard, avatar.Lips, avatar.Tattoo)
 
 	return ErrAvatar.Wrap(err)
 }
@@ -61,7 +61,7 @@ func (avatarsDB *avatarsDB) Get(ctx context.Context, cardID uuid.UUID) (avatars.
         `
 	err := avatarsDB.conn.QueryRowContext(ctx, query, cardID).Scan(
 		&avatar.CardID, &avatar.PictureType, &avatar.FaceColor, &avatar.FaceType, &avatar.EyeBrowsType, &avatar.EyeBrowsColor, &avatar.HairstyleColor,
-		&avatar.HairstyleType, &avatar.Nose, &avatar.Tshirt, &avatar.Beard, &avatar.Lips, &avatar.Tattoo)
+		&avatar.EyeLaserType, &avatar.HairstyleType, &avatar.Nose, &avatar.Tshirt, &avatar.Beard, &avatar.Lips, &avatar.Tattoo)
 	if errors.Is(err, sql.ErrNoRows) {
 		return avatar, avatars.ErrNoAvatar.Wrap(err)
 	}
