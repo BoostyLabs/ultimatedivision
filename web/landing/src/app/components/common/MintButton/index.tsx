@@ -5,13 +5,8 @@ import React, { useState } from 'react';
 
 import MetaMaskOnboarding from '@metamask/onboarding';
 
-import './index.scss';
 
-declare global {
-    interface Window {
-        ethereum: any;
-    }
-}
+import './index.scss';
 
 export const MintButton: React.FC = () => {
     const onboarding = React.useRef<MetaMaskOnboarding>();
