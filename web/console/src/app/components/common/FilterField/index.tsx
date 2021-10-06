@@ -15,11 +15,17 @@ import eye
     from '@static/img/FilterField/eye.svg';
 import parametres
     from '@static/img/FilterField/parametres.svg';
+import filters
+    from '@static/img/MarketPlacePage/filter_icon.svg';
 
 import './index.scss';
+import { AnyAction, Dispatch } from 'redux';
 import { FilterFieldDropdown } from './FilterFieldDropdown';
 
-export const FilterField: React.FC<{ title: string }> = ({ title }) => {
+export const FilterField: React.FC<{
+    title: string;
+    thunk: (lowRange: string, topRange: string) => (dispatch: Dispatch<AnyAction>) => Promise<void>;
+}> = ({ title, thunk }) => {
     const [searchData, setSearchData] = useState('');
 
     /** Class for each filter field item */
@@ -58,6 +64,16 @@ export const FilterField: React.FC<{ title: string }> = ({ title }) => {
                 {title}
             </h1>
             <div className="filter-field__wrapper">
+                <div className="filter-field__use-filters">
+                    <img
+                        className="filter-field__use-filters__picture"
+                        src={filters}
+                        alt="use fitlers"
+                    />
+                    <span className="filter-field__use-filters__title">
+                        Use filters
+                    </span>
+                </div>
                 <ul className="filter-field__list">
                     <li className="filter-field__list__item">
                         <img

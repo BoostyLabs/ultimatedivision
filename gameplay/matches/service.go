@@ -61,17 +61,17 @@ func (service *Service) Play(ctx context.Context, matchID uuid.UUID, squadCards1
 	squadPowerAccuracy := service.config.SquadPowerAccuracy
 
 	goalProbabilityByPosition := map[clubs.Position]int{
-		clubs.ST:  service.config.GoalProbabilityByPosition.ST,
-		clubs.RW:  service.config.GoalProbabilityByPosition.RW,
-		clubs.LW:  service.config.GoalProbabilityByPosition.LW,
-		clubs.CAM: service.config.GoalProbabilityByPosition.CAM,
-		clubs.CM:  service.config.GoalProbabilityByPosition.CM,
-		clubs.RM:  service.config.GoalProbabilityByPosition.RM,
-		clubs.LM:  service.config.GoalProbabilityByPosition.LM,
-		clubs.CDM: service.config.GoalProbabilityByPosition.CDM,
-		clubs.CD:  service.config.GoalProbabilityByPosition.CD,
-		clubs.LB:  service.config.GoalProbabilityByPosition.LB,
-		clubs.RB:  service.config.GoalProbabilityByPosition.RB,
+		clubs.CST:  service.config.GoalProbabilityByPosition.ST,
+		clubs.RW:   service.config.GoalProbabilityByPosition.RW,
+		clubs.LW:   service.config.GoalProbabilityByPosition.LW,
+		clubs.CCAM: service.config.GoalProbabilityByPosition.CAM,
+		clubs.CCM:  service.config.GoalProbabilityByPosition.CM,
+		clubs.RM:   service.config.GoalProbabilityByPosition.RM,
+		clubs.LM:   service.config.GoalProbabilityByPosition.LM,
+		clubs.CCDM: service.config.GoalProbabilityByPosition.CDM,
+		clubs.CCD:  service.config.GoalProbabilityByPosition.CD,
+		clubs.LB:   service.config.GoalProbabilityByPosition.LB,
+		clubs.RB:   service.config.GoalProbabilityByPosition.RB,
 	}
 
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -117,9 +117,9 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 	// TODO: refactor positions.
 
 	switch {
-	case randNumber > 0 && randNumber <= goalByPosition[clubs.ST]:
+	case randNumber > 0 && randNumber <= goalByPosition[clubs.CST]:
 		for _, card := range squadCards {
-			if card.Position == clubs.ST {
+			if card.Position == clubs.CST || card.Position == clubs.LST || card.Position == clubs.RST  {
 				cardsByPosition = append(cardsByPosition, card.CardID)
 			}
 		}
@@ -129,11 +129,13 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 		}
 
 		fallthrough
-	case randNumber > goalByPosition[clubs.ST] &&
-		randNumber < goalByPosition[clubs.ST]+goalByPosition[clubs.RW]:
+	case randNumber > goalByPosition[clubs.CST] &&
+		randNumber < goalByPosition[clubs.CST]+goalByPosition[clubs.RW]:
 		for _, card := range squadCards {
 			if card.Position == clubs.RW || card.Position == clubs.LW ||
-				card.Position == clubs.CM || card.Position == clubs.CAM {
+				card.Position == clubs.CCM || card.Position == clubs.CCAM ||
+				card.Position == clubs.LCM || card.Position == clubs.LCAM ||
+			    card.Position == clubs.RCM || card.Position == clubs.RCAM{
 				cardsByPosition = append(cardsByPosition, card.CardID)
 			}
 		}
@@ -143,11 +145,13 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 		}
 
 		fallthrough
-	case randNumber > goalByPosition[clubs.ST]+goalByPosition[clubs.RW] &&
-		randNumber < 100-goalByPosition[clubs.CD]:
+	case randNumber > goalByPosition[clubs.CST]+goalByPosition[clubs.RW] &&
+		randNumber < 100-goalByPosition[clubs.CCD]:
 		for _, card := range squadCards {
 			if card.Position == clubs.RM || card.Position == clubs.LM ||
-				card.Position == clubs.CDM || card.Position == clubs.CAM {
+				card.Position == clubs.CCDM || card.Position == clubs.CCAM ||
+				card.Position == clubs.LCDM || card.Position == clubs.LCAM ||
+				card.Position == clubs.RCDM || card.Position == clubs.RCAM {
 				cardsByPosition = append(cardsByPosition, card.CardID)
 			}
 		}
@@ -157,9 +161,10 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 		}
 
 		fallthrough
-	case randNumber >= 100-goalByPosition[clubs.CD] && randNumber < 100:
+	case randNumber >= 100-goalByPosition[clubs.CCD] && randNumber < 100:
 		for _, card := range squadCards {
-			if card.Position == clubs.CD || card.Position == clubs.LB ||
+			if card.Position == clubs.CCD || card.Position == clubs.LCD ||
+			   card.Position == clubs.LB || card.Position == clubs.RCD ||
 				card.Position == clubs.RB {
 				cardsByPosition = append(cardsByPosition, card.CardID)
 			}

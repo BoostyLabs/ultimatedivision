@@ -1,0 +1,213 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
+@import "@/index.scss";
+
+.footballer-card-price {
+    width: 90%;
+    margin: 5% 5% 0 auto;
+    border-radius: 15px;
+    padding: 1px;
+    background: linear-gradient(0deg, rgb(40, 40, 70), rgb(89, 89, 148));
+
+    &__wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 24px 4%;
+        background: $highlightBackground;
+        border-radius: 15px;
+    }
+
+    &__diagram {
+        width: 160px;
+        height: 160px;
+        display: flex;
+        position: relative;
+        margin: 0;
+        padding: 1px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    &__diagram-value {
+        position: absolute;
+        top: calc(50% - 10px);
+        text-align: center;
+        font-weight: lighter;
+        font-size: 24px;
+    }
+
+    &__diagram-value-quantity {
+        color: $textColor;
+    }
+
+    &__info-area {
+        width: 90%;
+        position: relative;
+        margin: 5%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__price {
+        display: flex;
+        align-items: center;
+        font-size: 64px;
+        font-weight: 100;
+        margin-bottom: 30px;
+
+        &:after {
+            @extend %pseudoelementsInFootballerCard;
+
+            width: 90%;
+            top: 60%;
+            margin-left: 0;
+        }
+    }
+
+    &__price-currency {
+        margin-left: 8px;
+    }
+
+    &__additional-info {
+        width: 70%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+    }
+
+    &__value {
+        color: $textColor;
+    }
+}
+
+@media screen and (max-width: $desktopBreakPoint) {
+
+    .footballer-card-price {
+
+        &__price {
+            font-size: 48px;
+        }
+
+        &__additional-info {
+            width: 80%;
+            padding-left: 4px;
+            font-size: 18px;
+            text-align: center;
+        }
+    }
+}
+
+@media screen and (max-width: $tabletBreakPoint) {
+
+    .footballer-card-price {
+
+        &__diagram {
+            width: 120px;
+            height: 120px;
+        }
+
+        &__diagram-value {
+            top: calc(50% - 5px);
+            font-size: 20px;
+        }
+
+        &__price {
+            font-size: 32px;
+
+            &:after {
+                width: 90%;
+                top: 50%;
+                margin-left: 0;
+            }
+        }
+
+        &__additional-info {
+            width: 90%;
+            padding-left: 4px;
+            font-size: 12px;
+            text-align: center;
+
+            div {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint) {
+
+    .footballer-card-price {
+        position: absolute;
+        margin: -1250px 5% 0 5%;
+        border: none;
+        background: none;
+
+        &__wrapper {
+            background: none;
+        }
+
+        &__info-area {
+            align-items: center;
+        }
+
+        &__diagram {
+            width: 224px;
+            height: 224px;
+        }
+
+        &__diagram-value {
+            top: calc(50% - 10px);
+            font-size: 34.9091px;
+            line-height: 42px;
+        }
+
+        &__price {
+            font-size: 64px;
+            line-height: 77px;
+
+            &:after {
+                width: 70%;
+                top: 50%;
+                margin: auto;
+            }
+        }
+
+        &__additional-info {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding-left: 0;
+            font-size: 24px;
+            line-height: 29px;
+            gap: 10px;
+
+            div {
+                display: flex;
+                flex-direction: row;
+
+                span {
+                    padding-left: 5px;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint - 100px) {
+
+    .footballer-card-price {
+        margin: -1100px 5% auto 5%;
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint - 200px) {
+
+    .footballer-card-price {
+        margin: -1050px 5% auto 5%;
+    }
+}
