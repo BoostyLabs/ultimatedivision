@@ -2,7 +2,6 @@
 // See LICENSE for copying information.
 
 import { Card } from '@/card';
-
 import { Radar } from 'react-chartjs-2';
 
 import './index.scss';
