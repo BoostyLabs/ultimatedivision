@@ -14,7 +14,7 @@ import (
 var ErrNoAvatar = errs.Class("avatar does not exist")
 
 // ErrNoAvatarFile indicated that avatar does not exist.
-var ErrNoAvatarFile = errs.Class("avatar does not exist")
+var ErrNoAvatarFile = errs.Class("avatar's file does not exist")
 
 // DB is exposing access to avatars db.
 //
