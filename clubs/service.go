@@ -233,15 +233,31 @@ func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squad
 			effectiveness += cardsFromSquad[index].EfficientGK()
 		case LB:
 			effectiveness += cardsFromSquad[index].EfficientLB()
-		case CD:
+		case CCD:
+			effectiveness += cardsFromSquad[index].EfficientCD()
+		case LCD:
+			effectiveness += cardsFromSquad[index].EfficientCD()
+		case RCD:
 			effectiveness += cardsFromSquad[index].EfficientCD()
 		case RB:
 			effectiveness += cardsFromSquad[index].EfficientLB()
-		case CDM:
+		case CCDM:
 			effectiveness += cardsFromSquad[index].EfficientCDM()
-		case CM:
+		case LCDM:
+			effectiveness += cardsFromSquad[index].EfficientCDM()
+		case RCDM:
+			effectiveness += cardsFromSquad[index].EfficientCDM()
+		case CCM:
 			effectiveness += cardsFromSquad[index].EfficientCM()
-		case CAM:
+		case LCM:
+			effectiveness += cardsFromSquad[index].EfficientCM()
+		case RCM:
+			effectiveness += cardsFromSquad[index].EfficientCM()
+		case CCAM:
+			effectiveness += cardsFromSquad[index].EfficientCAM()
+		case LCAM:
+			effectiveness += cardsFromSquad[index].EfficientCAM()
+		case RCAM:
 			effectiveness += cardsFromSquad[index].EfficientCAM()
 		case LM:
 			effectiveness += cardsFromSquad[index].EfficientLM()
@@ -251,7 +267,11 @@ func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squad
 			effectiveness += cardsFromSquad[index].EfficientLW()
 		case RW:
 			effectiveness += cardsFromSquad[index].EfficientLW()
-		case ST:
+		case CST:
+			effectiveness += cardsFromSquad[index].EfficientST()
+		case RST:
+			effectiveness += cardsFromSquad[index].EfficientST()
+		case LST:
 			effectiveness += cardsFromSquad[index].EfficientST()
 		}
 	}
