@@ -13,6 +13,11 @@
     text-align: center;
     justify-content: space-between;
 
+    a {
+        z-index: 5;
+        margin-left: 5%;
+    }
+
     &__dropdown {
         display: none;
     }
@@ -25,7 +30,7 @@
     }
 
     &__logo {
-        margin-left: 5%;
+        margin-left: 0%;
     }
 
     &__item {
