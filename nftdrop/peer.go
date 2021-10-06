@@ -13,15 +13,12 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/landing/landingserver"
-	"ultimatedivision/nftdrop/whitelist"
 )
 
 // DB provides access to all databases and database related functionality.
 //
 // architecture: Master Database.
 type DB interface {
-	// Whitelist provides access to whitelist db.
-	Whitelist() whitelist.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -43,11 +40,6 @@ type Peer struct {
 	Log      logger.Logger
 	Database DB
 
-	// exposes whitelist related logic.
-	Whitelist struct {
-		Service *whitelist.Service
-	}
-
 	// Landing web server with web UI.
 	Landing struct {
 		Listener net.Listener
@@ -68,6 +60,11 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			return nil, err
 		}
 
+		peer.Landing.Endpoint = landingserver.NewServer(
+			config.Landing.Server,
+			logger,
+			peer.Landing.Listener,
+		)
 	}
 
 	return peer, nil
