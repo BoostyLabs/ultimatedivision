@@ -29,20 +29,23 @@ export const MintButton: React.FC = () => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 const request = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
                 setButtonText('Connected');
-                return request
+
+                return request;
             } catch (error: any) {
                 handleError(true);
                 console.log(error.message);
+
                 setTimeout(() => {
-                    handleError(false)
+                    handleError(false);
                 }, 5000);
             }
 
         } else {
             onboarding.current?.startOnboarding();
         }
-    }
+    };
 
     return (
         <button className="ultimatedivision-mint-btn"
@@ -52,8 +55,8 @@ export const MintButton: React.FC = () => {
             onClick={connect}
         >
             {
-                connectError &&
-                <span className="error">Please open metamask manually!</span>
+                connectError
+                && <span className="error">Please open metamask manually!</span>
             }
             <span className="ultimatedivision-mint-btn__text">{text}</span>
         </button>

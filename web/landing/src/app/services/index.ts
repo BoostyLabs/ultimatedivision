@@ -11,8 +11,6 @@ export class Service {
         this.provider = ethereumProvider;
     }
 
-
-
     public async sendTransaction(adress: string, amount: string) {
         try {
             const signer = this.provider.getSigner();
