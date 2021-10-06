@@ -56,7 +56,7 @@ func (controller *Avatars) Get(w http.ResponseWriter, r *http.Request) {
 
 	avatar, err := controller.avatars.Get(ctx, cardID)
 	if err != nil {
-		controller.log.Error("could not get avatars by card id", ErrAvatars.Wrap(err))
+		controller.log.Error("could not get avatar by card id", ErrAvatars.Wrap(err))
 		switch {
 		case avatars.ErrNoAvatar.Has(err):
 			http.Error(w, err.Error(), http.StatusNotFound)
