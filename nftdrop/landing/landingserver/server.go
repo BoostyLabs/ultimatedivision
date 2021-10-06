@@ -16,7 +16,6 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/nftdrop/whitelist"
 )
 
 var (
@@ -46,7 +45,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for nftdrop web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, whitelist *whitelist.Service) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener) *Server {
 	server := &Server{
 		log:      log,
 		config:   config,
