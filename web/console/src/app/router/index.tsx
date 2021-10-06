@@ -2,11 +2,12 @@
 // See LICENSE for copying information.
 
 import { lazy } from 'react';
-import { Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
 const Club = lazy(() => import('@/app/views/ClubPage'));
-const FootballerCard = lazy(() => import('@/app/views/FootballerCardPage'));
+const Card = lazy(() => import('@/app/views/CardPage'));
+const Lot = lazy(() => import('@/app/views/LotPage'));
 const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
 const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
 const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
@@ -29,29 +30,22 @@ export class ComponentRoutes {
         public component: React.FC<any>,
         public exact: boolean,
         public children?: ComponentRoutes[]
-    ) { }
+    ) {}
     /** Method for creating child subroutes path */
-    public with(child: ComponentRoutes, parrent: ComponentRoutes): ComponentRoutes {
+    public with(
+        child: ComponentRoutes,
+        parrent: ComponentRoutes
+    ): ComponentRoutes {
         child.path = `${parrent.path}/${child.path}`;
 
         return this;
     }
     /** Call with method for each child */
     public addChildren(children: ComponentRoutes[]): ComponentRoutes {
-        this.children = children.map(item => item.with(item, this));
+        this.children = children.map((item) => item.with(item, this));
 
         return this;
     }
-};
-
-/** interfafe fot AboutPage subroutes */
-interface RouteItem {
-    path: string;
-    component: React.FC<any>;
-    exact: boolean;
-    children?: ComponentRoutes[];
-    with?: (child: ComponentRoutes, parrent: ComponentRoutes) => ComponentRoutes;
-    addChildren?: (children: ComponentRoutes[]) => ComponentRoutes;
 }
 
 /** Route config implementation */
@@ -59,27 +53,32 @@ export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
         '/marketplace',
         MarketPlace,
-        true,
+        true
     );
-    public static FootballerCard: ComponentRoutes = new ComponentRoutes(
-        '/card',
-        FootballerCard,
-        true,
+    public static Lot: ComponentRoutes = new ComponentRoutes(
+        '/lot/:id',
+        Lot,
+        true
+    );
+    public static Card: ComponentRoutes = new ComponentRoutes(
+        '/card/:id',
+        Card,
+        false
     );
     public static FootballField: ComponentRoutes = new ComponentRoutes(
         '/field',
         FootballField,
-        true,
+        true
     );
     public static Store: ComponentRoutes = new ComponentRoutes(
         '/store',
         Store,
-        true,
+        true
     );
     public static Club: ComponentRoutes = new ComponentRoutes(
         '/club',
         Club,
-        true,
+        true
     );
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
         '/whitepaper',
@@ -134,14 +133,15 @@ export class RouteConfig {
     public static Default: ComponentRoutes = new ComponentRoutes(
         '/',
         MarketPlace,
-        true,
+        true
     );
     public static routes: ComponentRoutes[] = [
         RouteConfig.Default,
         RouteConfig.FootballField,
         RouteConfig.MarketPlace,
         RouteConfig.Club,
-        RouteConfig.FootballerCard,
+        RouteConfig.Card,
+        RouteConfig.Lot,
         RouteConfig.Store,
         RouteConfig.Whitepaper.addChildren([
             RouteConfig.Summary,
@@ -156,12 +156,7 @@ export class RouteConfig {
             RouteConfig.Fund,
         ]),
     ];
-};
-
-export const Route: React.FC<RouteItem> = ({
-    component: Component,
-    ...children
-}) => <Component {...children} />;
+}
 
 export const Routes = () =>
     <Switch>
@@ -171,7 +166,7 @@ export const Routes = () =>
                 path={route.path}
                 component={route.component}
                 exact={route.exact}
-                children={route.children}
             />
         )}
     </Switch>;
+
