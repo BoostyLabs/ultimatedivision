@@ -3,7 +3,7 @@
 
 declare global {
     interface Window {
-        ethereum: {request: ({method: string}) => {}};
+        ethereum: {request: ({}) => {}};
     }
 }
 
