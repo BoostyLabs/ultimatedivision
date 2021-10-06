@@ -7,6 +7,8 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
 
@@ -45,6 +47,18 @@ func New(databaseURL string) (ultimatedivision.DB, error) {
 	}
 
 	return &database{conn: conn}, nil
+}
+
+// Hub entity describes hub of queue for clients.
+type Hub struct {
+	Queue map[uuid.UUID]*websocket.Conn
+}
+
+// NewHub is a constructor for hub entity.
+func NewHub() *Hub {
+	return &Hub{
+		Queue: make(map[uuid.UUID]*websocket.Conn),
+	}
 }
 
 // CreateSchema create schema for all tables and databases.
@@ -247,5 +261,5 @@ func (db *database) Matches() matches.DB {
 
 // Queue provided access to accounts db.
 func (db *database) Queue() queue.DB {
-	return &queueDB{conn: db.conn}
+	return &queueHub{hub: NewHub()}
 }

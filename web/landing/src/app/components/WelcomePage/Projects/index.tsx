@@ -19,7 +19,13 @@ import bloom from '@static/images/Projects/bloom.png';
 import './index.scss';
 
 export const Projects: React.FC = () => {
-    const logoList = [
+    useEffect(() => {
+        Aos.init({
+            duration: 1500
+        });
+    }, []);
+
+    const logos = [
         consensys,
         nem,
         storj,
@@ -30,35 +36,36 @@ export const Projects: React.FC = () => {
         bloom,
     ];
 
-    useEffect(() => {
-        Aos.init({
-            duration: 1500
-        });
-    }, []);
-
     return (
         <section className="projects">
             <div className="projects__wrapper">
+
                 <h2 className="projects__title" data-aos="fade-left">
                     The game was created by a team involved in the development
                     of well-know crypto projects
                 </h2>
                 <div className="projects__area">
-                    {logoList.map((logo) => (
-                        <img
-                            key={logoList.indexOf(logo)}
-                            src={logo}
-                            alt="logo"
-                            className="projects__area-item"
+                    {logos.map((logo, index) => (
+                        <div
+                            key={index}
                             data-aos={
-                                dataAosLogoAnimation(logoList.indexOf(logo))
+                                dataAosLogoAnimation(index)
                             }
                             data-aos-delay={
-                                aosDelayLogoAnimation(logoList.indexOf(logo))
+                                aosDelayLogoAnimation(index)
                             }
                             data-aos-duration={500}
                             data-aos-easing="ease-in-out-cubic"
-                        />
+                            className="projects__area__item"
+                        >
+                            <img
+                                className="projects__area__item__logo"
+                                key={index}
+                                src={logo}
+                                alt="logo"
+                            />
+                        </div>
+
                     ))}
                 </div>
             </div>

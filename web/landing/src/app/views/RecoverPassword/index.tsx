@@ -1,19 +1,47 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { UserClient } from '@/api/user';
+import { UserService } from '@/user/service';
 import { Validator } from '@/user/validation';
+
+import { useQueryToken } from '@/app/hooks/useQueryToken';
+
+import { recoverUserPassword } from '@/app/store/actions/users';
 
 import { UserDataArea } from '@components/common/UserDataArea';
 
-import ultimate from '@static/images/registerPage/ultimate_recover.svg';
+import ultimate from '@static/images/registerPage/ultimate.svg';
 
 import './index.scss';
 
 const RecoverPassword: React.FC = () => {
+    useEffect(() => {
+        checkRecoverToken();
+    }, []);
+
     const dispatch = useDispatch();
+    const token = useQueryToken();
+
+    const [errorMessage, setErrorMessage]
+        = useState<SetStateAction<null | string>>(null);
+
+    const userClient = new UserClient();
+    const users = new UserService(userClient);
+
+    /** catches error if token is not valid */
+    async function checkRecoverToken() {
+        try {
+            await users.checkRecoverToken(token);
+        } catch (error: any) {
+            /** TODO: handles error */
+            setErrorMessage('Cannot get access');
+        };
+    };
+
     /** controlled values for form inputs */
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError]
@@ -31,7 +59,7 @@ const RecoverPassword: React.FC = () => {
         };
 
         if (!Validator.password(confirmedPassword)) {
-            setConfirmedPassword('Confirmed password is not valid');
+            setConfirmedPasswordError('Confirmed password is not valid');
             isValidForm = false;
         };
 
@@ -39,6 +67,7 @@ const RecoverPassword: React.FC = () => {
             setConfirmedPasswordError('Passwords does not match, please try again');
             isValidForm = false;
         }
+
         return isValidForm;
     };
 
@@ -50,7 +79,7 @@ const RecoverPassword: React.FC = () => {
             return;
         };
 
-        /** TODO: implements dispatch logic */
+        dispatch(recoverUserPassword(password));
 
     };
     /** user datas for recover password */
@@ -58,22 +87,28 @@ const RecoverPassword: React.FC = () => {
         {
             value: password,
             placeHolder: 'Enter a new password',
-            handleChange: setPassword,
+            onChange: setPassword,
             className: 'register__recover__sign-form__password',
             type: 'password',
             error: passwordError,
             clearError: setPasswordError,
+            validate: Validator.password,
         },
         {
             value: confirmedPassword,
             placeHolder: 'Enter a new password again',
-            handleChange: setConfirmedPassword,
+            onChange: setConfirmedPassword,
             className: 'register__recover__sign-form__password',
             type: 'password',
             error: confirmedPasswordError,
             clearError: setConfirmedPasswordError,
+            validate: Validator.password,
         },
     ];
+
+    if (errorMessage) {
+        return <h1>{errorMessage}</h1>;
+    };
 
     return (
         <div className="register">
@@ -81,11 +116,11 @@ const RecoverPassword: React.FC = () => {
                 <img
                     src={ultimate}
                     alt="utlimate division logo"
-                    className="register__represent-reset__ultimate-recover"
+                    className="register__represent-reset__ultimate"
                 />
             </div>
             <div className="register__recover">
-                <h1 className="register__recover__title">RECOVER PASSWORD</h1>
+                <h1 className="register__recover__title">Recover password</h1>
                 <form
                     className="register__recover__sign-form"
                     onSubmit={handleSubmit}
@@ -95,16 +130,17 @@ const RecoverPassword: React.FC = () => {
                             key={index}
                             value={password.value}
                             placeHolder={password.placeHolder}
-                            handleChange={password.handleChange}
+                            onChange={password.onChange}
                             className={password.className}
                             type={password.type}
                             error={password.error}
                             clearError={password.clearError}
+                            validate={password.validate}
                         />;
                     })}
                     <input
                         className="register__recover__sign-form__confirm"
-                        value="RECOVER PASSWORD"
+                        value="RECOVER YOUR PASSWORD"
                         type="submit"
                     />
                 </form>
