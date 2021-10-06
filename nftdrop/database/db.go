@@ -44,9 +44,9 @@ func New(databaseURL string) (nftdrop.DB, error) {
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
 		`CREATE TABLE IF NOT EXISTS whitelist (
-            address  VARCHAR PRIMARY KEY NOT NULL,
-            password BYTEA               NOT NULL
-        );`
+			address  VARCHAR PRIMARY KEY NOT NULL,
+			password BYTEA               NOT NULL
+		);`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
 	if err != nil {
