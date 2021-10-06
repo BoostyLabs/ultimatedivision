@@ -14,7 +14,7 @@ import (
 var ErrNoAvatar = errs.Class("avatar does not exist")
 
 // ErrNoAvatarFile indicated that avatar does not exist.
-var ErrNoAvatarFile = errs.Class("avatar does not exist")
+var ErrNoAvatarFile = errs.Class("avatar's file does not exist")
 
 // DB is exposing access to avatars db.
 //
@@ -34,6 +34,7 @@ type Avatar struct {
 	FaceType       int         `json:"faceType"`
 	EyeBrowsType   int         `json:"eyeBrowsType"`
 	EyeBrowsColor  int         `json:"eyeBrowsColor"`
+	EyeLaserType   int         `json:"eyeLaserType"`
 	HairstyleColor int         `json:"hairstyleColor"`
 	HairstyleType  int         `json:"hairstyleType"`
 	Nose           int         `json:"nose"`
@@ -52,7 +53,7 @@ const (
 	PictureTypeFirst PictureType = 1
 )
 
-// PictureType defines the list of possible type of avatar image.
+// TypeImage defines the list of possible type of avatar image.
 type TypeImage string
 
 const (
@@ -77,6 +78,10 @@ type Config struct {
 	EyeBrowsFolder     string `json:"eyeBrowsFolder"`
 	EyeBrowsTypeFolder string `json:"eyeBrowsTypeFolder"`
 	EyeBrowsColorFile  string `json:"eyeBrowsColorFile"`
+
+	EyeLaserFolder     string `json:"eyeLaserFolder"`
+	EyeLaserTypeFolder string `json:"eyeLaserTypeFolder"`
+	EyeLaserTypeFile   string `json:"eyeLaserTypeFile"`
 
 	HairstyleFolder      string `json:"hairstyleFolder"`
 	HairstyleColorFolder string `json:"hairstyleColorFolder"`

@@ -85,6 +85,13 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, isTattoo b
 		return Avatar{}, ErrAvatar.New("search random number in %s, error - %s", nameFile, err)
 	}
 
+	// EyeLaserType
+	pathToEyeLaserType := pathToFaceType + "/" + service.config.EyeLaserFolder
+	nameFile = service.config.EyeLaserTypeFolder
+	if avatar.EyeBrowsType, err = randomNumber(pathToEyeLaserType, nameFile); err != nil {
+		return Avatar{}, ErrAvatar.New("search random number in %s, error - %s", nameFile, err)
+	}
+
 	if (rand.Intn(99) + 1) <= service.config.PercentageFacialFeatures.Hairstyle {
 		// HairstylesColor
 		pathToHairstylesColor := pathToFaceType + "/" + service.config.HairstyleFolder
@@ -178,7 +185,7 @@ func searchCountFiles(pathToAvararsCPathToAvararsComponents, nameFile string) (i
 // generateAvatar generates a common avatar from different layers of photos.
 func (avatar *Avatar) generateAvatar(config Config) (string, error) {
 	var (
-		faceTypeLayer, tattooLayer, eyeBrowsLayer, hairstylesLayer, noseLayer, beardLayer, lipsLayer, tshirtLayer image.Image
+		faceTypeLayer, tattooLayer, eyeBrowsLayer, eyeLaserLayer, hairstylesLayer, noseLayer, beardLayer, lipsLayer, tshirtLayer image.Image
 	)
 
 	// FaceColor
@@ -230,6 +237,21 @@ func (avatar *Avatar) generateAvatar(config Config) (string, error) {
 	}
 	defer func() {
 		err = errs.Combine(err, ErrAvatar.Wrap(eyeBrowsFile.Close()))
+	}()
+
+	// EyeLaser
+	pathToEyeLaser := pathToFaceType + "/" + config.EyeLaserFolder + "/" + fmt.Sprintf(config.EyeLaserTypeFolder, avatar.EyeLaserType)
+	nameEyeLaserTypeFile := fmt.Sprintf(config.EyeLaserTypeFile, avatar.EyeLaserType)
+	eyeLaserFile, err := os.Open(pathToEyeLaser + "/" + nameEyeLaserTypeFile)
+	if err != nil {
+		return "", ErrNoAvatarFile.New("generate avatar with %s, error - %s", nameEyeLaserTypeFile, err)
+	}
+	eyeLaserLayer, err = png.Decode(eyeLaserFile)
+	if err != nil {
+		return "", ErrAvatar.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, ErrAvatar.Wrap(eyeLaserFile.Close()))
 	}()
 
 	// Hairstyles
@@ -327,6 +349,7 @@ func (avatar *Avatar) generateAvatar(config Config) (string, error) {
 		draw.Draw(baseImage, beardLayer.Bounds(), beardLayer, image.Point{}, draw.Over)
 	}
 	draw.Draw(baseImage, tshirtLayer.Bounds(), tshirtLayer, image.Point{}, draw.Over)
+	draw.Draw(baseImage, eyeLaserLayer.Bounds(), eyeLaserLayer, image.Point{}, draw.Over)
 
 	if err = saveImage(config.PathToOutputAvatars, avatar.CardID, baseImage); err != nil {
 		return "", ErrAvatar.Wrap(err)
