@@ -88,7 +88,7 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, isTattoo b
 	// EyeLaserType
 	pathToEyeLaserType := pathToFaceType + "/" + service.config.EyeLaserFolder
 	nameFile = service.config.EyeLaserTypeFolder
-	if avatar.EyeBrowsType, err = randomNumber(pathToEyeLaserType, nameFile); err != nil {
+	if avatar.EyeLaserType, err = randomNumber(pathToEyeLaserType, nameFile); err != nil {
 		return Avatar{}, ErrAvatar.New("search random number in %s, error - %s", nameFile, err)
 	}
 
