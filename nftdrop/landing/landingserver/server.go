@@ -16,6 +16,8 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/nftdrop/landing/landingserver/controllers"
+	"ultimatedivision/nftdrop/whitelist"
 )
 
 var (
@@ -45,14 +47,21 @@ type Server struct {
 }
 
 // NewServer is a constructor for nftdrop web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, whitelist *whitelist.Service) *Server {
 	server := &Server{
 		log:      log,
 		config:   config,
 		listener: listener,
 	}
 
+	whitelistController := controllers.NewWhitelist(log, whitelist)
+
 	router := mux.NewRouter()
+	apiRouter := router.PathPrefix("/api/v0").Subrouter()
+
+	whitelistRouter := apiRouter.PathPrefix("/whitelist").Subrouter()
+	whitelistRouter.HandleFunc("", whitelistController.List).Methods(http.MethodGet)
+	whitelistRouter.HandleFunc("", whitelistController.Create).Methods(http.MethodPost)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
