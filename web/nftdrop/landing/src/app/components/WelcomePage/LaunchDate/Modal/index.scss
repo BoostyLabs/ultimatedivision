@@ -83,6 +83,8 @@
             font-size: 24px;
             padding: 5px 29px;
             color: white;
+            background-repeat: no-repeat;
+            background-position: 98% 50%;
 
             &__error {
                 position: absolute;
@@ -114,7 +116,11 @@
             line-height: 40px;
             margin-top: 10%;
             color: white;
-            background: linear-gradient(95.3deg, rgba(0, 0, 0, 0.2) 4.05%, rgba(0, 0, 0, 0) 87.48%),
+            background: linear-gradient(
+                95.3deg,
+                rgba(0, 0, 0, 0.2) 4.05%,
+                rgba(0, 0, 0, 0) 87.48%
+            ),
                 linear-gradient(0deg, #0df55c, #0df55c);
             cursor: pointer;
         }
