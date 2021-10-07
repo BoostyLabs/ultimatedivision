@@ -3,22 +3,19 @@
 
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
 import { RouteConfig } from '@/app/router';
-
 import { DropdownStyle } from '@/app/utils/dropdownStyle';
 import ultimate from '@static/img/Navbar/ultimate.svg';
 import triangle from '@static/img/FootballFieldPage/triangle.svg';
+
 import './index.scss';
 
 export const AboutMenu = () => {
     const [whitePaperVisibility, changeWhitePaperVisibility] = useState(false);
     const [tokenomicsVisibility, changeTokenomicsVisibility] = useState(false);
 
-    const LIST_HEIGHT = 130;
-
-    const whitePaperStyle = new DropdownStyle(whitePaperVisibility, LIST_HEIGHT);
-    const tokenomicsStyle = new DropdownStyle(tokenomicsVisibility, LIST_HEIGHT);
+    const whitePaperStyle = new DropdownStyle(whitePaperVisibility);
+    const tokenomicsStyle = new DropdownStyle(tokenomicsVisibility);
 
     const path = useLocation().pathname;
     const shouldBeShowed = path.includes('tokenomics') || path.includes('whitepaper');

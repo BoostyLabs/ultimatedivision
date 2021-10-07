@@ -30,52 +30,55 @@ export class ComponentRoutes {
         public component: React.FC<any>,
         public exact: boolean,
         public children?: ComponentRoutes[]
-    ) { }
+    ) {}
     /** Method for creating child subroutes path */
-    public with(child: ComponentRoutes, parrent: ComponentRoutes): ComponentRoutes {
+    public with(
+        child: ComponentRoutes,
+        parrent: ComponentRoutes
+    ): ComponentRoutes {
         child.path = `${parrent.path}/${child.path}`;
 
         return this;
     }
     /** Call with method for each child */
     public addChildren(children: ComponentRoutes[]): ComponentRoutes {
-        this.children = children.map(item => item.with(item, this));
+        this.children = children.map((item) => item.with(item, this));
 
         return this;
     }
-};
+}
 
 /** Route config implementation */
 export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
         '/marketplace',
         MarketPlace,
-        true,
+        true
     );
     public static Lot: ComponentRoutes = new ComponentRoutes(
         '/lot/:id',
         Lot,
-        true,
+        true
     );
     public static Card: ComponentRoutes = new ComponentRoutes(
         '/card/:id',
         Card,
-        false,
+        false
     );
     public static FootballField: ComponentRoutes = new ComponentRoutes(
         '/field',
         FootballField,
-        true,
+        true
     );
     public static Store: ComponentRoutes = new ComponentRoutes(
         '/store',
         Store,
-        true,
+        true
     );
     public static Club: ComponentRoutes = new ComponentRoutes(
         '/club',
         Club,
-        true,
+        true
     );
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
         '/whitepaper',
@@ -92,8 +95,8 @@ export class RouteConfig {
         Summary,
         true
     );
-    public static GameMechanick: ComponentRoutes = new ComponentRoutes(
-        'game-mechanicks',
+    public static GameMechanics: ComponentRoutes = new ComponentRoutes(
+        'game-mechanics',
         GameMechanics,
         true
     );
@@ -130,7 +133,7 @@ export class RouteConfig {
     public static Default: ComponentRoutes = new ComponentRoutes(
         '/',
         MarketPlace,
-        true,
+        true
     );
     public static routes: ComponentRoutes[] = [
         RouteConfig.Default,
@@ -142,7 +145,7 @@ export class RouteConfig {
         RouteConfig.Store,
         RouteConfig.Whitepaper.addChildren([
             RouteConfig.Summary,
-            RouteConfig.GameMechanick,
+            RouteConfig.GameMechanics,
             RouteConfig.PayToEarnEconomy,
             RouteConfig.Technology,
         ]),
@@ -153,7 +156,7 @@ export class RouteConfig {
             RouteConfig.Fund,
         ]),
     ];
-};
+}
 
 export const Routes = () =>
     <Switch>
@@ -166,3 +169,4 @@ export const Routes = () =>
             />
         )}
     </Switch>;
+

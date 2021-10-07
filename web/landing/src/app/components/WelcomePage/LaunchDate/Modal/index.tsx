@@ -13,11 +13,12 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
     handleModal
 }) => {
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError] =
-        useState<SetStateAction<null | string>>(null);
+    const [emailError, setEmailError]
+        = useState<SetStateAction<null | string>>(null);
     /** checks if value does't valid then set an error message */
     const validateForm: () => boolean = () => {
         let isValidForm = true;
+
         if (!Validator.email(email)) {
             setEmailError('Email is not valid');
             isValidForm = false;
@@ -40,23 +41,24 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
     const formValue = {
         value: email,
         placeHolder: 'Email',
-        handleChange: setEmail,
+        onChange: setEmail,
         className: 'launch-date-modal__notification__send',
         type: 'email',
         error: emailError,
         clearError: setEmailError,
+        validate: Validator.email,
     };
 
     return <div className="launch-date-modal">
-        <a
-            onClick={handleModal}
-            className="launch-date-modal__close"
-        >
-            <p className="launch-date-modal__close__text">
-                &#215;
-            </p>
-        </a>
         <div className="launch-date-modal__window">
+            <a
+                onClick={handleModal}
+                className="launch-date-modal__close"
+            >
+                <p className="launch-date-modal__close__text">
+                    &#215;
+                </p>
+            </a>
             <h1 className="launch-date-modal__description">
                 Get notified on the launch
             </h1>
@@ -65,7 +67,15 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
                     className="launch-date-modal__notification"
                     onSubmit={handleSubmit}
                 >
-                    <UserDataArea {...formValue} />
+                    <div className="launch-date-modal__input-wrapper">
+                        <label
+                            htmlFor={formValue.value}
+                            className="launch-date-modal__input-label"
+                        >
+                            Email
+                        </label>
+                        <UserDataArea {...formValue} />
+                    </div>
                     <input
                         value="SEND"
                         className="launch-date-modal__notification__confirm"
@@ -73,8 +83,7 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
                     />
                 </form>
             </div>
-            <div
-                className="launch-date-modal__wrapper"
+            <div className="launch-date-modal__wrapper"
             />
         </div>
     </div>;
