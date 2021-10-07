@@ -42,7 +42,8 @@ type Avatar struct {
 	Beard          int         `json:"beard"`
 	Lips           int         `json:"lips"`
 	Tattoo         int         `json:"tattoo"`
-	Image          string      `json:"image"`
+	OriginalURL    string      `json:"originalUrl"`
+	PreviewURL     string      `json:"previewUrl"`
 }
 
 // PictureType defines the list of possible type of picture.
@@ -51,14 +52,6 @@ type PictureType int
 const (
 	// PictureTypeFirst indicates the type of photo is the first.
 	PictureTypeFirst PictureType = 1
-)
-
-// TypeImage defines the list of possible type of avatar image.
-type TypeImage string
-
-const (
-	// TypeImagePNG indicates that the type image avatar is png.
-	TypeImagePNG = "png"
 )
 
 // Config defines values needed by generate avatars.
@@ -101,7 +94,31 @@ type Config struct {
 	TshirtFile   string `json:"tshirtFile"`
 
 	PercentageFacialFeatures struct {
+		EyeLaser  int `json:"eyeLaser"`
 		Hairstyle int `json:"hairstyle"`
 		Beard     int `json:"beard"`
 	} `json:"percentageFacialFeatures"`
+
+	SizePreviewImage struct {
+		Height int `json:"height"`
+		Width  int `json:"width"`
+	} `json:"sizePreviewImage"`
 }
+
+// TypeImage defines the list of possible type of avatar image.
+type TypeImage string
+
+const (
+	// TypeImagePNG indicates that the type image avatar is png.
+	TypeImagePNG = "png"
+)
+
+// FormatImage defines the list of possible format of avatar image.
+type FormatImage string
+
+const (
+	// FormatImageOriginal indicates that the format image avatar is original.
+	FormatImageOriginal = "original"
+	// FormatImagePreview indicates that the format image avatar is preview.
+	FormatImagePreview = "preview"
+)

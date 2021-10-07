@@ -187,8 +187,11 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		return card, ErrCards.Wrap(err)
 	}
 
-	card.Avatar, err = service.avatars.Create(ctx, card.ID, card.IsTattoo)
-	return card, ErrCards.Wrap(err)
+	if card.Avatar, err = service.avatars.GenerateAvatar(ctx, card.ID, card.IsTattoo); err != nil {
+		return card, ErrCards.Wrap(err)
+	}
+
+	return card, ErrCards.Wrap(service.avatars.Create(ctx, card.Avatar))
 }
 
 // searchValueByPercent search value string by percent.
