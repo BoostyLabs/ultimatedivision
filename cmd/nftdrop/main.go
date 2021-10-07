@@ -60,7 +60,7 @@ var (
 	setupCfg Config
 	runCfg   Config
 
-	defaultConfigDir = ApplicationDir(filepath.Join("ultimatedivision","nftdrop"))
+	defaultConfigDir = ApplicationDir(filepath.Join("ultimatedivision", "nftdrop"))
 )
 
 func init() {

@@ -40,52 +40,15 @@ func (controller *Whitelist) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 
-	var err error
-	var request whitelist.Request
-	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
+	var request whitelist.Whitelist
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrWhitelist.Wrap(err))
 		return
 	}
 
-	if isValid := request.ValidateAddress(); isValid != true {
-		controller.serveError(w, http.StatusBadRequest, ErrWhitelist.New("the address is not valid"))
-		return
-	}
-
-	if err = controller.whitelist.Create(ctx, request); err != nil {
+	if err := controller.whitelist.Create(ctx, request.Address); err != nil {
 		controller.log.Error("could not create whitelist", ErrWhitelist.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrWhitelist.Wrap(err))
-		return
-	}
-}
-
-// List is an endpoint that allows to view all whitelist.
-func (controller *Whitelist) List(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	w.Header().Set("Content-Type", "application/json")
-
-	whitelistRecords, err := controller.whitelist.List(ctx)
-	if err != nil {
-		controller.log.Error("could not list whitelist", ErrWhitelist.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrWhitelist.Wrap(err))
-		return
-	}
-
-	if err = json.NewEncoder(w).Encode(whitelistRecords); err != nil {
-		controller.log.Error("failed to write json response", ErrWhitelist.Wrap(err))
-		return
-	}
-}
-
-// RandomHash is an endpoint that returns random hash.
-func (controller *Whitelist) RandomHash(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	w.Header().Set("Content-Type", "application/json")
-
-	hash := controller.whitelist.ReturnHash(ctx)
-
-	if err := json.NewEncoder(w).Encode(hash); err != nil {
-		controller.log.Error("failed to write json response", ErrWhitelist.Wrap(err))
 		return
 	}
 }

@@ -30,7 +30,7 @@ func TestWhitelists(t *testing.T) {
 		repositoryWhitelist := db.Whitelist()
 
 		t.Run("get sql no rows", func(t *testing.T) {
-			_, err := repositoryWhitelist.Get(ctx, "address0")
+			_, err := repositoryWhitelist.GetByAddress(ctx, "address0")
 			require.Error(t, err)
 			assert.Equal(t, true, whitelist.ErrNoWhitelist.Has(err))
 		})
@@ -39,9 +39,9 @@ func TestWhitelists(t *testing.T) {
 			err := repositoryWhitelist.Create(ctx, whitelist1)
 			require.NoError(t, err)
 
-			whitelistFromDB, err := repositoryWhitelist.Get(ctx, whitelist1.Address)
+			whitelistFromDB, err := repositoryWhitelist.GetByAddress(ctx, string(whitelist1.Address))
 			require.NoError(t, err)
-			comparewhitelists(t, whitelist1, whitelistFromDB)
+			compareWhitelists(t, whitelist1, whitelistFromDB)
 		})
 
 		t.Run("list", func(t *testing.T) {
@@ -50,13 +50,21 @@ func TestWhitelists(t *testing.T) {
 
 			whitelistRecordsFromDB, err := repositoryWhitelist.List(ctx)
 			require.NoError(t, err)
-			comparewhitelists(t, whitelist1, whitelistRecordsFromDB[0])
-			comparewhitelists(t, whitelist2, whitelistRecordsFromDB[1])
+			compareWhitelists(t, whitelist1, whitelistRecordsFromDB[0])
+			compareWhitelists(t, whitelist2, whitelistRecordsFromDB[1])
+		})
+
+		t.Run("delete", func(t *testing.T) {
+			err := repositoryWhitelist.Delete(ctx, whitelist1.Address)
+			require.NoError(t, err)
+
+			err = repositoryWhitelist.Delete(ctx, whitelist2.Address)
+			require.NoError(t, err)
 		})
 	})
 }
 
-func comparewhitelists(t *testing.T, whitelist1, whitelist2 whitelist.Whitelist) {
+func compareWhitelists(t *testing.T, whitelist1, whitelist2 whitelist.Whitelist) {
 	assert.Equal(t, whitelist1.Address, whitelist2.Address)
 	assert.Equal(t, whitelist1.Password, whitelist2.Password)
 }

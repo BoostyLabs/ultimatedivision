@@ -10,13 +10,13 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	controllers2 "ultimatedivision/nftdrop/server/controllers"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/nftdrop/server/controllers"
 	"ultimatedivision/nftdrop/whitelist"
 )
 
@@ -54,15 +54,13 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, whitelis
 		listener: listener,
 	}
 
-	whitelistController := controllers2.NewWhitelist(log, whitelist)
+	whitelistController := controllers.NewWhitelist(log, whitelist)
 
 	router := mux.NewRouter()
 	apiRouter := router.PathPrefix("/api/v0").Subrouter()
 
 	whitelistRouter := apiRouter.PathPrefix("/whitelist").Subrouter()
-	whitelistRouter.HandleFunc("", whitelistController.List).Methods(http.MethodGet)
 	whitelistRouter.HandleFunc("", whitelistController.Create).Methods(http.MethodPost)
-	whitelistRouter.HandleFunc("/hash", whitelistController.RandomHash).Methods(http.MethodGet)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))

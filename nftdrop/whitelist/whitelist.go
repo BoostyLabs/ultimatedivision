@@ -5,8 +5,8 @@ package whitelist
 
 import (
 	"context"
-	"regexp"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/zeebo/errs"
 )
 
@@ -20,29 +20,26 @@ const RegularIsEthereumAddress = "^0x[0-9a-fA-F]{40}$"
 //
 // architecture: DB
 type DB interface {
-	// Create adds whitelist in the data base.
+	// Create adds whitelist in the database.
 	Create(ctx context.Context, whitelist Whitelist) error
-	// Get returns whitelist by address from the data base.
-	Get(ctx context.Context, address string) (Whitelist, error)
-	// List returns all whitelist from the data base.
+	// GetByAddress returns whitelist by address from the database.
+	GetByAddress(ctx context.Context, address string) (Whitelist, error)
+	// List returns all whitelist from the database.
 	List(ctx context.Context) ([]Whitelist, error)
+	// Delete deletes whitelist from the database.
+	Delete(ctx context.Context, address Address) error
 }
 
 // Whitelist describes whitelist entity.
 type Whitelist struct {
-	Address  string `json:"address"`
-	Password []byte `json:"password"`
+	Address  Address `json:"address"`
+	Password []byte  `json:"password"`
 }
 
-// Request entity describes request values for create whitelist.
-type Request struct {
-	Address string `json:"address"`
-	Signature string `json:"signature"`
-}
+// Address defines address of user's wallet.
+type Address string
 
 // ValidateAddress checks if the address is valid.
-func (w Request) ValidateAddress() bool {
-	// TODO: rework.
-	re := regexp.MustCompile(RegularIsEthereumAddress)
-	return re.MatchString(w.Address)
+func (address Address) ValidateAddress() bool {
+	return common.IsHexAddress(string(address))
 }

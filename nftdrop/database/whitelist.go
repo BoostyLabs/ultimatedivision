@@ -39,8 +39,8 @@ func (whitelistDB *whitelistDB) Create(ctx context.Context, whitelist whitelist.
 	return ErrWhitelist.Wrap(err)
 }
 
-// Get returns record whitelist by address from the data base.
-func (whitelistDB *whitelistDB) Get(ctx context.Context, address string) (whitelist.Whitelist, error) {
+// GetByAddress returns record whitelist by address from the data base.
+func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address string) (whitelist.Whitelist, error) {
 	whitelistRecord := whitelist.Whitelist{}
 	query :=
 		`SELECT
@@ -84,4 +84,14 @@ func (whitelistDB *whitelistDB) List(ctx context.Context) ([]whitelist.Whitelist
 	}
 
 	return whitelistRecords, ErrWhitelist.Wrap(rows.Err())
+}
+
+// Delete deletes whitelist from the database.
+func (whitelistDB *whitelistDB) Delete(ctx context.Context, address whitelist.Address) error {
+	query := `DELETE FROM whitelist
+              WHERE address = $1`
+
+	_, err := whitelistDB.conn.ExecContext(ctx, query, address)
+
+	return ErrWhitelist.Wrap(err)
 }
