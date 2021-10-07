@@ -23,21 +23,21 @@ export const MintButton: React.FC = () => {
 
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
-                const request = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
 
                 setButtonText('Connected');
 
-                return request;
             } catch (error: any) {
-                handleError(true);
                 console.log(error.message);
+                handleError(true);
 
                 setTimeout(() => {
                     handleError(false);
-                }, 5000);
+                }, 3000);
             }
 
         } else {
+            onboarding.current &&
             onboarding.current?.startOnboarding();
         }
     };
