@@ -38,7 +38,7 @@ func (service *Service) Create(ctx context.Context, address Address) error {
 }
 
 // GetByAddress returns whitelist by address from the database.
-func (service *Service) GetByAddress(ctx context.Context, address string) (Whitelist, error) {
+func (service *Service) GetByAddress(ctx context.Context, address Address) (Whitelist, error) {
 	whitelist, err := service.whitelist.GetByAddress(ctx, address)
 	return whitelist, ErrWhitelist.Wrap(err)
 }

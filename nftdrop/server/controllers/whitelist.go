@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
@@ -35,19 +36,26 @@ func NewWhitelist(log logger.Logger, whitelist *whitelist.Service) *Whitelist {
 	return whitelistController
 }
 
-// Create is an endpoint that allows to view details of whitelist.
-func (controller *Whitelist) Create(w http.ResponseWriter, r *http.Request) {
+// Get is an endpoint that returns password by wallet address.
+func (controller *Whitelist) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	address := whitelist.Address(params["address"])
 
-	var request whitelist.Whitelist
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrWhitelist.Wrap(err))
+	if !address.ValidateAddress() {
+		controller.serveError(w, http.StatusBadRequest, ErrWhitelist.New("invalid address"))
+	}
+
+	password, err := controller.whitelist.GetByAddress(ctx, address)
+	if err != nil {
+		controller.log.Error("could get password", ErrWhitelist.Wrap(err))
+		controller.serveError(w, http.StatusInternalServerError, ErrWhitelist.Wrap(err))
 		return
 	}
 
-	if err := controller.whitelist.Create(ctx, request.Address); err != nil {
-		controller.log.Error("could not create whitelist", ErrWhitelist.Wrap(err))
+	if err = json.NewEncoder(w).Encode(password); err != nil {
+		controller.log.Error("could not response with json", ErrWhitelist.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrWhitelist.Wrap(err))
 		return
 	}

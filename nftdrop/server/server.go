@@ -60,7 +60,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, whitelis
 	apiRouter := router.PathPrefix("/api/v0").Subrouter()
 
 	whitelistRouter := apiRouter.PathPrefix("/whitelist").Subrouter()
-	whitelistRouter.HandleFunc("", whitelistController.Create).Methods(http.MethodPost)
+	whitelistRouter.HandleFunc("/{address}", whitelistController.Get).Methods(http.MethodGet)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))

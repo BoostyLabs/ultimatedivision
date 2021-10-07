@@ -23,7 +23,7 @@ type DB interface {
 	// Create adds whitelist in the database.
 	Create(ctx context.Context, whitelist Whitelist) error
 	// GetByAddress returns whitelist by address from the database.
-	GetByAddress(ctx context.Context, address string) (Whitelist, error)
+	GetByAddress(ctx context.Context, address Address) (Whitelist, error)
 	// List returns all whitelist from the database.
 	List(ctx context.Context) ([]Whitelist, error)
 	// Delete deletes whitelist from the database.

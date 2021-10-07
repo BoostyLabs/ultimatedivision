@@ -40,7 +40,7 @@ func (whitelistDB *whitelistDB) Create(ctx context.Context, whitelist whitelist.
 }
 
 // GetByAddress returns record whitelist by address from the data base.
-func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address string) (whitelist.Whitelist, error) {
+func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitelist.Address) (whitelist.Whitelist, error) {
 	whitelistRecord := whitelist.Whitelist{}
 	query :=
 		`SELECT

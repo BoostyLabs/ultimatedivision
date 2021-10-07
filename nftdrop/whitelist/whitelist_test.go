@@ -39,7 +39,7 @@ func TestWhitelists(t *testing.T) {
 			err := repositoryWhitelist.Create(ctx, whitelist1)
 			require.NoError(t, err)
 
-			whitelistFromDB, err := repositoryWhitelist.GetByAddress(ctx, string(whitelist1.Address))
+			whitelistFromDB, err := repositoryWhitelist.GetByAddress(ctx, whitelist1.Address)
 			require.NoError(t, err)
 			compareWhitelists(t, whitelist1, whitelistFromDB)
 		})
