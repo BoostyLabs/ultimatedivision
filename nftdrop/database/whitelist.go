@@ -95,3 +95,43 @@ func (whitelistDB *whitelistDB) Delete(ctx context.Context, address whitelist.Ad
 
 	return ErrWhitelist.Wrap(err)
 }
+
+// Update updates a whitelists password in the data base.
+func (whitelistDB *whitelistDB) Update(ctx context.Context, whitelist whitelist.Whitelist) error {
+	query :=
+		`UPDATE whitelist 
+		SET password = $1
+		WHERE address = $2`
+
+	_, err := whitelistDB.conn.ExecContext(ctx, query, whitelist.Password, whitelist.Address)
+	return ErrWhitelist.Wrap(err)
+}
+
+// ListWithoutPassword returns all whitelist address from the data base.
+func (whitelistDB *whitelistDB) ListWithoutPassword(ctx context.Context) ([]whitelist.Whitelist, error) {
+	query :=
+		`SELECT
+			address
+		FROM 
+			whitelist
+		WHERE password IS NULL`
+
+	rows, err := whitelistDB.conn.QueryContext(ctx, query)
+	if err != nil {
+		return nil, ErrWhitelist.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, ErrWhitelist.Wrap(rows.Close()))
+	}()
+
+	whitelistRecords := []whitelist.Whitelist{}
+	for rows.Next() {
+		whitelistRecord := whitelist.Whitelist{}
+		if err = rows.Scan(&whitelistRecord.Address); err != nil {
+			return nil, ErrWhitelist.Wrap(err)
+		}
+		whitelistRecords = append(whitelistRecords, whitelistRecord)
+	}
+
+	return whitelistRecords, ErrWhitelist.Wrap(rows.Err())
+}
