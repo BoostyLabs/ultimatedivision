@@ -409,6 +409,11 @@ func (service *Service) EffectivenessST(card Card) float64 {
 		service.config.CardEfficiencyParameters.ST.Offence*float64(card.Offence)
 }
 
+// RemoveIndex for remove element from slice.
+func RemoveIndex(s []clubs.SquadCard, index int) []clubs.SquadCard {
+	return append(s[:index], s[index+1:]...)
+}
+
 // EffectiveCardForPosition determines the effective card in the position.
 func (service *Service) EffectiveCardForPosition(ctx context.Context, position clubs.Position, cards []clubs.SquadCard) (Card, error) {
 	cardCoefficients := make(map[float64]Card)
@@ -422,48 +427,40 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position c
 		case clubs.GK:
 			coefficient := service.EffectivenessGK(card)
 			cardCoefficients[coefficient] = card
-
 		case clubs.CST,
 			clubs.LST,
 			clubs.RST:
 			coefficient := service.EffectivenessST(card)
 			cardCoefficients[coefficient] = card
-
 		case clubs.LW,
 			clubs.RW:
 			coefficient := service.EffectivenessRWorLW(card)
 			cardCoefficients[coefficient] = card
-
 		case clubs.RM,
 			clubs.LM:
 			coefficient := service.EffectivenessRMorLM(card)
 			cardCoefficients[coefficient] = card
-
 		case clubs.CCAM,
 			clubs.RCAM,
 			clubs.LCAM:
 			coefficient := service.EffectivenessCAM(card)
 			cardCoefficients[coefficient] = card
-
 		case clubs.CCM,
 			clubs.LCM,
 			clubs.RCM:
 			coefficient := service.EffectivenessCM(card)
 			cardCoefficients[coefficient] = card
-
 		case clubs.CCDM,
 			clubs.LCDM,
 			clubs.RCDM:
 			coefficient := service.EffectivenessCDM(card)
 			cardCoefficients[coefficient] = card
-
 		case clubs.LB,
 			clubs.RB,
 			clubs.RWB,
 			clubs.LWB:
 			coefficient := service.EffectivenessLBorRB(card)
 			cardCoefficients[coefficient] = card
-
 		case clubs.CCD,
 			clubs.LCD,
 			clubs.RCD:
@@ -481,10 +478,16 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position c
 		}
 	}
 
+	for key, v := range cards {
+		if cardCoefficients[max].ID == v.CardID {
+			cards = RemoveIndex(cards, key)
+		}
+	}
+
 	return cardCoefficients[max], nil
 }
 
-// CardsWithNewPositions return cards with new position by new formation.
+// CardsWithNewPositions returns cards with new position by new formation.
 func (service *Service) CardsWithNewPositions(ctx context.Context, cards []clubs.SquadCard, positions []clubs.Position) (map[clubs.Position]uuid.UUID, error) {
 	positionMap := make(map[clubs.Position]uuid.UUID)
 

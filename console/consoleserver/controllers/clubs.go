@@ -155,6 +155,13 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+const (
+	// minimumPositionValue defines the minimal value of the position in the squad.
+	minimumPositionValue clubs.Position = 0
+	// maximumPositionValue defines the maximal value of the position in the squad.
+	maximumPositionValue clubs.Position = 10
+)
+
 // UpdatePosition is an endpoint that updates card position in the squad.
 func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -185,8 +192,8 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if !squadCard.Position.IsValid() {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid  number of position"))
+	if squadCard.Position < minimumPositionValue || squadCard.Position > maximumPositionValue {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid value of position"))
 		return
 	}
 
@@ -257,12 +264,12 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 
 	squadCard.CardID = cardID
 
-	if !squadCard.Position.IsValid() {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid position"))
+	if squadCard.Position < minimumPositionValue || squadCard.Position > maximumPositionValue {
+		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid value of position"))
 		return
 	}
 
-	err = controller.clubs.AddSquadCards(ctx, squadID, squadCard)
+	err = controller.clubs.AddSquadCard(ctx, squadID, squadCard)
 	if err != nil {
 		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
@@ -332,7 +339,7 @@ func (controller *Clubs) serveError(w http.ResponseWriter, status int, err error
 	}
 }
 
-// ChangeFormation is an endpoint that change formation and card position.
+// ChangeFormation is a method that change formation and card position.
 func (controller *Clubs) ChangeFormation(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()

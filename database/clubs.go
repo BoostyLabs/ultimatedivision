@@ -189,13 +189,26 @@ func (clubsDB *clubsDB) GetFormation(ctx context.Context, squadID uuid.UUID) (cl
 	return formation, ErrClubs.Wrap(err)
 }
 
-// UpdatePosition updates position of card in the squad.
-func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, newPosition clubs.Position, squadID, cardID uuid.UUID) error {
+// UpdatePosition updates position of cards in the squad.
+func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, squadCards []clubs.SquadCard) error {
 	query := `UPDATE squad_cards
 			  SET card_position = $1
 			  WHERE card_id = $2 and id = $3`
 
-	_, err := clubsDB.conn.ExecContext(ctx, query, newPosition, cardID, squadID)
+	preparedQuery, err := clubsDB.conn.PrepareContext(ctx, query)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+	defer func() {
+		err = preparedQuery.Close()
+	}()
+
+	for _, squadCard := range squadCards {
+		_, err = preparedQuery.ExecContext(ctx, squadCard.Position, squadCard.CardID, squadCard.SquadID)
+		if err != nil {
+			return ErrClubs.Wrap(err)
+		}
+	}
 
 	return ErrSquad.Wrap(err)
 }

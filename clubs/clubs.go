@@ -42,7 +42,7 @@ type DB interface {
 	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
 	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
 	// UpdatePosition updates position of card in the squad.
-	UpdatePosition(ctx context.Context, newPosition Position, squadID, cardID uuid.UUID) error
+	UpdatePosition(ctx context.Context, squadCards []SquadCard) error
 	// UpdateFormation updates formation in the squad.
 	UpdateFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) error
 }
@@ -182,39 +182,6 @@ const (
 	// CST defines center central forward.
 	CST Position = 24
 )
-
-// IsValid check that position ID is valid.
-func (f Position) IsValid() bool {
-	switch f {
-	case GK,
-		LB,
-		LCD,
-		CCD,
-		RCD,
-		RB,
-		LCDM,
-		CCDM,
-		RCDM,
-		LCM,
-		CCM,
-		RCM,
-		LM,
-		RM,
-		LCAM,
-		CCAM,
-		RCAM,
-		LWB,
-		RWB,
-		RW,
-		LW,
-		LST,
-		RST,
-		CST:
-		return true
-	default:
-		return false
-	}
-}
 
 // FormationToPosition defines positions that are present in the formation.
 var FormationToPosition = map[Formation][]Position{

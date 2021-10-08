@@ -218,13 +218,14 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.Cards.Service = cards.NewService(
 			peer.Database.Cards(),
 			cards.Config{
-				Height:              config.Cards.Height,
-				Weight:              config.Cards.Weight,
-				DominantFoots:       config.Cards.DominantFoots,
-				Skills:              config.Cards.Skills,
-				RangeValueForSkills: config.Cards.RangeValueForSkills,
-				Tattoos:             config.Cards.Tattoos,
-				Cursor:              config.Cards.Cursor,
+				Height:                   config.Cards.Height,
+				Weight:                   config.Cards.Weight,
+				DominantFoots:            config.Cards.DominantFoots,
+				Skills:                   config.Cards.Skills,
+				RangeValueForSkills:      config.Cards.RangeValueForSkills,
+				Tattoos:                  config.Cards.Tattoos,
+				Cursor:                   config.Cards.Cursor,
+				CardEfficiencyParameters: config.Cards.CardEfficiencyParameters,
 			},
 		)
 	}

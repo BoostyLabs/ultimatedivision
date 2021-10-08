@@ -72,16 +72,16 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 	return squadID, ErrClubs.Wrap(err)
 }
 
-// AddSquadCards adds cards to the squad.
-func (service *Service) AddSquadCards(ctx context.Context, squadID uuid.UUID, squadCards SquadCard) error {
+// AddSquadCard adds cards to the squad.
+func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, squadCard SquadCard) error {
 	formation, err := service.clubs.GetFormation(ctx, squadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
 	}
-	squadCards.SquadID = squadID
-	squadCards.Position = FormationToPosition[formation][squadCards.Position]
+	squadCard.SquadID = squadID
+	squadCard.Position = FormationToPosition[formation][squadCard.Position]
 
-	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, squadCards))
+	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, squadCard))
 }
 
 // Delete deletes card from squad.
@@ -103,6 +103,20 @@ func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, form
 
 // UpdateCardPosition updates position of card in the squad.
 func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUID, cardID uuid.UUID, newPosition Position) error {
+	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	var oldPosition Position
+
+	for _, card := range squadCards {
+		if card.CardID == cardID {
+			oldPosition = card.Position
+			break
+		}
+	}
+
 	formation, err := service.clubs.GetFormation(ctx, squadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
@@ -110,7 +124,27 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 
 	newPosition = FormationToPosition[formation][newPosition]
 
-	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, newPosition, squadID, cardID))
+	updatedCards := make([]SquadCard, 0, 2)
+
+	updatedSquadCard := SquadCard{
+		SquadID:  squadID,
+		CardID:   cardID,
+		Position: newPosition,
+	}
+
+	updatedCards = append(updatedCards, updatedSquadCard)
+
+	for _, card := range squadCards {
+		if card.Position != newPosition {
+			continue
+		}
+
+		card.Position = oldPosition
+		updatedCards = append(updatedCards, card)
+		break
+	}
+
+	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, updatedCards))
 }
 
 // GetSquad returns squad of club.
@@ -131,7 +165,7 @@ func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error)
 	return club, ErrClubs.Wrap(err)
 }
 
-// ChangeFormation is an endpoint that change formation and card position.
+// ChangeFormation is a method that change formation and card position.
 func (service *Service) ChangeFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) (map[Position]uuid.UUID, error) {
 	var cardsWithNewPositions map[Position]uuid.UUID
 
@@ -150,11 +184,20 @@ func (service *Service) ChangeFormation(ctx context.Context, newFormation Format
 		return nil, ErrClubs.Wrap(err)
 	}
 
+	var squadCardsWithNewPositions []SquadCard
 	for position, card := range cardsWithNewPositions {
-		err = service.clubs.UpdatePosition(ctx, position, squadID, card)
-		if err != nil {
-			return nil, ErrClubs.Wrap(err)
+		squadCard := SquadCard{
+			Position: position,
+			SquadID:  squadID,
+			CardID:   card,
 		}
+
+		squadCardsWithNewPositions = append(squadCardsWithNewPositions, squadCard)
+	}
+
+	err = service.clubs.UpdatePosition(ctx, squadCardsWithNewPositions)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
 	}
 
 	return cardsWithNewPositions, nil
