@@ -66,13 +66,17 @@ func (controller *Whitelist) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var request whitelist.Request
-		request.Address = whitelist.Address(r.FormValue("address"))
-		if !request.Address.ValidateAddress() {
+		request.Address = whitelist.Hex(r.FormValue("address"))
+		if !request.Address.IsValidAddress() {
 			http.Error(w, errs.New("invalid wallet address").Error(), http.StatusBadRequest)
 			return
 		}
 
-		request.Key = r.FormValue("key")
+		request.PrivateKey = whitelist.Hex(r.FormValue("privateKey"))
+		if request.PrivateKey != "" && !request.PrivateKey.IsHex() {
+			http.Error(w, errs.New("invalid private key address").Error(), http.StatusBadRequest)
+			return
+		}
 
 		err = controller.whitelist.Create(ctx, request)
 		if err != nil {
@@ -109,8 +113,8 @@ func (controller *Whitelist) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 
-	walletAddress := whitelist.Address(params["address"])
-	if !walletAddress.ValidateAddress() {
+	walletAddress := whitelist.Hex(params["address"])
+	if !walletAddress.IsValidAddress() {
 		http.Error(w, errs.New("invalid wallet address").Error(), http.StatusBadRequest)
 		return
 	}
@@ -138,12 +142,18 @@ func (controller *Whitelist) SetPassword(w http.ResponseWriter, r *http.Request)
 			return
 		}
 	case http.MethodPost:
-		params := mux.Vars(r)
-
-		key := params["key"]
-
-		err := controller.whitelist.SetPassword(ctx, key)
+		err := r.ParseForm()
 		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		privateKey := whitelist.Hex(r.FormValue("privateKey"))
+		if privateKey != "" && !privateKey.IsHex() {
+			http.Error(w, errs.New("invalid private key address").Error(), http.StatusBadRequest)
+			return
+		}
+
+		if err = controller.whitelist.SetPassword(ctx, privateKey); err != nil {
 			controller.log.Error("could not set password", ErrWhitelist.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

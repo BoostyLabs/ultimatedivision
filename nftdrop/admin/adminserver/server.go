@@ -83,7 +83,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	router.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 
 	adminsRouter := router.PathPrefix("/admins").Subrouter().StrictSlash(true)
-	adminsRouter.Use(server.withAuth)
+	//adminsRouter.Use(server.withAuth)
 	adminsController := controllers.NewAdmins(log, admins, server.templates.admin)
 	adminsRouter.HandleFunc("", adminsController.List).Methods(http.MethodGet)
 	adminsRouter.HandleFunc("/create", adminsController.Create).Methods(http.MethodGet, http.MethodPost)
