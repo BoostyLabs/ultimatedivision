@@ -74,7 +74,7 @@ type Peer struct {
 		Endpoint *server.Server
 	}
 
-	// Admin web server server with web UI.
+	// Admin web server with web UI.
 	Admin struct {
 		Listener net.Listener
 		Endpoint *adminserver.Server
@@ -159,6 +159,7 @@ func (peer *Peer) Run(ctx context.Context) error {
 func (peer *Peer) Close() error {
 	var errlist errs.Group
 	errlist.Add(peer.Landing.Endpoint.Close())
+	errlist.Add(peer.Admin.Endpoint.Close())
 	return errlist.Err()
 }
 
