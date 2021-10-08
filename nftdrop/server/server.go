@@ -84,10 +84,10 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, whitelis
 
 // Run starts the server that host webapp and api endpoint.
 func (server *Server) Run(ctx context.Context) (err error) {
-	// err = server.initializeTemplates()
-	// if err != nil {
-	// 	return Error.Wrap(err)
-	// }
+	err = server.initializeTemplates()
+	if err != nil {
+		return Error.Wrap(err)
+	}
 
 	ctx, cancel := context.WithCancel(ctx)
 	var group errgroup.Group
