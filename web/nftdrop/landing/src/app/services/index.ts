@@ -1,6 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import MetaMaskOnboarding from "@metamask/onboarding";
+import MetaMaskOnboarding from '@metamask/onboarding';
 import { ethers } from 'ethers';
 
 export class Service {
@@ -49,4 +49,4 @@ export class Service {
             console.log(error.message)
         }
     }
-}
+};

@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export const useDebounce = (value: string, delay: number) => {
     const [debouncedValue, setDebouncedValue] = useState(value);
@@ -15,7 +15,7 @@ export const useDebounce = (value: string, delay: number) => {
             clearTimeout(handler);
         };
 
-    }, [value]);
+    }, [value, delay]);
 
     return debouncedValue;
 };
