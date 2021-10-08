@@ -32,14 +32,18 @@ func NewService(config Config, whitelist DB) *Service {
 
 // Create adds whitelist in the database.
 func (service *Service) Create(ctx context.Context, request Request) error {
-	privateKey, err := crypto.HexToECDSA(request.Key)
-	if err != nil {
-		return ErrWhitelist.Wrap(err)
-	}
+	var password []byte
 
-	password, err := service.GeneratePassword(request.Address, privateKey)
-	if err != nil {
-		return ErrWhitelist.Wrap(err)
+	if request.Key != "" {
+		privateKey, err := crypto.HexToECDSA(request.Key)
+		if err != nil {
+			return ErrWhitelist.Wrap(err)
+		}
+
+		password, err = service.GeneratePassword(request.Address, privateKey)
+		if err != nil {
+			return ErrWhitelist.Wrap(err)
+		}
 	}
 
 	whitelist := Whitelist{
