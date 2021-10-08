@@ -62,9 +62,12 @@ func (service *Service) GeneratePassword(address Hex, privateKey *ecdsa.PrivateK
 }
 
 // GetByAddress returns whitelist by address from the database.
-func (service *Service) GetByAddress(ctx context.Context, address Hex) (Whitelist, error) {
+func (service *Service) GetByAddress(ctx context.Context, address Hex) (Whitelist, string, float64, error) {
 	whitelist, err := service.whitelist.GetByAddress(ctx, address)
-	return whitelist, ErrWhitelist.Wrap(err)
+	smartContractAddress := service.config.SmartContract.Address
+	smartContractPrice := service.config.SmartContract.Price
+
+	return whitelist, smartContractAddress, smartContractPrice, ErrWhitelist.Wrap(err)
 }
 
 // List returns all whitelist from the database.
