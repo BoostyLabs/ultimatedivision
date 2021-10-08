@@ -53,3 +53,10 @@ func (service *Service) List(ctx context.Context) ([]Whitelist, error) {
 func (service *Service) Delete(ctx context.Context, address Address) error {
 	return ErrWhitelist.Wrap(service.whitelist.Delete(ctx, address))
 }
+
+// SetPassword generates passwords for all whitelist items.
+func (service *Service) SetPassword(ctx context.Context, privateKey string) error {
+	// TODO: add generation of password for all whitelist items.
+
+	return nil
+}

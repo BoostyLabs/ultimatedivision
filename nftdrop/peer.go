@@ -11,7 +11,11 @@ import (
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/nftdrop/admin/adminauth"
+	"ultimatedivision/nftdrop/admin/admins"
+	"ultimatedivision/nftdrop/admin/adminserver"
 	"ultimatedivision/nftdrop/server"
 	"ultimatedivision/nftdrop/whitelist"
 )
@@ -22,6 +26,9 @@ import (
 type DB interface {
 	// Whitelist provides access to whitelist db.
 	Whitelist() whitelist.DB
+
+	// Admins provides access to admins db.
+	Admins() admins.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -35,6 +42,13 @@ type Config struct {
 	Landing struct {
 		Server server.Config `json:"server"`
 	} `json:"landing"`
+
+	Admins struct {
+		Server adminserver.Config `json:"server"`
+		Auth   struct {
+			TokenAuthSecret string `json:"tokenAuthSecret"`
+		} `json:"auth"`
+	} `json:"admins"`
 }
 
 // Peer is the representation of a nftdrop.
@@ -48,10 +62,22 @@ type Peer struct {
 		Service *whitelist.Service
 	}
 
+	// exposes admins relates logic.
+	Admins struct {
+		Service *admins.Service
+		Auth    *adminauth.Service
+	}
+
 	// Landing web server with web UI.
 	Landing struct {
 		Listener net.Listener
 		Endpoint *server.Server
+	}
+
+	// Admin web server server with web UI.
+	Admin struct {
+		Listener net.Listener
+		Endpoint *adminserver.Server
 	}
 }
 
@@ -64,6 +90,37 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 	{ // whitelist setup
 		peer.Whitelist.Service = whitelist.NewService(peer.Database.Whitelist())
+	}
+
+	{ // admins setup
+		peer.Admins.Service = admins.NewService(
+			peer.Database.Admins(),
+		)
+		peer.Admins.Auth = adminauth.NewService(
+			peer.Database.Admins(),
+			auth.TokenSigner{
+				Secret: []byte(config.Admins.Auth.TokenAuthSecret),
+			},
+		)
+	}
+
+	{ // admin setup
+		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
+		if err != nil {
+			return nil, err
+		}
+
+		peer.Admin.Endpoint, err = adminserver.NewServer(
+			config.Admins.Server,
+			logger,
+			peer.Admin.Listener,
+			peer.Admins.Auth,
+			peer.Admins.Service,
+			peer.Whitelist.Service,
+		)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	{ // landing setup
@@ -90,6 +147,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	// start nftdrop servers as a separate goroutines.
 	group.Go(func() error {
 		return ignoreCancel(peer.Landing.Endpoint.Run(ctx))
+	})
+	group.Go(func() error {
+		return ignoreCancel(peer.Admin.Endpoint.Run(ctx))
 	})
 
 	return group.Wait()
