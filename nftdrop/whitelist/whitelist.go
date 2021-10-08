@@ -29,6 +29,10 @@ type DB interface {
 	Update(ctx context.Context, whitelist Whitelist) error
 	// Delete deletes whitelist from the database.
 	Delete(ctx context.Context, address Address) error
+	// Update updates a whitelists password in the data base.
+	Update(ctx context.Context, whitelist Whitelist) error
+	// ListWithoutPassword returns all whitelist address from the data base.
+	ListWithoutPassword(ctx context.Context) ([]Whitelist, error)
 }
 
 // Whitelist describes whitelist entity.
