@@ -61,6 +61,24 @@ func TestWhitelists(t *testing.T) {
 			err = repositoryWhitelist.Delete(ctx, whitelist2.Address)
 			require.NoError(t, err)
 		})
+		t.Run("update", func(t *testing.T) {
+			err := repositoryWhitelist.Update(ctx, whitelist2)
+			require.NoError(t, err)
+
+			whitelistRecordsFromDB, err := repositoryWhitelist.ListWithoutPassword(ctx)
+			require.NoError(t, err)
+			compareWhitelists(t, whitelist1, whitelistRecordsFromDB[0])
+			compareWhitelists(t, whitelist2, whitelistRecordsFromDB[1])
+		})
+		t.Run("listWithoutPassword", func(t *testing.T) {
+			err := repositoryWhitelist.Create(ctx, whitelist2)
+			require.NoError(t, err)
+
+			whitelistRecordsFromDB, err := repositoryWhitelist.ListWithoutPassword(ctx)
+			require.NoError(t, err)
+			compareWhitelists(t, whitelist1, whitelistRecordsFromDB[0])
+			compareWhitelists(t, whitelist2, whitelistRecordsFromDB[1])
+		})
 	})
 }
 
