@@ -65,13 +65,16 @@ func (controller *Whitelist) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		walletAddress := whitelist.Address(r.FormValue("address"))
-		if !walletAddress.ValidateAddress() {
+		var request whitelist.Request
+		request.Address = whitelist.Address(r.FormValue("address"))
+		if !request.Address.ValidateAddress() {
 			http.Error(w, errs.New("invalid wallet address").Error(), http.StatusBadRequest)
 			return
 		}
 
-		err = controller.whitelist.Create(ctx, walletAddress)
+		request.Key = r.FormValue("key")
+
+		err = controller.whitelist.Create(ctx, request)
 		if err != nil {
 			controller.log.Error("could not create whitelist item", ErrWhitelist.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -137,9 +140,9 @@ func (controller *Whitelist) SetPassword(w http.ResponseWriter, r *http.Request)
 	case http.MethodPost:
 		params := mux.Vars(r)
 
-		privateKey := params["privateKey"]
+		key := params["key"]
 
-		err := controller.whitelist.SetPassword(ctx, privateKey)
+		err := controller.whitelist.SetPassword(ctx, key)
 		if err != nil {
 			controller.log.Error("could not set password", ErrWhitelist.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)

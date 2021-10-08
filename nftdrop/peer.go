@@ -49,6 +49,10 @@ type Config struct {
 			TokenAuthSecret string `json:"tokenAuthSecret"`
 		} `json:"auth"`
 	} `json:"admins"`
+
+	Whitelist struct {
+		whitelist.Config
+	} `json:"whitelist"`
 }
 
 // Peer is the representation of a nftdrop.
@@ -89,7 +93,10 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	}
 
 	{ // whitelist setup
-		peer.Whitelist.Service = whitelist.NewService(peer.Database.Whitelist())
+		peer.Whitelist.Service = whitelist.NewService(
+			config.Whitelist.Config,
+			peer.Database.Whitelist(),
+		)
 	}
 
 	{ // admins setup
