@@ -1,22 +1,33 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useEffect } from 'react';
+import Aos from 'aos';
+
 import { BoostyLogo, ChickenfishLogo } from '@static/images/authorsPage/authors';
 import './index.scss';
 
-export const Authors: React.FC = () => (
+export const Authors: React.FC = () => {
+
+    useEffect(() => {
+        Aos.init({
+            duration: 1500,
+        });
+    });
+
+    return(
     <section className="authors">
         <div className="authors__wrapper">
             <span className="authors__title"
                 data-aos="fade-right"
-                data-aos-duration="600"
+                data-aos-duration="900"
                 data-aos-easing="ease-in-out-cubic"
             >
                 Created by
             </span>
             <div className="authors__created-by"
                 data-aos="fade-right"
-                data-aos-duration="600"
+                data-aos-duration="900"
                 data-aos-easing="ease-in-out-cubic"
             >
                 <a
@@ -38,4 +49,5 @@ export const Authors: React.FC = () => (
             </div>
         </div>
     </section>
-);
+    )
+};

@@ -1,25 +1,36 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useEffect } from 'react';
+import Aos from 'aos';
+
+import { MintButton } from '@components/common/MintButton';
+
 import cards from '@static/images/metaverse/cards.webp';
 
 import './index.scss';
-import { MintButton } from '@components/common/MintButton';
 
 export const Metaverse: React.FC = () => {
+
+    useEffect(() => {
+        Aos.init({
+            duration: 1500,
+        });
+    });
+
     return (
         <section className="metaverse" id="metaverse">
             <div className="metaverse__wrapper">
                 <h2 className="metaverse__title"
                     data-aos="fade-right"
-                    data-aos-duration="600"
+                    data-aos-duration="900"
                     data-aos-easing="ease-in-out-cubic"
                 >
                     Ultimate Divison
                 </h2>
                 <h3 className="metaverse__subtitle"
                     data-aos="fade-right"
-                    data-aos-duration="600"
+                    data-aos-duration="900"
                     data-aos-easing="ease-in-out-cubic"
                 >
                     Football Metaverse
@@ -27,14 +38,14 @@ export const Metaverse: React.FC = () => {
                 <img
                     className="metaverse__cards"
                     data-aos="fade-right"
-                    data-aos-duration="600"
+                    data-aos-duration="900"
                     data-aos-easing="ease-in-out-cubic"
                     src={cards}
                     alt="cards"
                 />
                 <div className="metaverse__sold-scale"
                     data-aos="fade-left"
-                    data-aos-duration="600"
+                    data-aos-duration="900"
                     data-aos-easing="ease-in-out-cubic"
                 >
                     <span className="metaverse__sold-scale__text">Cards Sold 0/10000</span>

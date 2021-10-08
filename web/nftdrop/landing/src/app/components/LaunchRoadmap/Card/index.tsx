@@ -16,16 +16,17 @@ export const Card: React.FC<{
         image: string,
     }
 }> = ({ card }) => {
+
     useEffect(() => {
         Aos.init({
-            duration: 500,
+            duration: 1500,
         });
     });
 
     return (
         <div className="card"
             data-aos="fade-right"
-            data-aos-duration="600"
+            data-aos-duration="900"
             data-aos-easing="ease-in-out-cubic"
         >
             <div className="card__text-area"

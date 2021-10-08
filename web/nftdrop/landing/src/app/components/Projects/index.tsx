@@ -54,7 +54,7 @@ export const Projects: React.FC = () => {
                             data-aos-delay={
                                 aosDelayLogoAnimation(index)
                             }
-                            data-aos-duration={500}
+                            data-aos-duration="900"
                             data-aos-easing="ease-in-out-cubic"
                             className="projects__area__item"
                         >

@@ -18,16 +18,15 @@ export const RoadmapPoint: React.FC<{
 }) => {
     useEffect(() => {
         Aos.init({
-            duration: 1000,
+            duration: 1500,
         });
     }, []);
 
     return (
         <div
             className="roadmap-point"
-            data-aos={item.id % 2 === 0 ? 'zoom-in-left-custom' : 'zoom-in-right-custom'}
-            data-aos-delay={200 * item.id}
-            data-aos-duration="600"
+            data-aos="fade-left"
+            data-aos-duration="900"
             data-aos-easing="ease-in-out-cubic"
         >
             <p className="roadmap-point__date">

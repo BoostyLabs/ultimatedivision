@@ -13,7 +13,7 @@ import './index.scss';
 export const LaunchDate: React.FC = () => {
     useEffect(() => {
         Aos.init({
-            duration: 500,
+            duration: 1500,
         });
     });
 
@@ -29,6 +29,7 @@ export const LaunchDate: React.FC = () => {
                         className="launch-date__ball"
                         src={ball}
                         alt="ultimate division ball"
+                        loading="lazy"
                     />
                     <div className="launch-date__information">
                         <p

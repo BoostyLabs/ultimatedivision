@@ -6,9 +6,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const StylelintPlugin = require("stylelint-webpack-plugin");
 const zlib = require("zlib");
 const CompressionPlugin = require("compression-webpack-plugin");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-    mode: "development",
+    mode: "production",
     experiments: {
         asset: true,
     },
@@ -18,13 +19,20 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "dist/"),
         filename: "[name].[hash].js",
-        publicPath: "/",
+        publicPath: "https://ultimatedivision.com/cbeduwydqbqfvihjwerbq/",
     },
     plugins: [
         new HtmlWebpackPlugin({
             title: "Ultimate Division",
             template: "./public/index.html",
             favicon: "./src/app/static/images/favicon.ico",
+            meta: {
+                'twitter:card': { name: 'twitter:card', content: "./src/app/static/images/ultimate.png" },
+                "twitter:image": { property: "twitter:image", content: "./src/app/static/images/ultimate.png" },
+                "twitter:title": { property: "twitter:title", content: "Ultimate Division" },
+                "twitter:description": { property: "twitter:description", content: "Ultimate Division is a world football simulator. UD players will own clubs, players and face each other in weekly competitions to win cash prizes! Other players can be hired as managers or coaches for your Club!" },
+                // "twitter:url": { property: "og:url", content: "https://ultimatedivision.com/" },
+            }
         }),
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin(),
@@ -124,4 +132,16 @@ module.exports = {
             },
         ],
     },
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
+        // minimize: true,
+        minimizer: [
+            new UglifyJsPlugin({
+                test: /\.js(\?.*)?$/i,
+            }),
+            // new CssMinimizerPlugin(),
+        ]
+    }
 };
