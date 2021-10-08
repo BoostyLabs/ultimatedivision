@@ -34,8 +34,8 @@ export const UserDataArea: React.FC<{
     const debouncedValue: string = useDebounce(value, DELAY);
 
     /** inline styles for valid input field */
-    const [successLabelStyle , setSuccessLabelStyle] =
-        useState({});
+    const [successLabelStyle , setSuccessLabelStyle]
+        = useState({});
 
     useEffect(() => {
         if (!validate(debouncedValue)) {
