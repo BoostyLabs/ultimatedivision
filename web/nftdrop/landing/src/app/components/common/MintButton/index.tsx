@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 
 import MetaMaskOnboarding from '@metamask/onboarding';
 
-
 import './index.scss';
 
 export const MintButton: React.FC = () => {
@@ -37,8 +36,8 @@ export const MintButton: React.FC = () => {
             }
 
         } else {
-            onboarding.current &&
-            onboarding.current?.startOnboarding();
+            onboarding.current
+            && onboarding.current?.startOnboarding();
         }
     };
 
