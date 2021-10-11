@@ -97,6 +97,4 @@ func compareAdmins(t *testing.T, adminFromDB admins.Admin, testAdmin admins.Admi
 	assert.Equal(t, adminFromDB.Email, testAdmin.Email)
 	assert.Equal(t, adminFromDB.PasswordHash, testAdmin.PasswordHash)
 	assert.WithinDuration(t, adminFromDB.CreatedAt, testAdmin.CreatedAt, 1*time.Second)
-	// TODO: compare dates in a better way.
-	// assert.Equal(t, adminFromDB.CreatedAt, testAdmin.CreatedAt)
 }
