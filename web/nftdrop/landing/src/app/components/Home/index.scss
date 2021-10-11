@@ -32,7 +32,6 @@
         padding: 10px 20px;
         display: flex;
         justify-content: center;
-        justify-content: space-between;
         align-items: center;
         text-decoration: none;
         color: white;
@@ -262,13 +261,6 @@
             margin-top: 60px;
             display: block;
         }
-
-        &__discord {
-
-            &__logo {
-                margin-right: 5px;
-            }
-        }
     }
 }
 
@@ -286,7 +278,10 @@
 
         &__discord {
             padding: 10px;
-            justify-content: space-around;
+
+            &__logo {
+                margin-right: 10px;
+            }
 
             &__text {
                 font-size: 12px;
