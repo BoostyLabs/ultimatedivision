@@ -1,8 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useEffect } from 'react';
-import Aos from 'aos';
+import React from 'react';
 
 import { Card } from './Card';
 import fifteen from '@static/images/launchRoadmap/15.svg';

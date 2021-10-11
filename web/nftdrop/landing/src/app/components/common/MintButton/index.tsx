@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import Aos from 'aos';
+
 
 import MetaMaskOnboarding from '@metamask/onboarding';
 
@@ -19,12 +19,6 @@ export const MintButton: React.FC = () => {
             onboarding.current = new MetaMaskOnboarding();
         }
     }, []);
-
-    useEffect(() => {
-        Aos.init({
-            duration: 1500,
-        });
-    });
 
     const connect = async () => {
 
@@ -45,15 +39,13 @@ export const MintButton: React.FC = () => {
 
         } else {
             onboarding.current &&
-            onboarding.current?.startOnboarding();
+                onboarding.current?.startOnboarding();
         }
     };
 
     return (
-        <button className="ultimatedivision-mint-btn"
-            data-aos="fade-right"
-            data-aos-duration="900"
-            data-aos-easing="ease-in-out-cubic"
+        <button
+            className="ultimatedivision-mint-btn"
             onClick={connect}
         >
             {

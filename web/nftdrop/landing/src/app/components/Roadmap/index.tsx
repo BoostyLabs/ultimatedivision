@@ -1,9 +1,9 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import Aos from 'aos';
+
 
 import footer from '@static/images/roadmap/bottom.svg';
 import flag from '@static/images/roadmap/flag.svg';
@@ -12,11 +12,6 @@ import './index.scss';
 import { RoadmapPoint } from './RoadmapPoint';
 
 export const Roadmap: React.FC = () => {
-    useEffect(() => {
-        Aos.init({
-            duration: 1500,
-        });
-    }, []);
 
     const dataList = [
         {
@@ -58,9 +53,7 @@ export const Roadmap: React.FC = () => {
                 <h2 className="roadmap__title">
                     Development Roadmap
                 </h2>
-                <div
-                    className="roadmap__road"
-                    data-aos="zoom-out-down">
+                <div className="roadmap__road">
                     {dataList.map((item) => (
                         <RoadmapPoint
                             key={item.id} item={item} />
@@ -77,6 +70,6 @@ export const Roadmap: React.FC = () => {
                 src={footer}
                 alt="bottom texture"
             />
-        </section>
+        </section >
     );
 };

@@ -1,13 +1,16 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useEffect } from 'react';
-import Aos from 'aos';
+import React from 'react';
 
-import footballer from '@static/images/home/footballer.webp';
-import footballerMobile from '@static/images/home/footballer-mobile.webp';
-import footballerTablet from '@static/images/home/footballer-tablet.webp';
 import { ScrollTop } from '../ScrollTop';
+
+import webkitFootballer from '@static/images/home/footballer.png';
+import webkitFootballerTablet from '@static/images/home/footballerTablet.png';
+import webkitFootballerMobile from '@static/images/home/footballerMobile.png';
+import footballer from '@static/images/home/footballer.webp';
+import footballerTablet from '@static/images/home/footballerTablet.webp';
+import footballerMobile from '@static/images/home/footballerMobile.webp';
 
 import discord from '@static/images/home/discord.svg';
 import twitter from '@static/images/home/twitter.svg';
@@ -15,21 +18,16 @@ import twitter from '@static/images/home/twitter.svg';
 import './index.scss';
 
 export const Home: React.FC = () => {
-    useEffect(() => {
-        Aos.init({
-            duration: 1500,
-        });
-    });
 
     return (
         <section className="home" id="home">
             <div className="home__wrapper">
                 <div className="home__text-area"
-                    data-aos="fade-right"
-                    data-aos-duration="900"
-                    data-aos-easing="ease-in-out-cubic"
+
+
+
                 >
-                    <h2 className="home__value">10 000</h2>
+                    <h1 className="home__value">10 000</h1>
                     <h3 className="home__title">Unique Collectible Player Cards.</h3>
                     <p className="home__description">
                         Get one to become UD founder and join the Play-to-Earn game.
@@ -67,16 +65,14 @@ export const Home: React.FC = () => {
                 </div>
                 <picture
                 >
-                    <source media="(max-width: 600px)" srcSet={footballerMobile} />
-                    <source media="(max-width: 800px)" srcSet={footballerTablet} />
-                    <source media="(min-width: 800px)" srcSet={footballer} />
-
+                    <source media="(max-width: 500px)" srcSet={footballerMobile} type="image/webp" />
+                    <source media="(max-width: 800px)" srcSet={footballerTablet} type="image/webp" />
+                    <source media="(min-width: 800px)" srcSet={footballer} type="image/webp" />
+                    <source media="(max-width: 500px)" srcSet={webkitFootballerMobile} />
+                    <source media="(max-width: 800px)" srcSet={webkitFootballerTablet} />
                     <img
                         className="home__player-image"
-                        data-aos="fade-left"
-                        data-aos-duration="900"
-                        data-aos-easing="ease-in-out-cubic"
-                        src={footballer}
+                        src={webkitFootballer}
                         alt="Player Illustration"
                     />
                 </picture>

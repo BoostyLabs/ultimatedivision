@@ -1,8 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useEffect } from 'react';
-import Aos from 'aos';
+import React from 'react';
 
 import './index.scss';
 
@@ -13,22 +12,10 @@ export const RoadmapPoint: React.FC<{
         id: number,
         done: boolean
     }
-}> = ({
-    item
-}) => {
-    useEffect(() => {
-        Aos.init({
-            duration: 1500,
-        });
-    }, []);
+}> = ({ item }) => {
 
     return (
-        <div
-            className="roadmap-point"
-            data-aos="fade-left"
-            data-aos-duration="900"
-            data-aos-easing="ease-in-out-cubic"
-        >
+        <div className="roadmap-point">
             <p className="roadmap-point__date">
                 {item.date}
             </p>
