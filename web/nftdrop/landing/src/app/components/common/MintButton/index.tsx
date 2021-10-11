@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import MetaMaskOnboarding from '@metamask/onboarding';
 
@@ -42,10 +42,8 @@ export const MintButton: React.FC = () => {
     };
 
     return (
-        <button className="ultimatedivision-mint-btn"
-            data-aos="fade-right"
-            data-aos-duration="600"
-            data-aos-easing="ease-in-out-cubic"
+        <button
+            className="ultimatedivision-mint-btn"
             onClick={connect}
         >
             {
