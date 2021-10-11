@@ -1,6 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import MetaMaskOnboarding from "@metamask/onboarding";
+
 import { ethers } from 'ethers';
 
 export class Service {
@@ -8,18 +8,6 @@ export class Service {
 
     public constructor(ethereumProvider: any) {
         this.provider = ethereumProvider;
-    }
-
-    public async connectMetamask() {
-        const onboarding = new MetaMaskOnboarding();
-
-        if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-            // @ts-ignore
-            return await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-        } else {
-            onboarding.startOnboarding();
-        }
     }
 
     public async sendTransaction(adress: string, amount: string) {
@@ -49,4 +37,4 @@ export class Service {
             console.log(error.message)
         }
     }
-}
+};

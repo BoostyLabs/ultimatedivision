@@ -1,6 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import React from 'react';
+
 import { Card } from './Card';
 import fifteen from '@static/images/launchRoadmap/15.svg';
 import fifty from '@static/images/launchRoadmap/50.svg';
@@ -22,8 +24,8 @@ export const LaunchRoadmap: React.FC = () => {
         {
             title: 'What’s inside?',
             subTitle: 'The Treasury now contains 20 ETH ',
-            description: `20 mysterious lootboxes will be sent to lucky owners of UD founder
-            player cards. You can sell it or wait for the
+            description: `20 mysterious lootboxes will be sent to lucky owners of UD
+            founder player cards. You can sell it or wait for the
             game launch to see what's inside.`,
             image: fifty,
         },
