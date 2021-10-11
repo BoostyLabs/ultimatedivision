@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 
 import MetaMaskOnboarding from '@metamask/onboarding';
 
-
 import './index.scss';
 
 export const MintButton: React.FC = () => {
