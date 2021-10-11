@@ -183,21 +183,14 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 		return nil, ErrClubs.Wrap(err)
 	}
 
-	for i := 0; i < len(squadCards); i++ {
-		for j := 0; j < len(FormationToPosition[formation]); j++ {
-			if squadCards[i].Position == FormationToPosition[formation][j] {
-				squadCards[i].Position = Position(j)
-				break
-			}
-		}
-	}
+	convertPositions(squadCards, formation)
 
 	if len(squadCards) < squadSize {
 		for i := 0; i < squadSize; i++ {
 			var isPositionInTheSquad bool
 			for _, card := range squadCards {
 				if card.Position == Position(i) {
-					isPositionInTheSquad  = true
+					isPositionInTheSquad = true
 				}
 			}
 
@@ -206,13 +199,15 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 			}
 
 			var squadCard = SquadCard{
-				SquadID: squadID,
+				SquadID:  squadID,
 				Position: Position(i),
 			}
 
 			squadCards = append(squadCards, squadCard)
 		}
 	}
+
+	sortSquadCards(squadCards)
 
 	return squadCards, ErrClubs.Wrap(err)
 }
