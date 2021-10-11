@@ -3,8 +3,6 @@
 
 import React from 'react';
 
-
-
 import footer from '@static/images/roadmap/bottom.svg';
 import flag from '@static/images/roadmap/flag.svg';
 
