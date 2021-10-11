@@ -31,7 +31,7 @@ func NewService(config Config, whitelist DB) *Service {
 }
 
 // Create adds whitelist in the database.
-func (service *Service) Create(ctx context.Context, request Request) error {
+func (service *Service) Create(ctx context.Context, request CreateWallet) error {
 	var password []byte
 
 	if request.PrivateKey != "" {
@@ -40,21 +40,21 @@ func (service *Service) Create(ctx context.Context, request Request) error {
 			return ErrWhitelist.Wrap(err)
 		}
 
-		password, err = service.GeneratePassword(request.Address, privateKeyECDSA)
+		password, err = service.generatePassword(request.Address, privateKeyECDSA)
 		if err != nil {
 			return ErrWhitelist.Wrap(err)
 		}
 	}
 
-	whitelist := Whitelist{
+	whitelist := Wallet{
 		Address:  request.Address,
 		Password: password,
 	}
 	return ErrWhitelist.Wrap(service.whitelist.Create(ctx, whitelist))
 }
 
-// GeneratePassword generates password for user's wallet.
-func (service *Service) GeneratePassword(address Hex, privateKey *ecdsa.PrivateKey) ([]byte, error) {
+// generatePassword generates password for user's wallet.
+func (service *Service) generatePassword(address Hex, privateKey *ecdsa.PrivateKey) ([]byte, error) {
 	dataSignature := []byte(service.config.SmartContract.Address + string(address))
 	hashSignature := crypto.Keccak256Hash(dataSignature)
 
@@ -62,28 +62,34 @@ func (service *Service) GeneratePassword(address Hex, privateKey *ecdsa.PrivateK
 }
 
 // GetByAddress returns whitelist by address from the database.
-func (service *Service) GetByAddress(ctx context.Context, address Hex) (Whitelist, string, float64, error) {
+func (service *Service) GetByAddress(ctx context.Context, address Hex) (SmartContractWithWhiteList, error) {
 	whitelist, err := service.whitelist.GetByAddress(ctx, address)
 	smartContractAddress := service.config.SmartContract.Address
 	smartContractPrice := service.config.SmartContract.Price
 
-	return whitelist, smartContractAddress, smartContractPrice, ErrWhitelist.Wrap(err)
+	smartContractWithWhiteList := SmartContractWithWhiteList{
+		Wallet:  whitelist,
+		Address: smartContractAddress,
+		Price:   smartContractPrice,
+	}
+
+	return smartContractWithWhiteList, ErrWhitelist.Wrap(err)
 }
 
 // List returns all whitelist from the database.
-func (service *Service) List(ctx context.Context) ([]Whitelist, error) {
+func (service *Service) List(ctx context.Context) ([]Wallet, error) {
 	whitelistRecords, err := service.whitelist.List(ctx)
 	return whitelistRecords, ErrWhitelist.Wrap(err)
 }
 
 // ListWithoutPassword returns whitelist without password from the database.
-func (service *Service) ListWithoutPassword(ctx context.Context) ([]Whitelist, error) {
+func (service *Service) ListWithoutPassword(ctx context.Context) ([]Wallet, error) {
 	whitelistRecords, err := service.whitelist.ListWithoutPassword(ctx)
 	return whitelistRecords, ErrWhitelist.Wrap(err)
 }
 
 // Update updates whitelist by address.
-func (service *Service) Update(ctx context.Context, whitelist Whitelist) error {
+func (service *Service) Update(ctx context.Context, whitelist Wallet) error {
 	return ErrWhitelist.Wrap(service.whitelist.Update(ctx, whitelist))
 }
 
@@ -105,12 +111,12 @@ func (service *Service) SetPassword(ctx context.Context, privateKey Hex) error {
 	}
 
 	for _, v := range whitelist {
-		password, err := service.GeneratePassword(v.Address, privateKeyECDSA)
+		password, err := service.generatePassword(v.Address, privateKeyECDSA)
 		if err != nil {
 			return ErrWhitelist.Wrap(err)
 		}
 
-		whitelist := Whitelist{
+		whitelist := Wallet{
 			Address:  v.Address,
 			Password: password,
 		}

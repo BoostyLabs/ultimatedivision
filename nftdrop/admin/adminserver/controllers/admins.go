@@ -145,14 +145,8 @@ func (controller *Admins) Update(w http.ResponseWriter, r *http.Request) {
 		}
 
 		password := r.FormValue("password")
-		passwordAgain := r.FormValue("password-again")
-		if password == "" || passwordAgain == "" {
+		if password == "" {
 			http.Error(w, "empty field", http.StatusBadRequest)
-			return
-		}
-
-		if password != passwordAgain {
-			http.Error(w, "password mismatch", http.StatusBadRequest)
 			return
 		}
 

@@ -16,12 +16,12 @@ import (
 )
 
 func TestWhitelists(t *testing.T) {
-	whitelist1 := whitelist.Whitelist{
+	whitelist1 := whitelist.Wallet{
 		Address:  "address1",
 		Password: []byte{},
 	}
 
-	whitelist2 := whitelist.Whitelist{
+	whitelist2 := whitelist.Wallet{
 		Address:  "address2",
 		Password: []byte{},
 	}
@@ -82,7 +82,7 @@ func TestWhitelists(t *testing.T) {
 	})
 }
 
-func compareWhitelists(t *testing.T, whitelist1, whitelist2 whitelist.Whitelist) {
+func compareWhitelists(t *testing.T, whitelist1, whitelist2 whitelist.Wallet) {
 	assert.Equal(t, whitelist1.Address, whitelist2.Address)
 	assert.Equal(t, whitelist1.Password, whitelist2.Password)
 }

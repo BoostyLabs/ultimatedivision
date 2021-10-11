@@ -27,21 +27,21 @@ type whitelistDB struct {
 	conn *sql.DB
 }
 
-// Create add record whitelist in the data base.
-func (whitelistDB *whitelistDB) Create(ctx context.Context, whitelist whitelist.Whitelist) error {
+// Create add wallet in the data base.
+func (whitelistDB *whitelistDB) Create(ctx context.Context, wallet whitelist.Wallet) error {
 	query :=
 		`INSERT INTO
 			whitelist(address, password) 
 		VALUES 
 			($1, $2)`
 
-	_, err := whitelistDB.conn.ExecContext(ctx, query, whitelist.Address, whitelist.Password)
+	_, err := whitelistDB.conn.ExecContext(ctx, query, wallet.Address, wallet.Password)
 	return ErrWhitelist.Wrap(err)
 }
 
-// GetByAddress returns record whitelist by address from the data base.
-func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitelist.Hex) (whitelist.Whitelist, error) {
-	whitelistRecord := whitelist.Whitelist{}
+// GetByAddress returns wallet by address from the data base.
+func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitelist.Hex) (whitelist.Wallet, error) {
+	wallet := whitelist.Wallet{}
 	query :=
 		`SELECT
 			address, password
@@ -50,16 +50,16 @@ func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitel
 		WHERE
 			address = $1`
 
-	err := whitelistDB.conn.QueryRowContext(ctx, query, address).Scan(&whitelistRecord.Address, &whitelistRecord.Password)
+	err := whitelistDB.conn.QueryRowContext(ctx, query, address).Scan(&wallet.Address, &wallet.Password)
 	if errors.Is(err, sql.ErrNoRows) {
-		return whitelistRecord, whitelist.ErrNoWhitelist.Wrap(err)
+		return wallet, whitelist.ErrNoWhitelist.Wrap(err)
 	}
 
-	return whitelistRecord, ErrWhitelist.Wrap(err)
+	return wallet, ErrWhitelist.Wrap(err)
 }
 
-// List returns all whitelist from the data base.
-func (whitelistDB *whitelistDB) List(ctx context.Context) ([]whitelist.Whitelist, error) {
+// List returns all wallets from the data base.
+func (whitelistDB *whitelistDB) List(ctx context.Context) ([]whitelist.Wallet, error) {
 	query :=
 		`SELECT
 			address, password
@@ -74,19 +74,19 @@ func (whitelistDB *whitelistDB) List(ctx context.Context) ([]whitelist.Whitelist
 		err = errs.Combine(err, ErrWhitelist.Wrap(rows.Close()))
 	}()
 
-	whitelistRecords := []whitelist.Whitelist{}
+	wallets := []whitelist.Wallet{}
 	for rows.Next() {
-		whitelistRecord := whitelist.Whitelist{}
-		if err = rows.Scan(&whitelistRecord.Address, &whitelistRecord.Password); err != nil {
+		wallet := whitelist.Wallet{}
+		if err = rows.Scan(&wallet.Address, &wallet.Password); err != nil {
 			return nil, ErrWhitelist.Wrap(err)
 		}
-		whitelistRecords = append(whitelistRecords, whitelistRecord)
+		wallets = append(wallets, wallet)
 	}
 
-	return whitelistRecords, ErrWhitelist.Wrap(rows.Err())
+	return wallets, ErrWhitelist.Wrap(rows.Err())
 }
 
-// Delete deletes whitelist from the database.
+// Delete deletes wallet from the database.
 func (whitelistDB *whitelistDB) Delete(ctx context.Context, address whitelist.Hex) error {
 	query := `DELETE FROM whitelist
               WHERE address = $1`
@@ -96,19 +96,19 @@ func (whitelistDB *whitelistDB) Delete(ctx context.Context, address whitelist.He
 	return ErrWhitelist.Wrap(err)
 }
 
-// Update updates a whitelists password in the data base.
-func (whitelistDB *whitelistDB) Update(ctx context.Context, whitelist whitelist.Whitelist) error {
+// Update updates a wallets password in the data base.
+func (whitelistDB *whitelistDB) Update(ctx context.Context, wallet whitelist.Wallet) error {
 	query :=
 		`UPDATE whitelist 
 		SET password = $1
 		WHERE address = $2`
 
-	_, err := whitelistDB.conn.ExecContext(ctx, query, whitelist.Password, whitelist.Address)
+	_, err := whitelistDB.conn.ExecContext(ctx, query, wallet.Password, wallet.Address)
 	return ErrWhitelist.Wrap(err)
 }
 
-// ListWithoutPassword returns all whitelist address from the data base.
-func (whitelistDB *whitelistDB) ListWithoutPassword(ctx context.Context) ([]whitelist.Whitelist, error) {
+// ListWithoutPassword returns all wallets address from the data base.
+func (whitelistDB *whitelistDB) ListWithoutPassword(ctx context.Context) ([]whitelist.Wallet, error) {
 	query :=
 		`SELECT
 			address
@@ -125,14 +125,14 @@ func (whitelistDB *whitelistDB) ListWithoutPassword(ctx context.Context) ([]whit
 		err = errs.Combine(err, ErrWhitelist.Wrap(rows.Close()))
 	}()
 
-	whitelistRecords := []whitelist.Whitelist{}
+	wallets := []whitelist.Wallet{}
 	for rows.Next() {
-		whitelistRecord := whitelist.Whitelist{}
-		if err = rows.Scan(&whitelistRecord.Address); err != nil {
+		wallet := whitelist.Wallet{}
+		if err = rows.Scan(&wallet.Address); err != nil {
 			return nil, ErrWhitelist.Wrap(err)
 		}
-		whitelistRecords = append(whitelistRecords, whitelistRecord)
+		wallets = append(wallets, wallet)
 	}
 
-	return whitelistRecords, ErrWhitelist.Wrap(rows.Err())
+	return wallets, ErrWhitelist.Wrap(rows.Err())
 }
