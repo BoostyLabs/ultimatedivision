@@ -74,7 +74,7 @@ func (controller *Whitelist) Create(w http.ResponseWriter, r *http.Request) {
 
 		createFields.PrivateKey = whitelist.Hex(r.FormValue("privateKey"))
 
-		if createFields.PrivateKey != "" && !createFields.PrivateKey.IsValidAddress() {
+		if createFields.PrivateKey != "" && !createFields.PrivateKey.IsHex() {
 			http.Error(w, errs.New("invalid private key").Error(), http.StatusBadRequest)
 			return
 		}
@@ -149,7 +149,7 @@ func (controller *Whitelist) SetPassword(w http.ResponseWriter, r *http.Request)
 			return
 		}
 		privateKey := whitelist.Hex(r.FormValue("privateKey"))
-		if privateKey != "" && !privateKey.IsValidAddress() {
+		if privateKey != "" && !privateKey.IsHex() {
 			http.Error(w, errs.New("invalid private key").Error(), http.StatusBadRequest)
 			return
 		}

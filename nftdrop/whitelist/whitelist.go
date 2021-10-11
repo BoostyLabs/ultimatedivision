@@ -45,6 +45,24 @@ func (hex Hex) IsValidAddress() bool {
 	return common.IsHexAddress(string(hex))
 }
 
+// IsHex validates whether each byte is valid hexadecimal string.
+func (hex Hex) IsHex() bool {
+	if len(string(hex))%2 != 0 {
+		return false
+	}
+	for _, c := range []byte(string(hex)) {
+		if !isHexCharacter(c) {
+			return false
+		}
+	}
+	return true
+}
+
+// isHexCharacter returns bool of c being a valid hexadecimal.
+func isHexCharacter(c byte) bool {
+	return ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+}
+
 // CreateWallet entity describes request values for create whitelist.
 type CreateWallet struct {
 	Address    Hex `json:"address"`
