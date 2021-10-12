@@ -75,6 +75,7 @@
     }
 
     &__buttons-wrapper {
+        z-index: 1;
         max-width: 380px;
         margin-top: 40px;
         display: flex;
