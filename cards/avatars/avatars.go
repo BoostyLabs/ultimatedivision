@@ -56,8 +56,9 @@ const (
 
 // Config defines values needed by generate avatars.
 type Config struct {
-	PathToAvararsComponents string `json:"pathToAvararsComponents"`
-	PathToOutputAvatars     string `json:"pathToOutputAvatars"`
+	PathToAvararsComponents   string `json:"pathToAvararsComponents"`
+	PathToOutputAvatarsLocal  string `json:"pathToOutputAvatarsLocal"`
+	PathToOutputAvatarsRemote string `json:"pathToOutputAvatarsRemote"`
 
 	FaceColorFolder string `json:"faceColorFolder"`
 

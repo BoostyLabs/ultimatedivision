@@ -221,12 +221,12 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	originalImage := imageprocessing.Layering(layers)
 	//previewImage := resize.Resize(uint(service.config.SizePreviewImage.Width), uint(service.config.SizePreviewImage.Height), originalImage, resize.Lanczos3)
 
-	avatar.OriginalURL = filepath.Join(service.config.PathToOutputAvatars, service.config.PathToOutputAvatars+nameImage+"."+string(TypeImagePNG))
-	if err = imageprocessing.SaveImage(avatar.OriginalURL, originalImage); err != nil {
+	avatar.OriginalURL = filepath.Join(service.config.PathToOutputAvatarsRemote, nameImage+"."+string(TypeImagePNG))
+	if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, nameImage+"."+string(TypeImagePNG)), originalImage); err != nil {
 		return avatar, ErrAvatar.Wrap(err)
 	}
-	// avatar.PreviewURL = filepath.Join(service.config.PathToOutputAvatars, service.config.PathToOutputAvatars+nameImage+"_"+FormatImagePreview+"."+string(TypeImagePNG))
-	// if err = imageprocessing.SaveImage(avatar.PreviewURL, previewImage); err != nil {
+	// avatar.PreviewURL = filepath.Join(service.config.PathToOutputAvatarsRemote, nameImage+"_"+FormatImagePreview+"."+string(TypeImagePNG))
+	// if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, nameImage+"_"+FormatImagePreview+"."+string(TypeImagePNG)), previewImage); err != nil {
 	// 	return avatar, ErrAvatar.Wrap(err)
 	// }
 
