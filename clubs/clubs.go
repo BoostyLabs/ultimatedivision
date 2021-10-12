@@ -41,8 +41,8 @@ type DB interface {
 	DeleteSquadCard(ctx context.Context, squadID, cardID uuid.UUID) error
 	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
 	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
-	// UpdatePosition updates position of cards in the squad.
-	UpdatePosition(ctx context.Context, squadCards []SquadCard) error
+	// UpdatePositions updates positions of cards in the squad.
+	UpdatePositions(ctx context.Context, squadCards []SquadCard) error
 	// UpdateFormation updates formation in the squad.
 	UpdateFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) error
 }

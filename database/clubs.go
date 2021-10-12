@@ -207,8 +207,8 @@ func (clubsDB *clubsDB) GetFormation(ctx context.Context, squadID uuid.UUID) (cl
 	return formation, ErrClubs.Wrap(err)
 }
 
-// UpdatePosition updates position of cards in the squad.
-func (clubsDB *clubsDB) UpdatePosition(ctx context.Context, squadCards []clubs.SquadCard) error {
+// UpdatePositions updates positions of cards in the squad.
+func (clubsDB *clubsDB) UpdatePositions(ctx context.Context, squadCards []clubs.SquadCard) error {
 	query := `UPDATE squad_cards
 			  SET card_position = $1
 			  WHERE card_id = $2 and id = $3`

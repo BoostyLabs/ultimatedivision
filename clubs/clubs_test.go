@@ -155,8 +155,8 @@ func TestTeam(t *testing.T) {
 			require.NoError(t, err)
 		})
 
-		t.Run("Update card position in squad", func(t *testing.T) {
-			err := repositoryClubs.UpdatePosition(ctx, []clubs.SquadCard{updatedSquadCard1, updatedSquadCard2})
+		t.Run("Update card positions in squad", func(t *testing.T) {
+			err := repositoryClubs.UpdatePositions(ctx, []clubs.SquadCard{updatedSquadCard1, updatedSquadCard2})
 			require.NoError(t, err)
 		})
 

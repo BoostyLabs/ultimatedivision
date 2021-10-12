@@ -75,8 +75,8 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 	return squadID, ErrClubs.Wrap(err)
 }
 
-// AddSquadCards adds cards to the squad.
-func (service *Service) AddSquadCards(ctx context.Context, squadID uuid.UUID, newSquadCard SquadCard) error {
+// AddSquadCard adds card to the squad.
+func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, newSquadCard SquadCard) error {
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
@@ -169,7 +169,7 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 		break
 	}
 
-	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, updatedCards))
+	return ErrClubs.Wrap(service.clubs.UpdatePositions(ctx, updatedCards))
 }
 
 // GetSquad returns squad of club.
@@ -248,7 +248,7 @@ func (service *Service) ChangeFormation(ctx context.Context, newFormation Format
 		squadCardsWithNewPositions = append(squadCardsWithNewPositions, squadCard)
 	}
 
-	err = service.clubs.UpdatePosition(ctx, squadCardsWithNewPositions)
+	err = service.clubs.UpdatePositions(ctx, squadCardsWithNewPositions)
 	if err != nil {
 		return nil, ErrClubs.Wrap(err)
 	}
