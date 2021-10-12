@@ -4,6 +4,8 @@
 package cardgenerator
 
 import (
+	"context"
+
 	"ultimatedivision/cardgenerator/avatarcards"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
@@ -22,6 +24,8 @@ type Peer struct {
 	Config Config
 	Log    logger.Logger
 
+	quantityOfCard int
+
 	// exposes cards related logic.
 	Cards struct {
 		Service *cards.Service
@@ -39,10 +43,11 @@ type Peer struct {
 }
 
 // New is a constructor for cardgenerator.Peer.
-func New(logger logger.Logger, config Config) (peer *Peer, err error) {
+func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, err error) {
 	peer = &Peer{
 		Log:    logger,
 		Config: config,
+		quantityOfCard : quantityOfCard,
 	}
 
 	{ // Avatars setup
@@ -69,4 +74,11 @@ func New(logger logger.Logger, config Config) (peer *Peer, err error) {
 	}
 
 	return peer, nil
+}
+
+// Generate initiates generation of cards.
+func (peer *Peer) Generate(ctx context.Context) ([]avatarcards.AvatarCards, error) {
+	cardsWithAvatars, err := peer.AvatarCards.Service.Generate(ctx, peer.quantityOfCard)
+
+	return cardsWithAvatars, err
 }

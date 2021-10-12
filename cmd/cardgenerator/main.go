@@ -123,21 +123,21 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
-	peer, err := cardgenerator.New(log, runCfg.Config)
-	if err != nil {
-		log.Error("Error starting card generator bank service", Error.Wrap(err))
-		return Error.Wrap(err)
-	}
-
 	count, err := strconv.Atoi(args[0])
 	if err != nil {
 		log.Error("Error convert agrs to integer", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
 
-	avatarCards, err := peer.AvatarCards.Service.Generate(ctx, count)
+	peer, err := cardgenerator.New(log, runCfg.Config, count)
 	if err != nil {
-		log.Error("Error convert agrs to integer", Error.Wrap(err))
+		log.Error("Error starting card generator bank service", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
+	avatarCards, err := peer.Generate(ctx)
+	if err != nil {
+		log.Error("could not generate cards with avatars", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
 
