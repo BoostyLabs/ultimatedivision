@@ -6,11 +6,12 @@ package avatarcards
 import (
 	"context"
 	"strconv"
-	"ultimatedivision/cards"
-	"ultimatedivision/cards/avatars"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/cards"
+	"ultimatedivision/cards/avatars"
 )
 
 // ErrAvatarCard indicated that there was an error in service.
