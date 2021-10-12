@@ -14,11 +14,11 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"ultimatedivision/cardgenerator"
 
 	"github.com/spf13/cobra"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cardgenerator"
 	"ultimatedivision/internal/logger/zaplog"
 )
 
@@ -66,7 +66,6 @@ var (
 func init() {
 	rootCmd.AddCommand(setupCmd)
 	rootCmd.AddCommand(runCmd)
-	runCmd.PersistentFlags().Int("quantity", 0, "determines the number of cards and avatars to generate")
 	rootCmd.AddCommand(destroyCmd)
 }
 

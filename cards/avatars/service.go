@@ -219,7 +219,7 @@ func (service *Service) Generate(ctx context.Context, cardID uuid.UUID, isTattoo
 	}
 
 	originalImage := imageprocessing.Layering(layers)
-	//previewImage := resize.Resize(uint(service.config.SizePreviewImage.Width), uint(service.config.SizePreviewImage.Height), originalImage, resize.Lanczos3)
+	// previewImage := resize.Resize(uint(service.config.SizePreviewImage.Width), uint(service.config.SizePreviewImage.Height), originalImage, resize.Lanczos3)
 
 	avatar.OriginalURL = filepath.Join(service.config.PathToOutputAvatarsRemote, nameImage+"."+string(TypeImagePNG))
 	if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, nameImage+"."+string(TypeImagePNG)), originalImage); err != nil {

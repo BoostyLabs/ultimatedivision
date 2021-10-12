@@ -10,14 +10,14 @@ import (
 	"ultimatedivision/internal/logger"
 )
 
-// Config is the global configuration for nftdrop.
+// Config is the global configuration for cardgenerator.
 type Config struct {
 	AvatarCards struct {
 		avatarcards.Config
 	} `json:"avatarCards"`
 }
 
-// Peer is the representation of a nftdrop.
+// Peer is the representation of a cardgenerator.
 type Peer struct {
 	Config Config
 	Log    logger.Logger
