@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/cards/avatars"
 	"ultimatedivision/internal/pagination"
 )
 
@@ -46,66 +45,65 @@ type DB interface {
 
 // Card describes card entity.
 type Card struct {
-	ID               uuid.UUID      `json:"id"`
-	PlayerName       string         `json:"playerName"`
-	Quality          Quality        `json:"quality"`
-	Height           float64        `json:"height"`
-	Weight           float64        `json:"weight"`
-	DominantFoot     DominantFoot   `json:"dominantFoot"`
-	IsTattoo         bool           `json:"isTattoo"`
-	Status           Status         `json:"status"`
-	Type             Type           `json:"type"`
-	UserID           uuid.UUID      `json:"userId"`
-	Tactics          int            `json:"tactics"`
-	Positioning      int            `json:"positioning"`
-	Composure        int            `json:"composure"`
-	Aggression       int            `json:"aggression"`
-	Vision           int            `json:"vision"`
-	Awareness        int            `json:"awareness"`
-	Crosses          int            `json:"crosses"`
-	Physique         int            `json:"physique"`
-	Acceleration     int            `json:"acceleration"`
-	RunningSpeed     int            `json:"runningSpeed"`
-	ReactionSpeed    int            `json:"reactionSpeed"`
-	Agility          int            `json:"agility"`
-	Stamina          int            `json:"stamina"`
-	Strength         int            `json:"strength"`
-	Jumping          int            `json:"jumping"`
-	Balance          int            `json:"balance"`
-	Technique        int            `json:"technique"`
-	Dribbling        int            `json:"dribbling"`
-	BallControl      int            `json:"ballControl"`
-	WeakFoot         int            `json:"weakFoot"`
-	SkillMoves       int            `json:"skillMoves"`
-	Finesse          int            `json:"finesse"`
-	Curve            int            `json:"curve"`
-	Volleys          int            `json:"volleys"`
-	ShortPassing     int            `json:"shortPassing"`
-	LongPassing      int            `json:"longPassing"`
-	ForwardPass      int            `json:"forwardPass"`
-	Offense          int            `json:"offense"`
-	FinishingAbility int            `json:"finishingAbility"`
-	ShotPower        int            `json:"shotPower"`
-	Accuracy         int            `json:"accuracy"`
-	Distance         int            `json:"distance"`
-	Penalty          int            `json:"penalty"`
-	FreeKicks        int            `json:"freeKicks"`
-	Corners          int            `json:"corners"`
-	HeadingAccuracy  int            `json:"headingAccuracy"`
-	Defence          int            `json:"defence"`
-	OffsideTrap      int            `json:"offsideTrap"`
-	Sliding          int            `json:"sliding"`
-	Tackles          int            `json:"tackles"`
-	BallFocus        int            `json:"ballFocus"`
-	Interceptions    int            `json:"interceptions"`
-	Vigilance        int            `json:"vigilance"`
-	Goalkeeping      int            `json:"goalkeeping"`
-	Reflexes         int            `json:"reflexes"`
-	Diving           int            `json:"diving"`
-	Handling         int            `json:"handling"`
-	Sweeping         int            `json:"sweeping"`
-	Throwing         int            `json:"throwing"`
-	Avatar           avatars.Avatar `json:"avatar"`
+	ID               uuid.UUID    `json:"id"`
+	PlayerName       string       `json:"playerName"`
+	Quality          Quality      `json:"quality"`
+	Height           float64      `json:"height"`
+	Weight           float64      `json:"weight"`
+	DominantFoot     DominantFoot `json:"dominantFoot"`
+	IsTattoo         bool         `json:"isTattoo"`
+	Status           Status       `json:"status"`
+	Type             Type         `json:"type"`
+	UserID           uuid.UUID    `json:"userId"`
+	Tactics          int          `json:"tactics"`
+	Positioning      int          `json:"positioning"`
+	Composure        int          `json:"composure"`
+	Aggression       int          `json:"aggression"`
+	Vision           int          `json:"vision"`
+	Awareness        int          `json:"awareness"`
+	Crosses          int          `json:"crosses"`
+	Physique         int          `json:"physique"`
+	Acceleration     int          `json:"acceleration"`
+	RunningSpeed     int          `json:"runningSpeed"`
+	ReactionSpeed    int          `json:"reactionSpeed"`
+	Agility          int          `json:"agility"`
+	Stamina          int          `json:"stamina"`
+	Strength         int          `json:"strength"`
+	Jumping          int          `json:"jumping"`
+	Balance          int          `json:"balance"`
+	Technique        int          `json:"technique"`
+	Dribbling        int          `json:"dribbling"`
+	BallControl      int          `json:"ballControl"`
+	WeakFoot         int          `json:"weakFoot"`
+	SkillMoves       int          `json:"skillMoves"`
+	Finesse          int          `json:"finesse"`
+	Curve            int          `json:"curve"`
+	Volleys          int          `json:"volleys"`
+	ShortPassing     int          `json:"shortPassing"`
+	LongPassing      int          `json:"longPassing"`
+	ForwardPass      int          `json:"forwardPass"`
+	Offense          int          `json:"offense"`
+	FinishingAbility int          `json:"finishingAbility"`
+	ShotPower        int          `json:"shotPower"`
+	Accuracy         int          `json:"accuracy"`
+	Distance         int          `json:"distance"`
+	Penalty          int          `json:"penalty"`
+	FreeKicks        int          `json:"freeKicks"`
+	Corners          int          `json:"corners"`
+	HeadingAccuracy  int          `json:"headingAccuracy"`
+	Defence          int          `json:"defence"`
+	OffsideTrap      int          `json:"offsideTrap"`
+	Sliding          int          `json:"sliding"`
+	Tackles          int          `json:"tackles"`
+	BallFocus        int          `json:"ballFocus"`
+	Interceptions    int          `json:"interceptions"`
+	Vigilance        int          `json:"vigilance"`
+	Goalkeeping      int          `json:"goalkeeping"`
+	Reflexes         int          `json:"reflexes"`
+	Diving           int          `json:"diving"`
+	Handling         int          `json:"handling"`
+	Sweeping         int          `json:"sweeping"`
+	Throwing         int          `json:"throwing"`
 }
 
 // Quality defines the list of possible card qualities.
