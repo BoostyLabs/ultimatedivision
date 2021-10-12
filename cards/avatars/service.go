@@ -219,16 +219,11 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	}
 
 	originalImage := imageprocessing.Layering(layers)
-	// previewImage := resize.Resize(uint(service.config.SizePreviewImage.Width), uint(service.config.SizePreviewImage.Height), originalImage, resize.Lanczos3)
 
 	avatar.OriginalURL = filepath.Join(service.config.PathToOutputAvatarsRemote, name+"."+string(TypeImagePNG))
 	if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, name+"."+string(TypeImagePNG)), originalImage); err != nil {
 		return avatar, ErrAvatar.Wrap(err)
 	}
-	// avatar.PreviewURL = filepath.Join(service.config.PathToOutputAvatarsRemote, name+"_"+FormatImagePreview+"."+string(TypeImagePNG))
-	// if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, name+"_"+FormatImagePreview+"."+string(TypeImagePNG)), previewImage); err != nil {
-	// 	return avatar, ErrAvatar.Wrap(err)
-	// }
 
 	return avatar, nil
 }
