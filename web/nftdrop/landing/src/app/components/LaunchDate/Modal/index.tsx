@@ -27,7 +27,7 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
         if (!email) {
             setEmailError('Please, enter your email');
             isValidForm = false;
-        }
+        };
 
         return isValidForm;
     };
