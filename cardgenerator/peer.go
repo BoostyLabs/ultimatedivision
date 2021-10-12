@@ -5,6 +5,9 @@ package cardgenerator
 
 import (
 	"context"
+	"encoding/json"
+	"io/ioutil"
+	"path/filepath"
 
 	"ultimatedivision/cardgenerator/avatarcards"
 	"ultimatedivision/cards"
@@ -45,9 +48,9 @@ type Peer struct {
 // New is a constructor for cardgenerator.Peer.
 func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, err error) {
 	peer = &Peer{
-		Log:    logger,
-		Config: config,
-		quantityOfCard : quantityOfCard,
+		Log:            logger,
+		Config:         config,
+		quantityOfCard: quantityOfCard,
 	}
 
 	{ // Avatars setup
@@ -76,9 +79,13 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 	return peer, nil
 }
 
-// Generate initiates generation of cards.
-func (peer *Peer) Generate(ctx context.Context) ([]avatarcards.AvatarCards, error) {
+// Generate initiates generation of avatar cards.
+func (peer *Peer) Generate(ctx context.Context) error {
 	cardsWithAvatars, err := peer.AvatarCards.Service.Generate(ctx, peer.quantityOfCard)
+	file, err := json.MarshalIndent(cardsWithAvatars, "", " ")
+	if err != nil {
+		return err
+	}
 
-	return cardsWithAvatars, err
+	return ioutil.WriteFile(filepath.Join(peer.Config.AvatarCards.PathToOutputJSONFile, peer.Config.AvatarCards.NameOutputJSONFile+".json"), file, 0644)
 }

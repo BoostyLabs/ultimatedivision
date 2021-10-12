@@ -16,7 +16,9 @@ type AvatarCards struct {
 
 // Config defines values needed by generate avatar cards.
 type Config struct {
-	CardConfig          cards.Config              `json:"cardConfig"`
-	PercentageQualities cards.PercentageQualities `json:"percentageQualities"`
-	AvatarConfig        avatars.Config            `json:"avatarConfig"`
+	CardConfig           cards.Config              `json:"cardConfig"`
+	PercentageQualities  cards.PercentageQualities `json:"percentageQualities"`
+	AvatarConfig         avatars.Config            `json:"avatarConfig"`
+	PathToOutputJSONFile string                    `json:"pathToOutputJSONFile"`
+	NameOutputJSONFile   string                    `json:"nameOutputJSONFile"`
 }

@@ -6,7 +6,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"io/ioutil"
 	"os"
 	"path"
@@ -123,6 +122,11 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
+	if len(args) == 0 {
+		log.Error("agrs are empty", Error.New("agrs are empty"))
+		return Error.New("agrs are empty")
+	}
+
 	count, err := strconv.Atoi(args[0])
 	if err != nil {
 		log.Error("Error convert agrs to integer", Error.Wrap(err))
@@ -135,19 +139,11 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
-	avatarCards, err := peer.Generate(ctx)
-	if err != nil {
+	if err := peer.Generate(ctx); err != nil {
 		log.Error("could not generate cards with avatars", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
 
-	// TODO: create json file
-
-	var w io.Writer
-	if err = json.NewEncoder(w).Encode(avatarCards); err != nil {
-		log.Error("failed to write json response", Error.Wrap(err))
-		return Error.Wrap(err)
-	}
 	return nil
 }
 
