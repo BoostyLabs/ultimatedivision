@@ -11,14 +11,14 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
-	"ultimatedivision/cardgenerator"
 
 	"github.com/spf13/cobra"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cardgenerator"
 	"ultimatedivision/internal/logger/zaplog"
-	"ultimatedivision/nftdrop/database"
 )
 
 // Error is a default error type for card generator cli.
@@ -26,7 +26,7 @@ var Error = errs.Class("card generator cli error")
 
 // Config contains configurable values for card generator project.
 type Config struct {
-	Database       string `json:"database"`
+	Database             string `json:"database"`
 	cardgenerator.Config `json:"config"`
 }
 
@@ -60,13 +60,12 @@ var (
 	setupCfg Config
 	runCfg   Config
 
-	defaultConfigDir = ApplicationDir(filepath.Join("ultimatedivision", "cardGenerator"))
+	defaultConfigDir = ApplicationDir(filepath.Join("ultimatedivision", "cardgenerator"))
 )
 
 func init() {
 	rootCmd.AddCommand(setupCmd)
 	rootCmd.AddCommand(runCmd)
-	runCmd.PersistentFlags().Int("quantity",0,"determines the number of cards and avatars to generate")
 	rootCmd.AddCommand(destroyCmd)
 }
 
@@ -124,16 +123,13 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
-	db, err := database.New(runCfg.Database)
+	quantity, err := strconv.Atoi(args[0])
 	if err != nil {
-		log.Error("Error starting master database on card generator bank service", Error.Wrap(err))
+		log.Error("Could not convert", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
-	defer func() {
-		err = errs.Combine(err, db.Close())
-	}()
 
-	peer, err := cardgenerator.New(log, runCfg.Config)
+	peer, err := cardgenerator.New(log, runCfg.Config, quantity)
 	if err != nil {
 		log.Error("Error starting card generator bank service", Error.Wrap(err))
 		return Error.Wrap(err)
