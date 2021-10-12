@@ -10,6 +10,7 @@ import (
 	"image/png"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 
 	"github.com/zeebo/errs"
@@ -38,7 +39,7 @@ func SearchCountFiles(pathToAvararsComponents, nameFile string) (int, error) {
 
 // CreateLayer searches and decodes image to layer.
 func CreateLayer(path, name string) (image.Image, error) {
-	image, err := os.Open(path + "/" + name)
+	image, err := os.Open(filepath.Join(path, name))
 	if err != nil {
 		return nil, err
 	}

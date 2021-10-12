@@ -110,7 +110,7 @@ type TypeImage string
 
 const (
 	// TypeImagePNG indicates that the type image avatar is png.
-	TypeImagePNG = "png"
+	TypeImagePNG TypeImage = "png"
 )
 
 // FormatImage defines the list of possible format of avatar image.

@@ -7,9 +7,9 @@ import (
 	"context"
 	"fmt"
 	"image"
+	"path/filepath"
 
 	"github.com/google/uuid"
-	"github.com/nfnt/resize"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/pkg/imageprocessing"
@@ -41,7 +41,7 @@ func (service *Service) Create(ctx context.Context, avatar Avatar) error {
 }
 
 // GenerateAvatar generates a common avatar from different layers of photos.
-func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, isTattoo bool) (Avatar, error) {
+func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, isTattoo bool, nameImage string) (Avatar, error) {
 	var (
 		layer  image.Image
 		layers []image.Image
@@ -63,7 +63,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	}
 
 	// FaceType
-	pathToFaceColor := service.config.PathToAvararsComponents + "/" + fmt.Sprintf(service.config.FaceColorFolder, avatar.FaceColor)
+	pathToFaceColor := filepath.Join(service.config.PathToAvararsComponents, fmt.Sprintf(service.config.FaceColorFolder, avatar.FaceColor))
 	if count, err = imageprocessing.SearchCountFiles(pathToFaceColor, service.config.FaceTypeFolder); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
@@ -71,14 +71,14 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 		return avatar, ErrAvatar.Wrap(err)
 	}
 
-	pathToFaceType := pathToFaceColor + "/" + fmt.Sprintf(service.config.FaceTypeFolder, avatar.FaceType)
+	pathToFaceType := filepath.Join(pathToFaceColor, fmt.Sprintf(service.config.FaceTypeFolder, avatar.FaceType))
 	if layer, err = imageprocessing.CreateLayer(pathToFaceType, fmt.Sprintf(service.config.FaceTypeFile, avatar.FaceType)); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
 	layers = append(layers, layer)
 
 	// NoseType
-	pathToNoseType := pathToFaceType + "/" + service.config.NoseFolder
+	pathToNoseType := filepath.Join(pathToFaceType, service.config.NoseFolder)
 	if count, err = imageprocessing.SearchCountFiles(pathToNoseType, service.config.NoseTypeFolder); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
@@ -86,14 +86,14 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 		return avatar, ErrAvatar.Wrap(err)
 	}
 
-	pathToNoseType += "/" + fmt.Sprintf(service.config.NoseTypeFolder, avatar.Nose)
+	pathToNoseType = filepath.Join(pathToNoseType, fmt.Sprintf(service.config.NoseTypeFolder, avatar.Nose))
 	if layer, err = imageprocessing.CreateLayer(pathToNoseType, fmt.Sprintf(service.config.NoseFile, avatar.Nose)); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
 	layers = append(layers, layer)
 
 	// LipsType
-	pathToLipsType := pathToNoseType + "/" + service.config.LipsFolder
+	pathToLipsType := filepath.Join(pathToNoseType, service.config.LipsFolder)
 	if count, err = imageprocessing.SearchCountFiles(pathToLipsType, service.config.LipsFile); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
@@ -107,7 +107,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	layers = append(layers, layer)
 
 	// EyeBrowsType
-	pathToEyeBrowsType := pathToFaceType + "/" + service.config.EyeBrowsFolder
+	pathToEyeBrowsType := filepath.Join(pathToFaceType, service.config.EyeBrowsFolder)
 	if count, err = imageprocessing.SearchCountFiles(pathToEyeBrowsType, service.config.EyeBrowsTypeFolder); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
@@ -116,7 +116,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	}
 
 	// EyeBrowsColor
-	pathToBrowsColor := pathToEyeBrowsType + "/" + fmt.Sprintf(service.config.EyeBrowsTypeFolder, avatar.EyeBrowsType)
+	pathToBrowsColor := filepath.Join(pathToEyeBrowsType, fmt.Sprintf(service.config.EyeBrowsTypeFolder, avatar.EyeBrowsType))
 	if count, err = imageprocessing.SearchCountFiles(pathToBrowsColor, service.config.EyeBrowsColorFile); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
@@ -131,7 +131,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 	// Tattoo
 	if isTattoo {
-		pathToTattoo := service.config.PathToAvararsComponents + "/" + service.config.TattooFolder + "/" + fmt.Sprintf(service.config.TattooTypeFolder, avatar.FaceType)
+		pathToTattoo := filepath.Join(service.config.PathToAvararsComponents, service.config.TattooFolder, fmt.Sprintf(service.config.TattooTypeFolder, avatar.FaceType))
 		if count, err = imageprocessing.SearchCountFiles(pathToTattoo, service.config.TattooFile); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
@@ -148,7 +148,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	// Hairstyles
 	if rand.IsIncludeRange(service.config.PercentageFacialFeatures.Hairstyle) {
 		// HairstylesColor
-		pathToHairstylesColor := pathToFaceType + "/" + service.config.HairstyleFolder
+		pathToHairstylesColor := filepath.Join(pathToFaceType, service.config.HairstyleFolder)
 		if count, err = imageprocessing.SearchCountFiles(pathToHairstylesColor, service.config.HairstyleColorFolder); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
@@ -157,7 +157,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 		}
 
 		// HairstylesType
-		pathToHairstylesType := pathToHairstylesColor + "/" + fmt.Sprintf(service.config.HairstyleColorFolder, avatar.HairstyleColor)
+		pathToHairstylesType := filepath.Join(pathToHairstylesColor, fmt.Sprintf(service.config.HairstyleColorFolder, avatar.HairstyleColor))
 		if count, err = imageprocessing.SearchCountFiles(pathToHairstylesType, service.config.HairstyleTypeFile); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
@@ -173,7 +173,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 	// BeardType
 	if rand.IsIncludeRange(service.config.PercentageFacialFeatures.Beard) {
-		pathToBeardType := pathToNoseType + "/" + service.config.BeardFolder
+		pathToBeardType := filepath.Join(pathToNoseType, service.config.BeardFolder)
 		if count, err = imageprocessing.SearchCountFiles(pathToBeardType, service.config.BeardFile); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
@@ -188,7 +188,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	}
 
 	// T-shirtType
-	pathToTshirtType := pathToFaceType + "/" + service.config.TshirtFolder
+	pathToTshirtType := filepath.Join(pathToFaceType, service.config.TshirtFolder)
 	if count, err = imageprocessing.SearchCountFiles(pathToTshirtType, service.config.TshirtFile); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
@@ -203,7 +203,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 	// EyeLaserType
 	if rand.IsIncludeRange(service.config.PercentageFacialFeatures.EyeLaser) {
-		pathToEyeLaserType := pathToFaceType + "/" + service.config.EyeLaserFolder
+		pathToEyeLaserType := filepath.Join(pathToFaceType, service.config.EyeLaserFolder)
 		if count, err = imageprocessing.SearchCountFiles(pathToEyeLaserType, service.config.EyeLaserTypeFolder); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
@@ -211,7 +211,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 			return avatar, ErrAvatar.Wrap(err)
 		}
 
-		pathToEyeLaserType += "/" + fmt.Sprintf(service.config.EyeLaserTypeFolder, avatar.EyeLaserType)
+		pathToEyeLaserType = filepath.Join(pathToEyeLaserType, fmt.Sprintf(service.config.EyeLaserTypeFolder, avatar.EyeLaserType))
 		if layer, err = imageprocessing.CreateLayer(pathToEyeLaserType, fmt.Sprintf(service.config.EyeLaserTypeFile, avatar.EyeLaserType)); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
@@ -219,17 +219,16 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	}
 
 	originalImage := imageprocessing.Layering(layers)
-	previewImage := resize.Resize(uint(service.config.SizePreviewImage.Width), uint(service.config.SizePreviewImage.Height), originalImage, resize.Lanczos3)
+	//previewImage := resize.Resize(uint(service.config.SizePreviewImage.Width), uint(service.config.SizePreviewImage.Height), originalImage, resize.Lanczos3)
 
-	avatar.OriginalURL = service.config.PathToOutputAvatars + "/" + avatar.CardID.String() + "_" + FormatImageOriginal + "." + TypeImagePNG
+	avatar.OriginalURL = filepath.Join(service.config.PathToOutputAvatars, service.config.PathToOutputAvatars+nameImage+"."+string(TypeImagePNG))
 	if err = imageprocessing.SaveImage(avatar.OriginalURL, originalImage); err != nil {
 		return avatar, ErrAvatar.Wrap(err)
 	}
-
-	avatar.PreviewURL = service.config.PathToOutputAvatars + "/" + avatar.CardID.String() + "_" + FormatImagePreview + "." + TypeImagePNG
-	if err = imageprocessing.SaveImage(avatar.PreviewURL, previewImage); err != nil {
-		return avatar, ErrAvatar.Wrap(err)
-	}
+	// avatar.PreviewURL = filepath.Join(service.config.PathToOutputAvatars, service.config.PathToOutputAvatars+nameImage+"_"+FormatImagePreview+"."+string(TypeImagePNG))
+	// if err = imageprocessing.SaveImage(avatar.PreviewURL, previewImage); err != nil {
+	// 	return avatar, ErrAvatar.Wrap(err)
+	// }
 
 	return avatar, nil
 }
