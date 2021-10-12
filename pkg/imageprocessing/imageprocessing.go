@@ -16,11 +16,11 @@ import (
 	"github.com/zeebo/errs"
 )
 
-// SearchCountFiles searches count files in the specified path and by name of file.
-func SearchCountFiles(pathToAvararsComponents, nameFile string) (int, error) {
-	files, err := ioutil.ReadDir(pathToAvararsComponents)
+// LayerComponentsCount searches count files in the specified path and by name of file.
+func LayerComponentsCount(pathToLayerComponents, nameFile string) (int, error) {
+	files, err := ioutil.ReadDir(pathToLayerComponents)
 	if err != nil {
-		return 0, fmt.Errorf(pathToAvararsComponents + " - folder does not exist")
+		return 0, fmt.Errorf(pathToLayerComponents + " - folder does not exist")
 	}
 
 	var count int

@@ -40,7 +40,7 @@ func NewService(cards DB, config Config, avatars *avatars.Service) *Service {
 }
 
 // Create adds card in DB.
-func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int, nameImage string) (Card, error) {
+func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int, imageName string) (Card, error) {
 	qualities := map[string]int{
 		"wood":    percentageQualities[0],
 		"silver":  percentageQualities[1],
@@ -188,7 +188,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 	}
 
 	var avatar avatars.Avatar
-	if avatar, err = service.avatars.GenerateAvatar(ctx, card.ID, card.IsTattoo, nameImage); err != nil {
+	if avatar, err = service.avatars.GenerateAvatar(ctx, card.ID, card.IsTattoo, imageName); err != nil {
 		return card, ErrCards.Wrap(err)
 	}
 
