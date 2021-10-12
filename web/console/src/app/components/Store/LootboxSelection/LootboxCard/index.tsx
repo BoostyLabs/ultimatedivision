@@ -3,12 +3,8 @@
 
 import { Dispatch, SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { LootboxStats } from '@/app/types/lootbox';
-
 import { openLootbox } from '@/app/store/actions/lootboxes';
-
-
 import wood from '@static/img/StorePage/BoxCard/wood.svg';
 import silver from '@static/img/StorePage/BoxCard/silver.svg';
 import gold from '@static/img/StorePage/BoxCard/gold.svg';

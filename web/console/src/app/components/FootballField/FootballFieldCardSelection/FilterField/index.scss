@@ -87,3 +87,10 @@
         }
     }
 }
+
+@media (max-width: $desktopBreakPoint) {
+
+    .football-field-filter {
+        display: none;
+    }
+}

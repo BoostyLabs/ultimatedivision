@@ -56,8 +56,9 @@ const (
 
 // Config defines values needed by generate avatars.
 type Config struct {
-	PathToAvararsComponents string `json:"pathToAvararsComponents"`
-	PathToOutputAvatars     string `json:"pathToOutputAvatars"`
+	PathToAvararsComponents   string `json:"pathToAvararsComponents"`
+	PathToOutputAvatarsLocal  string `json:"pathToOutputAvatarsLocal"`
+	PathToOutputAvatarsRemote string `json:"pathToOutputAvatarsRemote"`
 
 	FaceColorFolder string `json:"faceColorFolder"`
 
@@ -110,7 +111,7 @@ type TypeImage string
 
 const (
 	// TypeImagePNG indicates that the type image avatar is png.
-	TypeImagePNG = "png"
+	TypeImagePNG TypeImage = "png"
 )
 
 // FormatImage defines the list of possible format of avatar image.

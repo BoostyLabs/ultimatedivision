@@ -40,7 +40,7 @@ func NewService(cards DB, config Config, avatars *avatars.Service) *Service {
 }
 
 // Create adds card in DB.
-func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int) (Card, error) {
+func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int, nameImage string) (Card, error) {
 	qualities := map[string]int{
 		"wood":    percentageQualities[0],
 		"silver":  percentageQualities[1],
@@ -187,11 +187,12 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		return card, ErrCards.Wrap(err)
 	}
 
-	if card.Avatar, err = service.avatars.GenerateAvatar(ctx, card.ID, card.IsTattoo); err != nil {
+	var avatar avatars.Avatar
+	if avatar, err = service.avatars.GenerateAvatar(ctx, card.ID, card.IsTattoo, nameImage); err != nil {
 		return card, ErrCards.Wrap(err)
 	}
 
-	return card, ErrCards.Wrap(service.avatars.Create(ctx, card.Avatar))
+	return card, ErrCards.Wrap(service.avatars.Create(ctx, avatar))
 }
 
 // searchValueByPercent search value string by percent.
