@@ -38,8 +38,9 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
         if (!validateForm()) {
             return;
         };
-        /** send notifications to user */
+        /** closes modal window */
         handleModal();
+        /** TODO: send email for gets notifications to server */
     };
 
     const formValue = {
