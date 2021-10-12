@@ -6,11 +6,13 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"ultimatedivision/cardgenerator"
 
@@ -18,7 +20,6 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger/zaplog"
-	"ultimatedivision/nftdrop/database"
 )
 
 // Error is a default error type for card generator cli.
@@ -26,7 +27,6 @@ var Error = errs.Class("card generator cli error")
 
 // Config contains configurable values for card generator project.
 type Config struct {
-	Database       string `json:"database"`
 	cardgenerator.Config `json:"config"`
 }
 
@@ -60,13 +60,13 @@ var (
 	setupCfg Config
 	runCfg   Config
 
-	defaultConfigDir = ApplicationDir(filepath.Join("ultimatedivision", "cardGenerator"))
+	defaultConfigDir = ApplicationDir(filepath.Join("ultimatedivision", "cardgenerator"))
 )
 
 func init() {
 	rootCmd.AddCommand(setupCmd)
 	rootCmd.AddCommand(runCmd)
-	runCmd.PersistentFlags().Int("quantity",0,"determines the number of cards and avatars to generate")
+	runCmd.PersistentFlags().Int("quantity", 0, "determines the number of cards and avatars to generate")
 	rootCmd.AddCommand(destroyCmd)
 }
 
@@ -124,25 +124,32 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
-	db, err := database.New(runCfg.Database)
-	if err != nil {
-		log.Error("Error starting master database on card generator bank service", Error.Wrap(err))
-		return Error.Wrap(err)
-	}
-	defer func() {
-		err = errs.Combine(err, db.Close())
-	}()
-
 	peer, err := cardgenerator.New(log, runCfg.Config)
 	if err != nil {
 		log.Error("Error starting card generator bank service", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
 
-	runError := peer.Run(ctx)
-	closeError := peer.Close()
+	count, err := strconv.Atoi(args[0])
+	if err != nil {
+		log.Error("Error convert agrs to integer", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
 
-	return Error.Wrap(errs.Combine(runError, closeError))
+	avatarCards, err := peer.AvatarCards.Service.Generate(ctx, count)
+	if err != nil {
+		log.Error("Error convert agrs to integer", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
+	// TODO: create json file
+
+	var w io.Writer
+	if err = json.NewEncoder(w).Encode(avatarCards); err != nil {
+		log.Error("failed to write json response", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+	return nil
 }
 
 func cmdDestroy(cmd *cobra.Command, args []string) (err error) {

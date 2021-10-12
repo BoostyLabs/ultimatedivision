@@ -4,53 +4,69 @@
 package cardgenerator
 
 import (
-	"context"
-	"errors"
-
-	"github.com/zeebo/errs"
-	"golang.org/x/sync/errgroup"
-
+	"ultimatedivision/cardgenerator/avatarcards"
+	"ultimatedivision/cards"
+	"ultimatedivision/cards/avatars"
 	"ultimatedivision/internal/logger"
 )
 
 // Config is the global configuration for nftdrop.
 type Config struct {
+	AvatarCards struct {
+		avatarcards.Config
+	} `json:"avatarCards"`
 }
 
 // Peer is the representation of a nftdrop.
 type Peer struct {
-	Config   Config
-	Log      logger.Logger
+	Config Config
+	Log    logger.Logger
+
+	// exposes cards related logic.
+	Cards struct {
+		Service *cards.Service
+	}
+
+	// exposes avatars related logic.
+	Avatars struct {
+		Service *avatars.Service
+	}
+
+	// exposes avatar cards related logic.
+	AvatarCards struct {
+		Service *avatarcards.Service
+	}
 }
 
 // New is a constructor for cardgenerator.Peer.
 func New(logger logger.Logger, config Config) (peer *Peer, err error) {
 	peer = &Peer{
-		Log:      logger,
+		Log:    logger,
 		Config: config,
 	}
 
-	return peer, nil
-}
-
-// Run runs cardgenerator.Peer until it's either closed or it errors.
-func (peer *Peer) Run(ctx context.Context) error {
-	group, ctx := errgroup.WithContext(ctx)
-
-	return group.Wait()
-}
-
-// Close closes all the resources.
-func (peer *Peer) Close() error {
-	var errlist errs.Group
-	return errlist.Err()
-}
-
-// we ignore cancellation and stopping errors since they are expected.
-func ignoreCancel(err error) error {
-	if errors.Is(err, context.Canceled) {
-		return nil
+	{ // Avatars setup
+		peer.Avatars.Service = avatars.NewService(
+			nil,
+			config.AvatarCards.AvatarConfig,
+		)
 	}
 
-	return err
+	{ // cards setup
+		peer.Cards.Service = cards.NewService(
+			nil,
+			config.AvatarCards.CardConfig,
+			peer.Avatars.Service,
+		)
+	}
+
+	{ // avatar cards setup
+		peer.AvatarCards.Service = avatarcards.NewService(
+			config.AvatarCards.Config,
+			peer.Cards.Service,
+			peer.Avatars.Service,
+		)
+	}
+
+	return peer, nil
 }
