@@ -41,7 +41,7 @@ func (service *Service) Generate(ctx context.Context, count int) ([]AvatarCards,
 		avatarCards []AvatarCards
 	)
 
-	uuID := uuid.New()
+	id := uuid.New()
 	percentageQualities := []int{
 		service.config.PercentageQualities.Wood,
 		service.config.PercentageQualities.Silver,
@@ -52,7 +52,7 @@ func (service *Service) Generate(ctx context.Context, count int) ([]AvatarCards,
 	for i := 0; i < count; i++ {
 		var avatarCard AvatarCards
 		var avatar avatars.Avatar
-		if avatarCard.Card, err = service.cards.Generate(ctx, uuID, percentageQualities); err != nil {
+		if avatarCard.Card, err = service.cards.Generate(ctx, id, percentageQualities); err != nil {
 			return nil, ErrAvatarCard.Wrap(err)
 		}
 
