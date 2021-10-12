@@ -82,10 +82,27 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 // Generate initiates generation of avatar cards.
 func (peer *Peer) Generate(ctx context.Context) error {
 	cardsWithAvatars, err := peer.AvatarCards.Service.Generate(ctx, peer.quantityOfCard)
+	if err != nil {
+		return err
+	}
 	file, err := json.MarshalIndent(cardsWithAvatars, "", " ")
 	if err != nil {
 		return err
 	}
 
 	return ioutil.WriteFile(filepath.Join(peer.Config.AvatarCards.PathToOutputJSONFile, peer.Config.AvatarCards.NameOutputJSONFile+".json"), file, 0644)
+}
+
+// TestGenerate initiates generation test version of avatar cards.
+func (peer *Peer) TestGenerate(ctx context.Context) error {
+	avatars, err := peer.AvatarCards.Service.TestGenerate(ctx, peer.quantityOfCard)
+	if err != nil {
+		return err
+	}
+	file, err := json.MarshalIndent(avatars, "", " ")
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(filepath.Join(peer.Config.AvatarCards.PathToOutputJSONFile, peer.Config.AvatarCards.NameOutputJSONFile+"_test.json"), file, 0644)
 }

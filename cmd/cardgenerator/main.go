@@ -50,6 +50,12 @@ var (
 		RunE:        cmdRun,
 		Annotations: map[string]string{"type": "run"},
 	}
+	testCmd = &cobra.Command{
+		Use:         "test",
+		Short:       "tests the program",
+		RunE:        testRun,
+		Annotations: map[string]string{"type": "test"},
+	}
 	destroyCmd = &cobra.Command{
 		Use:         "destroy",
 		Short:       "deletes config folder",
@@ -65,6 +71,7 @@ var (
 func init() {
 	rootCmd.AddCommand(setupCmd)
 	rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(testCmd)
 	rootCmd.AddCommand(destroyCmd)
 }
 
@@ -140,6 +147,41 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 	}
 
 	if err := peer.Generate(ctx); err != nil {
+		log.Error("could not generate cards with avatars", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
+	return nil
+}
+
+func testRun(cmd *cobra.Command, args []string) (err error) {
+	ctx := context.Background()
+	log := zaplog.NewLog()
+
+	runCfg, err = readConfig()
+	if err != nil {
+		log.Error("Could not read config from default place", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
+	if len(args) == 0 {
+		log.Error("agrs are empty", Error.New("agrs are empty"))
+		return Error.New("agrs are empty")
+	}
+
+	count, err := strconv.Atoi(args[0])
+	if err != nil {
+		log.Error("Error convert agrs to integer", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
+	peer, err := cardgenerator.New(log, runCfg.Config, count)
+	if err != nil {
+		log.Error("Error starting card generator bank service", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
+	if err := peer.TestGenerate(ctx); err != nil {
 		log.Error("could not generate cards with avatars", Error.Wrap(err))
 		return Error.Wrap(err)
 	}

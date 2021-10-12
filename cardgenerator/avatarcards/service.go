@@ -67,3 +67,35 @@ func (service *Service) Generate(ctx context.Context, count int) ([]AvatarCards,
 
 	return avatarCards, nil
 }
+
+// TestGenerate generates test version avatar cards.
+func (service *Service) TestGenerate(ctx context.Context, count int) ([]avatars.Avatar, error) {
+	var (
+		err     error
+		avatars []avatars.Avatar
+	)
+
+	id := uuid.New()
+	percentageQualities := []int{
+		service.config.PercentageQualities.Wood,
+		service.config.PercentageQualities.Silver,
+		service.config.PercentageQualities.Gold,
+		service.config.PercentageQualities.Diamond,
+	}
+
+	for i := 0; i < count; i++ {
+		var avatarCard AvatarCards
+		if avatarCard.Card, err = service.cards.Generate(ctx, id, percentageQualities); err != nil {
+			return nil, ErrAvatarCard.Wrap(err)
+		}
+
+		avatar, err := service.avatars.Generate(ctx, avatarCard.Card.ID, avatarCard.Card.IsTattoo, avatarCard.Card.ID.String())
+		if err != nil {
+			return nil, ErrAvatarCard.Wrap(err)
+		}
+
+		avatars = append(avatars, avatar)
+	}
+
+	return avatars, nil
+}
