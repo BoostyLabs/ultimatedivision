@@ -221,11 +221,11 @@ func (service *Service) Generate(ctx context.Context, cardID uuid.UUID, isTattoo
 	originalImage := imageprocessing.Layering(layers)
 	// previewImage := resize.Resize(uint(service.config.SizePreviewImage.Width), uint(service.config.SizePreviewImage.Height), originalImage, resize.Lanczos3)
 
-	avatar.OriginalURL = service.config.PathToOutputAvatarsRemote + nameImage + "." + string(TypeImagePNG)
+	avatar.OriginalURL = filepath.Join(service.config.PathToOutputAvatarsRemote, nameImage+"."+string(TypeImagePNG))
 	if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, nameImage+"."+string(TypeImagePNG)), originalImage); err != nil {
 		return avatar, ErrAvatar.Wrap(err)
 	}
-	// avatar.PreviewURL = service.config.PathToOutputAvatarsRemote + nameImage+"_"+FormatImagePreview+"."+string(TypeImagePNG)
+	// avatar.PreviewURL = filepath.Join(service.config.PathToOutputAvatarsRemote, nameImage+"_"+FormatImagePreview+"."+string(TypeImagePNG))
 	// if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, nameImage+"_"+FormatImagePreview+"."+string(TypeImagePNG)), previewImage); err != nil {
 	// 	return avatar, ErrAvatar.Wrap(err)
 	// }
