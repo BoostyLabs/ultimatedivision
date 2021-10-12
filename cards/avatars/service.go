@@ -41,7 +41,7 @@ func (service *Service) Create(ctx context.Context, avatar Avatar) error {
 }
 
 // GenerateAvatar generates a common avatar from different layers of photos.
-func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, isTattoo bool, nameImage string) (Avatar, error) {
+func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, isTattoo bool, name string) (Avatar, error) {
 	var (
 		layer  image.Image
 		layers []image.Image
@@ -55,7 +55,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	}
 
 	// FaceColor
-	if count, err = imageprocessing.SearchCountFiles(service.config.PathToAvararsComponents, service.config.FaceColorFolder); err != nil {
+	if count, err = imageprocessing.LayerComponentsCount(service.config.PathToAvararsComponents, service.config.FaceColorFolder); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
 	if avatar.FaceColor, err = rand.RandomInRange(count); err != nil {
@@ -64,7 +64,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 	// FaceType
 	pathToFaceColor := filepath.Join(service.config.PathToAvararsComponents, fmt.Sprintf(service.config.FaceColorFolder, avatar.FaceColor))
-	if count, err = imageprocessing.SearchCountFiles(pathToFaceColor, service.config.FaceTypeFolder); err != nil {
+	if count, err = imageprocessing.LayerComponentsCount(pathToFaceColor, service.config.FaceTypeFolder); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
 	if avatar.FaceType, err = rand.RandomInRange(count); err != nil {
@@ -79,7 +79,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 	// NoseType
 	pathToNoseType := filepath.Join(pathToFaceType, service.config.NoseFolder)
-	if count, err = imageprocessing.SearchCountFiles(pathToNoseType, service.config.NoseTypeFolder); err != nil {
+	if count, err = imageprocessing.LayerComponentsCount(pathToNoseType, service.config.NoseTypeFolder); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
 	if avatar.Nose, err = rand.RandomInRange(count); err != nil {
@@ -94,7 +94,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 	// LipsType
 	pathToLipsType := filepath.Join(pathToNoseType, service.config.LipsFolder)
-	if count, err = imageprocessing.SearchCountFiles(pathToLipsType, service.config.LipsFile); err != nil {
+	if count, err = imageprocessing.LayerComponentsCount(pathToLipsType, service.config.LipsFile); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
 	if avatar.Lips, err = rand.RandomInRange(count); err != nil {
@@ -108,7 +108,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 	// EyeBrowsType
 	pathToEyeBrowsType := filepath.Join(pathToFaceType, service.config.EyeBrowsFolder)
-	if count, err = imageprocessing.SearchCountFiles(pathToEyeBrowsType, service.config.EyeBrowsTypeFolder); err != nil {
+	if count, err = imageprocessing.LayerComponentsCount(pathToEyeBrowsType, service.config.EyeBrowsTypeFolder); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
 	if avatar.EyeBrowsType, err = rand.RandomInRange(count); err != nil {
@@ -117,7 +117,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 	// EyeBrowsColor
 	pathToBrowsColor := filepath.Join(pathToEyeBrowsType, fmt.Sprintf(service.config.EyeBrowsTypeFolder, avatar.EyeBrowsType))
-	if count, err = imageprocessing.SearchCountFiles(pathToBrowsColor, service.config.EyeBrowsColorFile); err != nil {
+	if count, err = imageprocessing.LayerComponentsCount(pathToBrowsColor, service.config.EyeBrowsColorFile); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
 	if avatar.EyeBrowsColor, err = rand.RandomInRange(count); err != nil {
@@ -132,7 +132,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	// Tattoo
 	if isTattoo {
 		pathToTattoo := filepath.Join(service.config.PathToAvararsComponents, service.config.TattooFolder, fmt.Sprintf(service.config.TattooTypeFolder, avatar.FaceType))
-		if count, err = imageprocessing.SearchCountFiles(pathToTattoo, service.config.TattooFile); err != nil {
+		if count, err = imageprocessing.LayerComponentsCount(pathToTattoo, service.config.TattooFile); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
 		if avatar.Tattoo, err = rand.RandomInRange(count); err != nil {
@@ -149,7 +149,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	if rand.IsIncludeRange(service.config.PercentageFacialFeatures.Hairstyle) {
 		// HairstylesColor
 		pathToHairstylesColor := filepath.Join(pathToFaceType, service.config.HairstyleFolder)
-		if count, err = imageprocessing.SearchCountFiles(pathToHairstylesColor, service.config.HairstyleColorFolder); err != nil {
+		if count, err = imageprocessing.LayerComponentsCount(pathToHairstylesColor, service.config.HairstyleColorFolder); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
 		if avatar.HairstyleColor, err = rand.RandomInRange(count); err != nil {
@@ -158,7 +158,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 		// HairstylesType
 		pathToHairstylesType := filepath.Join(pathToHairstylesColor, fmt.Sprintf(service.config.HairstyleColorFolder, avatar.HairstyleColor))
-		if count, err = imageprocessing.SearchCountFiles(pathToHairstylesType, service.config.HairstyleTypeFile); err != nil {
+		if count, err = imageprocessing.LayerComponentsCount(pathToHairstylesType, service.config.HairstyleTypeFile); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
 		if avatar.HairstyleType, err = rand.RandomInRange(count); err != nil {
@@ -174,7 +174,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	// BeardType
 	if rand.IsIncludeRange(service.config.PercentageFacialFeatures.Beard) {
 		pathToBeardType := filepath.Join(pathToNoseType, service.config.BeardFolder)
-		if count, err = imageprocessing.SearchCountFiles(pathToBeardType, service.config.BeardFile); err != nil {
+		if count, err = imageprocessing.LayerComponentsCount(pathToBeardType, service.config.BeardFile); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
 		if avatar.Beard, err = rand.RandomInRange(count); err != nil {
@@ -189,7 +189,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 
 	// T-shirtType
 	pathToTshirtType := filepath.Join(pathToFaceType, service.config.TshirtFolder)
-	if count, err = imageprocessing.SearchCountFiles(pathToTshirtType, service.config.TshirtFile); err != nil {
+	if count, err = imageprocessing.LayerComponentsCount(pathToTshirtType, service.config.TshirtFile); err != nil {
 		return avatar, ErrNoAvatarFile.Wrap(err)
 	}
 	if avatar.Tshirt, err = rand.RandomInRange(count); err != nil {
@@ -204,7 +204,7 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	// EyeLaserType
 	if rand.IsIncludeRange(service.config.PercentageFacialFeatures.EyeLaser) {
 		pathToEyeLaserType := filepath.Join(pathToFaceType, service.config.EyeLaserFolder)
-		if count, err = imageprocessing.SearchCountFiles(pathToEyeLaserType, service.config.EyeLaserTypeFolder); err != nil {
+		if count, err = imageprocessing.LayerComponentsCount(pathToEyeLaserType, service.config.EyeLaserTypeFolder); err != nil {
 			return avatar, ErrNoAvatarFile.Wrap(err)
 		}
 		if avatar.EyeLaserType, err = rand.RandomInRange(count); err != nil {
@@ -219,16 +219,11 @@ func (service *Service) GenerateAvatar(ctx context.Context, cardID uuid.UUID, is
 	}
 
 	originalImage := imageprocessing.Layering(layers)
-	//previewImage := resize.Resize(uint(service.config.SizePreviewImage.Width), uint(service.config.SizePreviewImage.Height), originalImage, resize.Lanczos3)
 
-	avatar.OriginalURL = filepath.Join(service.config.PathToOutputAvatarsRemote, nameImage+"."+string(TypeImagePNG))
-	if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, nameImage+"."+string(TypeImagePNG)), originalImage); err != nil {
+	avatar.OriginalURL = filepath.Join(service.config.PathToOutputAvatarsRemote, name+"."+string(TypeImagePNG))
+	if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, name+"."+string(TypeImagePNG)), originalImage); err != nil {
 		return avatar, ErrAvatar.Wrap(err)
 	}
-	// avatar.PreviewURL = filepath.Join(service.config.PathToOutputAvatarsRemote, nameImage+"_"+FormatImagePreview+"."+string(TypeImagePNG))
-	// if err = imageprocessing.SaveImage(filepath.Join(service.config.PathToOutputAvatarsLocal, nameImage+"_"+FormatImagePreview+"."+string(TypeImagePNG)), previewImage); err != nil {
-	// 	return avatar, ErrAvatar.Wrap(err)
-	// }
 
 	return avatar, nil
 }
