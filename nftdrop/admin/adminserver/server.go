@@ -15,10 +15,10 @@ import (
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/admin/adminauth"
+	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/nftdrop/admin/adminauth"
-	"ultimatedivision/nftdrop/admin/admins"
 	"ultimatedivision/nftdrop/admin/adminserver/controllers"
 	"ultimatedivision/nftdrop/whitelist"
 )
@@ -137,15 +137,15 @@ func (server *Server) initializeTemplates() (err error) {
 		return err
 	}
 
-	server.templates.admin.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "list.html"))
+	server.templates.admin.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
 	if err != nil {
 		return err
 	}
-	server.templates.admin.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "create.html"))
+	server.templates.admin.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "create.html"))
 	if err != nil {
 		return err
 	}
-	server.templates.admin.Update, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "update.html"))
+	server.templates.admin.Update, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "update.html"))
 	if err != nil {
 		return err
 	}
