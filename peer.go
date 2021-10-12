@@ -155,7 +155,8 @@ type Peer struct {
 
 	// exposes queue related logic.
 	Queue struct {
-		Service *queue.Service
+		Service    *queue.Service
+		PlaceChore *queue.Chore
 	}
 
 	// Admin web server server with web UI.
@@ -280,6 +281,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Database.Queue(),
 			peer.Users.Service,
 		)
+
+		peer.Queue.PlaceChore = queue.NewChore(
+			peer.Log,
+			config.Queue.Config,
+			peer.Queue.Service,
+		)
 	}
 
 	{ // admin setup
@@ -300,6 +307,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Marketplace.Service,
 			peer.LootBoxes.Service,
 			peer.Clubs.Service,
+			peer.Queue.Service,
 		)
 		if err != nil {
 			return nil, err
@@ -322,6 +330,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Clubs.Service,
 			peer.Users.Auth,
 			peer.Users.Service,
+			peer.Queue.Service,
 		)
 	}
 
@@ -341,6 +350,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	})
 	group.Go(func() error {
 		return ignoreCancel(peer.Marketplace.ExpirationLotChore.Run(ctx))
+	})
+	group.Go(func() error {
+		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
 	})
 
 	return group.Wait()
