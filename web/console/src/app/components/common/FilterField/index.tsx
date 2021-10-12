@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-
+import { AnyAction, Dispatch } from 'redux';
 import rectangle
     from '@static/img/FilterField/rectangle.svg';
 import search
@@ -15,10 +15,11 @@ import eye
     from '@static/img/FilterField/eye.svg';
 import parametres
     from '@static/img/FilterField/parametres.svg';
+import filters
+    from '@static/img/MarketPlacePage/filter_icon.svg';
+import { FilterFieldDropdown } from './FilterFieldDropdown';
 
 import './index.scss';
-import { AnyAction, Dispatch } from 'redux';
-import { FilterFieldDropdown } from './FilterFieldDropdown';
 
 export const FilterField: React.FC<{
     title: string;
@@ -62,6 +63,16 @@ export const FilterField: React.FC<{
                 {title}
             </h1>
             <div className="filter-field__wrapper">
+                <div className="filter-field__use-filters">
+                    <img
+                        className="filter-field__use-filters__picture"
+                        src={filters}
+                        alt="use fitlers"
+                    />
+                    <span className="filter-field__use-filters__title">
+                        Use filters
+                    </span>
+                </div>
                 <ul className="filter-field__list">
                     <li className="filter-field__list__item">
                         <img

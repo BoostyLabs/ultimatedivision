@@ -29,10 +29,10 @@ type DB interface {
 	GetByUserID(ctx context.Context, userID uuid.UUID) (Club, error)
 	// GetSquad returns squad.
 	GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, error)
-	// GetCaptainID returns id of captain.
-	GetCaptainID(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error)
 	// GetFormation returns formation of the squad.
 	GetFormation(ctx context.Context, squadID uuid.UUID) (Formation, error)
+	// GetCaptainID returns id of captain.
+	GetCaptainID(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error)
 	// ListSquadCards returns all cards from squad.
 	ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error)
 	// AddSquadCard adds new card to the squad.
@@ -41,7 +41,7 @@ type DB interface {
 	DeleteSquadCard(ctx context.Context, squadID, cardID uuid.UUID) error
 	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
 	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
-	// UpdatePosition updates position of card in the squad.
+	// UpdatePosition updates position of cards in the squad.
 	UpdatePosition(ctx context.Context, squadCards []SquadCard) error
 	// UpdateFormation updates formation in the squad.
 	UpdateFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) error
@@ -190,8 +190,8 @@ var FormationToPosition = map[Formation][]Position{
 	FourTwoTwoTwo:   {GK, LB, LCD, RCD, RB, LCAM, LCDM, RCDM, RCAM, LST, RST},
 	FourThreeOneTwo: {GK, LB, LCD, RCD, RB, LCM, CCM, CCAM, RCM, LST, RST},
 	FourThreeThree:  {GK, LB, LCD, RCD, RB, LCM, CCM, RCM, LW, CST, RW},
-	FourTwoThreeOne: {GK, LB, LCD, RCD, RB, LCDM, LCAM, CCAM, RCAM, CST},
-	FourThreeTwoOne: {GK, LB, LCD, RCD, RB, LCM, CCM, RCM, LW, CST, LW},
+	FourTwoThreeOne: {GK, LB, LCD, RCD, RB, LCDM, LCAM, CCAM, RCAM, RCDM, CST},
+	FourThreeTwoOne: {GK, LB, LCD, RCD, RB, LCM, CCM, RCM, LW, CST, RW},
 	FourOneThreeTwo: {GK, LB, LCD, RCD, RB, LM, CCM, CCDM, RM, LST, RST},
 	FiveThreeTwo:    {GK, LWB, LCD, CCD, RCD, RWB, LCM, CCM, RCM, LST, RST},
 	ThreeFiveTwo:    {GK, LCD, CCD, RCD, LM, LCDM, CCAM, RCDM, RM, LST, RST},

@@ -82,7 +82,7 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 
 	squadID, err := controller.clubs.CreateSquad(ctx, id)
 	if err != nil {
-		controller.log.Error("could not create club", ErrClubs.Wrap(err))
+		controller.log.Error("could not create squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
@@ -166,12 +166,7 @@ const (
 func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["cardId"] == "" || params["squadId"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
-		return
-	}
 
 	cardID, err := uuid.Parse(params["cardId"])
 	if err != nil {
@@ -209,12 +204,7 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["squadId"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
-		return
-	}
 
 	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
@@ -241,8 +231,8 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-
 	params := mux.Vars(r)
+
 	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
@@ -256,10 +246,10 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var squadCard clubs.SquadCard
+	squadCard.CardID = cardID
 
 	if err = json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
-		return
 	}
 
 	squadCard.CardID = cardID
@@ -281,12 +271,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-
 	params := mux.Vars(r)
-	if params["cardId"] == "" || params["squadId"] == "" {
-		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("empty id parameter"))
-		return
-	}
 
 	cardID, err := uuid.Parse(params["cardId"])
 	if err != nil {
