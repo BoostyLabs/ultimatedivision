@@ -10,6 +10,21 @@ export class Service {
         this.provider = ethereumProvider;
     }
 
+    public async totalSupply (adress: string, abi: any[]) {
+        const contract = await new ethers.Contract(adress, abi);
+        const signer = await this.provider.getSigner();
+        const connect = await contract.connect(signer);
+        const token = await connect.functions.totalSupply();
+        return parseInt(token[0]._hex, 16);
+    };
+
+    public async contract(adress: string, abi: any[]) {
+        const contractSale = await new ethers.Contract(adress, abi);
+        const signer = await this.provider.getSigner();
+        const connectSale = await contractSale.connect(signer).getCurrentPrice();
+        return parseInt(connectSale[0]._hex, 16);
+    };
+
     public async sendTransaction(adress: string, amount: string) {
         try {
             const signer = this.provider.getSigner();

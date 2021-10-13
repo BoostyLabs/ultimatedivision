@@ -4,6 +4,8 @@
 import React, { useState } from 'react';
 
 import MetaMaskOnboarding from '@metamask/onboarding';
+import { ServicePlugin } from '@/app/plugins/service'
+import {NFT_ABI, NFT_ABI_SALE, NFT_ADRESS, NFT_ADRESS_SALE} from '@/app/services/abi';
 
 import './index.scss';
 
@@ -37,7 +39,7 @@ export const MintButton: React.FC = () => {
 
         } else {
             onboarding.current
-            && onboarding.current?.startOnboarding();
+                && onboarding.current?.startOnboarding();
         }
     };
 
