@@ -28,27 +28,26 @@ export const Card: React.FC<{
 
     // const percents: string[] = ["15%", "50%", "80%", "100%"];
 
-    const changeImagesPath = parsedImagesData.assets.map(
+    const changeImagesPath = parsedImagesData.assets.forEach(
         //@ts-ignore
         (img: string, i: number) => {
             //@ts-ignore
             img.p = images[i];
-            //@ts-ignore
-            img[5] = card.percent;
-            //@ts-ignore
-            return;
         }
     );
 
-    parsedImagesData.layers.map(
-        //@ts-ignore
-        (p: string, i: number) => {
-            //@ts-ignore
-            p[0] = card.percent;
-            //@ts-ignore
-            return;
-        }
-    );
+    parsedImagesData.assets[5].nm = card.percent;
+    parsedImagesData.layers[0].nm = card.percent;
+
+    // parsedImagesData.layers.map(
+    //     //@ts-ignore
+    //     (p: string, i: number) => {
+    //         //@ts-ignore
+    //         p[0].nm = card.percent;
+    //         //@ts-ignore
+    //         return;
+    //     }
+    // );
 
     // parsedImagesData.assets[5].nm = card.percent;
     // parsedImagesData.layers[0].nm = card.percent;
@@ -56,12 +55,13 @@ export const Card: React.FC<{
     // console.log(card.percent);
 
     useEffect(() => {
+        // console.log(parsedImagesData);
         lottie.loadAnimation({
             //@ts-ignore
             container: document.querySelector(`.card__image-${card.id}`),
             animationData: parsedImagesData,
         });
-    }, []);
+    }, [parsedImagesData]);
 
     return (
         <div className="card">
