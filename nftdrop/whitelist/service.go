@@ -55,7 +55,7 @@ func (service *Service) Create(ctx context.Context, request CreateWallet) error 
 
 // generatePassword generates password for user's wallet.
 func (service *Service) generatePassword(address Hex, privateKey *ecdsa.PrivateKey) ([]byte, error) {
-	dataSignature := []byte(service.config.SmartContract.Address + string(address))
+	dataSignature := []byte(string(service.config.SmartContract.AddressNFTSale) + string(address))
 	hashSignature := crypto.Keccak256(dataSignature)
 	messageSignature := crypto.Keccak256(append([]byte(EthereumSignedMessage), hashSignature...))
 
@@ -63,18 +63,19 @@ func (service *Service) generatePassword(address Hex, privateKey *ecdsa.PrivateK
 }
 
 // GetByAddress returns whitelist by address from the database.
-func (service *Service) GetByAddress(ctx context.Context, address Hex) (SmartContractWithWhiteList, error) {
+func (service *Service) GetByAddress(ctx context.Context, address Hex) (Response, error) {
 	whitelist, err := service.whitelist.GetByAddress(ctx, address)
-	smartContractAddress := service.config.SmartContract.Address
-	smartContractPrice := service.config.SmartContract.Price
 
-	smartContractWithWhiteList := SmartContractWithWhiteList{
-		Wallet:  whitelist,
-		Address: smartContractAddress,
-		Price:   smartContractPrice,
+	response := Response{
+		Password: []byte(whitelist.Password),
+		SmartContract: SmartContract{
+			AddressNFT:     service.config.AddressNFT,
+			AddressNFTSale: service.config.AddressNFTSale,
+			Price:          service.config.Price,
+		},
 	}
 
-	return smartContractWithWhiteList, ErrWhitelist.Wrap(err)
+	return response, ErrWhitelist.Wrap(err)
 }
 
 // List returns all whitelist from the database.

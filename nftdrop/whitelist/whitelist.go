@@ -71,17 +71,20 @@ type CreateWallet struct {
 
 // Config defines configuration for queue.
 type Config struct {
-	SmartContract struct {
-		Address string  `json:"address"`
-		Price   float64 `json:"price"`
-	} `json:"smartContract"`
+	SmartContract `json:"smartContract"`
 }
 
-// SmartContractWithWhiteList entity describes whitelist and smart contract.
-type SmartContractWithWhiteList struct {
-	Wallet
-	Address string  `json:"address"`
-	Price   float64 `json:"price"`
+// SmartContract entity describes addresses and price.
+type SmartContract struct {
+	AddressNFT     Hex     `json:"addressNFT"`
+	AddressNFTSale Hex     `json:"addressNFTSale"`
+	Price          float64 `json:"price"`
+}
+
+// Response entity describes password wallet and smart contract value.
+type Response struct {
+	Password      []byte `json:"password"`
+	SmartContract `json:"smartContract"`
 }
 
 // EthereumSignedMessage defines message for sinbature.
