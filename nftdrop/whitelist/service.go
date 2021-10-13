@@ -56,9 +56,10 @@ func (service *Service) Create(ctx context.Context, request CreateWallet) error 
 // generatePassword generates password for user's wallet.
 func (service *Service) generatePassword(address Hex, privateKey *ecdsa.PrivateKey) ([]byte, error) {
 	dataSignature := []byte(service.config.SmartContract.Address + string(address))
-	hashSignature := crypto.Keccak256Hash(dataSignature)
+	hashSignature := crypto.Keccak256(dataSignature)
+	messageSignature := crypto.Keccak256(append([]byte(EthereumSignedMessage), hashSignature...))
 
-	return crypto.Sign(hashSignature.Bytes(), privateKey)
+	return crypto.Sign(messageSignature, privateKey)
 }
 
 // GetByAddress returns whitelist by address from the database.

@@ -83,3 +83,6 @@ type SmartContractWithWhiteList struct {
 	Address string  `json:"address"`
 	Price   float64 `json:"price"`
 }
+
+// EthereumSignedMessage defines message for sinbature.
+const EthereumSignedMessage string = "\x19Ethereum Signed Message:\n32"
