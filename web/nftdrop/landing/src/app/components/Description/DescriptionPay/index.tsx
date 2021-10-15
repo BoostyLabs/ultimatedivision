@@ -32,31 +32,29 @@ export const DescriptionPay = () => {
         (image, i: number) => (image.p = animationImages[i])
     );
 
+    const autoAnimation = () => {
+        const animationBlock = document?.querySelector(
+            ".description-pay__radar"
+        );
+
+        /** Height of the page to the animated block. */
+        const heightFromTop: number | undefined =
+            animationBlock?.getBoundingClientRect().top;
+
+        /** Set animation state to true when the user scrolls to the required block. */
+        if (heightFromTop && heightFromTop >= -500 && heightFromTop <= 1000) {
+            setIsAnimation(true);
+
+            return;
+        }
+
+        /** Set animation state to false when the user scrolls up or down from the animated block. */
+        setIsAnimation(false);
+    };
+
     useEffect(() => {
         /** Scroll listener. */
-        window.addEventListener("scroll", () => {
-            const animationBlock = document?.querySelector(
-                ".description-pay__radar"
-            );
-
-            /** Height of the page to the animated block. */
-            const heightFromTop: number | undefined =
-                animationBlock?.getBoundingClientRect().top;
-
-            /** Set animation state to true when the user scrolls to the required block. */
-            if (
-                heightFromTop &&
-                heightFromTop >= -500 &&
-                heightFromTop <= 1000
-            ) {
-                setIsAnimation(true);
-
-                return;
-            }
-
-            /** Set animation state to false when the user scrolls up or down from the animated block. */
-            setIsAnimation(false);
-        });
+        window.addEventListener("scroll", autoAnimation);
 
         /** Show animation if the animation state is true. */
         if (isAnimation) {
@@ -71,8 +69,16 @@ export const DescriptionPay = () => {
             return;
         }
 
-        /** Delete the picture when if the animation state is false. */
-        lottie.destroy();
+        /** Delete the picture when animation state is false. */
+        const animationSvg = document?.querySelector(".description-pay__radar");
+
+        if (animationSvg?.hasChildNodes()) {
+            animationSvg.removeChild(animationSvg.childNodes[0]);
+        }
+
+        return () => {
+            window.removeEventListener("scroll", autoAnimation);
+        };
     }, [isAnimation, parsedImagesData]);
 
     return (

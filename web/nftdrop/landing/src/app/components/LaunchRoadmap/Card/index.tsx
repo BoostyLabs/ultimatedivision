@@ -34,7 +34,6 @@ export const Card: React.FC<{
         animationImage_4,
     ];
 
-    // const percents: string[] = ["15%", "50%", "80%", "100%"];
     /** Adding the path to the pictures in JSON. */
     parsedImagesData.assets.forEach(
         //@ts-ignore
@@ -44,35 +43,29 @@ export const Card: React.FC<{
         }
     );
 
-    parsedImagesData.assets[5].nm = card.percent;
-    parsedImagesData.layers[0].nm = card.percent;
+    const autoAnimation = () => {
+        const animationBlock = document?.querySelector(
+            `.card__image-${card.id}`
+        );
+
+        /** Height of the page to the animated block. */
+        const heightFromTop: number | undefined =
+            animationBlock?.getBoundingClientRect().top;
+
+        /** Set animation state to true when the user scrolls to the required block. */
+        if (heightFromTop && heightFromTop <= 800 && heightFromTop >= 0) {
+            setIsAnimation(true);
+
+            return;
+        }
+
+        /** Set animation state to false when the user scrolls up or down from the animated block. */
+        setIsAnimation(false);
+    };
 
     useEffect(() => {
         /** Scroll listener. */
-        window.addEventListener("scroll", () => {
-            const animationBlock = document?.querySelector(
-                ".launch-roadmap__wrapper"
-            );
-
-            /** Height of the page to the animated block. */
-            const heightFromTop: number | undefined =
-                animationBlock?.getBoundingClientRect().top;
-            console.log("heightFromTop", heightFromTop);
-
-            /** Set animation state to true when the user scrolls to the required block. */
-            if (
-                heightFromTop &&
-                heightFromTop <= 600 &&
-                heightFromTop >= -2500
-            ) {
-                setIsAnimation(true);
-
-                return;
-            }
-
-            /** Set animation state to false when the user scrolls up or down from the animated block. */
-            setIsAnimation(false);
-        });
+        window.addEventListener("scroll", autoAnimation);
 
         /** Show animation if the animation state is true. */
         if (isAnimation) {
@@ -87,9 +80,17 @@ export const Card: React.FC<{
             return;
         }
 
-        /** Delete the picture when if the animation state is false. */
-        // lottie.destroy();
-    }, [isAnimation, parsedImagesData, card.id]);
+        /** Delete the picture when animation state is false. */
+        const animationSvg = document?.querySelector(`.card__image-${card.id}`);
+
+        if (animationSvg?.hasChildNodes()) {
+            animationSvg?.removeChild(animationSvg?.childNodes[0]);
+        }
+
+        return () => {
+            window.removeEventListener("scroll", autoAnimation);
+        };
+    }, [isAnimation, parsedImagesData, card.id, autoAnimation]);
 
     return (
         <div className="card">
@@ -105,11 +106,6 @@ export const Card: React.FC<{
                     <p className="card__box__subtitle">{card.subTitle}</p>
                 </div>
             </div>
-            {/* <img
-                src={card.image}
-                alt="diagram"
-                className="card__image"
-            /> */}
             <div className={`card__image-${card.id}`}></div>
         </div>
     );
