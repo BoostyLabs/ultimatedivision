@@ -1,14 +1,14 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import lottie from "lottie-web";
 import box from "@static/images/launchRoadmap/box1.svg";
-import roadmapDiagram from "@static/images/launchRoadmap/animated-diagram/data.json";
-import images_0 from "@static/images/launchRoadmap/animated-diagram/images/img_0.png";
-import images_1 from "@static/images/launchRoadmap/animated-diagram/images/img_1.png";
-import images_2 from "@static/images/launchRoadmap/animated-diagram/images/img_2.png";
-import images_3 from "@static/images/launchRoadmap/animated-diagram/images/img_3.png";
-import images_4 from "@static/images/launchRoadmap/animated-diagram/images/img_4.png";
+import roadmapDiagramData from "@static/images/launchRoadmap/animated-diagram/data.json";
+import animationImage_0 from "@static/images/launchRoadmap/animated-diagram/images/img_0.png";
+import animationImage_1 from "@static/images/launchRoadmap/animated-diagram/images/img_1.png";
+import animationImage_2 from "@static/images/launchRoadmap/animated-diagram/images/img_2.png";
+import animationImage_3 from "@static/images/launchRoadmap/animated-diagram/images/img_3.png";
+import animationImage_4 from "@static/images/launchRoadmap/animated-diagram/images/img_4.png";
 
 import "./index.scss";
 
@@ -18,50 +18,78 @@ export const Card: React.FC<{
         title: string;
         subTitle: string;
         description: string;
-        image: string;
         percent: string;
     };
 }> = ({ card }) => {
-    const loadedImagesData = JSON.stringify(roadmapDiagram);
+    const [isAnimation, setIsAnimation] = useState<boolean>(false);
+
+    /** Reading and parsing JSON with data to animate playToEarn block. */
+    const loadedImagesData = JSON.stringify(roadmapDiagramData);
     const parsedImagesData = JSON.parse(loadedImagesData);
-    const images: string[] = [images_0, images_1, images_2, images_3, images_4];
+    const animationImages: string[] = [
+        animationImage_0,
+        animationImage_1,
+        animationImage_2,
+        animationImage_3,
+        animationImage_4,
+    ];
 
     // const percents: string[] = ["15%", "50%", "80%", "100%"];
-
-    const changeImagesPath = parsedImagesData.assets.forEach(
+    /** Adding the path to the pictures in JSON. */
+    parsedImagesData.assets.forEach(
         //@ts-ignore
-        (img: string, i: number) => {
+        (image, i) => {
             //@ts-ignore
-            img.p = images[i];
+            image.p = animationImages[i];
         }
     );
 
     parsedImagesData.assets[5].nm = card.percent;
     parsedImagesData.layers[0].nm = card.percent;
 
-    // parsedImagesData.layers.map(
-    //     //@ts-ignore
-    //     (p: string, i: number) => {
-    //         //@ts-ignore
-    //         p[0].nm = card.percent;
-    //         //@ts-ignore
-    //         return;
-    //     }
-    // );
-
-    // parsedImagesData.assets[5].nm = card.percent;
-    // parsedImagesData.layers[0].nm = card.percent;
-    // console.log(parsedImagesData);
-    // console.log(card.percent);
-
     useEffect(() => {
-        // console.log(parsedImagesData);
-        lottie.loadAnimation({
-            //@ts-ignore
-            container: document.querySelector(`.card__image-${card.id}`),
-            animationData: parsedImagesData,
+        /** Scroll listener. */
+        window.addEventListener("scroll", () => {
+            const animationBlock = document?.querySelector(
+                ".launch-roadmap__wrapper"
+            );
+
+            /** Height of the page to the animated block. */
+            const heightFromTop: number | undefined =
+                animationBlock?.getBoundingClientRect().top;
+            console.log("heightFromTop", heightFromTop);
+
+            /** Set animation state to true when the user scrolls to the required block. */
+            if (
+                heightFromTop &&
+                heightFromTop <= 600 &&
+                heightFromTop >= -2500
+            ) {
+                setIsAnimation(true);
+
+                return;
+            }
+
+            /** Set animation state to false when the user scrolls up or down from the animated block. */
+            setIsAnimation(false);
         });
-    }, [parsedImagesData]);
+
+        /** Show animation if the animation state is true. */
+        if (isAnimation) {
+            lottie.loadAnimation({
+                // @ts-ignore
+                container: document.querySelector(`.card__image-${card.id}`),
+                animationData: parsedImagesData,
+                loop: false,
+                autoplay: true,
+            });
+
+            return;
+        }
+
+        /** Delete the picture when if the animation state is false. */
+        // lottie.destroy();
+    }, [isAnimation, parsedImagesData, card.id]);
 
     return (
         <div className="card">

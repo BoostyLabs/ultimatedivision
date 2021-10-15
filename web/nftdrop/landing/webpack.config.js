@@ -9,7 +9,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
-    mode: "production",
+    mode: "development",
     experiments: {
         asset: true,
     },

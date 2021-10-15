@@ -8,8 +8,8 @@
     padding: 70px 90px;
     justify-content: space-between;
     align-items: center;
-    background: #19215e;
-    border: 1px solid #3f4ba7;
+    background: linear-gradient(180deg, #213497 0%, rgba(44, 60, 143, 0) 100%);
+    box-shadow: 0 9px 22px -2px #00ffa3;
 
     &__text-area {
         width: 70%;
@@ -127,8 +127,14 @@
             }
         }
 
-        &__image {
+        &__image-0,
+        &__image-1,
+        &__image-2,
+        &__image-3,
+        &__image-4 {
             position: absolute;
+            width: 158.1px;
+            height: 158.1px;
             top: 160px;
         }
     }
