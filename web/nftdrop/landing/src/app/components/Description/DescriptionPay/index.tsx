@@ -24,11 +24,9 @@ export const DescriptionPay = () => {
         (img: string, i: number) => (img.p = images[i])
     );
 
-    const parentBlock = document.querySelector(
-        ".description-pay__radar aos-init aos-animate"
-    );
+    const parentBlock = document.querySelector(".aos-animate");
     console.log(parentBlock);
-    
+
     useEffect(() => {
         Aos.init({
             duration: 3000,
@@ -45,7 +43,7 @@ export const DescriptionPay = () => {
         }
 
         lottie.destroy();
-    }, []);
+    }, [parentBlock]);
 
     return (
         <div className="description-pay">
