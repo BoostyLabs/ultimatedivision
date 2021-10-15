@@ -47,14 +47,14 @@ func (controller *Whitelist) Get(w http.ResponseWriter, r *http.Request) {
 		controller.serveError(w, http.StatusBadRequest, ErrWhitelist.New("invalid address"))
 	}
 
-	smartContractWithWhiteList, err := controller.whitelist.GetByAddress(ctx, address)
+	response, err := controller.whitelist.GetByAddress(ctx, address)
 	if err != nil {
 		controller.log.Error("could get password", ErrWhitelist.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrWhitelist.Wrap(err))
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(smartContractWithWhiteList); err != nil {
+	if err = json.NewEncoder(w).Encode(response); err != nil {
 		controller.log.Error("could not response with json", ErrWhitelist.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrWhitelist.Wrap(err))
 		return
