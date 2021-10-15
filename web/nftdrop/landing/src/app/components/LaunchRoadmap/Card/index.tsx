@@ -1,16 +1,16 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import React, { useEffect, useState } from "react";
-import lottie from "lottie-web";
-import box from "@static/images/launchRoadmap/box1.svg";
-import roadmapDiagramData from "@static/images/launchRoadmap/animated-diagram/data.json";
-import animationImage_0 from "@static/images/launchRoadmap/animated-diagram/images/img_0.png";
-import animationImage_1 from "@static/images/launchRoadmap/animated-diagram/images/img_1.png";
-import animationImage_2 from "@static/images/launchRoadmap/animated-diagram/images/img_2.png";
-import animationImage_3 from "@static/images/launchRoadmap/animated-diagram/images/img_3.png";
-import animationImage_4 from "@static/images/launchRoadmap/animated-diagram/images/img_4.png";
+import React, { useEffect, useState } from 'react';
+import lottie from 'lottie-web';
+import box from '@static/images/launchRoadmap/box1.svg';
+import roadmapDiagramData from '@static/images/launchRoadmap/animated-diagram/data.json';
+import animationImage_0 from '@static/images/launchRoadmap/animated-diagram/images/img_0.png';
+import animationImage_1 from '@static/images/launchRoadmap/animated-diagram/images/img_1.png';
+import animationImage_2 from '@static/images/launchRoadmap/animated-diagram/images/img_2.png';
+import animationImage_3 from '@static/images/launchRoadmap/animated-diagram/images/img_3.png';
+import animationImage_4 from '@static/images/launchRoadmap/animated-diagram/images/img_4.png';
 
-import "./index.scss";
+import './index.scss';
 
 export const Card: React.FC<{
     card: {
@@ -49,8 +49,8 @@ export const Card: React.FC<{
         );
 
         /** Height of the page to the animated block. */
-        const heightFromTop: number | undefined =
-            animationBlock?.getBoundingClientRect().top;
+        const heightFromTop: number | undefined
+            = animationBlock?.getBoundingClientRect().top;
 
         /** Set animation state to true when the user scrolls to the required block. */
         if (heightFromTop && heightFromTop <= 800 && heightFromTop >= 0) {
@@ -65,7 +65,7 @@ export const Card: React.FC<{
 
     useEffect(() => {
         /** Scroll listener. */
-        window.addEventListener("scroll", autoAnimation);
+        window.addEventListener('scroll', autoAnimation);
 
         /** Show animation if the animation state is true. */
         if (isAnimation) {
@@ -88,7 +88,7 @@ export const Card: React.FC<{
         }
 
         return () => {
-            window.removeEventListener("scroll", autoAnimation);
+            window.removeEventListener('scroll', autoAnimation);
         };
     }, [isAnimation, parsedImagesData, card.id, autoAnimation]);
 

@@ -9,7 +9,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
-    mode: "development",
+    mode: "production",
     experiments: {
         asset: true,
     },
@@ -19,7 +19,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "dist/"),
         filename: "[name].[hash].js",
-        publicPath: "/",
+        publicPath: "/static/dist/",
     },
     plugins: [
         new HtmlWebpackPlugin({

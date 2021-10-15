@@ -24,8 +24,6 @@ export const Home: React.FC = () => {
             <div className="home__wrapper">
                 <div className="home__text-area"
 
-
-
                 >
                     <h1 className="home__value">10 000</h1>
                     <h3 className="home__title">Unique Collectible Player Cards.</h3>

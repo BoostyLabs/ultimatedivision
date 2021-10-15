@@ -1,16 +1,16 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from "react";
-import lottie from "lottie-web";
-import playToEarnData from "@static/images/description/playToEarn/data.json";
-import animationImage_0 from "@static/images/description/playToEarn/images/img_0.png";
-import animationImage_1 from "@static/images/description/playToEarn/images/img_1.png";
-import animationImage_2 from "@static/images/description/playToEarn/images/img_2.png";
-import animationImage_3 from "@static/images/description/playToEarn/images/img_3.png";
-import animationImage_4 from "@static/images/description/playToEarn/images/img_4.png";
+import { useEffect, useState } from 'react';
+import lottie from 'lottie-web';
+import playToEarnData from '@static/images/description/playToEarn/data.json';
+import animationImage_0 from '@static/images/description/playToEarn/images/img_0.png';
+import animationImage_1 from '@static/images/description/playToEarn/images/img_1.png';
+import animationImage_2 from '@static/images/description/playToEarn/images/img_2.png';
+import animationImage_3 from '@static/images/description/playToEarn/images/img_3.png';
+import animationImage_4 from '@static/images/description/playToEarn/images/img_4.png';
 
-import "./index.scss";
+import './index.scss';
 
 export const DescriptionPay = () => {
     const [isAnimation, setIsAnimation] = useState<boolean>(false);
@@ -34,12 +34,12 @@ export const DescriptionPay = () => {
 
     const autoAnimation = () => {
         const animationBlock = document?.querySelector(
-            ".description-pay__radar"
+            '.description-pay__radar'
         );
 
         /** Height of the page to the animated block. */
-        const heightFromTop: number | undefined =
-            animationBlock?.getBoundingClientRect().top;
+        const heightFromTop: number | undefined
+            = animationBlock?.getBoundingClientRect().top;
 
         /** Set animation state to true when the user scrolls to the required block. */
         if (heightFromTop && heightFromTop >= -500 && heightFromTop <= 1000) {
@@ -54,13 +54,13 @@ export const DescriptionPay = () => {
 
     useEffect(() => {
         /** Scroll listener. */
-        window.addEventListener("scroll", autoAnimation);
+        window.addEventListener('scroll', autoAnimation);
 
         /** Show animation if the animation state is true. */
         if (isAnimation) {
             lottie.loadAnimation({
                 // @ts-ignore
-                container: document.querySelector(".description-pay__radar"),
+                container: document.querySelector('.description-pay__radar'),
                 animationData: parsedImagesData,
                 loop: false,
                 autoplay: true,
@@ -70,14 +70,14 @@ export const DescriptionPay = () => {
         }
 
         /** Delete the picture when animation state is false. */
-        const animationSvg = document?.querySelector(".description-pay__radar");
+        const animationSvg = document?.querySelector('.description-pay__radar');
 
         if (animationSvg?.hasChildNodes()) {
             animationSvg.removeChild(animationSvg.childNodes[0]);
         }
 
         return () => {
-            window.removeEventListener("scroll", autoAnimation);
+            window.removeEventListener('scroll', autoAnimation);
         };
     }, [isAnimation, parsedImagesData]);
 
