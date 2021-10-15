@@ -128,36 +128,34 @@
 @media (max-width: $tabletBreakPoint) {
 
     .launch-date {
-        @media (max-width: $tabletBreakPoint) {
-            overflow: hidden;
+        overflow: hidden;
 
-            &__wrapper {
-                justify-content: left;
-                min-height: 440px;
-                padding: 70px 20px;
-            }
+        &__wrapper {
+            justify-content: left;
+            min-height: 440px;
+            padding: 70px 20px;
+        }
 
-            &__ball {
-                height: 100%;
-                width: unset;
-                position: absolute;
-                right: 0;
-                top: 0;
-                animation: unset;
-                z-index: 0;
-            }
+        &__ball {
+            height: 100%;
+            width: unset;
+            position: absolute;
+            right: 0;
+            top: 0;
+            animation: unset;
+            z-index: 0;
+        }
 
-            &__information {
+        &__information {
 
-                &__remind {
-                    width: 156px;
-                    height: 42px;
-                    margin: 25px auto;
+            &__remind {
+                width: 156px;
+                height: 42px;
+                margin: 25px auto;
 
-                    &__text {
-                        font-size: 14px;
-                        line-height: 42px;
-                    }
+                &__text {
+                    font-size: 14px;
+                    line-height: 42px;
                 }
             }
         }
