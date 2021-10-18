@@ -13,12 +13,12 @@ module.exports = {
     experiments: {
         asset: true,
     },
-    entry: './src/index.tsx',
-    target: 'web',
+    entry: "./src/index.tsx",
+    target: "web",
     output: {
         path: path.resolve(__dirname, "dist/"),
         filename: "[name].[hash].js",
-        publicPath: "/static/dist/",
+        publicPath: "/",
     },
     plugins: [
         new HtmlWebpackPlugin({
