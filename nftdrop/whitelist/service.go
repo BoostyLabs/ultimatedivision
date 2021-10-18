@@ -97,7 +97,7 @@ func (service *Service) GetByAddress(ctx context.Context, address Hex) (Response
 	whitelist, err := service.whitelist.GetByAddress(ctx, address)
 
 	response := Response{
-		Password: []byte(whitelist.Password),
+		Password: Hex(whitelist.Password),
 		SmartContract: SmartContract{
 			AddressNFT:     service.config.AddressNFT,
 			AddressNFTSale: service.config.AddressNFTSale,

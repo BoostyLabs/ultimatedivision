@@ -83,7 +83,7 @@ type SmartContract struct {
 
 // Response entity describes password wallet and smart contract value.
 type Response struct {
-	Password      []byte `json:"password"`
+	Password      Hex `json:"password"`
 	SmartContract `json:"smartContract"`
 }
 
