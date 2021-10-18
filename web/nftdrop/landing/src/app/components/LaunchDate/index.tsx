@@ -18,8 +18,9 @@ export const LaunchDate: React.FC = () => {
 
     useEffect(() => {
         /** provides logic to disable scrolling */
-        isShowModal ?
-            document.body.classList.add('scroll-hidden') : document.body.classList.remove('scroll-hidden');
+        isShowModal
+            ? document.body.classList.add('scroll-hidden')
+            : document.body.classList.remove('scroll-hidden');
     }, [isShowModal]);
 
     const handleModal = () => setIsShowModal(prev => !prev);
