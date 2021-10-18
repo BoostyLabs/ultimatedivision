@@ -69,8 +69,7 @@ func (service *Service) generatePassword(address Hex, privateKey *ecdsa.PrivateK
 		return []byte{}, nil
 	}
 
-	dataSignature := append(addressLowHex, addressNFTSaleHex...)
-	hashSignature := crypto.Keccak256Hash(dataSignature)
+	hashSignature := crypto.Keccak256Hash(append(addressLowHex, addressNFTSaleHex...))
 
 	EthereumSignedMessageHashHex, err := hex.DecodeString(EthereumSignedMessageHash)
 	if err != nil {
