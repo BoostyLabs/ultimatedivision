@@ -34,7 +34,7 @@ type DB interface {
 // Wallet describes whitelist entity.
 type Wallet struct {
 	Address  Hex    `json:"address"`
-	Password []byte `json:"password"`
+	Password string `json:"password"`
 }
 
 // Hex defines hex type.
@@ -87,5 +87,5 @@ type Response struct {
 	SmartContract `json:"smartContract"`
 }
 
-// EthereumSignedMessage defines message for sinbature.
-const EthereumSignedMessage string = "\x19Ethereum Signed Message:\n32"
+// EthereumSignedMessageHash defines message for sinbature.
+const EthereumSignedMessageHash string = "19457468657265756d205369676e6564204d6573736167653a0a3332"

@@ -6,6 +6,8 @@ package whitelist
 import (
 	"context"
 	"crypto/ecdsa"
+	"encoding/hex"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/zeebo/errs"
@@ -48,18 +50,47 @@ func (service *Service) Create(ctx context.Context, request CreateWallet) error 
 
 	whitelist := Wallet{
 		Address:  request.Address,
-		Password: password,
+		Password: hex.EncodeToString(password),
 	}
 	return ErrWhitelist.Wrap(service.whitelist.Create(ctx, whitelist))
 }
 
 // generatePassword generates password for user's wallet.
 func (service *Service) generatePassword(address Hex, privateKey *ecdsa.PrivateKey) ([]byte, error) {
-	dataSignature := []byte(string(service.config.SmartContract.AddressNFTSale) + string(address))
-	hashSignature := crypto.Keccak256(dataSignature)
-	messageSignature := crypto.Keccak256(append([]byte(EthereumSignedMessage), hashSignature...))
+	addressLow := strings.ToLower(string(address))
+	addressNFTSale := strings.ToLower(string(service.config.AddressNFTSale))
 
-	return crypto.Sign(messageSignature, privateKey)
+	addressLowHex, err := hex.DecodeString(addressLow[2:])
+	if err != nil {
+		return []byte{}, nil
+	}
+	addressNFTSaleHex, err := hex.DecodeString(addressNFTSale[2:])
+	if err != nil {
+		return []byte{}, nil
+	}
+
+	dataSignature := append(addressLowHex, addressNFTSaleHex...)
+	hashSignature := crypto.Keccak256Hash(dataSignature)
+
+	EthereumSignedMessageHashHex, err := hex.DecodeString(EthereumSignedMessageHash)
+	if err != nil {
+		return []byte{}, nil
+	}
+
+	messageSignature := crypto.Keccak256Hash(append(EthereumSignedMessageHashHex, hashSignature.Bytes()...))
+
+	var resultPassword []byte
+	password, err := crypto.Sign(messageSignature.Bytes(), privateKey)
+	pass := string(password)[:len(password)-1]
+	passLastByte := hex.EncodeToString([]byte(string(password)[len(password)-1:]))
+
+	if passLastByte == "00" {
+		resultPassword = append([]byte(pass), []byte{27}...)
+	} else if passLastByte == "01" {
+		resultPassword = append([]byte(pass), []byte{28}...)
+	}
+
+	return resultPassword, err
 }
 
 // GetByAddress returns whitelist by address from the database.
@@ -120,7 +151,7 @@ func (service *Service) SetPassword(ctx context.Context, privateKey Hex) error {
 
 		whitelist := Wallet{
 			Address:  v.Address,
-			Password: password,
+			Password: hex.EncodeToString(password),
 		}
 		if err := service.Update(ctx, whitelist); err != nil {
 			return ErrWhitelist.Wrap(err)
