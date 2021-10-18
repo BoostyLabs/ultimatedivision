@@ -2,7 +2,9 @@
 // See LICENSE for copying information.
 
 import { AnimationImage } from '@components/common/AnimationImage';
+
 import playToEarnData from '@static/images/description/playToEarn/data.json';
+
 import animationImage_0 from '@static/images/description/playToEarn/images/img_0.png';
 import animationImage_1 from '@static/images/description/playToEarn/images/img_1.png';
 import animationImage_2 from '@static/images/description/playToEarn/images/img_2.png';
@@ -22,10 +24,8 @@ export const DescriptionPay = () => {
 
     return (
         <div className="description-pay">
-            {/* <div className="description-pay__radar"></div> */}
             <AnimationImage
                 className={'description-pay__radar'}
-                classData=""
                 heightFrom={1000}
                 heightTo={-500}
                 loop={false}

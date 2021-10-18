@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import lottie from 'lottie-web';
 
 export const AnimationImage: React.FC<{
-    classData: any;
     className: string;
     animationData: any;
     animationImages: string[];
@@ -13,7 +12,6 @@ export const AnimationImage: React.FC<{
     loop: boolean;
 }> = ({
     className,
-    classData,
     animationData,
     animationImages,
     heightFrom,
@@ -37,9 +35,7 @@ export const AnimationImage: React.FC<{
 
     const autoAnimation = () => {
         /** Get id card block. */
-        const animationBlock = document?.querySelector(
-            `.${className}${classData ? classData.id : ''}`
-        );
+        const animationBlock = document?.querySelector(`.${className}`);
 
         /** Height of the page to the animated block. */
         const heightFromTop: number | undefined
@@ -65,7 +61,7 @@ export const AnimationImage: React.FC<{
         if (!isAnimation) {
             return null;
         }
-        
+
         setIsAnimation(false);
     };
 
@@ -77,9 +73,7 @@ export const AnimationImage: React.FC<{
         if (isAnimation) {
             lottie.loadAnimation({
                 // @ts-ignore
-                container: document.querySelector(
-                    `.${className}${classData ? classData.id : ''}`
-                ),
+                container: document.querySelector(`.${className}`),
                 animationData: parsedImagesData,
                 loop: loop,
                 autoplay: true,
@@ -89,9 +83,7 @@ export const AnimationImage: React.FC<{
         }
 
         /** Delete the picture when animation state is false. */
-        const animationSvg = document?.querySelector(
-            `.${className}${classData ? classData.id : ''}`
-        );
+        const animationSvg = document?.querySelector(`.${className}`);
 
         if (animationSvg?.hasChildNodes()) {
             animationSvg?.removeChild(animationSvg?.childNodes[0]);
@@ -102,7 +94,5 @@ export const AnimationImage: React.FC<{
         };
     }, [isAnimation, parsedImagesData]);
 
-    return (
-        <div className={`${className}${classData ? classData.id : ''}`}></div>
-    );
+    return <div className={`${className}`}></div>;
 };

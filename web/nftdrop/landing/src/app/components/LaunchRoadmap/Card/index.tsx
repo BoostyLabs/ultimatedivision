@@ -1,9 +1,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 import React from 'react';
+
 import { AnimationImage } from '@components/common/AnimationImage';
-import box from '@static/images/launchRoadmap/box1.svg';
-import roadmapDiagramData from '@static/images/launchRoadmap/animated-diagram/data.json';
+
+import box from '@static/images/launchRoadmap/box.svg';
+
 import animationImage_0 from '@static/images/launchRoadmap/animated-diagram/images/img_0.png';
 import animationImage_1 from '@static/images/launchRoadmap/animated-diagram/images/img_1.png';
 import animationImage_2 from '@static/images/launchRoadmap/animated-diagram/images/img_2.png';
@@ -18,6 +20,7 @@ export const Card: React.FC<{
         title: string;
         subTitle: string;
         description: string;
+        animation: any;
     };
 }> = ({ card }) => {
     const animationImages: string[] = [
@@ -43,12 +46,11 @@ export const Card: React.FC<{
                 </div>
             </div>
             <AnimationImage
-                className={'card__image-'}
-                classData={card}
+                className={`card__image-${card.id}`}
                 heightFrom={1000}
                 heightTo={-200}
                 loop={true}
-                animationData={roadmapDiagramData}
+                animationData={card.animation}
                 animationImages={animationImages}
             />
         </div>
