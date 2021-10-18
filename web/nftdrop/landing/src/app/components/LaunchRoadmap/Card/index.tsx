@@ -1,16 +1,16 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import React from "react";
-import { AnimationImage } from "@components/common/AnimationImage";
-import box from "@static/images/launchRoadmap/box1.svg";
-import roadmapDiagramData from "@static/images/launchRoadmap/animated-diagram/data.json";
-import animationImage_0 from "@static/images/launchRoadmap/animated-diagram/images/img_0.png";
-import animationImage_1 from "@static/images/launchRoadmap/animated-diagram/images/img_1.png";
-import animationImage_2 from "@static/images/launchRoadmap/animated-diagram/images/img_2.png";
-import animationImage_3 from "@static/images/launchRoadmap/animated-diagram/images/img_3.png";
-import animationImage_4 from "@static/images/launchRoadmap/animated-diagram/images/img_4.png";
+import React from 'react';
+import { AnimationImage } from '@components/common/AnimationImage';
+import box from '@static/images/launchRoadmap/box1.svg';
+import roadmapDiagramData from '@static/images/launchRoadmap/animated-diagram/data.json';
+import animationImage_0 from '@static/images/launchRoadmap/animated-diagram/images/img_0.png';
+import animationImage_1 from '@static/images/launchRoadmap/animated-diagram/images/img_1.png';
+import animationImage_2 from '@static/images/launchRoadmap/animated-diagram/images/img_2.png';
+import animationImage_3 from '@static/images/launchRoadmap/animated-diagram/images/img_3.png';
+import animationImage_4 from '@static/images/launchRoadmap/animated-diagram/images/img_4.png';
 
-import "./index.scss";
+import './index.scss';
 
 export const Card: React.FC<{
     card: {
@@ -43,7 +43,7 @@ export const Card: React.FC<{
                 </div>
             </div>
             <AnimationImage
-                className={"card__image-"}
+                className={'card__image-'}
                 classData={card}
                 heightFrom={1000}
                 heightTo={-200}
