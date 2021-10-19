@@ -102,7 +102,7 @@ func generateName(path string, names []string) (string, error) {
 	var name string
 
 	for {
-		randomNum := rand.Intn(totalCount)+1
+		randomNum := rand.Intn(totalCount) + 1
 
 		name, err = filereading.ReadLine(file, randomNum)
 		if err != nil {

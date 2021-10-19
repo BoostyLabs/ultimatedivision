@@ -12,7 +12,7 @@ import (
 
 // ReadLine reads certain line from the file.
 func ReadLine(file *os.File, lineNum int) (string, error) {
-	_, err := file.Seek(0,io.SeekStart)
+	_, err := file.Seek(0, io.SeekStart)
 	if err != nil {
 		return "", err
 	}
