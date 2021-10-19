@@ -105,7 +105,7 @@ func generateName(path string, names []string) (string, error) {
 	for {
 		randomNum := rand.Intn(totalCount) + 1
 
-		name, err = filereading.ReadLine(file, randomNum)
+		name, err = filereading.ReadCertainLine(file, randomNum)
 		if err != nil {
 			return "", ErrAvatarCard.Wrap(err)
 		}

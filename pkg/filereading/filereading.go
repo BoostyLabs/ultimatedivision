@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-// ReadLine reads certain line from the file.
-func ReadLine(file *os.File, lineNum int) (string, error) {
+// ReadCertainLine reads certain line from the file.
+func ReadCertainLine(file *os.File, lineNum int) (string, error) {
 	_, err := file.Seek(0, io.SeekStart)
 	if err != nil {
 		return "", err

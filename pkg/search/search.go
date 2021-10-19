@@ -6,7 +6,7 @@ package search
 import "sort"
 
 // BinarySearch searches for elements in the slice,
-// it return true if element present in array, and false otherwise.
+// it return true if element present in given data, and false otherwise.
 func BinarySearch(allData []string, element string) bool {
 	sort.Strings(allData)
 
