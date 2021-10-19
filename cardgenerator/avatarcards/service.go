@@ -7,6 +7,7 @@ import (
 	"context"
 	"math/rand"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -63,9 +64,9 @@ func (service *Service) Generate(ctx context.Context, count int) ([]AvatarCards,
 			return nil, ErrAvatarCard.Wrap(err)
 		}
 
-		/*if avatar, err = service.avatars.Generate(ctx, avatarCard.Card.ID, avatarCard.Card.IsTattoo, strconv.Itoa(i)); err != nil {
+		if avatar, err = service.avatars.Generate(ctx, avatarCard.Card.ID, avatarCard.Card.IsTattoo, strconv.Itoa(i)); err != nil {
 			return nil, ErrAvatarCard.Wrap(err)
-		}*/
+		}
 
 		avatarCard.OriginalURL = avatar.OriginalURL
 
