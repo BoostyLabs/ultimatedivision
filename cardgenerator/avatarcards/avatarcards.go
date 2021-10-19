@@ -21,4 +21,5 @@ type Config struct {
 	AvatarConfig         avatars.Config            `json:"avatarConfig"`
 	PathToOutputJSONFile string                    `json:"pathToOutputJSONFile"`
 	NameOutputJSONFile   string                    `json:"nameOutputJSONFile"`
+	PathToNamesDataset   string                    `json:"pathToNamesDataset"`
 }
