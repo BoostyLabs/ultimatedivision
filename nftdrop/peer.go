@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"net"
+	"ultimatedivision/nftdrop/emails"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -29,6 +30,9 @@ type DB interface {
 
 	// Admins provides access to admins db.
 	Admins() admins.DB
+
+	// Emails provides access to emails db.
+	Emails() emails.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -82,6 +86,11 @@ type Peer struct {
 	Admin struct {
 		Listener net.Listener
 		Endpoint *adminserver.Server
+	}
+
+	// exposes emails related logic.
+	Emails struct {
+		Service *emails.Service
 	}
 }
 
@@ -141,6 +150,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			logger,
 			peer.Landing.Listener,
 			peer.Whitelist.Service,
+			peer.Emails.Service,
 		)
 	}
 

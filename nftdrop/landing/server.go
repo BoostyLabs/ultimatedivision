@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"ultimatedivision/nftdrop/emails"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -54,7 +55,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for nftdrop web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, whitelist *whitelist.Service) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, whitelist *whitelist.Service, emails *emails.Service) *Server {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -65,12 +66,16 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, whitelis
 	server.rateLimiter = ratelimit.NewRateLimiter(time.Minute*5, 5, 10000)
 
 	whitelistController := controllers.NewWhitelist(log, whitelist)
+	emailsController := controllers.NewEmails(log, emails)
 
 	router := mux.NewRouter()
 	apiRouter := router.PathPrefix("/api/v0").Subrouter()
 
 	whitelistRouter := apiRouter.PathPrefix("/whitelist").Subrouter()
 	whitelistRouter.Handle("/{address}", server.rateLimit(http.HandlerFunc(whitelistController.Get))).Methods(http.MethodGet)
+
+	EmailsRouter := apiRouter.PathPrefix("/emails").Subrouter()
+	EmailsRouter.Handle("", server.rateLimit(http.HandlerFunc(emailsController.Create))).Methods(http.MethodPost)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(server.brotliMiddleware(http.StripPrefix("/static", fs)))
