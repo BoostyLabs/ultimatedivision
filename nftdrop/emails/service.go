@@ -30,20 +30,20 @@ func NewService(emails DB) *Service {
 
 // Get returns email from DB.
 func (service *Service) Get(ctx context.Context, emailID uuid.UUID) (Email, error) {
-	user, err := service.emails.Get(ctx, emailID)
-	return user, ErrEmails.Wrap(err)
+	email, err := service.emails.Get(ctx, emailID)
+	return email, ErrEmails.Wrap(err)
 }
 
 // GetByEmail returns email by email from DB.
 func (service *Service) GetByEmail(ctx context.Context, name string) (Email, error) {
-	user, err := service.emails.GetByEmail(ctx, name)
-	return user, ErrEmails.Wrap(err)
+	email, err := service.emails.GetByEmail(ctx, name)
+	return email, ErrEmails.Wrap(err)
 }
 
 // List returns all emails from DB.
 func (service *Service) List(ctx context.Context) ([]Email, error) {
-	users, err := service.emails.List(ctx)
-	return users, ErrEmails.Wrap(err)
+	emails, err := service.emails.List(ctx)
+	return emails, ErrEmails.Wrap(err)
 }
 
 // Create creates a email.

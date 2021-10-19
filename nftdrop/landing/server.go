@@ -15,7 +15,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-	"ultimatedivision/nftdrop/emails"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -23,6 +22,7 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/ratelimit"
+	"ultimatedivision/nftdrop/emails"
 	"ultimatedivision/nftdrop/landing/controllers"
 	"ultimatedivision/nftdrop/whitelist"
 )

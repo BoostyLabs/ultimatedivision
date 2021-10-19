@@ -11,7 +11,7 @@ import (
 	"github.com/zeebo/errs"
 )
 
-// ErrNoEmail indicated that user does not exist.
+// ErrNoEmail indicated that email does not exist.
 var ErrNoEmail = errs.Class("email does not exist")
 
 // DB exposes access to emails db.

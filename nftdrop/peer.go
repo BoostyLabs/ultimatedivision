@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"net"
-	"ultimatedivision/nftdrop/emails"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -17,6 +16,7 @@ import (
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/admin/adminserver"
+	"ultimatedivision/nftdrop/emails"
 	"ultimatedivision/nftdrop/landing"
 	"ultimatedivision/nftdrop/whitelist"
 )

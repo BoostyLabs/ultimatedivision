@@ -34,7 +34,7 @@ func (emailsDB *emailsDB) List(ctx context.Context) ([]emails.Email, error) {
 		err = errs.Combine(err, ErrEmails.Wrap(rows.Close()))
 	}()
 
-	var data []emails.Email
+	var dataEmails []emails.Email
 	for rows.Next() {
 		var email emails.Email
 		err := rows.Scan(&email.ID, &email.Name, &email.CreatedAt)
@@ -42,13 +42,13 @@ func (emailsDB *emailsDB) List(ctx context.Context) ([]emails.Email, error) {
 			return nil, emails.ErrNoEmail.Wrap(err)
 		}
 
-		data = append(data, email)
+		dataEmails = append(dataEmails, email)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, ErrEmails.Wrap(err)
 	}
 
-	return data, nil
+	return dataEmails, nil
 }
 
 // Get returns email by id from the data base.
@@ -98,7 +98,7 @@ func (emailsDB *emailsDB) Create(ctx context.Context, email emails.Email) error 
                   created_at) 
                   VALUES ($1, $2, $3, $4)`
 
-	_, err := emailsDB.conn.QueryContext(ctx, query, email.ID, email.Name, emailNormalized, email.CreatedAt)
+	_, err := emailsDB.conn.ExecContext(ctx, query, email.ID, email.Name, emailNormalized, email.CreatedAt)
 	if err != nil {
 		return ErrEmails.Wrap(err)
 	}
