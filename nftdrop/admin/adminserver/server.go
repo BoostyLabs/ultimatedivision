@@ -10,7 +10,6 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/internal/templatefuncs"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -20,6 +19,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/templatefuncs"
 	"ultimatedivision/nftdrop/admin/adminserver/controllers"
 	"ultimatedivision/nftdrop/whitelist"
 )

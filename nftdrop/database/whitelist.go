@@ -65,9 +65,9 @@ func (whitelistDB *whitelistDB) List(ctx context.Context, cursor pagination.Curs
 	var whitelistPage whitelist.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 	query := fmt.Sprintf(`SELECT address, password
-                                 FROM whitelist
-                                 LIMIT %d
-                                 OFFSET %d`, cursor.Limit, offset)
+	                             FROM whitelist
+	                             LIMIT %d
+	                             OFFSET %d`, cursor.Limit, offset)
 
 	rows, err := whitelistDB.conn.QueryContext(ctx, query)
 	if err != nil {
@@ -125,7 +125,7 @@ func (whitelistDB *whitelistDB) listPaginated(ctx context.Context, cursor pagina
 // totalCount counts all the wallets in the table.
 func (whitelistDB *whitelistDB) totalCount(ctx context.Context) (int, error) {
 	var count int
-	query := fmt.Sprintf(`SELECT COUNT(*) FROM whitelist`)
+	query := `SELECT COUNT(*) FROM whitelist`
 	err := whitelistDB.conn.QueryRowContext(ctx, query).Scan(&count)
 	if errors.Is(err, sql.ErrNoRows) {
 		return 0, whitelist.ErrNoWallet.Wrap(err)
