@@ -13,18 +13,18 @@ export class Service {
         this.provider = ethereumProvider;
     }
 
-    /**gets */
+    /** Get nft adress and password. */
     public async getAddress(wallet: string) {
         return await this.client.getAddress(wallet);
     }
-    /**gets current wallet address */
+    /** Gets current wallet address. */
     public async getWallet() {
         const signer = await this.provider.getSigner();
 
         return await signer.getAddress();
     }
 
-    /** gets last lot id */
+    /** Get last lot id. */
     public async getLastTokenId(wallet: string, abi: any[]) {
         const address = await this.getAddress(wallet);
         const contract = await new ethers.Contract(address.smartContract.addressNFT, abi);
@@ -35,7 +35,7 @@ export class Service {
         return parseInt(totalSupply[0]._hex, 16);
     };
 
-    /**sends smart contract transaction */
+    /** Send smart contract transaction. */
     public async sendTransaction(wallet: string, totalSupply: number, abi: any[]) {
         const signer = await this.provider.getSigner();
         const address = await this.getAddress(wallet);
