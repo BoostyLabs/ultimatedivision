@@ -110,10 +110,7 @@ func generateName(path string, names []string) (string, error) {
 			return "", ErrAvatarCard.Wrap(err)
 		}
 
-		isRepetition, err := isDuplicate(name, names)
-		if err != nil {
-			return "", ErrAvatarCard.Wrap(err)
-		}
+		isRepetition := isDuplicate(name, names)
 		if isRepetition {
 			continue
 		}
@@ -125,19 +122,19 @@ func generateName(path string, names []string) (string, error) {
 }
 
 // isDuplicate checks if names of cards is matches to given name.
-func isDuplicate(name string, allNames []string) (bool, error) {
+func isDuplicate(name string, allNames []string) bool {
 	var isRepetition bool
 
 	switch {
 	case len(allNames) == 0:
-		return false, nil
+		return false
 	case len(allNames) == 1:
-		return allNames[0] == name, nil
+		return allNames[0] == name
 	default:
 		isRepetition = search.BinarySearch(allNames, name)
 	}
 
-	return isRepetition, nil
+	return isRepetition
 }
 
 // TestGenerate generates test version avatar cards.
