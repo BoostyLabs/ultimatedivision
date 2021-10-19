@@ -8,10 +8,12 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/internal/pagination"
 )
 
-// ErrNoWhitelist indicated that whitelist does not exist.
-var ErrNoWhitelist = errs.Class("whitelist does not exist")
+// ErrNoWallet indicated that wallet in whitelist does not exist.
+var ErrNoWallet = errs.Class("wallet does not exist")
 
 // DB is exposing access to whitelist db.
 //
@@ -21,11 +23,11 @@ type DB interface {
 	Create(ctx context.Context, wallet Wallet) error
 	// GetByAddress returns whitelist by address from the database.
 	GetByAddress(ctx context.Context, address Hex) (Wallet, error)
-	// List returns all whitelist from the database.
-	List(ctx context.Context) ([]Wallet, error)
+	// List returns whitelist page from the database.
+	List(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// ListWithoutPassword returns whitelist without password from the database.
 	ListWithoutPassword(ctx context.Context) ([]Wallet, error)
-	// Update updates whitelist by address.
+	// Update updates password of wallet.
 	Update(ctx context.Context, wallet Wallet) error
 	// Delete deletes whitelist from the database.
 	Delete(ctx context.Context, address Hex) error
@@ -75,6 +77,8 @@ type Config struct {
 		Address string  `json:"address"`
 		Price   float64 `json:"price"`
 	} `json:"smartContract"`
+
+	pagination.Cursor `json:"cursor"`
 }
 
 // SmartContractWithWhiteList entity describes whitelist and smart contract.
@@ -82,4 +86,10 @@ type SmartContractWithWhiteList struct {
 	Wallet
 	Address string  `json:"address"`
 	Price   float64 `json:"price"`
+}
+
+// Page holds wallets page entity which is used to show listed page of wallets.
+type Page struct {
+	Wallets []Wallet        `json:"wallets"`
+	Page    pagination.Page `json:"page"`
 }

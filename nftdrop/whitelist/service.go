@@ -9,6 +9,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/internal/pagination"
 )
 
 // ErrWhitelist indicated that there was an error in service.
@@ -76,9 +78,16 @@ func (service *Service) GetByAddress(ctx context.Context, address Hex) (SmartCon
 	return smartContractWithWhiteList, ErrWhitelist.Wrap(err)
 }
 
-// List returns all whitelist from the database.
-func (service *Service) List(ctx context.Context) ([]Wallet, error) {
-	whitelistRecords, err := service.whitelist.List(ctx)
+// List returns whitelist page from the database.
+func (service *Service) List(ctx context.Context, cursor pagination.Cursor) (Page, error) {
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
+	}
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
+
+	whitelistRecords, err := service.whitelist.List(ctx, cursor)
 	return whitelistRecords, ErrWhitelist.Wrap(err)
 }
 

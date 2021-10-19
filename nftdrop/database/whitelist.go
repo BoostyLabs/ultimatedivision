@@ -7,10 +7,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/pagination"
 	"ultimatedivision/nftdrop/whitelist"
 )
 
@@ -52,38 +54,83 @@ func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitel
 
 	err := whitelistDB.conn.QueryRowContext(ctx, query, address).Scan(&wallet.Address, &wallet.Password)
 	if errors.Is(err, sql.ErrNoRows) {
-		return wallet, whitelist.ErrNoWhitelist.Wrap(err)
+		return wallet, whitelist.ErrNoWallet.Wrap(err)
 	}
 
 	return wallet, ErrWhitelist.Wrap(err)
 }
 
-// List returns all wallets from the data base.
-func (whitelistDB *whitelistDB) List(ctx context.Context) ([]whitelist.Wallet, error) {
-	query :=
-		`SELECT
-			address, password
-		FROM 
-			whitelist`
+// List returns whitelist page from the database.
+func (whitelistDB *whitelistDB) List(ctx context.Context, cursor pagination.Cursor) (whitelist.Page, error) {
+	var whitelistPage whitelist.Page
+	offset := (cursor.Page - 1) * cursor.Limit
+	query := fmt.Sprintf(`SELECT address, password
+                                 FROM whitelist
+                                 LIMIT %d
+                                 OFFSET %d`, cursor.Limit, offset)
 
 	rows, err := whitelistDB.conn.QueryContext(ctx, query)
 	if err != nil {
-		return nil, ErrWhitelist.Wrap(err)
+		return whitelistPage, ErrWhitelist.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, ErrWhitelist.Wrap(rows.Close()))
 	}()
 
-	wallets := []whitelist.Wallet{}
+	var wallets []whitelist.Wallet
 	for rows.Next() {
 		wallet := whitelist.Wallet{}
 		if err = rows.Scan(&wallet.Address, &wallet.Password); err != nil {
-			return nil, ErrWhitelist.Wrap(err)
+			return whitelistPage, ErrWhitelist.Wrap(err)
 		}
 		wallets = append(wallets, wallet)
 	}
+	if err = rows.Err(); err != nil {
+		return whitelistPage, ErrWhitelist.Wrap(err)
+	}
 
-	return wallets, ErrWhitelist.Wrap(rows.Err())
+	whitelistPage, err = whitelistDB.listPaginated(ctx, cursor, wallets)
+	return whitelistPage, ErrWhitelist.Wrap(err)
+}
+
+// listPaginated returns paginated list of whitelist wallets.
+func (whitelistDB *whitelistDB) listPaginated(ctx context.Context, cursor pagination.Cursor, walletsList []whitelist.Wallet) (whitelist.Page, error) {
+	var walletsListPage whitelist.Page
+	offset := (cursor.Page - 1) * cursor.Limit
+
+	totalCount, err := whitelistDB.totalCount(ctx)
+	if err != nil {
+		return walletsListPage, ErrWhitelist.Wrap(err)
+	}
+
+	pageCount := totalCount / cursor.Limit
+	if totalCount%cursor.Limit != 0 {
+		pageCount++
+	}
+
+	walletsListPage = whitelist.Page{
+		Wallets: walletsList,
+		Page: pagination.Page{
+			Offset:      offset,
+			Limit:       cursor.Limit,
+			CurrentPage: cursor.Page,
+			PageCount:   pageCount,
+			TotalCount:  totalCount,
+		},
+	}
+
+	return walletsListPage, nil
+}
+
+// totalCount counts all the wallets in the table.
+func (whitelistDB *whitelistDB) totalCount(ctx context.Context) (int, error) {
+	var count int
+	query := fmt.Sprintf(`SELECT COUNT(*) FROM whitelist`)
+	err := whitelistDB.conn.QueryRowContext(ctx, query).Scan(&count)
+	if errors.Is(err, sql.ErrNoRows) {
+		return 0, whitelist.ErrNoWallet.Wrap(err)
+	}
+	return count, ErrWhitelist.Wrap(err)
 }
 
 // Delete deletes wallet from the database.
@@ -100,8 +147,8 @@ func (whitelistDB *whitelistDB) Delete(ctx context.Context, address whitelist.He
 func (whitelistDB *whitelistDB) Update(ctx context.Context, wallet whitelist.Wallet) error {
 	query :=
 		`UPDATE whitelist 
-		SET password = $1
-		WHERE address = $2`
+		 SET password = $1
+		 WHERE address = $2`
 
 	_, err := whitelistDB.conn.ExecContext(ctx, query, wallet.Password, wallet.Address)
 	return ErrWhitelist.Wrap(err)
