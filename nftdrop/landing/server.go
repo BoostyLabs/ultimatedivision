@@ -55,7 +55,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for nftdrop web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, whitelist *whitelist.Service, emails *subscribers.Service) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, whitelist *whitelist.Service, subscribers *subscribers.Service) *Server {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -66,7 +66,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, whitelis
 	server.rateLimiter = ratelimit.NewRateLimiter(time.Minute*5, 5, 10000)
 
 	whitelistController := controllers.NewWhitelist(log, whitelist)
-	emailsController := controllers.NewEmails(log, emails)
+	subscribersController := controllers.NewEmails(log, subscribers)
 
 	router := mux.NewRouter()
 	apiRouter := router.PathPrefix("/api/v0").Subrouter()
@@ -74,8 +74,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, whitelis
 	whitelistRouter := apiRouter.PathPrefix("/whitelist").Subrouter()
 	whitelistRouter.Handle("/{address}", server.rateLimit(http.HandlerFunc(whitelistController.Get))).Methods(http.MethodGet)
 
-	EmailsRouter := apiRouter.PathPrefix("/subscribers").Subrouter()
-	EmailsRouter.Handle("", server.rateLimit(http.HandlerFunc(emailsController.Create))).Methods(http.MethodPost)
+	SubscribersRouter := apiRouter.PathPrefix("/subscribers").Subrouter()
+	SubscribersRouter.Handle("", server.rateLimit(http.HandlerFunc(subscribersController.Create))).Methods(http.MethodPost)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(server.brotliMiddleware(http.StripPrefix("/static", fs)))
