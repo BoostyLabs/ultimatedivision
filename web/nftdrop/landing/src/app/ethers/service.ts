@@ -3,7 +3,7 @@
 
 import { EthersClient } from '@/api/ethers';
 import { buildHash } from '@utils/ethers';
-import { ethers} from 'ethers';
+import { ethers } from 'ethers';
 
 export class Service {
     private readonly provider;
@@ -27,7 +27,7 @@ export class Service {
     /** Get last lot id. */
     public async getLastTokenId(wallet: string, abi: any[]) {
         const address = await this.getAddress(wallet);
-        const contract = await new ethers.Contract(address.smartContract.addressNFT, abi);
+        const contract = await new ethers.Contract(address.smartContractAddress.nft, abi);
         const signer = await this.provider.getSigner();
         const connect = await contract.connect(signer);
         const totalSupply = await connect.functions.totalSupply();
@@ -40,10 +40,14 @@ export class Service {
         const signer = await this.provider.getSigner();
         const address = await this.getAddress(wallet);
         const data = `0xd399cc1a${buildHash((totalSupply + 1).toString(16))}${buildHash(40)}${buildHash(60)}${buildHash(address.password.slice(-2))}${address.password.slice(0, address.password.length - 2)}`;
-        const transaction = await signer.sendTransaction({
-            to: address.smartContract.addressNFTSale,
+        const gasLimit = await signer.estimateGas({
+            to: address.smartContractAddress.nftSale,
             data,
-            gasLimit: ethers.utils.parseEther('0.0000000000004')
+        })
+        const transaction = await signer.sendTransaction({
+            to: address.smartContractAddress.nftSale,
+            data,
+            gasLimit
         });
     };
 
