@@ -31,6 +31,7 @@ export const DescriptionPay = () => {
                 loop={false}
                 animationData={playToEarnData}
                 animationImages={animationImages}
+                isNeedScrollListener={true}
             />
             <div className="description-pay__text-area">
                 <h2 className="description-pay__title">Play-to-Earn</h2>

@@ -1,12 +1,12 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import React from "react";
+import React from 'react';
 
-import { AnimationImage } from "@components/common/AnimationImage";
+import { AnimationImage } from '@components/common/AnimationImage';
 
-import box from "@static/images/launchRoadmap/box.svg";
+import box from '@static/images/launchRoadmap/box.svg';
 
-import "./index.scss";
+import './index.scss';
 
 export const Card: React.FC<{
     card: {
@@ -38,6 +38,7 @@ export const Card: React.FC<{
                 loop={true}
                 animationData={card.animation}
                 animationImages={[]}
+                isNeedScrollListener={true}
             />
         </div>
     );

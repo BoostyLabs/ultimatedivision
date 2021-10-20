@@ -17,7 +17,7 @@
     }
 
     &__text-area {
-        width: 60%;
+        width: 55%;
         margin-top: 120px;
         display: flex;
         flex-direction: column;
@@ -61,7 +61,11 @@
         }
 
         &:hover {
-            background: linear-gradient(95.3deg, rgba(0, 0, 0, 0.2) 4.05%, rgba(0, 0, 0, 0) 87.48%),
+            background: linear-gradient(
+                95.3deg,
+                rgba(0, 0, 0, 0.2) 4.05%,
+                rgba(0, 0, 0, 0) 87.48%
+            ),
                 linear-gradient(0deg, #0df55c, #0df55c);
         }
     }
@@ -69,7 +73,11 @@
     &__twitter {
 
         &:hover {
-            background: linear-gradient(95.3deg, rgba(0, 0, 0, 0.2) 4.05%, rgba(0, 0, 0, 0) 87.48%),
+            background: linear-gradient(
+                95.3deg,
+                rgba(0, 0, 0, 0.2) 4.05%,
+                rgba(0, 0, 0, 0) 87.48%
+            ),
                 linear-gradient(0deg, #0df55c, #0df55c);
         }
     }
@@ -165,7 +173,7 @@
         }
 
         &__text-area {
-            width: 65%;
+            width: 55%;
             margin-top: 80px;
         }
 
