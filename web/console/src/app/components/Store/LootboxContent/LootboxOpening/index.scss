@@ -3,9 +3,11 @@
 .box-animation {
     padding-top: 280px;
     display: flex;
+    justify-content: center;
 
-    &__box-wrapper {
+    &__box-container {
         width: 100%;
+        max-width: 540px;
         position: relative;
         left: 0;
         right: 0;
@@ -23,6 +25,7 @@
     &__box-cover,
     &__box-body,
     &__ribbons {
+        width: 100%;
         position: absolute;
         left: 0;
         right: 0;
@@ -30,14 +33,14 @@
     }
 
     &__light {
+        width: 100%;
         position: absolute;
-        top: -60px;
+        top: -45px;
         left: 0;
         right: 0;
         margin: 0 auto;
-        display: flex;
         opacity: 0;
-        animation: light 2s 1.5s 1 normal forwards;
+        animation: light 3s 2.5s 1 normal forwards;
 
         @keyframes light {
 
@@ -54,6 +57,9 @@
     }
 
     &__ribbons {
+        width: 100%;
+        max-width: 350px;
+        top: -50px;
         left: 0;
         right: 0;
         margin: 0 auto;
@@ -61,12 +67,7 @@
         animation: light 3s 4s 1 normal forwards;
     }
 
-    &__box-body {
-        width: 540px;
-    }
-
     &__box-cover {
-        width: 540px;
         animation: opening 3s 1s 1 normal forwards;
         transform: scale(1.05);
 
@@ -77,20 +78,20 @@
             }
 
             10% {
-                transform: scale(1.05) translateY(-20px);
+                transform: scale(1.05) translateY(-5%);
             }
 
             50% {
-                transform: scale(1.05) translateX(250px);
+                transform: scale(1.05) translateX(50%);
             }
 
             100% {
-                transform: scale(1.05) translateY(250px) translateX(300px);
+                transform: scale(1.05) translateY(90%) translateX(60%);
             }
         }
     }
 
-    &__card-wrapper {
+    &__card-container {
         width: 300px;
         position: absolute;
         left: 0;
@@ -116,12 +117,60 @@
         }
     }
 
-    &__card-wrapper-backlight {
+    &__card-container-backlight {
         display: flex;
         justify-content: center;
         width: 100%;
         background-image: url("@static/img/StorePage/BoxContent/backLight.svg");
         background-size: cover;
         background-position: center;
+    }
+}
+
+@media (max-width: $phoneBreakPoint + 100px) {
+
+    .box-animation {
+
+        &__box-container {
+            width: 80%;
+            margin: 0 20px;
+
+            @keyframes boxHiding {
+
+                to {
+                    transform: translateY(200px);
+                }
+            }
+        }
+
+        &__card-container {
+            border: 10px solid red;
+            width: 70%;
+        }
+
+        &__ribbons {
+            width: 70%;
+            top: -50px;
+        }
+
+        &__light {
+            left: -10%;
+            width: 120%;
+        }
+    }
+}
+
+@media (max-width: $phoneBreakPoint - 200px) {
+
+    .box-animation {
+
+        &__box-container {
+            @keyframes boxHiding {
+
+                to {
+                    transform: translateY(120px);
+                }
+            }
+        }
     }
 }

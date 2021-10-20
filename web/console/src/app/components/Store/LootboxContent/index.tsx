@@ -12,7 +12,7 @@ export const LootboxContent: React.FC<{ handleOpening: Dispatch<SetStateAction<b
 
     useEffect(() => {
         const TIMEOUT = 8000;
-        setTimeout(() => handleAnimation(false), TIMEOUT);
+        // setTimeout(() => handleAnimation(false), TIMEOUT);
     });
 
     return (
