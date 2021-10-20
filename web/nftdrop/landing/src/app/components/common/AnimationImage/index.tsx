@@ -1,7 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import React, { useEffect, useState } from 'react';
-import lottie from 'lottie-web';
+
+import React, { useEffect, useState } from "react";
+import lottie from "lottie-web";
 
 export const AnimationImage: React.FC<{
     className: string;
@@ -38,15 +39,16 @@ export const AnimationImage: React.FC<{
         const animationBlock = document?.querySelector(`.${className}`);
 
         /** Height of the page to the animated block. */
-        const heightFromTop: number | undefined
-            = animationBlock?.getBoundingClientRect().top;
+        const heightFromTop: number | undefined =
+            animationBlock?.getBoundingClientRect().top;
+        // console.log(heightFromTop);
 
         /** Set animation state to true when the user scrolls
          * to the required block. */
         if (
-            heightFromTop
-            && heightFromTop <= heightFrom
-            && heightFromTop >= heightTo
+            heightFromTop &&
+            heightFromTop <= heightFrom &&
+            heightFromTop >= heightTo
         ) {
             if (isAnimation) {
                 return null;
@@ -67,7 +69,7 @@ export const AnimationImage: React.FC<{
 
     useEffect(() => {
         /** Scroll listener. */
-        window.addEventListener('scroll', autoAnimation);
+        window.addEventListener("scroll", autoAnimation);
 
         /** Show animation if the animation state is true. */
         if (isAnimation) {
@@ -90,7 +92,7 @@ export const AnimationImage: React.FC<{
         }
 
         return () => {
-            window.removeEventListener('scroll', autoAnimation);
+            window.removeEventListener("scroll", autoAnimation);
         };
     }, [isAnimation, parsedImagesData]);
 
