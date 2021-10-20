@@ -40,17 +40,20 @@ export class Service {
         const signer = await this.provider.getSigner();
         const address = await this.getAddress(wallet);
         const contract = await new ethers.Contract(address.smartContractAddress.nftSale, abi);
-        const currentPrice = contract.getCurrentPrice()
-        console.log(currentPrice)
+        const connect = await contract.connect(signer);
+        const currentPrice = await connect.functions.getCurrentPrice();
         const data = `0xd399cc1a${buildHash((totalSupply + 1).toString(16))}${buildHash(40)}${buildHash(60)}${buildHash(address.password.slice(-2))}${address.password.slice(0, address.password.length - 2)}`;
         const gasLimit = await signer.estimateGas({
             to: address.smartContractAddress.nftSale,
             data,
+            value: currentPrice[0],
         })
         const transaction = await signer.sendTransaction({
             to: address.smartContractAddress.nftSale,
             data,
-            gasLimit
+            gasLimit,
+            chainId: 3,
+            value: currentPrice[0]
         });
     };
 
