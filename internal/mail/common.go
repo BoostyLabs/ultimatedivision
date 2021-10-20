@@ -1,13 +1,13 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package database
+package mail
 
 import (
 	"strings"
 )
 
-// normalizeEmail brings the email to UpperCase.
-func normalizeEmail(email string) string {
+// NormalizeEmail brings the email to UpperCase.
+func NormalizeEmail(email string) string {
 	return strings.ToUpper(email)
 }

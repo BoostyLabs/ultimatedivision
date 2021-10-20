@@ -10,7 +10,7 @@ import (
 // Address is alias of net/mail.Address.
 type Address = mail.Address
 
-// Sender sends emails.
+// Sender sends subscribers.
 type Sender interface {
 	FromAddress() Address
 	SendEmail(msg *Message) error

@@ -16,8 +16,8 @@ import (
 	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/admin/adminserver"
-	"ultimatedivision/nftdrop/emails"
 	"ultimatedivision/nftdrop/landing"
+	"ultimatedivision/nftdrop/subscribers"
 	"ultimatedivision/nftdrop/whitelist"
 )
 
@@ -31,8 +31,8 @@ type DB interface {
 	// Admins provides access to admins db.
 	Admins() admins.DB
 
-	// Emails provides access to emails db.
-	Emails() emails.DB
+	// Subscribers provides access to subscribers db.
+	Subscribers() subscribers.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -88,9 +88,9 @@ type Peer struct {
 		Endpoint *adminserver.Server
 	}
 
-	// exposes emails related logic.
-	Emails struct {
-		Service *emails.Service
+	// exposes subscribers related logic.
+	Subscribers struct {
+		Service *subscribers.Service
 	}
 }
 
@@ -150,7 +150,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			logger,
 			peer.Landing.Listener,
 			peer.Whitelist.Service,
-			peer.Emails.Service,
+			peer.Subscribers.Service,
 		)
 	}
 

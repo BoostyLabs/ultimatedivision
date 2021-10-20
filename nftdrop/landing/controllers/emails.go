@@ -10,23 +10,23 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/nftdrop/emails"
+	"ultimatedivision/nftdrop/subscribers"
 )
 
 var (
-	// ErrEmails is an internal error type for emails controller.
-	ErrEmails = errs.Class("emails controller error")
+	// ErrEmails is an internal error type for subscribers controller.
+	ErrEmails = errs.Class("subscribers controller error")
 )
 
-// Emails is a mvc controller that handles all emails related views.
+// Emails is a mvc controller that handles all subscribers related views.
 type Emails struct {
 	log logger.Logger
 
-	emails *emails.Service
+	emails *subscribers.Service
 }
 
-// NewEmails is a constructor for emails controller.
-func NewEmails(log logger.Logger, emails *emails.Service) *Emails {
+// NewEmails is a constructor for subscribers controller.
+func NewEmails(log logger.Logger, emails *subscribers.Service) *Emails {
 	emailsController := &Emails{
 		log:    log,
 		emails: emails,
@@ -41,7 +41,7 @@ func (controller *Emails) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
-	var request emails.CreateEmailFields
+	var request subscribers.CreateEmailFields
 
 	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrEmails.Wrap(err))

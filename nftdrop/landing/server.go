@@ -22,8 +22,8 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/ratelimit"
-	"ultimatedivision/nftdrop/emails"
 	"ultimatedivision/nftdrop/landing/controllers"
+	"ultimatedivision/nftdrop/subscribers"
 	"ultimatedivision/nftdrop/whitelist"
 )
 
@@ -55,7 +55,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for nftdrop web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, whitelist *whitelist.Service, emails *emails.Service) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, whitelist *whitelist.Service, emails *subscribers.Service) *Server {
 	server := &Server{
 		log:      log,
 		config:   config,
@@ -74,7 +74,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, whitelis
 	whitelistRouter := apiRouter.PathPrefix("/whitelist").Subrouter()
 	whitelistRouter.Handle("/{address}", server.rateLimit(http.HandlerFunc(whitelistController.Get))).Methods(http.MethodGet)
 
-	EmailsRouter := apiRouter.PathPrefix("/emails").Subrouter()
+	EmailsRouter := apiRouter.PathPrefix("/subscribers").Subrouter()
 	EmailsRouter.Handle("", server.rateLimit(http.HandlerFunc(emailsController.Create))).Methods(http.MethodPost)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
