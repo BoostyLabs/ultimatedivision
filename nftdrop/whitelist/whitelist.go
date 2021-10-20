@@ -99,8 +99,8 @@ type Config struct {
 
 // SmartContractAddress entity describes smart contract addresses.
 type SmartContractAddress struct {
-	NFT     Address `json:"NFT"`
-	NFTSale Address `json:"NFTSale"`
+	NFT     Address `json:"nft"`
+	NFTSale Address `json:"nftSale"`
 }
 
 // Transaction entity describes password wallet and smart contract addresses.
@@ -109,5 +109,5 @@ type Transaction struct {
 	SmartContractAddress `json:"smartContractAddress"`
 }
 
-// EthereumSignedMessageHash defines message for sinbature.
+// EthereumSignedMessageHash defines message for signature.
 const EthereumSignedMessageHash string = "19457468657265756d205369676e6564204d6573736167653a0a3332"
