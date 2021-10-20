@@ -20,7 +20,7 @@ type DB interface {
 	// Create adds whitelist in the database.
 	Create(ctx context.Context, wallet Wallet) error
 	// GetByAddress returns whitelist by address from the database.
-	GetByAddress(ctx context.Context, address Hex) (Wallet, error)
+	GetByAddress(ctx context.Context, address Address) (Wallet, error)
 	// List returns all whitelist from the database.
 	List(ctx context.Context) ([]Wallet, error)
 	// ListWithoutPassword returns whitelist without password from the database.
@@ -28,29 +28,52 @@ type DB interface {
 	// Update updates whitelist by address.
 	Update(ctx context.Context, wallet Wallet) error
 	// Delete deletes whitelist from the database.
-	Delete(ctx context.Context, address Hex) error
+	Delete(ctx context.Context, address Address) error
 }
 
 // Wallet describes whitelist entity.
 type Wallet struct {
-	Address  Hex    `json:"address"`
-	Password string `json:"password"`
+	Address  Address   `json:"address"`
+	Password Signature `json:"password"`
 }
 
-// Hex defines hex type.
-type Hex string
+// Address defines address type.
+type Address string
+
+// Signature defines signature type.
+type Signature string
+
+// PrivateKey defines private key type.
+type PrivateKey string
+
+// LengthPrivateKey defines length private key.
+const LengthPrivateKey int = 64
+
+// PrivateKeyV defines v of private key type.
+type PrivateKeyV int
+
+const (
+	// PrivateKeyVZero indicates that the v of private key is 0.
+	PrivateKeyVZero PrivateKeyV = 0
+	// PrivateKeyVOne indicates that the v of private key is 1.
+	PrivateKeyVOne PrivateKeyV = 1
+	// PrivateKeyVTwentySeven indicates that the v of private key is 27.
+	PrivateKeyVTwentySeven PrivateKeyV = 27
+	// PrivateKeyVTwentyEight indicates that the v of private key is 28.
+	PrivateKeyVTwentyEight PrivateKeyV = 28
+)
 
 // IsValidAddress checks if the address is valid.
-func (hex Hex) IsValidAddress() bool {
-	return common.IsHexAddress(string(hex))
+func (address Address) IsValidAddress() bool {
+	return common.IsHexAddress(string(address))
 }
 
-// IsHex validates whether each byte is valid hexadecimal string.
-func (hex Hex) IsHex() bool {
-	if len(string(hex))%2 != 0 {
+// IsValidPrivateKey validates whether each byte is valid hexadecimal private key.
+func (privateKey PrivateKey) IsValidPrivateKey() bool {
+	if len(string(privateKey)) != LengthPrivateKey {
 		return false
 	}
-	for _, c := range []byte(string(hex)) {
+	for _, c := range []byte(string(privateKey)) {
 		if !isHexCharacter(c) {
 			return false
 		}
@@ -65,26 +88,25 @@ func isHexCharacter(c byte) bool {
 
 // CreateWallet entity describes request values for create whitelist.
 type CreateWallet struct {
-	Address    Hex `json:"address"`
-	PrivateKey Hex `json:"privateKey"`
+	Address    Address    `json:"address"`
+	PrivateKey PrivateKey `json:"privateKey"`
 }
 
 // Config defines configuration for queue.
 type Config struct {
-	SmartContract `json:"smartContract"`
+	SmartContractAddress `json:"smartContractAddress"`
 }
 
-// SmartContract entity describes addresses and price.
-type SmartContract struct {
-	AddressNFT     Hex     `json:"addressNFT"`
-	AddressNFTSale Hex     `json:"addressNFTSale"`
-	Price          float64 `json:"price"`
+// SmartContractAddress entity describes smart contract addresses.
+type SmartContractAddress struct {
+	NFT     Address `json:"NFT"`
+	NFTSale Address `json:"NFTSale"`
 }
 
-// Response entity describes password wallet and smart contract value.
-type Response struct {
-	Password      Hex `json:"password"`
-	SmartContract `json:"smartContract"`
+// Transaction entity describes password wallet and smart contract addresses.
+type Transaction struct {
+	Password             Signature `json:"password"`
+	SmartContractAddress `json:"smartContractAddress"`
 }
 
 // EthereumSignedMessageHash defines message for sinbature.

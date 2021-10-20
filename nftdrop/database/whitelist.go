@@ -40,7 +40,7 @@ func (whitelistDB *whitelistDB) Create(ctx context.Context, wallet whitelist.Wal
 }
 
 // GetByAddress returns wallet by address from the data base.
-func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitelist.Hex) (whitelist.Wallet, error) {
+func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitelist.Address) (whitelist.Wallet, error) {
 	wallet := whitelist.Wallet{}
 	query :=
 		`SELECT
@@ -86,27 +86,6 @@ func (whitelistDB *whitelistDB) List(ctx context.Context) ([]whitelist.Wallet, e
 	return wallets, ErrWhitelist.Wrap(rows.Err())
 }
 
-// Delete deletes wallet from the database.
-func (whitelistDB *whitelistDB) Delete(ctx context.Context, address whitelist.Hex) error {
-	query := `DELETE FROM whitelist
-              WHERE address = $1`
-
-	_, err := whitelistDB.conn.ExecContext(ctx, query, address)
-
-	return ErrWhitelist.Wrap(err)
-}
-
-// Update updates a wallets password in the data base.
-func (whitelistDB *whitelistDB) Update(ctx context.Context, wallet whitelist.Wallet) error {
-	query :=
-		`UPDATE whitelist 
-		SET password = $1
-		WHERE address = $2`
-
-	_, err := whitelistDB.conn.ExecContext(ctx, query, wallet.Password, wallet.Address)
-	return ErrWhitelist.Wrap(err)
-}
-
 // ListWithoutPassword returns all wallets address from the data base.
 func (whitelistDB *whitelistDB) ListWithoutPassword(ctx context.Context) ([]whitelist.Wallet, error) {
 	query :=
@@ -135,4 +114,31 @@ func (whitelistDB *whitelistDB) ListWithoutPassword(ctx context.Context) ([]whit
 	}
 
 	return wallets, ErrWhitelist.Wrap(rows.Err())
+}
+
+// Update updates a wallets password in the data base.
+func (whitelistDB *whitelistDB) Update(ctx context.Context, wallet whitelist.Wallet) error {
+	query :=
+		`UPDATE 
+			whitelist
+		SET 
+			password = $1
+		WHERE 
+			address = $2`
+
+	_, err := whitelistDB.conn.ExecContext(ctx, query, wallet.Password, wallet.Address)
+	return ErrWhitelist.Wrap(err)
+}
+
+// Delete deletes wallet from the database.
+func (whitelistDB *whitelistDB) Delete(ctx context.Context, address whitelist.Address) error {
+	query :=
+		`DELETE FROM 
+			whitelist
+		WHERE 
+			address = $1`
+
+	_, err := whitelistDB.conn.ExecContext(ctx, query, address)
+
+	return ErrWhitelist.Wrap(err)
 }

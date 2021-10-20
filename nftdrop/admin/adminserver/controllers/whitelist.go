@@ -66,15 +66,15 @@ func (controller *Whitelist) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var createFields whitelist.CreateWallet
-		createFields.Address = whitelist.Hex(r.FormValue("address"))
+		createFields.Address = whitelist.Address(r.FormValue("address"))
 		if !createFields.Address.IsValidAddress() {
 			http.Error(w, errs.New("invalid wallet address").Error(), http.StatusBadRequest)
 			return
 		}
 
-		createFields.PrivateKey = whitelist.Hex(r.FormValue("privateKey"))
+		createFields.PrivateKey = whitelist.PrivateKey(r.FormValue("privateKey"))
 
-		if createFields.PrivateKey != "" && !createFields.PrivateKey.IsHex() {
+		if createFields.PrivateKey != "" && !createFields.PrivateKey.IsValidPrivateKey() {
 			http.Error(w, errs.New("invalid private key").Error(), http.StatusBadRequest)
 			return
 		}
@@ -114,7 +114,7 @@ func (controller *Whitelist) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 
-	walletAddress := whitelist.Hex(params["address"])
+	walletAddress := whitelist.Address(params["address"])
 	if !walletAddress.IsValidAddress() {
 		http.Error(w, errs.New("invalid wallet address").Error(), http.StatusBadRequest)
 		return
@@ -148,8 +148,8 @@ func (controller *Whitelist) SetPassword(w http.ResponseWriter, r *http.Request)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		privateKey := whitelist.Hex(r.FormValue("privateKey"))
-		if privateKey != "" && !privateKey.IsHex() {
+		privateKey := whitelist.PrivateKey(r.FormValue("privateKey"))
+		if privateKey != "" && !privateKey.IsValidPrivateKey() {
 			http.Error(w, errs.New("invalid private key").Error(), http.StatusBadRequest)
 			return
 		}

@@ -41,21 +41,21 @@ func (controller *Whitelist) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	address := whitelist.Hex(params["address"])
+	address := whitelist.Address(params["address"])
 
 	if !address.IsValidAddress() {
 		controller.serveError(w, http.StatusBadRequest, ErrWhitelist.New("invalid address"))
 	}
 
-	response, err := controller.whitelist.GetByAddress(ctx, address)
+	transactionValue, err := controller.whitelist.GetByAddress(ctx, address)
 	if err != nil {
 		controller.log.Error("could get password", ErrWhitelist.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrWhitelist.Wrap(err))
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(response); err != nil {
-		controller.log.Error("could not response with json", ErrWhitelist.Wrap(err))
+	if err = json.NewEncoder(w).Encode(transactionValue); err != nil {
+		controller.log.Error("could not transaction value with json", ErrWhitelist.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrWhitelist.Wrap(err))
 		return
 	}
