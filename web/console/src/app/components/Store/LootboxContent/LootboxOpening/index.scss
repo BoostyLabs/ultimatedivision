@@ -1,6 +1,7 @@
 @import "@/index.scss";
 
 .box-animation {
+    position: relative;
     padding-top: 280px;
     display: flex;
     justify-content: center;
@@ -56,6 +57,14 @@
         }
     }
 
+    &__box-body {
+
+        &__cool {
+            left: -10%;
+            width: 120%;
+        }
+    }
+
     &__ribbons {
         width: 100%;
         max-width: 350px;
@@ -92,13 +101,14 @@
     }
 
     &__card-container {
-        width: 300px;
+        max-width: 300px;
         position: absolute;
         left: 0;
         right: 0;
         margin: 0 auto;
         opacity: 0;
         background: url("@static/img/StorePage/BoxContent/3.svg");
+        background-repeat: no-repeat;
         background-size: contain;
         background-position: center;
         transform: scale(0);
@@ -120,7 +130,6 @@
     &__card-container-backlight {
         display: flex;
         justify-content: center;
-        width: 100%;
         background-image: url("@static/img/StorePage/BoxContent/backLight.svg");
         background-size: cover;
         background-position: center;
@@ -130,6 +139,7 @@
 @media (max-width: $phoneBreakPoint + 100px) {
 
     .box-animation {
+        width: 100%;
 
         &__box-container {
             width: 80%;
@@ -144,8 +154,7 @@
         }
 
         &__card-container {
-            border: 10px solid red;
-            width: 70%;
+            width: 60%;
         }
 
         &__ribbons {
