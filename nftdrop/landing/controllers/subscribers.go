@@ -50,8 +50,20 @@ func (controller *Subscribers) Create(w http.ResponseWriter, r *http.Request) {
 
 	err = controller.subscriber.Create(ctx, request.Email)
 	if err != nil {
-		controller.log.Error("Unable to write new subscriber", ErrSubscribers.Wrap(err))
-		controller.serveError(w, http.StatusInternalServerError, ErrSubscribers.Wrap(err))
+		switch {
+		case subscribers.ErrSubscribersDB.Has(err):
+			controller.log.Error("Address is already in use", ErrSubscribers.Wrap(err))
+			controller.serveError(w, http.StatusBadRequest, errs.New("Address is already in use"))
+			return
+		default:
+			controller.log.Error("Unable to write new subscriber", ErrSubscribers.Wrap(err))
+			controller.serveError(w, http.StatusInternalServerError, ErrSubscribers.Wrap(err))
+			return
+		}
+	}
+
+	if err = json.NewEncoder(w).Encode("success"); err != nil {
+		controller.log.Error("failed to write json response", ErrSubscribers.Wrap(err))
 		return
 	}
 }

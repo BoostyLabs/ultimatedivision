@@ -83,7 +83,7 @@ type Config struct {
 
 	Console struct {
 		Server consoleserver.Config `json:"server"`
-		Emails emails.Config        `json:"subscribers"`
+		Emails emails.Config        `json:"emails"`
 	} `json:"console"`
 
 	Cards struct {

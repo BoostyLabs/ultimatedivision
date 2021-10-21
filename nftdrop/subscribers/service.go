@@ -13,6 +13,9 @@ import (
 // ErrSubscribers indicates that there was an error in the service.
 var ErrSubscribers = errs.Class("subscribers service error")
 
+// ErrSubscribers indicates that there was an error in the database.
+var ErrSubscribersDB = errs.Class("subscribers repository error")
+
 // Service is handling subscribers related logic.
 //
 // architecture: Service

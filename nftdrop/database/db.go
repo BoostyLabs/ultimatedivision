@@ -84,7 +84,7 @@ func (db *database) Admins() admins.DB {
 	return &adminsDB{conn: db.conn}
 }
 
-// Users provided access to accounts db.
+// Subscribers provided access to accounts db.
 func (db *database) Subscribers() subscribers.DB {
 	return &subscribersDB{conn: db.conn}
 }

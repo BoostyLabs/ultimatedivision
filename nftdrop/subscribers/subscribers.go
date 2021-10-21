@@ -33,7 +33,7 @@ type Subscriber struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-// CreateSubscriberFields for crete email.
+// CreateSubscriberFields for create subscriber.
 type CreateSubscriberFields struct {
 	Email string `json:"email"`
 }
