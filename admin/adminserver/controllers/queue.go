@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/internal/logger"
+	"ultimatedivision/pkg/logger"
 	"ultimatedivision/queue"
 )
 

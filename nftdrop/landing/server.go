@@ -20,10 +20,10 @@ import (
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
-	"ultimatedivision/internal/logger"
-	"ultimatedivision/internal/ratelimit"
 	"ultimatedivision/nftdrop/landing/controllers"
 	"ultimatedivision/nftdrop/whitelist"
+	"ultimatedivision/pkg/logger"
+	"ultimatedivision/pkg/ratelimit"
 )
 
 var (

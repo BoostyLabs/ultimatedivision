@@ -9,8 +9,8 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/internal/logger"
-	"ultimatedivision/internal/mail"
+	"ultimatedivision/pkg/logger"
+	"ultimatedivision/pkg/mail"
 )
 
 // Config defines values needed by mailservice service.

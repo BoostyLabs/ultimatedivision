@@ -9,8 +9,8 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/internal/logger"
-	"ultimatedivision/internal/sync"
+	"ultimatedivision/pkg/logger"
+	"ultimatedivision/pkg/sync"
 )
 
 var (

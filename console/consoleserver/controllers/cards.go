@@ -13,8 +13,8 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
-	"ultimatedivision/internal/logger"
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/logger"
+	"ultimatedivision/pkg/pagination"
 	"ultimatedivision/pkg/sqlsearchoperators"
 )
 
