@@ -1,26 +1,26 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React from "react";
+import React from 'react';
 
-import twitter from "@static/images/footer/twitter.svg";
-import discord from "@static/images/footer/discord.svg";
+import twitter from '@static/images/footer/twitter.svg';
+import discord from '@static/images/footer/discord.svg';
 
-import "./index.scss";
+import './index.scss';
 
 export const Footer: React.FC = () => {
     const socialList = [
         {
             id: 1,
-            path: "https://discord.com/invite/ultimatedivision",
+            path: 'https://discord.com/invite/ultimatedivision',
             img: discord,
-            text: "Discord",
+            text: 'Discord',
         },
         {
             id: 2,
-            path: "https://twitter.com/UltimateDivnft",
+            path: 'https://twitter.com/UltimateDivnft',
             img: twitter,
-            text: "Twitter",
+            text: 'Twitter',
         },
     ];
 
