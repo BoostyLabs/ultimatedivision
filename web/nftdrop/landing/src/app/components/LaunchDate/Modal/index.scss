@@ -45,7 +45,7 @@
         position: absolute;
         left: 0;
         top: -35px;
-        color: white;
+        color: $signInMainTextColor;
         font-family: "Rubik";
         font-size: 24px;
         line-height: 28px;
@@ -83,7 +83,7 @@
             border: 1px solid $roadmapHighlightColor;
             font-size: 24px;
             padding: 5px 35px 5px 30px;
-            color: white;
+            color: $signInMainTextColor;
             background-repeat: no-repeat;
             background-position: 98% 50%;
 
@@ -125,7 +125,7 @@
             height: 66px;
             line-height: 40px;
             margin-top: 10%;
-            color: white;
+            color: $signInMainTextColor;
             background: linear-gradient(
                 95.3deg,
                 rgba(0, 0, 0, 0.2) 4.05%,
