@@ -70,7 +70,7 @@ func TestWhitelists(t *testing.T) {
 		t.Run("update sql no rows", func(t *testing.T) {
 			err := repositoryWhitelist.Update(ctx, whitelist3)
 			require.Error(t, err)
-			require.Equal(t, whitelist.ErrNoWhitelist.Has(err),true)
+			require.Equal(t, whitelist.ErrNoWhitelist.Has(err), true)
 		})
 
 		t.Run("update", func(t *testing.T) {
