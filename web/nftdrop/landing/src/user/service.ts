@@ -12,6 +12,6 @@ export class UserService {
     };
     /** handles the logic of user subscription to news by email */
     public async getNotifications(email: string): Promise<void> {
-        return await this.users.getNotifications(email);
+        await this.users.getNotifications(email);
     };
 };
