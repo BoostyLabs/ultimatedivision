@@ -12,6 +12,7 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/whitelist"
+	"ultimatedivision/pkg/signature"
 )
 
 var (
@@ -41,7 +42,7 @@ func (controller *Whitelist) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	address := whitelist.Address(params["address"])
+	address := signature.Address(params["address"])
 
 	if !address.IsValidAddress() {
 		controller.serveError(w, http.StatusBadRequest, ErrWhitelist.New("invalid address"))
