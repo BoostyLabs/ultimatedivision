@@ -117,7 +117,7 @@ func GenerateSignature(addressWallet Address, addressContract Address, privateKe
 	}
 
 	if signatureLastSymbol == fmt.Sprintf("%d", PrivateKeyVOne) {
-		return Signature(hex.EncodeToString(append([]byte(signatureWithoutEnd), []byte{byte(PrivateKeyVTwentySeven)}...))), nil
+		return Signature(hex.EncodeToString(append([]byte(signatureWithoutEnd), []byte{byte(PrivateKeyVTwentyEight)}...))), nil
 	}
 
 	return "", fmt.Errorf("error private key format")
