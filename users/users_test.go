@@ -25,9 +25,9 @@ func TestUsers(t *testing.T) {
 		NickName:     "Nik",
 		FirstName:    "Nikita",
 		LastName:     "Tarkovskyi",
-		LastLogin:    time.Now(),
+		LastLogin:    time.Now().UTC(),
 		Status:       0,
-		CreatedAt:    time.Now(),
+		CreatedAt:    time.Now().UTC(),
 	}
 
 	user2 := users.User{
@@ -37,9 +37,9 @@ func TestUsers(t *testing.T) {
 		NickName:     "qwerty",
 		FirstName:    "Stas",
 		LastName:     "Isakov",
-		LastLogin:    time.Now(),
+		LastLogin:    time.Now().UTC(),
 		Status:       1,
-		CreatedAt:    time.Now(),
+		CreatedAt:    time.Now().UTC(),
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {

@@ -22,14 +22,14 @@ func TestAdmin(t *testing.T) {
 		ID:           uuid.New(),
 		Email:        "admin1@gmail.com",
 		PasswordHash: []byte{0},
-		CreatedAt:    time.Now(),
+		CreatedAt:    time.Now().UTC(),
 	}
 
 	admin2 := admins.Admin{
 		ID:           uuid.New(),
 		Email:        "admin2@gmail.com",
 		PasswordHash: []byte{1},
-		CreatedAt:    time.Now(),
+		CreatedAt:    time.Now().UTC(),
 	}
 
 	updatedAdmin := admins.Admin{
@@ -43,7 +43,7 @@ func TestAdmin(t *testing.T) {
 		ID:           uuid.New(),
 		Email:        "test@gmail.com",
 		PasswordHash: []byte{3},
-		CreatedAt:    time.Now(),
+		CreatedAt:    time.Now().UTC(),
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
