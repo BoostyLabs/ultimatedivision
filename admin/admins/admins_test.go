@@ -39,6 +39,13 @@ func TestAdmin(t *testing.T) {
 		CreatedAt:    admin1.CreatedAt,
 	}
 
+	admin3 := admins.Admin{
+		ID:           uuid.New(),
+		Email:        "test@gmail.com",
+		PasswordHash: []byte{3},
+		CreatedAt:    time.Now(),
+	}
+
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
 		repository := db.Admins()
 		id := uuid.New()
@@ -80,6 +87,12 @@ func TestAdmin(t *testing.T) {
 			compareAdmins(t, allAdmins[1], admin2)
 		})
 
+		t.Run("Update sql no rows", func(t *testing.T) {
+			err := repository.Update(ctx, admin3)
+			require.Error(t, err)
+			require.Equal(t, admins.ErrNoAdmin.Has(err), true)
+		})
+
 		t.Run("Update", func(t *testing.T) {
 			err := repository.Update(ctx, updatedAdmin)
 			require.NoError(t, err)
@@ -96,6 +109,5 @@ func compareAdmins(t *testing.T, adminFromDB admins.Admin, testAdmin admins.Admi
 	assert.Equal(t, adminFromDB.ID, testAdmin.ID)
 	assert.Equal(t, adminFromDB.Email, testAdmin.Email)
 	assert.Equal(t, adminFromDB.PasswordHash, testAdmin.PasswordHash)
-	// TODO: compare dates in a better way.
-	// assert.Equal(t, adminFromDB.CreatedAt, testAdmin.CreatedAt)
+	assert.WithinDuration(t, adminFromDB.CreatedAt, testAdmin.CreatedAt, 1*time.Second)
 }
