@@ -94,7 +94,7 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor pagination.Cursor) (marketplace.Page, error) {
 	var lotsListPage marketplace.Page
 	offset := (cursor.Page - 1) * cursor.Limit
-	query := fmt.Sprintf(
+	query :=
 		`SELECT 
 			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
 			cards.id, player_name, quality, height, weight, dominant_foot, is_tattoo, cards.status, cards.type,
@@ -109,12 +109,12 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor p
 		WHERE
 			lots.status = $1
 		LIMIT 
-			%d 
+			$2 
 		OFFSET 
-			%d
-		`, cursor.Limit, offset)
+			$3
+		`
 
-	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive)
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, cursor.Limit, offset)
 	if err != nil {
 		return lotsListPage, ErrMarketplace.Wrap(err)
 	}
@@ -152,7 +152,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor p
 func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID, cursor pagination.Cursor) (marketplace.Page, error) {
 	var lotsListPage marketplace.Page
 	offset := (cursor.Page - 1) * cursor.Limit
-	query := fmt.Sprintf(
+	query :=
 		`SELECT 
 			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
 			cards.id, player_name, quality, height, weight, dominant_foot, is_tattoo, cards.status, cards.type,
@@ -167,12 +167,13 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, 
 		WHERE
 			lots.status = $1 AND item_id = ANY($2)
 		LIMIT 
-			%d 
+			$3 
 		OFFSET 
-			%d
-		`, cursor.Limit, offset)
+			$4
+		`
 
-	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, pq.Array(itemIds))
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive,
+		pq.Array(itemIds), cursor.Limit, offset)
 	if err != nil {
 		return lotsListPage, ErrMarketplace.Wrap(err)
 	}

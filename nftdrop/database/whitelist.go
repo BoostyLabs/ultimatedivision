@@ -7,7 +7,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
@@ -64,12 +63,12 @@ func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitel
 func (whitelistDB *whitelistDB) List(ctx context.Context, cursor pagination.Cursor) (whitelist.Page, error) {
 	var whitelistPage whitelist.Page
 	offset := (cursor.Page - 1) * cursor.Limit
-	query := fmt.Sprintf(`SELECT address, password
-	                             FROM whitelist
-	                             LIMIT %d
-	                             OFFSET %d`, cursor.Limit, offset)
+	query := `SELECT address, password
+	          FROM whitelist
+	          LIMIT $1
+	          OFFSET $2`
 
-	rows, err := whitelistDB.conn.QueryContext(ctx, query)
+	rows, err := whitelistDB.conn.QueryContext(ctx, query, cursor.Limit, offset)
 	if err != nil {
 		return whitelistPage, ErrWhitelist.Wrap(err)
 	}

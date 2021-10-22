@@ -96,9 +96,9 @@ func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, erro
 func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (cards.Page, error) {
 	var cardsListPage cards.Page
 	offset := (cursor.Page - 1) * cursor.Limit
-	query := fmt.Sprintf(`SELECT %s FROM cards LIMIT %d OFFSET %d`, allFields, cursor.Limit, offset)
+	query := fmt.Sprintf(`SELECT %s FROM cards LIMIT $1 OFFSET $2`, allFields)
 
-	rows, err := cardsDB.conn.QueryContext(ctx, query)
+	rows, err := cardsDB.conn.QueryContext(ctx, query, cursor.Limit, offset)
 	if err != nil {
 		return cardsListPage, ErrCard.Wrap(err)
 	}
