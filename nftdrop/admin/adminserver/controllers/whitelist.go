@@ -10,8 +10,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/whitelist"
-	"ultimatedivision/pkg/logger"
 )
 
 var (

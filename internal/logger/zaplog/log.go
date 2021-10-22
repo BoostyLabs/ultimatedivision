@@ -6,7 +6,7 @@ package zaplog
 import (
 	"go.uber.org/zap"
 
-	"ultimatedivision/pkg/logger"
+	"ultimatedivision/internal/logger"
 )
 
 // ensures that zaplog implements logger.Logger.

@@ -14,9 +14,9 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
-	"ultimatedivision/pkg/logger"
 	"ultimatedivision/pkg/pagination"
 	"ultimatedivision/pkg/sqlsearchoperators"
 )

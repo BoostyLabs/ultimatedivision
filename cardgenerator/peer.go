@@ -12,7 +12,7 @@ import (
 	"ultimatedivision/cardgenerator/avatarcards"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
-	"ultimatedivision/pkg/logger"
+	"ultimatedivision/internal/logger"
 )
 
 // Config is the global configuration for cardgenerator.

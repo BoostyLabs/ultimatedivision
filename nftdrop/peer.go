@@ -13,11 +13,11 @@ import (
 
 	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/admin/adminserver"
 	"ultimatedivision/nftdrop/landing"
 	"ultimatedivision/nftdrop/whitelist"
 	"ultimatedivision/pkg/auth"
-	"ultimatedivision/pkg/logger"
 )
 
 // DB provides access to all databases and database related functionality.

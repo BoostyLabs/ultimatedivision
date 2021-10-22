@@ -12,8 +12,8 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/auth"
-	"ultimatedivision/pkg/logger"
 )
 
 var (

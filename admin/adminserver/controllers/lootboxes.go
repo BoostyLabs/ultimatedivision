@@ -11,8 +11,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
-	"ultimatedivision/pkg/logger"
 )
 
 // ErrLootBoxes is an internal error type for loot boxes controller.

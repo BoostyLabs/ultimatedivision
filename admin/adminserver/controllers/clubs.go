@@ -13,7 +13,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
-	"ultimatedivision/pkg/logger"
+	"ultimatedivision/internal/logger"
 )
 
 var (

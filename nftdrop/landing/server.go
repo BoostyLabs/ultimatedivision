@@ -20,9 +20,9 @@ import (
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/landing/controllers"
 	"ultimatedivision/nftdrop/whitelist"
-	"ultimatedivision/pkg/logger"
 	"ultimatedivision/pkg/ratelimit"
 )
 
@@ -193,7 +193,7 @@ func (server *Server) seoHandler(w http.ResponseWriter, r *http.Request) {
 
 // initializeTemplates is used to initialize all templates.
 func (server *Server) initializeTemplates() (err error) {
-	server.templates.index, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "dist", "index.html"))
+	server.templates.index, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "index.html"))
 	if err != nil {
 		server.log.Error("dist folder is not generated. use 'npm run build' command", err)
 		return err

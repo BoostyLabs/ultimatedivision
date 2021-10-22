@@ -16,9 +16,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/logger/zaplog"
 	"ultimatedivision/nftdrop"
 	"ultimatedivision/nftdrop/database"
-	"ultimatedivision/pkg/logger/zaplog"
 )
 
 // Error is a default error type for nftdrop cli.

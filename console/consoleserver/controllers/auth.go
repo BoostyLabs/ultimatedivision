@@ -12,8 +12,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/auth"
-	"ultimatedivision/pkg/logger"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )

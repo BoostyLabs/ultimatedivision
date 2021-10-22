@@ -9,7 +9,7 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/pkg/logger"
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/mail"
 )
 

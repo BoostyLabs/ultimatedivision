@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/pkg/logger"
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/users"
 )
 

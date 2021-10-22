@@ -11,9 +11,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/pkg/auth"
-	"ultimatedivision/pkg/logger"
 )
 
 var (

@@ -18,7 +18,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cardgenerator"
-	"ultimatedivision/pkg/logger/zaplog"
+	"ultimatedivision/internal/logger/zaplog"
 )
 
 // Error is a default error type for card generator cli.

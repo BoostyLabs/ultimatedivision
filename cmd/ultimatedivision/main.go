@@ -18,7 +18,7 @@ import (
 
 	"ultimatedivision"
 	"ultimatedivision/database"
-	"ultimatedivision/pkg/logger/zaplog"
+	"ultimatedivision/internal/logger/zaplog"
 )
 
 // Error is a default error type for ultimatedivision cli.

@@ -12,7 +12,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/admin/admins"
-	"ultimatedivision/pkg/logger"
+	"ultimatedivision/internal/logger"
 )
 
 var (
