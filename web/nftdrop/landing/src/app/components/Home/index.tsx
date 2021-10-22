@@ -76,7 +76,7 @@ export const Home: React.FC = () => {
                 <AnimationImage
                     className={'home__player-image'}
                     heightFrom={4000}
-                    heightTo={-500}
+                    heightTo={-800}
                     loop={true}
                     animationData={footballerAnimation}
                     animationImages={animationImages}

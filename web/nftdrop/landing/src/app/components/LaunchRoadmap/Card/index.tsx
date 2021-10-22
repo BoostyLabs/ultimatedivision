@@ -34,7 +34,7 @@ export const Card: React.FC<{
             <AnimationImage
                 className={`card__image-${card.id}`}
                 heightFrom={1000}
-                heightTo={-200}
+                heightTo={-400}
                 loop={true}
                 animationData={card.animation}
                 animationImages={[]}
