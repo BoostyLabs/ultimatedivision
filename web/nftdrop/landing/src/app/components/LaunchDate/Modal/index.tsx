@@ -39,7 +39,7 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
     const user = new UserClient();
     const users = new UserService(user);
 
-  /** describes the logic of user subscription to news */
+    /** describes the logic of user subscription to news */
     async function getNotifications() {
         try {
             await users.getNotifications(email);
@@ -73,7 +73,7 @@ export const Modal: React.FC<{ handleModal: () => void }> = ({
         className: 'launch-date-modal__notification__email',
         type: 'text',
         error: emailError,
-        clearLabel: clearLabel,
+        clearLabel,
         validate: Validator.email,
         successLabel: successEmailLabel,
     };
