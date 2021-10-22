@@ -45,7 +45,7 @@
         position: absolute;
         left: 0;
         top: -35px;
-        color: $label-color;
+        color: white;
         font-family: "Rubik";
         font-size: 24px;
         line-height: 28px;
@@ -87,15 +87,20 @@
             background-repeat: no-repeat;
             background-position: 98% 50%;
 
-            &__error {
+            &__error,
+            &__success {
                 position: absolute;
                 right: 0;
                 top: -35px;
-                color: red;
+                color: $signInErrorColor;
                 font-family: "Rubik";
                 font-size: 24px;
                 line-height: 28px;
                 text-align: right;
+            }
+
+            &__success {
+                color: $roadmapHighlightColor;
             }
         }
 
@@ -104,7 +109,7 @@
         }
 
         &__email-error {
-            border: 1px solid red;
+            border: 1px solid $signInErrorColor;
         }
 
         &__confirm {
@@ -167,7 +172,8 @@
             &__email-error {
                 font-size: 18px;
 
-                &__error {
+                &__error,
+                &__success {
                     font-size: 18px;
                 }
             }
@@ -203,7 +209,8 @@
                 font-size: 14px;
                 padding: 5px 25px 5px 10px;
 
-                &__error {
+                &__error,
+                &__success {
                     font-size: 14px;
                 }
             }
@@ -239,7 +246,8 @@
             &__email-check,
             &__email-error {
 
-                &__error {
+                &__error,
+                &__success {
                     top: 50px;
                     left: 0;
                     right: unset;
