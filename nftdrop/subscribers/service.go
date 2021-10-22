@@ -46,7 +46,7 @@ func (service *Service) List(ctx context.Context) ([]Subscriber, error) {
 func (service *Service) Create(ctx context.Context, email string) error {
 	subscriber := Subscriber{
 		Email:     email,
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
 	}
 
 	return ErrSubscribers.Wrap(service.subscribers.Create(ctx, subscriber))

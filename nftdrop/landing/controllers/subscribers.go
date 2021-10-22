@@ -52,11 +52,9 @@ func (controller *Subscribers) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case subscribers.ErrSubscribersDB.Has(err):
-			controller.log.Error("Address is already in use", ErrSubscribers.Wrap(err))
 			controller.serveError(w, http.StatusBadRequest, errs.New("Address is already in use"))
 			return
 		default:
-			controller.log.Error("Unable to write new subscriber", ErrSubscribers.Wrap(err))
 			controller.serveError(w, http.StatusInternalServerError, ErrSubscribers.Wrap(err))
 			return
 		}
