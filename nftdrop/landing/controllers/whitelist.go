@@ -12,7 +12,7 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/whitelist"
-	"ultimatedivision/pkg/signature"
+	"ultimatedivision/pkg/cryptoutils"
 )
 
 var (
@@ -42,7 +42,7 @@ func (controller *Whitelist) Get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	address := signature.Address(params["address"])
+	address := cryptoutils.Address(params["address"])
 
 	if !address.IsValidAddress() {
 		controller.serveError(w, http.StatusBadRequest, ErrWhitelist.New("invalid address"))
@@ -50,7 +50,13 @@ func (controller *Whitelist) Get(w http.ResponseWriter, r *http.Request) {
 
 	transactionValue, err := controller.whitelist.GetByAddress(ctx, address)
 	if err != nil {
-		controller.log.Error("could get password", ErrWhitelist.Wrap(err))
+		controller.log.Error("could don't get transaction value", ErrWhitelist.Wrap(err))
+
+		if whitelist.ErrNoWhitelist.Has(err) {
+			controller.serveError(w, http.StatusNotFound, ErrWhitelist.Wrap(err))
+			return
+		}
+
 		controller.serveError(w, http.StatusInternalServerError, ErrWhitelist.Wrap(err))
 		return
 	}

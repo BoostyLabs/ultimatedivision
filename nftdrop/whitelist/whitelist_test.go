@@ -28,7 +28,7 @@ func TestWhitelists(t *testing.T) {
 
 	whitelist3 := whitelist.Wallet{
 		Address:  "address3",
-		Password: []byte{},
+		Password: "",
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db nftdrop.DB) {

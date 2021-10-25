@@ -12,7 +12,7 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/whitelist"
-	"ultimatedivision/pkg/signature"
+	"ultimatedivision/pkg/cryptoutils"
 )
 
 var (
@@ -67,13 +67,13 @@ func (controller *Whitelist) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var createFields whitelist.CreateWallet
-		createFields.Address = signature.Address(r.FormValue("address"))
+		createFields.Address = cryptoutils.Address(r.FormValue("address"))
 		if !createFields.Address.IsValidAddress() {
 			http.Error(w, errs.New("invalid wallet address").Error(), http.StatusBadRequest)
 			return
 		}
 
-		createFields.PrivateKey = signature.PrivateKey(r.FormValue("privateKey"))
+		createFields.PrivateKey = cryptoutils.PrivateKey(r.FormValue("privateKey"))
 
 		if createFields.PrivateKey != "" && !createFields.PrivateKey.IsValidPrivateKey() {
 			http.Error(w, errs.New("invalid private key").Error(), http.StatusBadRequest)
@@ -115,7 +115,7 @@ func (controller *Whitelist) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 
-	walletAddress := signature.Address(params["address"])
+	walletAddress := cryptoutils.Address(params["address"])
 	if !walletAddress.IsValidAddress() {
 		http.Error(w, errs.New("invalid wallet address").Error(), http.StatusBadRequest)
 		return
@@ -124,6 +124,12 @@ func (controller *Whitelist) Delete(w http.ResponseWriter, r *http.Request) {
 	err := controller.whitelist.Delete(ctx, walletAddress)
 	if err != nil {
 		controller.log.Error("could not delete whitelist item", ErrWhitelist.Wrap(err))
+
+		if whitelist.ErrNoWhitelist.Has(err) {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -149,7 +155,7 @@ func (controller *Whitelist) SetPassword(w http.ResponseWriter, r *http.Request)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		privateKey := signature.PrivateKey(r.FormValue("privateKey"))
+		privateKey := cryptoutils.PrivateKey(r.FormValue("privateKey"))
 		if privateKey != "" && !privateKey.IsValidPrivateKey() {
 			http.Error(w, errs.New("invalid private key").Error(), http.StatusBadRequest)
 			return
@@ -157,6 +163,12 @@ func (controller *Whitelist) SetPassword(w http.ResponseWriter, r *http.Request)
 
 		if err = controller.whitelist.SetPassword(ctx, privateKey); err != nil {
 			controller.log.Error("could not set password", ErrWhitelist.Wrap(err))
+
+			if whitelist.ErrNoWhitelist.Has(err) {
+				http.Error(w, err.Error(), http.StatusNotFound)
+				return
+			}
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
