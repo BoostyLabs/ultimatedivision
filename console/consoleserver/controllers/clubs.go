@@ -341,6 +341,7 @@ func (controller *Clubs) ChangeFormation(w http.ResponseWriter, r *http.Request)
 
 	if !clubs.Formation(newFormationID).IsValid() {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("Formation ID is not correct"))
+		return
 	}
 
 	squadID, err := uuid.Parse(params["squadId"])
