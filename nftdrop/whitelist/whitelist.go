@@ -5,9 +5,10 @@ package whitelist
 
 import (
 	"context"
-	"ultimatedivision/pkg/signature"
 
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/pkg/signature"
 )
 
 // ErrNoWhitelist indicated that whitelist does not exist.
