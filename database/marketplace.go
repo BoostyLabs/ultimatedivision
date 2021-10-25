@@ -32,19 +32,18 @@ type marketplaceDB struct {
 }
 
 const (
-	allLotOfFields = `id, item_id, type, user_id, shopper_id, status, start_price, max_price, current_price, start_time, end_time, period`
+	allFieldsOfLot = `id, item_id, type, user_id, shopper_id, status, start_price, max_price, current_price, start_time, end_time, period`
 )
 
 // CreateLot creates lot in the db.
 func (marketplaceDB *marketplaceDB) CreateLot(ctx context.Context, lot marketplace.Lot) error {
 	query :=
 		`INSERT INTO 
-			lots(` + allLotOfFields + `)
+			lots($1)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-		`
+			($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`
 
-	_, err := marketplaceDB.conn.ExecContext(ctx, query,
+	_, err := marketplaceDB.conn.ExecContext(ctx, query, allFieldsOfLot,
 		lot.ID, lot.ItemID, lot.Type, lot.UserID, lot.ShopperID, lot.Status,
 		lot.StartPrice, lot.MaxPrice, lot.CurrentPrice, lot.StartTime, lot.EndTime, lot.Period)
 
@@ -67,8 +66,8 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 		LEFT JOIN 
 			cards ON lots.item_id = cards.id
 		WHERE 
-			lots.id = $1
-		`
+			lots.id = $1`
+
 	err := marketplaceDB.conn.QueryRowContext(ctx, query, id).Scan(
 		&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status, &lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
 		&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.Height, &lot.Card.Weight, &lot.Card.DominantFoot, &lot.Card.IsTattoo, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
@@ -94,7 +93,7 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor pagination.Cursor) (marketplace.Page, error) {
 	var lotsListPage marketplace.Page
 	offset := (cursor.Page - 1) * cursor.Limit
-	query := fmt.Sprintf(
+	query :=
 		`SELECT 
 			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
 			cards.id, player_name, quality, height, weight, dominant_foot, is_tattoo, cards.status, cards.type,
@@ -109,12 +108,11 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor p
 		WHERE
 			lots.status = $1
 		LIMIT 
-			%d 
+			$2
 		OFFSET 
-			%d
-		`, cursor.Limit, offset)
+			$3`
 
-	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive)
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, cursor.Limit, offset)
 	if err != nil {
 		return lotsListPage, ErrMarketplace.Wrap(err)
 	}
@@ -152,7 +150,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor p
 func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, itemIds []uuid.UUID, cursor pagination.Cursor) (marketplace.Page, error) {
 	var lotsListPage marketplace.Page
 	offset := (cursor.Page - 1) * cursor.Limit
-	query := fmt.Sprintf(
+	query :=
 		`SELECT 
 			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
 			cards.id, player_name, quality, height, weight, dominant_foot, is_tattoo, cards.status, cards.type,
@@ -167,12 +165,11 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, 
 		WHERE
 			lots.status = $1 AND item_id = ANY($2)
 		LIMIT 
-			%d 
+			$3 
 		OFFSET 
-			%d
-		`, cursor.Limit, offset)
+			$4`
 
-	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, pq.Array(itemIds))
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, pq.Array(itemIds), cursor.Limit, offset)
 	if err != nil {
 		return lotsListPage, ErrMarketplace.Wrap(err)
 	}
@@ -248,16 +245,16 @@ func (marketplaceDB *marketplaceDB) totalActiveCount(ctx context.Context) (int, 
 func (marketplaceDB *marketplaceDB) ListExpiredLot(ctx context.Context) ([]marketplace.Lot, error) {
 	query :=
 		`SELECT 
-			` + allLotOfFields + ` 
+			$1 
 		FROM 
 			lots
 		WHERE
-			status = $1
+			status = $2
 		AND
-			end_time <= $2
+			end_time <= $3
 		`
 
-	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, time.Now().UTC())
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, allFieldsOfLot, marketplace.StatusActive, time.Now().UTC())
 	if err != nil {
 		return nil, ErrMarketplace.Wrap(err)
 	}

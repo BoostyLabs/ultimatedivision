@@ -37,11 +37,11 @@ const (
 func (avatarsDB *avatarsDB) Create(ctx context.Context, avatar avatars.Avatar) error {
 	query :=
 		`INSERT INTO
-			avatars(` + allAvatarFields + `) 
+			avatars($1) 
 		VALUES 
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+			($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
 		`
-	_, err := avatarsDB.conn.ExecContext(ctx, query,
+	_, err := avatarsDB.conn.ExecContext(ctx, query, allAvatarFields,
 		avatar.CardID, avatar.PictureType, avatar.FaceColor, avatar.FaceType, avatar.EyeBrowsType, avatar.EyeBrowsColor, avatar.HairstyleColor,
 		avatar.EyeLaserType, avatar.HairstyleType, avatar.Nose, avatar.Tshirt, avatar.Beard, avatar.Lips, avatar.Tattoo, avatar.OriginalURL, avatar.PreviewURL)
 
@@ -53,13 +53,13 @@ func (avatarsDB *avatarsDB) Get(ctx context.Context, cardID uuid.UUID) (avatars.
 	avatar := avatars.Avatar{}
 	query :=
 		`SELECT
-            ` + allAvatarFields + `
+            $1
         FROM 
             avatars
         WHERE
-            card_id = $1
+            card_id = $2
         `
-	err := avatarsDB.conn.QueryRowContext(ctx, query, cardID).Scan(
+	err := avatarsDB.conn.QueryRowContext(ctx, query, allAvatarFields, cardID).Scan(
 		&avatar.CardID, &avatar.PictureType, &avatar.FaceColor, &avatar.FaceType, &avatar.EyeBrowsType, &avatar.EyeBrowsColor, &avatar.HairstyleColor,
 		&avatar.EyeLaserType, &avatar.HairstyleType, &avatar.Nose, &avatar.Tshirt, &avatar.Beard, &avatar.Lips, &avatar.Tattoo, &avatar.OriginalURL, &avatar.PreviewURL)
 	if errors.Is(err, sql.ErrNoRows) {
