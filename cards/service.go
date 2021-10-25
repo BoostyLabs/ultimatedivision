@@ -10,12 +10,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"ultimatedivision/cards/avatars"
-	"ultimatedivision/clubs"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cards/avatars"
+	"ultimatedivision/clubs"
 	"ultimatedivision/pkg/pagination"
 )
 
