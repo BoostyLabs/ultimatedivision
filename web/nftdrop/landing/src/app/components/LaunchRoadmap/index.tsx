@@ -3,10 +3,10 @@
 
 import { Card } from './Card';
 
-import animationData_1 from '@static/images/launchRoadmap/animation-progress/15/data.json';
-import animationData_2 from '@static/images/launchRoadmap/animation-progress/50/data.json';
-import animationData_3 from '@static/images/launchRoadmap/animation-progress/80/data.json';
-import animationData_4 from '@static/images/launchRoadmap/animation-progress/100/data.json';
+import animationData_0 from '@static/images/launchRoadmap/animation-progress/15/data.json';
+import animationData_1 from '@static/images/launchRoadmap/animation-progress/50/data.json';
+import animationData_2 from '@static/images/launchRoadmap/animation-progress/80/data.json';
+import animationData_3 from '@static/images/launchRoadmap/animation-progress/100/data.json';
 
 import './index.scss';
 
@@ -19,7 +19,7 @@ export const LaunchRoadmap: React.FC = () => {
             description: `15 unique items will enter the metaverse and drop from the sky.
             Will you be the lucky one to receive unique boots NFT
             which will guarantee bonuses in game?`,
-            animation: animationData_1,
+            animation: animationData_0,
         },
         {
             id: '1',
@@ -28,7 +28,7 @@ export const LaunchRoadmap: React.FC = () => {
             description: `20 mysterious lootboxes will be sent to lucky owners of UD
             founder player cards. You can sell it or wait for the
             game launch to see what's inside.`,
-            animation: animationData_2,
+            animation: animationData_1,
         },
         {
             id: '2',
@@ -37,7 +37,7 @@ export const LaunchRoadmap: React.FC = () => {
             description: `It’s almost time to get to the field.
             Get one of 20 founder kits for your club
             that your fans will absolutely love. `,
-            animation: animationData_3,
+            animation: animationData_2,
         },
         {
             id: '3',
@@ -47,7 +47,7 @@ export const LaunchRoadmap: React.FC = () => {
             competition will soon begin. Prepare your NFTs to become 1 of 10000 UD
             founders and join the game before anyone else. Will your club reach
             the top of Ultimate Division?`,
-            animation: animationData_4,
+            animation: animationData_3,
         },
     ];
 

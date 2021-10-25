@@ -41,7 +41,7 @@ export const AnimationImage: React.FC<{
         const animationBlock = document?.querySelector(`.${className}`);
 
         if (!animationBlock) {
-            return null;
+            return;
         }
 
         /** Height of the page to the animated block. */
@@ -49,7 +49,7 @@ export const AnimationImage: React.FC<{
             = animationBlock?.getBoundingClientRect().top;
 
         if (!heightFromTop) {
-            return null;
+            return;
         }
 
         /** Set animation state to true when the user scrolls
@@ -60,17 +60,17 @@ export const AnimationImage: React.FC<{
             && heightFromTop >= heightTo
         ) {
             if (isAnimation) {
-                return null;
+                return;
             }
             setIsAnimation(true);
 
-            return null;
+            return;
         }
 
         /** Set animation state to false when the user scrolls up
          * or down from the animated block. */
         if (!isAnimation) {
-            return null;
+            return;
         }
 
         setIsAnimation(false);
@@ -102,7 +102,7 @@ export const AnimationImage: React.FC<{
         const animationSvg = document?.querySelector(`.${className}`);
 
         if (!animationSvg) {
-            return null;
+            return;
         }
 
         if (animationSvg?.hasChildNodes()) {
