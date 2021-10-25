@@ -5,6 +5,7 @@ package avatarcards
 
 import (
 	"context"
+	"io"
 	"math/rand"
 	"os"
 	"strconv"
@@ -16,7 +17,6 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/pkg/filereading"
-	"ultimatedivision/pkg/search"
 )
 
 // ErrAvatarCard indicated that there was an error in service.
@@ -100,37 +100,19 @@ func generateName(path string, names []string) (string, error) {
 		return "", ErrAvatarCard.Wrap(err)
 	}
 
-	var name string
+	randomNum := rand.Intn(totalCount) + 1
 
-	for {
-		randomNum := rand.Intn(totalCount) + 1
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return "", ErrAvatarCard.Wrap(err)
+	}
 
-		name, err = filereading.ReadCertainLine(file, randomNum)
-		if err != nil {
-			return "", ErrAvatarCard.Wrap(err)
-		}
-
-		isRepetition := isDuplicate(name, names)
-		if isRepetition {
-			continue
-		}
-
-		break
+	name, err := filereading.ReadCertainLine(file, randomNum)
+	if err != nil {
+		return "", ErrAvatarCard.Wrap(err)
 	}
 
 	return name, ErrAvatarCard.Wrap(err)
-}
-
-// isDuplicate checks if names of cards is matches to given name.
-func isDuplicate(name string, allNames []string) bool {
-	switch {
-	case len(allNames) == 0:
-		return false
-	case len(allNames) == 1:
-		return allNames[0] == name
-	default:
-		return search.BinarySearch(allNames, name)
-	}
 }
 
 // TestGenerate generates test version avatar cards.

@@ -12,10 +12,7 @@ import (
 
 // ReadCertainLine reads certain line from the file.
 func ReadCertainLine(file *os.File, lineNum int) (string, error) {
-	_, err := file.Seek(0, io.SeekStart)
-	if err != nil {
-		return "", err
-	}
+
 
 	var line int
 	scanner := bufio.NewScanner(file)
