@@ -127,9 +127,6 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (car
 			&card.BallFocus, &card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping,
 			&card.Throwing,
 		); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return cardsListPage, cards.ErrNoCard.Wrap(err)
-			}
 			return cardsListPage, ErrCard.Wrap(err)
 		}
 
@@ -174,7 +171,7 @@ func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID) ([]cards
 			&card.BallFocus, &card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping,
 			&card.Throwing,
 		); err != nil {
-			return nil, cards.ErrNoCard.Wrap(err)
+			return nil, ErrCard.Wrap(err)
 		}
 
 		userCards = append(userCards, card)
@@ -229,9 +226,6 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 			&card.FreeKicks, &card.Corners, &card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus,
 			&card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
 		); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return cardsListPage, cards.ErrNoCard.Wrap(err)
-			}
 			return cardsListPage, ErrCard.Wrap(err)
 		}
 
@@ -273,9 +267,6 @@ func (cardsDB *cardsDB) ListCardIDsWithFiltersWhereActiveLot(ctx context.Context
 	for rows.Next() {
 		var cardID uuid.UUID
 		if err = rows.Scan(&cardID); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return nil, cards.ErrNoCard.Wrap(err)
-			}
 			return nil, ErrCard.Wrap(err)
 		}
 
@@ -314,9 +305,6 @@ func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filte
 			&card.FreeKicks, &card.Corners, &card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus,
 			&card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
 		); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return cardsListPage, cards.ErrNoCard.Wrap(err)
-			}
 			return cardsListPage, ErrCard.Wrap(err)
 		}
 
@@ -358,9 +346,6 @@ func (cardsDB *cardsDB) ListCardIDsByPlayerNameWhereActiveLot(ctx context.Contex
 	for rows.Next() {
 		var cardID uuid.UUID
 		if err = rows.Scan(&cardID); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return nil, cards.ErrNoCard.Wrap(err)
-			}
 			return nil, ErrCard.Wrap(err)
 		}
 		cardIDs = append(cardIDs, cardID)
