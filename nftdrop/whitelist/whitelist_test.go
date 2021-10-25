@@ -10,21 +10,26 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"ultimatedivision/internal/pagination"
 	"ultimatedivision/nftdrop"
 	"ultimatedivision/nftdrop/database/dbtesting"
 	"ultimatedivision/nftdrop/whitelist"
+	"ultimatedivision/pkg/pagination"
 )
 
 func TestWhitelists(t *testing.T) {
 	whitelist1 := whitelist.Wallet{
 		Address:  "address1",
-		Password: []byte{},
+		Password: "",
 	}
 
 	whitelist2 := whitelist.Wallet{
 		Address:  "address2",
-		Password: []byte{},
+		Password: "",
+	}
+
+	whitelist3 := whitelist.Wallet{
+		Address:  "address3",
+		Password: "",
 	}
 
 	cursor := pagination.Cursor{
@@ -68,15 +73,27 @@ func TestWhitelists(t *testing.T) {
 			assert.Equal(t, whitelist2.Address, whitelistRecordsFromDB[1].Address)
 		})
 
+		t.Run("update sql no rows", func(t *testing.T) {
+			err := repositoryWhitelist.Update(ctx, whitelist3)
+			require.Error(t, err)
+			require.Equal(t, whitelist.ErrNoWallet.Has(err), true)
+		})
+
+		t.Run("update", func(t *testing.T) {
+			err := repositoryWhitelist.Update(ctx, whitelist2)
+			require.NoError(t, err)
+		})
+
+		t.Run("delete sql no rows", func(t *testing.T) {
+			err := repositoryWhitelist.Delete(ctx, whitelist3.Address)
+			require.Error(t, err)
+		})
+
 		t.Run("delete", func(t *testing.T) {
 			err := repositoryWhitelist.Delete(ctx, whitelist1.Address)
 			require.NoError(t, err)
 
 			err = repositoryWhitelist.Delete(ctx, whitelist2.Address)
-			require.NoError(t, err)
-		})
-		t.Run("update", func(t *testing.T) {
-			err := repositoryWhitelist.Update(ctx, whitelist2)
 			require.NoError(t, err)
 		})
 	})

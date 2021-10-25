@@ -6,10 +6,10 @@ package whitelist
 import (
 	"context"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/cryptoutils"
+	"ultimatedivision/pkg/pagination"
 )
 
 // ErrNoWallet indicated that wallet in whitelist does not exist.
@@ -19,73 +19,49 @@ var ErrNoWallet = errs.Class("wallet does not exist")
 //
 // architecture: DB
 type DB interface {
-	// Create adds whitelist in the database.
+	// Create adds wallet in the database.
 	Create(ctx context.Context, wallet Wallet) error
 	// GetByAddress returns whitelist by address from the database.
-	GetByAddress(ctx context.Context, address Hex) (Wallet, error)
+	GetByAddress(ctx context.Context, address cryptoutils.Address) (Wallet, error)
 	// List returns whitelist page from the database.
 	List(ctx context.Context, cursor pagination.Cursor) (Page, error)
-	// ListWithoutPassword returns whitelist without password from the database.
+	// ListWithoutPassword returns wallet without password from the database.
 	ListWithoutPassword(ctx context.Context) ([]Wallet, error)
-	// Update updates password of wallet.
+	// Update updates wallet by address.
 	Update(ctx context.Context, wallet Wallet) error
-	// Delete deletes whitelist from the database.
-	Delete(ctx context.Context, address Hex) error
+	// Delete deletes wallet from the database.
+	Delete(ctx context.Context, address cryptoutils.Address) error
 }
 
 // Wallet describes whitelist entity.
 type Wallet struct {
-	Address  Hex    `json:"address"`
-	Password []byte `json:"password"`
-}
-
-// Hex defines hex type.
-type Hex string
-
-// IsValidAddress checks if the address is valid.
-func (hex Hex) IsValidAddress() bool {
-	return common.IsHexAddress(string(hex))
-}
-
-// IsHex validates whether each byte is valid hexadecimal string.
-func (hex Hex) IsHex() bool {
-	if len(string(hex))%2 != 0 {
-		return false
-	}
-	for _, c := range []byte(string(hex)) {
-		if !isHexCharacter(c) {
-			return false
-		}
-	}
-	return true
-}
-
-// isHexCharacter returns bool of c being a valid hexadecimal.
-func isHexCharacter(c byte) bool {
-	return ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+	Address  cryptoutils.Address   `json:"address"`
+	Password cryptoutils.Signature `json:"password"`
 }
 
 // CreateWallet entity describes request values for create whitelist.
 type CreateWallet struct {
-	Address    Hex `json:"address"`
-	PrivateKey Hex `json:"privateKey"`
+	Address    cryptoutils.Address    `json:"address"`
+	PrivateKey cryptoutils.PrivateKey `json:"privateKey"`
 }
 
 // Config defines configuration for queue.
 type Config struct {
-	SmartContract struct {
-		Address string  `json:"address"`
-		Price   float64 `json:"price"`
-	} `json:"smartContract"`
+	SmartContractAddress `json:"smartContractAddress"`
 
 	pagination.Cursor `json:"cursor"`
 }
 
-// SmartContractWithWhiteList entity describes whitelist and smart contract.
-type SmartContractWithWhiteList struct {
-	Wallet
-	Address string  `json:"address"`
-	Price   float64 `json:"price"`
+// SmartContractAddress entity describes smart contract addresses.
+type SmartContractAddress struct {
+	NFT     cryptoutils.Address `json:"nft"`
+	NFTSale cryptoutils.Address `json:"nftSale"`
+}
+
+// Transaction entity describes password wallet and smart contract addresses.
+type Transaction struct {
+	Password             cryptoutils.Signature `json:"password"`
+	SmartContractAddress `json:"smartContractAddress"`
 }
 
 // Page holds wallets page entity which is used to show listed page of wallets.

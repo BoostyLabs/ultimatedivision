@@ -11,8 +11,9 @@ import (
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/internal/pagination"
 	"ultimatedivision/nftdrop/whitelist"
+	"ultimatedivision/pkg/cryptoutils"
+	"ultimatedivision/pkg/pagination"
 )
 
 // ensures that whitelistDB implements whitelist.DB.
@@ -41,7 +42,7 @@ func (whitelistDB *whitelistDB) Create(ctx context.Context, wallet whitelist.Wal
 }
 
 // GetByAddress returns wallet by address from the data base.
-func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitelist.Hex) (whitelist.Wallet, error) {
+func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address cryptoutils.Address) (whitelist.Wallet, error) {
 	wallet := whitelist.Wallet{}
 	query :=
 		`SELECT
@@ -53,7 +54,7 @@ func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address whitel
 
 	err := whitelistDB.conn.QueryRowContext(ctx, query, address).Scan(&wallet.Address, &wallet.Password)
 	if errors.Is(err, sql.ErrNoRows) {
-		return wallet, whitelist.ErrNoWallet.Wrap(err)
+		return wallet, whitelist.ErrNoWallet.New("address does not exist")
 	}
 
 	return wallet, ErrWhitelist.Wrap(err)
@@ -133,11 +134,19 @@ func (whitelistDB *whitelistDB) totalCount(ctx context.Context) (int, error) {
 }
 
 // Delete deletes wallet from the database.
-func (whitelistDB *whitelistDB) Delete(ctx context.Context, address whitelist.Hex) error {
+func (whitelistDB *whitelistDB) Delete(ctx context.Context, address cryptoutils.Address) error {
 	query := `DELETE FROM whitelist
               WHERE address = $1`
 
-	_, err := whitelistDB.conn.ExecContext(ctx, query, address)
+	result, err := whitelistDB.conn.ExecContext(ctx, query, address)
+	if err != nil {
+		return ErrWhitelist.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return whitelist.ErrNoWallet.New("address does not exist")
+	}
 
 	return ErrWhitelist.Wrap(err)
 }
@@ -149,7 +158,16 @@ func (whitelistDB *whitelistDB) Update(ctx context.Context, wallet whitelist.Wal
 		 SET password = $1
 		 WHERE address = $2`
 
-	_, err := whitelistDB.conn.ExecContext(ctx, query, wallet.Password, wallet.Address)
+	result, err := whitelistDB.conn.ExecContext(ctx, query, wallet.Password, wallet.Address)
+	if err != nil {
+		return ErrWhitelist.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return whitelist.ErrNoWallet.New("wallet does not exist")
+	}
+
 	return ErrWhitelist.Wrap(err)
 }
 

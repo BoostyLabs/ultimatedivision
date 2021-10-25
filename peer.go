@@ -20,11 +20,11 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/console/emails"
-	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
-	mail2 "ultimatedivision/internal/mail"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
+	"ultimatedivision/pkg/auth"
+	mail2 "ultimatedivision/pkg/mail"
 	"ultimatedivision/queue"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
@@ -238,7 +238,16 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // cards setup
 		peer.Cards.Service = cards.NewService(
 			peer.Database.Cards(),
-			config.Cards.Config,
+			cards.Config{
+				Height:                   config.Cards.Height,
+				Weight:                   config.Cards.Weight,
+				DominantFoots:            config.Cards.DominantFoots,
+				Skills:                   config.Cards.Skills,
+				RangeValueForSkills:      config.Cards.RangeValueForSkills,
+				Tattoos:                  config.Cards.Tattoos,
+				Cursor:                   config.Cards.Cursor,
+				CardEfficiencyParameters: config.Cards.CardEfficiencyParameters,
+			},
 			peer.Avatars.Service,
 		)
 	}
@@ -247,6 +256,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.Clubs.Service = clubs.NewService(
 			peer.Database.Clubs(),
 			peer.Users.Service,
+			peer.Cards.Service,
 		)
 	}
 

@@ -17,11 +17,11 @@ import (
 
 	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
-	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/templatefuncs"
 	"ultimatedivision/nftdrop/admin/adminserver/controllers"
 	"ultimatedivision/nftdrop/whitelist"
+	"ultimatedivision/pkg/auth"
 )
 
 var (
