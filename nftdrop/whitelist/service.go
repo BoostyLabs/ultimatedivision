@@ -78,6 +78,13 @@ func (service *Service) GetByAddress(ctx context.Context, address cryptoutils.Ad
 
 // List returns whitelist page from the database.
 func (service *Service) List(ctx context.Context, cursor pagination.Cursor) (Page, error) {
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
+	}
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
+
 	whitelistRecords, err := service.whitelist.List(ctx, cursor)
 	return whitelistRecords, ErrWhitelist.Wrap(err)
 }
