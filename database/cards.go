@@ -45,13 +45,13 @@ const (
 func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 	query :=
 		`INSERT INTO
-			cards($1) 
+			cards(` + allFields + `) 
 		VALUES 
-			($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25,
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25,
 			$26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49,
-			$50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60)`
+			$50, $51, $52, $53, $54, $55, $56, $57, $58, $59)`
 
-	_, err := cardsDB.conn.ExecContext(ctx, query, allFields,
+	_, err := cardsDB.conn.ExecContext(ctx, query,
 		card.ID, card.PlayerName, card.Quality, card.Height, card.Weight,
 		card.DominantFoot, card.IsTattoo, card.Status, card.Type, card.UserID, card.Tactics, card.Positioning, card.Composure, card.Aggression,
 		card.Vision, card.Awareness, card.Crosses, card.Physique, card.Acceleration, card.RunningSpeed, card.ReactionSpeed, card.Agility,
@@ -70,13 +70,13 @@ func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, erro
 	card := cards.Card{}
 	query :=
 		`SELECT
-            $1
+		` + allFields + `
         FROM 
             cards
         WHERE 
-            id = $2`
+            id = $1`
 
-	err := cardsDB.conn.QueryRowContext(ctx, query, allFields, id).Scan(
+	err := cardsDB.conn.QueryRowContext(ctx, query, id).Scan(
 		&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
 		&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed,
 		&card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling,
@@ -98,15 +98,15 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (car
 	offset := (cursor.Page - 1) * cursor.Limit
 	query :=
 		`SELECT 
-			$1 
+			` + allFields + ` 
 		FROM 
 			cards 
 		LIMIT 
-			$2
+			$1
 		OFFSET 
-			$3`
+			$2`
 
-	rows, err := cardsDB.conn.QueryContext(ctx, query, allFields, cursor.Limit, offset)
+	rows, err := cardsDB.conn.QueryContext(ctx, query, cursor.Limit, offset)
 	if err != nil {
 		return cardsListPage, ErrCard.Wrap(err)
 	}
@@ -147,13 +147,13 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (car
 func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID) ([]cards.Card, error) {
 	query :=
 		`SELECT 
-			$1 
+			` + allFields + ` 
 		FROM 
 			cards 
 		WHERE 
-			user_id = $2`
+			user_id = $1`
 
-	rows, err := cardsDB.conn.QueryContext(ctx, query, allFields, id)
+	rows, err := cardsDB.conn.QueryContext(ctx, query, id)
 	if err != nil {
 		return nil, ErrCard.Wrap(err)
 	}

@@ -39,11 +39,11 @@ const (
 func (marketplaceDB *marketplaceDB) CreateLot(ctx context.Context, lot marketplace.Lot) error {
 	query :=
 		`INSERT INTO 
-			lots($1)
+			lots(` + allFieldsOfLot + ` )
 		VALUES
-			($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
 
-	_, err := marketplaceDB.conn.ExecContext(ctx, query, allFieldsOfLot,
+	_, err := marketplaceDB.conn.ExecContext(ctx, query,
 		lot.ID, lot.ItemID, lot.Type, lot.UserID, lot.ShopperID, lot.Status,
 		lot.StartPrice, lot.MaxPrice, lot.CurrentPrice, lot.StartTime, lot.EndTime, lot.Period)
 
@@ -245,16 +245,16 @@ func (marketplaceDB *marketplaceDB) totalActiveCount(ctx context.Context) (int, 
 func (marketplaceDB *marketplaceDB) ListExpiredLot(ctx context.Context) ([]marketplace.Lot, error) {
 	query :=
 		`SELECT 
-			$1 
+			` + allFieldsOfLot + ` 
 		FROM 
 			lots
 		WHERE
-			status = $2
+			status = $1
 		AND
-			end_time <= $3
+			end_time <= $2
 		`
 
-	rows, err := marketplaceDB.conn.QueryContext(ctx, query, allFieldsOfLot, marketplace.StatusActive, time.Now().UTC())
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, time.Now().UTC())
 	if err != nil {
 		return nil, ErrMarketplace.Wrap(err)
 	}
