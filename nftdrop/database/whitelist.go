@@ -52,8 +52,12 @@ func (whitelistDB *whitelistDB) GetByAddress(ctx context.Context, address crypto
 			address = $1`
 
 	err := whitelistDB.conn.QueryRowContext(ctx, query, address).Scan(&wallet.Address, &wallet.Password)
-	if errors.Is(err, sql.ErrNoRows) {
-		return wallet, whitelist.ErrNoWhitelist.Wrap(err)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return wallet, whitelist.ErrNoWhitelist.Wrap(err)
+		}
+
+		return wallet, whitelist.ErrNoWhitelist.New("address does not exist")
 	}
 
 	return wallet, ErrWhitelist.Wrap(err)
@@ -87,6 +91,44 @@ func (whitelistDB *whitelistDB) List(ctx context.Context) ([]whitelist.Wallet, e
 	return wallets, ErrWhitelist.Wrap(rows.Err())
 }
 
+// Delete deletes wallet from the database.
+func (whitelistDB *whitelistDB) Delete(ctx context.Context, address cryptoutils.Address) error {
+	query := `DELETE FROM whitelist
+              WHERE address = $1`
+
+	result, err := whitelistDB.conn.ExecContext(ctx, query, address)
+	if err != nil {
+		return ErrWhitelist.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return whitelist.ErrNoWhitelist.New("address does not exist")
+	}
+
+	return ErrWhitelist.Wrap(err)
+}
+
+// Update updates a wallets password in the data base.
+func (whitelistDB *whitelistDB) Update(ctx context.Context, wallet whitelist.Wallet) error {
+	query :=
+		`UPDATE whitelist 
+		 SET password = $1
+		 WHERE address = $2`
+
+	result, err := whitelistDB.conn.ExecContext(ctx, query, wallet.Password, wallet.Address)
+	if err != nil {
+		return ErrWhitelist.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return whitelist.ErrNoWhitelist.New("wallet does not exist")
+	}
+
+	return ErrWhitelist.Wrap(err)
+}
+
 // ListWithoutPassword returns all wallets address from the data base.
 func (whitelistDB *whitelistDB) ListWithoutPassword(ctx context.Context) ([]whitelist.Wallet, error) {
 	query :=
@@ -115,31 +157,4 @@ func (whitelistDB *whitelistDB) ListWithoutPassword(ctx context.Context) ([]whit
 	}
 
 	return wallets, ErrWhitelist.Wrap(rows.Err())
-}
-
-// Update updates a wallets password in the data base.
-func (whitelistDB *whitelistDB) Update(ctx context.Context, wallet whitelist.Wallet) error {
-	query :=
-		`UPDATE 
-			whitelist
-		SET 
-			password = $1
-		WHERE 
-			address = $2`
-
-	_, err := whitelistDB.conn.ExecContext(ctx, query, wallet.Password, wallet.Address)
-	return ErrWhitelist.Wrap(err)
-}
-
-// Delete deletes wallet from the database.
-func (whitelistDB *whitelistDB) Delete(ctx context.Context, address cryptoutils.Address) error {
-	query :=
-		`DELETE FROM 
-			whitelist
-		WHERE 
-			address = $1`
-
-	_, err := whitelistDB.conn.ExecContext(ctx, query, address)
-
-	return ErrWhitelist.Wrap(err)
 }
