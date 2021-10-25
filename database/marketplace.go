@@ -14,8 +14,8 @@ import (
 	"github.com/lib/pq"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/internal/pagination"
 	"ultimatedivision/marketplace"
+	"ultimatedivision/pkg/pagination"
 )
 
 // ensures that marketplaceDB implements marketplace.DB.
@@ -57,7 +57,7 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 	query :=
 		`SELECT 
 			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
-			cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
+			cards.id, player_name, quality, height, weight, dominant_foot, is_tattoo, cards.status, cards.type,
 			cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
 			stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
 			forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
@@ -71,8 +71,7 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 		`
 	err := marketplaceDB.conn.QueryRowContext(ctx, query, id).Scan(
 		&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status, &lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
-		&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.PictureType, &lot.Card.Height, &lot.Card.Weight, &lot.Card.SkinColor, &lot.Card.HairStyle,
-		&lot.Card.HairColor, &lot.Card.DominantFoot, &lot.Card.IsTattoos, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
+		&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.Height, &lot.Card.Weight, &lot.Card.DominantFoot, &lot.Card.IsTattoo, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
 		&lot.Card.Composure, &lot.Card.Aggression, &lot.Card.Vision, &lot.Card.Awareness, &lot.Card.Crosses, &lot.Card.Physique, &lot.Card.Acceleration, &lot.Card.RunningSpeed,
 		&lot.Card.ReactionSpeed, &lot.Card.Agility, &lot.Card.Stamina, &lot.Card.Strength, &lot.Card.Jumping, &lot.Card.Balance, &lot.Card.Technique, &lot.Card.Dribbling,
 		&lot.Card.BallControl, &lot.Card.WeakFoot, &lot.Card.SkillMoves, &lot.Card.Finesse, &lot.Card.Curve, &lot.Card.Volleys, &lot.Card.ShortPassing, &lot.Card.LongPassing,
@@ -98,7 +97,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor p
 	query := fmt.Sprintf(
 		`SELECT 
 			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
-			cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
+			cards.id, player_name, quality, height, weight, dominant_foot, is_tattoo, cards.status, cards.type,
 			cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
 			stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
 			forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
@@ -128,8 +127,8 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor p
 		lot := marketplace.Lot{}
 		if err = rows.Scan(
 			&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status, &lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
-			&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.PictureType, &lot.Card.Height, &lot.Card.Weight, &lot.Card.SkinColor, &lot.Card.HairStyle,
-			&lot.Card.HairColor, &lot.Card.DominantFoot, &lot.Card.IsTattoos, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
+			&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.Height, &lot.Card.Weight,
+			&lot.Card.DominantFoot, &lot.Card.IsTattoo, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
 			&lot.Card.Composure, &lot.Card.Aggression, &lot.Card.Vision, &lot.Card.Awareness, &lot.Card.Crosses, &lot.Card.Physique, &lot.Card.Acceleration, &lot.Card.RunningSpeed,
 			&lot.Card.ReactionSpeed, &lot.Card.Agility, &lot.Card.Stamina, &lot.Card.Strength, &lot.Card.Jumping, &lot.Card.Balance, &lot.Card.Technique, &lot.Card.Dribbling,
 			&lot.Card.BallControl, &lot.Card.WeakFoot, &lot.Card.SkillMoves, &lot.Card.Finesse, &lot.Card.Curve, &lot.Card.Volleys, &lot.Card.ShortPassing, &lot.Card.LongPassing,
@@ -156,7 +155,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, 
 	query := fmt.Sprintf(
 		`SELECT 
 			lots.id, item_id, lots.type, lots.user_id, shopper_id, lots.status, start_price, max_price, current_price, start_time, end_time, period,
-			cards.id, player_name, quality, picture_type, height, weight, skin_color, hair_style, hair_color, dominant_foot, is_tattoos, cards.status, cards.type,
+			cards.id, player_name, quality, height, weight, dominant_foot, is_tattoo, cards.status, cards.type,
 			cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
 			stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
 			forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
@@ -186,8 +185,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, 
 		lot := marketplace.Lot{}
 		if err = rows.Scan(
 			&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status, &lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
-			&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.PictureType, &lot.Card.Height, &lot.Card.Weight, &lot.Card.SkinColor, &lot.Card.HairStyle,
-			&lot.Card.HairColor, &lot.Card.DominantFoot, &lot.Card.IsTattoos, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
+			&lot.Card.ID, &lot.Card.PlayerName, &lot.Card.Quality, &lot.Card.Height, &lot.Card.Weight, &lot.Card.DominantFoot, &lot.Card.IsTattoo, &lot.Card.Status, &lot.Card.Type, &lot.Card.UserID, &lot.Card.Tactics, &lot.Card.Positioning,
 			&lot.Card.Composure, &lot.Card.Aggression, &lot.Card.Vision, &lot.Card.Awareness, &lot.Card.Crosses, &lot.Card.Physique, &lot.Card.Acceleration, &lot.Card.RunningSpeed,
 			&lot.Card.ReactionSpeed, &lot.Card.Agility, &lot.Card.Stamina, &lot.Card.Strength, &lot.Card.Jumping, &lot.Card.Balance, &lot.Card.Technique, &lot.Card.Dribbling,
 			&lot.Card.BallControl, &lot.Card.WeakFoot, &lot.Card.SkillMoves, &lot.Card.Finesse, &lot.Card.Curve, &lot.Card.Volleys, &lot.Card.ShortPassing, &lot.Card.LongPassing,
@@ -291,24 +289,60 @@ func (marketplaceDB *marketplaceDB) ListExpiredLot(ctx context.Context) ([]marke
 
 // UpdateShopperIDLot updates shopper id of lot in the database.
 func (marketplaceDB *marketplaceDB) UpdateShopperIDLot(ctx context.Context, id, shopperID uuid.UUID) error {
-	_, err := marketplaceDB.conn.ExecContext(ctx, "UPDATE lots SET shopper_id = $1 WHERE id = $2", shopperID, id)
+	result, err := marketplaceDB.conn.ExecContext(ctx, "UPDATE lots SET shopper_id = $1 WHERE id = $2", shopperID, id)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+
+	rowsNum, err := result.RowsAffected()
+	if rowsNum == 0 {
+		return marketplace.ErrNoLot.New("lot does not exist")
+	}
+
 	return ErrMarketplace.Wrap(err)
 }
 
 // UpdateStatusLot updates status of lot in the database.
 func (marketplaceDB *marketplaceDB) UpdateStatusLot(ctx context.Context, id uuid.UUID, status marketplace.Status) error {
-	_, err := marketplaceDB.conn.ExecContext(ctx, "UPDATE lots SET status = $1 WHERE id = $2", status, id)
+	result, err := marketplaceDB.conn.ExecContext(ctx, "UPDATE lots SET status = $1 WHERE id = $2", status, id)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+
+	rowsNum, err := result.RowsAffected()
+	if rowsNum == 0 {
+		return marketplace.ErrNoLot.New("lot does not exist")
+	}
+
 	return ErrMarketplace.Wrap(err)
 }
 
 // UpdateCurrentPriceLot updates current price of lot in the database.
 func (marketplaceDB *marketplaceDB) UpdateCurrentPriceLot(ctx context.Context, id uuid.UUID, currentPrice float64) error {
-	_, err := marketplaceDB.conn.ExecContext(ctx, "UPDATE lots SET current_price = $1 WHERE id = $2", currentPrice, id)
+	result, err := marketplaceDB.conn.ExecContext(ctx, "UPDATE lots SET current_price = $1 WHERE id = $2", currentPrice, id)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+
+	rowsNum, err := result.RowsAffected()
+	if rowsNum == 0 {
+		return marketplace.ErrNoLot.New("lot does not exist")
+	}
+
 	return ErrMarketplace.Wrap(err)
 }
 
 // UpdateEndTimeLot updates end time of lot in the database.
 func (marketplaceDB *marketplaceDB) UpdateEndTimeLot(ctx context.Context, id uuid.UUID, endTime time.Time) error {
-	_, err := marketplaceDB.conn.ExecContext(ctx, "UPDATE lots SET end_time = $1 WHERE id = $2", endTime, id)
+	result, err := marketplaceDB.conn.ExecContext(ctx, "UPDATE lots SET end_time = $1 WHERE id = $2", endTime, id)
+	if err != nil {
+		return ErrMarketplace.Wrap(err)
+	}
+
+	rowsNum, err := result.RowsAffected()
+	if rowsNum == 0 {
+		return marketplace.ErrNoLot.New("lot does not exist")
+	}
+
 	return ErrMarketplace.Wrap(err)
 }

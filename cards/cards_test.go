@@ -18,7 +18,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/database"
 	"ultimatedivision/database/dbtesting"
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/pagination"
 	"ultimatedivision/pkg/sqlsearchoperators"
 	"ultimatedivision/users"
 )
@@ -52,15 +52,10 @@ func TestCards(t *testing.T) {
 		ID:               uuid.New(),
 		PlayerName:       "Dmytro yak muk",
 		Quality:          "wood",
-		PictureType:      1,
 		Height:           178.8,
 		Weight:           72.2,
-		SkinColor:        1,
-		HairStyle:        1,
-		HairColor:        1,
-		Accessories:      []int{1, 2},
 		DominantFoot:     "left",
-		IsTattoos:        false,
+		IsTattoo:         false,
 		Status:           cards.StatusActive,
 		Type:             cards.TypeWon,
 		UserID:           user1.ID,
@@ -119,15 +114,10 @@ func TestCards(t *testing.T) {
 		ID:               uuid.New(),
 		PlayerName:       "Vova",
 		Quality:          "gold",
-		PictureType:      2,
 		Height:           179.9,
 		Weight:           73.3,
-		SkinColor:        2,
-		HairStyle:        2,
-		HairColor:        2,
-		Accessories:      []int{1, 2},
 		DominantFoot:     "right",
-		IsTattoos:        true,
+		IsTattoo:         true,
 		Status:           cards.StatusSale,
 		UserID:           uuid.New(),
 		Tactics:          2,
@@ -208,6 +198,7 @@ func TestCards(t *testing.T) {
 		repositoryCards := db.Cards()
 		repositoryUsers := db.Users()
 		id := uuid.New()
+
 		t.Run("get sql no rows", func(t *testing.T) {
 			_, err := repositoryCards.Get(ctx, id)
 			require.Error(t, err)
@@ -308,6 +299,12 @@ func TestCards(t *testing.T) {
 			assert.Equal(t, values, []string{"yak", "yak %", "% yak", "% yak %"})
 		})
 
+		t.Run("update status sql no rows", func(t *testing.T) {
+			err := repositoryCards.UpdateStatus(ctx, uuid.New(), cards.StatusActive)
+			require.Error(t, err)
+			require.Equal(t, cards.ErrNoCard.Has(err), true)
+		})
+
 		t.Run("update status", func(t *testing.T) {
 			card1.Status = cards.StatusActive
 			err := repositoryCards.UpdateStatus(ctx, card1.ID, card1.Status)
@@ -320,6 +317,12 @@ func TestCards(t *testing.T) {
 			compareCards(t, card2, allCards.Cards[0])
 		})
 
+		t.Run("update user id sql no rows", func(t *testing.T) {
+			err := repositoryCards.UpdateUserID(ctx, uuid.New(), uuid.New())
+			require.Error(t, err)
+			require.Equal(t, cards.ErrNoCard.Has(err), true)
+		})
+
 		t.Run("update user id", func(t *testing.T) {
 			card1.UserID = user2.ID
 			err := repositoryCards.UpdateUserID(ctx, card1.ID, user2.ID)
@@ -328,6 +331,12 @@ func TestCards(t *testing.T) {
 			card, err := repositoryCards.Get(ctx, card1.ID)
 			assert.NoError(t, err)
 			compareCards(t, card1, card)
+		})
+
+		t.Run("delete sql no rows", func(t *testing.T) {
+			err := repositoryCards.Delete(ctx, uuid.New())
+			require.Error(t, err)
+			require.Equal(t, cards.ErrNoCard.Has(err), true)
 		})
 
 		t.Run("delete", func(t *testing.T) {
@@ -348,12 +357,8 @@ func compareCards(t *testing.T, card1, card2 cards.Card) {
 	assert.Equal(t, card1.Quality, card2.Quality)
 	assert.Equal(t, card1.Height, card2.Height)
 	assert.Equal(t, card1.Weight, card2.Weight)
-	assert.Equal(t, card1.SkinColor, card2.SkinColor)
-	assert.Equal(t, card1.HairStyle, card2.HairStyle)
-	assert.Equal(t, card1.HairColor, card2.HairColor)
-	assert.Equal(t, card1.Accessories, card2.Accessories)
 	assert.Equal(t, card1.DominantFoot, card2.DominantFoot)
-	assert.Equal(t, card1.IsTattoos, card2.IsTattoos)
+	assert.Equal(t, card1.IsTattoo, card2.IsTattoo)
 	assert.Equal(t, card1.Status, card2.Status)
 	assert.Equal(t, card1.UserID, card2.UserID)
 	assert.Equal(t, card1.Positioning, card2.Positioning)

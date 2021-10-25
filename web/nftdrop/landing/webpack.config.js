@@ -6,39 +6,32 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const StylelintPlugin = require("stylelint-webpack-plugin");
 const zlib = require("zlib");
 const CompressionPlugin = require("compression-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
     mode: "production",
     experiments: {
         asset: true,
     },
-    entry: './src/index.tsx',
-    target: 'web',
-    devtool: 'inline-source-map',
+    entry: "./src/index.tsx",
+    target: "web",
     output: {
-        path: path.resolve(__dirname, 'dist/'),
-        filename: '[name].[hash].js',
-        publicPath: '/static/dist/'
+        path: path.resolve(__dirname, "dist/"),
+        filename: "[name].[hash].js",
+        publicPath: "/static/dist/",
     },
     plugins: [
         new HtmlWebpackPlugin({
             title: "Ultimate Division",
             template: "./public/index.html",
             favicon: "./src/app/static/images/favicon.ico",
-            meta: {
-                'twitter:card': { name: 'twitter:card', content: "./src/app/static/images/ultimate.png" },
-                "twitter:image": { property: "twitter:image", content: "./src/app/static/images/ultimate.png" },
-                "twitter:title": { property: "twitter:title", content: "Ultimate Division" },
-                "twitter:description": { property: "twitter:description", content: "Ultimate Division is a world football simulator. UD players will own clubs, players and face each other in weekly competitions to win cash prizes! Other players can be hired as managers or coaches for your Club!" }
-            }
         }),
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin(),
         new StylelintPlugin({ fix: true }),
         new CompressionPlugin({
-            filename: '[path][base].br',
-            algorithm: 'brotliCompress',
+            filename: "[path][base].br",
+            algorithm: "brotliCompress",
             test: /\.(js|css|html|svg)$/,
             compressionOptions: {
                 params: {
@@ -57,13 +50,13 @@ module.exports = {
     },
     resolve: {
         alias: {
-            '@components': path.resolve(__dirname, './src/app/components/'),
-            '@static': path.resolve(__dirname, './src/app/static/'),
-            '@utils': path.resolve(__dirname, './src/app/utils/'),
-            '@': path.resolve(__dirname, './src/'),
+            "@components": path.resolve(__dirname, "./src/app/components/"),
+            "@static": path.resolve(__dirname, "./src/app/static/"),
+            "@utils": path.resolve(__dirname, "./src/app/utils/"),
+            "@": path.resolve(__dirname, "./src/"),
         },
-        extensions: ['.ts', '.tsx', '.js', '.jsx'],
-        modules: ['node_modules'],
+        extensions: [".ts", ".tsx", ".js", ".jsx"],
+        modules: ["node_modules"],
     },
     module: {
         rules: [
@@ -72,7 +65,7 @@ module.exports = {
                 exclude: /(node_modules)/,
                 use: [
                     {
-                        loader: 'ts-loader',
+                        loader: "ts-loader",
                     },
                 ],
             },
@@ -82,30 +75,30 @@ module.exports = {
                 use: [
                     //for dev style-loader, for production
                     // MiniCssExtractPlugin.loader
-                    'style-loader',
+                    "style-loader",
                     // MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'sass-loader',
+                    "css-loader",
+                    "sass-loader",
                 ],
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/i,
                 exclude: /(node_modules)/,
-                type: 'asset/resource',
+                type: "asset/resource",
                 generator: {
-                    filename: 'fonts/[name][hash:5][ext]',
+                    filename: "fonts/[name][hash:5][ext]",
                 },
             },
             {
                 test: /\.(jpe|jpg|png|svg|webp)(\?.*$|$)/,
                 exclude: /(node_modules)/,
-                type: 'asset/resource',
+                type: "asset/resource",
                 generator: {
-                    filename: 'images/[name][hash:5][ext]',
+                    filename: "images/[name][hash:5][ext]",
                 },
                 use: [
                     {
-                        loader: 'image-webpack-loader',
+                        loader: "image-webpack-loader",
                         options: {
                             mozjpeg: {
                                 progressive: true,
@@ -133,7 +126,7 @@ module.exports = {
     },
     optimization: {
         splitChunks: {
-            chunks: 'all',
+            chunks: "all",
         },
         // minimize: true,
         minimizer: [
@@ -141,6 +134,6 @@ module.exports = {
                 test: /\.js(\?.*)?$/i,
             }),
             // new CssMinimizerPlugin(),
-        ]
-    }
+        ],
+    },
 };

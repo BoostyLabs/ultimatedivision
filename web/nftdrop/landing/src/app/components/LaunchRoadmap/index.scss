@@ -1,7 +1,7 @@
 @import "/src/index.scss";
 
 .launch-roadmap {
-    background: #202552;
+    background: #1b2a7a;
 
     &__wrapper {
         display: flex;
@@ -22,8 +22,11 @@
     @media (max-width: $desktopBreakPoint) {
 
         &__wrapper {
-            padding: 90px 40px;
+            padding: 70px 40px;
         }
+    }
+
+    @media (max-width: $tabletBreakPoint) {
 
         &__title {
             font-size: 42px;
@@ -33,6 +36,7 @@
     @media (max-width: $phoneBreakPoint) {
 
         &__title {
+            margin: 0 auto 53px auto;
             font-size: 36px;
         }
     }

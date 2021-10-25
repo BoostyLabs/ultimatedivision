@@ -11,13 +11,14 @@ import (
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
-	"ultimatedivision/internal/auth"
+	"ultimatedivision/admin/adminauth"
+	"ultimatedivision/admin/admins"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/nftdrop/admin/adminauth"
-	"ultimatedivision/nftdrop/admin/admins"
 	"ultimatedivision/nftdrop/admin/adminserver"
-	"ultimatedivision/nftdrop/server"
+	"ultimatedivision/nftdrop/landing"
+	"ultimatedivision/nftdrop/subscribers"
 	"ultimatedivision/nftdrop/whitelist"
+	"ultimatedivision/pkg/auth"
 )
 
 // DB provides access to all databases and database related functionality.
@@ -30,6 +31,9 @@ type DB interface {
 	// Admins provides access to admins db.
 	Admins() admins.DB
 
+	// Subscribers provides access to subscribers db.
+	Subscribers() subscribers.DB
+
 	// Close closes underlying db connection.
 	Close() error
 
@@ -40,7 +44,7 @@ type DB interface {
 // Config is the global configuration for nftdrop.
 type Config struct {
 	Landing struct {
-		Server server.Config `json:"server"`
+		Server landing.Config `json:"server"`
 	} `json:"landing"`
 
 	Admins struct {
@@ -75,13 +79,18 @@ type Peer struct {
 	// Landing web server with web UI.
 	Landing struct {
 		Listener net.Listener
-		Endpoint *server.Server
+		Endpoint *landing.Server
 	}
 
 	// Admin web server with web UI.
 	Admin struct {
 		Listener net.Listener
 		Endpoint *adminserver.Server
+	}
+
+	// exposes subscribers related logic.
+	Subscribers struct {
+		Service *subscribers.Service
 	}
 }
 
@@ -97,6 +106,10 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.Whitelist.Config,
 			peer.Database.Whitelist(),
 		)
+	}
+
+	{ // subscribers setup
+		peer.Subscribers.Service = subscribers.NewService(peer.Database.Subscribers())
 	}
 
 	{ // admins setup
@@ -136,11 +149,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			return nil, err
 		}
 
-		peer.Landing.Endpoint = server.NewServer(
+		peer.Landing.Endpoint = landing.NewServer(
 			config.Landing.Server,
 			logger,
 			peer.Landing.Listener,
 			peer.Whitelist.Service,
+			peer.Subscribers.Service,
 		)
 	}
 
