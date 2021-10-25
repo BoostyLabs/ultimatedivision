@@ -10,13 +10,13 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"ultimatedivision/pkg/fileutils"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
-	"ultimatedivision/pkg/filereading"
 )
 
 // ErrCardWithLinkToAvatar indicated that there was an error in service.
@@ -103,7 +103,7 @@ func generateName(path string, names map[string]struct{}) error {
 
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	totalCount, err := filereading.CountLines(file)
+	totalCount, err := fileutils.CountLines(file)
 	if err != nil {
 		return ErrCardWithLinkToAvatar.Wrap(err)
 	}
@@ -115,7 +115,7 @@ func generateName(path string, names map[string]struct{}) error {
 		return ErrCardWithLinkToAvatar.Wrap(err)
 	}
 
-	name, err := filereading.ReadCertainLine(file, randomNum)
+	name, err := fileutils.ReadCertainLine(file, randomNum)
 	if err != nil {
 		return ErrCardWithLinkToAvatar.Wrap(err)
 	}
