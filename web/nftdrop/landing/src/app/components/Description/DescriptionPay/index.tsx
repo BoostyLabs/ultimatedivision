@@ -1,17 +1,17 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { AnimationImage } from "@components/common/AnimationImage";
+import { AnimationImage } from '@components/common/AnimationImage';
 
-import playToEarnData from "@static/images/description/playToEarn/data.json";
+import playToEarnData from '@static/images/description/playToEarn/data.json';
 
-import animationImage_0 from "@static/images/description/playToEarn/images/img_0.png";
-import animationImage_1 from "@static/images/description/playToEarn/images/img_1.png";
-import animationImage_2 from "@static/images/description/playToEarn/images/img_2.png";
-import animationImage_3 from "@static/images/description/playToEarn/images/img_3.png";
-import animationImage_4 from "@static/images/description/playToEarn/images/img_4.png";
+import animationImage_0 from '@static/images/description/playToEarn/images/img_0.png';
+import animationImage_1 from '@static/images/description/playToEarn/images/img_1.png';
+import animationImage_2 from '@static/images/description/playToEarn/images/img_2.png';
+import animationImage_3 from '@static/images/description/playToEarn/images/img_3.png';
+import animationImage_4 from '@static/images/description/playToEarn/images/img_4.png';
 
-import "./index.scss";
+import './index.scss';
 
 export const DescriptionPay = () => {
     const animationImages: string[] = [
@@ -25,7 +25,7 @@ export const DescriptionPay = () => {
     return (
         <div className="description-pay">
             <AnimationImage
-                className={"description-pay__radar"}
+                className={'description-pay__radar'}
                 heightFrom={1000}
                 heightTo={-500}
                 loop={false}

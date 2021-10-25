@@ -1,16 +1,16 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Modal } from "./Modal";
+import { Modal } from './Modal';
 
-import ball from "@static/images/launchDate/ball.webp";
-import ballMobile from "@static/images/launchDate/ballMobile.webp";
-import webkitBall from "@static/images/launchDate/ball.png";
-import webkitBallMobile from "@static/images/launchDate/ballMobile.png";
+import ball from '@static/images/launchDate/ball.webp';
+import ballMobile from '@static/images/launchDate/ballMobile.webp';
+import webkitBall from '@static/images/launchDate/ball.png';
+import webkitBallMobile from '@static/images/launchDate/ballMobile.png';
 
-import "./index.scss";
+import './index.scss';
 
 export const LaunchDate: React.FC = () => {
     const [isShowModal, setIsShowModal] = useState(false);
@@ -18,8 +18,8 @@ export const LaunchDate: React.FC = () => {
     useEffect(() => {
         /** provides logic to disable scrolling */
         isShowModal
-            ? document.body.classList.add("scroll-hidden")
-            : document.body.classList.remove("scroll-hidden");
+            ? document.body.classList.add('scroll-hidden')
+            : document.body.classList.remove('scroll-hidden');
     }, [isShowModal]);
 
     const handleModal = () => setIsShowModal((prev) => !prev);
