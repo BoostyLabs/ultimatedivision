@@ -8,7 +8,7 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/pkg/signature"
+	"ultimatedivision/pkg/cryptoutils"
 )
 
 // ErrNoWhitelist indicated that whitelist does not exist.
@@ -21,7 +21,7 @@ type DB interface {
 	// Create adds whitelist in the database.
 	Create(ctx context.Context, wallet Wallet) error
 	// GetByAddress returns whitelist by address from the database.
-	GetByAddress(ctx context.Context, address signature.Address) (Wallet, error)
+	GetByAddress(ctx context.Context, address cryptoutils.Address) (Wallet, error)
 	// List returns all whitelist from the database.
 	List(ctx context.Context) ([]Wallet, error)
 	// ListWithoutPassword returns whitelist without password from the database.
@@ -29,19 +29,19 @@ type DB interface {
 	// Update updates whitelist by address.
 	Update(ctx context.Context, wallet Wallet) error
 	// Delete deletes whitelist from the database.
-	Delete(ctx context.Context, address signature.Address) error
+	Delete(ctx context.Context, address cryptoutils.Address) error
 }
 
 // Wallet describes whitelist entity.
 type Wallet struct {
-	Address  signature.Address   `json:"address"`
-	Password signature.Signature `json:"password"`
+	Address  cryptoutils.Address   `json:"address"`
+	Password cryptoutils.Signature `json:"password"`
 }
 
 // CreateWallet entity describes request values for create whitelist.
 type CreateWallet struct {
-	Address    signature.Address    `json:"address"`
-	PrivateKey signature.PrivateKey `json:"privateKey"`
+	Address    cryptoutils.Address    `json:"address"`
+	PrivateKey cryptoutils.PrivateKey `json:"privateKey"`
 }
 
 // Config defines configuration for queue.
@@ -51,12 +51,12 @@ type Config struct {
 
 // SmartContractAddress entity describes smart contract addresses.
 type SmartContractAddress struct {
-	NFT     signature.Address `json:"nft"`
-	NFTSale signature.Address `json:"nftSale"`
+	NFT     cryptoutils.Address `json:"nft"`
+	NFTSale cryptoutils.Address `json:"nftSale"`
 }
 
 // Transaction entity describes password wallet and smart contract addresses.
 type Transaction struct {
-	Password             signature.Signature `json:"password"`
+	Password             cryptoutils.Signature `json:"password"`
 	SmartContractAddress `json:"smartContractAddress"`
 }
