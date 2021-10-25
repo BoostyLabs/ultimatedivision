@@ -79,6 +79,9 @@ func (usersDB *usersDB) GetByEmail(ctx context.Context, email string) (users.Use
 
 	err := row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.LastLogin, &user.Status, &user.CreatedAt)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return user, users.ErrNoUser.Wrap(err)
+		}
 		return user, ErrUsers.Wrap(err)
 	}
 
