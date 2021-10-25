@@ -134,9 +134,6 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor p
 			&lot.Card.FreeKicks, &lot.Card.Corners, &lot.Card.HeadingAccuracy, &lot.Card.Defence, &lot.Card.OffsideTrap, &lot.Card.Sliding, &lot.Card.Tackles, &lot.Card.BallFocus,
 			&lot.Card.Interceptions, &lot.Card.Vigilance, &lot.Card.Goalkeeping, &lot.Card.Reflexes, &lot.Card.Diving, &lot.Card.Handling, &lot.Card.Sweeping, &lot.Card.Throwing,
 		); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return lotsListPage, marketplace.ErrNoLot.Wrap(err)
-			}
 			return lotsListPage, ErrMarketplace.Wrap(err)
 		}
 
@@ -190,9 +187,6 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByItemID(ctx context.Context, 
 			&lot.Card.FreeKicks, &lot.Card.Corners, &lot.Card.HeadingAccuracy, &lot.Card.Defence, &lot.Card.OffsideTrap, &lot.Card.Sliding, &lot.Card.Tackles, &lot.Card.BallFocus,
 			&lot.Card.Interceptions, &lot.Card.Vigilance, &lot.Card.Goalkeeping, &lot.Card.Reflexes, &lot.Card.Diving, &lot.Card.Handling, &lot.Card.Sweeping, &lot.Card.Throwing,
 		); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return lotsListPage, marketplace.ErrNoLot.Wrap(err)
-			}
 			return lotsListPage, ErrMarketplace.Wrap(err)
 		}
 		lots = append(lots, lot)
@@ -269,9 +263,6 @@ func (marketplaceDB *marketplaceDB) ListExpiredLot(ctx context.Context) ([]marke
 			&lot.ID, &lot.ItemID, &lot.Type, &lot.UserID, &lot.ShopperID, &lot.Status,
 			&lot.StartPrice, &lot.MaxPrice, &lot.CurrentPrice, &lot.StartTime, &lot.EndTime, &lot.Period,
 		); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return nil, marketplace.ErrNoLot.Wrap(err)
-			}
 			return nil, ErrMarketplace.Wrap(err)
 		}
 
