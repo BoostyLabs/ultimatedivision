@@ -12,8 +12,6 @@ import (
 
 // ReadCertainLine reads certain line from the file.
 func ReadCertainLine(file *os.File, lineNum int) (string, error) {
-
-
 	var line int
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
