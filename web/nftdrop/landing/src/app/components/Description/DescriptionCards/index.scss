@@ -3,7 +3,7 @@
 .description-cards {
     display: flex;
     align-items: center;
-    margin: 200px auto;
+    margin: 250px auto 100px auto;
     min-height: 300px;
     transition: all 0.3s linear;
 
@@ -48,7 +48,7 @@
 @media (max-width: $desktopBreakPoint + 100px) {
 
     .description-cards {
-        margin: 50px auto;
+        margin: 90px auto 20px auto;
 
         &__text-area {
             width: 60%;
