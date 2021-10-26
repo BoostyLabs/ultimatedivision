@@ -164,12 +164,12 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 			if card.Position == clubs.CCD || card.Position == clubs.LCD ||
 				card.Position == clubs.LB || card.Position == clubs.RCD ||
 				card.Position == clubs.RB || card.Position == clubs.RWB ||
-				card.Position == clubs.LWB{
+				card.Position == clubs.LWB {
 				cardsByPosition = append(cardsByPosition, card.CardID)
 			}
 		}
 	}
-	if len(cardsByPosition) == 0{
+	if len(cardsByPosition) == 0 {
 		return uuid.Nil
 	}
 

@@ -68,9 +68,9 @@ type Server struct {
 		auth        controllers.AuthTemplates
 		lootbox     controllers.LootBoxesTemplates
 		marketplace controllers.MarketplaceTemplates
-		club       controllers.ClubsTemplates
+		club        controllers.ClubsTemplates
 		queue       controllers.QueueTemplates
-		match     controllers.MatchesTemplate
+		match       controllers.MatchesTemplate
 	}
 
 	cards.PercentageQualities
