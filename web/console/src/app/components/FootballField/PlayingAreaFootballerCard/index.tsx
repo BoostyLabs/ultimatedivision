@@ -3,9 +3,7 @@
 
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { PlayerCard } from '@components/common/PlayerCard';
-
 import { Card } from '@/card';
 import { removeCard } from '@/app/store/actions/club';
 
@@ -17,12 +15,12 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; p
     const style = visibility ? 'block' : 'none';
 
     /** show/hide delete block, preventing scroll to cardSelection */
-    function handleVisibility(e: any) {
+    function handleVisibility(e: React.MouseEvent<HTMLInputElement>) {
         e.stopPropagation();
         changeVisibility(prev => !prev);
     }
     /** remove player card implementation */
-    function handleDeletion(e: any) {
+    function handleDeletion(e: React.MouseEvent<HTMLInputElement>) {
         e.stopPropagation();
         e.preventDefault();
         dispatch(removeCard(index));

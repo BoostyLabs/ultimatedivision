@@ -3,12 +3,9 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-
 import { Card } from '@/card';
-
 import { createLot } from '@/app/store/actions/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
-
 import { PlayerCard } from '@components/common/PlayerCard';
 
 /** TODO: replace it by class fields */
@@ -23,11 +20,11 @@ export const MyCard: React.FC<{ card: Card }> = ({ card }) => {
 
     const [controlVisibility, changeControlVisibility] = useState<boolean>(false);
 
-    const handleControls = (e: any) => {
+    const handleControls = (e: React.MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
         changeControlVisibility(prev => !prev);
     };
-    const handleSelling = (e: any) => {
+    const handleSelling = (e: React.MouseEvent<HTMLInputElement>) => {
         e.stopPropagation();
         e.nativeEvent.stopImmediatePropagation();
         /** TODO: create interface for adding selling parameters */
@@ -40,7 +37,7 @@ export const MyCard: React.FC<{ card: Card }> = ({ card }) => {
     return (
         <div
             className="club-card"
-            onContextMenu={handleControls}
+            onContextMenu={(e: React.MouseEvent<HTMLInputElement>) => handleControls(e)}
         >
             <Link
                 className="club-card__link"
@@ -63,7 +60,7 @@ export const MyCard: React.FC<{ card: Card }> = ({ card }) => {
             </Link>
             {controlVisibility &&
                 <div className="club-card__control"
-                    onClick={(e) => handleSelling(e)}>
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) => handleSelling(e)}>
                     Sell card
                 </div>
             }

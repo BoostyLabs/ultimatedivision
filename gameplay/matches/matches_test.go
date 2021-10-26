@@ -17,7 +17,7 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/gameplay/matches"
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/pagination"
 	"ultimatedivision/users"
 )
 

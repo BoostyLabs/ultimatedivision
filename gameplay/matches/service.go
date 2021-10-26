@@ -12,7 +12,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/pagination"
 	rand2 "ultimatedivision/pkg/rand"
 )
 
@@ -113,8 +113,6 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 	rand.Seed(time.Now().UTC().UnixNano())
 	var cardsByPosition []uuid.UUID
 	randNumber := rand.Intn(100) + 1
-
-	// TODO: refactor positions.
 
 	switch {
 	case randNumber > 0 && randNumber <= goalByPosition[clubs.CST]:

@@ -13,7 +13,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/gameplay/matches"
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/pagination"
 )
 
 // ensures that matchesDB implements matches.DB.

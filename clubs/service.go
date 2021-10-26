@@ -26,15 +26,30 @@ const squadSize = 11
 type Service struct {
 	clubs DB
 	users *users.Service
-	cards *cards.Service
+	card  Cards
+}
+
+// Cards is exposing access to method CardsWithNewPositions and methods to count effectiveness of card in cards service.
+type Cards interface {
+	CardsWithNewPositions(ctx context.Context, cards []SquadCard, positions []Position) (map[Position]uuid.UUID, error)
+	GetCardsFromSquadCards(ctx context.Context, id uuid.UUID) ([]cards.Card, error)
+	EffectivenessGK(card cards.Card) float64
+	EffectivenessCD(card cards.Card) float64
+	EffectivenessLBorRB(card cards.Card) float64
+	EffectivenessCDM(card cards.Card) float64
+	EffectivenessCM(card cards.Card) float64
+	EffectivenessCAM(card cards.Card) float64
+	EffectivenessRMorLM(card cards.Card) float64
+	EffectivenessRWorLW(card cards.Card) float64
+	EffectivenessST(card cards.Card) float64
 }
 
 // NewService is a constructor for clubs service.
-func NewService(clubs DB, users *users.Service, cards *cards.Service) *Service {
+func NewService(clubs DB, users *users.Service, card Cards) *Service {
 	return &Service{
 		clubs: clubs,
 		users: users,
-		cards: cards,
+		card:  card,
 	}
 }
 
@@ -71,8 +86,8 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 	return squadID, ErrClubs.Wrap(err)
 }
 
-// AddSquadCards adds cards to the squad.
-func (service *Service) AddSquadCards(ctx context.Context, squadID uuid.UUID, newSquadCard SquadCard) error {
+// AddSquadCard adds card to the squad.
+func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, newSquadCard SquadCard) error {
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
@@ -165,7 +180,7 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 		break
 	}
 
-	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, updatedCards))
+	return ErrClubs.Wrap(service.clubs.UpdatePositions(ctx, updatedCards))
 }
 
 // GetSquad returns squad of club.
@@ -214,6 +229,44 @@ func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error)
 	return club, ErrClubs.Wrap(err)
 }
 
+// ChangeFormation is a method that change formation and card position.
+func (service *Service) ChangeFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) (map[Position]uuid.UUID, error) {
+	var cardsWithNewPositions map[Position]uuid.UUID
+
+	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	err = service.clubs.UpdateFormation(ctx, newFormation, squadID)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	cardsWithNewPositions, err = service.card.CardsWithNewPositions(ctx, squadCards, FormationToPosition[newFormation])
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	var squadCardsWithNewPositions []SquadCard
+	for position, card := range cardsWithNewPositions {
+		squadCard := SquadCard{
+			Position: position,
+			SquadID:  squadID,
+			CardID:   card,
+		}
+
+		squadCardsWithNewPositions = append(squadCardsWithNewPositions, squadCard)
+	}
+
+	err = service.clubs.UpdatePositions(ctx, squadCardsWithNewPositions)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	return cardsWithNewPositions, nil
+}
+
 // CalculateEffectivenessOfSquad calculates effectiveness of user's squad.
 func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squadCards []SquadCard) (float64, error) {
 	var effectiveness float64
@@ -222,7 +275,7 @@ func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squad
 		return float64(0), nil
 	}
 
-	cardsFromSquad, err := service.cards.GetCardsFromSquadCards(ctx, squadCards[0].SquadID)
+	cardsFromSquad, err := service.card.GetCardsFromSquadCards(ctx, squadCards[0].SquadID)
 	if err != nil {
 		return float64(0), ErrClubs.Wrap(err)
 	}
@@ -230,53 +283,53 @@ func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squad
 	for index, squadCard := range squadCards {
 		switch squadCard.Position {
 		case GK:
-			effectiveness += cardsFromSquad[index].EfficientGK()
+			effectiveness += service.card.EffectivenessGK(cardsFromSquad[index])
 		case LB:
-			effectiveness += cardsFromSquad[index].EfficientLB()
+			effectiveness += service.card.EffectivenessLBorRB(cardsFromSquad[index])
 		case LWB:
-			effectiveness += cardsFromSquad[index].EfficientLB()
+			effectiveness += service.card.EffectivenessLBorRB(cardsFromSquad[index])
 		case CCD:
-			effectiveness += cardsFromSquad[index].EfficientCD()
+			effectiveness += service.card.EffectivenessCD(cardsFromSquad[index])
 		case LCD:
-			effectiveness += cardsFromSquad[index].EfficientCD()
+			effectiveness += service.card.EffectivenessCD(cardsFromSquad[index])
 		case RCD:
-			effectiveness += cardsFromSquad[index].EfficientCD()
+			effectiveness += service.card.EffectivenessCD(cardsFromSquad[index])
 		case RB:
-			effectiveness += cardsFromSquad[index].EfficientLB()
+			effectiveness += service.card.EffectivenessLBorRB(cardsFromSquad[index])
 		case RWB:
-			effectiveness += cardsFromSquad[index].EfficientLB()
+			effectiveness += service.card.EffectivenessLBorRB(cardsFromSquad[index])
 		case CCDM:
-			effectiveness += cardsFromSquad[index].EfficientCDM()
+			effectiveness += service.card.EffectivenessCDM(cardsFromSquad[index])
 		case LCDM:
-			effectiveness += cardsFromSquad[index].EfficientCDM()
+			effectiveness += service.card.EffectivenessCDM(cardsFromSquad[index])
 		case RCDM:
-			effectiveness += cardsFromSquad[index].EfficientCDM()
+			effectiveness += service.card.EffectivenessCDM(cardsFromSquad[index])
 		case CCM:
-			effectiveness += cardsFromSquad[index].EfficientCM()
+			effectiveness += service.card.EffectivenessCM(cardsFromSquad[index])
 		case LCM:
-			effectiveness += cardsFromSquad[index].EfficientCM()
+			effectiveness += service.card.EffectivenessCM(cardsFromSquad[index])
 		case RCM:
-			effectiveness += cardsFromSquad[index].EfficientCM()
+			effectiveness += service.card.EffectivenessCM(cardsFromSquad[index])
 		case CCAM:
-			effectiveness += cardsFromSquad[index].EfficientCAM()
+			effectiveness += service.card.EffectivenessCAM(cardsFromSquad[index])
 		case LCAM:
-			effectiveness += cardsFromSquad[index].EfficientCAM()
+			effectiveness += service.card.EffectivenessCAM(cardsFromSquad[index])
 		case RCAM:
-			effectiveness += cardsFromSquad[index].EfficientCAM()
+			effectiveness += service.card.EffectivenessCAM(cardsFromSquad[index])
 		case LM:
-			effectiveness += cardsFromSquad[index].EfficientLM()
+			effectiveness += service.card.EffectivenessRMorLM(cardsFromSquad[index])
 		case RM:
-			effectiveness += cardsFromSquad[index].EfficientLM()
+			effectiveness += service.card.EffectivenessRMorLM(cardsFromSquad[index])
 		case LW:
-			effectiveness += cardsFromSquad[index].EfficientLW()
+			effectiveness += service.card.EffectivenessRWorLW(cardsFromSquad[index])
 		case RW:
-			effectiveness += cardsFromSquad[index].EfficientLW()
+			effectiveness += service.card.EffectivenessRWorLW(cardsFromSquad[index])
 		case CST:
-			effectiveness += cardsFromSquad[index].EfficientST()
+			effectiveness += service.card.EffectivenessST(cardsFromSquad[index])
 		case RST:
-			effectiveness += cardsFromSquad[index].EfficientST()
+			effectiveness += service.card.EffectivenessST(cardsFromSquad[index])
 		case LST:
-			effectiveness += cardsFromSquad[index].EfficientST()
+			effectiveness += service.card.EffectivenessST(cardsFromSquad[index])
 		}
 	}
 
