@@ -47,7 +47,10 @@
     &__list {
         list-style: none;
         display: flex;
-        column-gap: 21px;
+
+        #link-1 {
+            margin-right: 21px;
+        }
     }
 
     &__social-item {
