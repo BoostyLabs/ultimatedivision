@@ -115,7 +115,7 @@ func generateName(path string, names map[string]struct{}) error {
 		return ErrCardWithLinkToAvatar.Wrap(err)
 	}
 
-	name, err := fileutils.ReadCertainLine(file, randomNum)
+	name, err := fileutils.ReadLine(file, randomNum)
 	if err != nil {
 		return ErrCardWithLinkToAvatar.Wrap(err)
 	}
