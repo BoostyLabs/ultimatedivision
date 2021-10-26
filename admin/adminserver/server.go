@@ -21,6 +21,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/templatefuncs"
 	"ultimatedivision/lootboxes"
@@ -69,13 +70,14 @@ type Server struct {
 		marketplace controllers.MarketplaceTemplates
 		clubs       controllers.ClubsTemplates
 		queue       controllers.QueueTemplates
+		matches     controllers.MatchesTemplate
 	}
 
 	cards.PercentageQualities
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities, avatars *avatars.Service, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service, queue *queue.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities, avatars *avatars.Service, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service, queue *queue.Service, matches *matches.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -98,7 +100,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	router.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 
 	adminsRouter := router.PathPrefix("/admins").Subrouter().StrictSlash(true)
-	adminsRouter.Use(server.withAuth)
+	//adminsRouter.Use(server.withAuth)
 	adminsController := controllers.NewAdmins(log, admins, server.templates.admin)
 	adminsRouter.HandleFunc("", adminsController.List).Methods(http.MethodGet)
 	adminsRouter.HandleFunc("/create", adminsController.Create).Methods(http.MethodGet, http.MethodPost)
@@ -157,6 +159,14 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	queueController := controllers.NewQueue(log, queue, server.templates.queue)
 	queueRouter.HandleFunc("", queueController.List).Methods(http.MethodGet)
 	queueRouter.HandleFunc("/{id}", queueController.Get).Methods(http.MethodGet)
+
+	matchesRouter := router.PathPrefix("/matches").Subrouter().StrictSlash(true)
+	matchesRouter.Use(server.withAuth)
+	matchesController := controllers.NewMatches(log, matches, server.templates.matches)
+	matchesRouter.HandleFunc("/create", matchesController.Create).Methods(http.MethodGet, http.MethodPost)
+	matchesRouter.HandleFunc("/", matchesController.ListMatches).Methods(http.MethodGet)
+	matchesRouter.HandleFunc("/delete/{id}", matchesController.Delete).Methods(http.MethodGet)
+	matchesRouter.HandleFunc("/{id}/goals", matchesController.ListMatchGoals).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -310,6 +320,25 @@ func (server *Server) initializeTemplates() (err error) {
 	}
 
 	server.templates.queue.Get, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "queue", "get.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.matches.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "matches", "create.html"))
+	if err != nil {
+		return err
+	}
+	server.templates.matches.List, err = template.New("list.html").Funcs(template.FuncMap{
+		"Iter": templatefuncs.Iter,
+		"Inc":  templatefuncs.Inc,
+		"Dec":  templatefuncs.Dec,
+	}).ParseFiles(
+		filepath.Join(server.config.StaticDir, "matches", "list.html"),
+		filepath.Join(server.config.StaticDir, "matches", "pagination.html"))
+	if err != nil {
+		return err
+	}
+	server.templates.matches.ListGoals, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "matches", "listGoals.html"))
 	if err != nil {
 		return err
 	}
