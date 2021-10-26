@@ -191,6 +191,7 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 			for _, card := range squadCards {
 				if card.Position == Position(i) {
 					isPositionInTheSquad = true
+					break
 				}
 			}
 
