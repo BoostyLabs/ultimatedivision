@@ -1,6 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-
+import { toast } from 'react-toastify';
 import { EthersClient } from '@/api/ethers';
 import { buildHash } from '@utils/ethers';
 import { ethers } from 'ethers';
@@ -26,16 +26,22 @@ export class Service {
 
     /** Get last lot id. */
     public async getLastTokenId(wallet: string, abi: any[]) {
-        const address = await this.getAddress(wallet);
-        const contract = await new ethers.Contract(
-            address.smartContractAddress.nft,
-            abi
-        );
-        const signer = await this.provider.getSigner();
-        const connect = await contract.connect(signer);
-        const totalSupply = await connect.functions.totalSupply();
+        try {
 
-        return parseInt(totalSupply[0]._hex, 16);
+            const address = await this.getAddress(wallet);
+            const contract = await new ethers.Contract(
+                address.smartContractAddress.nft,
+                abi
+                );
+                const signer = await this.provider.getSigner();
+                const connect = await contract.connect(signer);
+                const totalSupply = await connect.functions.totalSupply();
+                return parseInt(totalSupply[0]._hex, 16);
+            } catch (error: any) {
+                console.log(123)
+                throw new Error(error)
+            }
+
     }
 
     /** Send smart contract transaction. */

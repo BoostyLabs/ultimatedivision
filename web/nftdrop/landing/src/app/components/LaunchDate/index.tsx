@@ -10,6 +10,7 @@ import ballMobile from '@static/images/launchDate/ballMobile.webp';
 import webkitBall from '@static/images/launchDate/ball.png';
 import webkitBallMobile from '@static/images/launchDate/ballMobile.png';
 
+import 'react-toastify/dist/ReactToastify.min.css';
 import './index.scss';
 
 export const LaunchDate: React.FC = () => {
