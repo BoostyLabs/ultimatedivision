@@ -43,10 +43,19 @@ export const MintButton: React.FC = () => {
 
         /** for testing */
         const service = ServicePlugin.create();
-        const wallet = await service.getWallet();
-        const totalSupply = await service.getLastTokenId(wallet, NFT_ABI);
-        console.log(totalSupply)
-        const contract = await service.sendTransaction(wallet, totalSupply, NFT_ABI_SALE);
+        try {
+            const wallet = await service.getWallet();
+            const totalSupply = await service.getLastTokenId(wallet, NFT_ABI);
+            console.log(totalSupply)
+            const contract = await service.sendTransaction(wallet, totalSupply, NFT_ABI_SALE);
+            
+        } catch (error: any) {
+            console.log(error.message)
+            toast.error(error.message, {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: "colored"
+            });
+        }
     };
 
     return (
