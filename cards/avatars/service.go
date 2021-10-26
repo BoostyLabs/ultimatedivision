@@ -326,7 +326,7 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, name stri
 		return avatar, ErrAvatar.Wrap(err)
 	}
 
-	// Offense
+	// Offence
 	inscriptionOff := imageprocessing.Inscription{
 		Img:         originalImageWithLabelTec,
 		Width:       service.config.Sizes.Background.Width,
@@ -334,7 +334,7 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, name stri
 		PathToFonts: service.config.Inscriptions.PathToFonts,
 		FontSize:    service.config.Inscriptions.GameCharacteristics.FontSize,
 		FontColor:   fontColors,
-		Text:        strconv.Itoa(card.Offense),
+		Text:        strconv.Itoa(card.Offence),
 		X:           service.config.Inscriptions.GameCharacteristics.Off.X,
 		Y:           service.config.Inscriptions.GameCharacteristics.Off.Y,
 		TextAlign:   service.config.Inscriptions.GameCharacteristics.TextAlign,
