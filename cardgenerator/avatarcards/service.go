@@ -10,19 +10,19 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"ultimatedivision/pkg/fileutils"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/pkg/fileutils"
 )
 
 // ErrCardWithLinkToAvatar indicated that there was an error in service.
 var ErrCardWithLinkToAvatar = errs.Class("card with link to avatar service error")
 
-// Service is handling cards with link avatars related logic.
+// Service is handling cards with link to avatars related logic.
 //
 // architecture: Service
 type Service struct {
