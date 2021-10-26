@@ -64,10 +64,9 @@ func (service *Service) Generate(ctx context.Context, count int) ([]CardWithLink
 			return nil, ErrCardWithLinkToAvatar.Wrap(err)
 		}
 
-		if avatar, err = service.avatars.Generate(ctx, cardWithAvatar.Card.ID, cardWithAvatar.Card.IsTattoo, strconv.Itoa(i)); err != nil {
+		if avatar, err = service.avatars.Generate(ctx, cardWithAvatar.Card, strconv.Itoa(i)); err != nil {
 			return nil, ErrCardWithLinkToAvatar.Wrap(err)
 		}
-
 		cardWithAvatar.OriginalURL = avatar.OriginalURL
 
 		cardsWithLinkToAvatar = append(cardsWithLinkToAvatar, cardWithAvatar)
@@ -146,7 +145,7 @@ func (service *Service) TestGenerate(ctx context.Context, count int) ([]avatars.
 			return nil, ErrCardWithLinkToAvatar.Wrap(err)
 		}
 
-		avatar, err := service.avatars.Generate(ctx, avatarCard.Card.ID, avatarCard.Card.IsTattoo, avatarCard.Card.ID.String())
+		avatar, err := service.avatars.Generate(ctx, avatarCard.Card, avatarCard.Card.ID.String())
 		if err != nil {
 			return nil, ErrCardWithLinkToAvatar.Wrap(err)
 		}

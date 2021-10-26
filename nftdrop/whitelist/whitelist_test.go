@@ -13,17 +13,28 @@ import (
 	"ultimatedivision/nftdrop"
 	"ultimatedivision/nftdrop/database/dbtesting"
 	"ultimatedivision/nftdrop/whitelist"
+	"ultimatedivision/pkg/pagination"
 )
 
 func TestWhitelists(t *testing.T) {
 	whitelist1 := whitelist.Wallet{
 		Address:  "address1",
-		Password: []byte{},
+		Password: "",
 	}
 
 	whitelist2 := whitelist.Wallet{
 		Address:  "address2",
-		Password: []byte{},
+		Password: "",
+	}
+
+	whitelist3 := whitelist.Wallet{
+		Address:  "address3",
+		Password: "",
+	}
+
+	cursor := pagination.Cursor{
+		Limit: 2,
+		Page:  1,
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db nftdrop.DB) {
@@ -32,7 +43,7 @@ func TestWhitelists(t *testing.T) {
 		t.Run("get sql no rows", func(t *testing.T) {
 			_, err := repositoryWhitelist.GetByAddress(ctx, "address0")
 			require.Error(t, err)
-			assert.Equal(t, true, whitelist.ErrNoWhitelist.Has(err))
+			assert.Equal(t, true, whitelist.ErrNoWallet.Has(err))
 		})
 
 		t.Run("get", func(t *testing.T) {
@@ -48,10 +59,34 @@ func TestWhitelists(t *testing.T) {
 			err := repositoryWhitelist.Create(ctx, whitelist2)
 			require.NoError(t, err)
 
-			whitelistRecordsFromDB, err := repositoryWhitelist.List(ctx)
+			whitelistRecordsFromDB, err := repositoryWhitelist.List(ctx, cursor)
 			require.NoError(t, err)
-			compareWhitelists(t, whitelist1, whitelistRecordsFromDB[0])
-			compareWhitelists(t, whitelist2, whitelistRecordsFromDB[1])
+			assert.Equal(t, len(whitelistRecordsFromDB.Wallets), 2)
+			compareWhitelists(t, whitelist1, whitelistRecordsFromDB.Wallets[0])
+			compareWhitelists(t, whitelist2, whitelistRecordsFromDB.Wallets[1])
+		})
+
+		t.Run("listWithoutPassword", func(t *testing.T) {
+			whitelistRecordsFromDB, err := repositoryWhitelist.ListWithoutPassword(ctx)
+			require.NoError(t, err)
+			assert.Equal(t, whitelist1.Address, whitelistRecordsFromDB[0].Address)
+			assert.Equal(t, whitelist2.Address, whitelistRecordsFromDB[1].Address)
+		})
+
+		t.Run("update sql no rows", func(t *testing.T) {
+			err := repositoryWhitelist.Update(ctx, whitelist3)
+			require.Error(t, err)
+			require.Equal(t, whitelist.ErrNoWallet.Has(err), true)
+		})
+
+		t.Run("update", func(t *testing.T) {
+			err := repositoryWhitelist.Update(ctx, whitelist2)
+			require.NoError(t, err)
+		})
+
+		t.Run("delete sql no rows", func(t *testing.T) {
+			err := repositoryWhitelist.Delete(ctx, whitelist3.Address)
+			require.Error(t, err)
 		})
 
 		t.Run("delete", func(t *testing.T) {
@@ -60,24 +95,6 @@ func TestWhitelists(t *testing.T) {
 
 			err = repositoryWhitelist.Delete(ctx, whitelist2.Address)
 			require.NoError(t, err)
-		})
-		t.Run("update", func(t *testing.T) {
-			err := repositoryWhitelist.Update(ctx, whitelist2)
-			require.NoError(t, err)
-
-			whitelistRecordsFromDB, err := repositoryWhitelist.ListWithoutPassword(ctx)
-			require.NoError(t, err)
-			compareWhitelists(t, whitelist1, whitelistRecordsFromDB[0])
-			compareWhitelists(t, whitelist2, whitelistRecordsFromDB[1])
-		})
-		t.Run("listWithoutPassword", func(t *testing.T) {
-			err := repositoryWhitelist.Create(ctx, whitelist2)
-			require.NoError(t, err)
-
-			whitelistRecordsFromDB, err := repositoryWhitelist.ListWithoutPassword(ctx)
-			require.NoError(t, err)
-			compareWhitelists(t, whitelist1, whitelistRecordsFromDB[0])
-			compareWhitelists(t, whitelist2, whitelistRecordsFromDB[1])
 		})
 	})
 }

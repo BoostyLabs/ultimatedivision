@@ -10,7 +10,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/internal/mail"
+	"ultimatedivision/pkg/mail"
 )
 
 // Config defines values needed by mailservice service.
@@ -60,7 +60,7 @@ func (service *Service) SendVerificationEmail(email, token string) error {
 
 	verificationMessage.To = []mail.Address{{Address: email, Name: "Verify"}}
 	verificationMessage.Date = time.Now().UTC()
-	verificationMessage.PlainText = fmt.Sprintf("%s/%s/%s", service.config.Domain, url, token)
+	verificationMessage.PlainText = fmt.Sprintf("%s/%s?token=%s", service.config.Domain, url, token)
 	verificationMessage.Subject = "confirm your email"
 	verificationMessage.From = mail.Address{Address: service.config.From}
 
@@ -74,7 +74,7 @@ func (service *Service) SendResetPasswordEmail(email, token string) error {
 
 	verificationMessage.To = []mail.Address{{Address: email, Name: "Verify"}}
 	verificationMessage.Date = time.Now().UTC()
-	verificationMessage.PlainText = fmt.Sprintf("%s/%s/%s", service.config.Domain, url, token)
+	verificationMessage.PlainText = fmt.Sprintf("%s/%s?token=%s", service.config.Domain, url, token)
 	verificationMessage.Subject = "reset your password"
 	verificationMessage.From = mail.Address{Address: service.config.From}
 
