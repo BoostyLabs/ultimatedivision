@@ -1,3 +1,4 @@
+import { ToastContainer, toast } from 'react-toastify';
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
@@ -14,6 +15,16 @@ import { Authors } from '@components/Authors';
 
 export const App = () => (
     <main className="main">
+        <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            pauseOnHover
+        />
         <Navbar />
         <Home />
         <LaunchDate />

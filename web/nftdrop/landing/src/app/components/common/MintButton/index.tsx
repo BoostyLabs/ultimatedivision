@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 
 import MetaMaskOnboarding from '@metamask/onboarding';
+import { toast } from 'react-toastify';
 import { ServicePlugin } from '@/app/plugins/service';
 import { NFT_ABI, NFT_ABI_SALE } from '@/app/ethers';
 
@@ -11,7 +12,6 @@ import './index.scss';
 
 export const MintButton: React.FC = () => {
     const onboarding = React.useRef<MetaMaskOnboarding>();
-    const [connectError, handleError] = useState(false);
     const [text, setButtonText] = useState('Mint');
 
     React.useEffect(() => {
@@ -30,11 +30,10 @@ export const MintButton: React.FC = () => {
 
             } catch (error: any) {
                 console.log(error.message);
-                handleError(true);
-
-                setTimeout(() => {
-                    handleError(false);
-                }, 3000);
+                toast.error("Please open metamask manually!", {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: "colored"
+                });
             }
 
         } else {
@@ -44,9 +43,19 @@ export const MintButton: React.FC = () => {
 
         /** for testing */
         const service = ServicePlugin.create();
-        const wallet = await service.getWallet();
-        const totalSupply = await service.getLastTokenId(wallet, NFT_ABI);
-        const contract = await service.sendTransaction(wallet, totalSupply, NFT_ABI_SALE);
+        try {
+            const wallet = await service.getWallet();
+            const totalSupply = await service.getLastTokenId(wallet, NFT_ABI);
+            console.log(totalSupply)
+            const contract = await service.sendTransaction(wallet, totalSupply, NFT_ABI_SALE);
+            
+        } catch (error: any) {
+            console.log(error.message)
+            toast.error(error.message, {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: "colored"
+            });
+        }
     };
 
     return (
@@ -54,10 +63,6 @@ export const MintButton: React.FC = () => {
             className="ultimatedivision-mint-btn"
             onClick={connect}
         >
-            {
-                connectError
-                && <span className="error">Please open metamask manually!</span>
-            }
             <span className="ultimatedivision-mint-btn__text">{text}</span>
         </button>
     );
