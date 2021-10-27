@@ -6,6 +6,7 @@ package subscribers
 import (
 	"context"
 	"time"
+	"ultimatedivision/pkg/pagination"
 
 	"github.com/zeebo/errs"
 )
@@ -21,12 +22,14 @@ var ErrSubscribersDB = errs.Class("subscribers repository error")
 // architecture: Service
 type Service struct {
 	subscribers DB
+	config      Config
 }
 
 // NewService is a constructor for subscribers service.
-func NewService(subscribers DB) *Service {
+func NewService(subscribers DB, config Config) *Service {
 	return &Service{
 		subscribers: subscribers,
+		config:      config,
 	}
 }
 
@@ -37,8 +40,15 @@ func (service *Service) GetByEmail(ctx context.Context, email string) (Subscribe
 }
 
 // List returns all subscribers from DB.
-func (service *Service) List(ctx context.Context) ([]Subscriber, error) {
-	subscribers, err := service.subscribers.List(ctx)
+func (service *Service) List(ctx context.Context, cursor pagination.Cursor) (Page, error) {
+	if cursor.Limit <= 0 {
+		cursor.Limit = service.config.Cursor.Limit
+	}
+	if cursor.Page <= 0 {
+		cursor.Page = service.config.Cursor.Page
+	}
+
+	subscribers, err := service.subscribers.List(ctx, cursor)
 	return subscribers, ErrSubscribers.Wrap(err)
 }
 

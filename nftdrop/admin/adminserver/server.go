@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"ultimatedivision/nftdrop/subscribers"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -54,14 +55,15 @@ type Server struct {
 	cookieAuth  *auth.CookieAuth
 
 	templates struct {
-		auth      controllers.AuthTemplates
-		admin     controllers.AdminTemplates
-		whitelist controllers.WhitelistTemplates
+		auth        controllers.AuthTemplates
+		admin       controllers.AdminTemplates
+		whitelist   controllers.WhitelistTemplates
+		subscribers controllers.SubscribersTemplates
 	}
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, whitelist *whitelist.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, whitelist *whitelist.Service, subscribers *subscribers.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -97,6 +99,11 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	whitelistRouter.HandleFunc("/create", whitelistController.Create).Methods(http.MethodGet, http.MethodPost)
 	whitelistRouter.HandleFunc("/delete/{address}", whitelistController.Delete).Methods(http.MethodGet)
 	whitelistRouter.HandleFunc("/set-password", whitelistController.SetPassword).Methods(http.MethodGet, http.MethodPost)
+
+	subscribersRouter := router.PathPrefix("/subscribers").Subrouter().StrictSlash(true)
+	subscribersRouter.Use(server.withAuth)
+	subscribersController := controllers.NewSubscribers(log, subscribers, server.templates.subscribers)
+	subscribersRouter.HandleFunc("/list", subscribersController.List).Methods(http.MethodPost)
 
 	server.server = http.Server{
 		Handler: router,
