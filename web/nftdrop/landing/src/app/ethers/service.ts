@@ -26,13 +26,17 @@ export class Service {
 
     /** Get last lot id. */
     public async getLastTokenId(wallet: string, abi: any[]) {
+        console.log(123)
         const address = await this.getAddress(wallet);
+        console.log(45)
         const contract = await new ethers.Contract(
-            address.smartContractAddress.nft,
+            address.contracts.nft,
             abi
         );
         const signer = await this.provider.getSigner();
         const connect = await contract.connect(signer);
+        
+        console.log(456)
         const totalSupply = await connect.functions.totalSupply();
 
         return parseInt(totalSupply[0]._hex, 16);
@@ -47,7 +51,7 @@ export class Service {
         const signer = await this.provider.getSigner();
         const address = await this.getAddress(wallet);
         const contract = await new ethers.Contract(
-            address.smartContractAddress.nftSale,
+            address.contracts.nftSale,
             abi
         );
         const connect = await contract.connect(signer);
@@ -58,12 +62,12 @@ export class Service {
             address.password.slice(-2)
         )}${address.password.slice(0, address.password.length - 2)}`;
         const gasLimit = await signer.estimateGas({
-            to: address.smartContractAddress.nftSale,
+            to: address.contracts.nftSale,
             data,
             value: currentPrice[0],
         });
         const transaction = await signer.sendTransaction({
-            to: address.smartContractAddress.nftSale,
+            to: address.contracts.nftSale,
             data,
             gasLimit,
             chainId: 3,
