@@ -19,8 +19,8 @@ type Crypto interface {
 	Withdraw(ctx context.Context, userID uuid.UUID, walletAddress cryptoutils.Address) error
 }
 
-// UDTToken provides access to all operations related to UDT token payment.
-type UDTToken interface {
+// UDT provides access to all operations related to ultimatedivision token payment.
+type UDT interface {
 	// BuyLootbox buys certain lootbox.
 	BuyLootbox(ctx context.Context, userID uuid.UUID, lootboxType lootboxes.Type) error
 	// BuyCard buys certain card.
@@ -34,5 +34,5 @@ type UDTToken interface {
 // Payment provides access to all operations related to currency.
 type Payment interface {
 	Crypto
-	UDTToken
+	UDT
 }
