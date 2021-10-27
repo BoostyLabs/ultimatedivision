@@ -62,7 +62,7 @@ func (controller *Users) List(w http.ResponseWriter, r *http.Request) {
 	err = controller.templates.List.Execute(w, users)
 	if err != nil {
 		controller.log.Error("can not execute list users template", ErrUsers.Wrap(err))
-		http.Error(w, "can not execute list users template", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -73,16 +73,14 @@ func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		err := controller.templates.Create.Execute(w, nil)
-		if err != nil {
+		if err := controller.templates.Create.Execute(w, nil); err != nil {
 			controller.log.Error("could not execute create users template", ErrUsers.Wrap(err))
-			http.Error(w, "could not execute create users template", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, "could not get users form", http.StatusBadRequest)
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		email := r.FormValue("email")
@@ -111,10 +109,9 @@ func (controller *Users) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = controller.users.Create(ctx, email, password, nickName, firstName, lastName)
-		if err != nil {
+		if err := controller.users.Create(ctx, email, password, nickName, firstName, lastName); err != nil {
 			controller.log.Error("could not create user", ErrUsers.Wrap(err))
-			http.Error(w, "could not create user", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		Redirect(w, r, "/users", http.MethodGet)
@@ -126,14 +123,10 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 	id := params["id"]
-	if id == "" {
-		http.Error(w, "id is empty", http.StatusBadRequest)
-		return
-	}
 
 	userID, err := uuid.Parse(id)
 	if err != nil {
-		http.Error(w, "could not parse uuid", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -143,36 +136,33 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			controller.log.Error("could not get user", ErrUsers.Wrap(err))
 			if users.ErrNoUser.Has(err) {
-				http.Error(w, "no user with such id", http.StatusNotFound)
+				http.Error(w, err.Error(), http.StatusNotFound)
 				return
 			}
-			http.Error(w, "could not get user", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		err = controller.templates.Update.Execute(w, user)
-		if err != nil {
+		if err = controller.templates.Update.Execute(w, user); err != nil {
 			controller.log.Error("could not execute update users template", ErrUsers.Wrap(err))
-			http.Error(w, "could not execute update users template", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
-		err = r.ParseForm()
-		if err != nil {
-			http.Error(w, "could not get users form", http.StatusBadRequest)
+		if err = r.ParseForm(); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		status, err := strconv.Atoi(r.FormValue("status"))
 		if err != nil {
-			http.Error(w, "invalid status", http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		err = controller.users.Update(ctx, users.Status(status), userID)
-		if err != nil {
+		if err = controller.users.Update(ctx, users.Status(status), userID); err != nil {
 			controller.log.Error("could not update users status", ErrUsers.Wrap(err))
-			http.Error(w, "could not update users status", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		Redirect(w, r, "/users", http.MethodGet)
@@ -183,22 +173,16 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 func (controller *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
-	id := params["id"]
-	if id == "" {
-		http.Error(w, "id is empty", http.StatusBadRequest)
+
+	uuid, err := uuid.Parse(params["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	uuid, err := uuid.Parse(id)
-	if err != nil {
-		http.Error(w, "could not parse uuid", http.StatusBadRequest)
-		return
-	}
-
-	err = controller.users.Delete(ctx, uuid)
-	if err != nil {
+	if err = controller.users.Delete(ctx, uuid); err != nil {
 		controller.log.Error("could not delete user", ErrUsers.Wrap(err))
-		http.Error(w, "could not delete user", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	Redirect(w, r, "/users", http.MethodGet)

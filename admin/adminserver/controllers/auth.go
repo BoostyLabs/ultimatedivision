@@ -49,21 +49,20 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		err = auth.loginTemplate.Execute(w, nil)
-		if err != nil {
+		if err = auth.loginTemplate.Execute(w, nil); err != nil {
 			auth.log.Error("Could not execute login template", AuthError.Wrap(err))
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
-		err = r.ParseForm()
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		if err = r.ParseForm(); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		email := r.Form["email"]
 		password := r.Form["password"]
+		// TODO: change chek
 		if len(email) == 0 || len(password) == 0 {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
@@ -78,11 +77,11 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 			auth.log.Error("could not get auth token", AuthError.Wrap(err))
 			switch {
 			case admins.ErrNoAdmin.Has(err):
-				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				http.Error(w, err.Error(), http.StatusNotFound)
 			case adminauth.ErrUnauthenticated.Has(err):
-				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 			default:
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 
 			return
