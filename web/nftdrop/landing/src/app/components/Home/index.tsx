@@ -36,7 +36,7 @@ export const Home: React.FC = () => {
 
     /** Show ScrollToTop block, when user scrolls down the landing page and hide block, when user looks Home component. */
     const changeVisibleScrollToTop = () => {
-        const homeElem = document.getElementById("home");
+        const homeElem = document.getElementById('home');
 
         if (!homeElem) {
             return;
@@ -45,26 +45,26 @@ export const Home: React.FC = () => {
         /** Current height from top page to Home component. */
         const heightFromTop = homeElem.getBoundingClientRect().top;
 
-        const scrollUpBlock = document.querySelector(".scroll-to-top");
+        const scrollUpBlock = document.querySelector('.scroll-to-top');
 
         if (!scrollUpBlock) {
             return;
         }
 
         if (heightFromTop <= MAX_HEIGHT_FROM_HOME) {
-            scrollUpBlock.classList.add("visible");
+            scrollUpBlock.classList.add('visible');
 
             return;
         }
 
-        scrollUpBlock.classList.remove("visible");
+        scrollUpBlock.classList.remove('visible');
     };
 
     useEffect(() => {
-        window.addEventListener("scroll", changeVisibleScrollToTop);
+        window.addEventListener('scroll', changeVisibleScrollToTop);
 
         return () =>
-            window.removeEventListener("scroll", changeVisibleScrollToTop);
+            window.removeEventListener('scroll', changeVisibleScrollToTop);
     }, []);
 
     return (
@@ -110,7 +110,7 @@ export const Home: React.FC = () => {
                     </div>
                 </div>
                 <AnimationImage
-                    className={"home__player-image"}
+                    className={'home__player-image'}
                     heightFrom={4000}
                     heightTo={-800}
                     loop={true}
