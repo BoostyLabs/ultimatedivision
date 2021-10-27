@@ -2,33 +2,28 @@
 // See LICENSE for copying information.
 
 import { useSelector } from 'react-redux';
-
 import { MyCard } from '@/app/components/Club/ClubCardsArea/MyCard';
 import { RootState } from '@/app/store';
-
+import { boxStyle } from '@/app/utils/lootboxStyle';
 import boxLight from '@static/img/StorePage/BoxContent/boxLight.svg';
 import ribbons from '@static/img/StorePage/BoxContent/ribbons.svg';
-
-import { boxStyle } from '@/app/utils/lootboxStyle';
 
 import './index.scss';
 
 
 export const LootboxOpening = () => {
     const FIRST_CARD = 0;
-    const REGULAR_BOX_LENGTH = 5;
     const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
 
     const box = boxStyle(cards.length);
 
     return (
         <div className="box-animation">
-            <div className="box-animation__box-wrapper">
+            <div className="box-animation__box-container">
                 <img
                     src={box.body}
                     alt="box body"
-                    className="box-animation__box-body"
-                    style={{ width: cards.length > REGULAR_BOX_LENGTH ? '670px' : '540px' }}
+                    className={`box-animation__box-body ${cards.length > 5 && "box-animation__box-body__cool"}`}
                 />
                 <img
                     src={box.cover}
@@ -46,8 +41,8 @@ export const LootboxOpening = () => {
                     className="box-animation__ribbons"
                 />
             </div>
-            <div className="box-animation__card-wrapper">
-                <div className="box-animation__card-wrapper-backlight">
+            <div className="box-animation__card-container">
+                <div className="box-animation__card-container-backlight">
                     <MyCard card={cards[FIRST_CARD]} />
                 </div>
             </div>

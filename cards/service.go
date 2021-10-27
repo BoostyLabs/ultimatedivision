@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/pagination"
 )
 
 // ErrCards indicated that there was an error in service.
@@ -37,7 +37,20 @@ func NewService(cards DB, config Config) *Service {
 }
 
 // Create adds card in DB.
-func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int) (Card, error) {
+func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentageQualities []int, nameImage string) (Card, error) {
+	var (
+		err  error
+		card Card
+	)
+
+	if card, err = service.Generate(ctx, userID, percentageQualities); err != nil {
+		return card, ErrCards.Wrap(err)
+	}
+	return card, service.cards.Create(ctx, card)
+}
+
+// Generate generates card.
+func (service *Service) Generate(ctx context.Context, userID uuid.UUID, percentageQualities []int) (Card, error) {
 	qualities := map[string]int{
 		"wood":    percentageQualities[0],
 		"silver":  percentageQualities[1],
@@ -96,7 +109,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		"right": service.config.DominantFoots.Right,
 	}
 
-	var isTattoos bool
+	var isTattoo bool
 	var tattoos = map[string]int{
 		"gold":    service.config.Tattoos.Gold,
 		"diamond": service.config.Tattoos.Diamond,
@@ -113,7 +126,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 	goalkeeping := generateGroupSkill(skills[quality])
 
 	if result := searchValueByPercent(tattoos); result != "" {
-		isTattoos = true
+		isTattoo = true
 	}
 
 	card := Card{
@@ -121,15 +134,10 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		// TODO: change it.
 		PlayerName:       "Dmytro",
 		Quality:          Quality(quality),
-		PictureType:      1,
 		Height:           round(rand.Float64()*(maxHeight-minHeight)+minHeight, 0.01),
 		Weight:           round(rand.Float64()*(maxWeight-minWeight)+minWeight, 0.01),
-		SkinColor:        1,
-		HairStyle:        1,
-		HairColor:        1,
-		Accessories:      []int{1, 2},
 		DominantFoot:     DominantFoot(searchValueByPercent(dominantFoots)),
-		IsTattoos:        isTattoos,
+		IsTattoo:         isTattoo,
 		Status:           StatusActive,
 		Type:             TypeWon,
 		UserID:           userID,
@@ -160,7 +168,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		ShortPassing:     generateSkill(technique),
 		LongPassing:      generateSkill(technique),
 		ForwardPass:      generateSkill(technique),
-		Offense:          offense,
+		Offence:          offense,
 		FinishingAbility: generateSkill(offense),
 		ShotPower:        generateSkill(offense),
 		Accuracy:         generateSkill(offense),
@@ -183,7 +191,8 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, percentage
 		Sweeping:         generateSkill(goalkeeping),
 		Throwing:         generateSkill(goalkeeping),
 	}
-	return card, ErrCards.Wrap(service.cards.Create(ctx, card))
+
+	return card, nil
 }
 
 // searchValueByPercent search value string by percent.
@@ -339,4 +348,78 @@ func (service *Service) UpdateUserID(ctx context.Context, id, userID uuid.UUID) 
 // Delete deletes card record in database.
 func (service *Service) Delete(ctx context.Context, cardID uuid.UUID) error {
 	return ErrCards.Wrap(service.cards.Delete(ctx, cardID))
+}
+
+// EffectivenessGK determines the effectiveness of the card in the GK position.
+func (service *Service) EffectivenessGK(card Card) float64 {
+	return service.config.CardEfficiencyParameters.GK.Goalkeeping*float64(card.Goalkeeping) +
+		service.config.CardEfficiencyParameters.GK.Physique*float64(card.Physique) +
+		service.config.CardEfficiencyParameters.GK.Tactics*float64(card.Tactics)
+}
+
+// EffectivenessCD determines the effectiveness of the card in the CD position.
+func (service *Service) EffectivenessCD(card Card) float64 {
+	return service.config.CardEfficiencyParameters.CD.Defence*float64(card.Defence) +
+		service.config.CardEfficiencyParameters.CD.Physique*float64(card.Physique) +
+		service.config.CardEfficiencyParameters.CD.Tactics*float64(card.Tactics)
+}
+
+// EffectivenessLBorRB determines the effectiveness of the card in the LB/RB position.
+func (service *Service) EffectivenessLBorRB(card Card) float64 {
+	return service.config.CardEfficiencyParameters.LBorRB.Defence*float64(card.Defence) +
+		service.config.CardEfficiencyParameters.LBorRB.Physique*float64(card.Physique) +
+		service.config.CardEfficiencyParameters.LBorRB.Tactics*float64(card.Tactics) +
+		service.config.CardEfficiencyParameters.LBorRB.Technique*float64(card.Technique)
+}
+
+// EffectivenessCDM determines the effectiveness of the card in the CDM position.
+func (service *Service) EffectivenessCDM(card Card) float64 {
+	return service.config.CardEfficiencyParameters.CDM.Defence*float64(card.Defence) +
+		service.config.CardEfficiencyParameters.CDM.Physique*float64(card.Physique) +
+		service.config.CardEfficiencyParameters.CDM.Tactics*float64(card.Tactics) +
+		service.config.CardEfficiencyParameters.CDM.Technique*float64(card.Technique) +
+		service.config.CardEfficiencyParameters.CDM.Offence*float64(card.Offence)
+}
+
+// EffectivenessCM determines the effectiveness of the card in the CM position.
+func (service *Service) EffectivenessCM(card Card) float64 {
+	return service.config.CardEfficiencyParameters.CM.Defence*float64(card.Defence) +
+		service.config.CardEfficiencyParameters.CM.Physique*float64(card.Physique) +
+		service.config.CardEfficiencyParameters.CM.Tactics*float64(card.Tactics) +
+		service.config.CardEfficiencyParameters.CM.Technique*float64(card.Technique) +
+		service.config.CardEfficiencyParameters.CM.Offence*float64(card.Offence)
+}
+
+// EffectivenessCAM determines the effectiveness of the card in the CAM position.
+func (service *Service) EffectivenessCAM(card Card) float64 {
+	return service.config.CardEfficiencyParameters.CAM.Defence*float64(card.Defence) +
+		service.config.CardEfficiencyParameters.CAM.Physique*float64(card.Physique) +
+		service.config.CardEfficiencyParameters.CAM.Tactics*float64(card.Tactics) +
+		service.config.CardEfficiencyParameters.CAM.Technique*float64(card.Technique) +
+		service.config.CardEfficiencyParameters.CAM.Offence*float64(card.Offence)
+}
+
+// EffectivenessRMorLM determines the effectiveness of the card in the LM/RM position.
+func (service *Service) EffectivenessRMorLM(card Card) float64 {
+	return service.config.CardEfficiencyParameters.RMorLM.Defence*float64(card.Defence) +
+		service.config.CardEfficiencyParameters.RMorLM.Physique*float64(card.Physique) +
+		service.config.CardEfficiencyParameters.RMorLM.Tactics*float64(card.Tactics) +
+		service.config.CardEfficiencyParameters.RMorLM.Technique*float64(card.Technique) +
+		service.config.CardEfficiencyParameters.RMorLM.Offence*float64(card.Offence)
+}
+
+// EffectivenessRWorLW determines the effectiveness of the card in the LW/RW position.
+func (service *Service) EffectivenessRWorLW(card Card) float64 {
+	return service.config.CardEfficiencyParameters.RWorLW.Physique*float64(card.Physique) +
+		service.config.CardEfficiencyParameters.RWorLW.Tactics*float64(card.Tactics) +
+		service.config.CardEfficiencyParameters.RWorLW.Technique*float64(card.Technique) +
+		service.config.CardEfficiencyParameters.RWorLW.Offence*float64(card.Offence)
+}
+
+// EffectivenessST determines the effectiveness of the card in the ST position.
+func (service *Service) EffectivenessST(card Card) float64 {
+	return service.config.CardEfficiencyParameters.ST.Physique*float64(card.Physique) +
+		service.config.CardEfficiencyParameters.ST.Tactics*float64(card.Tactics) +
+		service.config.CardEfficiencyParameters.ST.Technique*float64(card.Technique) +
+		service.config.CardEfficiencyParameters.ST.Offence*float64(card.Offence)
 }

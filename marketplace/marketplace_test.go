@@ -15,8 +15,8 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/cards"
 	"ultimatedivision/database/dbtesting"
-	"ultimatedivision/internal/pagination"
 	"ultimatedivision/marketplace"
+	"ultimatedivision/pkg/pagination"
 	"ultimatedivision/users"
 )
 
@@ -77,15 +77,10 @@ func TestMarketplace(t *testing.T) {
 		ID:               uuid.New(),
 		PlayerName:       "Dmytro yak muk",
 		Quality:          "wood",
-		PictureType:      1,
 		Height:           178.8,
 		Weight:           72.2,
-		SkinColor:        1,
-		HairStyle:        1,
-		HairColor:        1,
-		Accessories:      []int{1, 2},
 		DominantFoot:     "left",
-		IsTattoos:        false,
+		IsTattoo:         false,
 		Status:           cards.StatusActive,
 		Type:             cards.TypeWon,
 		UserID:           uuid.New(),
@@ -116,7 +111,7 @@ func TestMarketplace(t *testing.T) {
 		ShortPassing:     25,
 		LongPassing:      26,
 		ForwardPass:      27,
-		Offense:          28,
+		Offence:          28,
 		FinishingAbility: 29,
 		ShotPower:        30,
 		Accuracy:         31,
@@ -144,15 +139,10 @@ func TestMarketplace(t *testing.T) {
 		ID:               uuid.New(),
 		PlayerName:       "Vova",
 		Quality:          "gold",
-		PictureType:      2,
 		Height:           179.9,
 		Weight:           73.3,
-		SkinColor:        2,
-		HairStyle:        2,
-		HairColor:        2,
-		Accessories:      []int{1, 2},
 		DominantFoot:     "right",
-		IsTattoos:        true,
+		IsTattoo:         true,
 		Status:           cards.StatusSale,
 		UserID:           uuid.New(),
 		Tactics:          2,
@@ -182,7 +172,7 @@ func TestMarketplace(t *testing.T) {
 		ShortPassing:     25,
 		LongPassing:      26,
 		ForwardPass:      27,
-		Offense:          28,
+		Offence:          28,
 		FinishingAbility: 29,
 		ShotPower:        30,
 		Accuracy:         31,
@@ -285,6 +275,12 @@ func TestMarketplace(t *testing.T) {
 			compareLot(t, lot1, activeLots[0])
 		})
 
+		t.Run("update shopperID of lot sql no rows", func(t *testing.T) {
+			err := repositoryMarketplace.UpdateShopperIDLot(ctx, id, id)
+			require.Error(t, err)
+			require.Equal(t, marketplace.ErrNoLot.Has(err), true)
+		})
+
 		t.Run("update shopperID of lot", func(t *testing.T) {
 			lot1.ShopperID = uuid.New()
 			err := repositoryMarketplace.UpdateShopperIDLot(ctx, lot1.ID, lot1.ShopperID)
@@ -295,7 +291,13 @@ func TestMarketplace(t *testing.T) {
 			compareLot(t, lot1, lotFromDB)
 		})
 
-		t.Run("update staus of lot", func(t *testing.T) {
+		t.Run("update status of lot sql no rows", func(t *testing.T) {
+			err := repositoryMarketplace.UpdateStatusLot(ctx, id, marketplace.StatusExpired)
+			require.Error(t, err)
+			require.Equal(t, marketplace.ErrNoLot.Has(err), true)
+		})
+
+		t.Run("update status of lot", func(t *testing.T) {
 			lot1.Status = marketplace.StatusExpired
 			err := repositoryMarketplace.UpdateStatusLot(ctx, lot1.ID, marketplace.StatusExpired)
 			require.NoError(t, err)
@@ -303,6 +305,12 @@ func TestMarketplace(t *testing.T) {
 			lotFromDB, err := repositoryMarketplace.GetLotByID(ctx, lot1.ID)
 			require.NoError(t, err)
 			compareLot(t, lot1, lotFromDB)
+		})
+
+		t.Run("update current price of lot sql no rows", func(t *testing.T) {
+			err := repositoryMarketplace.UpdateCurrentPriceLot(ctx, id, 25.0)
+			require.Error(t, err)
+			require.Equal(t, marketplace.ErrNoLot.Has(err), true)
 		})
 
 		t.Run("update current price of lot", func(t *testing.T) {
@@ -313,6 +321,12 @@ func TestMarketplace(t *testing.T) {
 			lotFromDB, err := repositoryMarketplace.GetLotByID(ctx, lot1.ID)
 			require.NoError(t, err)
 			compareLot(t, lot1, lotFromDB)
+		})
+
+		t.Run("update end time of lot sql no rows", func(t *testing.T) {
+			err := repositoryMarketplace.UpdateEndTimeLot(ctx, id, lot1.EndTime)
+			require.Error(t, err)
+			require.Equal(t, marketplace.ErrNoLot.Has(err), true)
 		})
 
 		t.Run("update end time of lot", func(t *testing.T) {

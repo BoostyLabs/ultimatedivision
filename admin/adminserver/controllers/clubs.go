@@ -238,7 +238,7 @@ func (controller *Clubs) ListSquadCards(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	squadCards, err := controller.clubs.GetSquadCards(ctx, squadID)
+	squadCards, err := controller.clubs.ListSquadCards(ctx, squadID)
 	if err != nil {
 		controller.log.Error("could not get squad cards", ErrClubs.Wrap(err))
 		switch {
@@ -296,7 +296,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = controller.clubs.AddSquadCards(ctx, squadID, clubs.SquadCard{
+		err = controller.clubs.AddSquadCard(ctx, squadID, clubs.SquadCard{
 			Position: clubs.Position(position),
 			CardID:   cardID,
 		})

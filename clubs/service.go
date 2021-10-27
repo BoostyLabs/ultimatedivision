@@ -71,8 +71,8 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 	return squadID, ErrClubs.Wrap(err)
 }
 
-// AddSquadCards adds cards to the squad.
-func (service *Service) AddSquadCards(ctx context.Context, squadID uuid.UUID, newSquadCard SquadCard) error {
+// AddSquadCard adds card to the squad.
+func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, newSquadCard SquadCard) error {
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
@@ -165,7 +165,7 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 		break
 	}
 
-	return ErrClubs.Wrap(service.clubs.UpdatePosition(ctx, updatedCards))
+	return ErrClubs.Wrap(service.clubs.UpdatePositions(ctx, updatedCards))
 }
 
 // GetSquad returns squad of club.
@@ -174,21 +174,11 @@ func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, 
 	return squad, ErrClubs.Wrap(err)
 }
 
-// GetSquadCards returns al cards from squad.
-func (service *Service) GetSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error) {
+// ListSquadCards returns all cards from the squad.
+func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error) {
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
 	if err != nil {
 		return squadCards, ErrClubs.Wrap(err)
-	}
-
-	if len(squadCards) < squadSize {
-		for i := len(squadCards); i < squadSize; i++ {
-			var squadCard = SquadCard{
-				SquadID: squadID,
-			}
-
-			squadCards = append(squadCards, squadCard)
-		}
 	}
 
 	formation, err := service.clubs.GetFormation(ctx, squadID)
@@ -196,14 +186,32 @@ func (service *Service) GetSquadCards(ctx context.Context, squadID uuid.UUID) ([
 		return nil, ErrClubs.Wrap(err)
 	}
 
-	for i := 0; i < len(squadCards); i++ {
-		for j := 0; j < len(FormationToPosition[formation]); j++ {
-			if squadCards[i].Position == FormationToPosition[formation][j] {
-				squadCards[i].Position = Position(j)
-				break
+	convertPositions(squadCards, formation)
+
+	if len(squadCards) < squadSize {
+		for i := 0; i < squadSize; i++ {
+			var isPositionInTheSquad bool
+			for _, card := range squadCards {
+				if card.Position == Position(i) {
+					isPositionInTheSquad = true
+					break
+				}
 			}
+
+			if isPositionInTheSquad == true {
+				continue
+			}
+
+			var squadCard = SquadCard{
+				SquadID:  squadID,
+				Position: Position(i),
+			}
+
+			squadCards = append(squadCards, squadCard)
 		}
 	}
+
+	sortSquadCards(squadCards)
 
 	return squadCards, ErrClubs.Wrap(err)
 }
@@ -212,6 +220,44 @@ func (service *Service) GetSquadCards(ctx context.Context, squadID uuid.UUID) ([
 func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error) {
 	club, err := service.clubs.GetByUserID(ctx, userID)
 	return club, ErrClubs.Wrap(err)
+}
+
+// ChangeFormation is a method that change formation and card position.
+func (service *Service) ChangeFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) (map[Position]uuid.UUID, error) {
+	var cardsWithNewPositions map[Position]uuid.UUID
+
+	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	err = service.clubs.UpdateFormation(ctx, newFormation, squadID)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	cardsWithNewPositions, err = service.CardsWithNewPositions(ctx, squadCards, FormationToPosition[newFormation])
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	var squadCardsWithNewPositions []SquadCard
+	for position, card := range cardsWithNewPositions {
+		squadCard := SquadCard{
+			Position: position,
+			SquadID:  squadID,
+			CardID:   card,
+		}
+
+		squadCardsWithNewPositions = append(squadCardsWithNewPositions, squadCard)
+	}
+
+	err = service.clubs.UpdatePositions(ctx, squadCardsWithNewPositions)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+
+	return cardsWithNewPositions, nil
 }
 
 // CalculateEffectivenessOfSquad calculates effectiveness of user's squad.
@@ -230,55 +276,148 @@ func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squad
 	for index, squadCard := range squadCards {
 		switch squadCard.Position {
 		case GK:
-			effectiveness += cardsFromSquad[index].EfficientGK()
+			effectiveness += service.cards.EffectivenessGK(cardsFromSquad[index])
 		case LB:
-			effectiveness += cardsFromSquad[index].EfficientLB()
+			effectiveness += service.cards.EffectivenessLBorRB(cardsFromSquad[index])
 		case LWB:
-			effectiveness += cardsFromSquad[index].EfficientLB()
+			effectiveness += service.cards.EffectivenessLBorRB(cardsFromSquad[index])
 		case CCD:
-			effectiveness += cardsFromSquad[index].EfficientCD()
+			effectiveness += service.cards.EffectivenessCD(cardsFromSquad[index])
 		case LCD:
-			effectiveness += cardsFromSquad[index].EfficientCD()
+			effectiveness += service.cards.EffectivenessCD(cardsFromSquad[index])
 		case RCD:
-			effectiveness += cardsFromSquad[index].EfficientCD()
+			effectiveness += service.cards.EffectivenessCD(cardsFromSquad[index])
 		case RB:
-			effectiveness += cardsFromSquad[index].EfficientLB()
+			effectiveness += service.cards.EffectivenessLBorRB(cardsFromSquad[index])
 		case RWB:
-			effectiveness += cardsFromSquad[index].EfficientLB()
+			effectiveness += service.cards.EffectivenessLBorRB(cardsFromSquad[index])
 		case CCDM:
-			effectiveness += cardsFromSquad[index].EfficientCDM()
+			effectiveness += service.cards.EffectivenessCDM(cardsFromSquad[index])
 		case LCDM:
-			effectiveness += cardsFromSquad[index].EfficientCDM()
+			effectiveness += service.cards.EffectivenessCDM(cardsFromSquad[index])
 		case RCDM:
-			effectiveness += cardsFromSquad[index].EfficientCDM()
+			effectiveness += service.cards.EffectivenessCDM(cardsFromSquad[index])
 		case CCM:
-			effectiveness += cardsFromSquad[index].EfficientCM()
+			effectiveness += service.cards.EffectivenessCM(cardsFromSquad[index])
 		case LCM:
-			effectiveness += cardsFromSquad[index].EfficientCM()
+			effectiveness += service.cards.EffectivenessCM(cardsFromSquad[index])
 		case RCM:
-			effectiveness += cardsFromSquad[index].EfficientCM()
+			effectiveness += service.cards.EffectivenessCM(cardsFromSquad[index])
 		case CCAM:
-			effectiveness += cardsFromSquad[index].EfficientCAM()
+			effectiveness += service.cards.EffectivenessCAM(cardsFromSquad[index])
 		case LCAM:
-			effectiveness += cardsFromSquad[index].EfficientCAM()
+			effectiveness += service.cards.EffectivenessCAM(cardsFromSquad[index])
 		case RCAM:
-			effectiveness += cardsFromSquad[index].EfficientCAM()
+			effectiveness += service.cards.EffectivenessCAM(cardsFromSquad[index])
 		case LM:
-			effectiveness += cardsFromSquad[index].EfficientLM()
+			effectiveness += service.cards.EffectivenessRMorLM(cardsFromSquad[index])
 		case RM:
-			effectiveness += cardsFromSquad[index].EfficientLM()
+			effectiveness += service.cards.EffectivenessRMorLM(cardsFromSquad[index])
 		case LW:
-			effectiveness += cardsFromSquad[index].EfficientLW()
+			effectiveness += service.cards.EffectivenessRWorLW(cardsFromSquad[index])
 		case RW:
-			effectiveness += cardsFromSquad[index].EfficientLW()
+			effectiveness += service.cards.EffectivenessRWorLW(cardsFromSquad[index])
 		case CST:
-			effectiveness += cardsFromSquad[index].EfficientST()
+			effectiveness += service.cards.EffectivenessST(cardsFromSquad[index])
 		case RST:
-			effectiveness += cardsFromSquad[index].EfficientST()
+			effectiveness += service.cards.EffectivenessST(cardsFromSquad[index])
 		case LST:
-			effectiveness += cardsFromSquad[index].EfficientST()
+			effectiveness += service.cards.EffectivenessST(cardsFromSquad[index])
 		}
 	}
 
 	return effectiveness, nil
+}
+
+// RemoveIndex removes element from the slice.
+func RemoveIndex(s []SquadCard, index int) []SquadCard {
+	return append(s[:index], s[index+1:]...)
+}
+
+// EffectiveCardForPosition determines the effective card in the position.
+func (service *Service) EffectiveCardForPosition(ctx context.Context, position Position, squadCards []SquadCard) (cards.Card, error) {
+	cardCoefficients := make(map[float64]cards.Card)
+
+	for _, squadCard := range squadCards {
+		card, err := service.cards.Get(ctx, squadCard.CardID)
+		if err != nil {
+			return card, ErrClubs.Wrap(err)
+		}
+		switch position {
+		case GK:
+			coefficient := service.cards.EffectivenessGK(card)
+			cardCoefficients[coefficient] = card
+		case CST,
+			LST,
+			RST:
+			coefficient := service.cards.EffectivenessST(card)
+			cardCoefficients[coefficient] = card
+		case LW,
+			RW:
+			coefficient := service.cards.EffectivenessRWorLW(card)
+			cardCoefficients[coefficient] = card
+		case RM,
+			LM:
+			coefficient := service.cards.EffectivenessRMorLM(card)
+			cardCoefficients[coefficient] = card
+		case CCAM,
+			RCAM,
+			LCAM:
+			coefficient := service.cards.EffectivenessCAM(card)
+			cardCoefficients[coefficient] = card
+		case CCM,
+			LCM,
+			RCM:
+			coefficient := service.cards.EffectivenessCM(card)
+			cardCoefficients[coefficient] = card
+		case CCDM,
+			LCDM,
+			RCDM:
+			coefficient := service.cards.EffectivenessCDM(card)
+			cardCoefficients[coefficient] = card
+		case LB,
+			RB,
+			RWB,
+			LWB:
+			coefficient := service.cards.EffectivenessLBorRB(card)
+			cardCoefficients[coefficient] = card
+		case CCD,
+			LCD,
+			RCD:
+			coefficient := service.cards.EffectivenessCD(card)
+			cardCoefficients[coefficient] = card
+		}
+	}
+
+	var max float64
+
+	for coeff := range cardCoefficients {
+		max = coeff
+		if coeff > max {
+			max = coeff
+		}
+	}
+
+	for key, v := range squadCards {
+		if cardCoefficients[max].ID == v.CardID {
+			squadCards = RemoveIndex(squadCards, key)
+		}
+	}
+
+	return cardCoefficients[max], nil
+}
+
+// CardsWithNewPositions returns cards with new position by new formation.
+func (service *Service) CardsWithNewPositions(ctx context.Context, cards []SquadCard, positions []Position) (map[Position]uuid.UUID, error) {
+	positionMap := make(map[Position]uuid.UUID)
+
+	for _, position := range positions {
+		card, err := service.EffectiveCardForPosition(ctx, position, cards)
+		if err != nil {
+			return positionMap, ErrClubs.Wrap(err)
+		}
+		positionMap[position] = card.ID
+	}
+
+	return positionMap, nil
 }

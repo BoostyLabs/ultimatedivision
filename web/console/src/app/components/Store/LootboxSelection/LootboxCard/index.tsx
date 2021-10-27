@@ -3,12 +3,8 @@
 
 import { Dispatch, SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { LootboxStats } from '@/app/types/lootbox';
-
 import { openLootbox } from '@/app/store/actions/lootboxes';
-
-
 import wood from '@static/img/StorePage/BoxCard/wood.svg';
 import silver from '@static/img/StorePage/BoxCard/silver.svg';
 import gold from '@static/img/StorePage/BoxCard/gold.svg';
@@ -39,7 +35,7 @@ export const LootboxCard: React.FC<{ data: LootboxStats; handleOpening: Dispatch
         },
     ];
 
-    const handleAnimation = async() => {
+    const handleAnimation = async () => {
         // TODO: need add id lootbox from BD after be create endpoint fetch lootboxex.
         await dispatch(openLootbox({ id: data.id, type: data.type }));
         handleOpening(true);
@@ -49,11 +45,10 @@ export const LootboxCard: React.FC<{ data: LootboxStats; handleOpening: Dispatch
         <div className="box-card">
             <div className="box-card__wrapper">
                 <div className="box-card__description">
-                    <div
+                    <img
                         className="box-card__icon"
-                        style={{ backgroundImage: `url(${data.icon})` }}
-                    />
-                    <h2 className="box-card__title">{data.type === 'Regular Box' ? 'Regular Box': 'Cool box' }</h2>
+                        src={data.icon} alt="box" />
+                    <h2 className="box-card__title">{data.type === 'Regular Box' ? 'Regular Box' : 'Cool box'}</h2>
                     <div className="box-card__quantity">
                         <span className="box-card__quantity-label">Cards</span>
                         <span className="box-card__quantity-value">{data.quantity}</span>

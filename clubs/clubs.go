@@ -5,6 +5,7 @@ package clubs
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -16,6 +17,9 @@ var ErrNoClub = errs.Class("club does not exist")
 
 // ErrNoSquad indicated that squad does not exist.
 var ErrNoSquad = errs.Class("squad does not exist")
+
+// ErrNoSquadCard indicated that squad card does not exist.
+var ErrNoSquadCard = errs.Class("squad card does not exist")
 
 // DB is exposing access to clubs db.
 //
@@ -31,6 +35,8 @@ type DB interface {
 	GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, error)
 	// GetFormation returns formation of the squad.
 	GetFormation(ctx context.Context, squadID uuid.UUID) (Formation, error)
+	// GetCaptainID returns id of captain.
+	GetCaptainID(ctx context.Context, squadID uuid.UUID) (uuid.UUID, error)
 	// ListSquadCards returns all cards from squad.
 	ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error)
 	// AddSquadCard adds new card to the squad.
@@ -39,8 +45,10 @@ type DB interface {
 	DeleteSquadCard(ctx context.Context, squadID, cardID uuid.UUID) error
 	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
 	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
-	// UpdatePosition updates position of cards in the squad.
-	UpdatePosition(ctx context.Context, squadCards []SquadCard) error
+	// UpdatePositions updates positions of cards in the squad.
+	UpdatePositions(ctx context.Context, squadCards []SquadCard) error
+	// UpdateFormation updates formation in the squad.
+	UpdateFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) error
 }
 
 // Club defines club entity.
@@ -93,6 +101,25 @@ const (
 	// ThreeFiveTwo defines 4-5-2 scheme.
 	ThreeFiveTwo Formation = 10
 )
+
+// IsValid check that formation ID is valid.
+func (f Formation) IsValid() bool {
+	switch f {
+	case FourFourTwo,
+		FourTwoFour,
+		FourTwoTwoTwo,
+		FourThreeOneTwo,
+		FourThreeThree,
+		FourTwoThreeOne,
+		FourThreeTwoOne,
+		FourOneThreeTwo,
+		FiveThreeTwo,
+		ThreeFiveTwo:
+		return true
+	default:
+		return false
+	}
+}
 
 // Tactic defines a list of possible tactics.
 type Tactic int
@@ -172,4 +199,23 @@ var FormationToPosition = map[Formation][]Position{
 	FourOneThreeTwo: {GK, LB, LCD, RCD, RB, LM, CCM, CCDM, RM, LST, RST},
 	FiveThreeTwo:    {GK, LWB, LCD, CCD, RCD, RWB, LCM, CCM, RCM, LST, RST},
 	ThreeFiveTwo:    {GK, LCD, CCD, RCD, LM, LCDM, CCAM, RCDM, RM, LST, RST},
+}
+
+// sortSquadCards sorts cards from the squad by positions.
+func sortSquadCards(cards []SquadCard) {
+	sort.Slice(cards, func(i, j int) bool {
+		return cards[i].Position < cards[j].Position
+	})
+}
+
+// convertPositions converts cards positions from 0-10 view, to positions that are present in the formation.
+func convertPositions(squadCards []SquadCard, formation Formation) {
+	for i := 0; i < len(squadCards); i++ {
+		for j := 0; j < len(FormationToPosition[formation]); j++ {
+			if squadCards[i].Position == FormationToPosition[formation][j] {
+				squadCards[i].Position = Position(j)
+				break
+			}
+		}
+	}
 }

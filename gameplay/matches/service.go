@@ -12,7 +12,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/pagination"
 	rand2 "ultimatedivision/pkg/rand"
 )
 
@@ -114,12 +114,10 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 	var cardsByPosition []uuid.UUID
 	randNumber := rand.Intn(100) + 1
 
-	// TODO: refactor positions.
-
 	switch {
 	case randNumber > 0 && randNumber <= goalByPosition[clubs.CST]:
 		for _, card := range squadCards {
-			if card.Position == clubs.CST || card.Position == clubs.LST || card.Position == clubs.RST  {
+			if card.Position == clubs.CST || card.Position == clubs.LST || card.Position == clubs.RST {
 				cardsByPosition = append(cardsByPosition, card.CardID)
 			}
 		}
@@ -135,7 +133,7 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 			if card.Position == clubs.RW || card.Position == clubs.LW ||
 				card.Position == clubs.CCM || card.Position == clubs.CCAM ||
 				card.Position == clubs.LCM || card.Position == clubs.LCAM ||
-			    card.Position == clubs.RCM || card.Position == clubs.RCAM{
+				card.Position == clubs.RCM || card.Position == clubs.RCAM {
 				cardsByPosition = append(cardsByPosition, card.CardID)
 			}
 		}
@@ -164,7 +162,7 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 	case randNumber >= 100-goalByPosition[clubs.CCD] && randNumber < 100:
 		for _, card := range squadCards {
 			if card.Position == clubs.CCD || card.Position == clubs.LCD ||
-			   card.Position == clubs.LB || card.Position == clubs.RCD ||
+				card.Position == clubs.LB || card.Position == clubs.RCD ||
 				card.Position == clubs.RB {
 				cardsByPosition = append(cardsByPosition, card.CardID)
 			}
@@ -203,15 +201,15 @@ func (service *Service) chooseSquad(ctx context.Context, goalByPosition map[club
 }
 
 // Create creates new match.
-func (service *Service) Create(ctx context.Context, squad1ID uuid.UUID, squad2ID uuid.UUID, user1ID, user2ID uuid.UUID) (uuid.UUID, error) {
-	squadCards1, err := service.clubs.GetSquadCards(ctx, squad1ID)
+func (service *Service) Create(ctx context.Context, squad1ID uuid.UUID, squad2ID uuid.UUID, user1ID, user2ID uuid.UUID) error {
+	squadCards1, err := service.cards.GetSquadCards(ctx, squad1ID)
 	if err != nil {
-		return uuid.Nil, ErrMatches.Wrap(err)
+		return ErrMatches.Wrap(err)
 	}
 
 	squadCards2, err := service.clubs.GetSquadCards(ctx, squad2ID)
 	if err != nil {
-		return uuid.Nil, ErrMatches.Wrap(err)
+		return ErrMatches.Wrap(err)
 	}
 
 	newMatch := Match{
@@ -224,12 +222,12 @@ func (service *Service) Create(ctx context.Context, squad1ID uuid.UUID, squad2ID
 
 	err = service.matches.Create(ctx, newMatch)
 	if err != nil {
-		return uuid.Nil, ErrMatches.Wrap(err)
+		return ErrMatches.Wrap(err)
 	}
 
 	err = service.Play(ctx, newMatch.ID, squadCards1, squadCards2, newMatch.User1ID, newMatch.User2ID)
 
-	return newMatch.ID, ErrMatches.Wrap(err)
+	return ErrMatches.Wrap(err)
 }
 
 // Get returns match by id.

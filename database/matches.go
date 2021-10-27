@@ -13,7 +13,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/gameplay/matches"
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/pagination"
 )
 
 // ensures that matchesDB implements matches.DB.
@@ -144,7 +144,18 @@ func (matchesDB *matchesDB) Delete(ctx context.Context, id uuid.UUID) error {
 	query := `DELETE FROM matches
               WHERE id = $1`
 
-	_, err := matchesDB.conn.ExecContext(ctx, query, id)
+	result, err := matchesDB.conn.ExecContext(ctx, query, id)
+	if err != nil {
+		return ErrMatches.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if err != nil {
+		return ErrMatches.Wrap(err)
+	}
+	if rowNum == 0 {
+		return matches.ErrNoMatch.New("match does not exist")
+	}
 
 	return ErrMatches.Wrap(err)
 }

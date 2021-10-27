@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-
+import { AnyAction, Dispatch } from 'redux';
 import rectangle
     from '@static/img/FilterField/rectangle.svg';
 import search
@@ -17,10 +17,9 @@ import parametres
     from '@static/img/FilterField/parametres.svg';
 import filters
     from '@static/img/MarketPlacePage/filter_icon.svg';
+import { FilterFieldDropdown } from './FilterFieldDropdown';
 
 import './index.scss';
-import { AnyAction, Dispatch } from 'redux';
-import { FilterFieldDropdown } from './FilterFieldDropdown';
 
 export const FilterField: React.FC<{
     title: string;

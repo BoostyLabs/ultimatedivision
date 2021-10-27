@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/internal/pagination"
+	"ultimatedivision/pkg/pagination"
 )
 
 // ErrNoCard indicated that card does not exist.
@@ -50,15 +50,10 @@ type Card struct {
 	ID               uuid.UUID    `json:"id"`
 	PlayerName       string       `json:"playerName"`
 	Quality          Quality      `json:"quality"`
-	PictureType      int          `json:"pictureType"`
 	Height           float64      `json:"height"`
 	Weight           float64      `json:"weight"`
-	SkinColor        int          `json:"skinColor"`
-	HairStyle        int          `json:"hairStyle"`
-	HairColor        int          `json:"hairColor"`
-	Accessories      []int        `json:"accessories"`
 	DominantFoot     DominantFoot `json:"dominantFoot"`
-	IsTattoos        bool         `json:"isTattoos"`
+	IsTattoo         bool         `json:"isTattoo"`
 	Status           Status       `json:"status"`
 	Type             Type         `json:"type"`
 	UserID           uuid.UUID    `json:"userId"`
@@ -89,7 +84,7 @@ type Card struct {
 	ShortPassing     int          `json:"shortPassing"`
 	LongPassing      int          `json:"longPassing"`
 	ForwardPass      int          `json:"forwardPass"`
-	Offense          int          `json:"offense"`
+	Offence          int          `json:"offence"`
 	FinishingAbility int          `json:"finishingAbility"`
 	ShotPower        int          `json:"shotPower"`
 	Accuracy         int          `json:"accuracy"`
@@ -138,36 +133,6 @@ var QualityToValue = map[Quality]int{
 // GetValueOfQuality returns value of card by key.
 func (quality Quality) GetValueOfQuality() int {
 	return QualityToValue[quality]
-}
-
-// PictureType defines the list of possible card picture types.
-var PictureType = map[int]string{
-	1: "https://drive.google.com/file/d/1ESKPpiCoMUkOEpaa40VBFl4O1bPrDntS/view?usp=sharing",
-	2: "https://drive.google.com/file/d/1baFCTjDVzIy5ucdcz-jMCb2FPSKyIRU2/view?usp=sharing",
-}
-
-// SkinColor defines the list of possible card skin colors.
-var SkinColor = map[int]string{
-	1: "https://drive.google.com/file/d/1ESKPpiCoMUkOEpaa40VBFl4O1bPrDntS/view?usp=sharing",
-	2: "https://drive.google.com/file/d/1baFCTjDVzIy5ucdcz-jMCb2FPSKyIRU2/view?usp=sharing",
-}
-
-// HairStyle defines the list of possible card hairstyles.
-var HairStyle = map[int]string{
-	1: "https://drive.google.com/file/d/1ESKPpiCoMUkOEpaa40VBFl4O1bPrDntS/view?usp=sharing",
-	2: "https://drive.google.com/file/d/1baFCTjDVzIy5ucdcz-jMCb2FPSKyIRU2/view?usp=sharing",
-}
-
-// HairColor defines the list of possible card hair colors.
-var HairColor = map[int]string{
-	1: "https://drive.google.com/file/d/1ESKPpiCoMUkOEpaa40VBFl4O1bPrDntS/view?usp=sharing",
-	2: "https://drive.google.com/file/d/1baFCTjDVzIy5ucdcz-jMCb2FPSKyIRU2/view?usp=sharing",
-}
-
-// Accessory defines the list of possible card accessories.
-var Accessory = map[int]string{
-	1: "https://drive.google.com/file/d/1ESKPpiCoMUkOEpaa40VBFl4O1bPrDntS/view?usp=sharing",
-	2: "https://drive.google.com/file/d/1baFCTjDVzIy5ucdcz-jMCb2FPSKyIRU2/view?usp=sharing",
 }
 
 // DominantFoot defines the list of possible card dominant foots.
@@ -273,6 +238,66 @@ type Config struct {
 	} `json:"tattoos"`
 
 	pagination.Cursor `json:"cursor"`
+
+	// CardEfficiencyParameters coefficients for calculating the efficiency of the card.
+	CardEfficiencyParameters struct {
+		GK struct {
+			Goalkeeping float64 `json:"goalkeeping"`
+			Physique    float64 `json:"physique"`
+			Tactics     float64 `json:"tactics"`
+		} `json:"gk"`
+		CD struct {
+			Defence  float64 `json:"defence"`
+			Physique float64 `json:"physique"`
+			Tactics  float64 `json:"tactics"`
+		} `json:"cd"`
+		LBorRB struct {
+			Defence   float64 `json:"defence"`
+			Physique  float64 `json:"physique"`
+			Tactics   float64 `json:"tactics"`
+			Technique float64 `json:"technique"`
+		} `json:"lbOrRb"`
+		CDM struct {
+			Defence   float64 `json:"defence"`
+			Physique  float64 `json:"physique"`
+			Tactics   float64 `json:"tactics"`
+			Technique float64 `json:"technique"`
+			Offence   float64 `json:"offence"`
+		} `json:"cdm"`
+		CM struct {
+			Defence   float64 `json:"defence"`
+			Physique  float64 `json:"physique"`
+			Tactics   float64 `json:"tactics"`
+			Technique float64 `json:"technique"`
+			Offence   float64 `json:"offence"`
+		} `json:"cm"`
+		CAM struct {
+			Defence   float64 `json:"defence"`
+			Physique  float64 `json:"physique"`
+			Tactics   float64 `json:"tactics"`
+			Technique float64 `json:"technique"`
+			Offence   float64 `json:"offence"`
+		} `json:"cam"`
+		RMorLM struct {
+			Defence   float64 `json:"defence"`
+			Physique  float64 `json:"physique"`
+			Tactics   float64 `json:"tactics"`
+			Technique float64 `json:"technique"`
+			Offence   float64 `json:"offence"`
+		} `json:"rmOrLm"`
+		RWorLW struct {
+			Physique  float64 `json:"physique"`
+			Tactics   float64 `json:"tactics"`
+			Technique float64 `json:"technique"`
+			Offence   float64 `json:"offence"`
+		} `json:"rwOrLw"`
+		ST struct {
+			Physique  float64 `json:"physique"`
+			Tactics   float64 `json:"tactics"`
+			Technique float64 `json:"technique"`
+			Offence   float64 `json:"offence"`
+		} `json:"st"`
+	} `json:"cardEfficiencyParameters"`
 }
 
 // PercentageQualities entity for probabilities generate cards.
@@ -287,56 +312,4 @@ type PercentageQualities struct {
 type Page struct {
 	Cards []Card          `json:"cards"`
 	Page  pagination.Page `json:"page"`
-}
-
-// EfficientGK determines the effectiveness of the card in the GK position.
-func (card *Card) EfficientGK() float64 {
-	return 0.9*float64(card.Goalkeeping) + 0.05*float64(card.Physique) + 0.05*float64(card.Tactics)
-}
-
-// EfficientCD determines the effectiveness of the card in the CD position.
-func (card *Card) EfficientCD() float64 {
-	return 0.65*float64(card.Defence) + 0.2*float64(card.Physique) + 0.15*float64(card.Tactics)
-}
-
-// EfficientLB determines the effectiveness of the card in the LB/RB position.
-func (card *Card) EfficientLB() float64 {
-	return 0.55*float64(card.Defence) + 0.1*float64(card.Physique) +
-		0.2*float64(card.Tactics) + 0.15*float64(card.Technique)
-}
-
-// EfficientCDM determines the effectiveness of the card in the CDM position.
-func (card *Card) EfficientCDM() float64 {
-	return 0.3*float64(card.Defence) + 0.15*float64(card.Physique) +
-		0.3*float64(card.Tactics) + 0.15*float64(card.Technique) + 0.1*float64(card.Offense)
-}
-
-// EfficientCM determines the effectiveness of the card in the CM position.
-func (card *Card) EfficientCM() float64 {
-	return 0.2*float64(card.Defence) + 0.1*float64(card.Physique) +
-		0.4*float64(card.Tactics) + 0.2*float64(card.Technique) + 0.1*float64(card.Offense)
-}
-
-// EfficientCAM determines the effectiveness of the card in the CAM position.
-func (card *Card) EfficientCAM() float64 {
-	return 0.05*float64(card.Defence) + 0.1*float64(card.Physique) +
-		0.3*float64(card.Tactics) + 0.35*float64(card.Technique) + 0.2*float64(card.Offense)
-}
-
-// EfficientLM determines the effectiveness of the card in the LM/RM position.
-func (card *Card) EfficientLM() float64 {
-	return 0.05*float64(card.Defence) + 0.1*float64(card.Physique) +
-		0.2*float64(card.Tactics) + 0.45*float64(card.Technique) + 0.2*float64(card.Offense)
-}
-
-// EfficientLW determines the effectiveness of the card in the LW/RW position.
-func (card *Card) EfficientLW() float64 {
-	return 0.05*float64(card.Physique) + 0.15*float64(card.Tactics) +
-		0.5*float64(card.Technique) + 0.3*float64(card.Offense)
-}
-
-// EfficientST determines the effectiveness of the card in the ST position.
-func (card *Card) EfficientST() float64 {
-	return 0.2*float64(card.Physique) + 0.1*float64(card.Tactics) +
-		0.2*float64(card.Technique) + 0.5*float64(card.Offense)
 }

@@ -2,10 +2,7 @@
 // See LICENSE for copying information.
 
 import { Dispatch, SetStateAction } from 'react';
-
 import { LootboxStats, LootboxTypes } from '@/app/types/lootbox';
-
-
 import box from '@static/img/StorePage/BoxCard/box.svg';
 import coolBox from '@static/img/StorePage/BoxCard/coolBox.svg';
 import { LootboxCard } from './LootboxCard';
@@ -39,13 +36,15 @@ export const LootboxSelection: React.FC<{ handleOpening: Dispatch<SetStateAction
 
     return (
         <div className="box-selection">
-            {boxesData.map((item, index) =>
-                <LootboxCard
-                    data={item}
-                    key={index}
-                    handleOpening={handleOpening}
-                />
-            )}
+            <div className="box-selection__wrapper">
+                {boxesData.map((item, index) =>
+                    <LootboxCard
+                        data={item}
+                        key={index}
+                        handleOpening={handleOpening}
+                    />
+                )}
+            </div>
         </div>
     );
 };

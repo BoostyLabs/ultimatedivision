@@ -16,15 +16,16 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver"
 	"ultimatedivision/cards"
+	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/console/emails"
 	"ultimatedivision/gameplay/matches"
-	"ultimatedivision/internal/auth"
 	"ultimatedivision/internal/logger"
-	mail2 "ultimatedivision/internal/mail"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
+	"ultimatedivision/pkg/auth"
+	mail2 "ultimatedivision/pkg/mail"
 	"ultimatedivision/queue"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
@@ -42,6 +43,9 @@ type DB interface {
 
 	// Cards provides access to cards db.
 	Cards() cards.DB
+
+	// Avatars provides access to avatars db.
+	Avatars() avatars.DB
 
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
@@ -91,6 +95,10 @@ type Config struct {
 		cards.PercentageQualities `json:"percentageQualities"`
 	} `json:"cards"`
 
+	Avatars struct {
+		avatars.Config
+	} `json:"avatars"`
+
 	LootBoxes struct {
 		Config lootboxes.Config `json:"lootBoxes"`
 	} `json:"lootBoxes"`
@@ -130,6 +138,11 @@ type Peer struct {
 	// exposes cards related logic.
 	Cards struct {
 		Service *cards.Service
+	}
+
+	// exposes avatars related logic.
+	Avatars struct {
+		Service *avatars.Service
 	}
 
 	// exposes clubs related logic.
@@ -228,18 +241,17 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // Avatars setup
+		peer.Avatars.Service = avatars.NewService(
+			peer.Database.Avatars(),
+			config.Avatars.Config,
+		)
+	}
+
 	{ // cards setup
 		peer.Cards.Service = cards.NewService(
 			peer.Database.Cards(),
-			cards.Config{
-				Height:              config.Cards.Height,
-				Weight:              config.Cards.Weight,
-				DominantFoots:       config.Cards.DominantFoots,
-				Skills:              config.Cards.Skills,
-				RangeValueForSkills: config.Cards.RangeValueForSkills,
-				Tattoos:             config.Cards.Tattoos,
-				Cursor:              config.Cards.Cursor,
-			},
+			config.Cards.Config,
 		)
 	}
 
@@ -313,6 +325,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Service,
 			peer.Cards.Service,
 			config.Cards.PercentageQualities,
+			peer.Avatars.Service,
 			peer.Marketplace.Service,
 			peer.LootBoxes.Service,
 			peer.Clubs.Service,
