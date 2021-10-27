@@ -174,13 +174,13 @@ func (controller *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 
-	uuid, err := uuid.Parse(params["id"])
+	id, err := uuid.Parse(params["id"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err = controller.users.Delete(ctx, uuid); err != nil {
+	if err = controller.users.Delete(ctx, id); err != nil {
 		controller.log.Error("could not delete user", ErrUsers.Wrap(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
