@@ -31,31 +31,40 @@ export const Home: React.FC = () => {
         card,
     ];
 
+    /** Max height, when ScrollToTop block must be hidden. */
+    const MAX_HEIGHT_FROM_HOME = -200;
+
+    /** Show ScrollToTop block, when user scrolls down the landing page and hide block, when user looks Home component. */
+    const changeVisibleScrollToTop = () => {
+        const homeElem = document.getElementById("home");
+
+        if (!homeElem) {
+            return;
+        }
+
+        /** Current height from top page to Home component. */
+        const heightFromTop = homeElem.getBoundingClientRect().top;
+
+        const scrollUpBlock = document.querySelector(".scroll-to-top");
+
+        if (!scrollUpBlock) {
+            return;
+        }
+
+        if (heightFromTop <= MAX_HEIGHT_FROM_HOME) {
+            scrollUpBlock.classList.add("visible");
+
+            return;
+        }
+
+        scrollUpBlock.classList.remove("visible");
+    };
+
     useEffect(() => {
-        window.addEventListener('scroll', () => {
-            //@ts-ignore
-            const heightFromTop = document
-                ?.getElementById('home')
-                .getBoundingClientRect().top;
+        window.addEventListener("scroll", changeVisibleScrollToTop);
 
-            if (!heightFromTop) {
-                return;
-            }
-
-            const scrollUpBlock = document?.querySelector('.scroll-to-top');
-
-            if (!scrollUpBlock) {
-                return;
-            }
-
-            if (heightFromTop <= -200) {
-                scrollUpBlock?.classList.add('visible');
-
-                return;
-            }
-
-            scrollUpBlock?.classList.remove('visible');
-        });
+        return () =>
+            window.removeEventListener("scroll", changeVisibleScrollToTop);
     }, []);
 
     return (
@@ -101,7 +110,7 @@ export const Home: React.FC = () => {
                     </div>
                 </div>
                 <AnimationImage
-                    className={'home__player-image'}
+                    className={"home__player-image"}
                     heightFrom={4000}
                     heightTo={-800}
                     loop={true}
