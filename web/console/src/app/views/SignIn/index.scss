@@ -108,6 +108,10 @@
             &__surname,
             &__password,
             &__confirm,
+            &__email-check,
+            &__name-check,
+            &__surname-check,
+            &__password-check,
             &__email-error,
             &__name-error,
             &__surname-error,
@@ -244,6 +248,10 @@
                 &__name,
                 &__surname,
                 &__password,
+                &__email-check,
+                &__name-check,
+                &__surname-check,
+                &__password-check,
                 &__confirm {
                     line-height: 30px;
                 }
@@ -349,6 +357,10 @@
                 &__name,
                 &__surname,
                 &__password,
+                &__email-check,
+                &__name-check,
+                &__surname-check,
+                &__password-check,
                 &__confirm {
                     margin-top: 10px;
                     line-height: 24px;
@@ -452,6 +464,10 @@
                 &__name,
                 &__surname,
                 &__password,
+                &__email-check,
+                &__name-check,
+                &__surname-check,
+                &__password-check,
                 &__confirm {
                     line-height: 40px;
                     font-size: 14px;
@@ -489,6 +505,10 @@
                 &__name,
                 &__surname,
                 &__password,
+                &__email-check,
+                &__name-check,
+                &__surname-check,
+                &__password-check,
                 &__confirm {
                     margin-top: 20px;
                 }
@@ -528,6 +548,7 @@
                 margin-top: 40px;
 
                 &__password,
+                &__password-check,
                 &__password-error,
                 &__confirm {
                     margin-top: 35px;
@@ -546,6 +567,7 @@
                 margin-top: 20px;
 
                 &__password,
+                &__password-check,
                 &__password-error,
                 &__confirm {
                     margin-top: 35px;
@@ -567,6 +589,10 @@
                 &__name,
                 &__surname,
                 &__password,
+                &__email-check,
+                &__name-check,
+                &__surname-check,
+                &__password-check,
                 &__confirm {
                     margin-top: 7.5px;
                 }
