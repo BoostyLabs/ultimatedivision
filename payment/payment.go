@@ -24,6 +24,6 @@ type Payment interface {
 	BuyCard(ctx context.Context, uuid2, lotID uuid.UUID, walletAddress cryptoutils.Address) error
 	// SellCard sells cards.
 	SellCard(ctx context.Context, userID uuid.UUID, cardID uuid.UUID, walletAddress cryptoutils.Address) error
-	// MakeBid makes bid on lot in marketplace.
+	// MakeBid makes bid on lot in the marketplace.
 	MakeBid(ctx context.Context, userID, lotID uuid.UUID, walletAddress cryptoutils.Address) error
 }
