@@ -1,4 +1,3 @@
-import { ToastContainer, toast } from 'react-toastify';
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
@@ -12,6 +11,8 @@ import { LaunchDate } from '@components/LaunchDate';
 import { Description } from '@components/Description';
 import { Metaverse } from '@components/Metaverse';
 import { Authors } from '@components/Authors';
+
+import { ToastContainer } from 'react-toastify';
 
 export const App = () => (
     <main className="main">

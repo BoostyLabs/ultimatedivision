@@ -1,6 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import { toast } from 'react-toastify';
+
 import { EthersClient } from '@/api/ethers';
 import { buildHash } from '@utils/ethers';
 import { ethers } from 'ethers';
@@ -17,6 +17,7 @@ export class Service {
     public async getAddress(wallet: string) {
         return await this.client.getAddress(wallet);
     }
+
     /** Gets current wallet address. */
     public async getWallet() {
         const signer = await this.provider.getSigner();
@@ -26,22 +27,15 @@ export class Service {
 
     /** Get last lot id. */
     public async getLastTokenId(wallet: string, abi: any[]) {
-        try {
-
-            const address = await this.getAddress(wallet);
-            const contract = await new ethers.Contract(
-                address.contracts.nft,
-                abi
-                );
-                const signer = await this.provider.getSigner();
-                const connect = await contract.connect(signer);
-                const totalSupply = await connect.functions.totalSupply();
-                return parseInt(totalSupply[0]._hex, 16);
-            } catch (error: any) {
-                console.log(123)
-                throw new Error(error)
-            }
-
+        const address = await this.getAddress(wallet);
+        const contract = await new ethers.Contract(
+            address.contracts.nft,
+            abi
+        );
+        const signer = await this.provider.getSigner();
+        const connect = await contract.connect(signer);
+        const totalSupply = await connect.functions.totalSupply();
+        return parseInt(totalSupply[0]._hex, 16);
     }
 
     /** Send smart contract transaction. */
@@ -68,13 +62,14 @@ export class Service {
             data,
             value: currentPrice[0],
         });
-        const transaction = await signer.sendTransaction({
+        await signer.sendTransaction({
             to: address.contracts.nftSale,
             data,
             gasLimit,
             chainId: 3,
             value: currentPrice[0],
         });
+
     }
 
     public async getBalance(id: string) {
@@ -88,5 +83,4 @@ export class Service {
         }
     }
 
-    
 }
