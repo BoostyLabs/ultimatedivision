@@ -73,13 +73,17 @@ const SignUp: React.FC = () => {
             return;
         };
 
-        dispatch(registerUser({
-            email,
-            password,
-            nickName,
-            firstName,
-            lastName,
-        }));
+        try {
+            dispatch(registerUser({
+                email,
+                password,
+                nickName,
+                firstName,
+                lastName,
+            }));
+        } catch (error) {
+            /** TODO: it will be reworked with notification system */
+        }
     };
 
     /** user datas for registration */

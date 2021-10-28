@@ -46,58 +46,32 @@ const users = new UserService(client);
 
 /** thunk that implements user registration */
 export const registerUser = (user: User) =>
-    async function(dispatch: Dispatch) {
-        try {
-            await users.register(user);
-            dispatch(register(user));
-            location.pathname = RouteConfig.SignIn.path;
-        } catch (error: any) {
-            // TODO: rework catching errors
-            /* eslint-disable */
-            console.log(error.message);
-        };
+    async function (dispatch: Dispatch) {
+        await users.register(user);
+        dispatch(register(user));
+        location.pathname = RouteConfig.SignIn.path;
     };
 
 /** thunk that implements user login */
 export const loginUser = (email: string, password: string) =>
     async function (dispatch: Dispatch) {
-        const whitepaperPath = '/whitepaper';
-        try {
-            await users.login(email, password);
-            dispatch(login(email, password));
-            location.pathname = whitepaperPath;
-        } catch (error: any) {
-            // TODO: rework catching errors
-            /* eslint-disable */
-            console.log(error.message);
-        };
+        await users.login(email, password);
+        dispatch(login(email, password));
+        location.pathname = RouteConfig.Whitepaper.path;
     };
 
 /** thunk that implements user changing password */
 export const changeUserPassword = (password: string, newPassword: string) =>
     async function (dispatch: Dispatch) {
-        const marketplacePath = '/marketplace';
-        try {
-            await users.changePassword(password, newPassword);
-            dispatch(changePassword(password, newPassword));
-            location.pathname = marketplacePath;
-        } catch (error: any) {
-            // TODO: rework catching errors
-            /* eslint-disable */
-            console.log(error.message);
-        };
+        await users.changePassword(password, newPassword);
+        dispatch(changePassword(password, newPassword));
+        location.pathname = RouteConfig.MarketPlace.path;
     };
 
 /** thunk that implements user reset password */
 export const recoverUserPassword = (password: string) =>
     async function (dispatch: Dispatch) {
-        try {
-            await users.recoverPassword(password);
-            dispatch(recoverPassword(password));
-            location.pathname = RouteConfig.SignIn.path;
-        } catch (error: any) {
-            /** TODO: rework catching errros */
-            /* eslint-disable */
-            console.log(error.message);
-        }
+        await users.recoverPassword(password);
+        dispatch(recoverPassword(password));
+        location.pathname = RouteConfig.SignIn.path;
     };

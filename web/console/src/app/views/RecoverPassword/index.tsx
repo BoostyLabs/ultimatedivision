@@ -78,7 +78,11 @@ const RecoverPassword: React.FC = () => {
             return;
         };
 
-        dispatch(recoverUserPassword(password));
+        try {
+            dispatch(recoverUserPassword(password));
+        } catch (error) {
+            /** TODO: it will be reworked with notification system */
+        }
     };
     /** user datas for recover password */
     const passwords = [

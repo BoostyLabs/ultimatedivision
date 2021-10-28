@@ -13,15 +13,15 @@ export class UserService {
     };
     /** handles user registration */
     public async register(user: User): Promise<void> {
-        return await this.users.register(user);
+        await this.users.register(user);
     };
     /** return registred user */
     public async login(email: string, password: string): Promise<void> {
-        return await this.users.login(email, password);
+        await this.users.login(email, password);
     };
     /** handles user changing password */
     public async changePassword(password: string, newPassword: string): Promise<void> {
-        return await this.users.changePassword(password, newPassword);
+        await this.users.changePassword(password, newPassword);
     };
     /** handles user check email token */
     public async checkEmailToken(token: string | null): Promise<void> {

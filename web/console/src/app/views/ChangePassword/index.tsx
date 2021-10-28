@@ -50,7 +50,11 @@ const ChangePassword: React.FC = () => {
             return;
         };
 
-        dispatch(changeUserPassword(password, newPassword));
+        try {
+            dispatch(changeUserPassword(password, newPassword));
+        } catch (error) {
+            /** TODO: it will be reworked with notification system */
+        }
     };
     /** user datas for registration */
     const resetPasswordDatas = [

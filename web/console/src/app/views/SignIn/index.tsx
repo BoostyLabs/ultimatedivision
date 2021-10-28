@@ -53,7 +53,11 @@ const SignIn: React.FC = () => {
             return;
         };
 
-        dispatch(loginUser(email, password));
+        try {
+            dispatch(loginUser(email, password));
+        } catch (error) {
+            /** TODO: it will be reworked with notification system */
+        }
     };
     /** user datas for registration */
     const signInDatas = [

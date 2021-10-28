@@ -57,7 +57,7 @@ export class UserClient extends APIClient {
         };
     };
     /** recover user password */
-    public async recoverPassword(newPassword: string): Promise<Response> {
+    public async recoverPassword(newPassword: string): Promise<void> {
         const path = `${this.ROOT_PATH}/reset-password`;
         const response = await this.http.patch(path, JSON.stringify({ newPassword }));
 
@@ -65,6 +65,5 @@ export class UserClient extends APIClient {
             await this.handleError(response);
         };
 
-        return response;
     };
 };
