@@ -81,24 +81,29 @@ const SignUp: React.FC = () => {
                 dispatch(register(user));
                 location.pathname = RouteConfig.SignIn.path;
             } catch (error: any) {
-            /** TODO: it will be reworked with notification system */
+                /** TODO: it will be reworked with notification system */
             };
         };
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
             return;
         };
 
-        dispatch(registerUser({
-            email,
-            password,
-            nickName,
-            firstName,
-            lastName,
-        }));
+        try {
+            await dispatch(registerUser({
+                email,
+                password,
+                nickName,
+                firstName,
+                lastName,
+            }));
+            location.pathname = RouteConfig.SignIn.path;
+        } catch (error) {
+            /** TODO: it will be reworked with notification system */
+        };
     };
 
     /** user datas for registration */

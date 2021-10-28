@@ -4,12 +4,9 @@
 import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Dispatch } from 'redux';
 
-import { UserClient } from '@/api/user';
-import { UserService } from '@/user/service';
 
-import { changePassword } from '@/app/store/actions/users';
+import { changeUserPassword } from '@/app/store/actions/users';
 import { RouteConfig } from '@/app/router';
 import { Validator } from '@/user/validation';
 
@@ -45,29 +42,20 @@ const ChangePassword: React.FC = () => {
 
         return isValidForm;
     };
-
-    const userClient = new UserClient();
-    const users = new UserService(userClient);
-    /** implements user changing password */
-    const changeUserPassword = (password: string, newPassword: string) =>
-        async function (dispatch: Dispatch) {
-            try {
-                await users.changePassword(password, newPassword);
-                dispatch(changePassword(password, newPassword));
-                location.pathname = RouteConfig.SignIn.path;
-            } catch (error: any) {
-                /** TODO: it will be reworked with notification system */
-            };
-        };
     /** sign in user data */
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
             return;
         };
 
-            dispatch(changeUserPassword(password, newPassword));
+        try {
+            await dispatch(changeUserPassword(password, newPassword));
+            location.pathname = RouteConfig.MarketPlace.path;
+        } catch (error) {
+            /** TODO: it will be reworked with notification system */
+        };
     };
     /** user datas for registration */
     const resetPasswordDatas = [

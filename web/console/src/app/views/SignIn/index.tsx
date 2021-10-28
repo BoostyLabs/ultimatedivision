@@ -1,19 +1,15 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { SetStateAction, useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Dispatch } from 'redux';
 
 import { RouteConfig } from '@/app/router';
 
-import { UserClient } from '@/api/user';
-import { UserService } from '@/user/service';
-
 import { Validator } from '@/user/validation';
 
-import { login } from '@/app/store/actions/users';
+import { loginUser } from '@/app/store/actions/users';
 
 import { UserDataArea } from '@components/common/UserDataArea';
 
@@ -50,29 +46,19 @@ const SignIn: React.FC = () => {
         return isValidForm;
     };
     /** user data that will send to server */
-    const userClient = new UserClient();
-    const users = new UserService(userClient);
-    /** implements logic of user login */
-    const loginUser = (email: string, password: string) =>
-        async function (dispatch: Dispatch) {
-            const whitepaperPath = '/whitepaper';
-            try {
-                await users.login(email, password);
-                dispatch(login(email, password));
-                location.pathname = whitepaperPath;
-            } catch (error: any) {
-                /** TODO: it will be reworked with notification system */
-            };
-        };
-
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
             return;
         };
 
-        dispatch(loginUser(email, password));
+        try {
+            await dispatch(loginUser(email, password));
+            location.pathname = RouteConfig.MarketPlace.path;
+        } catch (error: any) {
+            /** TODO: it will be reworked with notification system */
+        };
     };
     /** user datas for registration */
     const signInDatas = [
