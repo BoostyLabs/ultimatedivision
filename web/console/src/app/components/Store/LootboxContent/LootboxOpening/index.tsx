@@ -17,13 +17,15 @@ export const LootboxOpening = () => {
 
     const box = boxStyle(cards.length);
 
+    const OPENNED_CARDS_COUNT: number = 5;
+
     return (
         <div className="box-animation">
             <div className="box-animation__box-container">
                 <img
                     src={box.body}
                     alt="box body"
-                    className={`box-animation__box-body ${cards.length > 5 && 'box-animation__box-body__cool'}`}
+                    className={`box-animation__box-body ${cards.length > OPENNED_CARDS_COUNT && 'box-animation__box-body__cool'}`}
                 />
                 <img
                     src={box.cover}

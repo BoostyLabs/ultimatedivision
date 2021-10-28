@@ -17,6 +17,7 @@ export class UsersState {
         email: '',
         password: '',
     };
+    /** implements user service */
     public constructor(userService: UserService) {
         this.userService = userService;
     };
