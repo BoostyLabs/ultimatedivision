@@ -73,7 +73,7 @@ const RecoverPassword: React.FC = () => {
     };
     /** implements recover of user password */
     const recoverUserPassword = (password: string) =>
-        async function (dispatch: Dispatch) {
+        async function(dispatch: Dispatch) {
             try {
                 await users.recoverPassword(password);
                 dispatch(recoverPassword(password));
@@ -83,7 +83,7 @@ const RecoverPassword: React.FC = () => {
             }
         };
     /** sign in user data */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {

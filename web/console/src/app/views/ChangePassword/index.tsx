@@ -43,7 +43,7 @@ const ChangePassword: React.FC = () => {
         return isValidForm;
     };
     /** sign in user data */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {

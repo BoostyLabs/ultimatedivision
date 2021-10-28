@@ -64,6 +64,5 @@ export class UserClient extends APIClient {
         if (!response.ok) {
             await this.handleError(response);
         };
-
     };
 };

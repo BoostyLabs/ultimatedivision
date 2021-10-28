@@ -4,13 +4,9 @@
 import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Dispatch } from 'redux';
 
-import { User } from '@/user';
-import { UserClient } from '@/api/user';
-import { UserService } from '@/user/service';
 
-import { register } from '@/app/store/actions/users';
+import { registerUser } from '@/app/store/actions/users';
 import { RouteConfig } from '@/app/router';
 
 import { Validator } from '@/user/validation';
@@ -71,21 +67,7 @@ const SignUp: React.FC = () => {
         return isValidForm;
     };
 
-    const userClient = new UserClient();
-    const users = new UserService(userClient);
-    /** implements the logic of user registration */
-    const registerUser = (user: User) =>
-        async function (dispatch: Dispatch) {
-            try {
-                await users.register(user);
-                dispatch(register(user));
-                location.pathname = RouteConfig.SignIn.path;
-            } catch (error: any) {
-                /** TODO: it will be reworked with notification system */
-            };
-        };
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
