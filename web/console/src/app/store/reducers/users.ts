@@ -7,7 +7,7 @@ import { UserService } from '@/user/service';
 import {
     CHANGE_PASSWORD,
     LOGIN,
-    RECOVER_PASSWORD
+    RECOVER_PASSWORD,
 } from '../actions/users';
 
 /** implementation of user state */

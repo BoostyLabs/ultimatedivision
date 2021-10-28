@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { APIClient } from '.';
 import { User } from '@/user';
+import { APIClient } from '.';
 
 /** Client for user controller of api */
 export class UserClient extends APIClient {
@@ -20,7 +20,7 @@ export class UserClient extends APIClient {
     public async login(email: string, password: string): Promise<void> {
         const path = `${this.ROOT_PATH}/login`;
         const response = await this.http.post(path, JSON.stringify({
-            email, password
+            email, password,
         }));
 
         if (!response.ok) {
@@ -31,7 +31,7 @@ export class UserClient extends APIClient {
     public async changePassword(password: string, newPassword: string): Promise<void> {
         const path = `${this.ROOT_PATH}/change-password`;
         const response = await this.http.post(path, JSON.stringify({
-            password, newPassword
+            password, newPassword,
         }));
 
         if (!response.ok) {

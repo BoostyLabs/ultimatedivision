@@ -1,12 +1,13 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { User } from '.';
 import { UserClient } from '@/api/user';
+import { User } from '.';
 
 /** exposes all user related logic  */
 export class UserService {
     private readonly users: UserClient;
+    /** user service depend on user client  */
     public constructor(users: UserClient) {
         this.users = users;
     };

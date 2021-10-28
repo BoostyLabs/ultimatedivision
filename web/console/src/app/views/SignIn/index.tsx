@@ -104,26 +104,8 @@ const SignIn: React.FC = () => {
                     className="register__sign-in__sign-form"
                     onSubmit={handleSubmit}
                 >
-                    {signInDatas.map((data, index) => {
-                        return data.type === 'radio' ? <div key={index}>
-                            <UserDataArea
-                                value={data.value}
-                                placeHolder={data.placeHolder}
-                                onChange={data.onChange}
-                                className={data.className}
-                                type={data.type}
-                                error={data.error}
-                                clearError={data.clearError}
-                                validate={data.validate}
-                            />
-                            <Link
-                                to={RouteConfig.ResetPassword.path}
-                                className="register__sign-in__sign-form__forgot-password"
-                            >
-                                Forgot Password?
-                            </Link>
-                        </div> : <UserDataArea
-                            key={index}
+                    {signInDatas.map((data, index) => data.type === 'radio' ? <div key={index}>
+                        <UserDataArea
                             value={data.value}
                             placeHolder={data.placeHolder}
                             onChange={data.onChange}
@@ -132,8 +114,24 @@ const SignIn: React.FC = () => {
                             error={data.error}
                             clearError={data.clearError}
                             validate={data.validate}
-                        />;
-                    })}
+                        />
+                        <Link
+                            to={RouteConfig.ResetPassword.path}
+                            className="register__sign-in__sign-form__forgot-password"
+                        >
+                                Forgot Password?
+                        </Link>
+                    </div> : <UserDataArea
+                        key={index}
+                        value={data.value}
+                        placeHolder={data.placeHolder}
+                        onChange={data.onChange}
+                        className={data.className}
+                        type={data.type}
+                        error={data.error}
+                        clearError={data.clearError}
+                        validate={data.validate}
+                    />)}
                     <div className="register__sign-in__sign-form__auth-internal">
                         <input
                             className="register__sign-in__sign-form__confirm"

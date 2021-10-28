@@ -102,19 +102,17 @@ const ChangePassword: React.FC = () => {
                     className="register__reset__sign-form"
                     onSubmit={handleSubmit}
                 >
-                    {resetPasswordDatas.map((data, index) => {
-                        return <UserDataArea
-                            key={index}
-                            value={data.value}
-                            placeHolder={data.placeHolder}
-                            onChange={data.onChange}
-                            className={data.className}
-                            type={data.type}
-                            error={data.error}
-                            clearError={data.clearError}
-                            validate={data.validate}
-                        />;
-                    })}
+                    {resetPasswordDatas.map((data, index) => <UserDataArea
+                        key={index}
+                        value={data.value}
+                        placeHolder={data.placeHolder}
+                        onChange={data.onChange}
+                        className={data.className}
+                        type={data.type}
+                        error={data.error}
+                        clearError={data.clearError}
+                        validate={data.validate}
+                    />)}
                     <input
                         className="register__reset__sign-form__confirm"
                         value="CHANGE PASSWORD"

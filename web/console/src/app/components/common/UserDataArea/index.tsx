@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { SetStateAction, useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 
 import { useDebounce } from '@/app/hooks/useDebounce';
 
@@ -31,7 +31,7 @@ export const UserDataArea: React.FC<{
     const debouncedValue: string = useDebounce(value, DELAY);
 
     /** inline styles for valid input field */
-    const [successLabelClassName , setSuccessLabelClassName] =
+    const [successLabelClassName, setSuccessLabelClassName] =
         useState<string>('');
 
     useEffect(() => {
@@ -40,7 +40,6 @@ export const UserDataArea: React.FC<{
         } else {
             setSuccessLabelClassName('-check');
         };
-
     }, [debouncedValue]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

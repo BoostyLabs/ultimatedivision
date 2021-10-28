@@ -4,9 +4,7 @@
 import { useLocation } from 'react-router';
 
 export const useQueryToken = () => {
-    const useQuery = () => {
-        return new URLSearchParams(useLocation().search);
-    };
+    const useQuery = () => new URLSearchParams(useLocation().search);
     const query = useQuery();
     const token = query.get('token');
 

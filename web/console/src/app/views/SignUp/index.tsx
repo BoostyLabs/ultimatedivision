@@ -160,19 +160,17 @@ const SignUp: React.FC = () => {
                     className="register__sign-up__sign-form"
                     onSubmit={handleSubmit}
                 >
-                    {signUpDatas.map((data, index) => {
-                        return <UserDataArea
-                            key={index}
-                            value={data.value}
-                            placeHolder={data.placeHolder}
-                            onChange={data.onChange}
-                            className={data.className}
-                            type={data.type}
-                            error={data.error}
-                            clearError={data.clearError}
-                            validate={data.validate}
-                        />;
-                    })}
+                    {signUpDatas.map((data, index) => <UserDataArea
+                        key={index}
+                        value={data.value}
+                        placeHolder={data.placeHolder}
+                        onChange={data.onChange}
+                        className={data.className}
+                        type={data.type}
+                        error={data.error}
+                        clearError={data.clearError}
+                        validate={data.validate}
+                    />)}
                     <input
                         className="register__sign-up__sign-form__confirm"
                         value="SIGN UP"

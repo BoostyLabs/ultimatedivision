@@ -25,7 +25,7 @@ export const login = (email: string, password: string) => ({
     user: {
         email,
         password,
-    }
+    },
 });
 /** changing user password */
 export const changePassword = (password: string, newPassword: string) => ({
@@ -33,12 +33,12 @@ export const changePassword = (password: string, newPassword: string) => ({
     passwords: {
         password,
         newPassword,
-    }
+    },
 });
 /** recover user password */
 export const recoverPassword = (password: string) => ({
     type: RECOVER_PASSWORD,
-    password
+    password,
 });
 
 const client = new UserClient();
@@ -46,7 +46,7 @@ const users = new UserService(client);
 
 /** thunk that implements user registration */
 export const registerUser = (user: User) =>
-    async function (dispatch: Dispatch) {
+    async function(dispatch: Dispatch) {
         try {
             await users.register(user);
             dispatch(register(user));

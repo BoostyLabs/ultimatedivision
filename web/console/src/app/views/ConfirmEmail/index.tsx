@@ -11,10 +11,6 @@ import { RouteConfig } from '@/app/router';
 
 /** TODO: Rework this view after design solution */
 const ConfirmEmail: React.FC = () => {
-    useEffect(() => {
-        checkEmailToken();
-    }, []);
-
     const token = useQueryToken();
 
     const [errorMessage, setErrorMessage]
@@ -23,6 +19,7 @@ const ConfirmEmail: React.FC = () => {
     const userClient = new UserClient();
     const users = new UserService(userClient);
 
+    const DELAY: number = 3000;
     /** catches error if token is not valid */
     async function checkEmailToken() {
         try {
@@ -30,12 +27,16 @@ const ConfirmEmail: React.FC = () => {
 
             await setTimeout(() => {
                 location.pathname = RouteConfig.SignIn.path;
-            }, 3000);
+            }, DELAY);
         } catch (error: any) {
             /** TODO: handles error */
             setErrorMessage('Email verification failed');
         };
     };
+
+    useEffect(() => {
+        checkEmailToken();
+    }, []);
 
     if (errorMessage) {
         return <h1>{errorMessage}</h1>;

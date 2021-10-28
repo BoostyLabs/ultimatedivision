@@ -19,10 +19,6 @@ import ultimate from '@static/img/registerPage/ultimate.svg';
 import './index.scss';
 
 const RecoverPassword: React.FC = () => {
-    useEffect(() => {
-        checkRecoverToken();
-    }, []);
-
     const dispatch = useDispatch();
     const token = useQueryToken();
 
@@ -41,6 +37,9 @@ const RecoverPassword: React.FC = () => {
             setErrorMessage('Cannot get access');
         };
     };
+    useEffect(() => {
+        checkRecoverToken();
+    }, []);
 
     /** controlled values for form inputs */
     const [password, setPassword] = useState('');
@@ -80,7 +79,6 @@ const RecoverPassword: React.FC = () => {
         };
 
         dispatch(recoverUserPassword(password));
-
     };
     /** user datas for recover password */
     const passwords = [
@@ -125,19 +123,17 @@ const RecoverPassword: React.FC = () => {
                     className="register__recover__sign-form"
                     onSubmit={handleSubmit}
                 >
-                    {passwords.map((password, index) => {
-                        return <UserDataArea
-                            key={index}
-                            value={password.value}
-                            placeHolder={password.placeHolder}
-                            onChange={password.onChange}
-                            className={password.className}
-                            type={password.type}
-                            error={password.error}
-                            clearError={password.clearError}
-                            validate={password.validate}
-                        />;
-                    })}
+                    {passwords.map((password, index) => <UserDataArea
+                        key={index}
+                        value={password.value}
+                        placeHolder={password.placeHolder}
+                        onChange={password.onChange}
+                        className={password.className}
+                        type={password.type}
+                        error={password.error}
+                        clearError={password.clearError}
+                        validate={password.validate}
+                    />)}
                     <input
                         className="register__recover__sign-form__confirm"
                         value="RECOVER YOUR PASSWORD"
