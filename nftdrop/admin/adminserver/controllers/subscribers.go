@@ -92,37 +92,8 @@ func (controller *Subscribers) List(w http.ResponseWriter, r *http.Request) {
 
 	err = controller.templates.List.Execute(w, subscribersPage)
 	if err != nil {
-		controller.log.Error("could not execute update subscriber template", ErrSubscribers.Wrap(err))
-		http.Error(w, "could not execute update subscriber template", http.StatusInternalServerError)
-		return
-	}
-}
-
-// GetByEmail is an endpoint that will provide a web page with subscriber by email page.
-func (controller *Subscribers) GetByEmail(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	params := mux.Vars(r)
-	email := params["email"]
-	if email == "" {
-		http.Error(w, "email is empty", http.StatusBadRequest)
-		return
-	}
-
-	subscriber, err := controller.subscribers.GetByEmail(ctx, email)
-	if err != nil {
-		controller.log.Error("could not get subscriber by email", ErrSubscribers.Wrap(err))
-		if users.ErrNoUser.Has(err) {
-			http.Error(w, "no subscriber with such email", http.StatusNotFound)
-			return
-		}
-		http.Error(w, "could not get subscriber", http.StatusInternalServerError)
-		return
-	}
-
-	err = controller.templates.GetByEmail.Execute(w, subscriber)
-	if err != nil {
-		controller.log.Error("could not execute update subscriber template", ErrSubscribers.Wrap(err))
-		http.Error(w, "could not execute update subscriber template", http.StatusInternalServerError)
+		controller.log.Error("could not execute list subscriber template", ErrSubscribers.Wrap(err))
+		http.Error(w, "could not execute list subscriber template", http.StatusInternalServerError)
 		return
 	}
 }
