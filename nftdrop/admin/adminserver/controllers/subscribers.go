@@ -4,16 +4,17 @@
 package controllers
 
 import (
-	"encoding/json"
 	"html/template"
 	"net/http"
 	"strconv"
-	"ultimatedivision/pkg/pagination"
 
+	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/nftdrop/subscribers"
+	"ultimatedivision/pkg/pagination"
+	"ultimatedivision/users"
 )
 
 var (
@@ -29,7 +30,7 @@ type SubscribersTemplates struct {
 	Delete     *template.Template
 }
 
-// Subscribers is a mvc controller that handles all Subscribers related views.
+// Subscribers is a mvc controller that handles all subscribers related views.
 type Subscribers struct {
 	log logger.Logger
 
@@ -53,8 +54,9 @@ func NewSubscribers(log logger.Logger, subscribers *subscribers.Service, templat
 func (controller *Subscribers) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var (
-		err         error
-		limit, page int
+		err   error
+		limit int
+		page  int
 	)
 	urlQuery := r.URL.Query()
 	limitQuery := urlQuery.Get("limit")
@@ -88,22 +90,64 @@ func (controller *Subscribers) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(subscribersPage); err != nil {
-		controller.log.Error("failed to write json response", ErrSubscribers.Wrap(err))
+	err = controller.templates.List.Execute(w, subscribersPage)
+	if err != nil {
+		controller.log.Error("could not execute update subscriber template", ErrSubscribers.Wrap(err))
+		http.Error(w, "could not execute update subscriber template", http.StatusInternalServerError)
 		return
 	}
 }
 
-// serveError replies to the request with specific code and error message.
-func (controller *Subscribers) serveError(w http.ResponseWriter, status int, err error) {
-	w.WriteHeader(status)
-	var response struct {
-		Error string `json:"error"`
+// GetByEmail is an endpoint that will provide a web page with subscriber by email page.
+func (controller *Subscribers) GetByEmail(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	params := mux.Vars(r)
+	email := params["email"]
+	if email == "" {
+		http.Error(w, "email is empty", http.StatusBadRequest)
+		return
 	}
-	response.Error = err.Error()
 
-	err = json.NewEncoder(w).Encode(response)
+	subscriber, err := controller.subscribers.GetByEmail(ctx, email)
 	if err != nil {
-		controller.log.Error("failed to write json error response", ErrWhitelist.Wrap(err))
+		controller.log.Error("could not get subscriber by email", ErrSubscribers.Wrap(err))
+		if users.ErrNoUser.Has(err) {
+			http.Error(w, "no subscriber with such email", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "could not get subscriber", http.StatusInternalServerError)
+		return
 	}
+
+	err = controller.templates.GetByEmail.Execute(w, subscriber)
+	if err != nil {
+		controller.log.Error("could not execute update subscriber template", ErrSubscribers.Wrap(err))
+		http.Error(w, "could not execute update subscriber template", http.StatusInternalServerError)
+		return
+	}
+}
+
+// Delete is an endpoint that deletes subscriber.
+func (controller *Subscribers) Delete(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	params := mux.Vars(r)
+
+	email := params["email"]
+	if email == "" {
+		http.Error(w, "email is empty", http.StatusBadRequest)
+		return
+	}
+
+	err := controller.subscribers.Delete(ctx, email)
+	if err != nil {
+		controller.log.Error("could not delete subscriber by email", ErrSubscribers.Wrap(err))
+		if users.ErrNoUser.Has(err) {
+			http.Error(w, "no subscriber with such email", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "could not delete subscriber", http.StatusInternalServerError)
+		return
+	}
+
+	Redirect(w, r, "/subscribers", http.MethodGet)
 }

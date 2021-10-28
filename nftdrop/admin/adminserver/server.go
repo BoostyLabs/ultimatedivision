@@ -10,7 +10,6 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/nftdrop/subscribers"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -21,6 +20,7 @@ import (
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/templatefuncs"
 	"ultimatedivision/nftdrop/admin/adminserver/controllers"
+	"ultimatedivision/nftdrop/subscribers"
 	"ultimatedivision/nftdrop/whitelist"
 	"ultimatedivision/pkg/auth"
 )
@@ -103,7 +103,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	subscribersRouter := router.PathPrefix("/subscribers").Subrouter().StrictSlash(true)
 	subscribersRouter.Use(server.withAuth)
 	subscribersController := controllers.NewSubscribers(log, subscribers, server.templates.subscribers)
-	subscribersRouter.HandleFunc("/list", subscribersController.List).Methods(http.MethodPost)
+	subscribersRouter.HandleFunc("", subscribersController.List).Methods(http.MethodGet)
+	subscribersRouter.HandleFunc("/delete/{email}", subscribersController.Delete).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -173,6 +174,16 @@ func (server *Server) initializeTemplates() (err error) {
 		return err
 	}
 	server.templates.whitelist.SetPassword, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "whitelist", "setPassword.html"))
+	if err != nil {
+		return err
+	}
+	server.templates.subscribers.List, err = template.New("list.html").Funcs(template.FuncMap{
+		"Iter": templatefuncs.Iter,
+		"Inc":  templatefuncs.Inc,
+		"Dec":  templatefuncs.Dec,
+	}).ParseFiles(
+		filepath.Join(server.config.StaticDir, "subscribers", "list.html"),
+		filepath.Join(server.config.StaticDir, "subscribers", "pagination.html"))
 	if err != nil {
 		return err
 	}

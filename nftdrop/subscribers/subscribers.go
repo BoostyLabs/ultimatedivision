@@ -46,7 +46,7 @@ type Page struct {
 	Page        pagination.Page `json:"page"`
 }
 
-// Config defines configuration for queue.
+// Config defines configuration for pagination.
 type Config struct {
 	pagination.Cursor `json:"cursor"`
 }

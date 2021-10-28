@@ -6,9 +6,10 @@ package subscribers
 import (
 	"context"
 	"time"
-	"ultimatedivision/pkg/pagination"
 
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/pkg/pagination"
 )
 
 // ErrSubscribers indicates that there was an error in the service.

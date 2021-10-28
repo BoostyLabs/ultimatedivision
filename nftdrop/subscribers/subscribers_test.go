@@ -7,7 +7,6 @@ import (
 	"context"
 	"testing"
 	"time"
-	"ultimatedivision/pkg/pagination"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -15,6 +14,7 @@ import (
 	"ultimatedivision/nftdrop"
 	"ultimatedivision/nftdrop/database/dbtesting"
 	"ultimatedivision/nftdrop/subscribers"
+	"ultimatedivision/pkg/pagination"
 )
 
 func TestEmails(t *testing.T) {

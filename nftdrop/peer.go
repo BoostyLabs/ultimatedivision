@@ -113,7 +113,10 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	}
 
 	{ // subscribers setup
-		peer.Subscribers.Service = subscribers.NewService(peer.Database.Subscribers(), config.Subscribers.Config)
+		peer.Subscribers.Service = subscribers.NewService(
+			peer.Database.Subscribers(),
+			config.Subscribers.Config,
+		)
 	}
 
 	{ // admins setup
