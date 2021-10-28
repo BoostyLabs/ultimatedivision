@@ -4,8 +4,13 @@
 import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 
-import { registerUser } from '@/app/store/actions/users';
+import { User } from '@/user';
+import { UserClient } from '@/api/user';
+import { UserService } from '@/user/service';
+
+import { register } from '@/app/store/actions/users';
 import { RouteConfig } from '@/app/router';
 
 import { Validator } from '@/user/validation';
@@ -66,6 +71,20 @@ const SignUp: React.FC = () => {
         return isValidForm;
     };
 
+    const userClient = new UserClient();
+    const users = new UserService(userClient);
+    /** implements the logic of user registration */
+    const registerUser = (user: User) =>
+        async function (dispatch: Dispatch) {
+            try {
+                await users.register(user);
+                dispatch(register(user));
+                location.pathname = RouteConfig.SignIn.path;
+            } catch (error: any) {
+            /** TODO: it will be reworked with notification system */
+            };
+        };
+
     const handleSubmit = (e: any) => {
         e.preventDefault();
 
@@ -73,17 +92,13 @@ const SignUp: React.FC = () => {
             return;
         };
 
-        try {
-            dispatch(registerUser({
-                email,
-                password,
-                nickName,
-                firstName,
-                lastName,
-            }));
-        } catch (error) {
-            /** TODO: it will be reworked with notification system */
-        }
+        dispatch(registerUser({
+            email,
+            password,
+            nickName,
+            firstName,
+            lastName,
+        }));
     };
 
     /** user datas for registration */

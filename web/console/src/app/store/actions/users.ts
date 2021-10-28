@@ -1,10 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Dispatch } from 'redux';
-
-import { RouteConfig } from '@/app/router';
-
 import { User } from '@/user';
 import { UserClient } from '@/api/user';
 import { UserService } from '@/user/service';
@@ -40,38 +36,3 @@ export const recoverPassword = (password: string) => ({
     type: RECOVER_PASSWORD,
     password,
 });
-
-const client = new UserClient();
-const users = new UserService(client);
-
-/** thunk that implements user registration */
-export const registerUser = (user: User) =>
-    async function (dispatch: Dispatch) {
-        await users.register(user);
-        dispatch(register(user));
-        location.pathname = RouteConfig.SignIn.path;
-    };
-
-/** thunk that implements user login */
-export const loginUser = (email: string, password: string) =>
-    async function (dispatch: Dispatch) {
-        await users.login(email, password);
-        dispatch(login(email, password));
-        location.pathname = RouteConfig.Whitepaper.path;
-    };
-
-/** thunk that implements user changing password */
-export const changeUserPassword = (password: string, newPassword: string) =>
-    async function (dispatch: Dispatch) {
-        await users.changePassword(password, newPassword);
-        dispatch(changePassword(password, newPassword));
-        location.pathname = RouteConfig.MarketPlace.path;
-    };
-
-/** thunk that implements user reset password */
-export const recoverUserPassword = (password: string) =>
-    async function (dispatch: Dispatch) {
-        await users.recoverPassword(password);
-        dispatch(recoverPassword(password));
-        location.pathname = RouteConfig.SignIn.path;
-    };

@@ -3,14 +3,16 @@
 
 import { SetStateAction, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 
 import { UserClient } from '@/api/user';
 import { UserService } from '@/user/service';
 import { Validator } from '@/user/validation';
+import { RouteConfig } from '@/app/router';
 
 import { useQueryToken } from '@/app/hooks/useQueryToken';
 
-import { recoverUserPassword } from '@/app/store/actions/users';
+import { recoverPassword } from '@/app/store/actions/users';
 
 import { UserDataArea } from '@components/common/UserDataArea';
 
@@ -69,7 +71,17 @@ const RecoverPassword: React.FC = () => {
 
         return isValidForm;
     };
-
+    /** implements recover of user password */
+    const recoverUserPassword = (password: string) =>
+    async function (dispatch: Dispatch) {
+        try {
+            await users.recoverPassword(password);
+            dispatch(recoverPassword(password));
+            location.pathname = RouteConfig.SignIn.path;
+        } catch (error: any) {
+            /** TODO: it will be reworked with notification system */
+        }
+    };
     /** sign in user data */
     const handleSubmit = (e: any) => {
         e.preventDefault();
@@ -78,11 +90,7 @@ const RecoverPassword: React.FC = () => {
             return;
         };
 
-        try {
-            dispatch(recoverUserPassword(password));
-        } catch (error) {
-            /** TODO: it will be reworked with notification system */
-        }
+        dispatch(recoverUserPassword(password));
     };
     /** user datas for recover password */
     const passwords = [
