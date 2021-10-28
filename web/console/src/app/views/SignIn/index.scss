@@ -135,6 +135,13 @@
                 }
             }
 
+            &__email-check,
+            &__name-check,
+            &__surname-check,
+            &__password-check {
+                background-image: url("@static/img/registerPage/check.svg");
+            }
+
             &__email-error,
             &__name-error,
             &__surname-error,
