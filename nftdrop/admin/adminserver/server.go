@@ -80,19 +80,19 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 		return nil, Error.Wrap(err)
 	}
 
-	router := mux.NewRouter().StrictSlash(true)
+	router := mux.NewRouter()
 	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
 	router.HandleFunc("/login", authController.Login).Methods(http.MethodPost, http.MethodGet)
 	router.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 
-	adminsRouter := router.PathPrefix("/admins").Subrouter().StrictSlash(true)
+	adminsRouter := router.PathPrefix("/admins").Subrouter()
 	adminsRouter.Use(server.withAuth)
 	adminsController := controllers.NewAdmins(log, admins, server.templates.admin)
 	adminsRouter.HandleFunc("", adminsController.List).Methods(http.MethodGet)
 	adminsRouter.HandleFunc("/create", adminsController.Create).Methods(http.MethodGet, http.MethodPost)
 	adminsRouter.HandleFunc("/update/{id}", adminsController.Update).Methods(http.MethodGet, http.MethodPost)
 
-	whitelistRouter := router.PathPrefix("/whitelist").Subrouter().StrictSlash(true)
+	whitelistRouter := router.PathPrefix("/whitelist").Subrouter()
 	whitelistRouter.Use(server.withAuth)
 	whitelistController := controllers.NewWhitelist(log, whitelist, server.templates.whitelist)
 	whitelistRouter.HandleFunc("", whitelistController.List).Methods(http.MethodGet)
@@ -100,7 +100,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	whitelistRouter.HandleFunc("/delete/{address}", whitelistController.Delete).Methods(http.MethodGet)
 	whitelistRouter.HandleFunc("/set-password", whitelistController.SetPassword).Methods(http.MethodGet, http.MethodPost)
 
-	subscribersRouter := router.PathPrefix("/subscribers").Subrouter().StrictSlash(true)
+	subscribersRouter := router.PathPrefix("/subscribers").Subrouter()
 	subscribersRouter.Use(server.withAuth)
 	subscribersController := controllers.NewSubscribers(log, subscribers, server.templates.subscribers)
 	subscribersRouter.HandleFunc("", subscribersController.List).Methods(http.MethodGet)

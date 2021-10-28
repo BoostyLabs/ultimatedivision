@@ -24,10 +24,7 @@ var (
 
 // SubscribersTemplates holds all subscribers related templates.
 type SubscribersTemplates struct {
-	Create     *template.Template
-	List       *template.Template
-	GetByEmail *template.Template
-	Delete     *template.Template
+	List *template.Template
 }
 
 // Subscribers is a mvc controller that handles all subscribers related views.
