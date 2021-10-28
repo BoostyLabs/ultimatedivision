@@ -11,6 +11,7 @@ import (
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/pkg/cryptoutils"
 )
+
 // Crypto provides access to all operations related to crypto payment.
 type Crypto interface {
 	// TopUpBalance tops up balance of user.
@@ -24,7 +25,7 @@ type UDT interface {
 	// BuyLootbox buys certain lootbox.
 	BuyLootbox(ctx context.Context, userID uuid.UUID, lootboxType lootboxes.Type) error
 	// BuyCard buys certain card.
-	BuyCard(ctx context.Context, uuid2, lotID uuid.UUID) error
+	BuyCard(ctx context.Context, userID, lotID uuid.UUID) error
 	// SellCard sells card.
 	SellCard(ctx context.Context, userID uuid.UUID, cardID uuid.UUID) error
 	// MakeBid makes bid on lot in the marketplace.
