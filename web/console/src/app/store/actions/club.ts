@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
+import { ExactCardPath } from '@/app/types/club';
 import {
     Club,
     Formations,
@@ -39,11 +40,6 @@ export const setClub = (club: Club) => ({
 export const cardSelectionVisibility = (isVisible: boolean) => ({
     type: SELECTION_VISIBILITY,
     isVisible,
-});
-
-export const removeCard = (index: dragParamType = DEFAULT_CARD_INDEX) => ({
-    type: REMOVE_CARD,
-    index,
 });
 
 /** Selection position of card which should be added */
@@ -113,17 +109,26 @@ export const setTactic = (squad: Squad, tactic: TacticsType) =>
     dispatch(setClub(club));
   };
 
-export const addCard = ({
-  squad,
-  cardId,
-  position,
-}: {
-  squad: Squad;
-  cardId: string;
-  position: number;
-}) =>
+export const addCard = (path: ExactCardPath) =>
   async function (dispatch: Dispatch) {
-    await service.addCard({ squad, cardId, position });
+    await service.addCard(path);
     const club = await service.getClub();
     dispatch(setClub(club));
   };
+
+export const deleteCard = (path: ExactCardPath) =>
+  async function (dispatch: Dispatch) {
+    await service.deleteCard(path)
+    const club = await service.getClub();
+    dispatch(setClub(club));
+  }
+
+export const changeCardPosition = (currencCard: ExactCardPath, existCard?: ExactCardPath) =>
+  async function (dispatch: Dispatch) {
+    console.log("current:", currencCard, "exist:", existCard)
+    await service.changeCardPosition(currencCard);
+    existCard &&
+      await service.changeCardPosition(existCard);
+    const club = await service.getClub()
+    dispatch(setClub(club))
+  }

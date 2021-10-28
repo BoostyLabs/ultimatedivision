@@ -2,15 +2,20 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { PlayerCard } from '@components/common/PlayerCard';
+import { useDispatch, useSelector } from 'react-redux';
 import { Card } from '@/card';
-import { removeCard } from '@/app/store/actions/club';
+import { ExactCardPath } from '@/app/types/club';
+import { deleteCard } from '@/app/store/actions/club';
+import { RootState } from '@/app/store';
+
+import { PlayerCard } from '@components/common/PlayerCard';
+
 
 import './index.scss';
 
 export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card, index, place }) => {
     const dispatch = useDispatch();
+    const fieldSetup = useSelector((state: RootState) => state.clubReducer);
     const [visibility, changeVisibility] = useState(false);
     const style = visibility ? 'block' : 'none';
 
@@ -23,7 +28,7 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; p
     function handleDeletion(e: React.MouseEvent<HTMLInputElement>) {
         e.stopPropagation();
         e.preventDefault();
-        dispatch(removeCard(index));
+        dispatch(deleteCard(new ExactCardPath(fieldSetup.squad, card.id)));
     }
 
     return (

@@ -1,7 +1,9 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import path from 'path/posix';
 import { ClubClient } from '@/api/club';
+import { ExactCardPath } from '@/app/types/club';
 import { Club, Squad } from '.';
 
 /**
@@ -31,18 +33,18 @@ export class ClubService {
     };
 
     /** adding card to squad cards list */
-    public async addCard({ squad, cardId, position }: {squad: Squad; cardId: string; position: number }): Promise<void> {
-        return await this.club.addCard({ squad, cardId, position });
+    public async addCard(path: ExactCardPath): Promise<void> {
+        return await this.club.addCard(path);
     };
 
     /** change position of existing card */
-    public async changeCardPosition({ clubId, squadId, cardId, position }: { clubId: string; squadId: string; cardId: string; position: number }): Promise<void> {
-        return await this.club.changeCardPosition({ clubId, squadId, cardId, position });
+    public async changeCardPosition(path: ExactCardPath): Promise<void> {
+        return await this.club.changeCardPosition(path);
     };
 
     /** delete card from squad cards list */
-    public async deleteCard({ clubId, squadId, cardId }: { clubId: string; squadId: string; cardId: string }): Promise<void> {
-        return await this.club.deleteCard({ clubId, squadId, cardId });
+    public async deleteCard(path: ExactCardPath): Promise<void> {
+        return await this.club.deleteCard(path);
     };
 
     /** updating squad tactic, formation or captain */

@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '@/api/index';
+import { ExactCardPath } from '@/app/types/club';
 import { Club, Squad } from '@/club';
 
 /** ClubClient base implementation */
@@ -36,29 +37,29 @@ export class ClubClient extends APIClient {
         return await response.json();
     }
     /** method calls get method from APIClient */
-    public async addCard({ squad, cardId, position }: { squad: Squad; cardId: string; position: number }): Promise<void> {
+    public async addCard(path: ExactCardPath): Promise<void> {
         const response = await this.http.post(
-            `${this.ROOT_PATH}/clubs/${squad.clubId}/squads/${squad.id}/cards/${cardId}`,
-            JSON.stringify({ position })
+            `${this.ROOT_PATH}/clubs/${path.squad.clubId}/squads/${path.squad.id}/cards/${path.cardId}`,
+            JSON.stringify({ position: path.position })
         );
         if (!response.ok) {
             await this.handleError(response);
         }
     }
     /** method calls get method from APIClient */
-    public async changeCardPosition({ clubId, squadId, cardId, position }: { clubId: string; squadId: string; cardId: string; position: number }): Promise<void> {
+    public async changeCardPosition(path: ExactCardPath): Promise<void> {
         const response = await this.http.patch(
-            `${this.ROOT_PATH}/clubs/${clubId}/squads/${squadId}/cards/${cardId}`,
-            JSON.stringify({ position })
+            `${this.ROOT_PATH}/clubs/${path.squad.clubId}/squads/${path.squad.id}/cards/${path.cardId}`,
+            JSON.stringify({ position: path.position })
         );
         if (!response.ok) {
             await this.handleError(response);
         }
     }
     /** method calls get method from APIClient */
-    public async deleteCard({ clubId, squadId, cardId }: { clubId: string; squadId: string; cardId: string }): Promise<void> {
+    public async deleteCard(path: ExactCardPath): Promise<void> {
         const response = await this.http.delete(
-            `${this.ROOT_PATH}/clubs/${clubId}/squads/${squadId}/cards/${cardId}`
+            `${this.ROOT_PATH}/clubs/${path.squad.clubId}/squads/${path.squad.id}/cards/${path.cardId}`
         );
         if (!response.ok) {
             await this.handleError(response);

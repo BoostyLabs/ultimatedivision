@@ -8,16 +8,20 @@ import { FootballFieldCardSelection } from
 import { FootballFieldPlayingArea } from
     '@components/FootballField/FotballFieldPlayingArea';
 import { RootState } from '@/app/store';
-import { getClub, removeCard } from '@/app/store/actions/club';
+import { deleteCard, getClub } from '@/app/store/actions/club';
 
 import './index.scss';
+import { ExactCardPath } from '@/app/types/club';
 
 const FootballField: React.FC = () => {
     const dispatch = useDispatch();
     dispatch(getClub());
-    const fieldSetup = useSelector((state: RootState) => state.clubReducer.options);
-    const cardSelectionVisibility = useSelector((state: RootState) => state.clubReducer.options.showCardSeletion);
+    const dragStartIndex = useSelector(
+        (state: RootState) => state.clubReducer.options.dragStart
+    );
 
+    const fieldSetup = useSelector((state: RootState) => state.clubReducer);
+    const cardSelectionVisibility = useSelector((state: RootState) => state.clubReducer.options.showCardSeletion);
 
     /** prevent default user agent action */
     function dragOverHandler(e: DragEvent<HTMLDivElement>) {
@@ -27,7 +31,8 @@ const FootballField: React.FC = () => {
     /** TO DO: ADD TYPE FOR Event */
     function drop(e: any) {
         if (e.target.className === 'football-field__wrapper') {
-            dispatch(removeCard(fieldSetup.dragStart));
+            dragStartIndex &&
+            dispatch(deleteCard(new ExactCardPath(fieldSetup.squad, fieldSetup.squadCards[dragStartIndex].cardId)));
         }
     };
 
