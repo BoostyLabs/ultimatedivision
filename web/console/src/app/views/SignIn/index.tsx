@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
@@ -22,6 +22,7 @@ import './index.scss';
 
 const SignIn: React.FC = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
@@ -56,7 +57,7 @@ const SignIn: React.FC = () => {
 
         try {
             await dispatch(loginUser(email, password));
-            location.pathname = RouteConfig.MarketPlace.path;
+            history.push(RouteConfig.MarketPlace.path);
         } catch (error: any) {
             toast.error('Incorrect email or password', {
                 position: toast.POSITION.TOP_RIGHT,

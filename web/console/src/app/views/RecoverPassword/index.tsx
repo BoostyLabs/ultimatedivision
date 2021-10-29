@@ -3,6 +3,7 @@
 
 import { SetStateAction, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { UserClient } from '@/api/user';
@@ -22,6 +23,7 @@ import './index.scss';
 
 const ResetPassword: React.FC = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const token = useQueryToken();
 
     const [errorMessage, setErrorMessage]
@@ -87,7 +89,7 @@ const ResetPassword: React.FC = () => {
                 position: toast.POSITION.TOP_RIGHT,
             });
             await setTimeout(() => {
-                location.pathname = AuthRouteConfig.SignIn.path;
+                history.push(AuthRouteConfig.SignIn.path);
             }, DELAY);
         } catch (error: any) {
             toast.error('Please, make sure your password is correct.', {

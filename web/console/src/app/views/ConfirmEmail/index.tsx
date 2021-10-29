@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { UserClient } from '@/api/user';
 import { UserService } from '@/user/service';
@@ -12,6 +13,7 @@ import { AuthRouteConfig } from '@/app/routes';
 /** TODO: Rework this view after design solution */
 const ConfirmEmail: React.FC = () => {
     const token = useQueryToken();
+    const history = useHistory();
 
     const [errorMessage, setErrorMessage]
         = useState<SetStateAction<null | string>>(null);
@@ -26,10 +28,9 @@ const ConfirmEmail: React.FC = () => {
             await users.checkEmailToken(token);
 
             await setTimeout(() => {
-                location.pathname = AuthRouteConfig.SignIn.path;
+                history.push(AuthRouteConfig.SignIn.path)
             }, DELAY);
         } catch (error: any) {
-            /** TODO: handles error */
             setErrorMessage('Email verification failed');
         };
     };
