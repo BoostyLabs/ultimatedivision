@@ -17,6 +17,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
+	"ultimatedivision/divisions"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
@@ -200,6 +201,12 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             start_time    TIMESTAMP WITH TIME ZONE                                        NOT NULL,
             end_time      TIMESTAMP WITH TIME ZONE                                        NOT NULL,
             period        INTEGER                                                         NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS divisions (
+            id                   BYTEA PRIMARY KEY        NOT NULL,
+            name                 VARCHAR                  NOT NULL,
+            percent_of_passing   INTEGER                  NOT NULL,
+            created_at           TIMESTAMP WITH TIME ZONE NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -253,4 +260,9 @@ func (db *database) Marketplace() marketplace.DB {
 // Queue provided access to accounts db.
 func (db *database) Queue() queue.DB {
 	return &queueHub{hub: NewHub()}
+}
+
+// Divisions provides access to accounts db.
+func (db *database) Divisions() divisions.DB {
+	return &divisionsDB{conn: db.conn}
 }

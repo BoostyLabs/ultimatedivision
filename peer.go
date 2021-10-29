@@ -20,6 +20,7 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/console/emails"
+	"ultimatedivision/divisions"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
@@ -57,6 +58,9 @@ type DB interface {
 
 	// Queue provides access to queue db.
 	Queue() queue.DB
+
+	// Queue provides access to queue db.
+	Divisions() divisions.DB
 
 	// Close closes underlying db connection.
 	Close() error
