@@ -19,9 +19,6 @@ export const LootboxKeeping: React.FC<{ handleOpening: Dispatch<SetStateAction<b
     const FIRST_CARD_INDEX: number = 0;
     const LAST_CARD_INDEX: number = 4;
 
-    const FIRST_CARD_INDEX: number = 0;
-    const LAST_CARD_INDEX: number = 4;
-
     return (
         <div className="box-keeping">
             <div className="box-keeping__wrapper">
