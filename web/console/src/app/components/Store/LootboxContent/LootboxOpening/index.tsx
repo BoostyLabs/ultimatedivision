@@ -13,7 +13,7 @@ import './index.scss';
 
 export const LootboxOpening = () => {
     const FIRST_CARD = 0;
-    const REGULAR_CARDS_AMOUNT = 5;
+    const REGULAR_CARDS_AMOUNT: number = 5;
     const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
 
     const box = boxStyle(cards.length);
