@@ -22,7 +22,7 @@ const Card: React.FC = () => {
     /** implements opening new card */
     async function openCard() {
         try {
-            await dispatch(openUserCard(id))
+            await dispatch(openUserCard(id));
         } catch (error: any) {
             /** TODO: it will be reworked with notification system */
         };
