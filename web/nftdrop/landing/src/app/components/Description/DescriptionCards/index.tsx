@@ -51,36 +51,36 @@ const cards = [
     },
 ];
 
-const delay = 1500;
+const animationDelay = 1000;
 
 export const DescriptionCards = () => {
-    const [index, setIndex] = useState<number>(0);
-    // const [card, setCard] = useState<string>(desktopCard_1);
+    const [cardIndex, setCardIndex] = useState<number>(0);
     const timeoutRef = useRef<any>(null);
 
-    function resetTimeout() {
+    const resetTimeout = () => {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
-    }
+    };
 
-    function sets() {
-        setIndex((prevIndex) =>
-            prevIndex === cards.length - 1 ? 0 : prevIndex + 1
+    const generateCardTimeout = () => {
+        setCardIndex((prevCardIndex) =>
+            prevCardIndex === cards.length - 1 ? 0 : prevCardIndex + 1
         );
-        timeoutRef.current = setTimeout(sets, delay);
-    }
+
+        timeoutRef.current = setTimeout(generateCardTimeout, animationDelay);
+    };
 
     useEffect(() => {
         resetTimeout();
 
         //@ts-ignore
-        timeoutRef.current = setTimeout(sets, delay);
+        timeoutRef.current = setTimeout(generateCardTimeout, animationDelay);
 
         return () => {
             resetTimeout();
         };
-    }, [index]);
+    }, [cardIndex]);
 
     return (
         <div className="description-cards" id="cards">
@@ -98,10 +98,8 @@ export const DescriptionCards = () => {
             </div>
             <div className="description-cards__wrapper">
                 <div
-                    className={`description-cards__animate-block-${index}`}
-                    // style={{ transform: `translate3d(${-index * 100}%, 0, 0)` }}
+                    className={`description-cards__animate-block-${cardIndex}`}
                 >
-                    {/* <picture> */}
                     {cards.map((card, i) => (
                         <img
                             className="description-cards__card"
@@ -110,43 +108,6 @@ export const DescriptionCards = () => {
                             loading="lazy"
                         />
                     ))}
-
-                    {/* <img
-                        className="description-cards__card"
-                        src={card}
-                        alt="cards"
-                        // loading="lazy"
-                    /> */}
-
-                    {/* <source
-                                key={i}
-                                media="(min-width: 801px)"
-                                srcSet={card.desktop}
-                                type="image/avif"
-                            />
-                            <source
-                                key={i}
-                                media="(max-width: 800px)"
-                                srcSet={card.tablet}
-                                type="image/avif"
-                            /> */}
-                    {/* </picture> */}
-                    {/* <source
-                        media="(min-width: 601px)"
-                        srcSet={desktopCard_1}
-                        type="image/avif"
-                    />
-                    <source
-                        media="(max-width: 600px)"
-                        srcSet={desktopCard_1}
-                        type="image/avif"
-                    />
-                    <img
-                        className="description-cards__card"
-                        src={desktopCard_1}
-                        alt="cards"
-                        loading="lazy"
-                    /> */}
                 </div>
             </div>
         </div>

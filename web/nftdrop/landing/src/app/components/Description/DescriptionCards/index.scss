@@ -14,15 +14,6 @@
     }
 }
 
-// %animation-image {
-//     display: inline-block;
-//     width: 100%;
-//     height: 100%;
-//     border-radius: 40px;
-//     animation-name: example;
-//     opacity: 1;
-// }
-
 .description-cards {
     display: flex;
     align-items: center;
@@ -69,36 +60,6 @@
         margin-right: 150px;
     }
 
-    &__animate-block {
-        @extend %animation-block;
-        // img {
-        //     @extend %animation-image;
-
-        //     animation-duration: 4.1s;
-        //     animation-iteration-count: infinite;
-        //     animation-fill-mode: both;
-        // }
-
-        // @keyframes example {
-
-        //     0% {
-        //         opacity: 1;
-        //     }
-
-        //     // 30% {
-        //     //     opacity: 1;
-        //     // }
-
-        //     // 75% {
-        //     //     opacity: 1;
-        //     // }
-
-        //     100% {
-        //         opacity: 0;
-        //     }
-        // }
-    }
-
     &__animate-block-0 {
         transform: translate3d(0%, 0, 0);
         display: flex;
@@ -111,18 +72,18 @@
             border-radius: 40px;
             animation-name: example;
             opacity: 1;
-            animation-duration: 1.5s;
+            animation-duration: 1s;
             animation-iteration-count: infinite;
             animation-fill-mode: both;
         }
 
         @keyframes example {
 
-            from {
+            0% {
                 opacity: 1;
             }
 
-            to {
+            100% {
                 opacity: 0;
             }
         }
@@ -139,20 +100,20 @@
             height: 100%;
             border-radius: 40px;
             animation-name: example;
-            opacity: 0;
-            animation-duration: 1.5s;
+            opacity: 1;
+            animation-duration: 1s;
             animation-iteration-count: infinite;
             animation-fill-mode: both;
         }
 
         @keyframes example {
 
-            from {
-                opacity: 0;
+            0% {
+                opacity: 1;
             }
 
-            to {
-                opacity: 1;
+            100% {
+                opacity: 0;
             }
         }
     }
@@ -169,18 +130,18 @@
             border-radius: 40px;
             animation-name: example;
             opacity: 1;
-            animation-duration: 1.5s;
+            animation-duration: 1s;
             animation-iteration-count: infinite;
             animation-fill-mode: both;
         }
 
         @keyframes example {
 
-            from {
+            0% {
                 opacity: 1;
             }
 
-            to {
+            100% {
                 opacity: 0;
             }
         }
@@ -197,20 +158,20 @@
             height: 100%;
             border-radius: 40px;
             animation-name: example;
-            opacity: 0;
-            animation-duration: 1.5s;
+            opacity: 1;
+            animation-duration: 1s;
             animation-iteration-count: infinite;
             animation-fill-mode: both;
         }
 
         @keyframes example {
 
-            from {
-                opacity: 0;
+            0% {
+                opacity: 1;
             }
 
-            to {
-                opacity: 1;
+            100% {
+                opacity: 0;
             }
         }
     }
@@ -227,18 +188,18 @@
             border-radius: 40px;
             animation-name: example;
             opacity: 1;
-            animation-duration: 1.5s;
+            animation-duration: 1s;
             animation-iteration-count: infinite;
             animation-fill-mode: both;
         }
 
         @keyframes example {
 
-            from {
+            0% {
                 opacity: 1;
             }
 
-            to {
+            100% {
                 opacity: 0;
             }
         }
@@ -255,20 +216,20 @@
             height: 100%;
             border-radius: 40px;
             animation-name: example;
-            opacity: 0;
-            animation-duration: 1.5s;
+            opacity: 1;
+            animation-duration: 1s;
             animation-iteration-count: infinite;
             animation-fill-mode: both;
         }
 
         @keyframes example {
 
-            from {
-                opacity: 0;
+            0% {
+                opacity: 1;
             }
 
-            to {
-                opacity: 1;
+            100% {
+                opacity: 0;
             }
         }
     }
@@ -285,18 +246,18 @@
             border-radius: 40px;
             animation-name: example;
             opacity: 1;
-            animation-duration: 1.5s;
+            animation-duration: 1s;
             animation-iteration-count: infinite;
             animation-fill-mode: both;
         }
 
         @keyframes example {
 
-            from {
+            0% {
                 opacity: 1;
             }
 
-            to {
+            100% {
                 opacity: 0;
             }
         }
@@ -313,20 +274,20 @@
             height: 100%;
             border-radius: 40px;
             animation-name: example;
-            opacity: 0;
-            animation-duration: 1.5s;
+            opacity: 1;
+            animation-duration: 1s;
             animation-iteration-count: infinite;
             animation-fill-mode: both;
         }
 
         @keyframes example {
 
-            from {
-                opacity: 0;
+            0% {
+                opacity: 1;
             }
 
-            to {
-                opacity: 1;
+            100% {
+                opacity: 0;
             }
         }
     }
