@@ -1,21 +1,29 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { DragEvent } from 'react';
+import { DragEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FootballFieldCardSelection } from
     '@components/FootballField/FootballFieldCardSelection';
 import { FootballFieldPlayingArea } from
     '@components/FootballField/FotballFieldPlayingArea';
 import { RootState } from '@/app/store';
-import { deleteCard, getClub } from '@/app/store/actions/club';
+import { deleteCard, getClub, createClub } from '@/app/store/actions/club';
 
 import './index.scss';
 import { ExactCardPath } from '@/app/types/club';
 
 const FootballField: React.FC = () => {
     const dispatch = useDispatch();
-    dispatch(getClub());
+    useEffect(() => {
+        (async function setClub() {
+            try {
+                await dispatch(getClub());
+            } catch (error: any) {
+                await dispatch(createClub())
+            }
+        })()
+    }, [])
     const dragStartIndex = useSelector(
         (state: RootState) => state.clubReducer.options.dragStart
     );
@@ -32,7 +40,7 @@ const FootballField: React.FC = () => {
     function drop(e: any) {
         if (e.target.className === 'football-field__wrapper') {
             dragStartIndex &&
-            dispatch(deleteCard(new ExactCardPath(fieldSetup.squad, fieldSetup.squadCards[dragStartIndex].cardId)));
+                dispatch(deleteCard(new ExactCardPath(fieldSetup.squad, fieldSetup.squadCards[dragStartIndex].cardId)));
         }
     };
 
