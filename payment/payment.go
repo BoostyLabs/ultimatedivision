@@ -12,16 +12,12 @@ import (
 	"ultimatedivision/pkg/cryptoutils"
 )
 
-// Crypto provides access to all operations related to crypto payment.
-type Crypto interface {
+// Payment provides access to all operations related to currency.
+type Payment interface {
 	// TopUpBalance tops up balance of user.
 	TopUpBalance(ctx context.Context, userID uuid.UUID, walletAddress cryptoutils.Address) error
 	// Withdraw withdraws money to a crypto wallet.
 	Withdraw(ctx context.Context, userID uuid.UUID, walletAddress cryptoutils.Address) error
-}
-
-// UDT provides access to all operations related to ultimatedivision token payment.
-type UDT interface {
 	// BuyLootbox buys certain lootbox.
 	BuyLootbox(ctx context.Context, userID uuid.UUID, lootboxType lootboxes.Type) error
 	// BuyCard buys certain card.
@@ -30,10 +26,4 @@ type UDT interface {
 	SellCard(ctx context.Context, userID uuid.UUID, cardID uuid.UUID) error
 	// MakeBid makes bid on lot in the marketplace.
 	MakeBid(ctx context.Context, userID, lotID uuid.UUID) error
-}
-
-// Payment provides access to all operations related to currency.
-type Payment interface {
-	Crypto
-	UDT
 }
