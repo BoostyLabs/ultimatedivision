@@ -4,6 +4,11 @@
 import { lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
+const SignIn = lazy(() => import('@/app/views/SignIn'));
+const SignUp = lazy(() => import('@/app/views/SignUp'));
+const ChangePassword = lazy(() => import('@/app/views/ChangePassword'));
+const ConfirmEmail = lazy(() => import('@/app/views/ConfirmEmail'));
+const RecoverPassword = lazy(() => import('@/app/views/RecoverPassword'));
 const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
 const Club = lazy(() => import('@/app/views/ClubPage'));
 const Card = lazy(() => import('@/app/views/CardPage'));
@@ -12,6 +17,7 @@ const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
 const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
 const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
 const Store = lazy(() => import('@/app/views/StorePage'));
+const Navbar = lazy(() => import('@/app/components/common/Navbar'));
 
 import Summary from '@components/WhitePaper/Summary';
 import GameMechanics from '@components/WhitePaper/GameMechanics';
@@ -30,7 +36,7 @@ export class ComponentRoutes {
         public component: React.FC<any>,
         public exact: boolean,
         public children?: ComponentRoutes[]
-    ) {}
+    ) { }
     /** Method for creating child subroutes path */
     public with(
         child: ComponentRoutes,
@@ -46,7 +52,48 @@ export class ComponentRoutes {
 
         return this;
     }
-}
+};
+/** Route config that implements auth actions */
+export class AuthRouteConfig {
+    public static SignIn: ComponentRoutes = new ComponentRoutes(
+        '/sign-in',
+        SignIn,
+        true
+    );
+    public static SignUp: ComponentRoutes = new ComponentRoutes(
+        '/sign-up',
+        SignUp,
+        true
+    );
+    public static ResetPassword: ComponentRoutes = new ComponentRoutes(
+        '/change-password',
+        ChangePassword,
+        true
+    );
+    public static ConfirmEmail: ComponentRoutes = new ComponentRoutes(
+        '/email/confirm',
+        ConfirmEmail,
+        true,
+    );
+    public static RecoverPassword: ComponentRoutes = new ComponentRoutes(
+        '/recover-password',
+        RecoverPassword,
+        true,
+    );
+    public static Default: ComponentRoutes = new ComponentRoutes(
+        '/',
+        SignIn,
+        true
+    );
+    public static routes: ComponentRoutes[] = [
+        AuthRouteConfig.ConfirmEmail,
+        AuthRouteConfig.Default,
+        AuthRouteConfig.RecoverPassword,
+        AuthRouteConfig.ResetPassword,
+        AuthRouteConfig.SignIn,
+        AuthRouteConfig.SignUp,
+    ];
+};
 
 /** Route config implementation */
 export class RouteConfig {
@@ -130,13 +177,7 @@ export class RouteConfig {
         Fund,
         true
     );
-    public static Default: ComponentRoutes = new ComponentRoutes(
-        '/',
-        MarketPlace,
-        true
-    );
     public static routes: ComponentRoutes[] = [
-        RouteConfig.Default,
         RouteConfig.FootballField,
         RouteConfig.MarketPlace,
         RouteConfig.Club,
@@ -156,11 +197,11 @@ export class RouteConfig {
             RouteConfig.Fund,
         ]),
     ];
-}
+};
 
 export const Routes = () =>
     <Switch>
-        {RouteConfig.routes.map((route, index) =>
+        {AuthRouteConfig.routes.map((route, index) =>
             <Route
                 key={index}
                 path={route.path}
@@ -168,5 +209,15 @@ export const Routes = () =>
                 exact={route.exact}
             />
         )}
-    </Switch>;
-
+        <Route>
+            <Navbar />
+            {RouteConfig.routes.map((route, index) =>
+                <Route
+                    key={index}
+                    path={route.path}
+                    component={route.component}
+                    exact={route.exact}
+                />
+            )}
+        </Route>
+    </Switch >;
