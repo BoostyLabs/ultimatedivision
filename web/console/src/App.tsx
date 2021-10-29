@@ -8,7 +8,6 @@ import { ToastContainer } from 'react-toastify';
 import { Routes } from '@/app/routes';
 import { AboutMenu } from '@components/common/AboutMenu';
 
-
 /** initial App setup */
 export function App() {
     return (
@@ -30,6 +29,6 @@ export function App() {
             </BrowserRouter>
         </Suspense>
     );
-}
+};
 
 export default App;
