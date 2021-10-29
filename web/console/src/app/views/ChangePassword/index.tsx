@@ -37,7 +37,7 @@ const ChangePassword: React.FC = () => {
     const userClient = new UserClient();
     const users = new UserService(userClient);
     /** sign in user data */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {

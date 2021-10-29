@@ -74,7 +74,7 @@ const ResetPassword: React.FC = () => {
 
     const DELAY: number = 3000;
     /** sign in user data */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
