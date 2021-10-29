@@ -29,7 +29,6 @@ export const MintButton: React.FC = () => {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
                 handleConnect(true);
             } catch (error: any) {
-                console.log(error.message);
                 toast.error("Please open metamask manually!", {
                     position: toast.POSITION.TOP_RIGHT,
                     theme: "colored"
