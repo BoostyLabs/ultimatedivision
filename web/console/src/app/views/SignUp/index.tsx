@@ -4,7 +4,7 @@
 import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-
+import { toast } from 'react-toastify';
 
 import { registerUser } from '@/app/store/actions/users';
 import { AuthRouteConfig } from '@/app/routes';
@@ -82,9 +82,16 @@ const SignUp: React.FC = () => {
                 firstName,
                 lastName,
             }));
-            location.pathname = AuthRouteConfig.SignIn.path;
-        } catch (error) {
-            /** TODO: it will be reworked with notification system */
+            toast.success('Successfully! Please, check your mail box and confirm email.', {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+        } catch (error: any) {
+            /** TODO: handles 400 error when email already in use */
+            /** Just for test rigth now */
+            toast.error('Someting wrong, please, try again.', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         };
     };
 
@@ -115,7 +122,7 @@ const SignUp: React.FC = () => {
             placeHolder: 'E-mail',
             onChange: setEmail,
             className: 'register__sign-up__sign-form__email',
-            type: 'email',
+            type: 'text',
             error: emailError,
             clearError: setEmailError,
             validate: Validator.email,

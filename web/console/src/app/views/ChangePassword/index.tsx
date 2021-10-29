@@ -3,10 +3,11 @@
 
 import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
-import { changeUserPassword } from '@/app/store/actions/users';
-import { AuthRouteConfig, RouteConfig } from '@/app/routes';
+import { UserClient } from '@/api/user';
+import { UserService } from '@/user/service';
+import { AuthRouteConfig } from '@/app/routes';
 import { Validator } from '@/user/validation';
 
 import { UserDataArea } from '@components/common/UserDataArea';
@@ -17,32 +18,26 @@ import goBack from '@static/img/registerPage/goback.svg';
 import './index.scss';
 
 const ChangePassword: React.FC = () => {
-    const dispatch = useDispatch();
     /** controlled values for form inputs */
-    const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError]
-        = useState<SetStateAction<null | string>>(null);
-    const [newPassword, setNewPassword] = useState('');
-    const [newPasswordError, setNewPasswordError]
+    const [email, setEmail] = useState('');
+    const [emailError, setEmailError]
         = useState<SetStateAction<null | string>>(null);
     /** checks if values does't valid then set an error messages */
     const validateForm: () => boolean = () => {
         let isValidForm = true;
 
-        if (!Validator.password(password)) {
-            setPasswordError('Old password is not valid');
-            isValidForm = false;
-        };
-
-        if (!Validator.password(newPassword)) {
-            setNewPasswordError('New password is not valid');
+        if (!Validator.email(email)) {
+            setEmailError('Email is not valid');
             isValidForm = false;
         };
 
         return isValidForm;
     };
+
+    const userClient = new UserClient();
+    const users = new UserService(userClient);
     /** sign in user data */
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
@@ -50,33 +45,28 @@ const ChangePassword: React.FC = () => {
         };
 
         try {
-            await dispatch(changeUserPassword(password, newPassword));
-            location.pathname = RouteConfig.MarketPlace.path;
-        } catch (error) {
-            /** TODO: it will be reworked with notification system */
+            await users.sendEmailForResetPassword(email);
+            toast.success('Successfully! Please, check your mail box.', {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+        } catch (error: any) {
+            toast.error('Please, make sure your email is correct.', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         };
     };
     /** user datas for registration */
     const resetPasswordDatas = [
         {
-            value: password,
-            placeHolder: 'Old Password',
-            onChange: setPassword,
-            className: 'register__reset__sign-form__password',
-            type: 'password',
-            error: passwordError,
-            clearError: setPasswordError,
-            validate: Validator.password,
-        },
-        {
-            value: newPassword,
-            placeHolder: 'New Password',
-            onChange: setNewPassword,
-            className: 'register__reset__sign-form__password',
-            type: 'password',
-            error: newPasswordError,
-            clearError: setNewPasswordError,
-            validate: Validator.password,
+            value: email,
+            placeHolder: 'Enter your email',
+            onChange: setEmail,
+            className: 'register__reset__sign-form__email',
+            type: 'text',
+            error: emailError,
+            clearError: setEmailError,
+            validate: Validator.email,
         },
     ];
 
@@ -119,7 +109,7 @@ const ChangePassword: React.FC = () => {
                     />)}
                     <input
                         className="register__reset__sign-form__confirm"
-                        value="CHANGE PASSWORD"
+                        value="CONFIRM"
                         type="submit"
                     />
                 </form>

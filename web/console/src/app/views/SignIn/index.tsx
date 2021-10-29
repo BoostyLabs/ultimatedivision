@@ -4,6 +4,7 @@
 import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import { AuthRouteConfig, RouteConfig } from '@/app/routes';
 
@@ -46,7 +47,7 @@ const SignIn: React.FC = () => {
         return isValidForm;
     };
     /** user data that will send to server */
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
@@ -57,7 +58,10 @@ const SignIn: React.FC = () => {
             await dispatch(loginUser(email, password));
             location.pathname = RouteConfig.MarketPlace.path;
         } catch (error: any) {
-            /** TODO: it will be reworked with notification system */
+            toast.error('Incorrect email or password', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         };
     };
     /** user datas for registration */
@@ -121,7 +125,7 @@ const SignIn: React.FC = () => {
                             validate={data.validate}
                         />
                         <Link
-                            to={AuthRouteConfig.ResetPassword.path}
+                            to={AuthRouteConfig.ChangePassword.path}
                             className="register__sign-in__sign-form__forgot-password"
                         >
                             Forgot Password?

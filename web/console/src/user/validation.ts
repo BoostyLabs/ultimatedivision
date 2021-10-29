@@ -5,7 +5,7 @@
 export class Validator {
     /** static method for email field validation */
     static email(email: string): boolean {
-        const re = new RegExp(/^(([^<>()[\],;:\s@"]+([^<>()[\],;:\s@"]+)*)|(".+"))@(([^<>()[\],;:\s@"]+)+[^<>()[\],;:\s@"]{2,})$/, 'i');
+        const re = new RegExp(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/, 'i');
 
         if (!email) {
             return false;

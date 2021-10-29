@@ -3,6 +3,7 @@
 
 import { SetStateAction, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import { UserClient } from '@/api/user';
 import { UserService } from '@/user/service';
@@ -11,7 +12,7 @@ import { AuthRouteConfig } from '@/app/routes';
 
 import { useQueryToken } from '@/app/hooks/useQueryToken';
 
-import {recoverUserPassword } from '@/app/store/actions/users';
+import { recoverUserPassword } from '@/app/store/actions/users';
 
 import { UserDataArea } from '@components/common/UserDataArea';
 
@@ -19,7 +20,7 @@ import ultimate from '@static/img/registerPage/ultimate.svg';
 
 import './index.scss';
 
-const RecoverPassword: React.FC = () => {
+const ResetPassword: React.FC = () => {
     const dispatch = useDispatch();
     const token = useQueryToken();
 
@@ -71,6 +72,7 @@ const RecoverPassword: React.FC = () => {
         return isValidForm;
     };
 
+    const DELAY: number = 3000;
     /** sign in user data */
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -81,9 +83,17 @@ const RecoverPassword: React.FC = () => {
 
         try {
             await dispatch(recoverUserPassword(password));
-            location.pathname = AuthRouteConfig.SignIn.path;
+            toast.success('Successfully! You will be redirected after 3 seconds', {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+            await setTimeout(() => {
+                location.pathname = AuthRouteConfig.SignIn.path;
+            }, DELAY);
         } catch (error: any) {
-            /** TODO: it will be reworked with notification system */
+            toast.error('Please, make sure your password is correct.', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         }
     };
     /** user datas for recover password */
@@ -151,4 +161,4 @@ const RecoverPassword: React.FC = () => {
     );
 };
 
-export default RecoverPassword;
+export default ResetPassword;

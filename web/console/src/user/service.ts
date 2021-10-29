@@ -35,4 +35,8 @@ export class UserService {
     public async recoverPassword(password: string): Promise<void> {
         await this.users.recoverPassword(password);
     };
+    /** handles user reseting password by email confirmation */
+    public async sendEmailForResetPassword(email: string): Promise<void> {
+        await this.users.sendEmailForResetPassword(email);
+    };
 };
