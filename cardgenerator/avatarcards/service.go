@@ -76,7 +76,7 @@ func (service *Service) Generate(ctx context.Context, count int) ([]CardWithLink
 			break
 		}
 
-		if avatar, err = service.avatars.Generate(ctx, cardWithAvatar.Card, strconv.Itoa(i)); err != nil {
+		if avatar, err = service.avatars.Generate(ctx, cardWithAvatar.Card, strconv.Itoa(i+1)); err != nil {
 			return nil, ErrCardWithLinkToAvatar.Wrap(err)
 		}
 		cardWithAvatar.OriginalURL = avatar.OriginalURL
