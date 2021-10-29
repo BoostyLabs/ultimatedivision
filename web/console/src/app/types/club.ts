@@ -1,7 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Squad } from '@/club';
 const DEFAULT_INDEX = 0;
 /** class for each control in option selection on field */
 export class FieldControl {
@@ -15,10 +14,11 @@ export class FieldControl {
 };
 
 /** class for api methods to declare full path of card inside of club */
-export class ExactCardPath {
+export class ClubCardPathModel {
     /** class implementation */
     constructor(
-        public squad: Squad,
+        public clubId: string,
+        public squadId: string,
         public cardId: string,
         public position: number = DEFAULT_INDEX
     ) { }

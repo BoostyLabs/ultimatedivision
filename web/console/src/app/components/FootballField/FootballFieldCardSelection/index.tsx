@@ -6,7 +6,6 @@ import { RootState } from '@/app/store';
 import { listOfCards } from '@/app/store/actions/cards';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/club';
 import { Card } from '@/card';
-import { Squad } from '@/club';
 import { FilterField } from
     '@components/FootballField/FootballFieldCardSelection/FilterField';
 import { PlayerCard } from '@components/common/PlayerCard';
@@ -25,8 +24,8 @@ export const FootballFieldCardSelection = () => {
     const DELAY = 10;
 
     /** Add card to field, and hide card selection component */
-    function handleClick(squad: Squad, cardId: string, position: number) {
-        dispatch(addCard({ squad, cardId, position }));
+    function handleClick(clubId: string, squadId: string, cardId: string, position: number) {
+        dispatch(addCard({ clubId, squadId, cardId, position }));
         dispatch(cardSelectionVisibility(false));
         setTimeout(() => {
             window.scroll(X_SCROLL_POINT, Y_SCROLL_POINT);
@@ -41,7 +40,7 @@ export const FootballFieldCardSelection = () => {
                     <div
                         key={index}
                         className="card-selection__card"
-                        onClick={() => handleClick(squad, card.id, fieldSetup.options.chosedCard)}
+                        onClick={() => handleClick(squad.clubId, squad.id, card.id, fieldSetup.options.chosedCard)}
                     >
                         <PlayerCard
                             card={card}

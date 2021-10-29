@@ -17,7 +17,7 @@ import {
 } from '@/app/store/actions/club';
 
 import './index.scss';
-import { ExactCardPath } from '@/app/types/club';
+import { ClubCardPathModel } from '@/app/types/club';
 
 export const FootballFieldPlayingArea: React.FC = () => {
     const dispatch = useDispatch();
@@ -31,7 +31,8 @@ export const FootballFieldPlayingArea: React.FC = () => {
         (state: RootState) => state.clubReducer.options.dragStart
     );
 
-    const squad = useSelector((state: RootState) => state.clubReducer);
+    const club = useSelector((state: RootState) => state.clubReducer);
+    const squad = useSelector((state: RootState) => state.clubReducer.squad);
 
     const fieldSetup = useSelector((state: RootState) => state.clubReducer);
 
@@ -91,14 +92,14 @@ export const FootballFieldPlayingArea: React.FC = () => {
         e.stopPropagation();
         if (isDragging && dragStartIndex !== null) {
             const cards = fieldSetup.squadCards;
-            getCard(cards[index].cardId)?
+            getCard(cards[index].cardId) ?
                 dispatch(changeCardPosition(
-                    new ExactCardPath(squad.squad, cards[dragStartIndex].cardId, index),
-                    new ExactCardPath(squad.squad, cards[index].cardId, dragStartIndex)
+                    new ClubCardPathModel(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
+                    new ClubCardPathModel(squad.clubId, squad.id, cards[index].cardId, dragStartIndex)
                 ))
                 :
                 dispatch(changeCardPosition(
-                    new ExactCardPath(squad.squad, cards[dragStartIndex].cardId, index),
+                    new ClubCardPathModel(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
                 ));
         }
 
@@ -116,7 +117,9 @@ export const FootballFieldPlayingArea: React.FC = () => {
     function removeFromArea() {
         if (isDragging) {
             dragStartIndex &&
-                dispatch(deleteCard(new ExactCardPath(squad.squad, squad.squadCards[dragStartIndex].cardId, dragStartIndex)));
+                dispatch(deleteCard(
+                    new ClubCardPathModel(squad.clubId, squad.id, club.squadCards[dragStartIndex].cardId, dragStartIndex))
+                );
             dispatch(setDragStart());
             handleDrag(false);
         }

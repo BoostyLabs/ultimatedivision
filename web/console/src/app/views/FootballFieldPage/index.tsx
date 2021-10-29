@@ -8,10 +8,10 @@ import { FootballFieldCardSelection } from
 import { FootballFieldPlayingArea } from
     '@components/FootballField/FotballFieldPlayingArea';
 import { RootState } from '@/app/store';
-import { deleteCard, getClub, createClub } from '@/app/store/actions/club';
+import { createClub, deleteCard, getClub } from '@/app/store/actions/club';
 
 import './index.scss';
-import { ExactCardPath } from '@/app/types/club';
+import { ClubCardPathModel } from '@/app/types/club';
 
 const FootballField: React.FC = () => {
     const dispatch = useDispatch();
@@ -20,15 +20,16 @@ const FootballField: React.FC = () => {
             try {
                 await dispatch(getClub());
             } catch (error: any) {
-                await dispatch(createClub())
+                await dispatch(createClub());
             }
-        })()
-    }, [])
+        })();
+    }, []);
     const dragStartIndex = useSelector(
         (state: RootState) => state.clubReducer.options.dragStart
     );
 
-    const fieldSetup = useSelector((state: RootState) => state.clubReducer);
+    const squad = useSelector((state: RootState) => state.clubReducer.squad);
+    const club = useSelector((state: RootState) => state.clubReducer);
     const cardSelectionVisibility = useSelector((state: RootState) => state.clubReducer.options.showCardSeletion);
 
     /** prevent default user agent action */
@@ -40,7 +41,7 @@ const FootballField: React.FC = () => {
     function drop(e: any) {
         if (e.target.className === 'football-field__wrapper') {
             dragStartIndex &&
-                dispatch(deleteCard(new ExactCardPath(fieldSetup.squad, fieldSetup.squadCards[dragStartIndex].cardId)));
+                dispatch(deleteCard(new ClubCardPathModel(squad.clubId, squad.id, club.squadCards[dragStartIndex].cardId)));
         }
     };
 

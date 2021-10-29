@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { LootboxStats } from '@/app/types/lootbox';
 import { openLootbox } from '@/app/store/actions/lootboxes';
 
-import { LootboxCardQuality } from './LootboxCardQuality';
 
 import { toast } from 'react-toastify';
 
@@ -15,6 +14,7 @@ import silver from '@static/img/StorePage/BoxCard/silver.svg';
 import gold from '@static/img/StorePage/BoxCard/gold.svg';
 import diamond from '@static/img/StorePage/BoxCard/diamond.svg';
 import coin from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
+import { LootboxCardQuality } from './LootboxCardQuality';
 
 import './index.scss';
 
@@ -45,9 +45,9 @@ export const LootboxCard: React.FC<{ data: LootboxStats; handleOpening: Dispatch
             await dispatch(openLootbox({ id: data.id, type: data.type }));
             handleOpening(true);
         } catch (error: any) {
-            toast.error("Failed to open lootbox", {
+            toast.error('Failed to open lootbox', {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored"
+                theme: 'colored',
             });
         }
     };

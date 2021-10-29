@@ -2,14 +2,14 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
-import { ExactCardPath } from '@/app/types/club';
+import { ClubCardPathModel } from '@/app/types/club';
 import {
-  Club,
-  Formations,
-  FormationsType,
-  Squad,
-  Tactic,
-  TacticsType,
+    Club,
+    Formations,
+    FormationsType,
+    Squad,
+    Tactic,
+    TacticsType,
 } from '@/club';
 import { ClubService } from '@/club/service';
 import { Dispatch } from 'redux';
@@ -33,97 +33,96 @@ const client = new ClubClient();
 const service = new ClubService(client);
 
 export const setClub = (club: Club) => ({
-  type: CREATE_CLUB,
-  club,
+    type: CREATE_CLUB,
+    club,
 });
 
 export const cardSelectionVisibility = (isVisible: boolean) => ({
-  type: SELECTION_VISIBILITY,
-  isVisible,
+    type: SELECTION_VISIBILITY,
+    isVisible,
 });
 
 /** Selection position of card which should be added */
 export const choosePosition = (index: number) => ({
-  type: CARD_POSITION,
-  index,
+    type: CARD_POSITION,
+    index,
 });
 
 export const setDragStart = (index: dragParamType = DEFAULT_CARD_INDEX) => ({
-  type: DRAG_START,
-  index,
+    type: DRAG_START,
+    index,
 });
 
 export const setDragTarget = (index: dragParamType = DEFAULT_CARD_INDEX) => ({
-  type: DRAG_TARGET,
-  index,
+    type: DRAG_TARGET,
+    index,
 });
 
 export const exchangeCards = (
-  previous: dragParamType,
-  current: dragParamType
+    previous: dragParamType,
+    current: dragParamType
 ) => ({
-  type: EXCHANGE_CARDS,
-  position: {
-    previous,
-    current,
-  },
+    type: EXCHANGE_CARDS,
+    position: {
+        previous,
+        current,
+    },
 });
 
 // Thunks
 
 export const createClub = () =>
-  async function (dispatch: Dispatch) {
-    const clubId = await service.createClub();
-    const squadId = await service.createSquad(clubId);
-    const club = await service.getClub();
-    dispatch(setClub(club));
-  };
+    async function(dispatch: Dispatch) {
+        const clubId = await service.createClub();
+        const squadId = await service.createSquad(clubId);
+        const club = await service.getClub();
+        dispatch(setClub(club));
+    };
 
 export const getClub = () =>
-  async function (dispatch: Dispatch) {
-    const club = await service.getClub();
-    console.log(club)
-    dispatch(setClub(club));
-  }
+    async function(dispatch: Dispatch) {
+        const club = await service.getClub();
+        dispatch(setClub(club));
+    };
 
 export const setFormation = (squad: Squad, formation: FormationsType) =>
-  async function (dispatch: Dispatch) {
-    await service.updateSquad({ ...squad, formation: Formations[formation] });
-    const club = await service.getClub();
-    dispatch(setClub(club));
-  };
+    async function(dispatch: Dispatch) {
+        await service.updateSquad({ ...squad, formation: Formations[formation] });
+        const club = await service.getClub();
+        dispatch(setClub(club));
+    };
 export const setCaptain = (squad: Squad, captainId: string) =>
-  async function (dispatch: Dispatch) {
-    await service.updateSquad({ ...squad, captainId });
-    const club = await service.getClub();
-    dispatch(setClub(club));
-  };
+    async function(dispatch: Dispatch) {
+        await service.updateSquad({ ...squad, captainId });
+        const club = await service.getClub();
+        dispatch(setClub(club));
+    };
 export const setTactic = (squad: Squad, tactic: TacticsType) =>
-  async function (dispatch: Dispatch) {
-    await service.updateSquad({ ...squad, tactic: Tactic[tactic] });
-    const club = await service.getClub();
-    dispatch(setClub(club));
-  };
+    async function(dispatch: Dispatch) {
+        await service.updateSquad({ ...squad, tactic: Tactic[tactic] });
+        const club = await service.getClub();
+        dispatch(setClub(club));
+    };
 
-export const addCard = (path: ExactCardPath) =>
-  async function (dispatch: Dispatch) {
-    await service.addCard(path);
-    const club = await service.getClub();
-    dispatch(setClub(club));
-  };
+export const addCard = (path: ClubCardPathModel) =>
+    async function(dispatch: Dispatch) {
+        await service.addCard(path);
+        const club = await service.getClub();
+        dispatch(setClub(club));
+    };
 
-export const deleteCard = (path: ExactCardPath) =>
-  async function (dispatch: Dispatch) {
-    await service.deleteCard(path)
-    const club = await service.getClub();
-    dispatch(setClub(club));
-  }
+export const deleteCard = (path: ClubCardPathModel) =>
+    async function(dispatch: Dispatch) {
+        await service.deleteCard(path);
+        const club = await service.getClub();
+        dispatch(setClub(club));
+    };
 
-export const changeCardPosition = (currencCard: ExactCardPath, existCard?: ExactCardPath) =>
-  async function (dispatch: Dispatch) {
-    await service.changeCardPosition(currencCard);
-    existCard &&
+export const changeCardPosition = (currentCard: ClubCardPathModel, existCard?: ClubCardPathModel) =>
+    async function(dispatch: Dispatch) {
+        await service.changeCardPosition(currentCard);
+        existCard &&
       await service.changeCardPosition(existCard);
-    const club = await service.getClub()
-    dispatch(setClub(club))
-  }
+        const club = await service.getClub();
+        dispatch(setClub(club));
+    };
