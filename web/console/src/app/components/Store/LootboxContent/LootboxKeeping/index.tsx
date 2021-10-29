@@ -15,6 +15,9 @@ export const LootboxKeeping: React.FC<{ handleOpening: Dispatch<SetStateAction<b
     const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
     const box = boxStyle(cards.length);
 
+    const FIRST_CARD_INDEX: number = 0;
+    const LAST_CARD_INDEX: number = 4;
+
     return (
         <div className="box-keeping">
             <div className="box-keeping__wrapper">
@@ -22,11 +25,11 @@ export const LootboxKeeping: React.FC<{ handleOpening: Dispatch<SetStateAction<b
                     Card
                 </h1>
                 <div className="box-keeping__card-wrapper">
-                    {cards.slice(0, 4).map((card, index) =>
-                    <div className="box-keeping__card">
-                    <MyCard card={card} key={index} />
-                    </div>
-                )}
+                    {cards.slice(FIRST_CARD_INDEX, LAST_CARD_INDEX).map((card, index) =>
+                        <div className="box-keeping__card">
+                            <MyCard card={card} key={index} />
+                        </div>
+                    )}
                 </div>
                 <div className="box-keeping__button-wrapper">
                     <button className="box-keeping__button"
