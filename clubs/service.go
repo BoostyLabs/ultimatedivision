@@ -110,16 +110,15 @@ func (service *Service) Delete(ctx context.Context, squadID, cardID uuid.UUID) e
 	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, squadID, cardID))
 }
 
-// UpdateSquad updates tactic and formation of the squad.
-func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, formation Formation, tactic Tactic, captainID uuid.UUID) error {
+// UpdateSquad updates tactic and captain of the squad.
+func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, tactic Tactic, captainID uuid.UUID) error {
 	updatedSquad := Squad{
 		ID:        squadID,
 		Tactic:    tactic,
-		Formation: formation,
 		CaptainID: captainID,
 	}
 
-	return ErrClubs.Wrap(service.clubs.UpdateTacticFormationCaptain(ctx, updatedSquad))
+	return ErrClubs.Wrap(service.clubs.UpdateTacticCaptain(ctx, updatedSquad))
 }
 
 // UpdateCardPosition updates position of card in the squad.
@@ -223,12 +222,22 @@ func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error)
 }
 
 // ChangeFormation is a method that change formation and card position.
-func (service *Service) ChangeFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) (map[Position]uuid.UUID, error) {
+func (service *Service) ChangeFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) ([]SquadCard, error) {
 	var cardsWithNewPositions map[Position]uuid.UUID
 
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
 	if err != nil {
 		return nil, ErrClubs.Wrap(err)
+	}
+
+	if len(squadCards) == 0 {
+		err = service.clubs.UpdateFormation(ctx, newFormation, squadID)
+		if err != nil {
+			return nil, ErrClubs.Wrap(err)
+		}
+
+		squadCards = fillSquadCards(squadCards, newFormation, squadID)
+		return squadCards, nil
 	}
 
 	err = service.clubs.UpdateFormation(ctx, newFormation, squadID)
@@ -257,7 +266,9 @@ func (service *Service) ChangeFormation(ctx context.Context, newFormation Format
 		return nil, ErrClubs.Wrap(err)
 	}
 
-	return cardsWithNewPositions, nil
+	squadCardsWithNewPositions = fillSquadCards(squadCardsWithNewPositions, newFormation, squadID)
+
+	return squadCardsWithNewPositions, nil
 }
 
 // CalculateEffectivenessOfSquad calculates effectiveness of user's squad.

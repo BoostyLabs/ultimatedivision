@@ -43,8 +43,8 @@ type DB interface {
 	AddSquadCard(ctx context.Context, squadCards SquadCard) error
 	// DeleteSquadCard deletes card from squad.
 	DeleteSquadCard(ctx context.Context, squadID, cardID uuid.UUID) error
-	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
-	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
+	// UpdateTacticCaptain updates tactic and capitan in the squad.
+	UpdateTacticCaptain(ctx context.Context, squad Squad) error
 	// UpdatePositions updates positions of cards in the squad.
 	UpdatePositions(ctx context.Context, squadCards []SquadCard) error
 	// UpdateFormation updates formation in the squad.
@@ -218,4 +218,35 @@ func convertPositions(squadCards []SquadCard, formation Formation) {
 			}
 		}
 	}
+}
+
+// fillSquadCards fills squad cards with missing items.
+func fillSquadCards(squadCards []SquadCard, formation Formation, squadID uuid.UUID) []SquadCard {
+	convertPositions(squadCards, formation)
+
+	if len(squadCards) < squadSize {
+		for i := 0; i < squadSize; i++ {
+			var isPositionInTheSquad bool
+			for _, card := range squadCards {
+				if card.Position == Position(i) {
+					isPositionInTheSquad = true
+					break
+				}
+			}
+
+			if isPositionInTheSquad == true {
+				continue
+			}
+
+			var squadCard = SquadCard{
+				SquadID:  squadID,
+				Position: Position(i),
+			}
+
+			squadCards = append(squadCards, squadCard)
+		}
+	}
+	sortSquadCards(squadCards)
+
+	return squadCards
 }

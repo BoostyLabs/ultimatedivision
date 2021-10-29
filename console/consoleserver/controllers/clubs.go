@@ -210,8 +210,8 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// UpdateSquad is an endpoint that updates squad tactic, capitan and formation.
-func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
+// UpdateTacticCaptain is an endpoint that updates squad tactic, capitan.
+func (controller *Clubs) UpdateTacticCaptain(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 	params := mux.Vars(r)
@@ -228,7 +228,7 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = controller.clubs.UpdateSquad(ctx, squadID, updatedSquad.Formation, updatedSquad.Tactic, updatedSquad.CaptainID); err != nil {
+	if err = controller.clubs.UpdateSquad(ctx, squadID, updatedSquad.Tactic, updatedSquad.CaptainID); err != nil {
 		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
@@ -305,7 +305,7 @@ func (controller *Clubs) ChangeFormation(w http.ResponseWriter, r *http.Request)
 	ctx := r.Context()
 	params := mux.Vars(r)
 
-	newFormationID, err := strconv.Atoi(params["formationID"])
+	newFormationID, err := strconv.Atoi(params["formation"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
