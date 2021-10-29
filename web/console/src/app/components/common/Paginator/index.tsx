@@ -41,14 +41,14 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
     const POS_STEP_FROM_CURRENT_PAGE: number = 2;
     const FIRST_PAGE: number = 1;
 
-    /** dispatch getCardsOnPage thunk with parameters: page and default limit value */
+    /** inplements opening current cards on selected page */
     async function getCards(selectedPage: number) {
         try {
+            /** dispatch getCardsOnPage thunk with parameters: page and default limit value */
             await dispatch(getCardsOnPage({ selectedPage, limit: CARDS_ON_PAGE }));
         } catch (error: any) {
-            console.log(error.message);
             /** TODO: it will be reworked with notification system */
-        }
+        };
     };
 
     const pages: number[] = [];

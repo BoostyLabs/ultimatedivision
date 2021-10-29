@@ -24,9 +24,8 @@ const Card: React.FC = () => {
         try {
             await dispatch(openUserCard(id))
         } catch (error: any) {
-            console.log('error: ', error.message);
             /** TODO: it will be reworked with notification system */
-        }
+        };
     };
     useEffect(() => {
         openCard();

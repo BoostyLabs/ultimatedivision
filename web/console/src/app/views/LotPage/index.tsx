@@ -24,9 +24,8 @@ const Lot: React.FC = () => {
         try {
             await dispatch(openMarketplaceCard(id));
         } catch (error: any) {
-            console.log(error.message);
             /** TODO: it will be reworked with notification system */
-        }
+        };
     };
 
     useEffect(() => {
