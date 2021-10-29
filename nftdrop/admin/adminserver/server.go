@@ -56,7 +56,7 @@ type Server struct {
 
 	templates struct {
 		auth        controllers.AuthTemplates
-		admin       controllers.AdminTemplates
+		admins      controllers.AdminTemplates
 		whitelist   controllers.WhitelistTemplates
 		subscribers controllers.SubscribersTemplates
 	}
@@ -87,7 +87,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 
 	adminsRouter := router.PathPrefix("/admins").Subrouter()
 	adminsRouter.Use(server.withAuth)
-	adminsController := controllers.NewAdmins(log, admins, server.templates.admin)
+	adminsController := controllers.NewAdmins(log, admins, server.templates.admins)
 	adminsRouter.HandleFunc("", adminsController.List).Methods(http.MethodGet)
 	adminsRouter.HandleFunc("/create", adminsController.Create).Methods(http.MethodGet, http.MethodPost)
 	adminsRouter.HandleFunc("/update/{id}", adminsController.Update).Methods(http.MethodGet, http.MethodPost)
@@ -146,15 +146,15 @@ func (server *Server) initializeTemplates() (err error) {
 		return err
 	}
 
-	server.templates.admin.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
+	server.templates.admins.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "list.html"))
 	if err != nil {
 		return err
 	}
-	server.templates.admin.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "create.html"))
+	server.templates.admins.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "create.html"))
 	if err != nil {
 		return err
 	}
-	server.templates.admin.Update, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "update.html"))
+	server.templates.admins.Update, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "admins", "update.html"))
 	if err != nil {
 		return err
 	}

@@ -58,7 +58,7 @@ func (subscribersDB *subscribersDB) List(ctx context.Context, cursor pagination.
 
 	subscribersPage, err = subscribersDB.listPaginated(ctx, cursor, dataSubscribers)
 
-	return subscribersPage, ErrWhitelist.Wrap(err)
+	return subscribersPage, ErrSubscribers.Wrap(err)
 }
 
 // GetByEmail returns subscriber by email from the data base.
@@ -108,7 +108,7 @@ func (subscribersDB *subscribersDB) listPaginated(ctx context.Context, cursor pa
 
 	totalCount, err := subscribersDB.totalCount(ctx)
 	if err != nil {
-		return subscribersPage, ErrWhitelist.Wrap(err)
+		return subscribersPage, ErrSubscribers.Wrap(err)
 	}
 
 	pageCount := totalCount / cursor.Limit

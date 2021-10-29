@@ -83,7 +83,7 @@ func (controller *Subscribers) List(w http.ResponseWriter, r *http.Request) {
 	subscribersPage, err := controller.subscribers.List(ctx, cursor)
 	if err != nil {
 		controller.log.Error("could not list subscribers", ErrSubscribers.Wrap(err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "could not list subscribers", http.StatusInternalServerError)
 		return
 	}
 
