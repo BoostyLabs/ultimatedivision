@@ -5,6 +5,7 @@ package clubs
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -185,7 +186,8 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 		return nil, ErrClubs.Wrap(err)
 	}
 
-	convertPositions(squadCards, formation)
+	squadCards = convertPositions(squadCards, formation)
+	fmt.Println(squadCards)
 
 	if len(squadCards) < squadSize {
 		for i := 0; i < squadSize; i++ {
@@ -235,9 +237,6 @@ func (service *Service) ChangeFormation(ctx context.Context, newFormation Format
 		if err != nil {
 			return nil, ErrClubs.Wrap(err)
 		}
-
-		squadCards = fillSquadCards(squadCards, newFormation, squadID)
-		return squadCards, nil
 	}
 
 	err = service.clubs.UpdateFormation(ctx, newFormation, squadID)
@@ -265,8 +264,6 @@ func (service *Service) ChangeFormation(ctx context.Context, newFormation Format
 	if err != nil {
 		return nil, ErrClubs.Wrap(err)
 	}
-
-	squadCardsWithNewPositions = fillSquadCards(squadCardsWithNewPositions, newFormation, squadID)
 
 	return squadCardsWithNewPositions, nil
 }
