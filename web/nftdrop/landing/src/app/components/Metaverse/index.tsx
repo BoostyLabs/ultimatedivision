@@ -1,16 +1,16 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { MintButton } from "@components/common/MintButton";
+import { MintButton } from '@components/common/MintButton';
 
-import webkitCards from "@static/images/metaverse/cards.png";
-import webkitCardsTablet from "@static/images/metaverse/cards-tablet.png";
-import webkitCardsMobile from "@static/images/metaverse/cards-mobile.png";
-import cards from "@static/images/metaverse/cards.webp";
-import cardsTablet from "@static/images/metaverse/cards-tablet.webp";
-import cardsMobile from "@static/images/metaverse/cards-mobile.webp";
+import webkitCards from '@static/images/metaverse/cards.png';
+import webkitCardsTablet from '@static/images/metaverse/cards-tablet.png';
+import webkitCardsMobile from '@static/images/metaverse/cards-mobile.png';
+import cards from '@static/images/metaverse/cards.webp';
+import cardsTablet from '@static/images/metaverse/cards-tablet.webp';
+import cardsMobile from '@static/images/metaverse/cards-mobile.webp';
 
-import "./index.scss";
+import './index.scss';
 
 export const Metaverse: React.FC = () => {
     return (
