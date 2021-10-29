@@ -5,6 +5,10 @@ import { Dispatch, SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
 import { LootboxStats } from '@/app/types/lootbox';
 import { openLootbox } from '@/app/store/actions/lootboxes';
+
+
+import { toast } from 'react-toastify';
+
 import wood from '@static/img/StorePage/BoxCard/wood.svg';
 import silver from '@static/img/StorePage/BoxCard/silver.svg';
 import gold from '@static/img/StorePage/BoxCard/gold.svg';
@@ -37,8 +41,15 @@ export const LootboxCard: React.FC<{ data: LootboxStats; handleOpening: Dispatch
 
     const handleAnimation = async() => {
         // TODO: need add id lootbox from BD after be create endpoint fetch lootboxex.
-        await dispatch(openLootbox({ id: data.id, type: data.type }));
-        handleOpening(true);
+        try {
+            await dispatch(openLootbox({ id: data.id, type: data.type }));
+            handleOpening(true);
+        } catch (error: any) {
+            toast.error('Failed to open lootbox', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
     };
 
     return (

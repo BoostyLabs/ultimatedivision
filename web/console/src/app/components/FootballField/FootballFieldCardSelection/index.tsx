@@ -4,7 +4,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 import { listOfCards } from '@/app/store/actions/cards';
-import { addCard, cardSelectionVisibility } from '@/app/store/actions/club';
+import { addCard, cardSelectionVisibility, createClub, getClub } from '@/app/store/actions/club';
 import { Card } from '@/card';
 import { Squad } from '@/club';
 import { FilterField } from
@@ -12,12 +12,23 @@ import { FilterField } from
 import { PlayerCard } from '@components/common/PlayerCard';
 import { Paginator } from '@components/common/Paginator';
 
+import { useEffect } from 'react';
 import './index.scss';
 
 export const FootballFieldCardSelection = () => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        (async function setClub() {
+            try {
+                await dispatch(getClub());
+            } catch (error: any) {
+                await dispatch(createClub());
+            }
+        })();
+    }, []);
+
     const squad = useSelector((state: RootState) => state.clubReducer.squad);
     const { cards, page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
-    const dispatch = useDispatch();
     const fieldSetup = useSelector((state: RootState) => state.clubReducer);
 
     const Y_SCROLL_POINT = 200;
