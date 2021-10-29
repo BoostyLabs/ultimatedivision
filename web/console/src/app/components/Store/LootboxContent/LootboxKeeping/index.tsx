@@ -14,6 +14,10 @@ import './index.scss';
 export const LootboxKeeping: React.FC<{ handleOpening: Dispatch<SetStateAction<boolean>> }> = ({ handleOpening }) => {
     const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
     const box = boxStyle(cards.length);
+    /** variables that describe indexes of first and last cards,
+     *  that will be shown when lootbox is openned */
+    const FIRST_CARD_INDEX: number = 0;
+    const LAST_CARD_INDEX: number = 4;
 
     const FIRST_CARD_INDEX: number = 0;
     const LAST_CARD_INDEX: number = 4;
