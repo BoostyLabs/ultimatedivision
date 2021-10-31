@@ -4,7 +4,7 @@
 /** implementation of user auth validation */
 export class Validator {
     /** static method for email field validation */
-    static email(email: string): boolean {
+    static isEmail(email: string): boolean {
         const re = new RegExp(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/, 'i');
 
         if (!email) {
@@ -14,7 +14,7 @@ export class Validator {
         return re.test(String(email).toLowerCase());
     };
     /** static method for password field validation */
-    static password(password: string): boolean {
+    static isPassword(password: string): boolean {
         /** same validation from back-end:
          * min 8 letter password, with at least a symbol,
          * upper and lower case letters and a number */
@@ -24,7 +24,7 @@ export class Validator {
     };
     /** static method for all string form fields validation,
      * except password and email */
-    static field(field: string): boolean {
-        return !!field;
+    static isName(name: string): boolean {
+        return !!name;
     };
 };

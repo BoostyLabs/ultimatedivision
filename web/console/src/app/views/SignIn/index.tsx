@@ -33,19 +33,19 @@ const SignIn: React.FC = () => {
     const handleIsRemember = () => setIsRemember(prev => !prev);
     /** checks if values does't valid then set an error messages */
     const validateForm: () => boolean = () => {
-        let isValidForm = true;
+        let isFormValid = true;
 
-        if (!Validator.email(email)) {
+        if (!Validator.isEmail(email)) {
             setEmailError('Email is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        if (!Validator.password(password)) {
+        if (!Validator.isPassword(password)) {
             setPasswordError('Password is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        return isValidForm;
+        return isFormValid;
     };
     /** user data that will send to server */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
@@ -75,7 +75,7 @@ const SignIn: React.FC = () => {
             type: 'email',
             error: emailError,
             clearError: setEmailError,
-            validate: Validator.email,
+            validate: Validator.isEmail,
         },
         {
             value: password,
@@ -85,7 +85,7 @@ const SignIn: React.FC = () => {
             type: 'password',
             error: passwordError,
             clearError: setPasswordError,
-            validate: Validator.password,
+            validate: Validator.isPassword,
         },
         {
             value: 'Remember me',

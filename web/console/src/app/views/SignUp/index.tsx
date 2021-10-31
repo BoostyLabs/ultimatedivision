@@ -37,34 +37,34 @@ const SignUp: React.FC = () => {
         = useState<SetStateAction<null | string>>(null);
     /** checks if values does't valid then set an error messages */
     const validateForm: () => boolean = () => {
-        let isValidForm = true;
+        let isFormValid = true;
 
-        if (!Validator.email(email)) {
+        if (!Validator.isEmail(email)) {
             setEmailError('Email is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        if (!Validator.password(password)) {
+        if (!Validator.isPassword(password)) {
             setPasswordError('Password is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        if (!Validator.field(lastName)) {
+        if (!Validator.isName(lastName)) {
             setLastNameError('LastName is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        if (!Validator.field(firstName)) {
+        if (!Validator.isName(firstName)) {
             setFirstNameError('FirstName is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        if (!Validator.field(nickName)) {
+        if (!Validator.isName(nickName)) {
             setNickNameError('NickName is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        return isValidForm;
+        return isFormValid;
     };
 
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
@@ -105,7 +105,7 @@ const SignUp: React.FC = () => {
             type: 'text',
             error: firstNameError,
             clearError: setFirstNameError,
-            validate: Validator.field,
+            validate: Validator.isName,
         },
         {
             value: lastName,
@@ -115,7 +115,7 @@ const SignUp: React.FC = () => {
             type: 'text',
             error: lastNameError,
             clearError: setLastNameError,
-            validate: Validator.field,
+            validate: Validator.isName,
         },
         {
             value: email,
@@ -125,7 +125,7 @@ const SignUp: React.FC = () => {
             type: 'text',
             error: emailError,
             clearError: setEmailError,
-            validate: Validator.email,
+            validate: Validator.isEmail,
         },
         {
             value: password,
@@ -135,7 +135,7 @@ const SignUp: React.FC = () => {
             type: 'password',
             error: passwordError,
             clearError: setPasswordError,
-            validate: Validator.password,
+            validate: Validator.isPassword,
         },
         {
             value: nickName,
@@ -145,7 +145,7 @@ const SignUp: React.FC = () => {
             type: 'text',
             error: nickNameError,
             clearError: setNickNameError,
-            validate: Validator.field,
+            validate: Validator.isName,
         },
     ];
 

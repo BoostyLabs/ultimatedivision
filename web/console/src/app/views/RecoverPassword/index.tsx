@@ -54,24 +54,24 @@ const ResetPassword: React.FC = () => {
         = useState<SetStateAction<null | string>>(null);
     /** checks if values does't valid then set an error messages */
     const validateForm: () => boolean = () => {
-        let isValidForm = true;
+        let isFormValid = true;
 
-        if (!Validator.password(password)) {
+        if (!Validator.isPassword(password)) {
             setPasswordError('Password is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        if (!Validator.password(confirmedPassword)) {
+        if (!Validator.isPassword(confirmedPassword)) {
             setConfirmedPasswordError('Confirmed password is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
         if (password !== confirmedPassword) {
             setConfirmedPasswordError('Passwords does not match, please try again');
-            isValidForm = false;
+            isFormValid = false;
         }
 
-        return isValidForm;
+        return isFormValid;
     };
 
     const DELAY: number = 3000;
@@ -108,7 +108,7 @@ const ResetPassword: React.FC = () => {
             type: 'password',
             error: passwordError,
             clearError: setPasswordError,
-            validate: Validator.password,
+            validate: Validator.isPassword,
         },
         {
             value: confirmedPassword,
@@ -118,7 +118,7 @@ const ResetPassword: React.FC = () => {
             type: 'password',
             error: confirmedPasswordError,
             clearError: setConfirmedPasswordError,
-            validate: Validator.password,
+            validate: Validator.isPassword,
         },
     ];
 

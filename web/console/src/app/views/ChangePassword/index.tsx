@@ -25,14 +25,14 @@ const ChangePassword: React.FC = () => {
         = useState<SetStateAction<null | string>>(null);
     /** checks if values does't valid then set an error messages */
     const validateForm: () => boolean = () => {
-        let isValidForm = true;
+        let isFormValid = true;
 
-        if (!Validator.email(email)) {
+        if (!Validator.isEmail(email)) {
             setEmailError('Email is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        return isValidForm;
+        return isFormValid;
     };
 
     const userClient = new UserClient();
@@ -67,7 +67,7 @@ const ChangePassword: React.FC = () => {
             type: 'text',
             error: emailError,
             clearError: setEmailError,
-            validate: Validator.email,
+            validate: Validator.isEmail,
         },
     ];
 

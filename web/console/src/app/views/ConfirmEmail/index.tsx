@@ -28,7 +28,7 @@ const ConfirmEmail: React.FC = () => {
             await users.checkEmailToken(token);
 
             await setTimeout(() => {
-                history.push(AuthRouteConfig.SignIn.path)
+                history.push(AuthRouteConfig.SignIn.path);
             }, DELAY);
         } catch (error: any) {
             setErrorMessage('Email verification failed');

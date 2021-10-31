@@ -68,7 +68,7 @@ export class UserClient extends APIClient {
     /** reset user password by email confirmation */
     public async sendEmailForResetPassword(email: string): Promise<void> {
         const path = `${this.ROOT_PATH}/password/${email}`;
-        const response = await this.http.get(path, JSON.stringify({ email }));
+        const response = await this.http.get(path, JSON.stringify(email));
 
         if (!response.ok) {
             await this.handleError(response);
