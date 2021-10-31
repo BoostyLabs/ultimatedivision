@@ -3,12 +3,11 @@
 
 import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { Routes } from '@/app/routes';
+
+import { AboutMenu } from '@components/common/AboutMenu';
 
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
-
-import { Routes } from '@/app/routes';
-import { AboutMenu } from '@components/common/AboutMenu';
 
 /** initial App setup */
 export function App() {

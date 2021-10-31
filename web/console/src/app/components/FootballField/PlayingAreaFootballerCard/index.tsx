@@ -3,10 +3,10 @@
 
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card } from '@/card';
 import { ClubCardPathModel } from '@/app/types/club';
 import { deleteCard } from '@/app/store/actions/club';
 import { RootState } from '@/app/store';
+import { Card } from '@/card';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 

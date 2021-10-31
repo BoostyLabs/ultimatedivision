@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { LootboxStats } from '@/app/types/lootbox';
 import { openLootbox } from '@/app/store/actions/lootboxes';
 
-
 import { toast } from 'react-toastify';
 
 import wood from '@static/img/StorePage/BoxCard/wood.svg';
