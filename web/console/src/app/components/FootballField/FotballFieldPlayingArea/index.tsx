@@ -8,6 +8,9 @@ import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingArea
 import { SquadCard } from '@/club';
 import { Card } from '@/card';
 import { RootState } from '@/app/store';
+
+import { ClubCardPathModel } from '@/app/types/club';
+
 import {
     cardSelectionVisibility,
     changeCardPosition,
@@ -17,7 +20,6 @@ import {
 } from '@/app/store/actions/club';
 
 import './index.scss';
-import { ClubCardPathModel } from '@/app/types/club';
 
 export const FootballFieldPlayingArea: React.FC = () => {
     const dispatch = useDispatch();
