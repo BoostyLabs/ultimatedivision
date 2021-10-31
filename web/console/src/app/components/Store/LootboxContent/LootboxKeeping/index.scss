@@ -1,4 +1,6 @@
 @import "@/index.scss";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
 
 .box-keeping {
     animation: darken 1s 0 1 normal forwards;
@@ -37,6 +39,7 @@
         grid-template-columns: repeat(4, 1fr);
         justify-content: center;
         justify-items: center;
+        padding: 0 0 80px;
     }
 
     &__card {
