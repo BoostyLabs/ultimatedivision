@@ -206,10 +206,10 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             id           BYTEA    PRIMARY KEY                             NOT NULL,
             user1_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
             squad1_id    BYTEA    REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
-            user1_points INTEGER                                         NOT NULL,
+            user1_points INTEGER                                          NOT NULL,
             user2_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
             squad2_id    BYTEA    REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
-            user2_points INTEGER                                         NOT NULL
+            user2_points INTEGER                                          NOT NULL
         );
         CREATE TABLE IF NOT EXISTS match_results(
             id       BYTEA   PRIMARY KEY                              NOT NULL,
