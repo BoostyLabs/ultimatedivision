@@ -1,7 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-//@ts-ignore
 import cardsVideo from '@static/images/description/players-for-slider/slides.mp4';
 
 import './index.scss';
