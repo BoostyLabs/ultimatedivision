@@ -3,15 +3,15 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { RouteConfig } from '@/app/router';
+import { RouteConfig } from '@/app/routes';
 
-import { DropdownIcon, CloseDropdownIcon } from '@/app/static/img/Navbar';
+import { CloseDropdownIcon, DropdownIcon } from '@/app/static/img/Navbar';
 
 import ultimate from '@static/img/Navbar/ultimate.svg';
 
 import './index.scss';
 
-export const Navbar: React.FC = () => {
+const Navbar: React.FC = () => {
     const [isDropdownActive, setIsDropdownActive] = useState<boolean>(false);
 
     const visibleClassName = isDropdownActive ? '-active' : '';
@@ -60,3 +60,5 @@ export const Navbar: React.FC = () => {
         </div>
     );
 };
+
+export default Navbar;
