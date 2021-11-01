@@ -203,20 +203,20 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             period        INTEGER                                                         NOT NULL
         );
         CREATE TABLE IF NOT EXISTS matches (
-            id          BYTEA   PRIMARY KEY                             NOT NULL,
-            user1_id    BYTEA   REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
-            squad1_id   BYTEA   REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
-            user1_point INTEGER                                         NOT NULL,
-            user2_id    BYTEA   REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
-            squad2_id   BYTEA   REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
-            user2_point INTEGER                                         NOT NULL
+            id           BYTEA    PRIMARY KEY                             NOT NULL,
+            user1_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
+            squad1_id    BYTEA    REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
+            user1_points INTEGER                                         NOT NULL,
+            user2_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
+            squad2_id    BYTEA    REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
+            user2_points INTEGER                                         NOT NULL
         );
         CREATE TABLE IF NOT EXISTS match_results(
-            id       BYTEA PRIMARY KEY                              NOT NULL,
-            match_id BYTEA REFERENCES matches(id) ON DELETE CASCADE NOT NULL,
-            user_id  BYTEA REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
-            card_id  BYTEA REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
-            minute   INTEGER                                        NOT NULL
+            id       BYTEA   PRIMARY KEY                              NOT NULL,
+            match_id BYTEA   REFERENCES matches(id) ON DELETE CASCADE NOT NULL,
+            user_id  BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
+            card_id  BYTEA   REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
+            minute   INTEGER                                          NOT NULL
         );
         CREATE TABLE IF NOT EXISTS places (
             user_id BYTEA   PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE NOT NULL,
