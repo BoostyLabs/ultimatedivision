@@ -67,6 +67,7 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 			auth.serveError(w, http.StatusBadRequest, errs.New("Email address is already in use"))
 			return
 		default:
+			auth.log.Error("Unable to register new user", AuthError.Wrap(err))
 			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 			return
 		}
