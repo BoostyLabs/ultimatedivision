@@ -28,13 +28,15 @@ type DB interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
-// Position defines the list of possible divisions positions.
-type Position int
-
 // Division describes divisions entity.
 type Division struct {
-	ID               uuid.UUID `json:"id"`
-	Name             string    `json:"name"`
-	PercentOfPassing int       `json:"percent_of_passing"`
-	CreatedAt        time.Time `json:"createdAt"`
+	ID             uuid.UUID `json:"id"`
+	Name           string    `json:"name"`
+	PassingPercent int       `json:"passingPercent"`
+	CreatedAt      time.Time `json:"createdAt"`
+}
+
+// Config defines configuration for divisions.
+type Config struct {
+	PassingPercent int `json:"passingPercent"`
 }

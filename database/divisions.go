@@ -14,6 +14,9 @@ import (
 	"ultimatedivision/divisions"
 )
 
+// ensures that divisionsDB implements divisions.DB.
+var _ divisions.DB = (*divisionsDB)(nil)
+
 // ErrDivisions indicates that there was an error in the database.
 var ErrDivisions = errs.Class("divisions repository error")
 
@@ -26,17 +29,17 @@ type divisionsDB struct {
 
 // Create creates a division and writes to the database.
 func (divisionsDB *divisionsDB) Create(ctx context.Context, division divisions.Division) error {
-	query := `INSERT INTO divisions(id, name, percent_of_passing, created_at) 
+	query := `INSERT INTO divisions(id, name, passing_percent, created_at) 
 	VALUES ($1, $2, $3, $4)`
 
-	_, err := divisionsDB.conn.ExecContext(ctx, query, division.ID, division.Name, division.PercentOfPassing, division.CreatedAt)
+	_, err := divisionsDB.conn.ExecContext(ctx, query, division.ID, division.Name, division.PassingPercent, division.CreatedAt)
 
 	return ErrDivisions.Wrap(err)
 }
 
 // List returns all divisions from the data base.
 func (divisionsDB *divisionsDB) List(ctx context.Context) ([]divisions.Division, error) {
-	query := `SELECT id, name, percent_of_passing, created_at FROM divisions`
+	query := `SELECT id, name, passing_percent, created_at FROM divisions`
 
 	rows, err := divisionsDB.conn.QueryContext(ctx, query)
 	if err != nil {
@@ -49,7 +52,7 @@ func (divisionsDB *divisionsDB) List(ctx context.Context) ([]divisions.Division,
 	var dataDivisions []divisions.Division
 	for rows.Next() {
 		var division divisions.Division
-		err := rows.Scan(&division.ID, &division.Name, &division.PercentOfPassing, &division.CreatedAt)
+		err := rows.Scan(&division.ID, &division.Name, &division.PassingPercent, &division.CreatedAt)
 		if err != nil {
 			return nil, ErrDivisions.Wrap(err)
 		}
@@ -65,12 +68,12 @@ func (divisionsDB *divisionsDB) List(ctx context.Context) ([]divisions.Division,
 
 // Get returns division by id from the data base.
 func (divisionsDB *divisionsDB) Get(ctx context.Context, id uuid.UUID) (divisions.Division, error) {
-	query := `SELECT id, name, percent_of_passing, created_at FROM divisions WHERE id=$1`
+	query := `SELECT id, name, passing_percent, created_at FROM divisions WHERE id=$1`
 	var division divisions.Division
 
 	row := divisionsDB.conn.QueryRowContext(ctx, query, id)
 
-	err := row.Scan(&division.ID, &division.Name, &division.PercentOfPassing, &division.CreatedAt)
+	err := row.Scan(&division.ID, &division.Name, &division.PassingPercent, &division.CreatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return division, divisions.ErrNoDivisions.Wrap(err)

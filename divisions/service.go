@@ -19,6 +19,7 @@ var ErrDivisions = errs.Class("divisions service error")
 // architecture: Service
 type Service struct {
 	divisions DB
+	config    Config
 }
 
 // NewService is a constructor for divisions service.
@@ -31,10 +32,10 @@ func NewService(divisions DB) *Service {
 // Create creates a division.
 func (service *Service) Create(ctx context.Context, name string) error {
 	division := Division{
-		ID:               uuid.UUID{},
-		Name:             name,
-		PercentOfPassing: 0,
-		CreatedAt:        time.Time{},
+		ID:             uuid.New(),
+		Name:           name,
+		PassingPercent: service.config.PassingPercent,
+		CreatedAt:      time.Now().UTC(),
 	}
 
 	return ErrDivisions.Wrap(service.divisions.Create(ctx, division))
@@ -42,14 +43,14 @@ func (service *Service) Create(ctx context.Context, name string) error {
 
 // List returns all divisions from DB.
 func (service *Service) List(ctx context.Context) ([]Division, error) {
-	users, err := service.divisions.List(ctx)
-	return users, ErrDivisions.Wrap(err)
+	divisions, err := service.divisions.List(ctx)
+	return divisions, ErrDivisions.Wrap(err)
 }
 
 // Get returns division from DB.
 func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Division, error) {
-	user, err := service.divisions.Get(ctx, userID)
-	return user, ErrDivisions.Wrap(err)
+	division, err := service.divisions.Get(ctx, userID)
+	return division, ErrDivisions.Wrap(err)
 }
 
 // Delete deletes a division.

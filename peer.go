@@ -59,7 +59,7 @@ type DB interface {
 	// Queue provides access to queue db.
 	Queue() queue.DB
 
-	// Queue provides access to queue db.
+	// Divisions provides access to divisions db.
 	Divisions() divisions.DB
 
 	// Close closes underlying db connection.
