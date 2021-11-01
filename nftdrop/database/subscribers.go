@@ -29,10 +29,7 @@ type subscribersDB struct {
 func (subscribersDB *subscribersDB) List(ctx context.Context, cursor pagination.Cursor) (subscribers.Page, error) {
 	var subscribersPage subscribers.Page
 	offset := (cursor.Page - 1) * cursor.Limit
-	query := `SELECT email, created_at 
-			  FROM subscribers
-	          LIMIT $1
-	          OFFSET $2`
+	query := `SELECT email, created_at FROM subscribers LIMIT $1 OFFSET $2`
 
 	rows, err := subscribersDB.conn.QueryContext(ctx, query, cursor.Limit, offset)
 	if err != nil {
