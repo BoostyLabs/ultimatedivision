@@ -5,10 +5,9 @@ import { SetStateAction, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { UserClient } from '@/api/user';
-import { UserService } from '@/user/service';
-
 import { useQueryToken } from '@/app/hooks/useQueryToken';
 import { AuthRouteConfig } from '@/app/routes';
+import { UserService } from '@/user/service';
 
 /** TODO: Rework this view after design solution */
 const ConfirmEmail: React.FC = () => {

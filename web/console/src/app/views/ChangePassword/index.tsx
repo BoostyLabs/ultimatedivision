@@ -5,17 +5,15 @@ import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { UserClient } from '@/api/user';
-
-import { AuthRouteConfig } from '@/app/routes';
-
-import { UserService } from '@/user/service';
-import { Validator } from '@/user/validation';
-
 import { UserDataArea } from '@components/common/UserDataArea';
 
-import ultimate from '@static/img/registerPage/ultimate.svg';
 import goBack from '@static/img/registerPage/goback.svg';
+import ultimate from '@static/img/registerPage/ultimate.svg';
+
+import { UserClient } from '@/api/user';
+import { AuthRouteConfig } from '@/app/routes';
+import { UserService } from '@/user/service';
+import { Validator } from '@/user/validation';
 
 import './index.scss';
 
@@ -47,7 +45,7 @@ const ChangePassword: React.FC = () => {
         };
 
         try {
-            await users.sendEmailForResetPassword(email);
+            await users.sendEmailForPasswordReset(email);
             toast.success('Successfully! Please, check your mail box.', {
                 position: toast.POSITION.TOP_RIGHT,
             });

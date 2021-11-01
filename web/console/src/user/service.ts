@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { UserClient } from '@/api/user';
 import { User } from '.';
+import { UserClient } from '@/api/user';
 
 /** exposes all user related logic  */
 export class UserService {
@@ -36,7 +36,7 @@ export class UserService {
         await this.users.recoverPassword(password);
     };
     /** handles user reseting password by email confirmation */
-    public async sendEmailForResetPassword(email: string): Promise<void> {
-        await this.users.sendEmailForResetPassword(email);
+    public async sendEmailForPasswordReset(email: string): Promise<void> {
+        await this.users.sendEmailForPasswordReset(email);
     };
 };

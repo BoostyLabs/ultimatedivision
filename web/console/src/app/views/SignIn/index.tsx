@@ -6,16 +6,15 @@ import { useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { AuthRouteConfig, RouteConfig } from '@/app/routes';
-import { loginUser } from '@/app/store/actions/users';
-
-import { Validator } from '@/user/validation';
-
 import { UserDataArea } from '@components/common/UserDataArea';
 
 import facebook from '@static/img/registerPage/facebook_logo.svg';
 import google from '@static/img/registerPage/google_logo.svg';
 import ultimate from '@static/img/registerPage/ultimate.svg';
+
+import { AuthRouteConfig, RouteConfig } from '@/app/routes';
+import { loginUser } from '@/app/store/actions/users';
+import { Validator } from '@/user/validation';
 
 import './index.scss';
 

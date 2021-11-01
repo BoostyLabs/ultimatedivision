@@ -2,22 +2,20 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
-import { UserClient } from '@/api/user';
-
-import { useQueryToken } from '@/app/hooks/useQueryToken';
-import { AuthRouteConfig } from '@/app/routes';
-import { recoverUserPassword } from '@/app/store/actions/users';
-
-import { UserService } from '@/user/service';
-import { Validator } from '@/user/validation';
 
 import { UserDataArea } from '@components/common/UserDataArea';
 
 import ultimate from '@static/img/registerPage/ultimate.svg';
+
+import { UserClient } from '@/api/user';
+import { useQueryToken } from '@/app/hooks/useQueryToken';
+import { AuthRouteConfig } from '@/app/routes';
+import { recoverUserPassword } from '@/app/store/actions/users';
+import { UserService } from '@/user/service';
+import { Validator } from '@/user/validation';
 
 import './index.scss';
 

@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { User } from '@/user';
 import { APIClient } from '.';
+import { User } from '@/user';
 
 /** Client for user controller of api */
 export class UserClient extends APIClient {
@@ -66,7 +66,7 @@ export class UserClient extends APIClient {
         };
     };
     /** reset user password by email confirmation */
-    public async sendEmailForResetPassword(email: string): Promise<void> {
+    public async sendEmailForPasswordReset(email: string): Promise<void> {
         const path = `${this.ROOT_PATH}/password/${email}`;
         const response = await this.http.get(path, JSON.stringify(email));
 

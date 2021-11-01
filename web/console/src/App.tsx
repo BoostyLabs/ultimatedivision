@@ -4,10 +4,10 @@
 import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { Routes } from '@/app/routes';
-
 import { AboutMenu } from '@components/common/AboutMenu';
 import { Notification } from '@components/common/Notification';
+
+import { Routes } from '@/app/routes';
 
 /** initial App setup */
 export function App() {
