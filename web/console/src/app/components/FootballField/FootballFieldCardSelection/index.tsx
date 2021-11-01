@@ -6,7 +6,7 @@ import { RootState } from '@/app/store';
 import { listOfCards } from '@/app/store/actions/cards';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/club';
 import { Card } from '@/card';
-import { ClubCardPathModel } from '@/app/types/club';
+import { ClubCardPath } from '@/app/types/club';
 
 import { FilterField } from
     '@components/FootballField/FootballFieldCardSelection/FilterField';
@@ -26,10 +26,10 @@ export const FootballFieldCardSelection = () => {
     const DELAY = 10;
 
     /** Add card to field, and hide card selection component */
-    function handleClick(cardId: string) {
+    function setCard(cardId: string) {
         dispatch(
             addCard(
-                new ClubCardPathModel(squad.clubId, squad.id, cardId, fieldSetup.options.chosedCard)
+                new ClubCardPath(squad.clubId, squad.id, cardId, fieldSetup.options.chosedCard)
             ));
         dispatch(cardSelectionVisibility(false));
         setTimeout(() => {
@@ -45,7 +45,7 @@ export const FootballFieldCardSelection = () => {
                     <div
                         key={index}
                         className="card-selection__card"
-                        onClick={() => handleClick(card.id)}
+                        onClick={() => setCard(card.id)}
                     >
                         <PlayerCard
                             card={card}

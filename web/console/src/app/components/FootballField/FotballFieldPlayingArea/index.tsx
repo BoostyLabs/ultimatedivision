@@ -9,7 +9,7 @@ import { SquadCard } from '@/club';
 import { Card } from '@/card';
 import { RootState } from '@/app/store';
 
-import { ClubCardPathModel } from '@/app/types/club';
+import { ClubCardPath } from '@/app/types/club';
 
 import {
     cardSelectionVisibility,
@@ -96,12 +96,12 @@ export const FootballFieldPlayingArea: React.FC = () => {
             const cards = fieldSetup.squadCards;
             getCard(cards[index].cardId) ?
                 dispatch(changeCardPosition(
-                    new ClubCardPathModel(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
-                    new ClubCardPathModel(squad.clubId, squad.id, cards[index].cardId, dragStartIndex)
+                    new ClubCardPath(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
+                    new ClubCardPath(squad.clubId, squad.id, cards[index].cardId, dragStartIndex)
                 ))
                 :
                 dispatch(changeCardPosition(
-                    new ClubCardPathModel(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
+                    new ClubCardPath(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
                 ));
         }
 
@@ -120,7 +120,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
         if (isDragging) {
             dragStartIndex &&
                 dispatch(deleteCard(
-                    new ClubCardPathModel(squad.clubId, squad.id, club.squadCards[dragStartIndex].cardId, dragStartIndex))
+                    new ClubCardPath(squad.clubId, squad.id, club.squadCards[dragStartIndex].cardId, dragStartIndex))
                 );
             dispatch(setDragStart());
             handleDrag(false);

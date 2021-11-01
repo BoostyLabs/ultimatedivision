@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '@/api/index';
-import { ClubCardPathModel } from '@/app/types/club';
+import { ClubCardPath } from '@/app/types/club';
 import { Club, Squad } from '@/club';
 
 /** ClubClient base implementation */
@@ -37,7 +37,7 @@ export class ClubClient extends APIClient {
         return await response.json();
     }
     /** method calls get method from APIClient */
-    public async addCard(path: ClubCardPathModel): Promise<void> {
+    public async addCard(path: ClubCardPath): Promise<void> {
         const response = await this.http.post(
             `${this.ROOT_PATH}/clubs/${path.clubId}/squads/${path.squadId}/cards/${path.cardId}`,
             JSON.stringify({ position: path.position })
@@ -47,7 +47,7 @@ export class ClubClient extends APIClient {
         }
     }
     /** method calls get method from APIClient */
-    public async changeCardPosition(path: ClubCardPathModel): Promise<void> {
+    public async changeCardPosition(path: ClubCardPath): Promise<void> {
         const response = await this.http.patch(
             `${this.ROOT_PATH}/clubs/${path.clubId}/squads/${path.squadId}/cards/${path.cardId}`,
             JSON.stringify({ position: path.position })
@@ -57,7 +57,7 @@ export class ClubClient extends APIClient {
         }
     }
     /** method calls get method from APIClient */
-    public async deleteCard(path: ClubCardPathModel): Promise<void> {
+    public async deleteCard(path: ClubCardPath): Promise<void> {
         const response = await this.http.delete(
             `${this.ROOT_PATH}/clubs/${path.clubId}/squads/${path.squadId}/cards/${path.cardId}`
         );

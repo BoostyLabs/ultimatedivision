@@ -14,7 +14,7 @@ export class FieldControl {
 };
 
 /** class for api methods to declare full path of card inside of club */
-export class ClubCardPathModel {
+export class ClubCardPath {
     /** includes club id, squad idm card id and position parameters */
     constructor(
         public clubId: string,
