@@ -11,11 +11,12 @@ import { RootState } from '@/app/store';
 import { createClub, deleteCard, getClub } from '@/app/store/actions/club';
 
 import './index.scss';
-import { ClubCardPathModel } from '@/app/types/club';
+import { ClubCardPath } from '@/app/types/club';
 
 const FootballField: React.FC = () => {
     const dispatch = useDispatch();
     useEffect(() => {
+        /** TODO: refactor method call after backend response changes */
         (async function setClub() {
             try {
                 await dispatch(getClub());
@@ -41,7 +42,7 @@ const FootballField: React.FC = () => {
     function drop(e: any) {
         if (e.target.className === 'football-field__wrapper') {
             dragStartIndex &&
-                dispatch(deleteCard(new ClubCardPathModel(squad.clubId, squad.id, club.squadCards[dragStartIndex].cardId)));
+                dispatch(deleteCard(new ClubCardPath(squad.clubId, squad.id, club.squadCards[dragStartIndex].cardId)));
         }
     };
 

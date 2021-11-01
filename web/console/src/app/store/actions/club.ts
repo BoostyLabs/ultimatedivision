@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
-import { ClubCardPathModel } from '@/app/types/club';
+import { ClubCardPath } from '@/app/types/club';
 import {
     Club,
     Formations,
@@ -104,25 +104,25 @@ export const setTactic = (squad: Squad, tactic: TacticsType) =>
         dispatch(setClub(club));
     };
 
-export const addCard = (path: ClubCardPathModel) =>
+export const addCard = (path: ClubCardPath) =>
     async function(dispatch: Dispatch) {
         await service.addCard(path);
         const club = await service.getClub();
         dispatch(setClub(club));
     };
 
-export const deleteCard = (path: ClubCardPathModel) =>
+export const deleteCard = (path: ClubCardPath) =>
     async function(dispatch: Dispatch) {
         await service.deleteCard(path);
         const club = await service.getClub();
         dispatch(setClub(club));
     };
 
-export const changeCardPosition = (currentCard: ClubCardPathModel, existCard?: ClubCardPathModel) =>
+export const changeCardPosition = (currentCard: ClubCardPath, existCard?: ClubCardPath) =>
     async function(dispatch: Dispatch) {
         await service.changeCardPosition(currentCard);
         existCard &&
-      await service.changeCardPosition(existCard);
+            await service.changeCardPosition(existCard);
         const club = await service.getClub();
         dispatch(setClub(club));
     };

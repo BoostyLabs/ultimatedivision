@@ -1,19 +1,19 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { useDebounce } from '@/app/hooks/useDebounce';
 
 export const UserDataArea: React.FC<{
-    value: string,
-    placeHolder: string,
-    onChange: any,
-    className: string,
-    type: string,
-    error: SetStateAction<string | null>,
-    clearError: any,
-    validate: (value: string) => boolean,
+    value: string;
+    placeHolder: string;
+    onChange: Dispatch<SetStateAction<string>>;
+    className: string;
+    type: string;
+    error: SetStateAction<string | null>;
+    clearError: React.Dispatch<SetStateAction<SetStateAction<string | null>>> | null;
+    validate: (value: string) => boolean;
 }> = ({
     value,
     placeHolder,
@@ -44,6 +44,7 @@ export const UserDataArea: React.FC<{
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange(e.target.value);
+        clearError &&
         clearError(null);
     };
 
