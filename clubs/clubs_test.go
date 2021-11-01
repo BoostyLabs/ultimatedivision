@@ -187,7 +187,7 @@ func TestTeam(t *testing.T) {
 				clubs.Position(5),
 			}})
 			require.Error(t, err)
-			require.Equal(t, clubs.ErrNoSquad.Has(err), true)
+			require.Equal(t, clubs.ErrNoSquadCard.Has(err), true)
 		})
 
 		t.Run("Update card position in squad", func(t *testing.T) {

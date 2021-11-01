@@ -205,7 +205,14 @@ func (clubsDB *clubsDB) UpdateFormation(ctx context.Context, newFormation clubs.
 			  SET formation = $1
   			  WHERE id = $2`
 
-	_, err := clubsDB.conn.ExecContext(ctx, query, newFormation, squadID)
+	result, err := clubsDB.conn.ExecContext(ctx, query, newFormation, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return clubs.ErrNoSquad.New("squad does not exist")
+	}
 
 	return ErrSquad.Wrap(err)
 }
@@ -251,7 +258,7 @@ func (clubsDB *clubsDB) UpdatePositions(ctx context.Context, squadCards []clubs.
 
 		rowNum, err := result.RowsAffected()
 		if rowNum == 0 {
-			return clubs.ErrNoSquad.New("squad card does not exist")
+			return clubs.ErrNoSquadCard.New("squad card does not exist")
 		}
 
 		if err != nil {

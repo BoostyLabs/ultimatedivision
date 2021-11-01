@@ -115,7 +115,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	squadRouter := clubsRouter.PathPrefix("/{clubId}/squads").Subrouter()
 	squadRouter.HandleFunc("", clubsController.CreateSquad).Methods(http.MethodPost)
 	squadRouter.HandleFunc("/{squadId}", clubsController.UpdateTacticCaptain).Methods(http.MethodPatch)
-	squadRouter.HandleFunc("/{squadId}/formation/{formation}", clubsController.ChangeFormation).Methods(http.MethodPut)
+	squadRouter.HandleFunc("/{squadId}/formation/{formationId}", clubsController.ChangeFormation).Methods(http.MethodPut)
 
 	squadCardsRouter := squadRouter.PathPrefix("/{squadId}/cards").Subrouter()
 	squadCardsRouter.HandleFunc("/{cardId}", clubsController.Add).Methods(http.MethodPost)
