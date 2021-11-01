@@ -6,8 +6,8 @@ import React, { SetStateAction, useState } from 'react';
 import { UserDataArea } from '@components/common/UserDataArea';
 
 import { UserClient } from '@/api/user';
-import { Validator } from '@/user/validation';
 import { UserService } from '@/user/service';
+import { Validator } from '@/user/validation';
 
 import './index.scss';
 

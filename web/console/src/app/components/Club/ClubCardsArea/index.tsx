@@ -2,10 +2,10 @@
 // See LICENSE for copying information.
 
 import { useSelector } from 'react-redux';
-import { RootState } from '@/app/store';
 
 import { MyCard } from './MyCard';
 
+import { RootState } from '@/app/store';
 import { Card } from '@/card';
 
 import './index.scss';

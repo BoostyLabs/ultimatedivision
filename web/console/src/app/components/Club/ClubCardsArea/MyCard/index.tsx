@@ -5,13 +5,14 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import { PlayerCard } from '@components/common/PlayerCard';
+
 import confirmIcon from '@static/img/MarketPlacePage/MyCard/ok.svg';
 import priceGoldIcon from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
 
 import { createLot } from '@/app/store/actions/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
 import { Card } from '@/card';
-import { PlayerCard } from '@components/common/PlayerCard';
 
 import './index.scss';
 
