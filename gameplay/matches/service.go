@@ -266,3 +266,38 @@ func (service *Service) ListMatchGoals(ctx context.Context, matchID uuid.UUID) (
 
 	return matchGoals, ErrMatches.Wrap(err)
 }
+
+// RankMatch evaluates how many points each user receive per match.
+func (service *Service) RankMatch(match Match, matchGoals []MatchGoals) error {
+	var user1Goals int
+	var user2Goals int
+
+	for _, goal := range matchGoals{
+		if goal.UserID == match.User1ID{
+			user1Goals++
+			continue
+		}
+		user2Goals++
+	}
+
+	switch {
+	case user1Goals > user2Goals:
+	case user1Goals < user2Goals:
+	case user1Goals == user2Goals:
+	}
+
+	// TODO: insert points to the database.
+
+	return nil
+}
+
+// GetClubsPoints returns points which club earned during division.
+func (service *Service) GetClubsPoints(ctx context.Context, clubsID uuid.UUID, divisionID uuid.UUID) (int, error){
+
+	// TODO
+	//
+	// 1. get matches during division for club ordered by time
+	// 2. check number of matches 3 <= count <= 30
+
+	return 0, nil
+}

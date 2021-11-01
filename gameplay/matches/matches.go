@@ -97,6 +97,10 @@ type Config struct {
 	} `json:"goalProbabilityByPosition"`
 
 	pagination.Cursor `json:"pagination"`
+
+	NumberOfPointsForWin int `json:"numberOfPointsForWin"`
+	NumberOfPointsForDraw int `json:"numberOfPointsForDraw"`
+	NumberOfPointsForLosing int `json:"numberOfPointsForLosing"`
 }
 
 // Match describes match entity.
