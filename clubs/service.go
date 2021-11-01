@@ -5,7 +5,6 @@ package clubs
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -187,7 +186,6 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 	}
 
 	squadCards = convertPositions(squadCards, formation)
-	fmt.Println(squadCards)
 
 	if len(squadCards) < squadSize {
 		for i := 0; i < squadSize; i++ {
@@ -408,7 +406,13 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position P
 
 	for key, v := range squadCards {
 		if cardCoefficients[max].ID == v.CardID {
+			if key >= len(squadCards)-1 {
+				squadCards = squadCards[:key]
+				continue
+			}
+
 			squadCards = RemoveIndex(squadCards, key)
+			continue
 		}
 	}
 
