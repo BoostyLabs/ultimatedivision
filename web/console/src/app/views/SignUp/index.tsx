@@ -2,12 +2,12 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { registerUser } from '@/app/store/actions/users';
 import { AuthRouteConfig } from '@/app/routes';
+import { registerUser } from '@/app/store/actions/users';
 
 import { Validator } from '@/user/validation';
 

@@ -2,15 +2,14 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { Link, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { AuthRouteConfig, RouteConfig } from '@/app/routes';
+import { loginUser } from '@/app/store/actions/users';
 
 import { Validator } from '@/user/validation';
-
-import { loginUser } from '@/app/store/actions/users';
 
 import { UserDataArea } from '@components/common/UserDataArea';
 

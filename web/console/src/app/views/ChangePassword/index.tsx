@@ -5,9 +5,10 @@ import { SetStateAction, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import { UserClient } from '@/api/user';
+
 import { AuthRouteConfig } from '@/app/routes';
 
-import { UserClient } from '@/api/user';
 import { UserService } from '@/user/service';
 import { Validator } from '@/user/validation';
 
