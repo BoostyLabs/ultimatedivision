@@ -34,7 +34,8 @@ export const Home: React.FC = () => {
     /** Max height, when ScrollToTop block must be hidden. */
     const MAX_HEIGHT_FROM_HOME = -200;
 
-    /** Show ScrollToTop block, when user scrolls down the landing page and hide block, when user looks Home component. */
+    /** Show ScrollToTop block, when user scrolls down the
+     * landing page and hide block, when user looks Home component. */
     const changeVisibleScrollToTop = () => {
         const homeElem = document.getElementById('home');
 
