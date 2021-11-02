@@ -31,6 +31,8 @@ type DB interface {
 	AddGoals(ctx context.Context, matchGoals []MatchGoals) error
 	// ListMatchGoals returns all goals from the match from the database.
 	ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]MatchGoals, error)
+	// GetResultMatch returns goals of each user in the match from db.
+	GetResultMatch(ctx context.Context, matchID uuid.UUID) ([]ResultMatch, error)
 }
 
 // Config defines configuration for matches.
@@ -115,6 +117,12 @@ type MatchGoals struct {
 	UserID  uuid.UUID `json:"userId"`
 	CardID  uuid.UUID `json:"cardId"`
 	Minute  int       `json:"minute"`
+}
+
+// ResultMatch defines quantity goals of each user in the match.
+type ResultMatch struct {
+	UserID        uuid.UUID `json:"userId"`
+	QuantityGoals int       `json:"quantityGoals"`
 }
 
 // Page holds match page entity which is used to show listed page of matches.

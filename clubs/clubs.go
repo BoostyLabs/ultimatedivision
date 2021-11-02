@@ -76,6 +76,9 @@ type SquadCard struct {
 	Position Position  `json:"position"`
 }
 
+// QuantityPlayersSquad indicates that quantity players full squad is 11.
+const QuantityPlayersSquad int = 11
+
 // Formation defines a list of possible formations.
 type Formation int
 
