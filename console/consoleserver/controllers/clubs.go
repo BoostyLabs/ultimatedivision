@@ -204,11 +204,13 @@ func (controller *Clubs) UpdatePosition(w http.ResponseWriter, r *http.Request) 
 
 	err = controller.clubs.UpdateCardPosition(ctx, squadID, cardID, squadCard.Position)
 	if err != nil {
+		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
+
 		if clubs.ErrNoSquadCard.Has(err) {
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
 			return
 		}
-		controller.log.Error("could not update card position", ErrClubs.Wrap(err))
+
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
@@ -233,11 +235,13 @@ func (controller *Clubs) UpdateTacticCaptain(w http.ResponseWriter, r *http.Requ
 	}
 
 	if err = controller.clubs.UpdateSquad(ctx, squadID, updatedSquad.Tactic, updatedSquad.CaptainID); err != nil {
+		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
+
 		if clubs.ErrNoSquad.Has(err) {
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
 			return
 		}
-		controller.log.Error("could not update squad", ErrClubs.Wrap(err))
+
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
@@ -301,11 +305,13 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = controller.clubs.Delete(ctx, squadID, cardID); err != nil {
+		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
+
 		if clubs.ErrNoSquadCard.Has(err) {
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
 			return
 		}
-		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
+
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
@@ -338,11 +344,13 @@ func (controller *Clubs) ChangeFormation(w http.ResponseWriter, r *http.Request)
 
 	err = controller.clubs.ChangeFormation(ctx, formation, squadID)
 	if err != nil {
+		controller.log.Error("could not change formation", ErrClubs.Wrap(err))
+
 		if clubs.ErrNoSquad.Has(err) {
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
 			return
 		}
-		controller.log.Error("could not change formation", ErrClubs.Wrap(err))
+
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
 	}
