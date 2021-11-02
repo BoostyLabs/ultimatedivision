@@ -3,12 +3,13 @@
 
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { PlayerCard } from '@components/common/PlayerCard';
+
 import { ClubCardPath } from '@/app/types/club';
 import { deleteCard } from '@/app/store/actions/club';
 import { RootState } from '@/app/store';
 import { Card } from '@/card';
-
-import { PlayerCard } from '@components/common/PlayerCard';
 
 import './index.scss';
 

@@ -3,14 +3,14 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { FootballFieldControlsArea } from '@/app/components/FootballField/FootballFieldControlsArea';
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
-import { SquadCard } from '@/club';
-import { Card } from '@/card';
+
 import { RootState } from '@/app/store';
-
 import { ClubCardPath } from '@/app/types/club';
-
+import { Card } from '@/card';
+import { SquadCard } from '@/club';
 import {
     cardSelectionVisibility,
     changeCardPosition,
