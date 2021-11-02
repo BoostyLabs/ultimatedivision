@@ -14,10 +14,10 @@ import { SquadCard } from '@/club';
 import {
     cardSelectionVisibility,
     changeCardPosition,
-    swapCards,
     choosePosition,
     deleteCard,
     setDragStart,
+    swapCards,
 } from '@/app/store/actions/club';
 
 import './index.scss';
@@ -161,7 +161,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 }
                                 key={index}
                                 className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
-                                    }`}
+                                }`}
                                 onClick={() => handleClick(index)}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
