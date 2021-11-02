@@ -224,14 +224,11 @@ func (service *Service) Create(ctx context.Context, squad1ID uuid.UUID, squad2ID
 		Squad2ID: squad2ID,
 	}
 
-	err = service.matches.Create(ctx, newMatch)
-	if err != nil {
+	if err = service.matches.Create(ctx, newMatch); err != nil {
 		return uuid.Nil, ErrMatches.Wrap(err)
 	}
 
-	err = service.Play(ctx, newMatch.ID, squadCards1, squadCards2, newMatch.User1ID, newMatch.User2ID)
-
-	return newMatch.ID, ErrMatches.Wrap(err)
+	return newMatch.ID, ErrMatches.Wrap(service.Play(ctx, newMatch.ID, squadCards1, squadCards2, newMatch.User1ID, newMatch.User2ID))
 }
 
 // Get returns match by id.
