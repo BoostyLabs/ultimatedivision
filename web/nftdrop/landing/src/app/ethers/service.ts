@@ -1,9 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { ethers } from 'ethers';
+
 import { EthersClient } from '@/api/ethers';
 import { buildHash } from '@utils/ethers';
-import { ethers } from 'ethers';
 
 export class Service {
     private readonly provider;
@@ -18,7 +19,7 @@ export class Service {
         return await this.client.getAddress(wallet);
     }
 
-    /** Gets current wallet address. */
+    /** Get current wallet address. */
     public async getWallet() {
         const signer = await this.provider.getSigner();
 
@@ -35,6 +36,7 @@ export class Service {
         const signer = await this.provider.getSigner();
         const connect = await contract.connect(signer);
         const totalSupply = await connect.functions.totalSupply();
+
         return parseInt(totalSupply[0]._hex, 16);
     }
 
@@ -62,6 +64,7 @@ export class Service {
             data,
             value: currentPrice[0],
         });
+
         await signer.sendTransaction({
             to: address.contracts.nftSale,
             data,
@@ -69,7 +72,6 @@ export class Service {
             chainId: 3,
             value: currentPrice[0],
         });
-
     }
 
     public async getBalance(id: string) {
@@ -82,5 +84,4 @@ export class Service {
             console.log(error.message);
         }
     }
-
 }

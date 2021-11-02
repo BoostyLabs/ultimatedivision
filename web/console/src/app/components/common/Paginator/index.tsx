@@ -1,17 +1,21 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
+
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+
 import { PaginatorBlockPages } from '@components/common/Paginator/PaginatorBlockPages';
-import { Pagination } from '@/app/types/pagination';
+
 import next
     from '@static/img/UltimateDivisionPaginator/next.svg';
 import notActiveNext
     from '@static/img/UltimateDivisionPaginator/not_active_next.svg';
-import previous
-    from '@static/img/UltimateDivisionPaginator/previous.svg';
 import notActivePrevious
     from '@static/img/UltimateDivisionPaginator/not_active_previous.svg';
+import previous
+    from '@static/img/UltimateDivisionPaginator/previous.svg';
+
+import { Pagination } from '@/app/types/pagination';
 
 import './index.scss';
 

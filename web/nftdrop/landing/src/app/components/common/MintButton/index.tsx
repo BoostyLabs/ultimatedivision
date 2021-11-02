@@ -1,13 +1,12 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useState } from 'react';
-
+import { useState } from 'react';
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { ServicePlugin } from '@/app/plugins/service';
-import { NFT_ABI, NFT_ABI_SALE } from '@/app/ethers';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
+
+import { NFT_ABI, NFT_ABI_SALE } from '@/app/ethers';
+import { ServicePlugin } from '@/app/plugins/service';
 
 import './index.scss';
 
@@ -27,51 +26,57 @@ export const MintButton: React.FC = () => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
+
                 handleConnect(true);
             } catch (error: any) {
-                toast.error("Please open metamask manually!", {
+                toast.error('Please open metamask manually!', {
                     position: toast.POSITION.TOP_RIGHT,
-                    theme: "colored"
+                    theme: 'colored'
                 });
+
                 return;
             }
         } else {
-            onboarding.current = new MetaMaskOnboarding()
+            onboarding.current = new MetaMaskOnboarding();
             onboarding.current?.startOnboarding();
         }
+
         try {
             const wallet = await service.getWallet();
-            await service.getAddress(wallet)
-            setButtonText("Mint")
+
+            await service.getAddress(wallet);
+
+            setButtonText('Mint');
         } catch (error: any) {
-            toast.error("You are not in whitelist", {
+            toast.error('You are not in whitelist', {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored"
+                theme: 'colored'
             });
         }
     };
+
     const sendTransaction = async () => {
         try {
             const wallet = await service.getWallet();
             const totalSupply = await service.getLastTokenId(wallet, NFT_ABI);
-            totalSupply &&
-                await service.sendTransaction(wallet, totalSupply, NFT_ABI_SALE);
+
+            totalSupply
+                && await service.sendTransaction(wallet, totalSupply, NFT_ABI_SALE);
         } catch (error: any) {
-            toast.error("Failed to connect to contract", {
+            toast.error('Failed to connect to contract', {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored"
+                theme: 'colored'
             });
         }
-    }
+    };
 
     return (
         <button
             className="ultimatedivision-mint-btn"
             onClick={() => {
-                !isConnected ?
-                    connect()
-                    :
-                    sendTransaction()
+                !isConnected
+                    ? connect()
+                    : sendTransaction();
             }}
         >
             <span className="ultimatedivision-mint-btn__text">{text}</span>
