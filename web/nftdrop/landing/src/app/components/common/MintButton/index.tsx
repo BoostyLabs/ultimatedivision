@@ -2,12 +2,11 @@
 // See LICENSE for copying information.
 
 import React, { useState } from 'react';
-
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { ServicePlugin } from '@/app/plugins/service';
-import { NFT_ABI, NFT_ABI_SALE } from '@/app/ethers';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
+
+import { NFT_ABI, NFT_ABI_SALE } from '@/app/ethers';
+import { ServicePlugin } from '@/app/plugins/service';
 
 import './index.scss';
 
