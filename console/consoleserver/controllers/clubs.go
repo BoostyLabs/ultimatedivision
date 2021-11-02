@@ -325,7 +325,7 @@ func (controller *Clubs) ChangeFormation(w http.ResponseWriter, r *http.Request)
 
 	formation := clubs.Formation(newFormationID)
 
-	if !clubs.Formation(newFormationID).IsValid() {
+	if !formation.IsValid() {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("formation is not correct"))
 		return
 	}
