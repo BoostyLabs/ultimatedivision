@@ -48,6 +48,10 @@ func (queueHub *queueHub) List() []queue.Client {
 func (queueHub *queueHub) Delete(userID uuid.UUID) error {
 	for k, client := range queueHub.hub.Queue {
 		if client.UserID == userID {
+			if k+1 == len(queueHub.hub.Queue) {
+				queueHub.hub.Queue = queueHub.hub.Queue[:k]
+				return nil
+			}
 			queueHub.hub.Queue = append(queueHub.hub.Queue[:k], queueHub.hub.Queue[k+1:]...)
 			return nil
 		}
