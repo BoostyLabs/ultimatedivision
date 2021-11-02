@@ -1,9 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { ethers } from 'ethers';
+
 import { EthersClient } from '@/api/ethers';
 import { buildHash } from '@utils/ethers';
-import { ethers } from 'ethers';
 
 export class Service {
     private readonly provider;
@@ -18,7 +19,7 @@ export class Service {
         return await this.client.getAddress(wallet);
     }
 
-    /** Gets current wallet address. */
+    /** Get current wallet address. */
     public async getWallet() {
         const signer = await this.provider.getSigner();
 

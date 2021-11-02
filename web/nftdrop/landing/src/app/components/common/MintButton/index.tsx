@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { toast } from 'react-toastify';
 
@@ -26,7 +26,7 @@ export const MintButton: React.FC = () => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
-                
+
                 handleConnect(true);
             } catch (error: any) {
                 toast.error('Please open metamask manually!', {
