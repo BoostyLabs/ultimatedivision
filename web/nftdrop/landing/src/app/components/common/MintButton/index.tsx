@@ -26,6 +26,7 @@ export const MintButton: React.FC = () => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
+                
                 handleConnect(true);
             } catch (error: any) {
                 toast.error('Please open metamask manually!', {
@@ -44,6 +45,7 @@ export const MintButton: React.FC = () => {
             const wallet = await service.getWallet();
 
             await service.getAddress(wallet);
+
             setButtonText('Mint');
         } catch (error: any) {
             toast.error('You are not in whitelist', {
@@ -52,6 +54,7 @@ export const MintButton: React.FC = () => {
             });
         }
     };
+
     const sendTransaction = async () => {
         try {
             const wallet = await service.getWallet();

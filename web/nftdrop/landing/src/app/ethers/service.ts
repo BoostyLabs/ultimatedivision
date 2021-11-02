@@ -71,7 +71,6 @@ export class Service {
             chainId: 3,
             value: currentPrice[0],
         });
-
     }
 
     public async getBalance(id: string) {
@@ -84,5 +83,4 @@ export class Service {
             console.log(error.message);
         }
     }
-
 }
