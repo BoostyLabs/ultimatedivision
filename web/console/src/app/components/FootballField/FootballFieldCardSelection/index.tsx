@@ -12,7 +12,7 @@ import { RootState } from '@/app/store';
 import { listOfCards } from '@/app/store/actions/cards';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/club';
 import { Card } from '@/card';
-import { ClubCardPath } from '@/app/types/club';
+import { CardEditIdentificators } from '@/app/types/club';
 
 import './index.scss';
 
@@ -30,7 +30,7 @@ export const FootballFieldCardSelection = () => {
     function setCard(cardId: string) {
         dispatch(
             addCard(
-                new ClubCardPath(squad.clubId, squad.id, cardId, fieldSetup.options.chosedCard)
+                new CardEditIdentificators(squad.clubId, squad.id, cardId, fieldSetup.options.chosedCard)
             ));
         dispatch(cardSelectionVisibility(false));
         setTimeout(() => {

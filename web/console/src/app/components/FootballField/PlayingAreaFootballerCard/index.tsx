@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 
-import { ClubCardPath } from '@/app/types/club';
+import { CardEditIdentificators } from '@/app/types/club';
 import { deleteCard } from '@/app/store/actions/club';
 import { RootState } from '@/app/store';
 import { Card } from '@/card';
@@ -28,7 +28,7 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; p
     function handleDeletion(e: React.MouseEvent<HTMLInputElement>) {
         e.stopPropagation();
         e.preventDefault();
-        dispatch(deleteCard(new ClubCardPath(squad.clubId, squad.id, card.id)));
+        dispatch(deleteCard(new CardEditIdentificators(squad.clubId, squad.id, card.id)));
     }
 
     return (

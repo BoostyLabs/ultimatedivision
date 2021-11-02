@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { ClubClient } from '@/api/club';
-import { ClubCardPath } from '@/app/types/club';
+import { CardEditIdentificators } from '@/app/types/club';
 import { Club, Squad } from '.';
 
 /**
@@ -32,17 +32,17 @@ export class ClubService {
     };
 
     /** adding card to squad cards list */
-    public async addCard(path: ClubCardPath): Promise<void> {
+    public async addCard(path: CardEditIdentificators): Promise<void> {
         return await this.club.addCard(path);
     };
 
     /** change position of existing card */
-    public async changeCardPosition(path: ClubCardPath): Promise<void> {
+    public async changeCardPosition(path: CardEditIdentificators): Promise<void> {
         return await this.club.changeCardPosition(path);
     };
 
     /** delete card from squad cards list */
-    public async deleteCard(path: ClubCardPath): Promise<void> {
+    public async deleteCard(path: CardEditIdentificators): Promise<void> {
         return await this.club.deleteCard(path);
     };
 

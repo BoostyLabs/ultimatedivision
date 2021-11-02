@@ -8,12 +8,13 @@ import { FootballFieldControlsArea } from '@/app/components/FootballField/Footba
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
 import { RootState } from '@/app/store';
-import { ClubCardPath } from '@/app/types/club';
+import { CardEditIdentificators } from '@/app/types/club';
 import { Card } from '@/card';
 import { SquadCard } from '@/club';
 import {
     cardSelectionVisibility,
     changeCardPosition,
+    swapCards,
     choosePosition,
     deleteCard,
     setDragStart,
@@ -95,13 +96,13 @@ export const FootballFieldPlayingArea: React.FC = () => {
         if (isDragging && dragStartIndex !== null) {
             const cards = fieldSetup.squadCards;
             getCard(cards[index].cardId) ?
-                dispatch(changeCardPosition(
-                    new ClubCardPath(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
-                    new ClubCardPath(squad.clubId, squad.id, cards[index].cardId, dragStartIndex)
+                dispatch(swapCards(
+                    new CardEditIdentificators(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
+                    new CardEditIdentificators(squad.clubId, squad.id, cards[index].cardId, dragStartIndex)
                 ))
                 :
                 dispatch(changeCardPosition(
-                    new ClubCardPath(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
+                    new CardEditIdentificators(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
                 ));
         }
 
@@ -120,7 +121,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
         if (isDragging) {
             dragStartIndex &&
                 dispatch(deleteCard(
-                    new ClubCardPath(squad.clubId, squad.id, club.squadCards[dragStartIndex].cardId, dragStartIndex))
+                    new CardEditIdentificators(squad.clubId, squad.id, club.squadCards[dragStartIndex].cardId, dragStartIndex))
                 );
             dispatch(setDragStart());
             handleDrag(false);
@@ -160,7 +161,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 }
                                 key={index}
                                 className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
-                                }`}
+                                    }`}
                                 onClick={() => handleClick(index)}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
