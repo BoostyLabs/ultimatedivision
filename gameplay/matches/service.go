@@ -264,8 +264,8 @@ func (service *Service) ListMatchGoals(ctx context.Context, matchID uuid.UUID) (
 	return matchGoals, ErrMatches.Wrap(err)
 }
 
-// GetResultMatch returns goals of each user in the match.
-func (service *Service) GetResultMatch(ctx context.Context, matchID uuid.UUID) ([]ResultMatch, error) {
-	resultMatch, err := service.matches.GetResultMatch(ctx, matchID)
+// GetMatchResult returns goals of each user in the match.
+func (service *Service) GetMatchResult(ctx context.Context, matchID uuid.UUID) ([]MatchResult, error) {
+	resultMatch, err := service.matches.GetMatchResult(ctx, matchID)
 	return resultMatch, ErrMatches.Wrap(err)
 }

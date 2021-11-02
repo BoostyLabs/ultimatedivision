@@ -95,7 +95,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					return ChoreError.Wrap(err)
 				}
 				if len(squadCardsFirstClient) != clubs.QuantityPlayersSquad {
-					if err := firstClient.WriteJSON(http.StatusInternalServerError, "quantity players full squad is not 11!"); err != nil {
+					if err := firstClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
 						return ChoreError.Wrap(err)
 					}
 				}
@@ -105,7 +105,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					return ChoreError.Wrap(err)
 				}
 				if len(squadCardsSecondClient) != clubs.QuantityPlayersSquad {
-					if err := secondClient.WriteJSON(http.StatusInternalServerError, "quantity players full squad is not 11!"); err != nil {
+					if err := secondClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
 						return ChoreError.Wrap(err)
 					}
 				}
@@ -120,9 +120,9 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					}
 				}
 
-				resultMatch, err := chore.matches.GetResultMatch(ctx, matchesID)
+				resultMatch, err := chore.matches.GetMatchResult(ctx, matchesID)
 				if err != nil {
-					if err := secondClient.WriteJSON(http.StatusInternalServerError, "impossible get result match"); err != nil {
+					if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not get result of match"); err != nil {
 						return ChoreError.Wrap(err)
 					}
 				}

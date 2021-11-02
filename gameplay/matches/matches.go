@@ -31,8 +31,8 @@ type DB interface {
 	AddGoals(ctx context.Context, matchGoals []MatchGoals) error
 	// ListMatchGoals returns all goals from the match from the database.
 	ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]MatchGoals, error)
-	// GetResultMatch returns goals of each user in the match from db.
-	GetResultMatch(ctx context.Context, matchID uuid.UUID) ([]ResultMatch, error)
+	// GetMatchResult returns goals of each user in the match from db.
+	GetMatchResult(ctx context.Context, matchID uuid.UUID) ([]MatchResult, error)
 }
 
 // Config defines configuration for matches.
@@ -119,8 +119,8 @@ type MatchGoals struct {
 	Minute  int       `json:"minute"`
 }
 
-// ResultMatch defines quantity goals of each user in the match.
-type ResultMatch struct {
+// MatchResult defines quantity goals of each user in the match.
+type MatchResult struct {
 	UserID        uuid.UUID `json:"userId"`
 	QuantityGoals int       `json:"quantityGoals"`
 }
