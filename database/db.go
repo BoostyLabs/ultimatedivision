@@ -203,10 +203,10 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             period        INTEGER                                                         NOT NULL
         );
         CREATE TABLE IF NOT EXISTS divisions (
-            id                   BYTEA PRIMARY KEY        NOT NULL,
-            name                 VARCHAR                  NOT NULL,
-            passing_percent      INTEGER                  NOT NULL,
-            created_at           TIMESTAMP WITH TIME ZONE NOT NULL
+            id              BYTEA PRIMARY KEY        NOT NULL,
+            name            VARCHAR                  NOT NULL,
+            passing_percent INTEGER                  NOT NULL,
+            created_at      TIMESTAMP WITH TIME ZONE NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)

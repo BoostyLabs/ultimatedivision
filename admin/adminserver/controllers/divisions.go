@@ -60,7 +60,7 @@ func (controller *Divisions) List(w http.ResponseWriter, r *http.Request) {
 	err = controller.templates.List.Execute(w, divisions)
 	if err != nil {
 		controller.log.Error("can not execute list divisions template", ErrDivisions.Wrap(err))
-		http.Error(w, "can not execute list divisions template", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -74,13 +74,13 @@ func (controller *Divisions) Create(w http.ResponseWriter, r *http.Request) {
 		err := controller.templates.Create.Execute(w, nil)
 		if err != nil {
 			controller.log.Error("could not execute create divisions template", ErrDivisions.Wrap(err))
-			http.Error(w, "could not execute create divisions template", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case http.MethodPost:
 		err := r.ParseForm()
 		if err != nil {
-			http.Error(w, "could not get divisions form", http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		name := r.FormValue("name")
@@ -92,7 +92,7 @@ func (controller *Divisions) Create(w http.ResponseWriter, r *http.Request) {
 		err = controller.divisions.Create(ctx, name)
 		if err != nil {
 			controller.log.Error("could not create division", ErrDivisions.Wrap(err))
-			http.Error(w, "could not create division", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		Redirect(w, r, "/divisions", http.MethodGet)
@@ -104,21 +104,21 @@ func (controller *Divisions) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 	id := params["id"]
-	if id == "" {
-		http.Error(w, "id is empty", http.StatusBadRequest)
-		return
-	}
 
 	uuid, err := uuid.Parse(id)
 	if err != nil {
-		http.Error(w, "could not parse uuid", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = controller.divisions.Delete(ctx, uuid)
 	if err != nil {
+		if divisions.ErrNoDivisions.Has(err) {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
 		controller.log.Error("could not delete division", ErrDivisions.Wrap(err))
-		http.Error(w, "could not delete division", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	Redirect(w, r, "/divisions", http.MethodGet)

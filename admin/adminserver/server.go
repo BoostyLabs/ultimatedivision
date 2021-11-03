@@ -163,7 +163,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	queueRouter.HandleFunc("", queueController.List).Methods(http.MethodGet)
 	queueRouter.HandleFunc("/{id}", queueController.Get).Methods(http.MethodGet)
 
-	divisionsRouter := router.PathPrefix("/divisions").Subrouter().StrictSlash(true)
+	divisionsRouter := router.PathPrefix("/divisions").Subrouter()
 	divisionsRouter.Use(server.withAuth)
 	divisionsController := controllers.NewDivisions(log, divisions, server.templates.divisions)
 	divisionsRouter.HandleFunc("", divisionsController.List).Methods(http.MethodGet)
