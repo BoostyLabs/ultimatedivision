@@ -11,19 +11,18 @@ import (
 	"net/http"
 	"path/filepath"
 
-
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
-	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/admin/adminserver/controllers"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/templatefuncs"
 	"ultimatedivision/lootboxes"
