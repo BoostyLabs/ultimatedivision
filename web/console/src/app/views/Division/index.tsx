@@ -47,7 +47,7 @@ const Division: React.FC = () => {
         'Points',
     ];
 
-    const setGradationDivisionClassName = (position: string) => {
+    const changeGradationDivisionClassName = (position: string) => {
         let className: string = '';
 
         if (+position <= UPPER_BREAKPOINT) {
@@ -121,7 +121,7 @@ const Division: React.FC = () => {
                 <tbody>
                     {divisionClubs.map((divisionClub: DivisionClub, index: number) =>
                         <tr
-                            className={`division__clubs__club${setGradationDivisionClassName(divisionClub.position)}`}
+                            className={`division__clubs__club${changeGradationDivisionClassName(divisionClub.position)}`}
                             key={index}
                         >
                             <td className="division__clubs__club__item">
