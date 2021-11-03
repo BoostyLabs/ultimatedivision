@@ -39,6 +39,7 @@
         grid-template-columns: repeat(4, 1fr);
         justify-content: center;
         justify-items: center;
+        align-items: flex-start;
         padding: 0 0 80px;
     }
 
@@ -106,6 +107,7 @@
         &__card-wrapper {
             row-gap: 20px;
             width: 100%;
+            min-height: 700px;
             grid-template-columns: repeat(2, 1fr);
             justify-content: space-between;
         }
@@ -126,6 +128,7 @@
         }
 
         &__card-wrapper {
+            min-height: 520px;
             row-gap: 0;
         }
 
