@@ -3,13 +3,13 @@
 
 /** exposes Division Club type */
 export class DivisionClub {
-    /** receives icon, position, name, games, wins, draws, 
+    /** receives icon, position, name, games, wins, draws,
      * defeats, goalDifference, points as string parameters */
     constructor(
         public position: string,
         public club: {
-            name: string,
-            icon: string,
+            name: string;
+            icon: string;
         },
         public games: string,
         public wins: string,

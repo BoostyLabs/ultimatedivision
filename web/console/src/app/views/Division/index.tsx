@@ -3,7 +3,7 @@
 
 import realMadrid from '@static/img/divisions/realmadrid.png';
 
-import { DivisionClub } from "@/app/types/division";
+import { DivisionClub } from '@/app/types/division';
 
 import './index.scss';
 
@@ -27,14 +27,14 @@ const Division: React.FC = () => {
     const CLUBS_COUNT: number = 50;
     const divisionClubs = new Array(CLUBS_COUNT).fill(divisionClub);
 
-    /** variables describes top and bottom club position
+    /** variables describes upper and lower clubs position
      * in general division table */
     const COEFFICIENT: number = 0.1;
 
-    const UPPER_BREAKPOINT_DIVISON_CLUBS: number
+    const UPPER_BREAKPOINT: number
         = Math.round(divisionClubs.length * COEFFICIENT);
-    const LOWER_BREAKPOINT_DIVISION_CLUBS: number
-        = divisionClubs.length - UPPER_BREAKPOINT_DIVISON_CLUBS;
+    const LOWER_BREAKPOINT: number
+        = divisionClubs.length - UPPER_BREAKPOINT;
 
     const titles: string[] = [
         '#',
@@ -96,8 +96,8 @@ const Division: React.FC = () => {
                 <tbody>
                     {divisionClubs.map((divisionClub: DivisionClub, index: number) =>
                         <tr
-                            className={`division__clubs__club${+divisionClub.position <= UPPER_BREAKPOINT_DIVISON_CLUBS ?
-                                '-upper' : +divisionClub.position >= LOWER_BREAKPOINT_DIVISION_CLUBS ? '-lower' : ''}`}
+                            className={`division__clubs__club${+divisionClub.position <= UPPER_BREAKPOINT ?
+                                '-upper' : +divisionClub.position >= LOWER_BREAKPOINT ? '-lower' : ''}`}
                             key={index}
                         >
                             <td className="division__clubs__club__item">
