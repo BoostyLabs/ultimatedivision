@@ -49,7 +49,7 @@ func (divisionsDB *divisionsDB) List(ctx context.Context) ([]divisions.Division,
 		err = errs.Combine(err, rows.Close())
 	}()
 
-	var dataDivisions []divisions.Division
+	var allDivisions []divisions.Division
 	for rows.Next() {
 		var division divisions.Division
 		err := rows.Scan(&division.ID, &division.Name, &division.PassingPercent, &division.CreatedAt)
@@ -57,13 +57,13 @@ func (divisionsDB *divisionsDB) List(ctx context.Context) ([]divisions.Division,
 			return nil, ErrDivisions.Wrap(err)
 		}
 
-		dataDivisions = append(dataDivisions, division)
+		allDivisions = append(allDivisions, division)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, ErrDivisions.Wrap(err)
 	}
 
-	return dataDivisions, ErrDivisions.Wrap(err)
+	return allDivisions, ErrDivisions.Wrap(err)
 }
 
 // Get returns division by id from the data base.
@@ -76,7 +76,7 @@ func (divisionsDB *divisionsDB) Get(ctx context.Context, id uuid.UUID) (division
 	err := row.Scan(&division.ID, &division.Name, &division.PassingPercent, &division.CreatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return division, divisions.ErrNoDivisions.Wrap(err)
+			return division, divisions.ErrNoDivision.Wrap(err)
 		}
 
 		return division, ErrDivisions.Wrap(err)
@@ -94,7 +94,7 @@ func (divisionsDB *divisionsDB) Delete(ctx context.Context, id uuid.UUID) error 
 
 	rowNum, err := result.RowsAffected()
 	if rowNum == 0 {
-		return divisions.ErrNoDivisions.New("division does not exist")
+		return divisions.ErrNoDivision.New("division does not exist")
 	}
 
 	return ErrDivisions.Wrap(err)

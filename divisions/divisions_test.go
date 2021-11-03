@@ -37,7 +37,7 @@ func TestDivisions(t *testing.T) {
 		t.Run("get sql no rows", func(t *testing.T) {
 			_, err := repository.Get(ctx, id)
 			require.Error(t, err)
-			assert.Equal(t, true, divisions.ErrNoDivisions.Has(err))
+			assert.Equal(t, true, divisions.ErrNoDivision.Has(err))
 		})
 
 		t.Run("get", func(t *testing.T) {
@@ -63,7 +63,7 @@ func TestDivisions(t *testing.T) {
 		t.Run("delete sql no rows", func(t *testing.T) {
 			err := repository.Delete(ctx, id)
 			require.Error(t, err)
-			require.Equal(t, divisions.ErrNoDivisions.Has(err), true)
+			require.Equal(t, divisions.ErrNoDivision.Has(err), true)
 		})
 
 		t.Run("delete", func(t *testing.T) {

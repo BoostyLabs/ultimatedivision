@@ -26,7 +26,7 @@ type DivisionsTemplates struct {
 	Create *template.Template
 }
 
-// Divisions is a mvc controller that handles all admins related views.
+// Divisions is a mvc controller that handles all divisions related views.
 type Divisions struct {
 	log logger.Logger
 
@@ -103,17 +103,16 @@ func (controller *Divisions) Create(w http.ResponseWriter, r *http.Request) {
 func (controller *Divisions) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
-	id := params["id"]
 
-	uuid, err := uuid.Parse(id)
+	id, err := uuid.Parse(params["id"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = controller.divisions.Delete(ctx, uuid)
+	err = controller.divisions.Delete(ctx, id)
 	if err != nil {
-		if divisions.ErrNoDivisions.Has(err) {
+		if divisions.ErrNoDivision.Has(err) {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}

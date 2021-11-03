@@ -323,8 +323,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
-	// divisions setup
-	{
+	{ // divisions setup
 		peer.Divisions.Service = divisions.NewService(
 			peer.Database.Divisions(),
 			config.Divisions.Config)

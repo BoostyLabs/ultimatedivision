@@ -11,8 +11,8 @@ import (
 	"github.com/zeebo/errs"
 )
 
-// ErrNoDivisions indicated that divisions does not exist.
-var ErrNoDivisions = errs.Class("divisions does not exist")
+// ErrNoDivision indicated that division does not exist.
+var ErrNoDivision = errs.Class("division does not exist")
 
 // DB exposes access to divisions db.
 //
