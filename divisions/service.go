@@ -14,7 +14,7 @@ import (
 // ErrDivisions indicates that there was an error in the service.
 var ErrDivisions = errs.Class("divisions service error")
 
-// Service is handling users related logic.
+// Service is handling divisions related logic.
 //
 // architecture: Service
 type Service struct {
