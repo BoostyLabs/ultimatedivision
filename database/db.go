@@ -17,6 +17,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/divisions"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
@@ -203,10 +204,30 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             period        INTEGER                                                         NOT NULL
         );
         CREATE TABLE IF NOT EXISTS divisions (
-            id              BYTEA PRIMARY KEY        NOT NULL,
+            id              BYTEA   PRIMARY KEY      NOT NULL,
             name            VARCHAR                  NOT NULL,
             passing_percent INTEGER                  NOT NULL,
             created_at      TIMESTAMP WITH TIME ZONE NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS matches (
+            id           BYTEA    PRIMARY KEY                             NOT NULL,
+            user1_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
+            squad1_id    BYTEA    REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
+            user1_points INTEGER                                          NOT NULL,
+            user2_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
+            squad2_id    BYTEA    REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
+            user2_points INTEGER                                          NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS match_results(
+            id       BYTEA   PRIMARY KEY                              NOT NULL,
+            match_id BYTEA   REFERENCES matches(id) ON DELETE CASCADE NOT NULL,
+            user_id  BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
+            card_id  BYTEA   REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
+            minute   INTEGER                                          NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS places (
+            user_id BYTEA   PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            status  VARCHAR                                                    NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -222,42 +243,47 @@ func (db *database) Close() error {
 	return Error.Wrap(db.conn.Close())
 }
 
-// Admins provided access to accounts db.
+// Admins provides access to accounts db.
 func (db *database) Admins() admins.DB {
 	return &adminsDB{conn: db.conn}
 }
 
-// Users provided access to accounts db.
+// Users provides access to accounts db.
 func (db *database) Users() users.DB {
 	return &usersDB{conn: db.conn}
 }
 
-// Cards provided access to accounts db.
+// Cards provides access to accounts db.
 func (db *database) Cards() cards.DB {
 	return &cardsDB{conn: db.conn}
 }
 
-// Avatars provided access to accounts db.
+// Avatars provides access to accounts db.
 func (db *database) Avatars() avatars.DB {
 	return &avatarsDB{conn: db.conn}
 }
 
-// Clubs provide access to clubs db.
+// Clubs provides access to accounts db.
 func (db *database) Clubs() clubs.DB {
 	return &clubsDB{conn: db.conn}
 }
 
-// LootBoxes provide access to lootboxes db.
+// LootBoxes provides access to accounts db.
 func (db *database) LootBoxes() lootboxes.DB {
 	return &lootboxesDB{conn: db.conn}
 }
 
-// Marketplace provided access to accounts db.
+// Marketplace provides access to accounts db.
 func (db *database) Marketplace() marketplace.DB {
 	return &marketplaceDB{conn: db.conn}
 }
 
-// Queue provided access to accounts db.
+// Matches provides access to accounts db.
+func (db *database) Matches() matches.DB {
+	return &matchesDB{conn: db.conn}
+}
+
+// Queue provides access to accounts db.
 func (db *database) Queue() queue.DB {
 	return &queueHub{hub: NewHub()}
 }

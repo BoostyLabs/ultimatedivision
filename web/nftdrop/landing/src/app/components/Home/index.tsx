@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React from 'react';
+import { useEffect } from 'react';
 
 import { ScrollTop } from '../ScrollTop';
 import { AnimationImage } from '@components/common/AnimationImage';
@@ -10,12 +10,12 @@ import footballerAnimation from '@static/images/home/animation-player/data.json'
 
 import ball from '@static/images/home/animation-player/images/ball.svg';
 import card from '@static/images/home/animation-player/images/card.svg';
+import discord from '@static/images/home/discord.svg';
 import head from '@static/images/home/animation-player/images/head.svg';
 import leftArm from '@static/images/home/animation-player/images/leftArm.svg';
 import leftLeg from '@static/images/home/animation-player/images/leftLeg.svg';
 import rightArm from '@static/images/home/animation-player/images/rightArm.svg';
 import rightLeg from '@static/images/home/animation-player/images/rightLeg.svg';
-import discord from '@static/images/home/discord.svg';
 import twitter from '@static/images/home/twitter.svg';
 
 import './index.scss';
@@ -30,6 +30,43 @@ export const Home: React.FC = () => {
         ball,
         card,
     ];
+
+    /** Max height, when ScrollToTop block must be hidden. */
+    const MAX_HEIGHT_FROM_HOME = -200;
+
+    /** Show ScrollToTop block, when user scrolls down the
+     * landing page and hide block, when user looks Home component. */
+    const changeVisibleScrollToTop = () => {
+        const homeElem = document.getElementById('home');
+
+        if (!homeElem) {
+            return;
+        }
+
+        /** Current height from top page to Home component. */
+        const heightFromTop = homeElem.getBoundingClientRect().top;
+
+        const scrollUpBlock = document.querySelector('.scroll-to-top');
+
+        if (!scrollUpBlock) {
+            return;
+        }
+
+        if (heightFromTop <= MAX_HEIGHT_FROM_HOME) {
+            scrollUpBlock.classList.add('visible');
+
+            return;
+        }
+
+        scrollUpBlock.classList.remove('visible');
+    };
+
+    useEffect(() => {
+        window.addEventListener('scroll', changeVisibleScrollToTop);
+
+        return () =>
+            window.removeEventListener('scroll', changeVisibleScrollToTop);
+    }, []);
 
     return (
         <section className="home" id="home">

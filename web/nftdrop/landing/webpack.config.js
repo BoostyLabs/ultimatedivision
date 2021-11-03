@@ -70,7 +70,7 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(s[c]ss|css)$/,
+                test: /\.(scss)$/,
                 exclude: /(node_modules)/,
                 use: [
                     //for dev style-loader, for production
@@ -82,6 +82,13 @@ module.exports = {
                 ],
             },
             {
+                test: /\.(css)$/,
+                use: [
+                    "style-loader",
+                    "css-loader",
+                ],
+            },
+            {
                 test: /\.(woff|woff2|eot|ttf|otf)$/i,
                 exclude: /(node_modules)/,
                 type: "asset/resource",
@@ -90,7 +97,7 @@ module.exports = {
                 },
             },
             {
-                test: /\.(jpe|jpg|png|svg|webp)(\?.*$|$)/,
+                test: /\.(jpe|jpg|png|svg|webp|mp4)(\?.*$|$)/,
                 exclude: /(node_modules)/,
                 type: "asset/resource",
                 generator: {

@@ -11,12 +11,14 @@ import (
 	"net/http"
 	"path/filepath"
 
+
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/admin/adminserver/controllers"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
@@ -68,9 +70,10 @@ type Server struct {
 		auth        controllers.AuthTemplates
 		lootbox     controllers.LootBoxesTemplates
 		marketplace controllers.MarketplaceTemplates
-		clubs       controllers.ClubsTemplates
+		club        controllers.ClubsTemplates
 		queue       controllers.QueueTemplates
 		divisions   controllers.DivisionsTemplates
+		match       controllers.MatchesTemplate
 	}
 
 	cards.PercentageQualities
@@ -80,7 +83,7 @@ type Server struct {
 func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service,
 	admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities,
 	avatars *avatars.Service, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service,
-	queue *queue.Service, divisions *divisions.Service) (*Server, error) {
+	queue *queue.Service, divisions *divisions.Service, matches *matches.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -146,7 +149,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 
 	clubsRouter := router.PathPrefix("/clubs").Subrouter().StrictSlash(true)
 	clubsRouter.Use(server.withAuth)
-	clubsController := controllers.NewClubs(log, clubs, server.templates.clubs)
+	clubsController := controllers.NewClubs(log, clubs, server.templates.club)
 	clubsRouter.HandleFunc("/create/{userId}", clubsController.Create).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{userId}", clubsController.Get).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{clubId}/squad/create", clubsController.CreateSquad).Methods(http.MethodGet)
@@ -162,6 +165,14 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	queueController := controllers.NewQueue(log, queue, server.templates.queue)
 	queueRouter.HandleFunc("", queueController.List).Methods(http.MethodGet)
 	queueRouter.HandleFunc("/{id}", queueController.Get).Methods(http.MethodGet)
+
+	matchesRouter := router.PathPrefix("/matches").Subrouter().StrictSlash(true)
+	matchesRouter.Use(server.withAuth)
+	matchesController := controllers.NewMatches(log, matches, server.templates.match)
+	matchesRouter.HandleFunc("/create", matchesController.Create).Methods(http.MethodGet, http.MethodPost)
+	matchesRouter.HandleFunc("/", matchesController.ListMatches).Methods(http.MethodGet)
+	matchesRouter.HandleFunc("/delete/{id}", matchesController.Delete).Methods(http.MethodGet)
+	matchesRouter.HandleFunc("/{id}/goals", matchesController.ListMatchGoals).Methods(http.MethodGet)
 
 	divisionsRouter := router.PathPrefix("/divisions").Subrouter()
 	divisionsRouter.Use(server.withAuth)
@@ -291,27 +302,27 @@ func (server *Server) initializeTemplates() (err error) {
 		return err
 	}
 
-	server.templates.clubs.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "list.html"))
+	server.templates.club.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "list.html"))
 	if err != nil {
 		return err
 	}
-	server.templates.clubs.ListSquads, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "listSquad.html"))
+	server.templates.club.ListSquads, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "listSquad.html"))
 	if err != nil {
 		return err
 	}
-	server.templates.clubs.ListSquadCards, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "listSquadCards.html"))
+	server.templates.club.ListSquadCards, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "listSquadCards.html"))
 	if err != nil {
 		return err
 	}
-	server.templates.clubs.AddCard, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "addCard.html"))
+	server.templates.club.AddCard, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "addCard.html"))
 	if err != nil {
 		return err
 	}
-	server.templates.clubs.UpdateSquad, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "updateSquad.html"))
+	server.templates.club.UpdateSquad, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "updateSquad.html"))
 	if err != nil {
 		return err
 	}
-	server.templates.clubs.UpdateCardPosition, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "updateCardPosition.html"))
+	server.templates.club.UpdateCardPosition, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "clubs", "updateCardPosition.html"))
 	if err != nil {
 		return err
 	}
@@ -322,6 +333,25 @@ func (server *Server) initializeTemplates() (err error) {
 	}
 
 	server.templates.queue.Get, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "queue", "get.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.match.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "matches", "create.html"))
+	if err != nil {
+		return err
+	}
+	server.templates.match.List, err = template.New("list.html").Funcs(template.FuncMap{
+		"Iter": templatefuncs.Iter,
+		"Inc":  templatefuncs.Inc,
+		"Dec":  templatefuncs.Dec,
+	}).ParseFiles(
+		filepath.Join(server.config.StaticDir, "matches", "list.html"),
+		filepath.Join(server.config.StaticDir, "matches", "pagination.html"))
+	if err != nil {
+		return err
+	}
+	server.templates.match.ListGoals, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "matches", "listGoals.html"))
 	if err != nil {
 		return err
 	}

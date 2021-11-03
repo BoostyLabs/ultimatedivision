@@ -3,12 +3,12 @@
 
 import { MintButton } from '@components/common/MintButton';
 
-import webkitCards from '@static/images/metaverse/cards.png';
-import webkitCardsTablet from '@static/images/metaverse/cards-tablet.png';
-import webkitCardsMobile from '@static/images/metaverse/cards-mobile.png';
 import cards from '@static/images/metaverse/cards.webp';
 import cardsTablet from '@static/images/metaverse/cards-tablet.webp';
 import cardsMobile from '@static/images/metaverse/cards-mobile.webp';
+import webkitCards from '@static/images/metaverse/cards.png';
+import webkitCardsTablet from '@static/images/metaverse/cards-tablet.png';
+import webkitCardsMobile from '@static/images/metaverse/cards-mobile.png';
 
 import './index.scss';
 
@@ -49,11 +49,6 @@ export const Metaverse: React.FC = () => {
                         loading="lazy"
                     />
                 </picture>
-                <div className="metaverse__sold-scale">
-                    <span className="metaverse__sold-scale__text">
-                        Cards Sold 0/10000
-                    </span>
-                </div>
                 <MintButton />
             </div>
         </section>

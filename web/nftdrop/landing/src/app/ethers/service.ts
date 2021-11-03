@@ -1,9 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { ethers } from 'ethers';
+
 import { EthersClient } from '@/api/ethers';
 import { buildHash } from '@utils/ethers';
-import { ethers } from 'ethers';
 
 export class Service {
     private readonly provider;
@@ -17,7 +18,8 @@ export class Service {
     public async getAddress(wallet: string) {
         return await this.client.getAddress(wallet);
     }
-    /** Gets current wallet address. */
+
+    /** Get current wallet address. */
     public async getWallet() {
         const signer = await this.provider.getSigner();
 
@@ -28,7 +30,7 @@ export class Service {
     public async getLastTokenId(wallet: string, abi: any[]) {
         const address = await this.getAddress(wallet);
         const contract = await new ethers.Contract(
-            address.smartContractAddress.nft,
+            address.contracts.nft,
             abi
         );
         const signer = await this.provider.getSigner();
@@ -47,7 +49,7 @@ export class Service {
         const signer = await this.provider.getSigner();
         const address = await this.getAddress(wallet);
         const contract = await new ethers.Contract(
-            address.smartContractAddress.nftSale,
+            address.contracts.nftSale,
             abi
         );
         const connect = await contract.connect(signer);
@@ -58,12 +60,13 @@ export class Service {
             address.password.slice(-2)
         )}${address.password.slice(0, address.password.length - 2)}`;
         const gasLimit = await signer.estimateGas({
-            to: address.smartContractAddress.nftSale,
+            to: address.contracts.nftSale,
             data,
             value: currentPrice[0],
         });
-        const transaction = await signer.sendTransaction({
-            to: address.smartContractAddress.nftSale,
+
+        await signer.sendTransaction({
+            to: address.contracts.nftSale,
             data,
             gasLimit,
             chainId: 3,

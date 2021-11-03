@@ -1,18 +1,20 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useState } from 'react';
-
+import { useState } from 'react';
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { ServicePlugin } from '@/app/plugins/service';
+import { toast } from 'react-toastify';
+
 import { NFT_ABI, NFT_ABI_SALE } from '@/app/ethers';
+import { ServicePlugin } from '@/app/plugins/service';
 
 import './index.scss';
 
 export const MintButton: React.FC = () => {
     const onboarding = React.useRef<MetaMaskOnboarding>();
-    const [connectError, handleError] = useState(false);
-    const [text, setButtonText] = useState('Mint');
+    const service = ServicePlugin.create();
+    const [text, setButtonText] = useState('Connect');
+    const [isConnected, handleConnect] = useState(false);
 
     React.useEffect(() => {
         if (!onboarding.current) {
@@ -21,43 +23,62 @@ export const MintButton: React.FC = () => {
     }, []);
 
     const connect = async () => {
-
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-                setButtonText('Connected');
-
+                handleConnect(true);
             } catch (error: any) {
-                console.log(error.message);
-                handleError(true);
+                toast.error('Please open metamask manually!', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored'
+                });
 
-                setTimeout(() => {
-                    handleError(false);
-                }, 3000);
+                return;
             }
-
         } else {
-            onboarding.current
-                && onboarding.current?.startOnboarding();
+            onboarding.current = new MetaMaskOnboarding();
+            onboarding.current?.startOnboarding();
         }
 
-        /** for testing */
-        const service = ServicePlugin.create();
-        const wallet = await service.getWallet();
-        const totalSupply = await service.getLastTokenId(wallet, NFT_ABI);
-        const contract = await service.sendTransaction(wallet, totalSupply, NFT_ABI_SALE);
+        try {
+            const wallet = await service.getWallet();
+
+            await service.getAddress(wallet);
+
+            setButtonText('Mint');
+        } catch (error: any) {
+            toast.error('You are not in whitelist', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored'
+            });
+        }
+    };
+
+    const sendTransaction = async () => {
+        try {
+            const wallet = await service.getWallet();
+            const totalSupply = await service.getLastTokenId(wallet, NFT_ABI);
+
+            totalSupply
+                && await service.sendTransaction(wallet, totalSupply, NFT_ABI_SALE);
+        } catch (error: any) {
+            toast.error('Failed to connect to contract', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored'
+            });
+        }
     };
 
     return (
         <button
             className="ultimatedivision-mint-btn"
-            onClick={connect}
+            onClick={() => {
+                !isConnected
+                    ? connect()
+                    : sendTransaction();
+            }}
         >
-            {
-                connectError
-                && <span className="error">Please open metamask manually!</span>
-            }
             <span className="ultimatedivision-mint-btn__text">{text}</span>
         </button>
     );

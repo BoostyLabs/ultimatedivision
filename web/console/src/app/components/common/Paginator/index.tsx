@@ -1,17 +1,21 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
+
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+
 import { PaginatorBlockPages } from '@components/common/Paginator/PaginatorBlockPages';
-import { Pagination } from '@/app/types/pagination';
+
 import next
     from '@static/img/UltimateDivisionPaginator/next.svg';
 import notActiveNext
     from '@static/img/UltimateDivisionPaginator/not_active_next.svg';
-import previous
-    from '@static/img/UltimateDivisionPaginator/previous.svg';
 import notActivePrevious
     from '@static/img/UltimateDivisionPaginator/not_active_previous.svg';
+import previous
+    from '@static/img/UltimateDivisionPaginator/previous.svg';
+
+import { Pagination } from '@/app/types/pagination';
 
 import './index.scss';
 
@@ -41,9 +45,14 @@ export const Paginator: React.FC<{ getCardsOnPage: ({ selectedPage, limit }: Pag
     const POS_STEP_FROM_CURRENT_PAGE: number = 2;
     const FIRST_PAGE: number = 1;
 
-    /** dispatch getCardsOnPage thunk with parameters: page and default limit value */
+    /** inplements opening current cards on selected page */
     async function getCards(selectedPage: number) {
-        await dispatch(getCardsOnPage({ selectedPage, limit: CARDS_ON_PAGE }));
+        try {
+            /** dispatch getCardsOnPage thunk with parameters: page and default limit value */
+            await dispatch(getCardsOnPage({ selectedPage, limit: CARDS_ON_PAGE }));
+        } catch (error: any) {
+            /** TODO: it will be reworked with notification system */
+        };
     };
 
     const pages: number[] = [];
