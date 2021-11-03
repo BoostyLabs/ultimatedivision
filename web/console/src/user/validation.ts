@@ -18,9 +18,9 @@ export class Validator {
         /** same validation from back-end:
          * min 8 letter password, with at least a symbol,
          * upper and lower case letters and a number */
-        const re = new RegExp(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/, 'i');
+        const re = new RegExp(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/, 'g');
 
-        return re.test(String(password).toLowerCase());
+        return re.test(password);
     };
     /** static method for all string form fields validation,
      * except password and email */
