@@ -14,9 +14,9 @@ export class UnauthorizedError extends Error {
 }
 
 /**
- * BadRequestError is a custom error type for performing bad request.
+ * NotFoundError is a custom error type for performing bad request.
  */
-export class BadRequestError extends Error {
+export class NotFoundError extends Error {
     /** Error message while bad request */
     public constructor(message = 'bad request') {
         super(message);
@@ -33,7 +33,7 @@ export class InternalError extends Error {
     }
 }
 const UNAUTORISED_ERROR = 401;
-const BAD_REQUEST_ERROR = 404;
+const NOT_FOUND_ERROR = 404;
 const INTERNAL_ERROR = 500;
 
 /**
@@ -46,7 +46,7 @@ export class APIClient {
      * handles error due to response code.
      * @param response - response from server.
      *
-     * @throws {@link BadRequestError}
+     * @throws {@link NotFoundError}
      * This exception is thrown if the input is not a valid ISBN number.
      *
      * @throws {@link UnauthorizedError}
@@ -62,7 +62,7 @@ export class APIClient {
 
         switch (response.status) {
         case UNAUTORISED_ERROR: throw new UnauthorizedError();
-        case BAD_REQUEST_ERROR: throw new BadRequestError();
+        case NOT_FOUND_ERROR: throw new NotFoundError();
         case INTERNAL_ERROR:
         default:
             throw new InternalError();
