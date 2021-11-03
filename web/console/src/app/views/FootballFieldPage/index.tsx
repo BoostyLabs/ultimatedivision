@@ -24,11 +24,11 @@ const FootballField: React.FC = () => {
             try {
                 await dispatch(getClub());
             } catch (error: any) {
+                /* eslint-disable max-depth */
                 if (error instanceof BadRequestError) {
                     try {
                         await dispatch(createClub());
                     } catch (error: any) {
-                        console.log(error)
                         toast.error('Something went wrong', {
                             position: toast.POSITION.TOP_RIGHT,
                             theme: 'colored',
