@@ -121,10 +121,14 @@ export const deleteCard = (path: CardEditIdentificators) =>
 export const changeCardPosition = (cardItentificators: CardEditIdentificators) =>
     async function(dispatch: Dispatch) {
         await service.changeCardPosition(cardItentificators);
+        const club = await service.getClub();
+        dispatch(setClub(club));
     };
 
 export const swapCards = (currentCard: CardEditIdentificators, existCard: CardEditIdentificators) =>
     async function(dispatch: Dispatch) {
         await service.changeCardPosition(currentCard);
         await service.changeCardPosition(existCard);
+        const club = await service.getClub();
+        dispatch(setClub(club));
     };
