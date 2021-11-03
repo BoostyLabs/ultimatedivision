@@ -1,12 +1,12 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { MintButton } from '@components/common/MintButton';
 
-import NavBarLogo from '@static/images/navbar/navbar-logo.png';
 import { Cross, DropdownNavBar } from '@static/images/navbar/svg';
+import NavBarLogo from '@static/images/navbar/navbar-logo.png';
 
 import './index.scss';
 
