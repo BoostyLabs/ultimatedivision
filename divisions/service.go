@@ -49,8 +49,8 @@ func (service *Service) List(ctx context.Context) ([]Division, error) {
 }
 
 // Get returns division from DB.
-func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Division, error) {
-	division, err := service.divisions.Get(ctx, userID)
+func (service *Service) Get(ctx context.Context, divisionID uuid.UUID) (Division, error) {
+	division, err := service.divisions.Get(ctx, divisionID)
 	return division, ErrDivisions.Wrap(err)
 }
 
