@@ -12,25 +12,28 @@ import { FootballFieldPlayingArea } from
 
 import { RootState } from '@/app/store';
 import { createClub, deleteCard, getClub } from '@/app/store/actions/club';
+import { CardEditIdentificators } from '@/app/types/club';
+import { BadRequestError } from '@/api';
 
 import './index.scss';
-import { CardEditIdentificators } from '@/app/types/club';
 
 const FootballField: React.FC = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        /** TODO: refactor method call after backend response changes */
         (async function setClub() {
             try {
                 await dispatch(getClub());
             } catch (error: any) {
-                try {
-                    await dispatch(createClub());
-                } catch (error: any) {
-                    toast.error('Something went wrong', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    });
+                if (error instanceof BadRequestError) {
+                    try {
+                        await dispatch(createClub());
+                    } catch (error: any) {
+                        console.log(error)
+                        toast.error('Something went wrong', {
+                            position: toast.POSITION.TOP_RIGHT,
+                            theme: 'colored',
+                        });
+                    }
                 }
             }
         })();
