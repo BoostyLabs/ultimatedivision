@@ -1,10 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-/** exposes Division Club type */
+/** Exposes Division Club type. */
 export class DivisionClub {
-    /** receives icon, position, name, games, wins, draws,
-     * defeats, goalDifference, points as string parameters */
+    /** Receives icon, position, name, games, wins, draws,
+     * defeats, goalDifference, points as string parameters. */
     constructor(
         public position: string,
         public club: {

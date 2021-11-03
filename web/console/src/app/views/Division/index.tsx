@@ -27,8 +27,8 @@ const Division: React.FC = () => {
     const CLUBS_COUNT: number = 50;
     const divisionClubs = new Array(CLUBS_COUNT).fill(divisionClub);
 
-    /** variables describes upper and lower clubs position
-     * in general division table */
+    /** Variables describes upper and lower clubs position
+     * in general division table. */
     const COEFFICIENT: number = 0.1;
 
     const UPPER_BREAKPOINT: number
