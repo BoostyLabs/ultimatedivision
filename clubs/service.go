@@ -17,9 +17,6 @@ import (
 // ErrClubs indicates that there was an error in the service.
 var ErrClubs = errs.Class("clubs service error")
 
-// squadSize defines number of cards in the full squad.
-const squadSize = 11
-
 // Service is handling clubs related logic.
 //
 // architecture: Service
@@ -78,7 +75,7 @@ func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, new
 		return ErrClubs.Wrap(err)
 	}
 
-	if len(squadCards) == squadSize {
+	if len(squadCards) == SquadSize {
 		return ErrClubs.New("squad is full")
 	}
 
@@ -194,8 +191,8 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 
 	convertPositions(squadCards, formation)
 
-	if len(squadCards) < squadSize {
-		for i := 0; i < squadSize; i++ {
+	if len(squadCards) < SquadSize {
+		for i := 0; i < SquadSize; i++ {
 			var isPositionInTheSquad bool
 			for _, card := range squadCards {
 				if card.Position == Position(i) {
