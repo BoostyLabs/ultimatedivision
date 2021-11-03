@@ -12,7 +12,7 @@ export const UserDataArea: React.FC<{
     className: string;
     type: string;
     error: SetStateAction<string | null>;
-    clearError: React.Dispatch<SetStateAction<SetStateAction<string | null>>> | null;
+    clearError: Dispatch<SetStateAction<SetStateAction<string | null>>> | null;
     validate: (value: string) => boolean;
 }> = ({
     value,
@@ -26,13 +26,13 @@ export const UserDataArea: React.FC<{
 }) => {
     const DELAY: number = 500;
     /**
-    * The value string from input returned by the useDebounce method after 500 milliseconds.
-    */
+        * The value string from input returned by the useDebounce method after 500 milliseconds.
+        */
     const debouncedValue: string = useDebounce(value, DELAY);
 
     /** inline styles for valid input field */
     const [successLabelClassName, setSuccessLabelClassName] =
-        useState<string>('');
+            useState<string>('');
 
     useEffect(() => {
         if (!validate(debouncedValue)) {
@@ -45,7 +45,7 @@ export const UserDataArea: React.FC<{
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange(e.target.value);
         clearError &&
-        clearError(null);
+                clearError(null);
     };
 
     return (
