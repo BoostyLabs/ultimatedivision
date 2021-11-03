@@ -14,23 +14,10 @@ type NFT struct {
 
 // Attribute entity describes attributes for nft token.
 type Attribute struct {
-	TraitType   string      `json:"trait_type"`
-	Value       interface{} `json:"value"`
-	MaxValue    interface{} `json:"max_value"`
-	DisplayType DisplayType `json:"display_type,omitempty"`
+	TraitType string      `json:"trait_type"`
+	Value     interface{} `json:"value"`
+	MaxValue  interface{} `json:"max_value"`
 }
-
-// DisplayType defines the list of possible attribute types.
-type DisplayType string
-
-const (
-	// DisplayTypeNumber indicates that the attribute is number.
-	DisplayTypeNumber DisplayType = "number"
-	// DisplayTypeBoostPercentage indicates that the attribute is boost percentage.
-	DisplayTypeBoostPercentage DisplayType = "boost_percentage"
-	// DisplayTypeBoostNumber indicates that the attribute is boost number.
-	DisplayTypeBoostNumber DisplayType = "boost_number"
-)
 
 // MaxValueGameParameter indicates that max value game parameter is 100.
 const MaxValueGameParameter = 100
