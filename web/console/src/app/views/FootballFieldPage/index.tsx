@@ -13,7 +13,7 @@ import { FootballFieldPlayingArea } from
 import { RootState } from '@/app/store';
 import { createClub, deleteCard, getClub } from '@/app/store/actions/club';
 import { CardEditIdentificators } from '@/app/types/club';
-import { BadRequestError } from '@/api';
+import { NotFoundError } from '@/api';
 
 import './index.scss';
 
@@ -25,7 +25,7 @@ const FootballField: React.FC = () => {
                 await dispatch(getClub());
             } catch (error: any) {
                 /* eslint-disable max-depth */
-                if (error instanceof BadRequestError) {
+                if (error instanceof NotFoundError) {
                     try {
                         await dispatch(createClub());
                     } catch (error: any) {
