@@ -202,7 +202,7 @@
         "new-cap": "error",
         "no-multi-assign": "error",
         "no-multiple-empty-lines": "error",
-        "no-nested-ternary": "warn",
+        "no-nested-ternary": "error",
         "no-trailing-spaces": "error",
         "no-underscore-dangle": "error",
         "no-whitespace-before-property": "error",

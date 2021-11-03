@@ -48,8 +48,17 @@ const Division: React.FC = () => {
     ];
 
     const setGradationDivisionClassName = (position: string) => {
-        return +position <= UPPER_BREAKPOINT ?
-            '-upper' : +position >= LOWER_BREAKPOINT ? '-lower' : '';
+        let className: string = '';
+
+        if (+position <= UPPER_BREAKPOINT) {
+            className = '-upper';
+        };
+
+        if (+position >= LOWER_BREAKPOINT) {
+            className = '-lower';
+        };
+
+        return className;
     };
 
     return (
