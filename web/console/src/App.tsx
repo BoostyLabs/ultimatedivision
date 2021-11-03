@@ -9,6 +9,8 @@ import { Notification } from '@components/common/Notification';
 
 import { Routes } from '@/app/routes';
 
+import 'react-toastify/dist/ReactToastify.min.css';
+
 /** initial App setup */
 export function App() {
     return (
