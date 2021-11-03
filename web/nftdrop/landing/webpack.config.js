@@ -26,22 +26,22 @@ module.exports = {
             template: "./public/index.html",
             favicon: "./src/app/static/images/favicon.ico",
         }),
-    //     new CleanWebpackPlugin(),
-    //     new MiniCssExtractPlugin(),
-    //     new StylelintPlugin({ fix: true }),
-    //     new CompressionPlugin({
-    //         filename: "[path][base].br",
-    //         algorithm: "brotliCompress",
-    //         test: /\.(js|css|html|svg)$/,
-    //         compressionOptions: {
-    //             params: {
-    //                 [zlib.constants.BROTLI_PARAM_QUALITY]: 11,
-    //             },
-    //         },
-    //         threshold: 10240,
-    //         minRatio: 0.8,
-    //         deleteOriginalAssets: false,
-    //     }),
+        new CleanWebpackPlugin(),
+        new MiniCssExtractPlugin(),
+        new StylelintPlugin({ fix: true }),
+        new CompressionPlugin({
+            filename: "[path][base].br",
+            algorithm: "brotliCompress",
+            test: /\.(js|css|html|svg)$/,
+            compressionOptions: {
+                params: {
+                    [zlib.constants.BROTLI_PARAM_QUALITY]: 11,
+                },
+            },
+            threshold: 10240,
+            minRatio: 0.8,
+            deleteOriginalAssets: false,
+        }),
     ],
     devServer: {
         port: 3000,
