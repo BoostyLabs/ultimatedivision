@@ -23,9 +23,10 @@ type Service struct {
 }
 
 // NewService is a constructor for divisions service.
-func NewService(divisions DB) *Service {
+func NewService(divisions DB, config Config) *Service {
 	return &Service{
 		divisions: divisions,
+		config:    config,
 	}
 }
 

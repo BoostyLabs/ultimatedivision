@@ -110,6 +110,10 @@ type Config struct {
 	Queue struct {
 		queue.Config
 	} `json:"queue"`
+
+	Divisions struct {
+		divisions.Config
+	} `json:"divisions"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -161,6 +165,11 @@ type Peer struct {
 	Queue struct {
 		Service    *queue.Service
 		PlaceChore *queue.Chore
+	}
+
+	// exposes divisions related logic.
+	Divisions struct {
+		Service *divisions.Service
 	}
 
 	// Admin web server server with web UI.
@@ -293,6 +302,13 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	// divisions setup
+	{
+		peer.Divisions.Service = divisions.NewService(
+			peer.Database.Divisions(),
+			config.Divisions.Config)
+	}
+
 	{ // admin setup
 		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
 		if err != nil {
@@ -313,6 +329,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.LootBoxes.Service,
 			peer.Clubs.Service,
 			peer.Queue.Service,
+			peer.Divisions.Service,
 		)
 		if err != nil {
 			return nil, err

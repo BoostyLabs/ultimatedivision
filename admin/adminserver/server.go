@@ -21,6 +21,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
+	"ultimatedivision/divisions"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/templatefuncs"
 	"ultimatedivision/lootboxes"
@@ -69,13 +70,17 @@ type Server struct {
 		marketplace controllers.MarketplaceTemplates
 		clubs       controllers.ClubsTemplates
 		queue       controllers.QueueTemplates
+		divisions   controllers.DivisionsTemplates
 	}
 
 	cards.PercentageQualities
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities, avatars *avatars.Service, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service, queue *queue.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service,
+	admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities,
+	avatars *avatars.Service, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service,
+	queue *queue.Service, divisions *divisions.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -157,6 +162,13 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	queueController := controllers.NewQueue(log, queue, server.templates.queue)
 	queueRouter.HandleFunc("", queueController.List).Methods(http.MethodGet)
 	queueRouter.HandleFunc("/{id}", queueController.Get).Methods(http.MethodGet)
+
+	divisionsRouter := router.PathPrefix("/divisions").Subrouter().StrictSlash(true)
+	divisionsRouter.Use(server.withAuth)
+	divisionsController := controllers.NewDivisions(log, divisions, server.templates.divisions)
+	divisionsRouter.HandleFunc("", divisionsController.List).Methods(http.MethodGet)
+	divisionsRouter.HandleFunc("/create", divisionsController.Create).Methods(http.MethodGet, http.MethodPost)
+	divisionsRouter.HandleFunc("/delete/{id}", divisionsController.Delete).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -310,6 +322,16 @@ func (server *Server) initializeTemplates() (err error) {
 	}
 
 	server.templates.queue.Get, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "queue", "get.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.divisions.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "divisions", "list.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.divisions.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "divisions", "create.html"))
 	if err != nil {
 		return err
 	}
