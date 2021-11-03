@@ -55,37 +55,41 @@
             }
 
             &__checkbox {
-                position: relative;
-                width: 14px;
-                height: 14px;
+                position: absolute;
+                opacity: 0;
 
-                &:after {
-                    position: absolute;
-                    width: 14px;
-                    height: 14px;
-                    background: red;
+                & + label {
+                    position: relative;
+                    cursor: pointer;
+                    padding: 0;
                 }
 
-                &:before {
-                    position: absolute;
+                & + label:before {
                     content: "";
-                    display: block;
-                    top: -3 px;
-                    left: 2 px;
-                    width: 6 px;
-                    height: 10px;
-                    border-style: solid;
-                    border-color: green;
-                    border-width: 0 2px 2px 0;
-                    transform: rotate(45deg);
-                    opacity: 0;
+                    margin-right: 10px;
+                    display: inline-block;
+                    vertical-align: text-top;
+                    width: 16px;
+                    height: 16px;
+                    background: $highlightBackground;
+                    border: 1px solid $divisionMainBackgroundColor;
                 }
 
-                &:checked {
-
-                    &:before {
-                        opacity: 1;
-                    }
+                &:checked + label:after {
+                    content: "";
+                    position: absolute;
+                    left: 3px;
+                    top: 7px;
+                    background: $highlightColor;
+                    width: 3px;
+                    height: 3px;
+                    box-shadow: 2px 0 0 $highlightColor,
+                        4px 0 0 $highlightColor,
+                        4px -2px 0 $highlightColor,
+                        4px -4px 0 $highlightColor,
+                        4px -6px 0 $highlightColor,
+                        4px -8px 0 $highlightColor;
+                    transform: rotate(45deg);
                 }
             }
         }
@@ -128,6 +132,17 @@
                 text-align: center;
                 padding: 15px 0;
 
+                &__position {
+                    display: block;
+                    border-radius: 12px;
+                    background: $highlightBackground;
+                    width: 24px;
+                    height: 24px;
+                    font-size: 14px;
+                    line-height: 24px;
+                    margin: auto;
+                }
+
                 &__icon {
                     margin-right: 8px;
                     vertical-align: middle;
@@ -142,7 +157,7 @@
 
                 &:first-child {
                     margin-left: 15px;
-                    width: 30px;
+                    width: 80px;
                     border-radius: 10px 0 0 10px;
                     border: 2px solid;
                     border-color: transparent;

@@ -47,6 +47,11 @@ const Division: React.FC = () => {
         'Points',
     ];
 
+    const setGradationDivisionClassName = (position: string) => {
+        return +position <= UPPER_BREAKPOINT ?
+            '-upper' : +position >= LOWER_BREAKPOINT ? '-lower' : '';
+    };
+
     return (
         <section className="division">
             <div className="division__titles">
@@ -65,19 +70,30 @@ const Division: React.FC = () => {
                     Filters
                 </span>
                 <div className="division__filters__item">
-                    <input type="checkbox" />
-                    <span className="division__filters__item__text">
-                        played all the matches
-                    </span>
-                </div>
-                <div className="division__filters__item">
                     <input
+                        id="division-checkbox-1"
                         className="division__filters__item__checkbox"
                         type="checkbox"
                     />
-                    <span className="division__filters__item__text">
+                    <label
+                        className="division__filters__item__text"
+                        htmlFor="division-checkbox-1"
+                    >
+                        played all the matches
+                    </label>
+                </div>
+                <div className="division__filters__item">
+                    <input
+                        id="division-checkbox-2"
+                        className="division__filters__item__checkbox"
+                        type="checkbox"
+                    />
+                    <label
+                        className="division__filters__item__text"
+                        htmlFor="division-checkbox-2"
+                    >
                         did not play in the current draw
-                    </span>
+                    </label>
                 </div>
             </div>
             <table className="division__clubs">
@@ -96,12 +112,13 @@ const Division: React.FC = () => {
                 <tbody>
                     {divisionClubs.map((divisionClub: DivisionClub, index: number) =>
                         <tr
-                            className={`division__clubs__club${+divisionClub.position <= UPPER_BREAKPOINT ?
-                                '-upper' : +divisionClub.position >= LOWER_BREAKPOINT ? '-lower' : ''}`}
+                            className={`division__clubs__club${setGradationDivisionClassName(divisionClub.position)}`}
                             key={index}
                         >
                             <td className="division__clubs__club__item">
-                                {divisionClub.position}
+                                <span className="division__clubs__club__item__position">
+                                    {divisionClub.position}
+                                </span>
                             </td>
                             <td className="division__clubs__club__item">
                                 <img
