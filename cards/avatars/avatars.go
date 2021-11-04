@@ -31,7 +31,7 @@ type DB interface {
 // architecture: Storage
 type Storage interface {
 	// Save saves avatar in the storage.
-	Save(ctx context.Context, avatar Avatar) (string, error)
+	Save(ctx context.Context, avatar Avatar) error
 }
 
 // Avatar entity describes the values that make up the avatar.

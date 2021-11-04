@@ -23,6 +23,7 @@ var ErrNFTs = errs.Class("NFTs service error")
 //
 // architecture: Service
 type Service struct {
+	config  Config
 	storage Storage
 	cards   *cards.Service
 	avatars *avatars.Service
@@ -30,8 +31,9 @@ type Service struct {
 }
 
 // NewService is a constructor for NFTs service.
-func NewService(storage Storage, cards *cards.Service, avatars *avatars.Service, users *users.Service) *Service {
+func NewService(config Config, storage Storage, cards *cards.Service, avatars *avatars.Service, users *users.Service) *Service {
 	return &Service{
+		config:  config,
 		storage: storage,
 		cards:   cards,
 		avatars: avatars,
@@ -51,12 +53,11 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, wallet cry
 		return ErrNFTs.Wrap(err)
 	}
 
-	avatarURL, err := service.avatars.Save(ctx, avatar)
-	if err != nil {
+	if err := service.avatars.Save(ctx, avatar); err != nil {
 		return ErrNFTs.Wrap(err)
 	}
 
-	nft, err := service.Generate(ctx, card, avatarURL)
+	nft, err := service.Generate(ctx, card, avatar.OriginalURL, service.config.ExternalURL)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
 	}
@@ -71,7 +72,7 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, wallet cry
 }
 
 // Generate generates values for nft token.
-func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL string) (NFT, error) {
+func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL, externalURL string) (NFT, error) {
 	var attributes []Attribute
 
 	attributes = append(attributes, Attribute{TraitType: "Id", Value: card.ID.String()})
@@ -133,8 +134,8 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL
 
 	nft := NFT{
 		Attributes:  attributes,
-		Description: "",
-		ExternalURL: "",
+		Description: service.config.Description,
+		ExternalURL: externalURL,
 		Image:       avatarURL,
 		Name:        card.PlayerName,
 	}

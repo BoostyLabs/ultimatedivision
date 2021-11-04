@@ -57,8 +57,15 @@ type NFT struct {
 type Attribute struct {
 	TraitType string      `json:"trait_type"`
 	Value     interface{} `json:"value"`
-	MaxValue  interface{} `json:"max_value"`
+	MaxValue  interface{} `json:"max_value,omitempty"`
 }
 
 // MaxValueGameParameter indicates that max value game parameter is 100.
 const MaxValueGameParameter = 100
+
+// Config defines values needed by create nft.
+type Config struct {
+	//NFTContract cryptoutils.Address `json:"nftContract"`
+	Description string `json:"description"`
+	ExternalURL string `json:"externalUrl"`
+}

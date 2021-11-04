@@ -118,6 +118,10 @@ type Config struct {
 		avatars.Config
 	} `json:"avatars"`
 
+	NFTs struct {
+		nfts.Config
+	} `json:"nfts"`
+
 	LootBoxes struct {
 		Config lootboxes.Config `json:"lootBoxes"`
 	} `json:"lootBoxes"`
@@ -284,7 +288,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
-	{ // Avatars setup
+	{ // avatars setup
 		peer.Avatars.Service = avatars.NewService(
 			peer.Database.Avatars(),
 			peer.Storage.Avatars(),
@@ -292,8 +296,9 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
-	{ // NFTs setup
+	{ // nfts setup
 		peer.NFTs.Service = nfts.NewService(
+			config.NFTs.Config,
 			peer.Storage.NFT(),
 			peer.Cards.Service,
 			peer.Avatars.Service,

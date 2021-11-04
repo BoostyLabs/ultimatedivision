@@ -16,6 +16,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/cards/nfts"
 	"ultimatedivision/pkg/fileutils"
 )
 
@@ -29,24 +30,21 @@ type Service struct {
 	config  Config
 	cards   *cards.Service
 	avatars *avatars.Service
+	nfts    *nfts.Service
 }
 
 // NewService is a constructor for card with link to avatar service.
-func NewService(config Config, cards *cards.Service, avatars *avatars.Service) *Service {
+func NewService(config Config, cards *cards.Service, avatars *avatars.Service, nfts *nfts.Service) *Service {
 	return &Service{
 		config:  config,
 		cards:   cards,
 		avatars: avatars,
+		nfts:    nfts,
 	}
 }
 
 // Generate generates cards with avatar link.
-func (service *Service) Generate(ctx context.Context, count int) ([]CardWithLinkToAvatar, error) {
-	var (
-		err                   error
-		cardsWithLinkToAvatar []CardWithLinkToAvatar
-	)
-
+func (service *Service) Generate(ctx context.Context, nameFile int, playerName string) (nfts.NFT, error) {
 	id := uuid.New()
 	percentageQualities := []int{
 		service.config.PercentageQualities.Wood,
@@ -55,36 +53,23 @@ func (service *Service) Generate(ctx context.Context, count int) ([]CardWithLink
 		service.config.PercentageQualities.Diamond,
 	}
 
-	allNames := make(map[string]struct{}, count)
+	card, err := service.cards.Generate(ctx, id, percentageQualities)
+	if err != nil {
+		return nfts.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
+	}
+	card.PlayerName = playerName
 
-	for i := 0; i < count; i++ {
-		var cardWithAvatar CardWithLinkToAvatar
-		var avatar avatars.Avatar
-		if cardWithAvatar.Card, err = service.cards.Generate(ctx, id, percentageQualities); err != nil {
-			return nil, ErrCardWithLinkToAvatar.Wrap(err)
-		}
-
-		for len(allNames) < count {
-			if err = generateName(service.config.PathToNamesDataset, allNames); err != nil {
-				return nil, ErrCardWithLinkToAvatar.Wrap(err)
-			}
-		}
-
-		for name := range allNames {
-			cardWithAvatar.PlayerName = name
-			delete(allNames, name)
-			break
-		}
-
-		if avatar, err = service.avatars.Generate(ctx, cardWithAvatar.Card, strconv.Itoa(i+1)); err != nil {
-			return nil, ErrCardWithLinkToAvatar.Wrap(err)
-		}
-		cardWithAvatar.OriginalURL = avatar.OriginalURL
-
-		cardsWithLinkToAvatar = append(cardsWithLinkToAvatar, cardWithAvatar)
+	avatar, err := service.avatars.Generate(ctx, card, strconv.Itoa(nameFile+1))
+	if err != nil {
+		return nfts.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
 	}
 
-	return cardsWithLinkToAvatar, nil
+	nft, err := service.nfts.Generate(ctx, card, avatar.OriginalURL, service.config.NFTConfig.ExternalURL)
+	if err != nil {
+		return nfts.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
+	}
+
+	return nft, nil
 }
 
 // TestGenerate generates test version avatar cards.
@@ -111,7 +96,7 @@ func (service *Service) TestGenerate(ctx context.Context, count int) ([]avatars.
 		}
 
 		for len(allNames) < count {
-			if err = generateName(service.config.PathToNamesDataset, allNames); err != nil {
+			if err = service.GenerateName(service.config.PathToNamesDataset, allNames); err != nil {
 				return nil, ErrCardWithLinkToAvatar.Wrap(err)
 			}
 		}
@@ -133,8 +118,8 @@ func (service *Service) TestGenerate(ctx context.Context, count int) ([]avatars.
 	return avatars, nil
 }
 
-// generateName generates name of card.
-func generateName(path string, names map[string]struct{}) error {
+// GenerateName generates name of card.
+func (service *Service) GenerateName(path string, names map[string]struct{}) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return ErrCardWithLinkToAvatar.Wrap(err)

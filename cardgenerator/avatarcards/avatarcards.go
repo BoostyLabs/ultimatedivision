@@ -6,6 +6,7 @@ package avatarcards
 import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/cards/nfts"
 )
 
 // CardWithLinkToAvatar describes card entity with link to avatar.
@@ -19,7 +20,7 @@ type Config struct {
 	CardConfig           cards.Config              `json:"cardConfig"`
 	PercentageQualities  cards.PercentageQualities `json:"percentageQualities"`
 	AvatarConfig         avatars.Config            `json:"avatarConfig"`
+	NFTConfig            nfts.Config               `json:"nftConfig"`
 	PathToOutputJSONFile string                    `json:"pathToOutputJsonFile"`
-	NameOutputJSONFile   string                    `json:"nameOutputJsonFile"`
 	PathToNamesDataset   string                    `json:"pathToNamesDataset"`
 }

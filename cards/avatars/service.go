@@ -394,7 +394,6 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Avatar, erro
 }
 
 // Save saves avatar in the storage.
-func (service *Service) Save(ctx context.Context, avatar Avatar) (string, error) {
-	avatarURL, err := service.storage.Save(ctx, avatar)
-	return avatarURL, ErrAvatar.Wrap(err)
+func (service *Service) Save(ctx context.Context, avatar Avatar) error {
+	return ErrAvatar.Wrap(service.storage.Save(ctx, avatar))
 }

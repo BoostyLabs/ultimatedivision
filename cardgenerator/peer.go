@@ -8,10 +8,12 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
+	"strconv"
 
 	"ultimatedivision/cardgenerator/avatarcards"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/cards/nfts"
 	"ultimatedivision/internal/logger"
 )
 
@@ -39,6 +41,11 @@ type Peer struct {
 		Service *avatars.Service
 	}
 
+	// exposes nfts related logic.
+	NFTs struct {
+		Service *nfts.Service
+	}
+
 	// exposes avatar cards related logic.
 	AvatarCards struct {
 		Service *avatarcards.Service
@@ -53,17 +60,28 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 		quantityOfCard: quantityOfCard,
 	}
 
-	{ // Avatars setup
+	{ // cards setup
+		peer.Cards.Service = cards.NewService(
+			nil,
+			config.AvatarCards.CardConfig,
+		)
+	}
+
+	{ // avatars setup
 		peer.Avatars.Service = avatars.NewService(
+			nil,
 			nil,
 			config.AvatarCards.AvatarConfig,
 		)
 	}
 
-	{ // cards setup
-		peer.Cards.Service = cards.NewService(
+	{ // nfts setup
+		peer.NFTs.Service = nfts.NewService(
+			config.AvatarCards.NFTConfig,
 			nil,
-			config.AvatarCards.CardConfig,
+			peer.Cards.Service,
+			peer.Avatars.Service,
+			nil,
 		)
 	}
 
@@ -72,6 +90,7 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 			config.AvatarCards.Config,
 			peer.Cards.Service,
 			peer.Avatars.Service,
+			peer.NFTs.Service,
 		)
 	}
 
@@ -80,16 +99,38 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 
 // Generate initiates generation of avatar cards.
 func (peer *Peer) Generate(ctx context.Context) error {
-	cardsWithAvatars, err := peer.AvatarCards.Service.Generate(ctx, peer.quantityOfCard)
-	if err != nil {
-		return err
-	}
-	file, err := json.MarshalIndent(cardsWithAvatars, "", " ")
-	if err != nil {
-		return err
+	for i := 0; i < peer.quantityOfCard; i++ {
+
+		allNames := make(map[string]struct{}, peer.quantityOfCard)
+		for len(allNames) <= peer.quantityOfCard {
+			if err := peer.AvatarCards.Service.GenerateName(peer.Config.AvatarCards.PathToNamesDataset, allNames); err != nil {
+				return err
+			}
+		}
+
+		var playerName string
+		for name := range allNames {
+			playerName = name
+			delete(allNames, name)
+			break
+		}
+
+		nft, err := peer.AvatarCards.Service.Generate(ctx, i, playerName)
+		if err != nil {
+			return err
+		}
+
+		file, err := json.MarshalIndent(nft, "", " ")
+		if err != nil {
+			return err
+		}
+
+		if err = ioutil.WriteFile(filepath.Join(peer.Config.AvatarCards.PathToOutputJSONFile, strconv.Itoa(i+1)+".json"), file, 0644); err != nil {
+			return err
+		}
 	}
 
-	return ioutil.WriteFile(filepath.Join(peer.Config.AvatarCards.PathToOutputJSONFile, peer.Config.AvatarCards.NameOutputJSONFile+".json"), file, 0644)
+	return nil
 }
 
 // TestGenerate initiates generation test version of avatar cards.
@@ -98,10 +139,11 @@ func (peer *Peer) TestGenerate(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
 	file, err := json.MarshalIndent(avatars, "", " ")
 	if err != nil {
 		return err
 	}
 
-	return ioutil.WriteFile(filepath.Join(peer.Config.AvatarCards.PathToOutputJSONFile, peer.Config.AvatarCards.NameOutputJSONFile+"_test.json"), file, 0644)
+	return ioutil.WriteFile(filepath.Join(peer.Config.AvatarCards.PathToOutputJSONFile, "test.json"), file, 0644)
 }
