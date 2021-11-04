@@ -5,10 +5,10 @@ package avatarcards
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"math/rand"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -45,7 +45,6 @@ func NewService(config Config, cards *cards.Service, avatars *avatars.Service, n
 
 // Generate generates cards with avatar link.
 func (service *Service) Generate(ctx context.Context, nameFile int, playerName string) (nfts.NFT, error) {
-	id := uuid.New()
 	percentageQualities := []int{
 		service.config.PercentageQualities.Wood,
 		service.config.PercentageQualities.Silver,
@@ -53,18 +52,18 @@ func (service *Service) Generate(ctx context.Context, nameFile int, playerName s
 		service.config.PercentageQualities.Diamond,
 	}
 
-	card, err := service.cards.Generate(ctx, id, percentageQualities)
+	card, err := service.cards.Generate(ctx, uuid.Nil, percentageQualities)
 	if err != nil {
 		return nfts.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
 	}
 	card.PlayerName = playerName
 
-	avatar, err := service.avatars.Generate(ctx, card, strconv.Itoa(nameFile+1))
+	avatar, err := service.avatars.Generate(ctx, card, nameFile+1)
 	if err != nil {
 		return nfts.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
 	}
 
-	nft, err := service.nfts.Generate(ctx, card, avatar.OriginalURL, service.config.NFTConfig.ExternalURL)
+	nft, err := service.nfts.Generate(ctx, card, avatar.OriginalURL, fmt.Sprintf(service.config.NFTConfig.ExternalURL, nameFile+1))
 	if err != nil {
 		return nfts.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
 	}
@@ -107,7 +106,7 @@ func (service *Service) TestGenerate(ctx context.Context, count int) ([]avatars.
 			break
 		}
 
-		avatar, err := service.avatars.Generate(ctx, avatarCard.Card, avatarCard.Card.ID.String())
+		avatar, err := service.avatars.Generate(ctx, avatarCard.Card, i+1)
 		if err != nil {
 			return nil, ErrCardWithLinkToAvatar.Wrap(err)
 		}

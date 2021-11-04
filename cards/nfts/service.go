@@ -78,8 +78,8 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL
 
 	attributes = append(attributes, Attribute{TraitType: "Id", Value: card.ID.String()})
 	attributes = append(attributes, Attribute{TraitType: "Quality", Value: card.Quality})
-	attributes = append(attributes, Attribute{TraitType: "Height", Value: fmt.Sprintf("%f", card.Height)})
-	attributes = append(attributes, Attribute{TraitType: "Weight", Value: fmt.Sprintf("%f", card.Weight)})
+	attributes = append(attributes, Attribute{TraitType: "Height", Value: fmt.Sprintf("%.2f", card.Height)})
+	attributes = append(attributes, Attribute{TraitType: "Weight", Value: fmt.Sprintf("%.2f", card.Weight)})
 	attributes = append(attributes, Attribute{TraitType: "Dominant Foot", Value: card.DominantFoot})
 
 	// Game parameters

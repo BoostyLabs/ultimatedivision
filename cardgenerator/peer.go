@@ -100,7 +100,6 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 // Generate initiates generation of avatar cards.
 func (peer *Peer) Generate(ctx context.Context) error {
 	for i := 0; i < peer.quantityOfCard; i++ {
-
 		allNames := make(map[string]struct{}, peer.quantityOfCard)
 		for len(allNames) <= peer.quantityOfCard {
 			if err := peer.AvatarCards.Service.GenerateName(peer.Config.AvatarCards.PathToNamesDataset, allNames); err != nil {
