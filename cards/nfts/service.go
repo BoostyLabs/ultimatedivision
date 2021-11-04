@@ -11,6 +11,8 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/cards/avatars"
+	"ultimatedivision/pkg/cryptoutils"
 )
 
 // ErrNFTs indicated that there was an error in service.
@@ -20,26 +22,48 @@ var ErrNFTs = errs.Class("NFTs service error")
 //
 // architecture: Service
 type Service struct {
-	cards *cards.Service
+	storage Storage
+	cards   *cards.Service
+	avatars *avatars.Service
 }
 
 // NewService is a constructor for NFTs service.
-func NewService(cards *cards.Service) *Service {
+func NewService(storage Storage, cards *cards.Service, avatars *avatars.Service) *Service {
 	return &Service{
-		cards: cards,
+		storage: storage,
+		cards:   cards,
+		avatars: avatars,
 	}
 }
 
-func (service *Service) Create(ctx context.Context, cardID uuid.UUID) {
+func (service *Service) Create(ctx context.Context, cardID uuid.UUID, addressWallet cryptoutils.Address) error {
+	card, err := service.cards.Get(ctx, cardID)
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	avatar, err := service.avatars.Get(ctx, cardID)
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	avatarURL, err := service.avatars.Save(ctx, avatar)
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	nft, err := service.Generate(ctx, card, avatarURL)
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	return service.Save(ctx, nft)
 }
 
 // Generate generates values for nft token.
-func (service *Service) Generate(ctx context.Context, cardID uuid.UUID) (NFT, error) {
-	card, err := service.cards.Get(ctx, cardID)
-	if err != nil {
-		return NFT{}, ErrNFTs.Wrap(err)
-	}
+func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL string) (NFT, error) {
 	var attributes []Attribute
+
 	attributes = append(attributes, Attribute{TraitType: "Id", Value: card.ID.String()})
 	attributes = append(attributes, Attribute{TraitType: "Quality", Value: card.Quality})
 	attributes = append(attributes, Attribute{TraitType: "Height", Value: fmt.Sprintf("%f", card.Height)})
@@ -101,8 +125,13 @@ func (service *Service) Generate(ctx context.Context, cardID uuid.UUID) (NFT, er
 		Attributes:  attributes,
 		Description: "",
 		ExternalURL: "",
-		Image:       "",
+		Image:       avatarURL,
 		Name:        card.PlayerName,
 	}
 	return nft, nil
+}
+
+// Save saves nft in the storage.
+func (service *Service) Save(ctx context.Context, nft NFT) error {
+	return ErrNFTs.Wrap(service.storage.Save(ctx, nft))
 }

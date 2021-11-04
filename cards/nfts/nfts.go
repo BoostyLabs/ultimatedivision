@@ -3,6 +3,16 @@
 
 package nfts
 
+import "context"
+
+// Storage is exposing access to nfts storage.
+//
+// architecture: Storage
+type Storage interface {
+	// Save saves nft in the storage.
+	Save(ctx context.Context, nft NFT) error
+}
+
 // NFT entity describes nft token format erc-721.
 type NFT struct {
 	Attributes  []Attribute `json:"attributes"`
