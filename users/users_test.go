@@ -7,7 +7,6 @@ import (
 	"context"
 	"testing"
 	"time"
-	"ultimatedivision/pkg/cryptoutils"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -15,6 +14,7 @@ import (
 
 	"ultimatedivision"
 	"ultimatedivision/database/dbtesting"
+	"ultimatedivision/pkg/cryptoutils"
 	"ultimatedivision/users"
 )
 

@@ -6,10 +6,11 @@ package users
 import (
 	"context"
 	"time"
-	"ultimatedivision/pkg/cryptoutils"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/pkg/cryptoutils"
 )
 
 // ErrUsers indicates that there was an error in the service.

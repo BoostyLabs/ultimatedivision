@@ -6,16 +6,15 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"ultimatedivision/pkg/auth"
-	"ultimatedivision/pkg/cryptoutils"
-	"ultimatedivision/users"
 
 	"github.com/google/uuid"
-
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/pkg/auth"
+	"ultimatedivision/pkg/cryptoutils"
+	"ultimatedivision/users"
 )
 
 // ErrNFTs is an internal error type for NFTs controller.

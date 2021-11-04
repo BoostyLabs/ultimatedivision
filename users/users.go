@@ -6,12 +6,13 @@ package users
 import (
 	"context"
 	"time"
-	"ultimatedivision/pkg/cryptoutils"
 	"unicode"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 	"golang.org/x/crypto/bcrypt"
+
+	"ultimatedivision/pkg/cryptoutils"
 )
 
 // ErrNoUser indicated that user does not exist.

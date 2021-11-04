@@ -6,13 +6,13 @@ package nfts
 import (
 	"context"
 	"fmt"
-	"ultimatedivision/pkg/cryptoutils"
-	"ultimatedivision/users"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/pkg/cryptoutils"
+	"ultimatedivision/users"
 )
 
 // ErrNFTs indicated that there was an error in service.
