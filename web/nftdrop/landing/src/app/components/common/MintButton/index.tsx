@@ -43,6 +43,7 @@ export const MintButton: React.FC = () => {
 
         try {
             const wallet = await service.getWallet();
+
             await service.getAddress(wallet);
             setButtonText('Mint');
         } catch (error: any) {
@@ -56,13 +57,16 @@ export const MintButton: React.FC = () => {
     const sendTransaction = async () => {
         try {
             const wallet = await service.getWallet();
+
             await service.sendTransaction(wallet, NFT_ABI_SALE);
         } catch (error: any) {
             let errorMessage = 'Failed to connect to contract';
             const presaleErrorCode = -32603;
+
             if (error.error.code === presaleErrorCode) {
                 errorMessage = 'Only one token can be bought on presale';
             };
+
             toast.error(errorMessage, {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored'

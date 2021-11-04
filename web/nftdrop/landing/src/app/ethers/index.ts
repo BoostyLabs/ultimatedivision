@@ -778,169 +778,169 @@ export const NFT_ABI = [
 
 export const NFT_ABI_SALE = [
     {
-        "inputs": [
+        'inputs': [
             {
-                "internalType": "address",
-                "name": "_nftAddress",
-                "type": "address"
+                'internalType': 'address',
+                'name': '_nftAddress',
+                'type': 'address'
             },
             {
-                "internalType": "address payable",
-                "name": "_ethReceiver",
-                "type": "address"
+                'internalType': 'address payable',
+                'name': '_ethReceiver',
+                'type': 'address'
             }
         ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
+        'stateMutability': 'nonpayable',
+        'type': 'constructor'
     },
     {
-        "inputs": [],
-        "name": "INITIAL_PRICE",
-        "outputs": [
+        'inputs': [],
+        'name': 'INITIAL_PRICE',
+        'outputs': [
             {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
+                'internalType': 'uint256',
+                'name': '',
+                'type': 'uint256'
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
+        'stateMutability': 'view',
+        'type': 'function'
     },
     {
-        "inputs": [],
-        "name": "MAX_UNITS_PER_ADDRESS",
-        "outputs": [
+        'inputs': [],
+        'name': 'MAX_UNITS_PER_ADDRESS',
+        'outputs': [
             {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
+                'internalType': 'uint256',
+                'name': '',
+                'type': 'uint256'
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
+        'stateMutability': 'view',
+        'type': 'function'
     },
     {
-        "inputs": [],
-        "name": "START_TIME",
-        "outputs": [
+        'inputs': [],
+        'name': 'START_TIME',
+        'outputs': [
             {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
+                'internalType': 'uint256',
+                'name': '',
+                'type': 'uint256'
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
+        'stateMutability': 'view',
+        'type': 'function'
     },
     {
-        "inputs": [],
-        "name": "buy",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
+        'inputs': [],
+        'name': 'buy',
+        'outputs': [],
+        'stateMutability': 'payable',
+        'type': 'function'
     },
     {
-        "inputs": [
+        'inputs': [
             {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
+                'internalType': 'uint256',
+                'name': 'amount',
+                'type': 'uint256'
             }
         ],
-        "name": "buyBatch",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
+        'name': 'buyBatch',
+        'outputs': [],
+        'stateMutability': 'payable',
+        'type': 'function'
     },
     {
-        "inputs": [
+        'inputs': [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
+                'internalType': 'address',
+                'name': '',
+                'type': 'address'
             }
         ],
-        "name": "buyers",
-        "outputs": [
+        'name': 'buyers',
+        'outputs': [
             {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
+                'internalType': 'uint256',
+                'name': '',
+                'type': 'uint256'
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
+        'stateMutability': 'view',
+        'type': 'function'
     },
     {
-        "inputs": [],
-        "name": "ethReceiver",
-        "outputs": [
+        'inputs': [],
+        'name': 'ethReceiver',
+        'outputs': [
             {
-                "internalType": "address payable",
-                "name": "",
-                "type": "address"
+                'internalType': 'address payable',
+                'name': '',
+                'type': 'address'
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
+        'stateMutability': 'view',
+        'type': 'function'
     },
     {
-        "inputs": [],
-        "name": "nft",
-        "outputs": [
+        'inputs': [],
+        'name': 'nft',
+        'outputs': [
             {
-                "internalType": "contract INFT",
-                "name": "",
-                "type": "address"
+                'internalType': 'contract INFT',
+                'name': '',
+                'type': 'address'
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
+        'stateMutability': 'view',
+        'type': 'function'
     },
     {
-        "inputs": [
+        'inputs': [
             {
-                "internalType": "bytes",
-                "name": "_signature",
-                "type": "bytes"
+                'internalType': 'bytes',
+                'name': '_signature',
+                'type': 'bytes'
             }
         ],
-        "name": "presaleBuyWithSignature",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
+        'name': 'presaleBuyWithSignature',
+        'outputs': [],
+        'stateMutability': 'payable',
+        'type': 'function'
     },
     {
-        "inputs": [
+        'inputs': [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
+                'internalType': 'address',
+                'name': '',
+                'type': 'address'
             }
         ],
-        "name": "presaleBuyers",
-        "outputs": [
+        'name': 'presaleBuyers',
+        'outputs': [
             {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
+                'internalType': 'bool',
+                'name': '',
+                'type': 'bool'
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
+        'stateMutability': 'view',
+        'type': 'function'
     },
     {
-        "inputs": [],
-        "name": "verifyAddress",
-        "outputs": [
+        'inputs': [],
+        'name': 'verifyAddress',
+        'outputs': [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
+                'internalType': 'address',
+                'name': '',
+                'type': 'address'
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
+        'stateMutability': 'view',
+        'type': 'function'
     }
-]
+];
 
