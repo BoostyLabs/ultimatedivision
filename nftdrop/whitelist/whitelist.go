@@ -51,9 +51,8 @@ type Config struct {
 	pagination.Cursor `json:"cursor"`
 }
 
-// Contracts entity describes smart contracts address.
+// Contracts entity describes smart contract address.
 type Contracts struct {
-	NFT     cryptoutils.Address `json:"nft"`
 	NFTSale cryptoutils.Address `json:"nftSale"`
 }
 
