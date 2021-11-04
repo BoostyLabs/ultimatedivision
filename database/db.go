@@ -225,6 +225,11 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             user_id  BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
             card_id  BYTEA   REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
             minute   INTEGER                                          NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS nfts_waitlist(
+            token_id       SERIAL  NOT NULL,
+            card_id        BYTEA   NOT NULL,
+            wallet_address VARCHAR NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)

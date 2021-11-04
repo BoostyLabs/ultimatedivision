@@ -3,6 +3,24 @@
 
 package nfts
 
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
+
+// DB is exposing access to cards db.
+//
+// architecture: DB
+type DB interface {
+	// Create creates nft token in the database.
+	Create(ctx context.Context, tokenID int, cardID uuid.UUID) error
+	// Get returns nft token by card id.
+	Get(ctx context.Context, tokenID int, cardID uuid.UUID)
+	// GetLast returns id of last inserted token.
+	GetLast(ctx context.Context) int
+}
+
 // NFT entity describes nft token format erc-721.
 type NFT struct {
 	Attributes  []Attribute `json:"attributes"`
