@@ -33,8 +33,10 @@ type DB interface {
 	Get(ctx context.Context, tokenID int) (NFTWaitList, error)
 	// GetLast returns id of last inserted token.
 	GetLast(ctx context.Context) (int, error)
+	// List returns all nft token from wait list from database.
+	List(ctx context.Context) ([]NFTWaitList, error)
 	// Delete deletes nft from wait list by id of token.
-	Delete(ctx context.Context, tokenID int) error
+	Delete(ctx context.Context, tokenIDs []int) error
 }
 
 // NFTWaitList describes list of nft tokens entity.
