@@ -124,7 +124,7 @@ func GenerateSignature(addressWallet Address, addressContract Address, privateKe
 	return "", fmt.Errorf("error private key format")
 }
 
-// GenerateSignature generates signature for user's wallet with token.
+// GenerateSignatureWithToken generates signature for user's wallet with token.
 func GenerateSignatureWithToken(addressWallet Address, addressContract Address, tokenID int, privateKey *ecdsa.PrivateKey) (Signature, error) {
 	if !addressWallet.IsValidAddress() {
 		return "", fmt.Errorf("invalid address of user's wallet")

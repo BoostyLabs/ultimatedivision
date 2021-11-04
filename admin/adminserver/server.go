@@ -10,7 +10,6 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/gameplay/matches"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -22,6 +21,8 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
+	"ultimatedivision/divisions"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/templatefuncs"
 	"ultimatedivision/lootboxes"
@@ -70,6 +71,7 @@ type Server struct {
 		marketplace controllers.MarketplaceTemplates
 		club        controllers.ClubsTemplates
 		queue       controllers.QueueTemplates
+		divisions   controllers.DivisionsTemplates
 		match       controllers.MatchesTemplate
 	}
 
@@ -77,7 +79,10 @@ type Server struct {
 }
 
 // NewServer is a constructor for admin web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service, admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities, avatars *avatars.Service, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service, queue *queue.Service, matches *matches.Service) (*Server, error) {
+func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service,
+	admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities,
+	avatars *avatars.Service, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service,
+	queue *queue.Service, divisions *divisions.Service, matches *matches.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -99,14 +104,14 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	router.HandleFunc("/login", authController.Login).Methods(http.MethodPost, http.MethodGet)
 	router.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 
-	adminsRouter := router.PathPrefix("/admins").Subrouter().StrictSlash(true)
+	adminsRouter := router.PathPrefix("/admins").Subrouter()
 	adminsRouter.Use(server.withAuth)
 	adminsController := controllers.NewAdmins(log, admins, server.templates.admin)
 	adminsRouter.HandleFunc("", adminsController.List).Methods(http.MethodGet)
 	adminsRouter.HandleFunc("/create", adminsController.Create).Methods(http.MethodGet, http.MethodPost)
 	adminsRouter.HandleFunc("/update/{id}", adminsController.Update).Methods(http.MethodGet, http.MethodPost)
 
-	userRouter := router.PathPrefix("/users").Subrouter().StrictSlash(true)
+	userRouter := router.PathPrefix("/users").Subrouter()
 	userRouter.Use(server.withAuth)
 	userController := controllers.NewUsers(log, users, server.templates.user)
 	userRouter.HandleFunc("", userController.List).Methods(http.MethodGet)
@@ -114,19 +119,19 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	userRouter.HandleFunc("/update/status/{id}", userController.Update).Methods(http.MethodGet, http.MethodPost)
 	userRouter.HandleFunc("/delete/{id}", userController.Delete).Methods(http.MethodGet)
 
-	cardsRouter := router.PathPrefix("/cards").Subrouter().StrictSlash(true)
+	cardsRouter := router.PathPrefix("/cards").Subrouter()
 	cardsRouter.Use(server.withAuth)
 	cardsController := controllers.NewCards(log, cards, server.templates.card, percentageQualities)
 	cardsRouter.HandleFunc("", cardsController.List).Methods(http.MethodGet)
 	cardsRouter.HandleFunc("/create/{userId}", cardsController.Create).Methods(http.MethodGet)
 	cardsRouter.HandleFunc("/delete/{id}", cardsController.Delete).Methods(http.MethodGet)
 
-	avatarsRouter := router.PathPrefix("/avatars").Subrouter().StrictSlash(true)
+	avatarsRouter := router.PathPrefix("/avatars").Subrouter()
 	avatarsRouter.Use(server.withAuth)
 	avatarsController := controllers.NewAvatars(log, avatars, server.templates.avatar)
 	avatarsRouter.HandleFunc("/{cardId}", avatarsController.Get).Methods(http.MethodGet)
 
-	marketplaceRouter := router.PathPrefix("/marketplace").Subrouter().StrictSlash(true)
+	marketplaceRouter := router.PathPrefix("/marketplace").Subrouter()
 	marketplaceRouter.Use(server.withAuth)
 	marketplaceController := controllers.NewMarketplace(log, marketplace, cards, users, server.templates.marketplace)
 	marketplaceRouter.HandleFunc("", marketplaceController.ListActiveLots).Methods(http.MethodGet)
@@ -134,14 +139,14 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	marketplaceRouter.HandleFunc("/create", marketplaceController.CreateLot).Methods(http.MethodGet, http.MethodPost)
 	marketplaceRouter.HandleFunc("/bet/{id}", marketplaceController.PlaceBetLot).Methods(http.MethodGet, http.MethodPost)
 
-	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter().StrictSlash(true)
+	lootBoxesRouter := router.PathPrefix("/lootboxes").Subrouter()
 	lootBoxesRouter.Use(server.withAuth)
 	lootBoxesController := controllers.NewLootBoxes(log, lootboxes, server.templates.lootbox)
 	lootBoxesRouter.HandleFunc("", lootBoxesController.List).Methods(http.MethodGet)
 	lootBoxesRouter.HandleFunc("/create/{id}", lootBoxesController.Create).Methods(http.MethodGet, http.MethodPost)
-	lootBoxesRouter.HandleFunc("/open/{userID}/{lootboxID}", lootBoxesController.Open).Methods(http.MethodGet)
+	lootBoxesRouter.HandleFunc("/open/{userId}/{lootboxId}", lootBoxesController.Open).Methods(http.MethodGet)
 
-	clubsRouter := router.PathPrefix("/clubs").Subrouter().StrictSlash(true)
+	clubsRouter := router.PathPrefix("/clubs").Subrouter()
 	clubsRouter.Use(server.withAuth)
 	clubsController := controllers.NewClubs(log, clubs, server.templates.club)
 	clubsRouter.HandleFunc("/create/{userId}", clubsController.Create).Methods(http.MethodGet)
@@ -154,19 +159,26 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	clubsRouter.HandleFunc("/squad/{squadId}/squad-cards/{cardId}/update", clubsController.UpdateCardPosition).Methods(http.MethodGet, http.MethodPost)
 	clubsRouter.HandleFunc("/squad/{squadId}/squad-cards/{cardId}", clubsController.DeleteCard).Methods(http.MethodGet)
 
-	queueRouter := router.PathPrefix("/queue").Subrouter().StrictSlash(true)
+	queueRouter := router.PathPrefix("/queue").Subrouter()
 	queueRouter.Use(server.withAuth)
 	queueController := controllers.NewQueue(log, queue, server.templates.queue)
 	queueRouter.HandleFunc("", queueController.List).Methods(http.MethodGet)
 	queueRouter.HandleFunc("/{id}", queueController.Get).Methods(http.MethodGet)
 
-	matchesRouter := router.PathPrefix("/matches").Subrouter().StrictSlash(true)
+	matchesRouter := router.PathPrefix("/matches").Subrouter()
 	matchesRouter.Use(server.withAuth)
 	matchesController := controllers.NewMatches(log, matches, server.templates.match)
 	matchesRouter.HandleFunc("/create", matchesController.Create).Methods(http.MethodGet, http.MethodPost)
 	matchesRouter.HandleFunc("/", matchesController.ListMatches).Methods(http.MethodGet)
 	matchesRouter.HandleFunc("/delete/{id}", matchesController.Delete).Methods(http.MethodGet)
 	matchesRouter.HandleFunc("/{id}/goals", matchesController.ListMatchGoals).Methods(http.MethodGet)
+
+	divisionsRouter := router.PathPrefix("/divisions").Subrouter()
+	divisionsRouter.Use(server.withAuth)
+	divisionsController := controllers.NewDivisions(log, divisions, server.templates.divisions)
+	divisionsRouter.HandleFunc("", divisionsController.List).Methods(http.MethodGet)
+	divisionsRouter.HandleFunc("/create", divisionsController.Create).Methods(http.MethodGet, http.MethodPost)
+	divisionsRouter.HandleFunc("/delete/{id}", divisionsController.Delete).Methods(http.MethodGet)
 
 	server.server = http.Server{
 		Handler: router,
@@ -343,6 +355,16 @@ func (server *Server) initializeTemplates() (err error) {
 		return err
 	}
 
+	server.templates.divisions.List, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "divisions", "list.html"))
+	if err != nil {
+		return err
+	}
+
+	server.templates.divisions.Create, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "divisions", "create.html"))
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -354,12 +376,12 @@ func (server *Server) withAuth(handler http.Handler) http.Handler {
 		ctxWithAuth := func(ctx context.Context) context.Context {
 			token, err := server.cookieAuth.GetToken(r)
 			if err != nil {
-				controllers.Redirect(w, r, "/login/", "GET")
+				controllers.Redirect(w, r, "/login", "GET")
 			}
 
 			claims, err := server.authService.Authorize(ctx, token)
 			if err != nil {
-				controllers.Redirect(w, r, "/login/", "GET")
+				controllers.Redirect(w, r, "/login", "GET")
 			}
 
 			return auth.SetClaims(ctx, claims)

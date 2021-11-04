@@ -13,6 +13,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/pkg/cryptoutils"
+	"ultimatedivision/users"
 )
 
 // ErrNFTs indicated that there was an error in service.
@@ -25,18 +26,20 @@ type Service struct {
 	storage Storage
 	cards   *cards.Service
 	avatars *avatars.Service
+	users   *users.Service
 }
 
 // NewService is a constructor for NFTs service.
-func NewService(storage Storage, cards *cards.Service, avatars *avatars.Service) *Service {
+func NewService(storage Storage, cards *cards.Service, avatars *avatars.Service, users *users.Service) *Service {
 	return &Service{
 		storage: storage,
 		cards:   cards,
 		avatars: avatars,
+		users:   users,
 	}
 }
 
-func (service *Service) Create(ctx context.Context, cardID uuid.UUID, addressWallet cryptoutils.Address) error {
+func (service *Service) Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address, userID uuid.UUID) error {
 	card, err := service.cards.Get(ctx, cardID)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
@@ -57,7 +60,11 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, addressWal
 		return ErrNFTs.Wrap(err)
 	}
 
-	return service.Save(ctx, nft)
+	if err = service.Save(ctx, nft); err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	return service.users.UpdateWalletAddress(ctx, wallet, userID)
 }
 
 // Generate generates values for nft token.
