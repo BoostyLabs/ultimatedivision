@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React, { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { toast } from 'react-toastify';
 
@@ -11,12 +11,12 @@ import { ServicePlugin } from '@/app/plugins/service';
 import './index.scss';
 
 export const MintButton: React.FC = () => {
-    const onboarding = React.useRef<MetaMaskOnboarding>();
+    const onboarding = useRef<MetaMaskOnboarding>();
     const service = ServicePlugin.create();
     const [text, setButtonText] = useState('Connect');
     const [isConnected, handleConnect] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!onboarding.current) {
             onboarding.current = new MetaMaskOnboarding();
         }
@@ -26,6 +26,7 @@ export const MintButton: React.FC = () => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
+
                 handleConnect(true);
             } catch (error: any) {
                 toast.error('Please open metamask manually!', {
@@ -52,19 +53,25 @@ export const MintButton: React.FC = () => {
             });
         }
     };
+
     const sendTransaction = async () => {
         try {
             const wallet = await service.getWallet();
-            const totalSupply = await service.getLastTokenId(wallet, NFT_ABI);
 
-            totalSupply
-                && await service.sendTransaction(wallet, totalSupply, NFT_ABI_SALE);
+            await service.sendTransaction(wallet, NFT_ABI_SALE);
         } catch (error: any) {
-            toast.error('Failed to connect to contract', {
+            let errorMessage = 'Failed to connect to contract';
+            const presaleErrorCode = -32603;
+
+            if (error.error.code === presaleErrorCode) {
+                errorMessage = 'Only one token can be bought on presale';
+            };
+
+            toast.error(errorMessage, {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored'
             });
-        }
+        };
     };
 
     return (
