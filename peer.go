@@ -70,6 +70,17 @@ type DB interface {
 	CreateSchema(ctx context.Context) error
 }
 
+// Storage provides access to all databases and database related functionality.
+//
+// architecture: Master Storage.
+type Storage interface {
+	// Avatars provides access to avatars storage.
+	Avatars() avatars.Storage
+
+	// NFT provides access to nft storage.
+	NFT() nfts.Storage
+}
+
 // Config is the global configuration for ultimatedivision.
 type Config struct {
 	Admins struct {
@@ -122,6 +133,7 @@ type Peer struct {
 	Config   Config
 	Log      logger.Logger
 	Database DB
+	Storage  Storage
 	Sender   mail2.Sender
 
 	// exposes admins relates logic.
@@ -199,6 +211,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		Database: db,
 	}
 
+	// TODO: initialize Storage
+
 	{ // email setup
 		from, err := mail.ParseAddress(config.Console.Emails.From)
 		if err != nil {
@@ -257,13 +271,16 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // Avatars setup
 		peer.Avatars.Service = avatars.NewService(
 			peer.Database.Avatars(),
+			peer.Storage.Avatars(),
 			config.Avatars.Config,
 		)
 	}
 
 	{ // NFTs setup
 		peer.NFTs.Service = nfts.NewService(
+			peer.Storage.NFT(),
 			peer.Cards.Service,
+			peer.Avatars.Service,
 		)
 	}
 
