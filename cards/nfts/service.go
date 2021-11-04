@@ -64,6 +64,8 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, wallet cry
 		return ErrNFTs.Wrap(err)
 	}
 
+	// TODO: add user in queue
+
 	return service.users.UpdateWalletAddress(ctx, wallet, userID)
 }
 
