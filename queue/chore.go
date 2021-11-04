@@ -46,7 +46,10 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		clients := chore.service.List()
 		if len(clients) >= 2 {
 			for k := range clients {
-				if k%2 != 0 || (clients[k] == Client{} && clients[k+1] == Client{}) || clients[k].DivisionID != clients[k+1].DivisionID {
+				isEvenNumber := (k%2 != 0)
+				isEmptyClients := (clients[k] == Client{} && clients[k+1] == Client{})
+				isEqualDivisions := (clients[k].DivisionID != clients[k+1].DivisionID)
+				if isEvenNumber || isEmptyClients || isEqualDivisions {
 					continue
 				}
 
