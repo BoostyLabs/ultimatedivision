@@ -30,8 +30,11 @@ func NewService(cards *cards.Service) *Service {
 	}
 }
 
-// GenerateNFT generates values for nft token.
-func (service *Service) GenerateNFT(ctx context.Context, cardID uuid.UUID) (NFT, error) {
+func (service *Service) Create(ctx context.Context, cardID uuid.UUID) {
+}
+
+// Generate generates values for nft token.
+func (service *Service) Generate(ctx context.Context, cardID uuid.UUID) (NFT, error) {
 	card, err := service.cards.Get(ctx, cardID)
 	if err != nil {
 		return NFT{}, ErrNFTs.Wrap(err)
