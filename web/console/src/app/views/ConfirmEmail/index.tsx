@@ -9,11 +9,13 @@ import { UserService } from '@/user/service';
 import { useQueryToken } from '@/app/hooks/useQueryToken';
 import { AuthRouteConfig } from '@/app/routes';
 
+import './index.scss';
+
 /** TODO: Rework this view after design solution */
 const ConfirmEmail: React.FC = () => {
     const token = useQueryToken();
 
-    const [errorMessage, setErrorMessage]
+    const [confirmEmailMessage, setConfirmEmailMessage]
         = useState<SetStateAction<null | string>>(null);
 
     const userClient = new UserClient();
@@ -24,13 +26,13 @@ const ConfirmEmail: React.FC = () => {
     async function checkEmailToken() {
         try {
             await users.checkEmailToken(token);
-
+            setConfirmEmailMessage(`Your email has been successfully verified.
+            You will be redirected to the sign-in page in 3 seconds.`);
             await setTimeout(() => {
                 location.pathname = AuthRouteConfig.SignIn.path;
             }, DELAY);
         } catch (error: any) {
-            /** TODO: handles error */
-            setErrorMessage('Email verification failed');
+            setConfirmEmailMessage('Email verification failed');
         };
     };
 
@@ -38,14 +40,9 @@ const ConfirmEmail: React.FC = () => {
         checkEmailToken();
     }, []);
 
-    if (errorMessage) {
-        return <h1>{errorMessage}</h1>;
-    };
-
-    return <div>
-        <h1>
-            Your email has been successfully verified.
-            You will be redirected to the sign-in page in 3 seconds.
+    return <div className="confirm-email">
+        <h1 className="confirm-email__title">
+            {confirmEmailMessage}
         </h1>
     </div>;
 };
