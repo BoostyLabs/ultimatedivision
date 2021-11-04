@@ -7,12 +7,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"ultimatedivision/pkg/cryptoutils"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/mail"
+	"ultimatedivision/pkg/cryptoutils"
 	"ultimatedivision/users"
 )
 

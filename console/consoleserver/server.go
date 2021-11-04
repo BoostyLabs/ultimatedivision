@@ -10,13 +10,13 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/cards/nfts"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/cards/nfts"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/internal/logger"
@@ -140,7 +140,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	queueRouter.Use(server.withAuth)
 	queueRouter.HandleFunc("", queueController.Create).Methods(http.MethodGet)
 
-	nftRouter := apiRouter.PathPrefix("/nft-token").Subrouter()
+	nftRouter := apiRouter.PathPrefix("/nft").Subrouter()
 	nftRouter.Use(server.withAuth)
 	nftRouter.HandleFunc("", nftsController.Create).Methods(http.MethodPost)
 

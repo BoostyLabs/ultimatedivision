@@ -6,7 +6,6 @@ package database
 import (
 	"context"
 	"database/sql"
-	"ultimatedivision/cards/nfts"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -17,6 +16,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/cards/nfts"
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
@@ -228,9 +228,9 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             minute   INTEGER                                          NOT NULL
         );
         CREATE TABLE IF NOT EXISTS nfts_waitlist(
-            token_id       SERIAL                                NOT NULL,
-            card_id        BYTEA   cards(id) ON DELETE CASCADE   NOT NULL,
-            wallet_address VARCHAR                               NOT NULL
+            token_id       SERIAL  PRIMARY KEY                            NOT NULL,
+            card_id        BYTEA   REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
+            wallet_address VARCHAR                                        NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)

@@ -88,7 +88,7 @@ func (nftsDB *nftsDB) Get(ctx context.Context, tokenID int) (nfts.NFTWaitList, e
 func (nftsDB *nftsDB) GetLast(ctx context.Context) (int, error) {
 	query := `SELECT token_id
 	          FROM nfts_waitlist
-	          ORDER BY DESC
+	          ORDER BY token_id DESC
 	          LIMIT 1`
 
 	var lastToken int
@@ -101,22 +101,32 @@ func (nftsDB *nftsDB) GetLast(ctx context.Context) (int, error) {
 	return lastToken, ErrNFTs.Wrap(err)
 }
 
-// Delete deletes nft from wait list by id of token.
-func (nftsDB *nftsDB) Delete(ctx context.Context, tokenID int) error {
+// Delete deletes nfts from wait list by id of token.
+func (nftsDB *nftsDB) Delete(ctx context.Context, tokenIDs []int) error {
 	query := `DELETE FROM nfts_waitlist
 	          WHERE token_id = $1`
 
-	result, err := nftsDB.conn.ExecContext(ctx, query, tokenID)
+	preparedQuery, err := nftsDB.conn.PrepareContext(ctx, query)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
 	}
+	defer func() {
+		err = preparedQuery.Close()
+	}()
 
-	rowNum, err := result.RowsAffected()
-	if err != nil {
-		return ErrNFTs.Wrap(err)
-	}
-	if rowNum == 0 {
-		return nfts.ErrNoNFT.Wrap(err)
+	for _, tokenID := range tokenIDs {
+		result, err := nftsDB.conn.ExecContext(ctx, query, tokenID)
+		if err != nil {
+			return ErrNFTs.Wrap(err)
+		}
+
+		rowNum, err := result.RowsAffected()
+		if err != nil {
+			return ErrNFTs.Wrap(err)
+		}
+		if rowNum == 0 {
+			return nfts.ErrNoNFT.New("nft token does not exist")
+		}
 	}
 
 	return nil
