@@ -17,8 +17,8 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
-	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/divisions"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
@@ -74,6 +74,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             nick_name        VARCHAR                  NOT NULL,
             first_name       VARCHAR                  NOT NULL,
             last_name        VARCHAR                  NOT NULL,
+            wallet_address   VARCHAR,
             last_login       TIMESTAMP WITH TIME ZONE NOT NULL,
             status           INTEGER                  NOT NULL,
             created_at       TIMESTAMP WITH TIME ZONE NOT NULL

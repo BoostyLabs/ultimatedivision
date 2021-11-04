@@ -6,6 +6,7 @@ package users
 import (
 	"context"
 	"time"
+	"ultimatedivision/pkg/cryptoutils"
 	"unicode"
 
 	"github.com/google/uuid"
@@ -32,6 +33,8 @@ type DB interface {
 	Update(ctx context.Context, status Status, id uuid.UUID) error
 	// UpdatePassword updates a password in the database.
 	UpdatePassword(ctx context.Context, passwordHash []byte, id uuid.UUID) error
+	// UpdateWalletAddress updates user's address of wallet in the database.
+	UpdateWalletAddress(ctx context.Context, wallet cryptoutils.Address, id uuid.UUID) error
 	// Delete deletes a user in the database.
 	Delete(ctx context.Context, id uuid.UUID) error
 	// GetNickNameByID returns nickname by user id from the database.
@@ -52,15 +55,16 @@ const (
 
 // User describes user entity.
 type User struct {
-	ID           uuid.UUID `json:"id"`
-	Email        string    `json:"email"`
-	PasswordHash []byte    `json:"passwordHash"`
-	NickName     string    `json:"nickName"`
-	FirstName    string    `json:"firstName"`
-	LastName     string    `json:"lastName"`
-	LastLogin    time.Time `json:"lastLogin"`
-	Status       Status    `json:"status"`
-	CreatedAt    time.Time `json:"createdAt"`
+	ID           uuid.UUID           `json:"id"`
+	Email        string              `json:"email"`
+	PasswordHash []byte              `json:"passwordHash"`
+	NickName     string              `json:"nickName"`
+	FirstName    string              `json:"firstName"`
+	LastName     string              `json:"lastName"`
+	Wallet       cryptoutils.Address `json:"wallet"`
+	LastLogin    time.Time           `json:"lastLogin"`
+	Status       Status              `json:"status"`
+	CreatedAt    time.Time           `json:"createdAt"`
 }
 
 // EncodePass encode the password and generate "hash" to store from users password.
