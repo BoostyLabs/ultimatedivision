@@ -1,7 +1,9 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useHistory } from 'react-router';
+import { toast } from 'react-toastify';
 
 import { UserClient } from '@/api/user';
 import { UserService } from '@/user/service';
@@ -9,14 +11,9 @@ import { UserService } from '@/user/service';
 import { useQueryToken } from '@/app/hooks/useQueryToken';
 import { AuthRouteConfig } from '@/app/routes';
 
-import './index.scss';
-
-/** TODO: Rework this view after design solution */
 const ConfirmEmail: React.FC = () => {
     const token = useQueryToken();
-
-    const [confirmEmailMessage, setConfirmEmailMessage]
-        = useState<SetStateAction<null | string>>(null);
+    const history = useHistory();
 
     const userClient = new UserClient();
     const users = new UserService(userClient);
@@ -26,13 +23,18 @@ const ConfirmEmail: React.FC = () => {
     async function checkEmailToken() {
         try {
             await users.checkEmailToken(token);
-            setConfirmEmailMessage(`Your email has been successfully verified.
-            You will be redirected to the sign-in page in 3 seconds.`);
+            toast.success(`Your email has been successfully verified.
+            You will be redirected to the sign-in page in 3 seconds.`, {
+                position: toast.POSITION.TOP_RIGHT,
+            });
             await setTimeout(() => {
-                location.pathname = AuthRouteConfig.SignIn.path;
+                history.push(AuthRouteConfig.SignIn.path);
             }, DELAY);
         } catch (error: any) {
-            setConfirmEmailMessage('Email verification failed');
+            toast.error('Email verification failed', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         };
     };
 
@@ -40,11 +42,7 @@ const ConfirmEmail: React.FC = () => {
         checkEmailToken();
     }, []);
 
-    return <div className="confirm-email">
-        <h1 className="confirm-email__title">
-            {confirmEmailMessage}
-        </h1>
-    </div>;
+    return <div className="confirm-email"/>
 };
 
 export default ConfirmEmail;
