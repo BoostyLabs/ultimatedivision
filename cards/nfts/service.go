@@ -11,6 +11,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/cards/avatars"
 	"ultimatedivision/pkg/cryptoutils"
 	"ultimatedivision/users"
 )
@@ -22,35 +23,57 @@ var ErrNFTs = errs.Class("NFTs service error")
 //
 // architecture: Service
 type Service struct {
-	cards *cards.Service
-	users *users.Service
+	storage Storage
+	cards   *cards.Service
+	avatars *avatars.Service
+	users   *users.Service
 }
 
 // NewService is a constructor for NFTs service.
-func NewService(cards *cards.Service, users *users.Service) *Service {
+func NewService(storage Storage, cards *cards.Service, avatars *avatars.Service, users *users.Service) *Service {
 	return &Service{
-		cards: cards,
-		users: users,
+		storage: storage,
+		cards:   cards,
+		avatars: avatars,
+		users:   users,
 	}
 }
 
 // Create creates nft token.
 func (service *Service) Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address, userID uuid.UUID) error {
-	err := service.users.UpdateWalletAddress(ctx, wallet, userID)
+	card, err := service.cards.Get(ctx, cardID)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
 	}
 
-	return nil
+	avatar, err := service.avatars.Get(ctx, cardID)
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	avatarURL, err := service.avatars.Save(ctx, avatar)
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	nft, err := service.Generate(ctx, card, avatarURL)
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	if err = service.Save(ctx, nft); err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	// TODO: add user in queue
+
+	return service.users.UpdateWalletAddress(ctx, wallet, userID)
 }
 
 // Generate generates values for nft token.
-func (service *Service) Generate(ctx context.Context, cardID uuid.UUID) (NFT, error) {
-	card, err := service.cards.Get(ctx, cardID)
-	if err != nil {
-		return NFT{}, ErrNFTs.Wrap(err)
-	}
+func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL string) (NFT, error) {
 	var attributes []Attribute
+
 	attributes = append(attributes, Attribute{TraitType: "Id", Value: card.ID.String()})
 	attributes = append(attributes, Attribute{TraitType: "Quality", Value: card.Quality})
 	attributes = append(attributes, Attribute{TraitType: "Height", Value: fmt.Sprintf("%f", card.Height)})
@@ -112,8 +135,13 @@ func (service *Service) Generate(ctx context.Context, cardID uuid.UUID) (NFT, er
 		Attributes:  attributes,
 		Description: "",
 		ExternalURL: "",
-		Image:       "",
+		Image:       avatarURL,
 		Name:        card.PlayerName,
 	}
 	return nft, nil
+}
+
+// Save saves nft in the storage.
+func (service *Service) Save(ctx context.Context, nft NFT) error {
+	return ErrNFTs.Wrap(service.storage.Save(ctx, nft))
 }

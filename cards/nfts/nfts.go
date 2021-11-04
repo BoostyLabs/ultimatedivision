@@ -7,18 +7,41 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/zeebo/errs"
+
+	"ultimatedivision/pkg/cryptoutils"
 )
+
+// ErrNoNFT indicates that nft token does not exist.
+var ErrNoNFT = errs.Class("nft does not exist")
+
+// Storage is exposing access to nfts storage.
+//
+// architecture: Storage
+type Storage interface {
+	// Save saves nft in the storage.
+	Save(ctx context.Context, nft NFT) error
+}
 
 // DB is exposing access to cards db.
 //
 // architecture: DB
 type DB interface {
 	// Create creates nft token in the database.
-	Create(ctx context.Context, tokenID int, cardID uuid.UUID) error
+	Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address) error
 	// Get returns nft token by card id.
-	Get(ctx context.Context, tokenID int, cardID uuid.UUID)
+	Get(ctx context.Context, tokenID int) (NFTWaitList, error)
 	// GetLast returns id of last inserted token.
-	GetLast(ctx context.Context) int
+	GetLast(ctx context.Context) (int, error)
+	// Delete deletes nft from wait list by id of token.
+	Delete(ctx context.Context, tokenID int) error
+}
+
+// NFTWaitList describes list of nft tokens entity.
+type NFTWaitList struct {
+	TokenID int                 `json:"tokenId"`
+	CardID  uuid.UUID           `json:"cardId"`
+	Wallet  cryptoutils.Address `json:"wallet"`
 }
 
 // NFT entity describes nft token format erc-721.

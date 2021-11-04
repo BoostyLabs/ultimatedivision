@@ -6,6 +6,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"ultimatedivision/cards/nfts"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -227,9 +228,9 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             minute   INTEGER                                          NOT NULL
         );
         CREATE TABLE IF NOT EXISTS nfts_waitlist(
-            token_id       SERIAL  NOT NULL,
-            card_id        BYTEA   NOT NULL,
-            wallet_address VARCHAR NOT NULL
+            token_id       SERIAL                                NOT NULL,
+            card_id        BYTEA   cards(id) ON DELETE CASCADE   NOT NULL,
+            wallet_address VARCHAR                               NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -293,4 +294,9 @@ func (db *database) Queue() queue.DB {
 // Divisions provides access to accounts db.
 func (db *database) Divisions() divisions.DB {
 	return &divisionsDB{conn: db.conn}
+}
+
+// NFTs provides access to accounts db.
+func (db *database) NFTs() nfts.DB {
+	return &nftsDB{conn: db.conn}
 }

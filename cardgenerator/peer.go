@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
+	"ultimatedivision/cards/nfts"
 
 	"ultimatedivision/cardgenerator/avatarcards"
 	"ultimatedivision/cards"

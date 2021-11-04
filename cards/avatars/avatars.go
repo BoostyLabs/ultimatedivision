@@ -26,6 +26,14 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Avatar, error)
 }
 
+// Storage is exposing access to avatars storage.
+//
+// architecture: Storage
+type Storage interface {
+	// Save saves avatar in the storage.
+	Save(ctx context.Context, avatar Avatar) (string, error)
+}
+
 // Avatar entity describes the values that make up the avatar.
 type Avatar struct {
 	CardID         uuid.UUID   `json:"cardId"`
