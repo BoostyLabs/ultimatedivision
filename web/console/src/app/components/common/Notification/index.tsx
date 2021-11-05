@@ -5,13 +5,17 @@ import { ToastContainer, ToastPosition } from 'react-toastify';
 
 import './index.scss';
 
-/** Custom component for notifications */
+/** Custom component for notifications. */
 export const Notification: React.FC = () => {
-    /** variables describes notification behaviour */
+    /** Describes notification position */
     const POSITION: ToastPosition = 'top-right';
+    /** Closes notification after delay  */
     const AUTO_CLOSE_TIME: number = 5000;
+    /** Describes notification queue */
     const IS_NEWEST_ON_TOP: boolean = false;
+    /** Describes behaviour closes notification by onClick Mouse Event */
     const IS_CLOSED_ON_CLICK: boolean = false;
+    /** RTL means right to left. Adds RTL support for pages */
     const IS_RIGHT_TO_LEFT_LAYOUT: boolean = false;
 
     return <ToastContainer
