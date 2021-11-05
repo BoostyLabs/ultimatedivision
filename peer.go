@@ -49,6 +49,9 @@ type DB interface {
 	// Avatars provides access to avatars db.
 	Avatars() avatars.DB
 
+	// NFTs provides access to nfts db.
+	NFTs() nfts.DB
+
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
 
@@ -66,9 +69,6 @@ type DB interface {
 
 	// Divisions provides access to divisions db.
 	Divisions() divisions.DB
-
-	// NFTs provides access to nfts db.
-	NFTs() nfts.DB
 
 	// Close closes underlying db connection.
 	Close() error

@@ -29,11 +29,11 @@ type nftsDB struct {
 }
 
 // Create creates nft token in the database.
-func (nftsDB *nftsDB) Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address) error {
-	query := `INSERT INTO nfts_waitlist(card_id, wallet_address)
-	          VALUES($1,$2)`
+func (nftsDB *nftsDB) Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address, password cryptoutils.Signature) error {
+	query := `INSERT INTO nfts_waitlist(card_id, wallet_address, password)
+	          VALUES($1,$2,$3)`
 
-	_, err := nftsDB.conn.ExecContext(ctx, query, cardID, wallet)
+	_, err := nftsDB.conn.ExecContext(ctx, query, cardID, wallet, password)
 	return ErrNFTs.Wrap(err)
 }
 
@@ -54,7 +54,7 @@ func (nftsDB *nftsDB) List(ctx context.Context) ([]nfts.NFTWaitList, error) {
 
 	for rows.Next() {
 		var nft nfts.NFTWaitList
-		err = rows.Scan(&nft.TokenID, &nft.CardID, &nft.Wallet)
+		err = rows.Scan(&nft.TokenID, &nft.CardID, &nft.Wallet, &nft.Password)
 		if err != nil {
 			return nftList, ErrNFTs.Wrap(err)
 		}
@@ -68,6 +68,33 @@ func (nftsDB *nftsDB) List(ctx context.Context) ([]nfts.NFTWaitList, error) {
 	return nftList, ErrNFTs.Wrap(err)
 }
 
+// ListWithoutPassword returns all nft tokens without password from database.
+func (nftsDB *nftsDB) ListWithoutPassword(ctx context.Context) ([]nfts.NFTWaitList, error) {
+	query :=
+		`SELECT *
+	     FROM nfts_waitlist
+	     WHERE password = ''`
+
+	rows, err := nftsDB.conn.QueryContext(ctx, query)
+	if err != nil {
+		return nil, ErrNFTs.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	var nftsWithoutPassword []nfts.NFTWaitList
+	for rows.Next() {
+		var nft nfts.NFTWaitList
+		if err = rows.Scan(&nft.TokenID, &nft.CardID, &nft.Wallet, &nft.Password); err != nil {
+			return nil, ErrNFTs.Wrap(err)
+		}
+		nftsWithoutPassword = append(nftsWithoutPassword, nft)
+	}
+
+	return nftsWithoutPassword, ErrNFTs.Wrap(rows.Err())
+}
+
 // Get returns nft token by card id.
 func (nftsDB *nftsDB) Get(ctx context.Context, tokenID int) (nfts.NFTWaitList, error) {
 	query := `SELECT *
@@ -76,7 +103,7 @@ func (nftsDB *nftsDB) Get(ctx context.Context, tokenID int) (nfts.NFTWaitList, e
 
 	var nft nfts.NFTWaitList
 
-	err := nftsDB.conn.QueryRowContext(ctx, query, tokenID).Scan(&nft.TokenID, &nft.CardID, &nft.Wallet)
+	err := nftsDB.conn.QueryRowContext(ctx, query, tokenID).Scan(&nft.TokenID, &nft.CardID, &nft.Wallet, &nft.Password)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nft, nfts.ErrNoNFT.Wrap(err)
 	}
