@@ -40,3 +40,10 @@ type Division struct {
 type Config struct {
 	PassingPercent int `json:"passingPercent"`
 }
+
+type Seasons struct {
+	ID         int       `json:"id"`
+	DivisionID uuid.UUID `json:"divisionID"`
+	StartedAt  time.Time `json:"startedAt"`
+	EndedAt    time.Time `json:"endedAt"`
+}
