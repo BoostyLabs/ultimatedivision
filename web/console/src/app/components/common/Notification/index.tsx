@@ -5,6 +5,7 @@ import { ToastContainer, ToastPosition } from 'react-toastify';
 
 import './index.scss';
 
+/** Custom component for notifications */
 export const Notification: React.FC = () => {
     /** variables describes notification behaviour */
     const POSITION: ToastPosition = 'top-right';

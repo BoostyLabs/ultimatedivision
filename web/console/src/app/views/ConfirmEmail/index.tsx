@@ -4,10 +4,10 @@
 import { SetStateAction, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { UserClient } from '@/api/user';
+import { UsersClient } from '@/api/users';
 import { useQueryToken } from '@/app/hooks/useQueryToken';
 import { AuthRouteConfig } from '@/app/routes';
-import { UserService } from '@/user/service';
+import { UsersService } from '@/users/service';
 
 /** TODO: Rework this view after design solution */
 const ConfirmEmail: React.FC = () => {
@@ -17,14 +17,14 @@ const ConfirmEmail: React.FC = () => {
     const [errorMessage, setErrorMessage]
         = useState<SetStateAction<null | string>>(null);
 
-    const userClient = new UserClient();
-    const users = new UserService(userClient);
+    const usersClient = new UsersClient();
+    const usersService = new UsersService(usersClient);
 
     const DELAY: number = 3000;
     /** catches error if token is not valid */
     async function checkEmailToken() {
         try {
-            await users.checkEmailToken(token);
+            await usersService.checkEmailToken(token);
 
             await setTimeout(() => {
                 history.push(AuthRouteConfig.SignIn.path);

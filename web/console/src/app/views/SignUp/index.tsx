@@ -12,7 +12,7 @@ import ultimate from '@static/img/registerPage/ultimate.svg';
 
 import { AuthRouteConfig } from '@/app/routes';
 import { registerUser } from '@/app/store/actions/users';
-import { Validator } from '@/user/validation';
+import { Validator } from '@/users/validation';
 
 import './index.scss';
 

@@ -10,12 +10,12 @@ import { UserDataArea } from '@components/common/UserDataArea';
 
 import ultimate from '@static/img/registerPage/ultimate.svg';
 
-import { UserClient } from '@/api/user';
+import { UsersClient } from '@/api/users';
 import { useQueryToken } from '@/app/hooks/useQueryToken';
 import { AuthRouteConfig } from '@/app/routes';
 import { recoverUserPassword } from '@/app/store/actions/users';
-import { UserService } from '@/user/service';
-import { Validator } from '@/user/validation';
+import { UsersService } from '@/users/service';
+import { Validator } from '@/users/validation';
 
 import './index.scss';
 
@@ -27,16 +27,21 @@ const ResetPassword: React.FC = () => {
     const [errorMessage, setErrorMessage]
         = useState<SetStateAction<null | string>>(null);
 
-    const userClient = new UserClient();
-    const users = new UserService(userClient);
+    const usersClient = new UsersClient();
+    const usersService = new UsersService(usersClient);
 
     /** catches error if token is not valid */
     async function checkRecoverToken() {
         try {
-            await users.checkRecoverToken(token);
+            await usersService.checkRecoverToken(token);
+            toast.success('Successfully! Please, change your password.', {
+                position: toast.POSITION.TOP_RIGHT,
+            });
         } catch (error: any) {
-            /** TODO: handles error */
-            setErrorMessage('Cannot get access');
+            toast.error('The token has not been verified. Please, check your mail.', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         };
     };
     useEffect(() => {

@@ -10,10 +10,10 @@ import { UserDataArea } from '@components/common/UserDataArea';
 import goBack from '@static/img/registerPage/goback.svg';
 import ultimate from '@static/img/registerPage/ultimate.svg';
 
-import { UserClient } from '@/api/user';
+import { UsersClient } from '@/api/users';
 import { AuthRouteConfig } from '@/app/routes';
-import { UserService } from '@/user/service';
-import { Validator } from '@/user/validation';
+import { UsersService } from '@/users/service';
+import { Validator } from '@/users/validation';
 
 import './index.scss';
 
@@ -34,9 +34,9 @@ const ChangePassword: React.FC = () => {
         return isFormValid;
     };
 
-    const userClient = new UserClient();
-    const users = new UserService(userClient);
-    /** sign in user data */
+    const usersClient = new UsersClient();
+    const usersService = new UsersService(usersClient);
+    /** submit changed password */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -45,7 +45,7 @@ const ChangePassword: React.FC = () => {
         };
 
         try {
-            await users.sendEmailForPasswordReset(email);
+            await usersService.sendEmailForPasswordReset(email);
             toast.success('Successfully! Please, check your mail box.', {
                 position: toast.POSITION.TOP_RIGHT,
             });

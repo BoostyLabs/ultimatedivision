@@ -2,12 +2,15 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '.';
-import { User } from '@/user';
+import { User } from '@/users';
 
-/** Client for user controller of api */
-export class UserClient extends APIClient {
+/**
+ * UsersClient is a http implementation of users API.
+ * Exposes all users-related functionality.
+ */
+export class UsersClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/auth';
-    /** Register new user  */
+    /** Exposes user registration logic */
     public async register(user: User): Promise<void> {
         const path = `${this.ROOT_PATH}/register`;
         const response = await this.http.post(path, JSON.stringify(user));
@@ -16,7 +19,7 @@ export class UserClient extends APIClient {
             await this.handleError(response);
         };
     };
-    /** user login */
+    /** Exposes user login logic */
     public async login(email: string, password: string): Promise<void> {
         const path = `${this.ROOT_PATH}/login`;
         const response = await this.http.post(path, JSON.stringify({
@@ -27,7 +30,7 @@ export class UserClient extends APIClient {
             await this.handleError(response);
         };
     };
-    /** change user password implementation */
+    /** changes user password */
     public async changePassword(password: string, newPassword: string): Promise<void> {
         const path = `${this.ROOT_PATH}/change-password`;
         const response = await this.http.post(path, JSON.stringify({
@@ -38,7 +41,7 @@ export class UserClient extends APIClient {
             await this.handleError(response);
         };
     };
-    /** check user email token */
+    /** checks user token by email confirmation */
     public async checkEmailToken(token: string | null): Promise<void> {
         const path = `${this.ROOT_PATH}/email/confirm/${token}`;
         const response = await this.http.get(path);
@@ -47,7 +50,7 @@ export class UserClient extends APIClient {
             await this.handleError(response);
         };
     };
-    /** check user recover token */
+    /** checks user recover token */
     public async checkRecoverToken(token: string | null): Promise<void> {
         const path = `${this.ROOT_PATH}/reset-password/${token}`;
         const response = await this.http.get(path);
@@ -56,16 +59,16 @@ export class UserClient extends APIClient {
             await this.handleError(response);
         };
     };
-    /** recover user password */
+    /** recovers user password */
     public async recoverPassword(newPassword: string): Promise<void> {
         const path = `${this.ROOT_PATH}/reset-password`;
-        const response = await this.http.patch(path, JSON.stringify({ newPassword }));
+        const response = await this.http.patch(path, JSON.stringify(newPassword));
 
         if (!response.ok) {
             await this.handleError(response);
         };
     };
-    /** reset user password by email confirmation */
+    /** resets user password by email confirmation */
     public async sendEmailForPasswordReset(email: string): Promise<void> {
         const path = `${this.ROOT_PATH}/password/${email}`;
         const response = await this.http.get(path, JSON.stringify(email));

@@ -21,6 +21,6 @@ export function App() {
             </BrowserRouter>
         </Suspense>
     );
-};
+}
 
 export default App;
