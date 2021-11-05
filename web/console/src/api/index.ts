@@ -14,11 +14,11 @@ export class UnauthorizedError extends Error {
 }
 
 /**
- * NotFoundError is a custom error type for performing bad request.
+ * NotFoundError is a custom error type which indicates that the server can't find the requested resource.
  */
 export class NotFoundError extends Error {
     /** Error message while bad request */
-    public constructor(message = 'bad request') {
+    public constructor(message = 'not found') {
         super(message);
     }
 }

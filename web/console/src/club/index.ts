@@ -45,6 +45,17 @@ export class ClubState {
     public options: Options = new Options();
 }
 
+/** class for api methods to declare full path of card inside of club */
+export class CardEditIdentificators {
+    /** includes club id, squad idm card id and position parameters */
+    constructor(
+        public clubId: string,
+        public squadId: string,
+        public cardId: string,
+        public position: number = DEFAULT_VALUE
+    ) { }
+}
+
 export type FormationsType =
     | '4-4-2'
     | '4-2-4'
@@ -56,6 +67,7 @@ export type FormationsType =
     | '4-1-3-2'
     | '5-3-2'
     | '4-5-2';
+
 export type TacticsType = 'attack' | 'defence' | 'balanced';
 
 /* eslint-disable no-magic-numbers */

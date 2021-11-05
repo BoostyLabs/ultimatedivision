@@ -8,9 +8,8 @@ import { FootballFieldControlsArea } from '@/app/components/FootballField/Footba
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
 import { RootState } from '@/app/store';
-import { CardEditIdentificators } from '@/app/types/club';
 import { Card } from '@/card';
-import { SquadCard } from '@/club';
+import { SquadCard, CardEditIdentificators } from '@/club';
 import {
     cardSelectionVisibility,
     changeCardPosition,
@@ -18,7 +17,7 @@ import {
     deleteCard,
     setDragStart,
     swapCards,
-} from '@/app/store/actions/club';
+} from '@/app/store/actions/clubs';
 
 import './index.scss';
 
@@ -28,16 +27,16 @@ export const FootballFieldPlayingArea: React.FC = () => {
         (state: RootState) => state.cardsReducer.cardsPage
     );
     const formation = useSelector(
-        (state: RootState) => state.clubReducer.squad.formation
+        (state: RootState) => state.clubsReducer.squad.formation
     );
     const dragStartIndex = useSelector(
-        (state: RootState) => state.clubReducer.options.dragStart
+        (state: RootState) => state.clubsReducer.options.dragStart
     );
 
-    const club = useSelector((state: RootState) => state.clubReducer);
-    const squad = useSelector((state: RootState) => state.clubReducer.squad);
+    const club = useSelector((state: RootState) => state.clubsReducer);
+    const squad = useSelector((state: RootState) => state.clubsReducer.squad);
 
-    const fieldSetup = useSelector((state: RootState) => state.clubReducer);
+    const fieldSetup = useSelector((state: RootState) => state.clubsReducer);
 
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -161,7 +160,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 }
                                 key={index}
                                 className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
-                                }`}
+                                    }`}
                                 onClick={() => handleClick(index)}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}

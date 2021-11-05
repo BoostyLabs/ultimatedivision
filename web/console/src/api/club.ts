@@ -2,14 +2,13 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '@/api/index';
-import { CardEditIdentificators } from '@/app/types/club';
-import { Club, Squad } from '@/club';
+import { Club, Squad, CardEditIdentificators } from '@/club';
 
-/** ClubClient base implementation */
-export class ClubClient extends APIClient {
+/** ClubsClient base implementation */
+export class ClubsClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0';
 
-    /** method calls get method from APIClient */
+    /** creates club entity */
     public async createClub(): Promise<string> {
         const response = await this.http.post(`${this.ROOT_PATH}/clubs`);
         if (!response.ok) {
@@ -18,7 +17,7 @@ export class ClubClient extends APIClient {
 
         return await response.json();
     }
-    /** method calls get method from APIClient */
+    /** gets club from api */
     public async getClub(): Promise<Club> {
         const response = await this.http.get(`${this.ROOT_PATH}/clubs`);
         if (!response.ok) {
@@ -27,7 +26,7 @@ export class ClubClient extends APIClient {
 
         return await response.json();
     }
-    /** method calls get method from APIClient */
+    /** creates squad based on exist club id */
     public async createSquad(clubId: string): Promise<string> {
         const response = await this.http.post(`${this.ROOT_PATH}/clubs/${clubId}/squads`);
         if (!response.ok) {
@@ -36,7 +35,7 @@ export class ClubClient extends APIClient {
 
         return await response.json();
     }
-    /** method calls get method from APIClient */
+    /** adds card to sqadCards array */
     public async addCard(path: CardEditIdentificators): Promise<void> {
         const response = await this.http.post(
             `${this.ROOT_PATH}/clubs/${path.clubId}/squads/${path.squadId}/cards/${path.cardId}`,
@@ -46,7 +45,7 @@ export class ClubClient extends APIClient {
             await this.handleError(response);
         }
     }
-    /** method calls get method from APIClient */
+    /** changes card position inside squadCards array */
     public async changeCardPosition(path: CardEditIdentificators): Promise<void> {
         const response = await this.http.patch(
             `${this.ROOT_PATH}/clubs/${path.clubId}/squads/${path.squadId}/cards/${path.cardId}`,
@@ -56,7 +55,7 @@ export class ClubClient extends APIClient {
             await this.handleError(response);
         }
     }
-    /** method calls get method from APIClient */
+    /** deletes card from squadCards array */
     public async deleteCard(path: CardEditIdentificators): Promise<void> {
         const response = await this.http.delete(
             `${this.ROOT_PATH}/clubs/${path.clubId}/squads/${path.squadId}/cards/${path.cardId}`
@@ -65,12 +64,33 @@ export class ClubClient extends APIClient {
             await this.handleError(response);
         }
     }
-    /** method updates squad position, formation and captain */
-    public async updateSquad(squad: Squad): Promise<void> {
-        const { tactic, formation, captainId, clubId, id } = squad;
+    /** updates squad tactic */
+    public async updateTactic(squad: Squad, tactic: number): Promise<void> {
+        const { captainId, clubId, id } = squad;
         const response = await this.http.patch(
             `${this.ROOT_PATH}/clubs/${clubId}/squads/${id}`,
-            JSON.stringify({ formation, tactic, captainId })
+            JSON.stringify({ tactic, captainId })
+        );
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+    }
+    /** updates squad captain */
+    public async updateCaptain(squad: Squad, captainId: string): Promise<void> {
+        const { tactic, clubId, id } = squad;
+        const response = await this.http.patch(
+            `${this.ROOT_PATH}/clubs/${clubId}/squads/${id}`,
+            JSON.stringify({ tactic, captainId })
+        );
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+    }
+    /** updates squad formation */
+    public async updateFormation(squad: Squad, formation: number): Promise<void> {
+        const { clubId, id } = squad;
+        const response = await this.http.put(
+            `${this.ROOT_PATH}/clubs/${clubId}/squads/${id}/formation/${formation}`
         );
         if (!response.ok) {
             await this.handleError(response);

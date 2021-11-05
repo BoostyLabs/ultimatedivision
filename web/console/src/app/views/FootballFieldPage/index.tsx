@@ -11,8 +11,8 @@ import { FootballFieldPlayingArea } from
     '@components/FootballField/FotballFieldPlayingArea';
 
 import { RootState } from '@/app/store';
-import { createClub, deleteCard, getClub } from '@/app/store/actions/club';
-import { CardEditIdentificators } from '@/app/types/club';
+import { createClub, deleteCard, getClub } from '@/app/store/actions/clubs';
+import { CardEditIdentificators } from '@/club';
 import { NotFoundError } from '@/api';
 
 import './index.scss';
@@ -24,27 +24,31 @@ const FootballField: React.FC = () => {
             try {
                 await dispatch(getClub());
             } catch (error: any) {
-                /* eslint-disable max-depth */
-                if (error instanceof NotFoundError) {
-                    try {
-                        await dispatch(createClub());
-                    } catch (error: any) {
-                        toast.error('Something went wrong', {
-                            position: toast.POSITION.TOP_RIGHT,
-                            theme: 'colored',
-                        });
-                    }
+                if (!(error instanceof NotFoundError)) {
+                    toast.error('Something went wrong', {
+                        position: toast.POSITION.TOP_RIGHT,
+                        theme: 'colored',
+                    });
+                    return;
+                }
+                try {
+                    await dispatch(createClub());
+                } catch (error: any) {
+                    toast.error('Something went wrong', {
+                        position: toast.POSITION.TOP_RIGHT,
+                        theme: 'colored',
+                    });
                 }
             }
         })();
     }, []);
     const dragStartIndex = useSelector(
-        (state: RootState) => state.clubReducer.options.dragStart
+        (state: RootState) => state.clubsReducer.options.dragStart
     );
 
-    const squad = useSelector((state: RootState) => state.clubReducer.squad);
-    const club = useSelector((state: RootState) => state.clubReducer);
-    const cardSelectionVisibility = useSelector((state: RootState) => state.clubReducer.options.showCardSeletion);
+    const squad = useSelector((state: RootState) => state.clubsReducer.squad);
+    const club = useSelector((state: RootState) => state.clubsReducer);
+    const cardSelectionVisibility = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
 
     /** prevent default user agent action */
     function dragOverHandler(e: DragEvent<HTMLDivElement>) {

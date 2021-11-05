@@ -10,17 +10,17 @@ import { FilterField } from
 
 import { RootState } from '@/app/store';
 import { listOfCards } from '@/app/store/actions/cards';
-import { addCard, cardSelectionVisibility } from '@/app/store/actions/club';
+import { addCard, cardSelectionVisibility } from '@/app/store/actions/clubs';
 import { Card } from '@/card';
-import { CardEditIdentificators } from '@/app/types/club';
+import { CardEditIdentificators } from '@/club';
 
 import './index.scss';
 
 export const FootballFieldCardSelection = () => {
     const dispatch = useDispatch();
-    const squad = useSelector((state: RootState) => state.clubReducer.squad);
+    const squad = useSelector((state: RootState) => state.clubsReducer.squad);
     const { cards, page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
-    const fieldSetup = useSelector((state: RootState) => state.clubReducer);
+    const fieldSetup = useSelector((state: RootState) => state.clubsReducer);
 
     const Y_SCROLL_POINT = 200;
     const X_SCROLL_POINT = 0;

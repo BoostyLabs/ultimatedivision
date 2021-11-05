@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 
-import { CardEditIdentificators } from '@/app/types/club';
-import { deleteCard } from '@/app/store/actions/club';
+import { CardEditIdentificators } from '@/club';
+import { deleteCard } from '@/app/store/actions/clubs';
 import { RootState } from '@/app/store';
 import { Card } from '@/card';
 
@@ -15,7 +15,7 @@ import './index.scss';
 
 export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card }) => {
     const dispatch = useDispatch();
-    const squad = useSelector((state: RootState) => state.clubReducer.squad);
+    const squad = useSelector((state: RootState) => state.clubsReducer.squad);
     const [visibility, changeVisibility] = useState(false);
     const style = visibility ? 'block' : 'none';
 
