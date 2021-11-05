@@ -202,3 +202,10 @@ func makeSignatureWithToken(createSignature CreateSignature, tokenID []byte) ([]
 	signature, err := crypto.Sign(dataSignature.Bytes(), createSignature.PrivateKey)
 	return signature, err
 }
+
+// makeSignatureWithToken makes signature from addresses, private key and token id.
+func makeSignatureWithToken(createSignature CreateSignature, tokenID []byte) ([]byte, error) {
+	dataSignature := crypto.Keccak256Hash(append(createSignature.EthereumSignedMessage, crypto.Keccak256Hash(append(createSignature.AddressWallet, append(createSignature.AddressContract, tokenID...)...)).Bytes()...))
+	signature, err := crypto.Sign(dataSignature.Bytes(), createSignature.PrivateKey)
+	return signature, err
+}
