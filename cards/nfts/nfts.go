@@ -28,22 +28,25 @@ type Storage interface {
 // architecture: DB
 type DB interface {
 	// Create creates nft token in the database.
-	Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address) error
+	Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address, password cryptoutils.Signature) error
 	// Get returns nft token by card id.
 	Get(ctx context.Context, tokenID int) (NFTWaitList, error)
 	// GetLast returns id of last inserted token.
 	GetLast(ctx context.Context) (int, error)
 	// List returns all nft token from wait list from database.
 	List(ctx context.Context) ([]NFTWaitList, error)
+	// ListWithoutPassword returns all nft tokens without password from database.
+	ListWithoutPassword(ctx context.Context) ([]NFTWaitList, error)
 	// Delete deletes nft from wait list by id of token.
 	Delete(ctx context.Context, tokenIDs []int) error
 }
 
 // NFTWaitList describes list of nft tokens entity.
 type NFTWaitList struct {
-	TokenID int                 `json:"tokenId"`
-	CardID  uuid.UUID           `json:"cardId"`
-	Wallet  cryptoutils.Address `json:"wallet"`
+	TokenID  int                   `json:"tokenId"`
+	CardID   uuid.UUID             `json:"cardId"`
+	Wallet   cryptoutils.Address   `json:"wallet"`
+	Password cryptoutils.Signature `json:"password"`
 }
 
 // NFT entity describes nft token format erc-721.
@@ -67,7 +70,7 @@ const MaxValueGameParameter = 100
 
 // Config defines values needed by create nft.
 type Config struct {
-	//NFTContract cryptoutils.Address `json:"nftContract"`
+	// NFTContract cryptoutils.Address `json:"nftContract"`
 	Description string `json:"description"`
 	ExternalURL string `json:"externalUrl"`
 }

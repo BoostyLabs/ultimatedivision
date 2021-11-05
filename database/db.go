@@ -228,7 +228,8 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         CREATE TABLE IF NOT EXISTS nfts_waitlist(
             token_id       SERIAL  PRIMARY KEY                            NOT NULL,
             card_id        BYTEA   REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
-            wallet_address VARCHAR                                        NOT NULL
+            wallet_address VARCHAR                                        NOT NULL,
+            password       VARCHAR                                        NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)

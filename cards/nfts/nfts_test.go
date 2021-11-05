@@ -156,15 +156,17 @@ func TestNFTs(t *testing.T) {
 	}
 
 	nft1 := nfts.NFTWaitList{
-		TokenID: 1,
-		CardID:  card1.ID,
-		Wallet:  "0x96216849c49358b10257cb55b28ea603c874b05e",
+		TokenID:  1,
+		CardID:   card1.ID,
+		Wallet:   "0x96216849c49358b10257cb55b28ea603c874b05e",
+		Password: "",
 	}
 
 	nft2 := nfts.NFTWaitList{
-		TokenID: 2,
-		CardID:  card2.ID,
-		Wallet:  "0x96216849c49358B10254cb55b28eA603c874b05E",
+		TokenID:  2,
+		CardID:   card2.ID,
+		Wallet:   "0x96216849c49358B10254cb55b28eA603c874b05E",
+		Password: "",
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
@@ -182,15 +184,22 @@ func TestNFTs(t *testing.T) {
 			err = repositoryCards.Create(ctx, card2)
 			require.NoError(t, err)
 
-			err = repositoryNFTs.Create(ctx, nft1.CardID, nft1.Wallet)
+			err = repositoryNFTs.Create(ctx, nft1.CardID, nft1.Wallet, nft1.Password)
 			require.NoError(t, err)
 
-			err = repositoryNFTs.Create(ctx, nft2.CardID, nft2.Wallet)
+			err = repositoryNFTs.Create(ctx, nft2.CardID, nft2.Wallet, nft2.Password)
 			require.NoError(t, err)
 		})
 
 		t.Run("List", func(t *testing.T) {
 			nftList, err := repositoryNFTs.List(ctx)
+			require.NoError(t, err)
+
+			compareNFTsSlice(t, nftList, []nfts.NFTWaitList{nft1, nft2})
+		})
+
+		t.Run("List without password", func(t *testing.T) {
+			nftList, err := repositoryNFTs.ListWithoutPassword(ctx)
 			require.NoError(t, err)
 
 			compareNFTsSlice(t, nftList, []nfts.NFTWaitList{nft1, nft2})
