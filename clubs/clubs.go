@@ -31,8 +31,12 @@ type DB interface {
 	CreateSquad(ctx context.Context, squad Squad) (uuid.UUID, error)
 	// GetByUserID returns club owned by the user.
 	GetByUserID(ctx context.Context, userID uuid.UUID) (Club, error)
+	// Get returns club.
+	Get(ctx context.Context, clubID uuid.UUID) (Club, error)
+	// GetSquadByClubID returns squad by club id.
+	GetSquadByClubID(ctx context.Context, clubID uuid.UUID) (Squad, error)
 	// GetSquad returns squad.
-	GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, error)
+	GetSquad(ctx context.Context, squadID uuid.UUID) (Squad, error)
 	// GetFormation returns formation of the squad.
 	GetFormation(ctx context.Context, squadID uuid.UUID) (Formation, error)
 	// GetCaptainID returns id of captain.
@@ -43,8 +47,8 @@ type DB interface {
 	AddSquadCard(ctx context.Context, squadCards SquadCard) error
 	// DeleteSquadCard deletes card from squad.
 	DeleteSquadCard(ctx context.Context, squadID, cardID uuid.UUID) error
-	// UpdateTacticFormationCaptain updates tactic, formation and capitan in the squad.
-	UpdateTacticFormationCaptain(ctx context.Context, squad Squad) error
+	// UpdateTacticCaptain updates tactic and capitan in the squad.
+	UpdateTacticCaptain(ctx context.Context, squad Squad) error
 	// UpdatePositions updates positions of cards in the squad.
 	UpdatePositions(ctx context.Context, squadCards []SquadCard) error
 	// UpdateFormation updates formation in the squad.
@@ -75,6 +79,9 @@ type SquadCard struct {
 	CardID   uuid.UUID `json:"cardId"`
 	Position Position  `json:"position"`
 }
+
+// SquadSize defines number of cards in the full squad.
+const SquadSize int = 11
 
 // Formation defines a list of possible formations.
 type Formation int
@@ -208,8 +215,8 @@ func sortSquadCards(cards []SquadCard) {
 	})
 }
 
-// convertPositions converts cards positions from 0-10 view, to positions that are present in the formation.
-func convertPositions(squadCards []SquadCard, formation Formation) {
+// convertPositions converts cards positions positions that are present in the formation, to 0-10 view.
+func convertPositions(squadCards []SquadCard, formation Formation) []SquadCard {
 	for i := 0; i < len(squadCards); i++ {
 		for j := 0; j < len(FormationToPosition[formation]); j++ {
 			if squadCards[i].Position == FormationToPosition[formation][j] {
@@ -218,4 +225,6 @@ func convertPositions(squadCards []SquadCard, formation Formation) {
 			}
 		}
 	}
+
+	return squadCards
 }
