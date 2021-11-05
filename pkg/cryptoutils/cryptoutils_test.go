@@ -14,7 +14,6 @@ import (
 )
 
 func TestCryptoUtils(t *testing.T) {
-
 	value1 := map[string]string{
 		"addressWallet":   "0xe2B32824733d350845c056CedD73c491FC4C1585",
 		"addressContract": "0x0c80417acb4b309725de29b1d950bca974120996",
