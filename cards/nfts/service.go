@@ -140,22 +140,25 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL
 // List returns all nfts.
 func (service *Service) List(ctx context.Context) ([]NFTWaitList, error) {
 	allNFT, err := service.nfts.List(ctx)
-
 	return allNFT, ErrNFTs.Wrap(err)
 }
 
 // Get returns nft by token id.
 func (service *Service) Get(ctx context.Context, tokenID int) (NFTWaitList, error) {
 	nft, err := service.nfts.Get(ctx, tokenID)
-
 	return nft, ErrNFTs.Wrap(err)
 }
 
 // GetLastTokenID returns id of latest nft.
 func (service *Service) GetLastTokenID(ctx context.Context) (int, error) {
 	lastID, err := service.nfts.GetLast(ctx)
-
 	return lastID, ErrNFTs.Wrap(err)
+}
+
+// List returns nfts without password.
+func (service *Service) ListWithoutPassword(ctx context.Context) ([]NFTWaitList, error) {
+	nftWithoutPassword, err := service.nfts.ListWithoutPassword(ctx)
+	return nftWithoutPassword, ErrNFTs.Wrap(err)
 }
 
 // Delete deletes nfts.
