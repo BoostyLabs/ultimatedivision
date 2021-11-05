@@ -4,6 +4,8 @@
 import { useSelector } from 'react-redux';
 import { filteredCards, listOfCards } from '@/app/store/actions/cards';
 import { RootState } from '@/app/store';
+// import { filteredCards, listOfCards } from '@/app/store/reducers/cardsToolkit';
+// import { RootState } from '@/app/store/indexToolkit';
 import { ClubCardsArea } from '@components/Club/ClubCardsArea';
 import { FilterField } from '@components/common/FilterField';
 import { Paginator } from '@components/common/Paginator';
@@ -17,6 +19,7 @@ const Club: React.FC = () => {
         <section className="club">
             <FilterField
                 title="My cards"
+                //@ts-ignore
                 thunk={filteredCards}
             />
             <ClubCardsArea />

@@ -9,6 +9,7 @@ import { LootboxService } from '@/lootbox/service';
 
 export const BUY_LOOTBOX = 'BUY_LOOTBOX';
 export const OPEN_LOOTBOX = 'OPEN_LOOTBOX';
+
 /** handles buying new lootbox */
 export const buyLootbox = (lootbox: Card[]) => ({
     type: BUY_LOOTBOX,
@@ -17,14 +18,10 @@ export const buyLootbox = (lootbox: Card[]) => ({
 
 const client = new LootboxClient();
 const service = new LootboxService(client);
+
 /** thunk that handles opening new lootbox */
 export const openLootbox = (lootbox: Lootbox) => async function(dispatch: Dispatch) {
-    try {
-        const opennedLootbox = await service.buy(lootbox);
+    const opennedLootbox = await service.buy(lootbox);
+    opennedLootbox &&
         dispatch(buyLootbox(opennedLootbox.map(card => new Card(card))));
-    }
-    catch (error: any) {
-        /* eslint-disable */
-        console.log(error.message);
-    }
 };

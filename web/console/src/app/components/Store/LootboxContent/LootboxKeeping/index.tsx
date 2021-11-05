@@ -2,17 +2,23 @@
 // See LICENSE for copying information.
 
 import { Dispatch, SetStateAction } from 'react';
-import { RootState } from '@/app/store';
 import { useSelector } from 'react-redux';
+
 import { MyCard } from '@/app/components/Club/ClubCardsArea/MyCard';
-import { boxStyle } from '@/app/utils/lootboxStyle';
+
 import boxLight from '@static/img/StorePage/BoxContent/boxLight.svg';
 import ribbons from '@static/img/StorePage/BoxContent/ribbons.svg';
+
+// import { RootState } from '@/app/store';
+import { RootState } from '@/app/store/indexToolkit';
+import { boxStyle } from '@/app/utils/lootboxStyle';
 
 import './index.scss';
 
 export const LootboxKeeping: React.FC<{ handleOpening: Dispatch<SetStateAction<boolean>> }> = ({ handleOpening }) => {
-    const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
+    // const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
+    const cards = useSelector((state: RootState) => state.lootbox.lootbox);
+
     const box = boxStyle(cards.length);
     /** variables that describe indexes of first and last cards,
      *  that will be shown when lootbox is openned */

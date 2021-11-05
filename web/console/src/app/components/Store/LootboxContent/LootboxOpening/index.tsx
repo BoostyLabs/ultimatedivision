@@ -2,19 +2,23 @@
 // See LICENSE for copying information.
 
 import { useSelector } from 'react-redux';
+
 import { MyCard } from '@/app/components/Club/ClubCardsArea/MyCard';
-import { RootState } from '@/app/store';
-import { boxStyle } from '@/app/utils/lootboxStyle';
+
 import boxLight from '@static/img/StorePage/BoxContent/boxLight.svg';
 import ribbons from '@static/img/StorePage/BoxContent/ribbons.svg';
 
-import './index.scss';
+// import { RootState } from '@/app/store';
+import { RootState } from '@/app/store/indexToolkit';
+import { boxStyle } from '@/app/utils/lootboxStyle';
 
+import './index.scss';
 
 export const LootboxOpening = () => {
     const FIRST_CARD = 0;
     const REGULAR_CARDS_AMOUNT: number = 5;
-    const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
+    // const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
+    const cards = useSelector((state: RootState) => state.lootbox.lootbox);
 
     const box = boxStyle(cards.length);
 

@@ -25,12 +25,16 @@ type DB interface {
 	Get(ctx context.Context, id uuid.UUID) (Match, error)
 	// ListMatches returns page of matches from the database.
 	ListMatches(ctx context.Context, cursor pagination.Cursor) (Page, error)
+	// UpdateMatch updates the number of points that users received for a played match.
+	UpdateMatch(ctx context.Context, match Match) error
 	// Delete deletes match from the database.
 	Delete(ctx context.Context, id uuid.UUID) error
 	// AddGoals adds new goal in the match.
 	AddGoals(ctx context.Context, matchGoals []MatchGoals) error
 	// ListMatchGoals returns all goals from the match from the database.
 	ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]MatchGoals, error)
+	// GetMatchResult returns goals of each user in the match from db.
+	GetMatchResult(ctx context.Context, matchID uuid.UUID) ([]MatchResult, error)
 }
 
 // Config defines configuration for matches.
@@ -97,15 +101,21 @@ type Config struct {
 	} `json:"goalProbabilityByPosition"`
 
 	pagination.Cursor `json:"pagination"`
+
+	NumberOfPointsForWin    int `json:"numberOfPointsForWin"`
+	NumberOfPointsForDraw   int `json:"numberOfPointsForDraw"`
+	NumberOfPointsForLosing int `json:"numberOfPointsForLosing"`
 }
 
 // Match describes match entity.
 type Match struct {
-	ID       uuid.UUID `json:"id"`
-	User1ID  uuid.UUID `json:"user1Id"`
-	Squad1ID uuid.UUID `json:"squad1Id"`
-	User2ID  uuid.UUID `json:"user2Id"`
-	Squad2ID uuid.UUID `json:"squad2Id"`
+	ID          uuid.UUID `json:"id"`
+	User1ID     uuid.UUID `json:"user1Id"`
+	Squad1ID    uuid.UUID `json:"squad1Id"`
+	User1Points int       `json:"user1Points"`
+	User2ID     uuid.UUID `json:"user2Id"`
+	Squad2ID    uuid.UUID `json:"squad2Id"`
+	User2Points int       `json:"user2Points"`
 }
 
 // MatchGoals defines goals scored by clubs.
@@ -115,6 +125,12 @@ type MatchGoals struct {
 	UserID  uuid.UUID `json:"userId"`
 	CardID  uuid.UUID `json:"cardId"`
 	Minute  int       `json:"minute"`
+}
+
+// MatchResult defines quantity goals of each user in the match.
+type MatchResult struct {
+	UserID        uuid.UUID `json:"userId"`
+	QuantityGoals int       `json:"quantityGoals"`
 }
 
 // Page holds match page entity which is used to show listed page of matches.

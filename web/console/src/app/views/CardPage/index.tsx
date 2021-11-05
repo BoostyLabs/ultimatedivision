@@ -7,6 +7,8 @@ import { useParams } from 'react-router';
 
 import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
+// import { RootState } from '@/app/store/indexToolkit';
+// import { openUserCard } from '@/app/store/reducers/cardsToolkit';
 import { FootballerCardIllustrations } from '@/app/components/common/Card/CardIllustrations';
 import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
 import { FootballerCardStatsArea } from '@/app/components/common/Card/CardStatsArea';
@@ -16,6 +18,8 @@ import './index.scss';
 
 const Card: React.FC = () => {
     const dispatch = useDispatch();
+    // const { card } = useSelector((state: RootState) => state.cards);
+    
     const { card } = useSelector((state: RootState) => state.cardsReducer);
 
     const { id }: { id: string } = useParams();

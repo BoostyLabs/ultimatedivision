@@ -1,9 +1,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useState } from 'react';
+
 import { LootboxContent } from '@/app/components/Store/LootboxContent';
 import { LootboxSelection } from '@/app/components/Store/LootboxSelection';
-import { useState } from 'react';
+
 import './index.scss';
 
 const Store = () => {
