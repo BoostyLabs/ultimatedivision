@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '@/api/index';
-import { Club, Squad, CardEditIdentificators } from '@/club';
+import { CardEditIdentificators, Club, Squad } from '@/club';
 
 /** ClubsClient base implementation */
 export class ClubsClient extends APIClient {

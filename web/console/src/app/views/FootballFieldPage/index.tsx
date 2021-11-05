@@ -29,6 +29,7 @@ const FootballField: React.FC = () => {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
                     });
+
                     return;
                 }
                 try {

@@ -9,7 +9,7 @@ import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingArea
 
 import { RootState } from '@/app/store';
 import { Card } from '@/card';
-import { SquadCard, CardEditIdentificators } from '@/club';
+import { CardEditIdentificators, SquadCard } from '@/club';
 import {
     cardSelectionVisibility,
     changeCardPosition,
@@ -160,7 +160,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 }
                                 key={index}
                                 className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
-                                    }`}
+                                }`}
                                 onClick={() => handleClick(index)}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
