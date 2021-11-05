@@ -47,3 +47,4 @@ export const filteredCards = (lowRange: string, topRange: string) => async funct
     const page = response.page;
     dispatch(getCards({ cards, page }));
 };
+

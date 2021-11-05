@@ -22,16 +22,16 @@ const service = new LootboxService(client);
 
 const lootboxClient = new LootboxClient();
 const lootboxService = new LootboxService(lootboxClient);
-const initialState = new LootboxState(lootboxService);
+const lootboxState = new LootboxState(lootboxService);
 
 export const lootboxSlice = createSlice({
-    name: 'lootbox',
-    initialState,
+    name: "lootbox",
+    lootboxState,
     reducers: {
-        buyLootbox(state, action: PayloadAction<any>) {
+        buyLootbox(state: LootboxState, action: PayloadAction<any>) {
             state.lootbox = action.payload;
-        }
-    }
+        },
+    },
 });
 
 export const openLootbox = (
