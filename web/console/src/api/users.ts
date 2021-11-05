@@ -10,7 +10,7 @@ import { User } from '@/users';
  */
 export class UsersClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/auth';
-    /** Exposes user registration logic */
+    /** exposes user registration logic */
     public async register(user: User): Promise<void> {
         const path = `${this.ROOT_PATH}/register`;
         const response = await this.http.post(path, JSON.stringify(user));
@@ -19,7 +19,7 @@ export class UsersClient extends APIClient {
             await this.handleError(response);
         };
     };
-    /** Exposes user login logic */
+    /** exposes user login logic */
     public async login(email: string, password: string): Promise<void> {
         const path = `${this.ROOT_PATH}/login`;
         const response = await this.http.post(path, JSON.stringify({
