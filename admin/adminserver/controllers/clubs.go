@@ -82,7 +82,7 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	club, err := controller.clubs.Get(ctx, userID)
+	club, err := controller.clubs.GetByUserID(ctx, userID)
 	if err != nil {
 		controller.log.Error("could not get club", ErrClubs.Wrap(err))
 		switch {
@@ -121,8 +121,8 @@ func (controller *Clubs) CreateSquad(w http.ResponseWriter, r *http.Request) {
 	Redirect(w, r, "/clubs/"+id.String()+"/squad", http.MethodGet)
 }
 
-// GetSquad is an endpoint that provides a web page with squad.
-func (controller *Clubs) GetSquad(w http.ResponseWriter, r *http.Request) {
+// GetSquadByClubID is an endpoint that provides a web page with squad.
+func (controller *Clubs) GetSquadByClubID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 
@@ -132,7 +132,7 @@ func (controller *Clubs) GetSquad(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	squad, err := controller.clubs.GetSquad(ctx, clubID)
+	squad, err := controller.clubs.GetSquadByClubID(ctx, clubID)
 	if err != nil {
 		controller.log.Error("could not get squad", ErrClubs.Wrap(err))
 		switch {
@@ -170,7 +170,7 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		squad, err := controller.clubs.GetSquad(ctx, clubID)
+		squad, err := controller.clubs.GetSquadByClubID(ctx, clubID)
 		if err != nil {
 			controller.log.Error("could not get squad", ErrClubs.Wrap(err))
 			switch {
@@ -193,12 +193,6 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		newFormation, err := strconv.Atoi(r.FormValue("formation"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
 		newTactic, err := strconv.Atoi(r.FormValue("tactic"))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -211,7 +205,7 @@ func (controller *Clubs) UpdateSquad(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err = controller.clubs.UpdateSquad(ctx, squadID, clubs.Formation(newFormation), clubs.Tactic(newTactic), newCaptainID); err != nil {
+		if err = controller.clubs.UpdateSquad(ctx, squadID, clubs.Tactic(newTactic), newCaptainID); err != nil {
 			controller.log.Error("could not update squad", ErrClubs.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

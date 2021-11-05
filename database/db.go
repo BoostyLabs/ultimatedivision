@@ -7,8 +7,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
 
@@ -17,6 +15,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
+	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
@@ -52,13 +51,13 @@ func New(databaseURL string) (ultimatedivision.DB, error) {
 
 // Hub entity describes hub of queue for clients.
 type Hub struct {
-	Queue map[uuid.UUID]*websocket.Conn
+	Queue []queue.Client
 }
 
 // NewHub is a constructor for hub entity.
 func NewHub() *Hub {
 	return &Hub{
-		Queue: make(map[uuid.UUID]*websocket.Conn),
+		Queue: []queue.Client{},
 	}
 }
 
@@ -202,6 +201,12 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             end_time      TIMESTAMP WITH TIME ZONE                                        NOT NULL,
             period        INTEGER                                                         NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS divisions (
+            id              BYTEA   PRIMARY KEY      NOT NULL,
+            name            VARCHAR                  NOT NULL,
+            passing_percent INTEGER                  NOT NULL,
+            created_at      TIMESTAMP WITH TIME ZONE NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS matches (
             id           BYTEA    PRIMARY KEY                             NOT NULL,
             user1_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
@@ -217,10 +222,6 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             user_id  BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
             card_id  BYTEA   REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
             minute   INTEGER                                          NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS places (
-            user_id BYTEA   PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-            status  VARCHAR                                                    NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -279,4 +280,9 @@ func (db *database) Matches() matches.DB {
 // Queue provides access to accounts db.
 func (db *database) Queue() queue.DB {
 	return &queueHub{hub: NewHub()}
+}
+
+// Divisions provides access to accounts db.
+func (db *database) Divisions() divisions.DB {
+	return &divisionsDB{conn: db.conn}
 }
