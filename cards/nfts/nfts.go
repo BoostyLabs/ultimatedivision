@@ -70,6 +70,7 @@ const MaxValueGameParameter = 100
 
 // Config defines values needed by create nft.
 type Config struct {
+	// NFTContract cryptoutils.Address `json:"nftContract"`
 	Description string `json:"description"`
 	ExternalURL string `json:"externalUrl"`
 }
