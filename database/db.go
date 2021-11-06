@@ -7,8 +7,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
 
@@ -17,8 +15,8 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
-	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/divisions"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
@@ -53,13 +51,13 @@ func New(databaseURL string) (ultimatedivision.DB, error) {
 
 // Hub entity describes hub of queue for clients.
 type Hub struct {
-	Queue map[uuid.UUID]*websocket.Conn
+	Queue []queue.Client
 }
 
 // NewHub is a constructor for hub entity.
 func NewHub() *Hub {
 	return &Hub{
-		Queue: make(map[uuid.UUID]*websocket.Conn),
+		Queue: []queue.Client{},
 	}
 }
 
