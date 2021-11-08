@@ -25,7 +25,6 @@ var ErrNFTs = errs.Class("NFTs service error")
 // architecture: Service
 type Service struct {
 	config  Config
-	storage Storage
 	cards   *cards.Service
 	avatars *avatars.Service
 	users   *users.Service
@@ -33,10 +32,9 @@ type Service struct {
 }
 
 // NewService is a constructor for NFTs service.
-func NewService(config Config, storage Storage, cards *cards.Service, avatars *avatars.Service, users *users.Service) *Service {
+func NewService(config Config, cards *cards.Service, avatars *avatars.Service, users *users.Service) *Service {
 	return &Service{
 		config:  config,
-		storage: storage,
 		cards:   cards,
 		avatars: avatars,
 		users:   users,
@@ -55,18 +53,14 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, wallet cry
 		return ErrNFTs.Wrap(err)
 	}
 
-	if err := service.avatars.Save(ctx, avatar); err != nil {
-		return ErrNFTs.Wrap(err)
-	}
+	// TODO: save avatar
 
-	nft, err := service.Generate(ctx, card, avatar.OriginalURL, service.config.ExternalURL)
+	_, err = service.Generate(ctx, card, avatar.OriginalURL, service.config.ExternalURL)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
 	}
 
-	if err = service.Save(ctx, nft); err != nil {
-		return ErrNFTs.Wrap(err)
-	}
+	// TODO: save nft
 
 	// TODO: add user in queue
 
@@ -142,11 +136,6 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL
 		Name:        card.PlayerName,
 	}
 	return nft, nil
-}
-
-// Save saves nft in the storage.
-func (service *Service) Save(ctx context.Context, nft NFT) error {
-	return ErrNFTs.Wrap(service.storage.Save(ctx, nft))
 }
 
 // List returns all nfts.

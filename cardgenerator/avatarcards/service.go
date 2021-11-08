@@ -18,6 +18,7 @@ import (
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/pkg/fileutils"
+	"ultimatedivision/pkg/nft"
 )
 
 // ErrCardWithLinkToAvatar indicated that there was an error in service.
@@ -44,7 +45,7 @@ func NewService(config Config, cards *cards.Service, avatars *avatars.Service, n
 }
 
 // Generate generates cards with avatar link.
-func (service *Service) Generate(ctx context.Context, nameFile int, playerName string) (nfts.NFT, error) {
+func (service *Service) Generate(ctx context.Context, nameFile int, playerName string) (nft.NFT, error) {
 	percentageQualities := []int{
 		service.config.PercentageQualities.Wood,
 		service.config.PercentageQualities.Silver,
@@ -54,21 +55,21 @@ func (service *Service) Generate(ctx context.Context, nameFile int, playerName s
 
 	card, err := service.cards.Generate(ctx, uuid.Nil, percentageQualities)
 	if err != nil {
-		return nfts.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
+		return nft.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
 	}
 	card.PlayerName = playerName
 
 	avatar, err := service.avatars.Generate(ctx, card, nameFile+1)
 	if err != nil {
-		return nfts.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
+		return nft.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
 	}
 
-	nft, err := service.nfts.Generate(ctx, card, avatar.OriginalURL, fmt.Sprintf(service.config.NFTConfig.ExternalURL, nameFile+1))
+	nftCard, err := service.nfts.Generate(ctx, card, avatar.OriginalURL, fmt.Sprintf(service.config.NFTConfig.ExternalURL, nameFile+1))
 	if err != nil {
-		return nfts.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
+		return nft.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
 	}
 
-	return nft, nil
+	return nftCard, nil
 }
 
 // TestGenerate generates test version avatar cards.

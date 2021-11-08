@@ -27,15 +27,13 @@ var ErrAvatar = errs.Class("avatar service error")
 // architecture: Service
 type Service struct {
 	avatars DB
-	storage Storage
 	config  Config
 }
 
 // NewService is a constructor for avatars service.
-func NewService(avatars DB, storage Storage, config Config) *Service {
+func NewService(avatars DB, config Config) *Service {
 	return &Service{
 		config:  config,
-		storage: storage,
 		avatars: avatars,
 	}
 }
@@ -391,9 +389,4 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, name int)
 func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Avatar, error) {
 	avatar, err := service.avatars.Get(ctx, cardID)
 	return avatar, ErrAvatar.Wrap(err)
-}
-
-// Save saves avatar in the storage.
-func (service *Service) Save(ctx context.Context, avatar Avatar) error {
-	return ErrAvatar.Wrap(service.storage.Save(ctx, avatar))
 }

@@ -70,7 +70,6 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 	{ // avatars setup
 		peer.Avatars.Service = avatars.NewService(
 			nil,
-			nil,
 			config.AvatarCards.AvatarConfig,
 		)
 	}
@@ -78,7 +77,6 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 	{ // nfts setup
 		peer.NFTs.Service = nfts.NewService(
 			config.AvatarCards.NFTConfig,
-			nil,
 			peer.Cards.Service,
 			peer.Avatars.Service,
 			nil,
