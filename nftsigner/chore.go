@@ -18,7 +18,7 @@ import (
 // ChoreError represents nft signer chore error type.
 var ChoreError = errs.Class("nft signer chore error")
 
-// Chore requests access token for contis api calls, re-requests it after token's expiration time.
+// Chore requests for unsigned nft tokens and sign all of them .
 //
 // architecture: Chore
 type Chore struct {
