@@ -64,7 +64,7 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, walletAddr
 	// TODO: add user in queue
 	// TODO: add transaction
 
-	if service.users.UpdateWalletAddress(ctx, walletAddress, userID); err != nil {
+	if err = service.users.UpdateWalletAddress(ctx, walletAddress, userID); err != nil {
 		return ErrNFTs.Wrap(err)
 	}
 
