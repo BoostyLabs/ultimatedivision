@@ -48,6 +48,10 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, walletAddr
 		return ErrNFTs.Wrap(err)
 	}
 
+	if card.UserID != userID {
+		return ErrNFTs.New("it isn't user`s card")
+	}
+
 	avatar, err := service.avatars.Get(ctx, cardID)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
