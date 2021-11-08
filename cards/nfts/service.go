@@ -156,7 +156,7 @@ func (service *Service) GetLastTokenID(ctx context.Context) (int, error) {
 	return lastID, ErrNFTs.Wrap(err)
 }
 
-// List returns nfts without password.
+// ListWithoutPassword returns nfts without password.
 func (service *Service) ListWithoutPassword(ctx context.Context) ([]NFTWaitList, error) {
 	nftWithoutPassword, err := service.nfts.ListWithoutPassword(ctx)
 	return nftWithoutPassword, ErrNFTs.Wrap(err)
