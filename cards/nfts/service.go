@@ -42,7 +42,7 @@ func NewService(config Config, cards *cards.Service, avatars *avatars.Service, u
 }
 
 // Create creates nft token.
-func (service *Service) Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address, userID uuid.UUID) error {
+func (service *Service) Create(ctx context.Context, cardID uuid.UUID, walletAddress cryptoutils.Address, userID uuid.UUID) error {
 	card, err := service.cards.Get(ctx, cardID)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
@@ -61,10 +61,14 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, wallet cry
 	}
 
 	// TODO: save nft
-
 	// TODO: add user in queue
+	// TODO: add transaction
 
-	return service.users.UpdateWalletAddress(ctx, wallet, userID)
+	if service.users.UpdateWalletAddress(ctx, walletAddress, userID); err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	return service.nfts.Create(ctx, cardID, walletAddress, "")
 }
 
 // Generate generates values for nft token.
