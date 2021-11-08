@@ -218,6 +218,17 @@ func TestNFTs(t *testing.T) {
 			assert.Equal(t, 2, largestTokenID)
 		})
 
+		t.Run("Update sql no rows", func(t *testing.T) {
+			err := repositoryNFTs.Update(ctx, -1, "signature")
+			require.Error(t, err)
+			assert.Equal(t, true, nfts.ErrNoNFT.Has(err))
+		})
+
+		t.Run("Delete", func(t *testing.T) {
+			err := repositoryNFTs.Update(ctx, 1, "signature")
+			require.NoError(t, err)
+		})
+
 		t.Run("Delete sql no rows", func(t *testing.T) {
 			err := repositoryNFTs.Delete(ctx, []int{-1})
 			require.Error(t, err)

@@ -51,12 +51,6 @@ var (
 		RunE:        cmdRun,
 		Annotations: map[string]string{"type": "run"},
 	}
-	stopCmd = &cobra.Command{
-		Use:         "stop",
-		Short:       "stops the program",
-		RunE:        cmdStop,
-		Annotations: map[string]string{"type": "stop"},
-	}
 	destroyCmd = &cobra.Command{
 		Use:         "destroy",
 		Short:       "deletes config folder",
@@ -72,7 +66,6 @@ var (
 func init() {
 	rootCmd.AddCommand(setupCmd)
 	rootCmd.AddCommand(runCmd)
-	rootCmd.AddCommand(stopCmd)
 	rootCmd.AddCommand(destroyCmd)
 }
 
@@ -153,24 +146,6 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 	runError := peer.Run(ctx)
 
 	return Error.Wrap(runError)
-}
-
-func cmdStop(cmd *cobra.Command, args []string) (err error) {
-	// ctx := context.Background()
-	log := zaplog.NewLog()
-
-	runCfg, err = readConfig()
-	if err != nil {
-		log.Error("Could not read config from default place", Error.Wrap(err))
-		return Error.Wrap(err)
-	}
-
-	/*if err := peer.Generate(ctx); err != nil {
-		log.Error("could not generate cards with avatars", Error.Wrap(err))
-		return Error.Wrap(err)
-	}*/
-
-	return nil
 }
 
 func cmdDestroy(cmd *cobra.Command, args []string) (err error) {

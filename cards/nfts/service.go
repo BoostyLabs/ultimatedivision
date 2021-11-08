@@ -163,6 +163,11 @@ func (service *Service) ListWithoutPassword(ctx context.Context) ([]NFTWaitList,
 	return nftWithoutPassword, ErrNFTs.Wrap(err)
 }
 
+// Update update nfts signature.
+func (service *Service) Update(ctx context.Context, tokenID int, signature cryptoutils.Signature) error {
+	return ErrNFTs.Wrap(service.nfts.Update(ctx, tokenID, signature))
+}
+
 // Delete deletes nfts.
 func (service *Service) Delete(ctx context.Context, tokenIDs []int) error {
 	return ErrNFTs.Wrap(service.nfts.Delete(ctx, tokenIDs))

@@ -128,6 +128,27 @@ func (nftsDB *nftsDB) GetLast(ctx context.Context) (int, error) {
 	return lastToken, ErrNFTs.Wrap(err)
 }
 
+// Update updates signature by token id.
+func (nftsDB *nftsDB) Update(ctx context.Context, tokenID int, signature cryptoutils.Signature) error {
+	query := `UPDATE nfts_waitlist
+	          SET password = $1
+	          WHERE token_id = $2`
+
+	result, err := nftsDB.conn.ExecContext(ctx, query, signature, tokenID)
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+	if rowNum == 0 {
+		return nfts.ErrNoNFT.New("nft token does not exist")
+	}
+	return nil
+}
+
 // Delete deletes nfts from wait list by id of token.
 func (nftsDB *nftsDB) Delete(ctx context.Context, tokenIDs []int) error {
 	query := `DELETE FROM nfts_waitlist

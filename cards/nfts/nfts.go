@@ -29,6 +29,8 @@ type DB interface {
 	List(ctx context.Context) ([]NFTWaitList, error)
 	// ListWithoutPassword returns all nft tokens without password from database.
 	ListWithoutPassword(ctx context.Context) ([]NFTWaitList, error)
+	// Update updates signature by token id.
+	Update(ctx context.Context, tokenID int, signature cryptoutils.Signature) error
 	// Delete deletes nft from wait list by id of token.
 	Delete(ctx context.Context, tokenIDs []int) error
 }
