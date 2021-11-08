@@ -10,19 +10,10 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/pkg/cryptoutils"
-	"ultimatedivision/pkg/nft"
 )
 
 // ErrNoNFT indicates that nft token does not exist.
 var ErrNoNFT = errs.Class("nft does not exist")
-
-// Storage is exposing access to nfts storage.
-//
-// architecture: Storage
-type Storage interface {
-	// Save saves nft in the storage.
-	Save(ctx context.Context, nft nft.NFT) error
-}
 
 // DB is exposing access to cards db.
 //
