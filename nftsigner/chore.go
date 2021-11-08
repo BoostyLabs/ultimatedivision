@@ -28,11 +28,11 @@ type Chore struct {
 }
 
 // NewChore instantiates Chore.
-func NewChore(log logger.Logger, config Config, db DB) *Chore {
+func NewChore(log logger.Logger, config Config, db nfts.DB) *Chore {
 	return &Chore{
 		log:  log,
 		loop: sync.NewCycle(config.RenewalInterval),
-		nfts: nfts.NewService(nfts.Config{}, nil, nil, nil, db.NFTs()),
+		nfts: nfts.NewService(nfts.Config{}, nil, nil, nil, db),
 	}
 }
 
