@@ -5,12 +5,10 @@ package seasons
 
 import (
 	"context"
-	"time"
 
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/divisions"
-	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/sync"
 )
 
@@ -19,25 +17,23 @@ var (
 	ChoreError = errs.Class("expiration season chore error")
 )
 
-// Chore requests access token for counties api calls, re-requests it after token's expiration time.
+// Chore requests access for season service, re-requests it after expiration time.
 //
 // architecture: Chore
 type Chore struct {
-	log     logger.Logger
 	service *Service
 	Loop    *sync.Cycle
 }
 
 // NewChore instantiates Chore.
-func NewChore(log logger.Logger, config Config, season DB, divisions *divisions.Service) *Chore {
+func NewChore(config Config, season DB, divisions *divisions.Service) *Chore {
 	return &Chore{
-		log: log,
 		service: NewService(
 			season,
 			config,
 			divisions,
 		),
-		Loop: sync.NewCycle(30 * time.Second),
+		Loop: sync.NewCycle(config.SeasonTime),
 	}
 }
 

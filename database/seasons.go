@@ -87,7 +87,7 @@ func (seasonsDB *seasonsDB) Get(ctx context.Context, id int) (seasons.Season, er
 	err := row.Scan(&season.ID, &season.DivisionID, &season.StartedAt, &season.EndedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return season, seasons.ErrNoSeasons.Wrap(err)
+			return season, seasons.ErrNoSeason.Wrap(err)
 		}
 
 		return season, ErrSeasons.Wrap(err)
@@ -105,7 +105,7 @@ func (seasonsDB *seasonsDB) Delete(ctx context.Context, id int) error {
 
 	rowNum, err := result.RowsAffected()
 	if err == nil && rowNum == 0 {
-		return seasons.ErrNoSeasons.New("season does not exist")
+		return seasons.ErrNoSeason.New("season does not exist")
 	}
 
 	return ErrSeasons.Wrap(err)

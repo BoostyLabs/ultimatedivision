@@ -351,7 +351,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 
 		peer.Seasons.ExpirationSeasons = seasons.NewChore(
-			peer.Log,
 			config.Seasons.Config,
 			peer.Database.Seasons(),
 			peer.Divisions.Service)

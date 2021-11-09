@@ -1,3 +1,6 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 package seasons
 
 import (
@@ -8,8 +11,8 @@ import (
 	"github.com/zeebo/errs"
 )
 
-// ErrNoSeasons indicated that seasons does not exist.
-var ErrNoSeasons = errs.Class("seasons does not exist")
+// ErrNoSeason indicated that season does not exist.
+var ErrNoSeason = errs.Class("season does not exist")
 
 // DB exposes access to seasons db.
 //
@@ -40,7 +43,7 @@ const (
 // Season describes seasons entity.
 type Season struct {
 	ID         int       `json:"id"`
-	DivisionID uuid.UUID `json:"divisionID"`
+	DivisionID uuid.UUID `json:"divisionId"`
 	Status     Status    `json:"status"`
 	StartedAt  time.Time `json:"startedAt"`
 	EndedAt    time.Time `json:"endedAt"`
