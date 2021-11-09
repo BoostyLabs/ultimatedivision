@@ -225,9 +225,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             user1_points INTEGER                                          NOT NULL,
             user2_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
             squad2_id    BYTEA    REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
-            user2_points INTEGER                                          NOT NULL,
-            seasons_id   INTEGER 										  NOT NULL,
-            FOREIGN KEY (seasons_id) REFERENCES seasons (id) ON DELETE CASCADE
+            user2_points INTEGER                                          NOT NULL
         );
         CREATE TABLE IF NOT EXISTS match_results(
             id       BYTEA   PRIMARY KEY                              NOT NULL,

@@ -5,6 +5,7 @@ package seasons
 
 import (
 	"context"
+	"time"
 
 	"github.com/zeebo/errs"
 
@@ -36,7 +37,7 @@ func NewChore(log logger.Logger, config Config, season DB, divisions *divisions.
 			config,
 			divisions,
 		),
-		Loop: sync.NewCycle(config.SeasonTime),
+		Loop: sync.NewCycle(30 * time.Second),
 	}
 }
 
