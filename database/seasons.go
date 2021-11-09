@@ -7,8 +7,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
-	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/seasons"
@@ -29,10 +29,21 @@ type seasonsDB struct {
 
 // Create creates a seasons and writes to the database.
 func (seasonsDB *seasonsDB) Create(ctx context.Context, season seasons.Season) error {
-	query := `INSERT INTO seasons(id, division_id, started_at, ended_at) 
+	query := `INSERT INTO seasons(division_id, status, started_at, ended_at) 
 	VALUES ($1, $2, $3, $4)`
 
-	_, err := seasonsDB.conn.ExecContext(ctx, query, season.ID, season.DivisionID, season.StartedAt, season.EndedAt)
+	_, err := seasonsDB.conn.ExecContext(ctx, query, season.DivisionID, season.Status, season.StartedAt, season.EndedAt)
+
+	return ErrSeasons.Wrap(err)
+}
+
+// EndSeason updates a status in the database when season ended.
+func (seasonsDB *seasonsDB) EndSeason(ctx context.Context) error {
+	_, err := seasonsDB.conn.ExecContext(ctx, "UPDATE seasons SET status=$1, ended_at=$2 WHERE status=$3",
+		seasons.StatusEnded, time.Now().UTC(), seasons.StatusStarted)
+	if err != nil {
+		return ErrSeasons.Wrap(err)
+	}
 
 	return ErrSeasons.Wrap(err)
 }
@@ -67,7 +78,7 @@ func (seasonsDB *seasonsDB) List(ctx context.Context) ([]seasons.Season, error) 
 }
 
 // Get returns season by id from the data base.
-func (seasonsDB *seasonsDB) Get(ctx context.Context, id uuid.UUID) (seasons.Season, error) {
+func (seasonsDB *seasonsDB) Get(ctx context.Context, id int) (seasons.Season, error) {
 	query := `SELECT id, division_id, started_at, ended_at FROM seasons WHERE id=$1`
 	var season seasons.Season
 
@@ -86,7 +97,7 @@ func (seasonsDB *seasonsDB) Get(ctx context.Context, id uuid.UUID) (seasons.Seas
 }
 
 // Delete deletes a season in the database.
-func (seasonsDB *seasonsDB) Delete(ctx context.Context, id uuid.UUID) error {
+func (seasonsDB *seasonsDB) Delete(ctx context.Context, id int) error {
 	result, err := seasonsDB.conn.ExecContext(ctx, "DELETE FROM seasons WHERE id=$1", id)
 	if err != nil {
 		return ErrSeasons.Wrap(err)

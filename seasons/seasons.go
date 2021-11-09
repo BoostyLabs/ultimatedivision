@@ -17,23 +17,36 @@ var ErrNoSeasons = errs.Class("seasons does not exist")
 type DB interface {
 	// Create creates a season and writes to the database.
 	Create(ctx context.Context, season Season) error
+	// EndSeason updates a status in the database when season ended.
+	EndSeason(ctx context.Context) error
 	// List returns all seasons from the data base.
 	List(ctx context.Context) ([]Season, error)
 	// Get returns season by id from the data base.
-	Get(ctx context.Context, id uuid.UUID) (Season, error)
+	Get(ctx context.Context, id int) (Season, error)
 	// Delete deletes a season in the database.
-	Delete(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id int) error
 }
+
+// Status defines the list of possible season statuses.
+type Status int
+
+const (
+	// StatusStarted indicates that season start.
+	StatusStarted Status = 0
+	// StatusEnded indicates that season ended.
+	StatusEnded Status = 1
+)
 
 // Season describes seasons entity.
 type Season struct {
 	ID         int       `json:"id"`
 	DivisionID uuid.UUID `json:"divisionID"`
+	Status     Status    `json:"status"`
 	StartedAt  time.Time `json:"startedAt"`
 	EndedAt    time.Time `json:"endedAt"`
 }
 
 // Config defines configuration for seasons.
 type Config struct {
-	SeasonsRenewalInterval time.Duration `json:"seasonsRenewalInterval"`
+	SeasonTime time.Duration `json:"seasonTime"`
 }

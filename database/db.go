@@ -22,6 +22,7 @@ import (
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 )
 
@@ -296,4 +297,9 @@ func (db *database) Queue() queue.DB {
 // Divisions provides access to accounts db.
 func (db *database) Divisions() divisions.DB {
 	return &divisionsDB{conn: db.conn}
+}
+
+// Seasons provides access to accounts db.
+func (db *database) Seasons() seasons.DB {
+	return &seasonsDB{conn: db.conn}
 }
