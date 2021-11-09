@@ -20,7 +20,7 @@ var ErrNoNFT = errs.Class("nft does not exist")
 // architecture: DB
 type DB interface {
 	// Create creates nft token in the database.
-	Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address, password cryptoutils.Signature) error
+	Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address) error
 	// Get returns nft token by card id.
 	Get(ctx context.Context, tokenID int) (NFTWaitList, error)
 	// GetLast returns id of last inserted token.

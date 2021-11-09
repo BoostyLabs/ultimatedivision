@@ -156,17 +156,15 @@ func TestNFTs(t *testing.T) {
 	}
 
 	nft1 := nfts.NFTWaitList{
-		TokenID:  1,
-		CardID:   card1.ID,
-		Wallet:   "0x96216849c49358b10257cb55b28ea603c874b05e",
-		Password: "",
+		TokenID: 1,
+		CardID:  card1.ID,
+		Wallet:  "0x96216849c49358b10257cb55b28ea603c874b05e",
 	}
 
 	nft2 := nfts.NFTWaitList{
-		TokenID:  2,
-		CardID:   card2.ID,
-		Wallet:   "0x96216849c49358B10254cb55b28eA603c874b05E",
-		Password: "",
+		TokenID: 2,
+		CardID:  card2.ID,
+		Wallet:  "0x96216849c49358B10254cb55b28eA603c874b05E",
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
@@ -184,10 +182,10 @@ func TestNFTs(t *testing.T) {
 			err = repositoryCards.Create(ctx, card2)
 			require.NoError(t, err)
 
-			err = repositoryNFTs.Create(ctx, nft1.CardID, nft1.Wallet, nft1.Password)
+			err = repositoryNFTs.Create(ctx, nft1.CardID, nft1.Wallet)
 			require.NoError(t, err)
 
-			err = repositoryNFTs.Create(ctx, nft2.CardID, nft2.Wallet, nft2.Password)
+			err = repositoryNFTs.Create(ctx, nft2.CardID, nft2.Wallet)
 			require.NoError(t, err)
 		})
 
