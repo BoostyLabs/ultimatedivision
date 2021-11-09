@@ -7,12 +7,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
-	"ultimatedivision/pkg/cryptoutils"
 	"ultimatedivision/pkg/nft"
 	"ultimatedivision/users"
 )
@@ -42,17 +40,17 @@ func NewService(config Config, cards *cards.Service, avatars *avatars.Service, u
 }
 
 // Create creates nft token.
-func (service *Service) Create(ctx context.Context, cardID uuid.UUID, walletAddress cryptoutils.Address, userID uuid.UUID) error {
-	card, err := service.cards.Get(ctx, cardID)
+func (service *Service) Create(ctx context.Context, createNFT CreateNFT) error {
+	card, err := service.cards.Get(ctx, createNFT.CardID)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
 	}
 
-	if card.UserID != userID {
+	if card.UserID != createNFT.UserID {
 		return ErrNFTs.New("it isn't user`s card")
 	}
 
-	avatar, err := service.avatars.Get(ctx, cardID)
+	avatar, err := service.avatars.Get(ctx, createNFT.CardID)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
 	}
@@ -68,11 +66,11 @@ func (service *Service) Create(ctx context.Context, cardID uuid.UUID, walletAddr
 	// TODO: add user in queue
 	// TODO: add transaction
 
-	if err = service.users.UpdateWalletAddress(ctx, walletAddress, userID); err != nil {
+	if err = service.users.UpdateWalletAddress(ctx, createNFT.WalletAddress, createNFT.UserID); err != nil {
 		return ErrNFTs.Wrap(err)
 	}
 
-	return service.nfts.Create(ctx, cardID, walletAddress, "")
+	return service.nfts.Create(ctx, createNFT.CardID, createNFT.WalletAddress, "")
 }
 
 // Generate generates values for nft token.

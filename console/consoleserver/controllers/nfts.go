@@ -7,13 +7,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/auth"
-	"ultimatedivision/pkg/cryptoutils"
 	"ultimatedivision/users"
 )
 
@@ -48,14 +46,15 @@ func (controller *NFTs) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var createNFT CreateNFT
+	var createNFT nfts.CreateNFT
 
 	if err = json.NewDecoder(r.Body).Decode(&createNFT); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrNFTs.Wrap(err))
 		return
 	}
+	createNFT.UserID = claims.UserID
 
-	err = controller.nfts.Create(ctx, createNFT.CardID, createNFT.Wallet, claims.UserID)
+	err = controller.nfts.Create(ctx, createNFT)
 	if err != nil {
 		controller.log.Error("could not create nft token", ErrNFTs.Wrap(err))
 
@@ -67,12 +66,6 @@ func (controller *NFTs) Create(w http.ResponseWriter, r *http.Request) {
 		controller.serveError(w, http.StatusInternalServerError, ErrNFTs.Wrap(err))
 		return
 	}
-}
-
-// CreateNFT describes body of request for creating nft token.
-type CreateNFT struct {
-	CardID uuid.UUID           `json:"cardId"`
-	Wallet cryptoutils.Address `json:"wallet"`
 }
 
 // serveError replies to the request with specific code and error message.
