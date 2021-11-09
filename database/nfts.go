@@ -29,11 +29,11 @@ type nftsDB struct {
 }
 
 // Create creates nft token in the database.
-func (nftsDB *nftsDB) Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address, password cryptoutils.Signature) error {
+func (nftsDB *nftsDB) Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address) error {
 	query := `INSERT INTO nfts_waitlist(card_id, wallet_address, password)
 	          VALUES($1,$2,$3)`
 
-	_, err := nftsDB.conn.ExecContext(ctx, query, cardID, wallet, password)
+	_, err := nftsDB.conn.ExecContext(ctx, query, cardID, wallet, "")
 	return ErrNFTs.Wrap(err)
 }
 
