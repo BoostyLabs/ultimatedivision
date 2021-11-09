@@ -210,6 +210,14 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             passing_percent INTEGER                  NOT NULL,
             created_at      TIMESTAMP WITH TIME ZONE NOT NULL
         );
+		CREATE TABLE IF NOT EXISTS seasons(
+			id          SERIAL PRIMARY KEY       NOT NULL,
+			division_id BYTEA                    NOT NULL,
+			status      INTEGER                  NOT NULL,
+			started_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+			ended_at    TIMESTAMP WITH TIME ZONE,
+			FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE
+		);
         CREATE TABLE IF NOT EXISTS matches (
             id           BYTEA    PRIMARY KEY                             NOT NULL,
             user1_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
@@ -227,14 +235,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             user_id  BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
             card_id  BYTEA   REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
             minute   INTEGER                                          NOT NULL
-        );
-		CREATE TABLE IF NOT EXISTS seasons(
-			id          SERIAL PRIMARY KEY       NOT NULL,
-			division_id BYTEA                    NOT NULL,
-			started_at  TIMESTAMP WITH TIME ZONE NOT NULL,
-			ended_at    TIMESTAMP WITH TIME ZONE,
-			FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE
-		); `
+        );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
 	if err != nil {

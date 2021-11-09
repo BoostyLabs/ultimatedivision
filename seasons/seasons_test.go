@@ -35,20 +35,19 @@ func TestSeasons(t *testing.T) {
 	season1 := seasons.Season{
 		ID:         1,
 		DivisionID: division1.ID,
-		Status:     0,
 		StartedAt:  time.Now().UTC(),
 		EndedAt:    time.Time{},
 	}
 	season2 := seasons.Season{
 		ID:         2,
 		DivisionID: division2.ID,
-		Status:     0,
 		StartedAt:  time.Now().UTC(),
 		EndedAt:    time.Time{},
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
 		repository := db.Seasons()
+		repositoryDivision := db.Divisions()
 		id := 3
 		t.Run("get sql no rows", func(t *testing.T) {
 			_, err := repository.Get(ctx, id)
@@ -57,7 +56,9 @@ func TestSeasons(t *testing.T) {
 		})
 
 		t.Run("get", func(t *testing.T) {
-			err := repository.Create(ctx, season1)
+			err := repositoryDivision.Create(ctx, division1)
+			require.NoError(t, err)
+			err = repository.Create(ctx, season1)
 			require.NoError(t, err)
 
 			seasonFromDB, err := repository.Get(ctx, season1.ID)
@@ -65,23 +66,15 @@ func TestSeasons(t *testing.T) {
 			compareSeasons(t, season1, seasonFromDB)
 		})
 
-		t.Run("endSeason sql no rows", func(t *testing.T) {
-			err := repository.EndSeason(ctx)
-			require.Error(t, err)
-			require.Equal(t, seasons.ErrNoSeasons.Has(err), true)
-		})
-
 		t.Run("endSeason", func(t *testing.T) {
-			err := repository.EndSeason(ctx)
+			err := repository.EndSeason(ctx, season1.ID)
 			require.NoError(t, err)
-
-			seasonFromDB, err := repository.Get(ctx, season1.ID)
-			require.NoError(t, err)
-			assert.Equal(t, seasons.StatusEnded, seasonFromDB.Status)
 		})
 
 		t.Run("list", func(t *testing.T) {
-			err := repository.Create(ctx, season2)
+			err := repositoryDivision.Create(ctx, division2)
+			require.NoError(t, err)
+			err = repository.Create(ctx, season2)
 			require.NoError(t, err)
 
 			allSeasons, err := repository.List(ctx)
@@ -109,5 +102,4 @@ func compareSeasons(t *testing.T, season1, season2 seasons.Season) {
 	assert.Equal(t, season1.DivisionID, season2.DivisionID)
 	assert.Equal(t, season1.Status, season2.Status)
 	assert.WithinDuration(t, season1.StartedAt, season2.StartedAt, 1*time.Second)
-	assert.WithinDuration(t, season1.EndedAt, season2.EndedAt, 1*time.Second)
 }

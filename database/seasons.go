@@ -38,9 +38,9 @@ func (seasonsDB *seasonsDB) Create(ctx context.Context, season seasons.Season) e
 }
 
 // EndSeason updates a status in the database when season ended.
-func (seasonsDB *seasonsDB) EndSeason(ctx context.Context) error {
-	_, err := seasonsDB.conn.ExecContext(ctx, "UPDATE seasons SET status=$1, ended_at=$2 WHERE status=$3",
-		seasons.StatusEnded, time.Now().UTC(), seasons.StatusStarted)
+func (seasonsDB *seasonsDB) EndSeason(ctx context.Context, id int) error {
+	_, err := seasonsDB.conn.ExecContext(ctx, "UPDATE seasons SET status=$1, ended_at=$2 WHERE id=$3",
+		seasons.StatusEnded, time.Now().UTC(), id)
 	if err != nil {
 		return ErrSeasons.Wrap(err)
 	}

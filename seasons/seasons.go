@@ -18,7 +18,7 @@ type DB interface {
 	// Create creates a season and writes to the database.
 	Create(ctx context.Context, season Season) error
 	// EndSeason updates a status in the database when season ended.
-	EndSeason(ctx context.Context) error
+	EndSeason(ctx context.Context, id int) error
 	// List returns all seasons from the data base.
 	List(ctx context.Context) ([]Season, error)
 	// Get returns season by id from the data base.
