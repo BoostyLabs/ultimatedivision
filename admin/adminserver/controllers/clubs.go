@@ -4,7 +4,6 @@
 package controllers
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -168,8 +167,6 @@ func (controller *Clubs) UpdateStatus(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "could parse club id", http.StatusBadRequest)
 		return
 	}
-
-	fmt.Println(userID, clubID)
 
 	if err = controller.clubs.UpdateStatus(ctx, userID, clubID, clubs.Active); err != nil {
 		controller.log.Error("could not change status", ErrClubs.Wrap(err))
