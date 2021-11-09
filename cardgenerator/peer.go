@@ -80,6 +80,7 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 			peer.Cards.Service,
 			peer.Avatars.Service,
 			nil,
+			nil,
 		)
 	}
 

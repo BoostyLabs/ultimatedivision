@@ -287,6 +287,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Cards.Service,
 			peer.Avatars.Service,
 			peer.Users.Service,
+			peer.Database.NFTs(),
 		)
 	}
 

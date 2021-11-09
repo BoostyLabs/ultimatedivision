@@ -30,12 +30,13 @@ type Service struct {
 }
 
 // NewService is a constructor for NFTs service.
-func NewService(config Config, cards *cards.Service, avatars *avatars.Service, users *users.Service) *Service {
+func NewService(config Config, cards *cards.Service, avatars *avatars.Service, users *users.Service, nfts DB) *Service {
 	return &Service{
 		config:  config,
 		cards:   cards,
 		avatars: avatars,
 		users:   users,
+		nfts:    nfts,
 	}
 }
 
