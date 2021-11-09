@@ -63,14 +63,13 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) error {
 	}
 
 	// TODO: save nft
-	// TODO: add user in queue
 	// TODO: add transaction
 
 	if err = service.users.UpdateWalletAddress(ctx, createNFT.WalletAddress, createNFT.UserID); err != nil {
 		return ErrNFTs.Wrap(err)
 	}
 
-	return service.nfts.Create(ctx, createNFT.CardID, createNFT.WalletAddress, "")
+	return service.nfts.Create(ctx, createNFT.CardID, createNFT.WalletAddress)
 }
 
 // Generate generates values for nft token.
