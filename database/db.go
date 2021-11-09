@@ -14,7 +14,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
-	"ultimatedivision/cards/nfts"
+	"ultimatedivision/cards/nfts/nftwaitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
@@ -295,7 +295,7 @@ func (db *database) Divisions() divisions.DB {
 	return &divisionsDB{conn: db.conn}
 }
 
-// NFTs provides access to accounts db.
-func (db *database) NFTs() nfts.DB {
-	return &nftsDB{conn: db.conn}
+// NFTWaitList provides access to accounts db.
+func (db *database) NFTWaitList() nftwaitlist.DB {
+	return &nftwaitlistDB{conn: db.conn}
 }

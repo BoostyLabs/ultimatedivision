@@ -18,6 +18,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/cards/nfts"
+	"ultimatedivision/cards/nfts/nftwaitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/console/emails"
@@ -49,8 +50,8 @@ type DB interface {
 	// Avatars provides access to avatars db.
 	Avatars() avatars.DB
 
-	// NFTs provides access to nfts db.
-	NFTs() nfts.DB
+	// NFTWaitList provides access to nftwaitlist db.
+	NFTWaitList() nftwaitlist.DB
 
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
@@ -159,6 +160,11 @@ type Peer struct {
 	// exposes avatars related logic.
 	Avatars struct {
 		Service *avatars.Service
+	}
+
+	// exposes nftwaitlist related logic.
+	NFTWaitList struct {
+		Service *nftwaitlist.Service
 	}
 
 	// exposes nfts related logic.
@@ -284,10 +290,17 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // nfts setup
 		peer.NFTs.Service = nfts.NewService(
 			config.NFTs.Config,
+			nil,
+		)
+	}
+
+	{ // nftwaitlist setup
+		peer.NFTWaitList.Service = nftwaitlist.NewService(
+			peer.Database.NFTWaitList(),
 			peer.Cards.Service,
 			peer.Avatars.Service,
 			peer.Users.Service,
-			peer.Database.NFTs(),
+			peer.NFTs.Service,
 		)
 	}
 
@@ -399,7 +412,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Auth,
 			peer.Users.Service,
 			peer.Queue.Service,
-			peer.NFTs.Service,
+			peer.NFTWaitList.Service,
 		)
 	}
 
