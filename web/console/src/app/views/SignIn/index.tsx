@@ -46,7 +46,7 @@ const SignIn: React.FC = () => {
         return isValidForm;
     };
     /** user data that will send to server */
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
@@ -82,16 +82,6 @@ const SignIn: React.FC = () => {
             clearError: setPasswordError,
             validate: Validator.password,
         },
-        {
-            value: 'Remember me',
-            placeHolder: '',
-            onChange: handleIsRemember,
-            className: 'register__sign-in__sign-form__remember-me',
-            type: 'radio',
-            error: null,
-            clearError: null,
-            validate: () => false,
-        },
     ];
 
     return (
@@ -109,8 +99,9 @@ const SignIn: React.FC = () => {
                     className="register__sign-in__sign-form"
                     onSubmit={handleSubmit}
                 >
-                    {signInDatas.map((data, index) => data.type === 'radio' ? <div key={index}>
+                    {signInDatas.map((data, index) =>
                         <UserDataArea
+                            key={index}
                             value={data.value}
                             placeHolder={data.placeHolder}
                             onChange={data.onChange}
@@ -119,24 +110,26 @@ const SignIn: React.FC = () => {
                             error={data.error}
                             clearError={data.clearError}
                             validate={data.validate}
+                        />)}
+                    <div className="register__sign-in__sign-form__checkbox-wrapper">
+                        <input
+                            id="register-sign-in-checkbox"
+                            className="register__sign-in__sign-form__remember-me"
+                            type="checkbox"
                         />
+                        <label
+                            className="register__sign-in__sign-form__remember-me__text"
+                            htmlFor="register-sign-in-checkbox"
+                        >
+                            Remember me
+                        </label>
                         <Link
                             to={AuthRouteConfig.ResetPassword.path}
                             className="register__sign-in__sign-form__forgot-password"
                         >
                             Forgot Password?
                         </Link>
-                    </div> : <UserDataArea
-                        key={index}
-                        value={data.value}
-                        placeHolder={data.placeHolder}
-                        onChange={data.onChange}
-                        className={data.className}
-                        type={data.type}
-                        error={data.error}
-                        clearError={data.clearError}
-                        validate={data.validate}
-                    />)}
+                    </div>
                     <div className="register__sign-in__sign-form__auth-internal">
                         <input
                             className="register__sign-in__sign-form__confirm"
