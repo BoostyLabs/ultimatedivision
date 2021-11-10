@@ -55,7 +55,7 @@ func (service *Service) Create(ctx context.Context) error {
 	return nil
 }
 
-// EndSeason change status when season end.
+// EndSeason changes status when season end.
 func (service *Service) EndSeason(ctx context.Context, id int) error {
 	return ErrSeasons.Wrap(service.seasons.EndSeason(ctx, id))
 }
@@ -63,6 +63,12 @@ func (service *Service) EndSeason(ctx context.Context, id int) error {
 // List returns all seasons from DB.
 func (service *Service) List(ctx context.Context) ([]Season, error) {
 	seasons, err := service.seasons.List(ctx)
+	return seasons, ErrSeasons.Wrap(err)
+}
+
+// GetCurrentSeasons returns all current seasons from DB.
+func (service *Service) GetCurrentSeasons(ctx context.Context) ([]Season, error) {
+	seasons, err := service.seasons.GetCurrentSeasons(ctx)
 	return seasons, ErrSeasons.Wrap(err)
 }
 

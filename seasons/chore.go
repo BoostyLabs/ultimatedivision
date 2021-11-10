@@ -8,7 +8,6 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/divisions"
 	"ultimatedivision/pkg/sync"
 )
 
@@ -21,40 +20,36 @@ var (
 //
 // architecture: Chore
 type Chore struct {
-	service *Service
+	seasons *Service
 	Loop    *sync.Cycle
 }
 
 // NewChore instantiates Chore.
-func NewChore(config Config, season DB, divisions *divisions.Service) *Chore {
+func NewChore(config Config, service *Service) *Chore {
 	return &Chore{
-		service: NewService(
-			season,
-			config,
-			divisions,
-		),
-		Loop: sync.NewCycle(config.SeasonTime),
+		seasons: service,
+		Loop:    sync.NewCycle(config.SeasonTime),
 	}
 }
 
 // Run starts the chore for re-check the expiration time of the season.
 func (chore *Chore) Run(ctx context.Context) (err error) {
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
-		seasons, err := chore.service.List(ctx)
+		seasons, err := chore.seasons.List(ctx)
 		if err != nil {
 			return ChoreError.Wrap(err)
 		}
 
 		for _, season := range seasons {
 			if season.Status == StatusStarted {
-				err := chore.service.EndSeason(ctx, season.ID)
+				err := chore.seasons.EndSeason(ctx, season.ID)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			}
 		}
 
-		err = chore.service.Create(ctx)
+		err = chore.seasons.Create(ctx)
 		if err != nil {
 			return ChoreError.Wrap(err)
 		}
