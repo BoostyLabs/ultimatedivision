@@ -168,7 +168,7 @@ func (controller *Clubs) UpdateStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = controller.clubs.UpdateStatus(ctx, userID, clubID, clubs.Active); err != nil {
+	if err = controller.clubs.UpdateStatus(ctx, userID, clubID, clubs.StatusActive); err != nil {
 		controller.log.Error("could not change status", ErrClubs.Wrap(err))
 		switch {
 		case clubs.ErrNoClub.Has(err):

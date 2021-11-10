@@ -36,7 +36,7 @@ func TestTeam(t *testing.T) {
 		ID:        uuid.New(),
 		OwnerID:   testUser.ID,
 		Name:      testUser.NickName,
-		Status:    clubs.Active,
+		Status:    clubs.StatusActive,
 		CreatedAt: time.Now().UTC(),
 	}
 
@@ -44,7 +44,7 @@ func TestTeam(t *testing.T) {
 		ID:        uuid.New(),
 		OwnerID:   testUser.ID,
 		Name:      testUser.NickName,
-		Status:    clubs.Inactive,
+		Status:    clubs.StatusInactive,
 		CreatedAt: time.Now().UTC(),
 	}
 
@@ -52,7 +52,7 @@ func TestTeam(t *testing.T) {
 		ID:        testClub1.ID,
 		OwnerID:   testUser.ID,
 		Name:      testUser.NickName,
-		Status:    clubs.Inactive,
+		Status:    clubs.StatusInactive,
 		CreatedAt: time.Now().UTC(),
 	}
 
@@ -60,7 +60,7 @@ func TestTeam(t *testing.T) {
 		ID:        testClub1.ID,
 		OwnerID:   testUser.ID,
 		Name:      testUser.NickName,
-		Status:    clubs.Active,
+		Status:    clubs.StatusActive,
 		CreatedAt: time.Now().UTC(),
 	}
 
@@ -208,7 +208,7 @@ func TestTeam(t *testing.T) {
 		t.Run("Update statuses sql no rows", func(t *testing.T) {
 			err := repositoryClubs.UpdateStatuses(ctx, []clubs.Club{{
 				ID:     uuid.New(),
-				Status: clubs.Active,
+				Status: clubs.StatusActive,
 			}})
 			require.Error(t, err)
 			require.Equal(t, clubs.ErrNoClub.Has(err), true)

@@ -56,9 +56,9 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 
 	switch {
 	case len(allClubs) == 0:
-		newClub.Status = Active
+		newClub.Status = StatusActive
 	default:
-		newClub.Status = Inactive
+		newClub.Status = StatusInactive
 	}
 
 	clubID, err := service.clubs.Create(ctx, newClub)
@@ -326,11 +326,11 @@ func (service *Service) UpdateStatus(ctx context.Context, userID, clubID uuid.UU
 
 	for i := 0; i < len(allUserClubs); i++ {
 		if allUserClubs[i].ID != clubID {
-			allUserClubs[i].Status = Inactive
+			allUserClubs[i].Status = StatusInactive
 			continue
 		}
 
-		allUserClubs[i].Status = Active
+		allUserClubs[i].Status = StatusActive
 	}
 
 	return ErrClubs.Wrap(service.clubs.UpdateStatuses(ctx, allUserClubs))

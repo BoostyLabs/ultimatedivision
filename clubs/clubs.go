@@ -61,15 +61,15 @@ type DB interface {
 type Status int
 
 const (
-	// Active indicates that club is active.
-	Active Status = 1
-	// Inactive indicates that club is inactive.
-	Inactive Status = 2
+	// StatusInactive indicates that club is inactive.
+	StatusInactive Status = 0
+	// StatusActive indicates that club is active.
+	StatusActive Status = 1
 )
 
 // IsValid checks if status of club valid.
 func (status Status) IsValid() bool {
-	if status == Active || status == Inactive {
+	if status == StatusActive || status == StatusInactive {
 		return true
 	}
 	return false
