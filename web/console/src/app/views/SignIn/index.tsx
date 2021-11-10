@@ -46,7 +46,7 @@ const SignIn: React.FC = () => {
         return isValidForm;
     };
     /** user data that will send to server */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
