@@ -57,10 +57,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) error {
 
 	// TODO: save avatar
 
-	_, err = service.nfts.Generate(ctx, card, avatar.OriginalURL)
-	if err != nil {
-		return ErrNFTWaitlist.Wrap(err)
-	}
+	service.nfts.Generate(ctx, card, avatar.OriginalURL)
 
 	// TODO: save nft
 	// TODO: add transaction

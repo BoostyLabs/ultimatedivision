@@ -53,6 +53,9 @@ type DB interface {
 	// NFTWaitList provides access to nftwaitlist db.
 	NFTWaitList() nftwaitlist.DB
 
+	// NFTs provides access to nfts db.
+	NFTs() nfts.DB
+
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
 
@@ -290,7 +293,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // nfts setup
 		peer.NFTs.Service = nfts.NewService(
 			config.NFTs.Config,
-			nil,
+			peer.Database.NFTs(),
 		)
 	}
 

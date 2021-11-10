@@ -63,11 +63,7 @@ func (service *Service) Generate(ctx context.Context, nameFile int, playerName s
 		return nft.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
 	}
 
-	nftCard, err := service.nfts.Generate(ctx, card, avatar.OriginalURL)
-	if err != nil {
-		return nft.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
-	}
-
+	nftCard := service.nfts.Generate(ctx, card, avatar.OriginalURL)
 	return nftCard, nil
 }
 
