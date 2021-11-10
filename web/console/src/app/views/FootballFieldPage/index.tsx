@@ -14,6 +14,7 @@ import './index.scss';
 
 const FootballField: React.FC = () => {
     const dispatch = useDispatch();
+    // TODO: this logic will be replaced in 301 PR by try/catch
     dispatch(createClub());
     const fieldSetup = useSelector((state: RootState) => state.clubReducer.options);
     const cardSelectionVisibility = useSelector((state: RootState) => state.clubReducer.options.showCardSeletion);
