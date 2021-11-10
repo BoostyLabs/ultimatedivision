@@ -21,7 +21,8 @@ export class Marketplaces {
     /** returns marketplace domain entity with list of lots */
     public async list({ selectedPage, limit }: Pagination): Promise<MarketPlacePage> {
         const response = await this.marketplace.list({ selectedPage, limit });
-        return {...response, lots: response.lots.map((lot: Lot) => ({ ...lot, card: new CardGetters(lot.card) }))}
+
+        return { ...response, lots: response.lots.map((lot: Lot) => ({ ...lot, card: new CardGetters(lot.card) })) };
     };
 
     /** creates lot */
@@ -32,7 +33,8 @@ export class Marketplaces {
     /** returns list of lots by filter parameters */
     public async filteredList(lowRange: string, topRange: string): Promise<MarketPlacePage> {
         const response = await this.marketplace.filteredList(lowRange, topRange);
-        return {...response, lots: response.lots.map((lot: Lot) => ({ ...lot, card: new CardGetters(lot.card) }))}
+
+        return { ...response, lots: response.lots.map((lot: Lot) => ({ ...lot, card: new CardGetters(lot.card) })) };
     };
 
     /** returns lot by id */

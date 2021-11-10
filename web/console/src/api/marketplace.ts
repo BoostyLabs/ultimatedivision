@@ -34,7 +34,6 @@ export class MarketplaceClient extends APIClient {
         };
 
         return await response.json();
-
     };
 
     /** implements creating lot (selling card) */

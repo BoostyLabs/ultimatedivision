@@ -5,31 +5,31 @@ import { CardGetters } from '@/card';
 
 /** base marketplace Lot type implementation */
 export interface Lot {
-    id: string,
-    itemId: string,
-    type: string,
-    userId: string,
-    shopperId: string,
-    status: string,
-    startPrice: number,
-    maxPrice: number,
-    currentPrice: number,
-    startTime: string,
-    endTime: string,
-    period: number,
-    card: CardGetters,
+    id: string;
+    itemId: string;
+    type: string;
+    userId: string;
+    shopperId: string;
+    status: string;
+    startPrice: number;
+    maxPrice: number;
+    currentPrice: number;
+    startTime: string;
+    endTime: string;
+    period: number;
+    card: CardGetters;
 };
 
 /** base MarketPlace domain entity type implementation */
 export interface MarketPlacePage {
-    lots: Lot[],
+    lots: Lot[];
     page: {
         offset: number;
         limit: number;
         currentPage: number;
         pageCount: number;
         totalCount: number;
-    }
+    };
 };
 
 /** marketplace reducer state */

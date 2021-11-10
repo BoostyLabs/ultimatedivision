@@ -45,6 +45,5 @@ export class CardClient extends APIClient {
         };
 
         return await response.json();
-
     };
 };

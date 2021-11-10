@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 const DEFAULT_VALUE = 0;
- 
+
 /** backend squad */
 export class Squad {
     public id: string = '';
@@ -27,7 +27,7 @@ export interface Club {
         id: string;
         name: string;
         createdAt: string;
-    }
+    };
     squad: Squad;
     squadCards: SquadCard[];
 }
@@ -49,7 +49,7 @@ export class ClubState {
     public clubs: Club['clubs'] = {
         id: '',
         name: '',
-        createdAt: ''
+        createdAt: '',
     };
     public squad: Squad = new Squad();
     public squadCards: SquadCard[] = [];

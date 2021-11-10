@@ -18,7 +18,7 @@ export class LootboxService {
     public async buy(lootbox: Lootbox): Promise<CardGetters[]> {
         const cards = await this.lootboxes.buy(lootbox);
 
-        return cards.map((card: Card) => new CardGetters(card))
+        return cards.map((card: Card) => new CardGetters(card));
     };
 };
 

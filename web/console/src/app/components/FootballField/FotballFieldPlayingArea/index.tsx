@@ -149,7 +149,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 }
                                 key={index}
                                 className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
-                                    }`}
+                                }`}
                                 onClick={() => handleClick(index)}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
