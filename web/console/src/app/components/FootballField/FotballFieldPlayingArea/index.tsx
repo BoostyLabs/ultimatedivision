@@ -8,7 +8,7 @@ import { FootballFieldControlsArea } from '@/app/components/FootballField/Footba
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
 import { RootState } from '@/app/store';
-import { Card } from '@/card';
+import { CardGetters } from '@/card';
 import { SquadCard } from '@/club';
 import {
     cardSelectionVisibility,
@@ -69,7 +69,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
 
     /** returns card data for card */
     function getCard(id: string) {
-        return cards.find((card: Card) => card.id === id);
+        return cards.find((card: CardGetters) => card.id === id);
     }
 
     /** Add card position, and shows card selection */
@@ -149,7 +149,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 }
                                 key={index}
                                 className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
-                                }`}
+                                    }`}
                                 onClick={() => handleClick(index)}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}

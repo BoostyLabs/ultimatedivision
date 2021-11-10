@@ -8,13 +8,13 @@ import { FootballFieldCardSelection } from
 import { FootballFieldPlayingArea } from
     '@components/FootballField/FotballFieldPlayingArea';
 import { RootState } from '@/app/store';
-import { getClub, removeCard } from '@/app/store/actions/club';
+import { createClub, getClub, removeCard } from '@/app/store/actions/club';
 
 import './index.scss';
 
 const FootballField: React.FC = () => {
     const dispatch = useDispatch();
-    dispatch(getClub());
+        dispatch(createClub())
     const fieldSetup = useSelector((state: RootState) => state.clubReducer.options);
     const cardSelectionVisibility = useSelector((state: RootState) => state.clubReducer.options.showCardSeletion);
 

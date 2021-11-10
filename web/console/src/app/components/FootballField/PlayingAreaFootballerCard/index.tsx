@@ -6,12 +6,12 @@ import { useDispatch } from 'react-redux';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 
-import { Card } from '@/card';
+import { CardGetters } from '@/card';
 import { removeCard } from '@/app/store/actions/club';
 
 import './index.scss';
 
-export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card, index, place }) => {
+export const PlayingAreaFootballerCard: React.FC<{ card: CardGetters; index?: number; place?: string }> = ({ card, index, place }) => {
     const dispatch = useDispatch();
     const [visibility, changeVisibility] = useState(false);
     const style = visibility ? 'block' : 'none';

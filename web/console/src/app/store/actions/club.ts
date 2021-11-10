@@ -95,12 +95,14 @@ export const setFormation = (squad: Squad, formation: FormationsType) =>
         const club = await service.getClub();
         dispatch(setClub(club));
     };
+
 export const setCaptain = (squad: Squad, captainId: string) =>
     async function(dispatch: Dispatch) {
         await service.updateSquad({ ...squad, captainId });
         const club = await service.getClub();
         dispatch(setClub(club));
     };
+
 export const setTactic = (squad: Squad, tactic: TacticsType) =>
     async function(dispatch: Dispatch) {
         await service.updateSquad({ ...squad, tactic: Tactic[tactic] });

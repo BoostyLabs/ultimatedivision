@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { MyCard } from './MyCard';
 
 import { RootState } from '@/app/store';
-import { Card } from '@/card';
+import { CardGetters } from '@/card';
 
 import './index.scss';
 
@@ -16,7 +16,7 @@ export const ClubCardsArea: React.FC = () => {
 
     return <div className="club-cards">
         <div className="club-cards__wrapper">
-            {cards.map((card: Card, index: number) =>
+            {cards.map((card: CardGetters, index: number) =>
                 <MyCard
                     card={card}
                     key={index}

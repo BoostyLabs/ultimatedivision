@@ -11,7 +11,7 @@ import { FilterField } from
 import { RootState } from '@/app/store';
 import { listOfCards } from '@/app/store/actions/cards';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/club';
-import { Card } from '@/card';
+import { CardGetters } from '@/card';
 import { Squad } from '@/club';
 
 import './index.scss';
@@ -39,7 +39,7 @@ export const FootballFieldCardSelection = () => {
         <div id="cardList" className="card-selection">
             <FilterField />
             <div className="card-selection__list">
-                {cards.map((card: Card, index: number) =>
+                {cards.map((card: CardGetters, index: number) =>
                     <div
                         key={index}
                         className="card-selection__card"

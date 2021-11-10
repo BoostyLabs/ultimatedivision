@@ -69,7 +69,7 @@ export class CardStats {
   }
 }
 
-export interface ICard {
+export interface Card {
   id: string;
   playerName: string;
   quality: string;
@@ -137,7 +137,7 @@ export interface ICard {
 }
 
 /** Card base implementation */
-export class Card {
+export class CardGetters {
   id: string = "";
   playerName: string = "Taras";
   quality: string = "";
@@ -202,8 +202,9 @@ export class Card {
   handling: number = 0;
   sweeping: number = 0;
   throwing: number = 0;
+
   /** Card fields */
-  constructor(card: Partial<ICard> = {}) {
+  constructor(card?: Card) {
     Object.assign(this, card);
   }
 
@@ -380,7 +381,7 @@ export class Card {
 export class CardsPage {
   /** default Cards initial values */
   constructor(
-    public cards: Card[],
+    public cards: Card[] | CardGetters[],
     public page: {
       offset: number;
       limit: number;
