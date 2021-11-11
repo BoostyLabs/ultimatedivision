@@ -69,10 +69,7 @@ const (
 
 // IsValid checks if status of club valid.
 func (status Status) IsValid() bool {
-	if status == StatusActive || status == StatusInactive {
-		return true
-	}
-	return false
+	return status == StatusActive || status == StatusInactive
 }
 
 // Club defines club entity.
