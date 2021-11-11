@@ -27,5 +27,5 @@ export const Notification: React.FC = () => {
         rtl={IS_RIGHT_TO_LEFT_LAYOUT}
         pauseOnFocusLoss
         pauseOnHover
-    />
+    />;
 };

@@ -10,8 +10,8 @@ import {
     RECOVER_PASSWORD,
 } from '../actions/users';
 
-/** 
- * UsersState is a representation of users reducer state. 
+/**
+ * UsersState is a representation of users reducer state.
  */
 export class UsersState {
     public readonly userService: UsersService;
