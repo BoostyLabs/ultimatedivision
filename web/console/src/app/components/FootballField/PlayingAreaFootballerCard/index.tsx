@@ -13,13 +13,13 @@ import './index.scss';
 
 export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card, index, place }) => {
     const dispatch = useDispatch();
-    const [visibility, changeVisibility] = useState(false);
-    const style = visibility ? 'block' : 'none';
+    const [isVisibile, setIsVisibile] = useState(false);
+    const visibilityBlock = isVisibile ? "-active" : "-inactive";
 
     /** show/hide delete block, preventing scroll to cardSelection */
     function handleVisibility(e: React.MouseEvent<HTMLInputElement>) {
         e.stopPropagation();
-        changeVisibility(prev => !prev);
+        setIsVisibile((prevVisability) => !prevVisability);
     }
     /** remove player card implementation */
     function handleDeletion(e: React.MouseEvent<HTMLInputElement>) {
@@ -29,24 +29,17 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; p
     }
 
     return (
-        <div
-            onClick={handleVisibility}
-            className="football-field-card"
-        >
+        <div onClick={handleVisibility} className="football-field-card">
             <div
-                className="football-field-card__wrapper"
-                style={{ display: style }}
+                className={`football-field-card__wrapper${visibilityBlock}`}
             ></div>
-            <PlayerCard
-                card={card}
-                parentClassName="football-field-card"
-            />
+            <PlayerCard card={card} parentClassName="football-field-card" />
             <div
-                style={{ display: style }}
                 onClick={handleDeletion}
-                className="football-field-card__control">
+                className={`football-field-card__control${visibilityBlock}`}
+            >
                 &#10006; delete a player
             </div>
-        </div >
+        </div>
     );
 };
