@@ -10,6 +10,7 @@ import { UserDataArea } from '@components/common/UserDataArea';
 
 import ultimate from '@static/img/registerPage/ultimate.svg';
 
+import { BadRequestError } from '@/api';
 import { AuthRouteConfig } from '@/app/routes';
 import { registerUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
@@ -85,9 +86,11 @@ const SignUp: React.FC = () => {
                 position: toast.POSITION.TOP_RIGHT,
             });
         } catch (error: any) {
-            /** TODO: handles 400 error when email already in use */
-            /** Just for test rigth now */
-            toast.error('Someting wrong, please, try again.', {
+            let errorMessage = 'Someting wrong, please, try again.';
+            if (error instanceof BadRequestError) {
+                errorMessage = 'Email is already in use.';
+            };
+            toast.error(errorMessage, {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
