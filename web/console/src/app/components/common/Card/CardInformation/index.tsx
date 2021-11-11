@@ -5,19 +5,22 @@ import { Card } from '@/card';
 
 import './index.scss';
 
-export const FootballerCardInformation: React.FC<{ card: Card }> = ({ card }) => {
+export const FootballerCardInformation: React.FC<{ card: Card }> = ({
+    card,
+}) => {
     const overalInfo = card.infoBlock;
 
     return (
         <div className="footballer-card-information">
             {overalInfo.map((item, index) =>
-                <div className="footballer-card-information__item"
-                    key={index}
-                >
-                    <div className="footballer-card-information__item-title">{item.label}</div>
+                <div className="footballer-card-information__item" key={index}>
+                    <div className="footballer-card-information__item-title">
+                        {item.label}
+                    </div>
                     <div className="footballer-card-information__item-value">
                         <>
                             {item.value}
+                            {/* TODO: Need delete or rewrite this code, after backend changes */}
                             {/* <img
                                 className="footballer-card-information__item-icon"
                                 src={item.icon}
@@ -25,7 +28,7 @@ export const FootballerCardInformation: React.FC<{ card: Card }> = ({ card }) =>
                             /> */}
                         </>
                     </div>
-                </div>,
+                </div>
             )}
         </div>
     );

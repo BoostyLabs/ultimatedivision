@@ -19,6 +19,7 @@ const ConfirmEmail: React.FC = () => {
     const users = new UserService(userClient);
 
     const DELAY: number = 3000;
+    
     /** catches error if token is not valid */
     async function checkEmailToken() {
         try {
@@ -42,7 +43,7 @@ const ConfirmEmail: React.FC = () => {
         checkEmailToken();
     }, []);
 
-    return <div className="confirm-email"/>
+    return <div className="confirm-email"/>;
 };
 
 export default ConfirmEmail;

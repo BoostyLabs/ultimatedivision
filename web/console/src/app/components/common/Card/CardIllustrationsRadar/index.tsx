@@ -66,16 +66,16 @@ export const FootballerCardIllustrationsRadar: React.FC<{ card: Card }> = ({
                             },
                             angleLines: {
                                 /* eslint-disable */
-                borderDash: [7, 8],
-                color: "#515180",
-              },
-              grid: {
-                color: "#515180",
-              },
-            },
-          },
-        }}
-      />
-    </div>
-  );
+                                borderDash: [7, 8],
+                                color: "#515180",
+                            },
+                            grid: {
+                                color: "#515180",
+                            },
+                        },
+                    },
+                }}
+            />
+        </div>
+    );
 };

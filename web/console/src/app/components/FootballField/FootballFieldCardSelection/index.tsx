@@ -5,8 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Paginator } from '@components/common/Paginator';
 import { PlayerCard } from '@components/common/PlayerCard';
-import { FilterField } from
-    '@components/FootballField/FootballFieldCardSelection/FilterField';
+import { FilterField } from '@components/FootballField/FootballFieldCardSelection/FilterField';
 
 import { RootState } from '@/app/store';
 import { listOfCards } from '@/app/store/actions/cards';
@@ -19,7 +18,9 @@ import './index.scss';
 export const FootballFieldCardSelection = () => {
     const dispatch = useDispatch();
     const squad = useSelector((state: RootState) => state.clubReducer.squad);
-    const { cards, page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
+    const { cards, page } = useSelector(
+        (state: RootState) => state.cardsReducer.cardsPage
+    );
     const fieldSetup = useSelector((state: RootState) => state.clubReducer);
 
     const Y_SCROLL_POINT = 200;
@@ -43,13 +44,19 @@ export const FootballFieldCardSelection = () => {
                     <div
                         key={index}
                         className="card-selection__card"
-                        onClick={() => handleClick(squad, card.id, fieldSetup.options.chosedCard)}
+                        onClick={() =>
+                            handleClick(
+                                squad,
+                                card.id,
+                                fieldSetup.options.chosedCard
+                            )
+                        }
                     >
                         <PlayerCard
                             card={card}
                             parentClassName={'card-selection__card'}
                         />
-                    </div>,
+                    </div>
                 )}
             </div>
             <Paginator

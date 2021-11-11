@@ -12,7 +12,9 @@ import { DropdownStyle } from '@/app/utils/dropdownStyle';
 
 import './index.scss';
 
-export const FootballFieldControl: React.FC<{ props: FieldControl }> = ({ props }) => {
+export const FootballFieldControl: React.FC<{ props: FieldControl }> = ({
+    props,
+}) => {
     const squad = useSelector((state: RootState) => state.clubReducer.squad);
     const [optionVisibility, changeVisibility] = useState(false);
     const optionStyle = new DropdownStyle(optionVisibility);
@@ -23,11 +25,9 @@ export const FootballFieldControl: React.FC<{ props: FieldControl }> = ({ props 
         <div className="football-field-control">
             <div
                 className="football-field-control__heading"
-                onClick={() => changeVisibility(prev => !prev)}
+                onClick={() => changeVisibility((prev) => !prev)}
             >
-                <h4 className="football-field-control__title">
-                    {props.title}
-                </h4>
+                <h4 className="football-field-control__title">{props.title}</h4>
                 <img
                     className="football-field-control__image"
                     src={triangle}
@@ -49,7 +49,6 @@ export const FootballFieldControl: React.FC<{ props: FieldControl }> = ({ props 
                     >
                         {item}
                     </li>
-
                 )}
             </ul>
         </div>
