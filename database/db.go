@@ -20,6 +20,7 @@ import (
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 )
 
@@ -207,6 +208,14 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             passing_percent INTEGER                  NOT NULL,
             created_at      TIMESTAMP WITH TIME ZONE NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS seasons(
+            id          SERIAL PRIMARY KEY       NOT NULL,
+            division_id BYTEA                    NOT NULL,
+            status      INTEGER                  NOT NULL,
+            started_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+            ended_at    TIMESTAMP WITH TIME ZONE NOT NULL,
+            FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE
+        );
         CREATE TABLE IF NOT EXISTS matches (
             id           BYTEA    PRIMARY KEY                             NOT NULL,
             user1_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
@@ -285,4 +294,9 @@ func (db *database) Queue() queue.DB {
 // Divisions provides access to accounts db.
 func (db *database) Divisions() divisions.DB {
 	return &divisionsDB{conn: db.conn}
+}
+
+// Seasons provides access to accounts db.
+func (db *database) Seasons() seasons.DB {
+	return &seasonsDB{conn: db.conn}
 }
