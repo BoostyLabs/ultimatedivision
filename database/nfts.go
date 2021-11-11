@@ -9,6 +9,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards/nfts"
@@ -131,29 +132,19 @@ func (nftsDB *nftsDB) GetLast(ctx context.Context) (int, error) {
 // Delete deletes nfts from wait list by id of token.
 func (nftsDB *nftsDB) Delete(ctx context.Context, tokenIDs []int) error {
 	query := `DELETE FROM nfts_waitlist
-	          WHERE token_id = $1`
+	          WHERE token_id = ANY($1)`
 
-	preparedQuery, err := nftsDB.conn.PrepareContext(ctx, query)
+	result, err := nftsDB.conn.ExecContext(ctx, query, pq.Array(tokenIDs))
 	if err != nil {
 		return ErrNFTs.Wrap(err)
 	}
-	defer func() {
-		err = preparedQuery.Close()
-	}()
 
-	for _, tokenID := range tokenIDs {
-		result, err := nftsDB.conn.ExecContext(ctx, query, tokenID)
-		if err != nil {
-			return ErrNFTs.Wrap(err)
-		}
-
-		rowNum, err := result.RowsAffected()
-		if err != nil {
-			return ErrNFTs.Wrap(err)
-		}
-		if rowNum == 0 {
-			return nfts.ErrNoNFT.New("nft token does not exist")
-		}
+	rowNum, err := result.RowsAffected()
+	if err != nil {
+		return ErrNFTs.Wrap(err)
+	}
+	if rowNum == 0 {
+		return nfts.ErrNoNFT.New("nft from wait list does not exist")
 	}
 
 	return nil
