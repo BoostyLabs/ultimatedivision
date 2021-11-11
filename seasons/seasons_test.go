@@ -66,11 +66,6 @@ func TestSeasons(t *testing.T) {
 			compareSeasons(t, season1, seasonFromDB)
 		})
 
-		t.Run("endSeason", func(t *testing.T) {
-			err := repository.EndSeason(ctx, season1.ID)
-			require.NoError(t, err)
-		})
-
 		t.Run("list", func(t *testing.T) {
 			err := repositoryDivision.Create(ctx, division2)
 			require.NoError(t, err)
@@ -82,6 +77,11 @@ func TestSeasons(t *testing.T) {
 			assert.Equal(t, len(allSeasons), 2)
 			compareSeasons(t, season1, allSeasons[0])
 			compareSeasons(t, season2, allSeasons[1])
+		})
+
+		t.Run("endSeason", func(t *testing.T) {
+			err := repository.EndSeason(ctx, season1.ID)
+			require.NoError(t, err)
 		})
 
 		t.Run("delete sql no rows", func(t *testing.T) {

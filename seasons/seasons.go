@@ -26,6 +26,8 @@ type DB interface {
 	List(ctx context.Context) ([]Season, error)
 	// Get returns season by id from the data base.
 	Get(ctx context.Context, id int) (Season, error)
+	// GetCurrentSeasons returns all current seasons from the data base.
+	GetCurrentSeasons(ctx context.Context) ([]Season, error)
 	// Delete deletes a season in the database.
 	Delete(ctx context.Context, id int) error
 }

@@ -354,8 +354,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 		peer.Seasons.ExpirationSeasons = seasons.NewChore(
 			config.Seasons.Config,
-			peer.Database.Seasons(),
-			peer.Divisions.Service)
+			peer.Seasons.Service,
+		)
 	}
 
 	{ // admin setup
@@ -403,6 +403,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Auth,
 			peer.Users.Service,
 			peer.Queue.Service,
+			peer.Seasons.Service,
 		)
 	}
 
@@ -426,9 +427,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
 	})
-	/*group.Go(func() error {
+	group.Go(func() error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
-	})*/
+	})
 
 	return group.Wait()
 }

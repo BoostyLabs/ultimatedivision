@@ -39,10 +39,15 @@ func (seasonsDB *seasonsDB) Create(ctx context.Context, season seasons.Season) e
 
 // EndSeason updates a status in the database when season ended.
 func (seasonsDB *seasonsDB) EndSeason(ctx context.Context, id int) error {
-	_, err := seasonsDB.conn.ExecContext(ctx, "UPDATE seasons SET status=$1, ended_at=$2 WHERE id=$3",
+	db, err := seasonsDB.conn.ExecContext(ctx, "UPDATE seasons SET status=$1, ended_at=$2 WHERE id=$3",
 		seasons.StatusEnded, time.Now().UTC(), id)
 	if err != nil {
 		return ErrSeasons.Wrap(err)
+	}
+
+	rowNum, err := db.RowsAffected()
+	if rowNum == 0 {
+		return seasons.ErrNoSeason.New("season does not exist")
 	}
 
 	return ErrSeasons.Wrap(err)
@@ -50,7 +55,7 @@ func (seasonsDB *seasonsDB) EndSeason(ctx context.Context, id int) error {
 
 // List returns all seasons from the data base.
 func (seasonsDB *seasonsDB) List(ctx context.Context) ([]seasons.Season, error) {
-	query := `SELECT id, division_id, started_at, ended_at FROM seasons`
+	query := `SELECT id, division_id, status, started_at, ended_at FROM seasons`
 
 	rows, err := seasonsDB.conn.QueryContext(ctx, query)
 	if err != nil {
@@ -63,28 +68,25 @@ func (seasonsDB *seasonsDB) List(ctx context.Context) ([]seasons.Season, error) 
 	var allSeasons []seasons.Season
 	for rows.Next() {
 		var season seasons.Season
-		err := rows.Scan(&season.ID, &season.DivisionID, &season.StartedAt, &season.EndedAt)
+		err := rows.Scan(&season.ID, &season.DivisionID, &season.Status, &season.StartedAt, &season.EndedAt)
 		if err != nil {
 			return nil, ErrSeasons.Wrap(err)
 		}
 
 		allSeasons = append(allSeasons, season)
 	}
-	if err = rows.Err(); err != nil {
-		return nil, ErrSeasons.Wrap(err)
-	}
 
-	return allSeasons, ErrSeasons.Wrap(err)
+	return allSeasons, ErrSeasons.Wrap(rows.Err())
 }
 
 // Get returns season by id from the data base.
 func (seasonsDB *seasonsDB) Get(ctx context.Context, id int) (seasons.Season, error) {
-	query := `SELECT id, division_id, started_at, ended_at FROM seasons WHERE id=$1`
+	query := `SELECT id, division_id, status, started_at, ended_at FROM seasons WHERE id=$1`
 	var season seasons.Season
 
 	row := seasonsDB.conn.QueryRowContext(ctx, query, id)
 
-	err := row.Scan(&season.ID, &season.DivisionID, &season.StartedAt, &season.EndedAt)
+	err := row.Scan(&season.ID, &season.DivisionID, &season.Status, &season.StartedAt, &season.EndedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return season, seasons.ErrNoSeason.Wrap(err)
@@ -94,6 +96,32 @@ func (seasonsDB *seasonsDB) Get(ctx context.Context, id int) (seasons.Season, er
 	}
 
 	return season, ErrSeasons.Wrap(err)
+}
+
+// GetCurrentSeasons returns all current seasons from the data base.
+func (seasonsDB *seasonsDB) GetCurrentSeasons(ctx context.Context) ([]seasons.Season, error) {
+	query := `SELECT id, division_id, status, started_at, ended_at FROM seasons WHERE status=$1`
+
+	rows, err := seasonsDB.conn.QueryContext(ctx, query, seasons.StatusStarted)
+	if err != nil {
+		return nil, ErrSeasons.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	var allSeasons []seasons.Season
+	for rows.Next() {
+		var season seasons.Season
+		err := rows.Scan(&season.ID, &season.DivisionID, &season.Status, &season.StartedAt, &season.EndedAt)
+		if err != nil {
+			return nil, ErrSeasons.Wrap(err)
+		}
+
+		allSeasons = append(allSeasons, season)
+	}
+
+	return allSeasons, ErrSeasons.Wrap(rows.Err())
 }
 
 // Delete deletes a season in the database.
