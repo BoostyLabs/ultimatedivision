@@ -5,7 +5,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { LootboxCardQuality } from "./LootboxCardQuality";
+import { LootboxCardQuality } from './LootboxCardQuality';
 
 import coin from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
 import diamond from '@static/img/StorePage/BoxCard/diamond.svg';
