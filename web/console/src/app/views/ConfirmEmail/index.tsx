@@ -42,7 +42,7 @@ const ConfirmEmail: React.FC = () => {
         checkEmailToken();
     }, []);
 
-    return <div className="confirm-email"/>
+    return <div className="confirm-email"/>;
 };
 
 export default ConfirmEmail;
