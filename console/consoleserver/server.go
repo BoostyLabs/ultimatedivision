@@ -144,7 +144,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 
 	seasonsRouter := apiRouter.PathPrefix("/seasons").Subrouter()
 	seasonsRouter.Use(server.withAuth)
-	seasonsRouter.HandleFunc("/current-seasons", seasonsController.GetCurrentSeasons).Methods(http.MethodGet)
+	seasonsRouter.HandleFunc("/current", seasonsController.GetCurrentSeasons).Methods(http.MethodGet)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
