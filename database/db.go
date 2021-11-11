@@ -20,6 +20,7 @@ import (
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 )
 
@@ -207,14 +208,23 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             passing_percent INTEGER                  NOT NULL,
             created_at      TIMESTAMP WITH TIME ZONE NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS seasons(
+			id          SERIAL PRIMARY KEY       NOT NULL,
+			division_id BYTEA                    NOT NULL,
+			status      INTEGER                  NOT NULL,
+			started_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+			ended_at    TIMESTAMP WITH TIME ZONE,
+			FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE
+		);
         CREATE TABLE IF NOT EXISTS matches (
-            id           BYTEA    PRIMARY KEY                             NOT NULL,
-            user1_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
-            squad1_id    BYTEA    REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
+            id           BYTEA   PRIMARY KEY                              NOT NULL,
+            user1_id     BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
+            squad1_id    BYTEA   REFERENCES squads(id) ON DELETE CASCADE  NOT NULL,
             user1_points INTEGER                                          NOT NULL,
-            user2_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
-            squad2_id    BYTEA    REFERENCES squads(id) ON DELETE CASCADE NOT NULL,
-            user2_points INTEGER                                          NOT NULL
+            user2_id     BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
+            squad2_id    BYTEA   REFERENCES squads(id) ON DELETE CASCADE  NOT NULL,
+            user2_points INTEGER                                          NOT NULL,
+            season_id    INTEGER REFERENCES seasons(id) ON DELETE CASCADE NOT NULL
         );
         CREATE TABLE IF NOT EXISTS match_results(
             id       BYTEA   PRIMARY KEY                              NOT NULL,
@@ -285,4 +295,9 @@ func (db *database) Queue() queue.DB {
 // Divisions provides access to accounts db.
 func (db *database) Divisions() divisions.DB {
 	return &divisionsDB{conn: db.conn}
+}
+
+// Seasons provides access to accounts db.
+func (db *database) Seasons() seasons.DB {
+	return &seasonsDB{conn: db.conn}
 }

@@ -118,7 +118,8 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					}
 				}
 
-				matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID)
+				// TODO: add season id, currently its 1, but need to refactor.
+				matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, 1)
 				if err != nil {
 					if err := firstClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
 						return ChoreError.Wrap(err)

@@ -56,7 +56,7 @@ type UpdateRequest struct {
 
 // ClubResponse is a struct for response clubs, squad and squadCards.
 type ClubResponse struct {
-	Clubs      clubs.Club        `json:"clubs"`
+	clubs.Club
 	Squad      clubs.Squad       `json:"squad"`
 	SquadCards []clubs.SquadCard `json:"squadCards"`
 }
@@ -161,9 +161,9 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userTeam := ClubResponse{
-		Clubs:      club,
-		Squad:      squad,
-		SquadCards: squadCards,
+		club,
+		squad,
+		squadCards,
 	}
 
 	if err = json.NewEncoder(w).Encode(userTeam); err != nil {

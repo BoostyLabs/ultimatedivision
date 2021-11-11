@@ -7,6 +7,8 @@ import (
 	"context"
 	"testing"
 	"time"
+	"ultimatedivision/divisions"
+	"ultimatedivision/seasons"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -81,12 +83,27 @@ func TestMatches(t *testing.T) {
 		Formation: clubs.FourTwoFour,
 	}
 
+	division1 := divisions.Division{
+		ID:             uuid.New(),
+		Name:           "10",
+		PassingPercent: 10,
+		CreatedAt:      time.Now().UTC(),
+	}
+
+	season1 := seasons.Season{
+		ID:         1,
+		DivisionID: division1.ID,
+		StartedAt:  time.Now().UTC(),
+		EndedAt:    time.Time{},
+	}
+
 	testMatch := matches.Match{
 		ID:       uuid.New(),
 		User1ID:  testUser1.ID,
 		Squad1ID: testSquad1.ID,
 		User2ID:  testUser2.ID,
 		Squad2ID: testSquad2.ID,
+		SeasonID: season1.ID,
 	}
 
 	testMatchUpdated := matches.Match{
@@ -97,6 +114,7 @@ func TestMatches(t *testing.T) {
 		User2ID:     testUser2.ID,
 		Squad2ID:    testSquad2.ID,
 		User2Points: 0,
+		SeasonID:    season1.ID,
 	}
 
 	testMatchGoal1 := matches.MatchGoals{
@@ -125,6 +143,8 @@ func TestMatches(t *testing.T) {
 		repositoryUsers := db.Users()
 		repositoryClubs := db.Clubs()
 		repositoryMatches := db.Matches()
+		repositoryDivisions := db.Divisions()
+		repositorySeasons := db.Seasons()
 
 		t.Run("Create", func(t *testing.T) {
 			err := repositoryUsers.Create(ctx, testUser1)
@@ -143,6 +163,12 @@ func TestMatches(t *testing.T) {
 			require.NoError(t, err)
 
 			_, err = repositoryClubs.CreateSquad(ctx, testSquad2)
+			require.NoError(t, err)
+
+			err = repositoryDivisions.Create(ctx, division1)
+			require.NoError(t, err)
+
+			err = repositorySeasons.Create(ctx, season1)
 			require.NoError(t, err)
 
 			err = repositoryMatches.Create(ctx, testMatch)
@@ -293,6 +319,20 @@ func TestMatchService(t *testing.T) {
 		Formation: clubs.FourTwoFour,
 	}
 
+	division1 := divisions.Division{
+		ID:             uuid.New(),
+		Name:           "10",
+		PassingPercent: 10,
+		CreatedAt:      time.Now().UTC(),
+	}
+
+	season1 := seasons.Season{
+		ID:         1,
+		DivisionID: division1.ID,
+		StartedAt:  time.Now().UTC(),
+		EndedAt:    time.Time{},
+	}
+
 	testMatch := matches.Match{
 		User1ID:  testUser1.ID,
 		User2ID:  testUser2.ID,
@@ -310,6 +350,8 @@ func TestMatchService(t *testing.T) {
 		repositoryUsers := db.Users()
 		repositoryClubs := db.Clubs()
 		repositoryMatches := db.Matches()
+		repositorySeasons := db.Seasons()
+		repositoryDivisions := db.Divisions()
 
 		cardsService := cards.NewService(repositoryCards, cards.Config{})
 		usersService := users.NewService(repositoryUsers)
@@ -337,7 +379,13 @@ func TestMatchService(t *testing.T) {
 			_, err = repositoryClubs.CreateSquad(ctx, testSquad2)
 			require.NoError(t, err)
 
-			matchID, err = matchesService.Create(ctx, testSquad1.ID, testSquad2.ID, testUser1.ID, testUser2.ID)
+			err = repositoryDivisions.Create(ctx, division1)
+			require.NoError(t, err)
+
+			err = repositorySeasons.Create(ctx, season1)
+			require.NoError(t, err)
+
+			matchID, err = matchesService.Create(ctx, testSquad1.ID, testSquad2.ID, testUser1.ID, testUser2.ID, season1.ID)
 			require.NoError(t, err)
 		})
 
