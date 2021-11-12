@@ -2,14 +2,9 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-
-import { AuthRouteConfig, RouteConfig } from '@/app/routes';
-
-import { Validator } from '@/user/validation';
-
-import { loginUser } from '@/app/store/actions/users';
+import { Link, useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { UserDataArea } from '@components/common/UserDataArea';
 
@@ -17,10 +12,15 @@ import facebook from '@static/img/registerPage/facebook_logo.svg';
 import google from '@static/img/registerPage/google_logo.svg';
 import ultimate from '@static/img/registerPage/ultimate.svg';
 
+import { AuthRouteConfig, RouteConfig } from '@/app/routes';
+import { loginUser } from '@/app/store/actions/users';
+import { Validator } from '@/users/validation';
+
 import './index.scss';
 
 const SignIn: React.FC = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
@@ -31,19 +31,19 @@ const SignIn: React.FC = () => {
     const handleIsRemember = () => setIsRemember(prev => !prev);
     /** checks if values does't valid then set an error messages */
     const validateForm: () => boolean = () => {
-        let isValidForm = true;
+        let isFormValid = true;
 
-        if (!Validator.email(email)) {
+        if (!Validator.isEmail(email)) {
             setEmailError('Email is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        if (!Validator.password(password)) {
+        if (!Validator.isPassword(password)) {
             setPasswordError('Password is not valid');
-            isValidForm = false;
+            isFormValid = false;
         };
 
-        return isValidForm;
+        return isFormValid;
     };
     /** user data that will send to server */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
@@ -55,9 +55,12 @@ const SignIn: React.FC = () => {
 
         try {
             await dispatch(loginUser(email, password));
-            location.pathname = RouteConfig.MarketPlace.path;
+            history.push(RouteConfig.MarketPlace.path);
         } catch (error: any) {
-            /** TODO: it will be reworked with notification system */
+            toast.error('Incorrect email or password', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         };
     };
     /** user datas for registration */
@@ -70,7 +73,7 @@ const SignIn: React.FC = () => {
             type: 'email',
             error: emailError,
             clearError: setEmailError,
-            validate: Validator.email,
+            validate: Validator.isEmail,
         },
         {
             value: password,
@@ -80,17 +83,7 @@ const SignIn: React.FC = () => {
             type: 'password',
             error: passwordError,
             clearError: setPasswordError,
-            validate: Validator.password,
-        },
-        {
-            value: 'Remember me',
-            placeHolder: '',
-            onChange: handleIsRemember,
-            className: 'register__sign-in__sign-form__remember-me',
-            type: 'radio',
-            error: null,
-            clearError: null,
-            validate: () => false,
+            validate: Validator.isPassword,
         },
     ];
 
@@ -109,8 +102,9 @@ const SignIn: React.FC = () => {
                     className="register__sign-in__sign-form"
                     onSubmit={handleSubmit}
                 >
-                    {signInDatas.map((data, index) => data.type === 'radio' ? <div key={index}>
+                    {signInDatas.map((data, index) =>
                         <UserDataArea
+                            key={index}
                             value={data.value}
                             placeHolder={data.placeHolder}
                             onChange={data.onChange}
@@ -119,24 +113,26 @@ const SignIn: React.FC = () => {
                             error={data.error}
                             clearError={data.clearError}
                             validate={data.validate}
+                        />)}
+                    <div className="register__sign-in__sign-form__checkbox-wrapper">
+                        <input
+                            id="register-sign-in-checkbox"
+                            className="register__sign-in__sign-form__remember-me"
+                            type="checkbox"
                         />
+                        <label
+                            className="register__sign-in__sign-form__remember-me__text"
+                            htmlFor="register-sign-in-checkbox"
+                        >
+                            Remember me
+                        </label>
                         <Link
-                            to={AuthRouteConfig.ResetPassword.path}
+                            to={AuthRouteConfig.ChangePassword.path}
                             className="register__sign-in__sign-form__forgot-password"
                         >
                             Forgot Password?
                         </Link>
-                    </div> : <UserDataArea
-                        key={index}
-                        value={data.value}
-                        placeHolder={data.placeHolder}
-                        onChange={data.onChange}
-                        className={data.className}
-                        type={data.type}
-                        error={data.error}
-                        clearError={data.clearError}
-                        validate={data.validate}
-                    />)}
+                    </div>
                     <div className="register__sign-in__sign-form__auth-internal">
                         <input
                             className="register__sign-in__sign-form__confirm"

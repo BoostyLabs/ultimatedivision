@@ -17,6 +17,8 @@ import (
 	"ultimatedivision/admin/adminserver"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/cards/nfts"
+	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/console/emails"
@@ -28,6 +30,7 @@ import (
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
 	"ultimatedivision/queue"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -48,6 +51,12 @@ type DB interface {
 	// Avatars provides access to avatars db.
 	Avatars() avatars.DB
 
+	// WaitList provides access to waitlist db.
+	WaitList() waitlist.DB
+
+	// NFTs provides access to nfts db.
+	NFTs() nfts.DB
+
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
 
@@ -65,6 +74,9 @@ type DB interface {
 
 	// Divisions provides access to divisions db.
 	Divisions() divisions.DB
+
+	// Seasons provides access to seasons db.
+	Seasons() seasons.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -103,6 +115,10 @@ type Config struct {
 		avatars.Config
 	} `json:"avatars"`
 
+	NFTs struct {
+		nfts.Config
+	} `json:"nfts"`
+
 	LootBoxes struct {
 		Config lootboxes.Config `json:"lootBoxes"`
 	} `json:"lootBoxes"`
@@ -118,6 +134,10 @@ type Config struct {
 	Divisions struct {
 		divisions.Config
 	} `json:"divisions"`
+
+	Seasons struct {
+		seasons.Config
+	} `json:"seasons"`
 
 	Matches struct {
 		matches.Config
@@ -153,6 +173,16 @@ type Peer struct {
 		Service *avatars.Service
 	}
 
+	// exposes waitlist related logic.
+	WaitList struct {
+		Service *waitlist.Service
+	}
+
+	// exposes nfts related logic.
+	NFTs struct {
+		Service *nfts.Service
+	}
+
 	// exposes clubs related logic.
 	Clubs struct {
 		Service *clubs.Service
@@ -183,6 +213,12 @@ type Peer struct {
 	// exposes divisions related logic.
 	Divisions struct {
 		Service *divisions.Service
+	}
+
+	// exposes divisions related logic.
+	Seasons struct {
+		Service           *seasons.Service
+		ExpirationSeasons *seasons.Chore
 	}
 
 	// Admin web server server with web UI.
@@ -254,17 +290,34 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
-	{ // Avatars setup
+	{ // cards setup
+		peer.Cards.Service = cards.NewService(
+			peer.Database.Cards(),
+			config.Cards.Config,
+		)
+	}
+
+	{ // avatars setup
 		peer.Avatars.Service = avatars.NewService(
 			peer.Database.Avatars(),
 			config.Avatars.Config,
 		)
 	}
 
-	{ // cards setup
-		peer.Cards.Service = cards.NewService(
-			peer.Database.Cards(),
-			config.Cards.Config,
+	{ // nfts setup
+		peer.NFTs.Service = nfts.NewService(
+			config.NFTs.Config,
+			peer.Database.NFTs(),
+		)
+	}
+
+	{ // waitlist setup
+		peer.WaitList.Service = waitlist.NewService(
+			peer.Database.WaitList(),
+			peer.Cards.Service,
+			peer.Avatars.Service,
+			peer.Users.Service,
+			peer.NFTs.Service,
 		)
 	}
 
@@ -331,6 +384,19 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.Divisions.Config)
 	}
 
+	{ // seasons setup
+		peer.Seasons.Service = seasons.NewService(
+			peer.Database.Seasons(),
+			config.Seasons.Config,
+			peer.Divisions.Service,
+		)
+
+		peer.Seasons.ExpirationSeasons = seasons.NewChore(
+			config.Seasons.Config,
+			peer.Seasons.Service,
+		)
+	}
+
 	{ // admin setup
 		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
 		if err != nil {
@@ -376,6 +442,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Auth,
 			peer.Users.Service,
 			peer.Queue.Service,
+			peer.Seasons.Service,
+			peer.WaitList.Service,
 		)
 	}
 
@@ -398,6 +466,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	})
 	group.Go(func() error {
 		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
+	})
+	group.Go(func() error {
+		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
 
 	return group.Wait()
