@@ -117,7 +117,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					}
 				}
 
-				seasonID, err := chore.seasons.GetCurrentSeasons(ctx)
+				_, err = chore.seasons.GetCurrentSeasons(ctx)
 				if err != nil {
 					if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
 						return ChoreError.Wrap(err)
@@ -126,7 +126,8 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 						return ChoreError.Wrap(err)
 					}
 				}
-				matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, seasonID)
+
+				matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, 1)
 				if err != nil {
 					if err := firstClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
 						return ChoreError.Wrap(err)

@@ -20,21 +20,21 @@ var ErrNoMatch = errs.Class("match does not exist")
 // architecture: DB
 type DB interface {
 	// Create creates match in the database.
-	Create(ctx context.Context, match Match) error
+	Create(ctx context.Context, match Match) error //
 	// Get returns match from the database.
-	Get(ctx context.Context, id uuid.UUID) (Match, error)
+	Get(ctx context.Context, id uuid.UUID) (Match, error) //
 	// ListMatches returns page of matches from the database.
-	ListMatches(ctx context.Context, cursor pagination.Cursor) (Page, error)
+	ListMatches(ctx context.Context, cursor pagination.Cursor) (Page, error) //
 	// ListSquadMatches returns all matches played by squad in season.
-	ListSquadMatches(ctx context.Context, squadID uuid.UUID, seasonID int) ([]Match, error)
+	ListSquadMatches(ctx context.Context, squadID uuid.UUID, seasonID int) ([]Match, error) //
 	// UpdateMatch updates the number of points that users received for a played match.
-	UpdateMatch(ctx context.Context, match Match) error
+	UpdateMatch(ctx context.Context, match Match) error //
 	// Delete deletes match from the database.
-	Delete(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error //
 	// AddGoals adds new goal in the match.
-	AddGoals(ctx context.Context, matchGoals []MatchGoals) error
+	AddGoals(ctx context.Context, matchGoals []MatchGoals) error //
 	// ListMatchGoals returns all goals from the match from the database.
-	ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]MatchGoals, error)
+	ListMatchGoals(ctx context.Context, matchID uuid.UUID) ([]MatchGoals, error) //
 	// GetMatchResult returns goals of each user in the match from db.
 	GetMatchResult(ctx context.Context, matchID uuid.UUID) ([]MatchResult, error)
 }

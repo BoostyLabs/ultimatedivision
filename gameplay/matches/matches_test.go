@@ -133,6 +133,11 @@ func TestMatches(t *testing.T) {
 		Minute:  41,
 	}
 
+	testResult := []matches.MatchResult{{
+		UserID: testUser1.ID,
+		QuantityGoals: 2,
+	}}
+
 	newCursor := pagination.Cursor{
 		Limit: 10,
 		Page:  1,
@@ -179,6 +184,12 @@ func TestMatches(t *testing.T) {
 			allMatchesDB, err := repositoryMatches.ListMatches(ctx, newCursor)
 			require.NoError(t, err)
 			compareMatchesSlice(t, allMatchesDB.Matches, []matches.Match{testMatch})
+		})
+
+		t.Run("List squad matches", func(t *testing.T) {
+			allMatches, err := repositoryMatches.ListSquadMatches(ctx, testSquad1.ID, season1.ID)
+			require.NoError(t, err)
+			compareMatchesSlice(t, allMatches, []matches.Match{testMatch})
 		})
 
 		t.Run("Get", func(t *testing.T) {
@@ -392,6 +403,12 @@ func TestMatchService(t *testing.T) {
 		t.Run("list goals", func(t *testing.T) {
 			_, err := matchesService.ListMatchGoals(ctx, matchID)
 			require.NoError(t, err)
+		})
+
+		t.Run("list result", func(t *testing.T) {
+			matchResult, err := matchesService.GetMatchResult(ctx, testMatch.ID)
+			require.NoError(t, err)
+			assert.Equal(t, )
 		})
 
 		t.Run("list matches", func(t *testing.T) {
