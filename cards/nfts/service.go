@@ -11,7 +11,6 @@ import (
 	"ultimatedivision/pkg/nft"
 )
 
-
 // Service is handling NFTs related logic.
 //
 // architecture: Service
