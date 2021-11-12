@@ -83,7 +83,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	lootBoxesController := controllers.NewLootBoxes(log, lootBoxes)
 	marketplaceController := controllers.NewMarketplace(log, marketplace)
 	queueController := controllers.NewQueue(log, queue)
-	nftsController := controllers.NewNFTWaitList(log, nftWaitList)
+	nftWaitListController := controllers.NewNFTWaitList(log, nftWaitList)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -113,6 +113,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsRouter.Use(server.withAuth)
 	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
 	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/{clubId}", clubsController.UpdateStatus).Methods(http.MethodPatch)
 
 	squadRouter := clubsRouter.PathPrefix("/{clubId}/squads").Subrouter()
 	squadRouter.HandleFunc("", clubsController.CreateSquad).Methods(http.MethodPost)
@@ -140,9 +141,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	queueRouter.Use(server.withAuth)
 	queueRouter.HandleFunc("", queueController.Create).Methods(http.MethodGet)
 
-	nftRouter := apiRouter.PathPrefix("/nft").Subrouter()
-	nftRouter.Use(server.withAuth)
-	nftRouter.HandleFunc("", nftsController.Create).Methods(http.MethodPost)
+	nftWaitListRouter := apiRouter.PathPrefix("/nft-waitlist").Subrouter()
+	nftWaitListRouter.Use(server.withAuth)
+	nftWaitListRouter.HandleFunc("", nftWaitListController.Create).Methods(http.MethodPost)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))

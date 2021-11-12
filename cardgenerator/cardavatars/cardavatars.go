@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package avatarcards
+package cardavatars
 
 import (
 	"ultimatedivision/cards"
@@ -9,8 +9,8 @@ import (
 	"ultimatedivision/cards/nfts"
 )
 
-// CardWithLinkToAvatar describes card entity with link to avatar.
-type CardWithLinkToAvatar struct {
+// CardAvatars describes card entity with link to avatar.
+type CardAvatars struct {
 	cards.Card
 	OriginalURL string `json:"originalUrl"`
 }
