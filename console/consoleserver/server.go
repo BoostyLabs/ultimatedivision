@@ -141,9 +141,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	queueRouter.Use(server.withAuth)
 	queueRouter.HandleFunc("", queueController.Create).Methods(http.MethodGet)
 
-	nftRouter := apiRouter.PathPrefix("/nft").Subrouter()
-	nftRouter.Use(server.withAuth)
-	nftRouter.HandleFunc("", nftsController.Create).Methods(http.MethodPost)
+	nftWaitListRouter := apiRouter.PathPrefix("/nft-waitlist").Subrouter()
+	nftWaitListRouter.Use(server.withAuth)
+	nftWaitListRouter.HandleFunc("", nftsController.Create).Methods(http.MethodPost)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))

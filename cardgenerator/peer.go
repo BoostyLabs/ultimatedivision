@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"ultimatedivision/cardgenerator/avatarcards"
+	"ultimatedivision/cardgenerator/cardavatars"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/cards/nfts"
@@ -19,9 +19,9 @@ import (
 
 // Config is the global configuration for cardgenerator.
 type Config struct {
-	AvatarCards struct {
-		avatarcards.Config
-	} `json:"avatarCards"`
+	CardAvatars struct {
+		cardavatars.Config
+	} `json:"cardAvatars"`
 }
 
 // Peer is the representation of a cardgenerator.
@@ -29,7 +29,7 @@ type Peer struct {
 	Config Config
 	Log    logger.Logger
 
-	quantityOfCard int
+	cardsTotal int
 
 	// exposes cards related logic.
 	Cards struct {
@@ -47,36 +47,36 @@ type Peer struct {
 	}
 
 	// exposes avatar cards related logic.
-	AvatarCards struct {
-		Service *avatarcards.Service
+	CardAvatars struct {
+		Service *cardavatars.Service
 	}
 }
 
 // New is a constructor for cardgenerator.Peer.
-func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, err error) {
+func New(logger logger.Logger, config Config, cardsTotal int) (peer *Peer, err error) {
 	peer = &Peer{
-		Log:            logger,
-		Config:         config,
-		quantityOfCard: quantityOfCard,
+		Log:        logger,
+		Config:     config,
+		cardsTotal: cardsTotal,
 	}
 
 	{ // cards setup
 		peer.Cards.Service = cards.NewService(
 			nil,
-			config.AvatarCards.CardConfig,
+			config.CardAvatars.CardConfig,
 		)
 	}
 
 	{ // avatars setup
 		peer.Avatars.Service = avatars.NewService(
 			nil,
-			config.AvatarCards.AvatarConfig,
+			config.CardAvatars.AvatarConfig,
 		)
 	}
 
 	{ // nfts setup
 		peer.NFTs.Service = nfts.NewService(
-			config.AvatarCards.NFTConfig,
+			config.CardAvatars.NFTConfig,
 			peer.Cards.Service,
 			peer.Avatars.Service,
 			nil,
@@ -85,8 +85,8 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 	}
 
 	{ // avatar cards setup
-		peer.AvatarCards.Service = avatarcards.NewService(
-			config.AvatarCards.Config,
+		peer.CardAvatars.Service = cardavatars.NewService(
+			config.CardAvatars.Config,
 			peer.Cards.Service,
 			peer.Avatars.Service,
 			peer.NFTs.Service,
@@ -98,10 +98,10 @@ func New(logger logger.Logger, config Config, quantityOfCard int) (peer *Peer, e
 
 // Generate initiates generation of avatar cards.
 func (peer *Peer) Generate(ctx context.Context) error {
-	for i := 0; i < peer.quantityOfCard; i++ {
-		allNames := make(map[string]struct{}, peer.quantityOfCard)
-		for len(allNames) <= peer.quantityOfCard {
-			if err := peer.AvatarCards.Service.GenerateName(peer.Config.AvatarCards.PathToNamesDataset, allNames); err != nil {
+	for i := 0; i < peer.cardsTotal; i++ {
+		allNames := make(map[string]struct{}, peer.cardsTotal)
+		for len(allNames) <= peer.cardsTotal {
+			if err := peer.CardAvatars.Service.GenerateName(peer.Config.CardAvatars.PathToNamesDataset, allNames); err != nil {
 				return err
 			}
 		}
@@ -113,7 +113,7 @@ func (peer *Peer) Generate(ctx context.Context) error {
 			break
 		}
 
-		nft, err := peer.AvatarCards.Service.Generate(ctx, i, playerName)
+		nft, err := peer.CardAvatars.Service.Generate(ctx, i, playerName)
 		if err != nil {
 			return err
 		}
@@ -123,7 +123,7 @@ func (peer *Peer) Generate(ctx context.Context) error {
 			return err
 		}
 
-		if err = ioutil.WriteFile(filepath.Join(peer.Config.AvatarCards.PathToOutputJSONFile, strconv.Itoa(i+1)+".json"), file, 0644); err != nil {
+		if err = ioutil.WriteFile(filepath.Join(peer.Config.CardAvatars.PathToOutputJSONFile, strconv.Itoa(i+1)+".json"), file, 0644); err != nil {
 			return err
 		}
 	}
@@ -133,7 +133,7 @@ func (peer *Peer) Generate(ctx context.Context) error {
 
 // TestGenerate initiates generation test version of avatar cards.
 func (peer *Peer) TestGenerate(ctx context.Context) error {
-	avatars, err := peer.AvatarCards.Service.TestGenerate(ctx, peer.quantityOfCard)
+	avatars, err := peer.CardAvatars.Service.TestGenerate(ctx, peer.cardsTotal)
 	if err != nil {
 		return err
 	}
@@ -143,5 +143,5 @@ func (peer *Peer) TestGenerate(ctx context.Context) error {
 		return err
 	}
 
-	return ioutil.WriteFile(filepath.Join(peer.Config.AvatarCards.PathToOutputJSONFile, "test.json"), file, 0644)
+	return ioutil.WriteFile(filepath.Join(peer.Config.CardAvatars.PathToOutputJSONFile, "data-that-make-up-avatar.json"), file, 0644)
 }

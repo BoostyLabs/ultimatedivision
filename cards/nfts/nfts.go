@@ -50,7 +50,7 @@ type Config struct {
 	ExternalURL string `json:"externalUrl"`
 }
 
-// CreateNFT describes body of request for creating nft token.
+// CreateNFT holds data required for creation of NFT token from a card.
 type CreateNFT struct {
 	CardID        uuid.UUID           `json:"cardId"`
 	WalletAddress cryptoutils.Address `json:"walletAddress"`
