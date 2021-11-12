@@ -2,7 +2,20 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '@/api/index';
-import { CardEditIdentificators, Club, Squad } from '@/club';
+import { Club, Squad } from '@/club';
+
+const DEFAULT_VALUE = 0;
+
+/** class for api methods to declare full path of card inside of club */
+export class CardEditIdentificators {
+    /** includes club id, squad idm card id and position parameters */
+    constructor(
+        public clubId: string,
+        public squadId: string,
+        public cardId: string,
+        public position: number = DEFAULT_VALUE
+    ) { }
+}
 
 /** ClubsClient base implementation */
 export class ClubsClient extends APIClient {

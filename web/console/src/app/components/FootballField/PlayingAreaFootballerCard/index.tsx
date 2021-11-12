@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 
-import { CardEditIdentificators } from '@/club';
+import { CardEditIdentificators } from '@/api/club';
 import { deleteCard } from '@/app/store/actions/clubs';
 import { RootState } from '@/app/store';
 import { Card } from '@/card';

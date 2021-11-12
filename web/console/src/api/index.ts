@@ -4,7 +4,8 @@
 import { HttpClient } from '@/private/http/client';
 
 /**
- * ErrorUnauthorized is a custom error type for performing unauthorized operations.
+ * ErrorUnauthorized is a custom error type which indicates that the client request has not been
+ * completed because it lacks valid authentication credentials for the requested resource.
  */
 export class UnauthorizedError extends Error {
     /** Error message while unautorized */
@@ -14,7 +15,8 @@ export class UnauthorizedError extends Error {
 }
 
 /**
- * BadRequestError is a custom error type for performing bad request.
+ * BadRequestError is a custom error type which indicates that the server cannot or
+ * will not process the request due to something that is perceived to be a client error.
  */
 export class BadRequestError extends Error {
     /** Error message while bad request */
@@ -34,7 +36,8 @@ export class NotFoundError extends Error {
 };
 
 /**
- * InternalError is a custom error type for internal server error.
+ * InternalError is a custom error type which indicates that the server encountered an unexpected condition
+ * that prevented it from fulfilling the request.
  */
 export class InternalError extends Error {
     /** Error message for internal server error */
@@ -69,7 +72,6 @@ export class APIClient {
      *
      * @private
      */
-    /* eslint-disable */
     protected async handleError(response: Response): Promise<void> {
 
         switch (response.status) {

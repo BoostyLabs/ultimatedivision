@@ -12,7 +12,7 @@ import { RootState } from '@/app/store';
 import { listOfCards } from '@/app/store/actions/cards';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/clubs';
 import { Card } from '@/card';
-import { CardEditIdentificators } from '@/club';
+import { CardEditIdentificators } from '@/api/club';
 
 import './index.scss';
 

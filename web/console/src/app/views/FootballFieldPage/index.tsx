@@ -12,7 +12,7 @@ import { FootballFieldPlayingArea } from
 
 import { RootState } from '@/app/store';
 import { createClub, deleteCard, getClub } from '@/app/store/actions/clubs';
-import { CardEditIdentificators } from '@/club';
+import { CardEditIdentificators } from '@/api/club';
 import { NotFoundError } from '@/api';
 
 import './index.scss';
