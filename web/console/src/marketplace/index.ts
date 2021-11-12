@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { CardGetters } from '@/card';
+import { CardWithStats } from '@/card';
 
 /** base marketplace Lot type implementation */
 export interface Lot {
@@ -17,7 +17,7 @@ export interface Lot {
     startTime: string;
     endTime: string;
     period: number;
-    card: CardGetters;
+    card: CardWithStats;
 };
 
 /** base MarketPlace domain entity type implementation */

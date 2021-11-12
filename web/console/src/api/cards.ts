@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Card, CardGetters, CardsPage } from '@/card';
+import { Card, CardWithStats, CardsPage } from '@/card';
 
 import { APIClient } from '@/api/index';
 

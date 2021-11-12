@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { LootboxClient } from '@/api/lootboxes';
-import { Card, CardGetters } from '@/card';
+import { Card, CardWithStats } from '@/card';
 import { Lootbox } from '.';
 
 /** exposes all lootbox related logic */
@@ -15,10 +15,10 @@ export class LootboxService {
     };
 
     /** handles lootbox buying */
-    public async buy(lootbox: Lootbox): Promise<CardGetters[]> {
+    public async buy(lootbox: Lootbox): Promise<CardWithStats[]> {
         const cards = await this.lootboxes.buy(lootbox);
 
-        return cards.map((card: Card) => new CardGetters(card));
+        return cards.map((card: Card) => new CardWithStats(card));
     };
 };
 

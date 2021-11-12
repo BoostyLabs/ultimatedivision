@@ -25,8 +25,8 @@ import star from '@static/img/FootballerCardPage/star.svg';
 
 /** class for our getters to get label and value while mapping */
 export class CardField {
-    /** label and value for mapping */
-    constructor(public label: string, public value: string | number) {}
+  /** label and value for mapping */
+  constructor(public label: string, public value: string | number) { }
 }
 
 /* eslint-disable */
@@ -37,7 +37,7 @@ export class CardStats {
     public title: string = "",
     public abbreviated: string = "",
     public fields: CardField[] = []
-  ) {}
+  ) { }
   get average() {
     return Math.round(
       this.fields
@@ -137,7 +137,7 @@ export interface Card {
 }
 
 /** Card base implementation */
-export class CardGetters {
+export class CardWithStats {
   id: string = "";
   playerName: string = "Taras";
   quality: string = "";
@@ -381,7 +381,7 @@ export class CardGetters {
 export class CardsPage {
   /** default Cards initial values */
   constructor(
-    public cards: Card[] | CardGetters[],
+    public cards: Card[] | CardWithStats[],
     public page: {
       offset: number;
       limit: number;
@@ -389,5 +389,5 @@ export class CardsPage {
       pageCount: number;
       totalCount: number;
     }
-  ) {}
+  ) { }
 }
