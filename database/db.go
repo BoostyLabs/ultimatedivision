@@ -7,8 +7,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
 
@@ -16,6 +14,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
@@ -54,13 +53,13 @@ func New(databaseURL string) (ultimatedivision.DB, error) {
 
 // Hub entity describes hub of queue for clients.
 type Hub struct {
-	Queue map[uuid.UUID]*websocket.Conn
+	Queue []queue.Client
 }
 
 // NewHub is a constructor for hub entity.
 func NewHub() *Hub {
 	return &Hub{
-		Queue: make(map[uuid.UUID]*websocket.Conn),
+		Queue: []queue.Client{},
 	}
 }
 
@@ -75,6 +74,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             nick_name        VARCHAR                  NOT NULL,
             first_name       VARCHAR                  NOT NULL,
             last_name        VARCHAR                  NOT NULL,
+            wallet_address   VARCHAR,
             last_login       TIMESTAMP WITH TIME ZONE NOT NULL,
             status           INTEGER                  NOT NULL,
             created_at       TIMESTAMP WITH TIME ZONE NOT NULL
@@ -168,6 +168,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             id         BYTEA     PRIMARY KEY                            NOT NULL,
             owner_id   BYTEA     REFERENCES users(id) ON DELETE CASCADE NOT NULL,
             club_name  VARCHAR                                          NOT NULL,
+            status     INTEGER                                          NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE                         NOT NULL
         );
         CREATE TABLE IF NOT EXISTS squads (
@@ -233,6 +234,12 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             user_id  BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
             card_id  BYTEA   REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
             minute   INTEGER                                          NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS waitlist(
+            token_id       SERIAL  PRIMARY KEY                            NOT NULL,
+            card_id        BYTEA   REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
+            wallet_address VARCHAR                                        NOT NULL,
+            password       VARCHAR                                        NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -301,4 +308,9 @@ func (db *database) Divisions() divisions.DB {
 // Seasons provides access to accounts db.
 func (db *database) Seasons() seasons.DB {
 	return &seasonsDB{conn: db.conn}
+}
+
+// WaitList provides access to accounts db.
+func (db *database) WaitList() waitlist.DB {
+	return &waitlistDB{conn: db.conn}
 }

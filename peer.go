@@ -17,6 +17,8 @@ import (
 	"ultimatedivision/admin/adminserver"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/cards/nfts"
+	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/console/emails"
@@ -48,6 +50,9 @@ type DB interface {
 
 	// Avatars provides access to avatars db.
 	Avatars() avatars.DB
+
+	// WaitList provides access to waitlist db.
+	WaitList() waitlist.DB
 
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
@@ -107,6 +112,10 @@ type Config struct {
 		avatars.Config
 	} `json:"avatars"`
 
+	NFTs struct {
+		nfts.Config
+	} `json:"nfts"`
+
 	LootBoxes struct {
 		Config lootboxes.Config `json:"lootBoxes"`
 	} `json:"lootBoxes"`
@@ -159,6 +168,16 @@ type Peer struct {
 	// exposes avatars related logic.
 	Avatars struct {
 		Service *avatars.Service
+	}
+
+	// exposes waitlist related logic.
+	WaitList struct {
+		Service *waitlist.Service
+	}
+
+	// exposes nfts related logic.
+	NFTs struct {
+		Service *nfts.Service
 	}
 
 	// exposes clubs related logic.
@@ -268,17 +287,34 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
-	{ // Avatars setup
+	{ // cards setup
+		peer.Cards.Service = cards.NewService(
+			peer.Database.Cards(),
+			config.Cards.Config,
+		)
+	}
+
+	{ // avatars setup
 		peer.Avatars.Service = avatars.NewService(
 			peer.Database.Avatars(),
 			config.Avatars.Config,
 		)
 	}
 
-	{ // cards setup
-		peer.Cards.Service = cards.NewService(
-			peer.Database.Cards(),
-			config.Cards.Config,
+	{ // nfts setup
+		peer.NFTs.Service = nfts.NewService(
+			config.NFTs.Config,
+			nil,
+		)
+	}
+
+	{ // waitlist setup
+		peer.WaitList.Service = waitlist.NewService(
+			peer.Database.WaitList(),
+			peer.Cards.Service,
+			peer.Avatars.Service,
+			peer.Users.Service,
+			peer.NFTs.Service,
 		)
 	}
 
@@ -328,12 +364,14 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.Queue.Config,
 			peer.Database.Queue(),
 			peer.Users.Service,
+			peer.Clubs.Service,
 		)
 
 		peer.Queue.PlaceChore = queue.NewChore(
 			peer.Log,
 			config.Queue.Config,
 			peer.Queue.Service,
+			peer.Matches.Service,
 		)
 	}
 
@@ -402,6 +440,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Service,
 			peer.Queue.Service,
 			peer.Seasons.Service,
+			peer.WaitList.Service,
 		)
 	}
 

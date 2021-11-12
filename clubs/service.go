@@ -17,9 +17,6 @@ import (
 // ErrClubs indicates that there was an error in the service.
 var ErrClubs = errs.Class("clubs service error")
 
-// squadSize defines number of cards in the full squad.
-const squadSize = 11
-
 // Service is handling clubs related logic.
 //
 // architecture: Service
@@ -52,8 +49,19 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 		CreatedAt: time.Now().UTC(),
 	}
 
-	clubID, err := service.clubs.Create(ctx, newClub)
+	allClubs, err := service.ListByUserID(ctx, userID)
+	if err != nil {
+		return uuid.Nil, ErrClubs.Wrap(err)
+	}
 
+	switch {
+	case len(allClubs) == 0:
+		newClub.Status = StatusActive
+	default:
+		newClub.Status = StatusInactive
+	}
+
+	clubID, err := service.clubs.Create(ctx, newClub)
 	return clubID, ErrClubs.Wrap(err)
 }
 
@@ -78,7 +86,7 @@ func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, new
 		return ErrClubs.Wrap(err)
 	}
 
-	if len(squadCards) == squadSize {
+	if len(squadCards) == SquadSize {
 		return ErrClubs.New("squad is full")
 	}
 
@@ -167,9 +175,15 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 	return ErrClubs.Wrap(service.clubs.UpdatePositions(ctx, updatedCards))
 }
 
-// GetSquad returns squad of club.
-func (service *Service) GetSquad(ctx context.Context, clubID uuid.UUID) (Squad, error) {
-	squad, err := service.clubs.GetSquad(ctx, clubID)
+// GetSquadByClubID returns squad of club.
+func (service *Service) GetSquadByClubID(ctx context.Context, clubID uuid.UUID) (Squad, error) {
+	squad, err := service.clubs.GetSquadByClubID(ctx, clubID)
+	return squad, ErrClubs.Wrap(err)
+}
+
+// GetSquad returns squad.
+func (service *Service) GetSquad(ctx context.Context, squadID uuid.UUID) (Squad, error) {
+	squad, err := service.clubs.GetSquad(ctx, squadID)
 	return squad, ErrClubs.Wrap(err)
 }
 
@@ -187,8 +201,8 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 
 	squadCards = convertPositions(squadCards, formation)
 
-	if len(squadCards) < squadSize {
-		for i := 0; i < squadSize; i++ {
+	if len(squadCards) < SquadSize {
+		for i := 0; i < SquadSize; i++ {
 			var isPositionInTheSquad bool
 			for _, card := range squadCards {
 				if card.Position == Position(i) {
@@ -215,9 +229,15 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 	return squadCards, ErrClubs.Wrap(err)
 }
 
-// Get returns user club.
-func (service *Service) Get(ctx context.Context, userID uuid.UUID) (Club, error) {
-	club, err := service.clubs.GetByUserID(ctx, userID)
+// ListByUserID returns user's clubs.
+func (service *Service) ListByUserID(ctx context.Context, userID uuid.UUID) ([]Club, error) {
+	club, err := service.clubs.ListByUserID(ctx, userID)
+	return club, ErrClubs.Wrap(err)
+}
+
+// Get returns club.
+func (service *Service) Get(ctx context.Context, clubID uuid.UUID) (Club, error) {
+	club, err := service.clubs.Get(ctx, clubID)
 	return club, ErrClubs.Wrap(err)
 }
 
@@ -297,6 +317,25 @@ func (service *Service) CalculateEffectivenessOfSquad(ctx context.Context, squad
 	return effectiveness, nil
 }
 
+// UpdateStatus updates status of club.
+func (service *Service) UpdateStatus(ctx context.Context, userID, clubID uuid.UUID, newStatus Status) error {
+	allUserClubs, err := service.clubs.ListByUserID(ctx, userID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	for i := 0; i < len(allUserClubs); i++ {
+		if allUserClubs[i].ID != clubID {
+			allUserClubs[i].Status = StatusInactive
+			continue
+		}
+
+		allUserClubs[i].Status = StatusActive
+	}
+
+	return ErrClubs.Wrap(service.clubs.UpdateStatuses(ctx, allUserClubs))
+}
+
 // RemoveIndex removes element from the slice.
 func RemoveIndex(s []SquadCard, index int) []SquadCard {
 	return append(s[:index], s[index+1:]...)
@@ -364,14 +403,17 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position P
 // CardsWithNewPositions returns cards with new position by new formation.
 func (service *Service) CardsWithNewPositions(ctx context.Context, cards []SquadCard, positions []Position) (map[Position]uuid.UUID, error) {
 	positionMap := make(map[Position]uuid.UUID)
-
+	maxCards := SquadSize
 	for _, position := range positions {
 		card, index, err := service.EffectiveCardForPosition(ctx, position, cards)
 		if err != nil {
 			return positionMap, ErrClubs.Wrap(err)
 		}
 		positionMap[position] = card.ID
-		cards = RemoveIndex(cards, index)
+		if len(cards) == maxCards {
+			cards = RemoveIndex(cards, index)
+		}
+		maxCards--
 	}
 
 	return positionMap, nil
