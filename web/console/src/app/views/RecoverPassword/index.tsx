@@ -77,6 +77,7 @@ const ResetPassword: React.FC = () => {
         return isFormValid;
     };
 
+    /** DELAY is the delay time in milliseconds for redirect to SignIn page. */
     const DELAY: number = 3000;
     /** sign in user data */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
