@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { APIClient } from '.';
 import { User } from '@/users';
+import { APIClient } from '.';
 
 /**
  * UsersClient is a http implementation of users API.
@@ -62,7 +62,7 @@ export class UsersClient extends APIClient {
     /** recovers user password */
     public async recoverPassword(newPassword: string): Promise<void> {
         const path = `${this.ROOT_PATH}/reset-password`;
-        const response = await this.http.patch(path, JSON.stringify(newPassword));
+        const response = await this.http.patch(path, JSON.stringify({newPassword}));
 
         if (!response.ok) {
             await this.handleError(response);
