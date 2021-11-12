@@ -39,11 +39,11 @@ func (nftsDB *nftsDB) Create(ctx context.Context, cardID uuid.UUID, wallet crypt
 }
 
 // List returns all nft token from wait list from database.
-func (nftsDB *nftsDB) List(ctx context.Context) ([]nfts.NFTWaitList, error) {
+func (nftsDB *nftsDB) List(ctx context.Context) ([]nfts.NFTWaitListItem, error) {
 	query := `SELECT *
 	          FROM nfts_waitlist`
 
-	var nftList []nfts.NFTWaitList
+	var nftList []nfts.NFTWaitListItem
 
 	rows, err := nftsDB.conn.QueryContext(ctx, query)
 	if err != nil {
@@ -54,7 +54,7 @@ func (nftsDB *nftsDB) List(ctx context.Context) ([]nfts.NFTWaitList, error) {
 	}()
 
 	for rows.Next() {
-		var nft nfts.NFTWaitList
+		var nft nfts.NFTWaitListItem
 		err = rows.Scan(&nft.TokenID, &nft.CardID, &nft.Wallet, &nft.Password)
 		if err != nil {
 			return nftList, ErrNFTs.Wrap(err)
@@ -70,7 +70,7 @@ func (nftsDB *nftsDB) List(ctx context.Context) ([]nfts.NFTWaitList, error) {
 }
 
 // ListWithoutPassword returns all nft tokens without password from database.
-func (nftsDB *nftsDB) ListWithoutPassword(ctx context.Context) ([]nfts.NFTWaitList, error) {
+func (nftsDB *nftsDB) ListWithoutPassword(ctx context.Context) ([]nfts.NFTWaitListItem, error) {
 	query :=
 		`SELECT *
 	     FROM nfts_waitlist
@@ -84,9 +84,9 @@ func (nftsDB *nftsDB) ListWithoutPassword(ctx context.Context) ([]nfts.NFTWaitLi
 		err = errs.Combine(err, rows.Close())
 	}()
 
-	var nftsWithoutPassword []nfts.NFTWaitList
+	var nftsWithoutPassword []nfts.NFTWaitListItem
 	for rows.Next() {
-		var nft nfts.NFTWaitList
+		var nft nfts.NFTWaitListItem
 		if err = rows.Scan(&nft.TokenID, &nft.CardID, &nft.Wallet, &nft.Password); err != nil {
 			return nil, ErrNFTs.Wrap(err)
 		}
@@ -97,12 +97,12 @@ func (nftsDB *nftsDB) ListWithoutPassword(ctx context.Context) ([]nfts.NFTWaitLi
 }
 
 // Get returns nft token by card id.
-func (nftsDB *nftsDB) Get(ctx context.Context, tokenID int) (nfts.NFTWaitList, error) {
+func (nftsDB *nftsDB) Get(ctx context.Context, tokenID int) (nfts.NFTWaitListItem, error) {
 	query := `SELECT *
 	          FROM nfts_waitlist
 	          WHERE token_id = $1`
 
-	var nft nfts.NFTWaitList
+	var nft nfts.NFTWaitListItem
 
 	err := nftsDB.conn.QueryRowContext(ctx, query, tokenID).Scan(&nft.TokenID, &nft.CardID, &nft.Wallet, &nft.Password)
 	if errors.Is(err, sql.ErrNoRows) {

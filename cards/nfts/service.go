@@ -17,8 +17,8 @@ import (
 	"ultimatedivision/users"
 )
 
-// ErrNFTs indicated that there was an error in service.
-var ErrNFTs = errs.Class("NFTs service error")
+// ErrNFTWaitList indicated that there was an error in service.
+var ErrNFTWaitList = errs.Class("NFTs service error")
 
 // Service is handling NFTs related logic.
 //
@@ -45,22 +45,22 @@ func NewService(config Config, cards *cards.Service, avatars *avatars.Service, u
 func (service *Service) Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address, userID uuid.UUID) error {
 	card, err := service.cards.Get(ctx, cardID)
 	if err != nil {
-		return ErrNFTs.Wrap(err)
+		return ErrNFTWaitList.Wrap(err)
 	}
 
 	avatar, err := service.avatars.Get(ctx, cardID)
 	if err != nil {
-		return ErrNFTs.Wrap(err)
+		return ErrNFTWaitList.Wrap(err)
 	}
 
-	// TODO: save avatar
+	// TODO: save avatar to file storage
 
 	_, err = service.Generate(ctx, card, avatar.OriginalURL, service.config.ExternalURL)
 	if err != nil {
-		return ErrNFTs.Wrap(err)
+		return ErrNFTWaitList.Wrap(err)
 	}
 
-	// TODO: save nft
+	// TODO: save nft metadata to file storage
 
 	// TODO: add user in queue and update wallet address
 
@@ -139,30 +139,30 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL
 }
 
 // List returns all nfts.
-func (service *Service) List(ctx context.Context) ([]NFTWaitList, error) {
+func (service *Service) List(ctx context.Context) ([]NFTWaitListItem, error) {
 	allNFT, err := service.nfts.List(ctx)
-	return allNFT, ErrNFTs.Wrap(err)
+	return allNFT, ErrNFTWaitList.Wrap(err)
 }
 
 // Get returns nft by token id.
-func (service *Service) Get(ctx context.Context, tokenID int) (NFTWaitList, error) {
+func (service *Service) Get(ctx context.Context, tokenID int) (NFTWaitListItem, error) {
 	nft, err := service.nfts.Get(ctx, tokenID)
-	return nft, ErrNFTs.Wrap(err)
+	return nft, ErrNFTWaitList.Wrap(err)
 }
 
 // GetLastTokenID returns id of latest nft.
 func (service *Service) GetLastTokenID(ctx context.Context) (int, error) {
 	lastID, err := service.nfts.GetLast(ctx)
-	return lastID, ErrNFTs.Wrap(err)
+	return lastID, ErrNFTWaitList.Wrap(err)
 }
 
 // ListWithoutPassword returns nfts without password.
-func (service *Service) ListWithoutPassword(ctx context.Context) ([]NFTWaitList, error) {
+func (service *Service) ListWithoutPassword(ctx context.Context) ([]NFTWaitListItem, error) {
 	nftWithoutPassword, err := service.nfts.ListWithoutPassword(ctx)
-	return nftWithoutPassword, ErrNFTs.Wrap(err)
+	return nftWithoutPassword, ErrNFTWaitList.Wrap(err)
 }
 
 // Delete deletes nfts.
 func (service *Service) Delete(ctx context.Context, tokenIDs []int) error {
-	return ErrNFTs.Wrap(service.nfts.Delete(ctx, tokenIDs))
+	return ErrNFTWaitList.Wrap(service.nfts.Delete(ctx, tokenIDs))
 }
