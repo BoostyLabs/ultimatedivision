@@ -155,13 +155,13 @@ func TestNFTs(t *testing.T) {
 		Throwing:         49,
 	}
 
-	nft1 := nfts.NFTWaitList{
+	nft1 := nfts.NFTWaitListItem{
 		TokenID: 1,
 		CardID:  card1.ID,
 		Wallet:  "0x96216849c49358b10257cb55b28ea603c874b05e",
 	}
 
-	nft2 := nfts.NFTWaitList{
+	nft2 := nfts.NFTWaitListItem{
 		TokenID: 2,
 		CardID:  card2.ID,
 		Wallet:  "0x96216849c49358B10254cb55b28eA603c874b05E",
@@ -193,14 +193,14 @@ func TestNFTs(t *testing.T) {
 			nftList, err := repositoryNFTs.List(ctx)
 			require.NoError(t, err)
 
-			compareNFTsSlice(t, nftList, []nfts.NFTWaitList{nft1, nft2})
+			compareNFTsSlice(t, nftList, []nfts.NFTWaitListItem{nft1, nft2})
 		})
 
 		t.Run("List without password", func(t *testing.T) {
 			nftList, err := repositoryNFTs.ListWithoutPassword(ctx)
 			require.NoError(t, err)
 
-			compareNFTsSlice(t, nftList, []nfts.NFTWaitList{nft1, nft2})
+			compareNFTsSlice(t, nftList, []nfts.NFTWaitListItem{nft1, nft2})
 		})
 
 		t.Run("Get", func(t *testing.T) {
@@ -229,7 +229,7 @@ func TestNFTs(t *testing.T) {
 	})
 }
 
-func compareNFTsSlice(t *testing.T, nft1, nft2 []nfts.NFTWaitList) {
+func compareNFTsSlice(t *testing.T, nft1, nft2 []nfts.NFTWaitListItem) {
 	assert.Equal(t, len(nft1), len(nft2))
 
 	for i := 0; i < len(nft1); i++ {
@@ -239,7 +239,7 @@ func compareNFTsSlice(t *testing.T, nft1, nft2 []nfts.NFTWaitList) {
 	}
 }
 
-func compareNFTs(t *testing.T, nft1, nft2 nfts.NFTWaitList) {
+func compareNFTs(t *testing.T, nft1, nft2 nfts.NFTWaitListItem) {
 	assert.Equal(t, nft1.TokenID, nft2.TokenID)
 	assert.Equal(t, nft1.CardID, nft2.CardID)
 	assert.Equal(t, nft1.Wallet, nft2.Wallet)
