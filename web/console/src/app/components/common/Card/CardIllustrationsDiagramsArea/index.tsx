@@ -3,13 +3,12 @@
 
 import { FootballerCardIllustrationsDiagram } from '@/app/components/common/Card/CardIllustrationsDiagram';
 
-import { Card } from '@/card';
+import { CardWithStats } from '@/card';
 
 import './index.scss';
 
-export const FootballerCardIllustrationsDiagramsArea: React.FC<{ card: Card }> =
-    ({ card }) => {
-        const diagramData = card.diagramArea;
+export const FootballerCardIllustrationsDiagramsArea: React.FC<{ card: CardWithStats }> = ({ card }) => {
+    const diagramData = card.diagramArea;
 
         return (
             <div className="footballer-card-illustrations-diagram-area">
