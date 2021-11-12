@@ -7,7 +7,6 @@ import (
 	"crypto/ecdsa"
 	"encoding/hex"
 	"fmt"
-	"strconv"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -158,7 +157,7 @@ func GenerateSignatureWithToken(addressWallet Address, addressContract Address, 
 		return "", err
 	}
 
-	tokenIDString := strconv.Itoa(tokenID)
+	tokenIDString := fmt.Sprintf("%x", tokenID)
 	var zeroString string
 	for i := 0; i < (64 - len(tokenIDString)); i++ {
 		zeroString += "0"
