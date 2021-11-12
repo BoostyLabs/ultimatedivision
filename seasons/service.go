@@ -5,9 +5,9 @@ package seasons
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/divisions"
