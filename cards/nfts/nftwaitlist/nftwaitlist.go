@@ -22,19 +22,19 @@ type DB interface {
 	// Create creates nft for wait list in the database.
 	Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address) error
 	// Get returns nft for wait list by card id.
-	Get(ctx context.Context, tokenID int) (NFTWaitList, error)
+	Get(ctx context.Context, tokenID int) (Item, error)
 	// GetLast returns id of last inserted token.
 	GetLast(ctx context.Context) (int, error)
 	// List returns all nft tokens from wait list from database.
-	List(ctx context.Context) ([]NFTWaitList, error)
+	List(ctx context.Context) ([]Item, error)
 	// ListWithoutPassword returns nfts for wait list without password from database.
-	ListWithoutPassword(ctx context.Context) ([]NFTWaitList, error)
+	ListWithoutPassword(ctx context.Context) ([]Item, error)
 	// Delete deletes nft from wait list by id of token.
 	Delete(ctx context.Context, tokenIDs []int) error
 }
 
-// NFTWaitList describes wait list of nft tokens entity.
-type NFTWaitList struct {
+// Item entity describes item fot wait list nfts.
+type Item struct {
 	TokenID  int                   `json:"tokenId"`
 	CardID   uuid.UUID             `json:"cardId"`
 	Wallet   cryptoutils.Address   `json:"wallet"`

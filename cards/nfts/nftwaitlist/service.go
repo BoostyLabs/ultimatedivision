@@ -73,13 +73,13 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) error {
 }
 
 // List returns all nft for wait list.
-func (service *Service) List(ctx context.Context) ([]NFTWaitList, error) {
+func (service *Service) List(ctx context.Context) ([]Item, error) {
 	allNFT, err := service.nftWaitList.List(ctx)
 	return allNFT, ErrNFTWaitlist.Wrap(err)
 }
 
 // Get returns nft for wait list by token id.
-func (service *Service) Get(ctx context.Context, tokenID int) (NFTWaitList, error) {
+func (service *Service) Get(ctx context.Context, tokenID int) (Item, error) {
 	nft, err := service.nftWaitList.Get(ctx, tokenID)
 	return nft, ErrNFTWaitlist.Wrap(err)
 }
@@ -91,7 +91,7 @@ func (service *Service) GetLastTokenID(ctx context.Context) (int, error) {
 }
 
 // ListWithoutPassword returns nft for wait list without password.
-func (service *Service) ListWithoutPassword(ctx context.Context) ([]NFTWaitList, error) {
+func (service *Service) ListWithoutPassword(ctx context.Context) ([]Item, error) {
 	nftWithoutPassword, err := service.nftWaitList.ListWithoutPassword(ctx)
 	return nftWithoutPassword, ErrNFTWaitlist.Wrap(err)
 }
