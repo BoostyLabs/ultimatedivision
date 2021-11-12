@@ -63,7 +63,7 @@ func (clubsDB *clubsDB) Create(ctx context.Context, club clubs.Club) (uuid.UUID,
 
 // CreateSquad creates squad for clubs in the database.
 func (clubsDB *clubsDB) CreateSquad(ctx context.Context, squad clubs.Squad) (uuid.UUID, error) {
-	query := `INSERT INTO squads(id, squad_name, club_id, tactic, formation,captain_id)
+	query := `INSERT INTO squads(id, squad_name, club_id, tactic, formation, captain_id)
               VALUES($1,$2,$3,$4,$5,$6)
               RETURNING id`
 

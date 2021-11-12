@@ -317,10 +317,25 @@ func TestMatchService(t *testing.T) {
 		CreatedAt:    time.Now(),
 	}
 
+	division1 := divisions.Division{
+		ID:             uuid.New(),
+		Name:           "10",
+		PassingPercent: 10,
+		CreatedAt:      time.Now().UTC(),
+	}
+
+	season1 := seasons.Season{
+		ID:         1,
+		DivisionID: division1.ID,
+		StartedAt:  time.Now().UTC(),
+		EndedAt:    time.Time{},
+	}
+
 	testClub1 := clubs.Club{
 		ID:        uuid.New(),
 		OwnerID:   testUser1.ID,
 		Name:      testUser1.NickName,
+		DivisionID: division1.ID,
 		CreatedAt: time.Now().UTC(),
 	}
 
@@ -336,6 +351,7 @@ func TestMatchService(t *testing.T) {
 		ID:        uuid.New(),
 		OwnerID:   testUser1.ID,
 		Name:      testUser1.NickName,
+		DivisionID: division1.ID,
 		CreatedAt: time.Now().UTC(),
 	}
 
@@ -347,25 +363,12 @@ func TestMatchService(t *testing.T) {
 		Formation: clubs.FourTwoFour,
 	}
 
-	division1 := divisions.Division{
-		ID:             uuid.New(),
-		Name:           "10",
-		PassingPercent: 10,
-		CreatedAt:      time.Now().UTC(),
-	}
-
-	season1 := seasons.Season{
-		ID:         1,
-		DivisionID: division1.ID,
-		StartedAt:  time.Now().UTC(),
-		EndedAt:    time.Time{},
-	}
-
 	testMatch := matches.Match{
 		User1ID:  testUser1.ID,
 		User2ID:  testUser2.ID,
 		Squad1ID: testSquad1.ID,
 		Squad2ID: testSquad2.ID,
+		SeasonID: season1.ID,
 	}
 
 	newCursor := pagination.Cursor{
@@ -395,6 +398,12 @@ func TestMatchService(t *testing.T) {
 			err = repositoryUsers.Create(ctx, testUser2)
 			require.NoError(t, err)
 
+			err = repositoryDivisions.Create(ctx, division1)
+			require.NoError(t, err)
+
+			err = repositorySeasons.Create(ctx, season1)
+			require.NoError(t, err)
+
 			_, err = repositoryClubs.Create(ctx, testClub1)
 			require.NoError(t, err)
 
@@ -405,12 +414,6 @@ func TestMatchService(t *testing.T) {
 			require.NoError(t, err)
 
 			_, err = repositoryClubs.CreateSquad(ctx, testSquad2)
-			require.NoError(t, err)
-
-			err = repositoryDivisions.Create(ctx, division1)
-			require.NoError(t, err)
-
-			err = repositorySeasons.Create(ctx, season1)
 			require.NoError(t, err)
 
 			matchID, err = matchesService.Create(ctx, testSquad1.ID, testSquad2.ID, testUser1.ID, testUser2.ID, season1.ID)
