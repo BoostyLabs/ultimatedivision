@@ -5,13 +5,13 @@ package waitlist
 
 import (
 	"context"
-	"ultimatedivision/pkg/cryptoutils"
 
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/cards/nfts"
+	"ultimatedivision/pkg/cryptoutils"
 	"ultimatedivision/users"
 )
 

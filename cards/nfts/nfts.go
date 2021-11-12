@@ -7,13 +7,9 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/zeebo/errs"
 
 	"ultimatedivision/pkg/cryptoutils"
 )
-
-// ErrNoNFT indicates that nft token does not exist.
-var ErrNoNFT = errs.Class("nft does not exist")
 
 // DB is exposing access to cards db.
 //
@@ -28,7 +24,7 @@ type DB interface {
 // NFT entity describes values released nft token.
 type NFT struct {
 	TokenID       int                 `json:"tokenId"`
-	Сhain         Сhain               `json:"chain"`
+	Chain         Сhain               `json:"chain"`
 	CardID        uuid.UUID           `json:"cardId"`
 	WalletAddress cryptoutils.Address `json:"walletAddress"`
 }
@@ -37,10 +33,10 @@ type NFT struct {
 type Сhain string
 
 const (
-	// СhainEthereum indicates that chain is ethereum.
-	СhainEthereum Сhain = "ethereum"
-	// СhainPolygon indicates that chain is polygon.
-	СhainPolygon Сhain = "polygon"
+	// ChainEthereum indicates that chain is ethereum.
+	ChainEthereum Сhain = "ethereum"
+	// ChainPolygon indicates that chain is polygon.
+	ChainPolygon Сhain = "polygon"
 )
 
 // MaxValueGameParameter indicates that max value game parameter is 100.
