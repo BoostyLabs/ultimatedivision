@@ -332,11 +332,11 @@ func TestMatchService(t *testing.T) {
 	}
 
 	testClub1 := clubs.Club{
-		ID:        uuid.New(),
-		OwnerID:   testUser1.ID,
-		Name:      testUser1.NickName,
+		ID:         uuid.New(),
+		OwnerID:    testUser1.ID,
+		Name:       testUser1.NickName,
 		DivisionID: division1.ID,
-		CreatedAt: time.Now().UTC(),
+		CreatedAt:  time.Now().UTC(),
 	}
 
 	testSquad1 := clubs.Squad{
@@ -348,11 +348,11 @@ func TestMatchService(t *testing.T) {
 	}
 
 	testClub2 := clubs.Club{
-		ID:        uuid.New(),
-		OwnerID:   testUser1.ID,
-		Name:      testUser1.NickName,
+		ID:         uuid.New(),
+		OwnerID:    testUser1.ID,
+		Name:       testUser1.NickName,
 		DivisionID: division1.ID,
-		CreatedAt: time.Now().UTC(),
+		CreatedAt:  time.Now().UTC(),
 	}
 
 	testSquad2 := clubs.Squad{
