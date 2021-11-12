@@ -85,7 +85,7 @@
         "comma-dangle": ["error", "always-multiline"],
         "constructor-super": "warn",
         "import/no-default-export": "off",
-        "import/order": "warn",
+        "import/order": "off",
         "no-cond-assign": "warn",
         "no-console": 2,
         "no-duplicate-case": "warn",
@@ -234,9 +234,9 @@
         "prefer-rest-params": "error",
         "prefer-template": "error",
         "sort-imports": [
-            "error",
+            "off",
             {
-                "ignoreDeclarationSort": true
+                "ignoreDeclarationSort": false
             }
         ],
         "template-curly-spacing": "error"
