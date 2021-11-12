@@ -49,14 +49,14 @@ const (
 	PrivateKeyVTwentyEight PrivateKeyV = 28
 )
 
-// Chain defines the list of possible chains in blockchain.
-type Chain string
+// Сhain defines the list of possible chains in blockchain.
+type Сhain string
 
 const (
 	// ChainEthereum indicates that chain is ethereum.
-	ChainEthereum Chain = "ethereum"
+	ChainEthereum Сhain = "ethereum"
 	// ChainPolygon indicates that chain is polygon.
-	ChainPolygon Chain = "polygon"
+	ChainPolygon Сhain = "polygon"
 )
 
 // IsValidAddress checks if the address is valid.
