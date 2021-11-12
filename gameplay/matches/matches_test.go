@@ -7,8 +7,6 @@ import (
 	"context"
 	"testing"
 	"time"
-	"ultimatedivision/divisions"
-	"ultimatedivision/seasons"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -18,8 +16,10 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/database/dbtesting"
+	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/pkg/pagination"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 )
 
@@ -53,36 +53,6 @@ func TestMatches(t *testing.T) {
 		UserID: testUser1.ID,
 	}
 
-	testClub1 := clubs.Club{
-		ID:        uuid.New(),
-		OwnerID:   testUser1.ID,
-		Name:      testUser1.NickName,
-		CreatedAt: time.Now().UTC(),
-	}
-
-	testSquad1 := clubs.Squad{
-		ID:        uuid.New(),
-		Name:      "test squad",
-		ClubID:    testClub1.ID,
-		Tactic:    clubs.Balanced,
-		Formation: clubs.FourTwoFour,
-	}
-
-	testClub2 := clubs.Club{
-		ID:        uuid.New(),
-		OwnerID:   testUser1.ID,
-		Name:      testUser1.NickName,
-		CreatedAt: time.Now().UTC(),
-	}
-
-	testSquad2 := clubs.Squad{
-		ID:        uuid.New(),
-		Name:      "test squad",
-		ClubID:    testClub2.ID,
-		Tactic:    clubs.Balanced,
-		Formation: clubs.FourTwoFour,
-	}
-
 	division1 := divisions.Division{
 		ID:             uuid.New(),
 		Name:           "10",
@@ -95,6 +65,38 @@ func TestMatches(t *testing.T) {
 		DivisionID: division1.ID,
 		StartedAt:  time.Now().UTC(),
 		EndedAt:    time.Time{},
+	}
+
+	testClub1 := clubs.Club{
+		ID:         uuid.New(),
+		OwnerID:    testUser1.ID,
+		Name:       testUser1.NickName,
+		DivisionID: division1.ID,
+		CreatedAt:  time.Now().UTC(),
+	}
+
+	testSquad1 := clubs.Squad{
+		ID:        uuid.New(),
+		Name:      "test squad",
+		ClubID:    testClub1.ID,
+		Tactic:    clubs.Balanced,
+		Formation: clubs.FourTwoFour,
+	}
+
+	testClub2 := clubs.Club{
+		ID:         uuid.New(),
+		OwnerID:    testUser2.ID,
+		Name:       testUser2.NickName,
+		DivisionID: division1.ID,
+		CreatedAt:  time.Now().UTC(),
+	}
+
+	testSquad2 := clubs.Squad{
+		ID:        uuid.New(),
+		Name:      "test squad",
+		ClubID:    testClub2.ID,
+		Tactic:    clubs.Balanced,
+		Formation: clubs.FourTwoFour,
 	}
 
 	testMatch := matches.Match{
@@ -134,7 +136,7 @@ func TestMatches(t *testing.T) {
 	}
 
 	testResult := []matches.MatchResult{{
-		UserID: testUser1.ID,
+		UserID:        testUser1.ID,
 		QuantityGoals: 2,
 	}}
 
@@ -158,6 +160,12 @@ func TestMatches(t *testing.T) {
 			err = repositoryUsers.Create(ctx, testUser2)
 			require.NoError(t, err)
 
+			err = repositoryDivisions.Create(ctx, division1)
+			require.NoError(t, err)
+
+			err = repositorySeasons.Create(ctx, season1)
+			require.NoError(t, err)
+
 			_, err = repositoryClubs.Create(ctx, testClub1)
 			require.NoError(t, err)
 
@@ -168,12 +176,6 @@ func TestMatches(t *testing.T) {
 			require.NoError(t, err)
 
 			_, err = repositoryClubs.CreateSquad(ctx, testSquad2)
-			require.NoError(t, err)
-
-			err = repositoryDivisions.Create(ctx, division1)
-			require.NoError(t, err)
-
-			err = repositorySeasons.Create(ctx, season1)
 			require.NoError(t, err)
 
 			err = repositoryMatches.Create(ctx, testMatch)
@@ -212,6 +214,12 @@ func TestMatches(t *testing.T) {
 			compareMatchGoals(t, matchGoalsDB, []matches.MatchGoals{testMatchGoal1, testMatchGoal2})
 		})
 
+		t.Run("list result", func(t *testing.T) {
+			matchResult, err := repositoryMatches.GetMatchResult(ctx, testMatch.ID)
+			require.NoError(t, err)
+			compareMatchResults(t, matchResult, testResult)
+		})
+
 		t.Run("update sql no rows", func(t *testing.T) {
 			testMatchUpdated.ID = uuid.New()
 			err := repositoryMatches.UpdateMatch(ctx, testMatchUpdated)
@@ -243,6 +251,15 @@ func TestMatches(t *testing.T) {
 
 		})
 	})
+}
+
+func compareMatchResults(t *testing.T, matchResultDB, matchResult []matches.MatchResult) {
+	assert.Equal(t, len(matchResultDB), len(matchResult))
+
+	for i := 0; i < len(matchResultDB); i++ {
+		assert.Equal(t, matchResultDB[i].UserID, matchResult[i].UserID)
+		assert.Equal(t, matchResultDB[i].QuantityGoals, matchResult[i].QuantityGoals)
+	}
 }
 
 func compareMatches(t *testing.T, matchDB, matchTest matches.Match) {
@@ -403,12 +420,6 @@ func TestMatchService(t *testing.T) {
 		t.Run("list goals", func(t *testing.T) {
 			_, err := matchesService.ListMatchGoals(ctx, matchID)
 			require.NoError(t, err)
-		})
-
-		t.Run("list result", func(t *testing.T) {
-			matchResult, err := matchesService.GetMatchResult(ctx, testMatch.ID)
-			require.NoError(t, err)
-			assert.Equal(t, )
 		})
 
 		t.Run("list matches", func(t *testing.T) {

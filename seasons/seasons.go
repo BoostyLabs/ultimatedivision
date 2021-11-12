@@ -28,6 +28,8 @@ type DB interface {
 	Get(ctx context.Context, id int) (Season, error)
 	// GetCurrentSeasons returns all current seasons from the data base.
 	GetCurrentSeasons(ctx context.Context) ([]Season, error)
+	// GetSeasonByDivisionID returns season by division id from the data base.
+	GetSeasonByDivisionID(ctx context.Context, divisionID uuid.UUID) (Season, error)
 	// Delete deletes a season in the database.
 	Delete(ctx context.Context, id int) error
 }
@@ -35,18 +37,10 @@ type DB interface {
 // Status defines the list of possible season statuses.
 type Status int
 
-const (
-	// StatusStarted indicates that season start.
-	StatusStarted Status = 0
-	// StatusEnded indicates that season ended.
-	StatusEnded Status = 1
-)
-
 // Season describes seasons entity.
 type Season struct {
 	ID         int       `json:"id"`
 	DivisionID uuid.UUID `json:"divisionId"`
-	Status     Status    `json:"status"`
 	StartedAt  time.Time `json:"startedAt"`
 	EndedAt    time.Time `json:"endedAt"`
 }

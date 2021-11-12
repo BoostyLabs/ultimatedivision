@@ -30,16 +30,18 @@ type Chore struct {
 	Loop    *sync.Cycle
 	matches *matches.Service
 	seasons *seasons.Service
+	clubs   *clubs.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(log logger.Logger, config Config, service *Service, matches *matches.Service, seasons *seasons.Service) *Chore {
+func NewChore(log logger.Logger, config Config, service *Service, matches *matches.Service, seasons *seasons.Service, clubs *clubs.Service) *Chore {
 	return &Chore{
 		log:     log,
 		service: service,
 		Loop:    sync.NewCycle(config.PlaceRenewalInterval),
 		matches: matches,
 		seasons: seasons,
+		clubs:   clubs,
 	}
 }
 
@@ -117,7 +119,17 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					}
 				}
 
-				_, err = chore.seasons.GetCurrentSeasons(ctx)
+				firstClientSquad, err := chore.clubs.GetSquad(ctx, firstClient.SquadID)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
+
+				firstClientClub, err := chore.clubs.Get(ctx, firstClientSquad.ClubID)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
+
+				season, err := chore.seasons.GetSeasonByDivisionID(ctx, firstClientClub.DivisionID)
 				if err != nil {
 					if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
 						return ChoreError.Wrap(err)
@@ -127,7 +139,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					}
 				}
 
-				matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, 1)
+				matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, season.ID)
 				if err != nil {
 					if err := firstClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
 						return ChoreError.Wrap(err)

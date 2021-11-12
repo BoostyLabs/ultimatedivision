@@ -14,6 +14,8 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/cards/nfts"
+	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
@@ -73,6 +75,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             nick_name        VARCHAR                  NOT NULL,
             first_name       VARCHAR                  NOT NULL,
             last_name        VARCHAR                  NOT NULL,
+            wallet_address   VARCHAR,
             last_login       TIMESTAMP WITH TIME ZONE NOT NULL,
             status           INTEGER                  NOT NULL,
             created_at       TIMESTAMP WITH TIME ZONE NOT NULL
@@ -162,11 +165,19 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             password_hash BYTEA                    NOT NULL,
             created_at    TIMESTAMP WITH TIME ZONE NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS divisions (
+            id              BYTEA   PRIMARY KEY      NOT NULL,
+            name            VARCHAR                  NOT NULL,
+            passing_percent INTEGER                  NOT NULL,
+            created_at      TIMESTAMP WITH TIME ZONE NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS clubs (
-            id         BYTEA     PRIMARY KEY                            NOT NULL,
-            owner_id   BYTEA     REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-            club_name  VARCHAR                                          NOT NULL,
-            created_at TIMESTAMP WITH TIME ZONE                         NOT NULL
+            id          BYTEA     PRIMARY KEY                                NOT NULL,
+            owner_id    BYTEA     REFERENCES users(id) ON DELETE CASCADE     NOT NULL,
+            club_name   VARCHAR                                              NOT NULL,
+            status      INTEGER                                              NOT NULL,
+            division_id BYTEA     REFERENCES divisions(id) ON DELETE CASCADE NOT NULL,
+            created_at  TIMESTAMP WITH TIME ZONE                             NOT NULL
         );
         CREATE TABLE IF NOT EXISTS squads (
             id            BYTEA   PRIMARY KEY                            NOT NULL,
@@ -202,16 +213,9 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             end_time      TIMESTAMP WITH TIME ZONE                                        NOT NULL,
             period        INTEGER                                                         NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS divisions (
-            id              BYTEA   PRIMARY KEY      NOT NULL,
-            name            VARCHAR                  NOT NULL,
-            passing_percent INTEGER                  NOT NULL,
-            created_at      TIMESTAMP WITH TIME ZONE NOT NULL
-        );
         CREATE TABLE IF NOT EXISTS seasons(
             id          SERIAL PRIMARY KEY       NOT NULL,
             division_id BYTEA                    NOT NULL,
-            status      INTEGER                  NOT NULL,
             started_at  TIMESTAMP WITH TIME ZONE NOT NULL,
             ended_at    TIMESTAMP WITH TIME ZONE NOT NULL,
             FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE
@@ -232,6 +236,18 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             user_id  BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
             card_id  BYTEA   REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
             minute   INTEGER                                          NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS waitlist(
+            token_id       SERIAL  PRIMARY KEY                            NOT NULL,
+            card_id        BYTEA   REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
+            wallet_address VARCHAR                                        NOT NULL,
+            password       VARCHAR                                        NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS nfts(
+            card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) NOT NULL,
+            token_id       INTEGER                                  NOT NULL,
+            chain          VARCHAR                                  NOT NULL,
+            wallet_address VARCHAR                                  NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -300,4 +316,14 @@ func (db *database) Divisions() divisions.DB {
 // Seasons provides access to accounts db.
 func (db *database) Seasons() seasons.DB {
 	return &seasonsDB{conn: db.conn}
+}
+
+// NFTs provides access to accounts db.
+func (db *database) NFTs() nfts.DB {
+	return &nftsDB{conn: db.conn}
+}
+
+// WaitList provides access to accounts db.
+func (db *database) WaitList() waitlist.DB {
+	return &waitlistDB{conn: db.conn}
 }
