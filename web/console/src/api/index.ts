@@ -14,14 +14,24 @@ export class UnauthorizedError extends Error {
 }
 
 /**
+ * BadRequestError is a custom error type for performing bad request.
+ */
+export class BadRequestError extends Error {
+    /** Error message while bad request */
+    public constructor(message = 'bad request') {
+        super(message);
+    };
+};
+
+/**
  * NotFoundError is a custom error type which indicates that the server can't find the requested resource.
  */
 export class NotFoundError extends Error {
-    /** Error message while bad request */
+    /** Error message while not found request */
     public constructor(message = 'not found') {
         super(message);
-    }
-}
+    };
+};
 
 /**
  * InternalError is a custom error type for internal server error.
@@ -30,8 +40,10 @@ export class InternalError extends Error {
     /** Error message for internal server error */
     public constructor(message = 'internal server error') {
         super(message);
-    }
-}
+    };
+};
+
+const BAD_REQUEST_ERROR = 400;
 const UNAUTORISED_ERROR = 401;
 const NOT_FOUND_ERROR = 404;
 const INTERNAL_ERROR = 500;
@@ -61,11 +73,12 @@ export class APIClient {
     protected async handleError(response: Response): Promise<void> {
 
         switch (response.status) {
-        case UNAUTORISED_ERROR: throw new UnauthorizedError();
-        case NOT_FOUND_ERROR: throw new NotFoundError();
-        case INTERNAL_ERROR:
-        default:
-            throw new InternalError();
+            case BAD_REQUEST_ERROR: throw new BadRequestError();
+            case NOT_FOUND_ERROR: throw new NotFoundError();
+            case UNAUTORISED_ERROR: throw new UnauthorizedError();
+            case INTERNAL_ERROR:
+            default:
+                throw new InternalError();
         }
     }
 }
