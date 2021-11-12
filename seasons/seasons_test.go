@@ -100,6 +100,5 @@ func TestSeasons(t *testing.T) {
 func compareSeasons(t *testing.T, season1, season2 seasons.Season) {
 	assert.Equal(t, season1.ID, season2.ID)
 	assert.Equal(t, season1.DivisionID, season2.DivisionID)
-	assert.Equal(t, season1.Status, season2.Status)
 	assert.WithinDuration(t, season1.StartedAt, season2.StartedAt, 1*time.Second)
 }

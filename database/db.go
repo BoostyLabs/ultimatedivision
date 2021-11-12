@@ -214,7 +214,6 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         CREATE TABLE IF NOT EXISTS seasons(
             id          SERIAL PRIMARY KEY       NOT NULL,
             division_id BYTEA                    NOT NULL,
-            status      INTEGER                  NOT NULL,
             started_at  TIMESTAMP WITH TIME ZONE NOT NULL,
             ended_at    TIMESTAMP WITH TIME ZONE NOT NULL,
             FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE

@@ -5,6 +5,7 @@ package seasons
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"time"
 
 	"github.com/zeebo/errs"
@@ -43,7 +44,6 @@ func (service *Service) Create(ctx context.Context) error {
 	for _, division := range divisions {
 		season := Season{
 			DivisionID: division.ID,
-			Status:     StatusStarted,
 			StartedAt:  time.Now().UTC(),
 			EndedAt:    time.Time{},
 		}
@@ -81,4 +81,10 @@ func (service *Service) Get(ctx context.Context, seasonID int) (Season, error) {
 // Delete deletes a season.
 func (service *Service) Delete(ctx context.Context, id int) error {
 	return ErrSeasons.Wrap(service.seasons.Delete(ctx, id))
+}
+
+// GetSeasonByDivisionID returns season by division id.
+func (service *Service) GetSeasonByDivisionID(ctx context.Context, divisionID uuid.UUID) (Season, error) {
+	season, err := service.seasons.GetSeasonByDivisionID(ctx, divisionID)
+	return season, ErrSeasons.Wrap(err)
 }
