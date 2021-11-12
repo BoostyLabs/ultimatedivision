@@ -14,7 +14,7 @@ import './index.scss';
 export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card, index, place }) => {
     const dispatch = useDispatch();
     const [isVisibile, setIsVisibile] = useState(false);
-    const visibilityBlock = isVisibile ? "-active" : "-inactive";
+    const visibilityBlock = isVisibile ? '-active' : '-inactive';
 
     /** show/hide delete block, preventing scroll to cardSelection */
     function handleVisibility(e: React.MouseEvent<HTMLInputElement>) {

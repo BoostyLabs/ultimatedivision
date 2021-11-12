@@ -15,6 +15,18 @@ export const FootballerCardPrice: React.FC<{ card: Card }> = ({ card }) => {
     const priceData = card.cardPrice;
     const prpValue: number = priceData.prp;
 
+    const chartOptions = [
+        {
+            data: [prpValue, FULL_VALUE_STATISTIC_SCALE - prpValue],
+            backgroundColor: [`${priceData.color}`, '#5E5EAA'],
+            borderColor: ['transparent'],
+            cutout: '80%',
+            rotation: 90,
+            esponsive: true,
+            maintainAspectRatio: true,
+        },
+    ];
+
     return (
         <div className="footballer-card-price">
             <div className="footballer-card-price__wrapper">
@@ -28,23 +40,7 @@ export const FootballerCardPrice: React.FC<{ card: Card }> = ({ card }) => {
                     <Doughnut
                         type={Doughnut}
                         data={{
-                            datasets: [
-                                {
-                                    data: [
-                                        prpValue,
-                                        FULL_VALUE_STATISTIC_SCALE - prpValue,
-                                    ],
-                                    backgroundColor: [
-                                        `${priceData.color}`,
-                                        '#5E5EAA',
-                                    ],
-                                    borderColor: ['transparent'],
-                                    cutout: '80%',
-                                    rotation: 90,
-                                    esponsive: true,
-                                    maintainAspectRatio: true,
-                                },
-                            ],
+                            datasets: chartOptions,
                         }}
                     />
                 </div>

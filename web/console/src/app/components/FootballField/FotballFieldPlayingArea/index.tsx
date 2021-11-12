@@ -148,14 +148,12 @@ export const FootballFieldPlayingArea: React.FC = () => {
                             return (
                                 <div
                                     style={
-                                        equality
-                                            ? {
-                                                left: x - outerOffset.x,
-                                                top: y - OFFSET_TOP,
-                                                zIndex: 5,
-                                                pointerEvents: 'none',
-                                            }
-                                            : undefined
+                                        equality ? {
+                                            left: x - outerOffset.x,
+                                            top: y - OFFSET_TOP,
+                                            zIndex: 5,
+                                            pointerEvents: 'none',
+                                        } : undefined
                                     }
                                     key={index}
                                     className={`playing-area__${formation}__${

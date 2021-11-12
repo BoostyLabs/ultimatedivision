@@ -48,7 +48,7 @@ export const FootballFieldCardSelection = () => {
                             handleClick(
                                 squad,
                                 card.id,
-                                fieldSetup.options.chosedCard
+                                fieldSetup.options.chosedCard,
                             )
                         }
                     >
