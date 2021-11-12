@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FootballFieldControlsArea } from '@/app/components/FootballField/FootballFieldControlsArea';
 import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
 
+import { CardEditIdentificators } from '@/api/club';
 import { RootState } from '@/app/store';
 import { Card } from '@/card';
-import { CardEditIdentificators, SquadCard } from '@/club';
+import { SquadCard } from '@/club';
 import {
     cardSelectionVisibility,
     changeCardPosition,
@@ -160,7 +161,7 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                 }
                                 key={index}
                                 className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
-                                }`}
+                                    }`}
                                 onClick={() => handleClick(index)}
                                 onDragStart={(e) => dragStart(e, index)}
                                 onMouseUp={(e) => onMouseUp(e, index)}
