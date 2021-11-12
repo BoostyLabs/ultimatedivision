@@ -336,6 +336,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.Queue.Config,
 			peer.Queue.Service,
 			peer.Matches.Service,
+			peer.Seasons.Service,
 		)
 	}
 

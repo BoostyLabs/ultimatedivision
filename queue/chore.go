@@ -13,6 +13,7 @@ import (
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/sync"
+	"ultimatedivision/seasons"
 )
 
 var (
@@ -28,15 +29,17 @@ type Chore struct {
 	service *Service
 	Loop    *sync.Cycle
 	matches *matches.Service
+	seasons *seasons.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(log logger.Logger, config Config, service *Service, matches *matches.Service) *Chore {
+func NewChore(log logger.Logger, config Config, service *Service, matches *matches.Service, seasons *seasons.Service) *Chore {
 	return &Chore{
 		log:     log,
 		service: service,
 		Loop:    sync.NewCycle(config.PlaceRenewalInterval),
 		matches: matches,
+		seasons: seasons,
 	}
 }
 
@@ -52,11 +55,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					continue
 				}
 
-				isEmptyClients := (clients[k] == Client{} && clients[k+1] == Client{})
-				isEqualDivisions := (clients[k].DivisionID != clients[k+1].DivisionID)
-				if isEmptyClients || isEqualDivisions {
-					continue
-				}
+				// TODO: add check if client/clients is empty.
 
 				firstClient := clients[k]
 				secondClient := clients[k+1]
@@ -118,8 +117,16 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					}
 				}
 
-				// TODO: add season id, currently its 1, but need to refactor.
-				matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, 1)
+				seasonID, err := chore.seasons.GetCurrentSeasons(ctx)
+				if err != nil {
+					if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
+						return ChoreError.Wrap(err)
+					}
+					if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
+						return ChoreError.Wrap(err)
+					}
+				}
+				matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, seasonID)
 				if err != nil {
 					if err := firstClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
 						return ChoreError.Wrap(err)
