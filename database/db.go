@@ -15,7 +15,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/cards/nfts"
-	"ultimatedivision/cards/nfts/nftwaitlist"
+	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
@@ -168,6 +168,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             id         BYTEA     PRIMARY KEY                            NOT NULL,
             owner_id   BYTEA     REFERENCES users(id) ON DELETE CASCADE NOT NULL,
             club_name  VARCHAR                                          NOT NULL,
+            status     INTEGER                                          NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE                         NOT NULL
         );
         CREATE TABLE IF NOT EXISTS squads (
@@ -226,7 +227,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             card_id  BYTEA   REFERENCES cards(id) ON DELETE CASCADE   NOT NULL,
             minute   INTEGER                                          NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS nfts_waitlist(
+        CREATE TABLE IF NOT EXISTS waitlist(
             token_id       SERIAL  PRIMARY KEY                            NOT NULL,
             card_id        BYTEA   REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
             wallet_address VARCHAR                                        NOT NULL,
@@ -302,12 +303,12 @@ func (db *database) Divisions() divisions.DB {
 	return &divisionsDB{conn: db.conn}
 }
 
-// NFTWaitList provides access to accounts db.
-func (db *database) NFTWaitList() nftwaitlist.DB {
-	return &nftwaitlistDB{conn: db.conn}
-}
-
 // NFTs provides access to accounts db.
 func (db *database) NFTs() nfts.DB {
 	return &nftsDB{conn: db.conn}
+}
+
+// WaitList provides access to accounts db.
+func (db *database) WaitList() waitlist.DB {
+	return &waitlistDB{conn: db.conn}
 }

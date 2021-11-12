@@ -16,7 +16,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/cards"
-	"ultimatedivision/cards/nfts/nftwaitlist"
+	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/internal/logger"
@@ -64,7 +64,7 @@ type Server struct {
 }
 
 // NewServer is a constructor for console web server.
-func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service, queue *queue.Service, nftWaitList *nftwaitlist.Service) *Server {
+func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service, marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service, queue *queue.Service, waitList *waitlist.Service) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -83,7 +83,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	lootBoxesController := controllers.NewLootBoxes(log, lootBoxes)
 	marketplaceController := controllers.NewMarketplace(log, marketplace)
 	queueController := controllers.NewQueue(log, queue)
-	nftsController := controllers.NewNFTWaitList(log, nftWaitList)
+	waitListController := controllers.NewWaitList(log, waitList)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -113,6 +113,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsRouter.Use(server.withAuth)
 	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
 	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/{clubId}", clubsController.UpdateStatus).Methods(http.MethodPatch)
 
 	squadRouter := clubsRouter.PathPrefix("/{clubId}/squads").Subrouter()
 	squadRouter.HandleFunc("", clubsController.CreateSquad).Methods(http.MethodPost)
@@ -140,9 +141,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	queueRouter.Use(server.withAuth)
 	queueRouter.HandleFunc("", queueController.Create).Methods(http.MethodGet)
 
-	nftRouter := apiRouter.PathPrefix("/nft").Subrouter()
-	nftRouter.Use(server.withAuth)
-	nftRouter.HandleFunc("", nftsController.Create).Methods(http.MethodPost)
+	waitListRouter := apiRouter.PathPrefix("/nft-waitlist").Subrouter()
+	waitListRouter.Use(server.withAuth)
+	waitListRouter.HandleFunc("", waitListController.Create).Methods(http.MethodPost)
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))

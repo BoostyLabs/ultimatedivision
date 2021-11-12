@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package avatarcards
+package cardavatars
 
 import (
 	"context"
@@ -20,8 +20,8 @@ import (
 	"ultimatedivision/pkg/nft"
 )
 
-// ErrCardWithLinkToAvatar indicated that there was an error in service.
-var ErrCardWithLinkToAvatar = errs.Class("card with link to avatar service error")
+// ErrCardAvatars indicated that there was an error in service.
+var ErrCardAvatars = errs.Class("card with link to avatar service error")
 
 // Service is handling cards with link to avatars related logic.
 //
@@ -54,16 +54,20 @@ func (service *Service) Generate(ctx context.Context, nameFile int, playerName s
 
 	card, err := service.cards.Generate(ctx, uuid.Nil, percentageQualities)
 	if err != nil {
-		return nft.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
+		return nft.NFT{}, ErrCardAvatars.Wrap(err)
 	}
 	card.PlayerName = playerName
 
 	avatar, err := service.avatars.Generate(ctx, card, nameFile+1)
 	if err != nil {
-		return nft.NFT{}, ErrCardWithLinkToAvatar.Wrap(err)
+		return nft.NFT{}, ErrCardAvatars.Wrap(err)
 	}
 
-	nftCard := service.nfts.Generate(ctx, card, avatar.OriginalURL)
+	nftCard, err := service.nfts.Generate(ctx, card, avatar.OriginalURL)
+	if err != nil {
+		return nft.NFT{}, ErrCardAvatars.Wrap(err)
+	}
+
 	return nftCard, nil
 }
 
@@ -85,26 +89,26 @@ func (service *Service) TestGenerate(ctx context.Context, count int) ([]avatars.
 	allNames := make(map[string]struct{}, count)
 
 	for i := 0; i < count; i++ {
-		var avatarCard CardWithLinkToAvatar
-		if avatarCard.Card, err = service.cards.Generate(ctx, id, percentageQualities); err != nil {
-			return nil, ErrCardWithLinkToAvatar.Wrap(err)
+		var cardAvatar CardAvatars
+		if cardAvatar.Card, err = service.cards.Generate(ctx, id, percentageQualities); err != nil {
+			return nil, ErrCardAvatars.Wrap(err)
 		}
 
 		for len(allNames) < count {
 			if err = service.GenerateName(service.config.PathToNamesDataset, allNames); err != nil {
-				return nil, ErrCardWithLinkToAvatar.Wrap(err)
+				return nil, ErrCardAvatars.Wrap(err)
 			}
 		}
 
 		for name := range allNames {
-			avatarCard.PlayerName = name
+			cardAvatar.PlayerName = name
 			delete(allNames, name)
 			break
 		}
 
-		avatar, err := service.avatars.Generate(ctx, avatarCard.Card, i+1)
+		avatar, err := service.avatars.Generate(ctx, cardAvatar.Card, i+1)
 		if err != nil {
-			return nil, ErrCardWithLinkToAvatar.Wrap(err)
+			return nil, ErrCardAvatars.Wrap(err)
 		}
 
 		avatars = append(avatars, avatar)
@@ -117,7 +121,7 @@ func (service *Service) TestGenerate(ctx context.Context, count int) ([]avatars.
 func (service *Service) GenerateName(path string, names map[string]struct{}) error {
 	file, err := os.Open(path)
 	if err != nil {
-		return ErrCardWithLinkToAvatar.Wrap(err)
+		return ErrCardAvatars.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, file.Close())
@@ -127,22 +131,22 @@ func (service *Service) GenerateName(path string, names map[string]struct{}) err
 
 	totalCount, err := fileutils.CountLines(file)
 	if err != nil {
-		return ErrCardWithLinkToAvatar.Wrap(err)
+		return ErrCardAvatars.Wrap(err)
 	}
 
 	randomNum := rand.Intn(totalCount) + 1
 
 	_, err = file.Seek(0, io.SeekStart)
 	if err != nil {
-		return ErrCardWithLinkToAvatar.Wrap(err)
+		return ErrCardAvatars.Wrap(err)
 	}
 
 	name, err := fileutils.ReadLine(file, randomNum)
 	if err != nil {
-		return ErrCardWithLinkToAvatar.Wrap(err)
+		return ErrCardAvatars.Wrap(err)
 	}
 
 	names[name] = struct{}{}
 
-	return ErrCardWithLinkToAvatar.Wrap(err)
+	return ErrCardAvatars.Wrap(err)
 }
