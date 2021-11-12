@@ -22,9 +22,18 @@ export class Validator {
 
         return re.test(password);
     };
-    /** static method for all string form fields validation,
-     * except password and email */
+
+    /** static method for firstname and lastname fields validation */
     static isName(name: string): boolean {
-        return !!name;
+        const re = new RegExp(/^[a-zA-Z]{2,}$/, 'i');
+
+        return re.test(name);
+    };
+
+    /** static method for nickname field validation */
+    static isNickName(nickName: string): boolean {
+        const re = new RegExp(/^[a-zA-Z0-9]{2,}$/, 'i');
+
+        return re.test(nickName);
     };
 };
