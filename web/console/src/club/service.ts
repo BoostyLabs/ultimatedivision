@@ -1,8 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { ClubsClient } from '@/api/club';
-import { CardEditIdentificators } from '@/api/club';
+import { CardEditIdentificators, ClubsClient } from '@/api/club';
 import { Club, Squad } from '.';
 
 /**
