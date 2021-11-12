@@ -17,7 +17,7 @@ export const PlayingAreaFootballerCard: React.FC<{ card: Card; index?: number; p
     const dispatch = useDispatch();
     const squad = useSelector((state: RootState) => state.clubsReducer.squad);
     const [isVisibile, setIsVisibile] = useState(false);
-    const visibilityBlock = isVisibile ? "-active" : "-inactive";
+    const visibilityBlock = isVisibile ? '-active' : '-inactive';
 
     /** show/hide delete block, preventing scroll to cardSelection */
     function handleVisibility(e: React.MouseEvent<HTMLInputElement>) {

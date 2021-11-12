@@ -163,26 +163,26 @@ export const FootballFieldPlayingArea: React.FC = () => {
                                             zIndex: 5,
                                             pointerEvents: 'none',
                                         }
-                                        : undefined
-                                }
-                                key={index}
-                                className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
+                                            : undefined
+                                    }
+                                    key={index}
+                                    className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
                                     }`}
-                                onClick={() => handleClick(index)}
-                                onDragStart={(e) => dragStart(e, index)}
-                                onMouseUp={(e) => onMouseUp(e, index)}
-                                draggable={true}
-                            >
-                                {card &&
+                                    onClick={() => handleClick(index)}
+                                    onDragStart={(e) => dragStart(e, index)}
+                                    onMouseUp={(e) => onMouseUp(e, index)}
+                                    draggable={true}
+                                >
+                                    {card &&
                                     <PlayingAreaFootballerCard
                                         card={card}
                                         index={index}
                                         place={'PlayingArea'}
                                     />
-                                }
-                            </div>
-                        );
-                    })}
+                                    }
+                                </div>
+                            );
+                        })}
                 </div>
                 <div className={`playing-area__${formation}-shadows`}>
                     {fieldSetup.squadCards.map(
