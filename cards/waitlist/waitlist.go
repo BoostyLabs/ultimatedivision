@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package nftwaitlist
+package waitlist
 
 import (
 	"context"
@@ -12,8 +12,8 @@ import (
 	"ultimatedivision/pkg/cryptoutils"
 )
 
-// ErrNoNFTWaitList indicates that nft for wait list does not exist.
-var ErrNoNFTWaitList = errs.Class("nft for wait list does not exist")
+// ErrNoItem indicates that item for wait list does not exist.
+var ErrNoItem = errs.Class("item for wait list does not exist")
 
 // DB is exposing access to cards db.
 //

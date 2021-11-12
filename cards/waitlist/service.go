@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package nftwaitlist
+package waitlist
 
 import (
 	"context"
@@ -14,28 +14,28 @@ import (
 	"ultimatedivision/users"
 )
 
-// ErrNFTWaitlist indicated that there was an error in service.
-var ErrNFTWaitlist = errs.Class("NFTWaitlist service error")
+// ErrWaitlist indicated that there was an error in service.
+var ErrWaitlist = errs.Class("waitlist service error")
 
-// Service is handling NFTWaitlist related logic.
+// Service is handling waitList related logic.
 //
 // architecture: Service
 type Service struct {
-	nftWaitList DB
-	cards       *cards.Service
-	avatars     *avatars.Service
-	users       *users.Service
-	nfts        *nfts.Service
+	waitList DB
+	cards    *cards.Service
+	avatars  *avatars.Service
+	users    *users.Service
+	nfts     *nfts.Service
 }
 
-// NewService is a constructor for NFTWaitlist service.
-func NewService(nftWaitList DB, cards *cards.Service, avatars *avatars.Service, users *users.Service, nfts *nfts.Service) *Service {
+// NewService is a constructor for waitlist service.
+func NewService(waitList DB, cards *cards.Service, avatars *avatars.Service, users *users.Service, nfts *nfts.Service) *Service {
 	return &Service{
-		nftWaitList: nftWaitList,
-		cards:       cards,
-		avatars:     avatars,
-		users:       users,
-		nfts:        nfts,
+		waitList: waitList,
+		cards:    cards,
+		avatars:  avatars,
+		users:    users,
+		nfts:     nfts,
 	}
 }
 
@@ -43,60 +43,60 @@ func NewService(nftWaitList DB, cards *cards.Service, avatars *avatars.Service, 
 func (service *Service) Create(ctx context.Context, createNFT CreateNFT) error {
 	card, err := service.cards.Get(ctx, createNFT.CardID)
 	if err != nil {
-		return ErrNFTWaitlist.Wrap(err)
+		return ErrWaitlist.Wrap(err)
 	}
 
 	if card.UserID != createNFT.UserID {
-		return ErrNFTWaitlist.New("it isn't user`s card")
+		return ErrWaitlist.New("it isn't user`s card")
 	}
 
 	avatar, err := service.avatars.Get(ctx, createNFT.CardID)
 	if err != nil {
-		return ErrNFTWaitlist.Wrap(err)
+		return ErrWaitlist.Wrap(err)
 	}
 
 	// TODO: save avatar
 
 	_, err = service.nfts.Generate(ctx, card, avatar.OriginalURL)
 	if err != nil {
-		return ErrNFTWaitlist.Wrap(err)
+		return ErrWaitlist.Wrap(err)
 	}
 
 	// TODO: save nft
 	// TODO: add transaction
 
 	if err = service.users.UpdateWalletAddress(ctx, createNFT.WalletAddress, createNFT.UserID); err != nil {
-		return ErrNFTWaitlist.Wrap(err)
+		return ErrWaitlist.Wrap(err)
 	}
 
-	return service.nftWaitList.Create(ctx, createNFT.CardID, createNFT.WalletAddress)
+	return service.waitList.Create(ctx, createNFT.CardID, createNFT.WalletAddress)
 }
 
 // List returns all nft for wait list.
 func (service *Service) List(ctx context.Context) ([]Item, error) {
-	allNFT, err := service.nftWaitList.List(ctx)
-	return allNFT, ErrNFTWaitlist.Wrap(err)
+	allNFT, err := service.waitList.List(ctx)
+	return allNFT, ErrWaitlist.Wrap(err)
 }
 
 // Get returns nft for wait list by token id.
 func (service *Service) Get(ctx context.Context, tokenID int) (Item, error) {
-	nft, err := service.nftWaitList.Get(ctx, tokenID)
-	return nft, ErrNFTWaitlist.Wrap(err)
+	nft, err := service.waitList.Get(ctx, tokenID)
+	return nft, ErrWaitlist.Wrap(err)
 }
 
 // GetLastTokenID returns id of latest nft for wait list.
 func (service *Service) GetLastTokenID(ctx context.Context) (int, error) {
-	lastID, err := service.nftWaitList.GetLast(ctx)
-	return lastID, ErrNFTWaitlist.Wrap(err)
+	lastID, err := service.waitList.GetLast(ctx)
+	return lastID, ErrWaitlist.Wrap(err)
 }
 
 // ListWithoutPassword returns nft for wait list without password.
 func (service *Service) ListWithoutPassword(ctx context.Context) ([]Item, error) {
-	nftWithoutPassword, err := service.nftWaitList.ListWithoutPassword(ctx)
-	return nftWithoutPassword, ErrNFTWaitlist.Wrap(err)
+	nftWithoutPassword, err := service.waitList.ListWithoutPassword(ctx)
+	return nftWithoutPassword, ErrWaitlist.Wrap(err)
 }
 
 // Delete deletes nft for wait list.
 func (service *Service) Delete(ctx context.Context, tokenIDs []int) error {
-	return ErrNFTWaitlist.Wrap(service.nftWaitList.Delete(ctx, tokenIDs))
+	return ErrWaitlist.Wrap(service.waitList.Delete(ctx, tokenIDs))
 }

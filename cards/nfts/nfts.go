@@ -30,7 +30,7 @@ type NFT struct {
 	TokenID       int                 `json:"tokenId"`
 	Сhain         Сhain               `json:"chain"`
 	CardID        uuid.UUID           `json:"cardId"`
-	WalletAddress cryptoutils.Address `json:"WalletAddress"`
+	WalletAddress cryptoutils.Address `json:"walletAddress"`
 }
 
 // Сhain defines the list of possible chains in blockchain.
