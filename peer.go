@@ -30,6 +30,7 @@ import (
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
 	"ultimatedivision/queue"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -53,6 +54,9 @@ type DB interface {
 	// WaitList provides access to waitlist db.
 	WaitList() waitlist.DB
 
+	// NFTs provides access to nfts db.
+	NFTs() nfts.DB
+
 	// Clubs provides access to clubs db.
 	Clubs() clubs.DB
 
@@ -70,6 +74,9 @@ type DB interface {
 
 	// Divisions provides access to divisions db.
 	Divisions() divisions.DB
+
+	// Seasons provides access to seasons db.
+	Seasons() seasons.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -127,6 +134,10 @@ type Config struct {
 	Divisions struct {
 		divisions.Config
 	} `json:"divisions"`
+
+	Seasons struct {
+		seasons.Config
+	} `json:"seasons"`
 
 	Matches struct {
 		matches.Config
@@ -202,6 +213,12 @@ type Peer struct {
 	// exposes divisions related logic.
 	Divisions struct {
 		Service *divisions.Service
+	}
+
+	// exposes divisions related logic.
+	Seasons struct {
+		Service           *seasons.Service
+		ExpirationSeasons *seasons.Chore
 	}
 
 	// Admin web server server with web UI.
@@ -290,7 +307,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // nfts setup
 		peer.NFTs.Service = nfts.NewService(
 			config.NFTs.Config,
-			nil,
+			peer.Database.NFTs(),
 		)
 	}
 
@@ -367,6 +384,19 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.Divisions.Config)
 	}
 
+	{ // seasons setup
+		peer.Seasons.Service = seasons.NewService(
+			peer.Database.Seasons(),
+			config.Seasons.Config,
+			peer.Divisions.Service,
+		)
+
+		peer.Seasons.ExpirationSeasons = seasons.NewChore(
+			config.Seasons.Config,
+			peer.Seasons.Service,
+		)
+	}
+
 	{ // admin setup
 		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
 		if err != nil {
@@ -412,6 +442,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Auth,
 			peer.Users.Service,
 			peer.Queue.Service,
+			peer.Seasons.Service,
 			peer.WaitList.Service,
 		)
 	}
@@ -435,6 +466,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	})
 	group.Go(func() error {
 		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
+	})
+	group.Go(func() error {
+		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
 
 	return group.Wait()

@@ -14,6 +14,7 @@ import (
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/cards/nfts"
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
@@ -21,6 +22,7 @@ import (
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 )
 
@@ -210,6 +212,13 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             passing_percent INTEGER                  NOT NULL,
             created_at      TIMESTAMP WITH TIME ZONE NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS seasons(
+            id          SERIAL PRIMARY KEY       NOT NULL,
+            division_id BYTEA                    NOT NULL,
+            started_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+            ended_at    TIMESTAMP WITH TIME ZONE NOT NULL,
+            FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE
+        );
         CREATE TABLE IF NOT EXISTS matches (
             id           BYTEA    PRIMARY KEY                             NOT NULL,
             user1_id     BYTEA    REFERENCES users(id) ON DELETE CASCADE  NOT NULL,
@@ -231,6 +240,12 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             card_id        BYTEA   REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
             wallet_address VARCHAR                                        NOT NULL,
             password       VARCHAR                                        NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS nfts(
+            card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) NOT NULL,
+            token_id       INTEGER                                  NOT NULL,
+            chain          VARCHAR                                  NOT NULL,
+            wallet_address VARCHAR                                  NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -294,6 +309,16 @@ func (db *database) Queue() queue.DB {
 // Divisions provides access to accounts db.
 func (db *database) Divisions() divisions.DB {
 	return &divisionsDB{conn: db.conn}
+}
+
+// Seasons provides access to accounts db.
+func (db *database) Seasons() seasons.DB {
+	return &seasonsDB{conn: db.conn}
+}
+
+// NFTs provides access to accounts db.
+func (db *database) NFTs() nfts.DB {
+	return &nftsDB{conn: db.conn}
 }
 
 // WaitList provides access to accounts db.

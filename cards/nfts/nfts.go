@@ -23,9 +23,9 @@ type DB interface {
 
 // NFT entity describes values released nft token.
 type NFT struct {
-	TokenID       int                 `json:"tokenId"`
-	Chain         Сhain               `json:"chain"`
 	CardID        uuid.UUID           `json:"cardId"`
+	Chain         Сhain               `json:"chain"`
+	TokenID       int                 `json:"tokenId"`
 	WalletAddress cryptoutils.Address `json:"walletAddress"`
 }
 
