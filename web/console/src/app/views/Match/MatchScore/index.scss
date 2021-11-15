@@ -3,12 +3,13 @@
 
 @import "@/index.scss";
 
-.game-score {
+.match__score {
     display: flex;
     background-image: url("@static/img/match/background.svg");
+    background-size: cover;
     height: 100%;
 
-    &__scoreboard {
+    &__board {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -21,7 +22,13 @@
         box-sizing: border-box;
         border-radius: 25.211px;
 
-        &__game-timer {
+        &-team-1,
+        &-team-2,
+        &-dash {
+            z-index: 1;
+        }
+
+        &__timer {
             position: absolute;
             z-index: 1;
             display: flex;
@@ -47,7 +54,7 @@
                     #3a3a70 0%,
                     #303052 100%
                 );
-            box-shadow: inset 0px 6.05063px 45.3797px rgba(0, 0, 0, 0.5);
+            box-shadow: inset 0 6.05063px 45.3797px rgba(0, 0, 0, 0.5);
             border-radius: 57px;
             // TODO: Need add border gradient.
             border: 1px solid;
@@ -56,21 +63,35 @@
             font-weight: normal;
             font-size: 48.4051px;
             line-height: 58px;
-            color: #ffffff;
+            color: #fff;
         }
 
-        &__match-result {
+        &__result {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: "Digital Numbers";
+            font-family: "Digital Numbers", sans-serif;
             font-style: normal;
             font-weight: normal;
             font-size: 173.956px;
             line-height: 225px;
-            display: flex;
-            align-items: center;
-            color: #ffffff;
+            color: #fff;
+        }
+
+        &__gradient {
+            position: absolute;
+            width: 100%;
+            height: 268px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            border-radius: 25.211px;
+            background: linear-gradient(
+                260.42deg,
+                #ff00cb 14.71%,
+                #00a3ff 96.59%
+            );
+            opacity: 0.1;
         }
     }
 }

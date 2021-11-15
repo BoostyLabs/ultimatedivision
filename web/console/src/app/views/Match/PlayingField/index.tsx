@@ -7,8 +7,9 @@ import "./index.scss";
 
 export const PlayingField: React.FC = () => {
     return (
-        <div className="playing-field">
+        <div className="match__playing-field">
             <img src={FootballField} alt="Playing football field"></img>
+            <div className="match__playing-field__gradient"></div>
         </div>
     );
 };
