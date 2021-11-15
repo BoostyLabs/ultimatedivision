@@ -1,33 +1,34 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { lazy } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { lazy } from "react";
+import { Route, Switch } from "react-router-dom";
 
-const SignIn = lazy(() => import('@/app/views/SignIn'));
-const SignUp = lazy(() => import('@/app/views/SignUp'));
-const ChangePassword = lazy(() => import('@/app/views/ChangePassword'));
-const ConfirmEmail = lazy(() => import('@/app/views/ConfirmEmail'));
-const RecoverPassword = lazy(() => import('@/app/views/RecoverPassword'));
-const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
-const Club = lazy(() => import('@/app/views/ClubPage'));
-const Card = lazy(() => import('@/app/views/CardPage'));
-const Lot = lazy(() => import('@/app/views/LotPage'));
-const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
-const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
-const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
-const Store = lazy(() => import('@/app/views/StorePage'));
-const Navbar = lazy(() => import('@/app/components/common/Navbar'));
-const Division = lazy(() => import('@/app/views/Division'));
+const SignIn = lazy(() => import("@/app/views/SignIn"));
+const SignUp = lazy(() => import("@/app/views/SignUp"));
+const ChangePassword = lazy(() => import("@/app/views/ChangePassword"));
+const ConfirmEmail = lazy(() => import("@/app/views/ConfirmEmail"));
+const RecoverPassword = lazy(() => import("@/app/views/RecoverPassword"));
+const MarketPlace = lazy(() => import("@/app/views/MarketPlacePage"));
+const Club = lazy(() => import("@/app/views/ClubPage"));
+const Card = lazy(() => import("@/app/views/CardPage"));
+const Lot = lazy(() => import("@/app/views/LotPage"));
+const FootballField = lazy(() => import("@/app/views/FootballFieldPage"));
+const WhitePaper = lazy(() => import("@/app/views/WhitePaperPage"));
+const Tokenomics = lazy(() => import("@/app/views/TokenomicsPage"));
+const Store = lazy(() => import("@/app/views/StorePage"));
+const Navbar = lazy(() => import("@/app/components/common/Navbar"));
+const Division = lazy(() => import("@/app/views/Division"));
+const Match = lazy(() => import("@/app/views/Match"));
 
-import Summary from '@components/WhitePaper/Summary';
-import GameMechanics from '@components/WhitePaper/GameMechanics';
-import PayToEarnEconomy from '@components/WhitePaper/PayToEarnEconomy';
-import Technology from '@components/WhitePaper/Technology';
-import Fund from '@components/Tokenomics/Fund';
-import PlayToEarn from '@components/Tokenomics/PlayToEarn';
-import Spending from '@components/Tokenomics/Spending';
-import Staking from '@components/Tokenomics/Staking';
+import Summary from "@components/WhitePaper/Summary";
+import GameMechanics from "@components/WhitePaper/GameMechanics";
+import PayToEarnEconomy from "@components/WhitePaper/PayToEarnEconomy";
+import Technology from "@components/WhitePaper/Technology";
+import Fund from "@components/Tokenomics/Fund";
+import PlayToEarn from "@components/Tokenomics/PlayToEarn";
+import Spending from "@components/Tokenomics/Spending";
+import Staking from "@components/Tokenomics/Staking";
 
 /** Route base config implementation */
 export class ComponentRoutes {
@@ -37,7 +38,7 @@ export class ComponentRoutes {
         public component: React.FC<any>,
         public exact: boolean,
         public children?: ComponentRoutes[]
-    ) { }
+    ) {}
     /** Method for creating child subroutes path */
     public with(
         child: ComponentRoutes,
@@ -53,36 +54,36 @@ export class ComponentRoutes {
 
         return this;
     }
-};
+}
 /** Route config that implements auth actions */
 export class AuthRouteConfig {
     public static SignIn: ComponentRoutes = new ComponentRoutes(
-        '/sign-in',
+        "/sign-in",
         SignIn,
         true
     );
     public static SignUp: ComponentRoutes = new ComponentRoutes(
-        '/sign-up',
+        "/sign-up",
         SignUp,
         true
     );
     public static ChangePassword: ComponentRoutes = new ComponentRoutes(
-        '/change-password',
+        "/change-password",
         ChangePassword,
         true
     );
     public static ConfirmEmail: ComponentRoutes = new ComponentRoutes(
-        '/email/confirm',
+        "/email/confirm",
         ConfirmEmail,
-        true,
+        true
     );
     public static ResetPassword: ComponentRoutes = new ComponentRoutes(
-        '/reset-password',
+        "/reset-password",
         RecoverPassword,
-        true,
+        true
     );
     public static Default: ComponentRoutes = new ComponentRoutes(
-        '/',
+        "/",
         SignIn,
         true
     );
@@ -94,96 +95,102 @@ export class AuthRouteConfig {
         AuthRouteConfig.SignIn,
         AuthRouteConfig.SignUp,
     ];
-};
+}
 
 /** Route config implementation */
 export class RouteConfig {
     public static MarketPlace: ComponentRoutes = new ComponentRoutes(
-        '/marketplace',
+        "/marketplace",
         MarketPlace,
         true
     );
     public static Lot: ComponentRoutes = new ComponentRoutes(
-        '/lot/:id',
+        "/lot/:id",
         Lot,
         true
     );
     public static Card: ComponentRoutes = new ComponentRoutes(
-        '/card/:id',
+        "/card/:id",
         Card,
         false
     );
     public static Division: ComponentRoutes = new ComponentRoutes(
         /** TODO: it will be replaced with id parameter */
-        '/division',
+        "/division",
         Division,
-        true,
+        true
     );
     public static FootballField: ComponentRoutes = new ComponentRoutes(
-        '/field',
+        "/field",
         FootballField,
         true
     );
     public static Store: ComponentRoutes = new ComponentRoutes(
-        '/store',
+        "/store",
         Store,
         true
     );
     public static Club: ComponentRoutes = new ComponentRoutes(
-        '/club',
+        "/club",
         Club,
         true
     );
+    public static Match: ComponentRoutes = new ComponentRoutes(
+        "/match",
+        Match,
+        true
+    );
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
-        '/whitepaper',
+        "/whitepaper",
         WhitePaper,
         false
     );
     public static Tokenomics: ComponentRoutes = new ComponentRoutes(
-        '/tokenomics',
+        "/tokenomics",
         Tokenomics,
         false
     );
     public static Summary: ComponentRoutes = new ComponentRoutes(
-        'summary',
+        "summary",
         Summary,
         true
     );
     public static GameMechanics: ComponentRoutes = new ComponentRoutes(
-        'game-mechanics',
+        "game-mechanics",
         GameMechanics,
         true
     );
     public static PayToEarnEconomy: ComponentRoutes = new ComponentRoutes(
-        'pay-to-earn-and-economy',
+        "pay-to-earn-and-economy",
         PayToEarnEconomy,
         true
     );
     public static Technology: ComponentRoutes = new ComponentRoutes(
-        'technology',
+        "technology",
         Technology,
         true
     );
     public static Spending: ComponentRoutes = new ComponentRoutes(
-        'udt-spending',
+        "udt-spending",
         Spending,
         true
     );
     public static PayToEarn: ComponentRoutes = new ComponentRoutes(
-        'pay-to-earn',
+        "pay-to-earn",
         PlayToEarn,
         true
     );
     public static Staking: ComponentRoutes = new ComponentRoutes(
-        'staking',
+        "staking",
         Staking,
         true
     );
     public static Fund: ComponentRoutes = new ComponentRoutes(
-        'ud-dao-fund',
+        "ud-dao-fund",
         Fund,
         true
     );
+
     public static routes: ComponentRoutes[] = [
         RouteConfig.FootballField,
         RouteConfig.MarketPlace,
@@ -192,6 +199,7 @@ export class RouteConfig {
         RouteConfig.Division,
         RouteConfig.Lot,
         RouteConfig.Store,
+        RouteConfig.Match,
         RouteConfig.Whitepaper.addChildren([
             RouteConfig.Summary,
             RouteConfig.GameMechanics,
@@ -205,27 +213,28 @@ export class RouteConfig {
             RouteConfig.Fund,
         ]),
     ];
-};
+}
 
-export const Routes = () =>
+export const Routes = () => (
     <Switch>
-        {AuthRouteConfig.routes.map((route, index) =>
+        {AuthRouteConfig.routes.map((route, index) => (
             <Route
                 key={index}
                 path={route.path}
                 component={route.component}
                 exact={route.exact}
             />
-        )}
+        ))}
         <Route>
             <Navbar />
-            {RouteConfig.routes.map((route, index) =>
+            {RouteConfig.routes.map((route, index) => (
                 <Route
                     key={index}
                     path={route.path}
                     component={route.component}
                     exact={route.exact}
                 />
-            )}
+            ))}
         </Route>
-    </Switch >;
+    </Switch>
+);
