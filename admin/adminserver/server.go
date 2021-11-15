@@ -10,7 +10,6 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/seasons"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -30,6 +29,7 @@ import (
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/queue"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 )
 
@@ -152,7 +152,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	clubsController := controllers.NewClubs(log, clubs, server.templates.club)
 	clubsRouter.HandleFunc("/create/{userId}", clubsController.Create).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{userId}", clubsController.List).Methods(http.MethodGet)
-	clubsRouter.HandleFunc("/{userId}/{clubId}", clubsController.UpdateStatus).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/{userId}/{clubId}/update", clubsController.UpdateStatus).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{clubId}/squad/create", clubsController.CreateSquad).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{clubId}/squad", clubsController.GetSquadByClubID).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{clubId}/squad/{squadId}/update", clubsController.UpdateSquad).Methods(http.MethodGet, http.MethodPost)

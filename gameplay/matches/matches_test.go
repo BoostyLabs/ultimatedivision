@@ -15,6 +15,7 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
+	"ultimatedivision/clubs/managers"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
@@ -383,10 +384,12 @@ func TestMatchService(t *testing.T) {
 		repositoryMatches := db.Matches()
 		repositorySeasons := db.Seasons()
 		repositoryDivisions := db.Divisions()
+		repositoryManagers := db.Managers()
 
 		cardsService := cards.NewService(repositoryCards, cards.Config{})
 		usersService := users.NewService(repositoryUsers)
-		clubsService := clubs.NewService(repositoryClubs, usersService, cardsService, repositoryDivisions)
+		managersService := managers.NewService(repositoryManagers, managers.Config{RenewalTime: 5000000})
+		clubsService := clubs.NewService(repositoryClubs, usersService, cardsService, managersService, repositoryDivisions)
 		matchesService := matches.NewService(repositoryMatches, matches.Config{}, clubsService)
 
 		var matchID uuid.UUID

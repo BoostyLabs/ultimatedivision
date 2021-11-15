@@ -2,17 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Portal | Clubs</title>
+  <title>Admin Portal | Admins</title>
 </head>
 <body>
+<nav>
+  <div>
+    <ul>
+      <li><a href="/admins/create">Add admin</a></li>
+    </ul>
+  </div>
+</nav>
 <table style="width:100%">
   <thead>
   <tr>
     <th>ID</th>
-    <th>Owner ID</th>
+    <th>OwnerID</th>
     <th>Name</th>
     <th>Status</th>
-    <th>Created At</th>
+    <th>DivisionID</th>
+    <th>Ownership</th>
+    <th>CreatedAt</th>
     <th>Operations</th>
   </tr>
   </thead>
@@ -31,14 +40,18 @@
       {{.Status}}
     </td>
     <td>
+      {{.DivisionID}}
+    </td>
+    <td>
+      {{.Ownership}}
+    </td>
+    <td>
       {{.CreatedAt}}
     </td>
     <td>
-      <a href = "/clubs/{{.OwnerID}}/{{.ID}}">Make Active</a>
-      <br>
-      <a href = "/clubs/{{.ID}}/squad">Get squad</a>
-      <br>
-      <a href = "/clubs/{{.ID}}/squad/create">Create squad</a>
+      <a href="/clubs/{{.ID}}/squad">Get squad</a>
+      <a href="/clubs/{{.ID}}/squad/create">Create squad</a>
+      <a href="/clubs/{{.OwnerID}}/{{.ID}}/update">Make active</a>
     </td>
   </tr>
   {{end}}

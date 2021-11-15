@@ -37,13 +37,13 @@ func (clubsDB *clubsDB) Create(ctx context.Context, club clubs.Club) (uuid.UUID,
 		return uuid.Nil, ErrClubs.Wrap(err)
 	}
 
-	query := `INSERT INTO clubs(id, owner_id, club_name, status, division_id, created_at)
-              VALUES($1,$2,$3,$4,$5,$6)
+	query := `INSERT INTO clubs(id, owner_id, club_name, status, division_id, ownership, created_at)
+              VALUES($1,$2,$3,$4,$5,$6,$7)
               RETURNING id`
 
 	var clubID uuid.UUID
 	err = clubsDB.conn.QueryRowContext(ctx, query,
-		club.ID, club.OwnerID, club.Name, club.Status, club.ID, club.CreatedAt).Scan(&clubID)
+		club.ID, club.OwnerID, club.Name, club.Status, club.DivisionID, club.Ownership, club.CreatedAt).Scan(&clubID)
 	if err != nil {
 		err = tx.Rollback()
 		if err != nil {
@@ -106,7 +106,7 @@ func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, squadID, cardID uui
 
 // ListByUserID returns clubs owned by the user.
 func (clubsDB *clubsDB) ListByUserID(ctx context.Context, userID uuid.UUID) ([]clubs.Club, error) {
-	query := `SELECT id, owner_id, club_name, status, created_at
+	query := `SELECT id, owner_id, club_name, status, division_id, ownership, created_at
 			  FROM clubs
 			  WHERE owner_id = $1`
 
@@ -122,7 +122,8 @@ func (clubsDB *clubsDB) ListByUserID(ctx context.Context, userID uuid.UUID) ([]c
 
 	for rows.Next() {
 		var club clubs.Club
-		err = rows.Scan(&club.ID, &club.OwnerID, &club.Name, &club.Status, &club.CreatedAt)
+		err = rows.Scan(&club.ID, &club.OwnerID, &club.Name, &club.Status, &club.DivisionID,
+			&club.Ownership, &club.CreatedAt)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return allClubs, clubs.ErrNoClub.Wrap(err)
@@ -138,14 +139,14 @@ func (clubsDB *clubsDB) ListByUserID(ctx context.Context, userID uuid.UUID) ([]c
 
 // Get returns club.
 func (clubsDB *clubsDB) Get(ctx context.Context, clubID uuid.UUID) (clubs.Club, error) {
-	query := `SELECT id, owner_id, club_name, status, division_id, created_at
+	query := `SELECT id, owner_id, club_name, status, division_id, ownership, created_at
 			  FROM clubs
 			  WHERE id = $1`
 
 	row := clubsDB.conn.QueryRowContext(ctx, query, clubID)
 
 	var club clubs.Club
-	err := row.Scan(&club.ID, &club.OwnerID, &club.Name, &club.Status, &club.DivisionID, &club.CreatedAt)
+	err := row.Scan(&club.ID, &club.OwnerID, &club.Name, &club.Status, &club.DivisionID, &club.Ownership, &club.CreatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return club, clubs.ErrNoClub.Wrap(err)

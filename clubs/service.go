@@ -11,6 +11,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/clubs/managers"
 	"ultimatedivision/divisions"
 	"ultimatedivision/users"
 )
@@ -25,15 +26,17 @@ type Service struct {
 	clubs     DB
 	users     *users.Service
 	cards     *cards.Service
+	managers  *managers.Service
 	divisions divisions.DB
 }
 
 // NewService is a constructor for clubs service.
-func NewService(clubs DB, users *users.Service, cards *cards.Service, divisions divisions.DB) *Service {
+func NewService(clubs DB, users *users.Service, cards *cards.Service, managers *managers.Service, divisions divisions.DB) *Service {
 	return &Service{
 		clubs:     clubs,
 		users:     users,
 		cards:     cards,
+		managers:  managers,
 		divisions: divisions,
 	}
 }
@@ -56,6 +59,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 		Name:       nickname,
 		CreatedAt:  time.Now().UTC(),
 		DivisionID: division.ID,
+		Ownership:  Owner,
 	}
 
 	allClubs, err := service.ListByUserID(ctx, userID)
@@ -240,8 +244,23 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 
 // ListByUserID returns user's clubs.
 func (service *Service) ListByUserID(ctx context.Context, userID uuid.UUID) ([]Club, error) {
-	club, err := service.clubs.ListByUserID(ctx, userID)
-	return club, ErrClubs.Wrap(err)
+	userClubs, err := service.clubs.ListByUserID(ctx, userID)
+	if err != nil {
+		return userClubs, ErrClubs.Wrap(err)
+	}
+
+	managedClubs, err := service.managers.ListByUserID(ctx, userID)
+	for i := 0; i < len(managedClubs); i++ {
+		club, err := service.Get(ctx, managedClubs[i].ClubID)
+		if err != nil {
+			return userClubs, ErrClubs.Wrap(err)
+		}
+		club.Ownership = Manager
+
+		userClubs = append(userClubs, club)
+	}
+
+	return userClubs, ErrClubs.Wrap(err)
 }
 
 // Get returns club.

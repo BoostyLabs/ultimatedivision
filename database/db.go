@@ -17,6 +17,7 @@ import (
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
+	"ultimatedivision/clubs/managers"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/lootboxes"
@@ -172,12 +173,18 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             created_at      TIMESTAMP WITH TIME ZONE NOT NULL
         );
         CREATE TABLE IF NOT EXISTS clubs (
-            id          BYTEA     PRIMARY KEY                                NOT NULL,
-            owner_id    BYTEA     REFERENCES users(id) ON DELETE CASCADE     NOT NULL,
-            club_name   VARCHAR                                              NOT NULL,
-            status      INTEGER                                              NOT NULL,
+            id          BYTEA     PRIMARY KEY                            NOT NULL,
+            owner_id    BYTEA     REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            club_name   VARCHAR                                          NOT NULL,
+            status      INTEGER                                          NOT NULL,
             division_id BYTEA,
-            created_at  TIMESTAMP WITH TIME ZONE                             NOT NULL
+            ownership   INTEGER                                          NOT NULL,
+            created_at  TIMESTAMP WITH TIME ZONE                         NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS managers (
+            user_id   BYTEA     REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            club_id   BYTEA     REFERENCES clubs(id) ON DELETE CASCADE NOT NULL,
+            ended_at  TIMESTAMP WITH TIME ZONE                         NOT NULL
         );
         CREATE TABLE IF NOT EXISTS squads (
             id            BYTEA   PRIMARY KEY                            NOT NULL,
@@ -326,4 +333,9 @@ func (db *database) NFTs() nfts.DB {
 // WaitList provides access to accounts db.
 func (db *database) WaitList() waitlist.DB {
 	return &waitlistDB{conn: db.conn}
+}
+
+// Managers provides access to accounts db.
+func (db *database) Managers() managers.DB {
+	return &managersDB{conn: db.conn}
 }

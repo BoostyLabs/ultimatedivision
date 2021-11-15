@@ -79,6 +79,7 @@ type Club struct {
 	Name       string    `json:"name"`
 	Status     Status    `json:"status"`
 	DivisionID uuid.UUID `json:"divisionId"`
+	Ownership  Ownership `json:"ownership"`
 	CreatedAt  time.Time `json:"createdAt"`
 }
 
@@ -101,6 +102,16 @@ type SquadCard struct {
 
 // SquadSize defines number of cards in the full squad.
 const SquadSize int = 11
+
+// Ownership defines a list of possible ownerships.
+type Ownership int
+
+const (
+	// Manager defines manager type of ownership.
+	Manager Ownership = 0
+	// Owner defines owner type of ownership.
+	Owner Ownership = 1
+)
 
 // Formation defines a list of possible formations.
 type Formation int
