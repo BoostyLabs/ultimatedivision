@@ -388,7 +388,7 @@ func TestMatchService(t *testing.T) {
 
 		cardsService := cards.NewService(repositoryCards, cards.Config{})
 		usersService := users.NewService(repositoryUsers)
-		managersService := managers.NewService(repositoryManagers, managers.Config{RenewalTime: 5000000})
+		managersService := managers.NewService(repositoryManagers)
 		clubsService := clubs.NewService(repositoryClubs, usersService, cardsService, managersService, repositoryDivisions)
 		matchesService := matches.NewService(repositoryMatches, matches.Config{}, clubsService)
 
