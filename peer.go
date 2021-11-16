@@ -338,7 +338,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // managers setup
 		peer.Managers.Service = managers.NewService(
 			peer.Database.Managers(),
-			config.Managers.Config,
 		)
 
 		peer.Managers.ExpirationManagerContract = managers.NewChore(

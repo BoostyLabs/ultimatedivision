@@ -184,7 +184,8 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         CREATE TABLE IF NOT EXISTS managers (
             user_id   BYTEA     REFERENCES users(id) ON DELETE CASCADE NOT NULL,
             club_id   BYTEA     REFERENCES clubs(id) ON DELETE CASCADE NOT NULL,
-            ended_at  TIMESTAMP WITH TIME ZONE                         NOT NULL
+            ended_at  TIMESTAMP WITH TIME ZONE                         NOT NULL,
+            PRIMARY KEY(user_id, club_id)
         );
         CREATE TABLE IF NOT EXISTS squads (
             id            BYTEA   PRIMARY KEY                            NOT NULL,

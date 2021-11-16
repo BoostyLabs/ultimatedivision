@@ -51,7 +51,7 @@ func (controller *Managers) Create(w http.ResponseWriter, r *http.Request) {
 
 	var manager managers.Manager
 
-	if err := json.NewDecoder(r.Body).Decode(&manager); err != nil {
+	if err = json.NewDecoder(r.Body).Decode(&manager); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrManagers.Wrap(err))
 		return
 	}

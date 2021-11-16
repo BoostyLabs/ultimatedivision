@@ -6,6 +6,7 @@ package database
 import (
 	"context"
 	"database/sql"
+
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
@@ -18,7 +19,7 @@ var _ managers.DB = (*managersDB)(nil)
 // ErrManagers indicates that there was an error in the database.
 var ErrManagers = errs.Class("managers repository error")
 
-// managersDB provide access to managers DB.
+// managersDB provide access to manager DB.
 //
 // architecture: Database
 type managersDB struct {
@@ -26,7 +27,7 @@ type managersDB struct {
 }
 
 // Create creates manager in the database.
-func (managersDB managersDB) Create(ctx context.Context, manager managers.Manager) error {
+func (managersDB *managersDB) Create(ctx context.Context, manager managers.Manager) error {
 	query := `INSERT INTO managers(user_id, club_id, ended_at)
 	          VALUES($1,$2,$3)`
 
@@ -36,7 +37,7 @@ func (managersDB managersDB) Create(ctx context.Context, manager managers.Manage
 }
 
 // List returns all managers from the database.
-func (managersDB managersDB) List(ctx context.Context) ([]managers.Manager, error) {
+func (managersDB *managersDB) List(ctx context.Context) ([]managers.Manager, error) {
 	query := `SELECT user_id, club_id, ended_at
 	          FROM managers`
 
@@ -67,7 +68,7 @@ func (managersDB managersDB) List(ctx context.Context) ([]managers.Manager, erro
 }
 
 // ListByUserID returns clubs managed by user from the database.
-func (managersDB managersDB) ListByUserID(ctx context.Context, userID uuid.UUID) ([]managers.Manager, error) {
+func (managersDB *managersDB) ListByUserID(ctx context.Context, userID uuid.UUID) ([]managers.Manager, error) {
 	query := `SELECT user_id, club_id, ended_at
 	          FROM managers
 	          WHERE user_id = $1`
@@ -99,7 +100,7 @@ func (managersDB managersDB) ListByUserID(ctx context.Context, userID uuid.UUID)
 }
 
 // Delete deletes manager from the database.
-func (managersDB managersDB) Delete(ctx context.Context, userID, clubID uuid.UUID) error {
+func (managersDB *managersDB) Delete(ctx context.Context, userID, clubID uuid.UUID) error {
 	query := `DELETE FROM managers
 	          WHERE user_id = $1 and club_id = $2`
 

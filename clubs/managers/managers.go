@@ -30,7 +30,6 @@ type DB interface {
 
 // Manager defines managers entity.
 type Manager struct {
-	ID uuid.UUID `json:"id"`
 	UserID  uuid.UUID `json:"userId"`
 	ClubID  uuid.UUID `json:"clubId"`
 	EndedAt time.Time `json:"endedAt"`

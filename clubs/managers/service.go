@@ -19,14 +19,12 @@ var ErrManagers = errs.Class("managers service error")
 // architecture: Service
 type Service struct {
 	managers DB
-	config   Config
 }
 
 // NewService is constructor for Service.
-func NewService(managers DB, config Config) *Service {
+func NewService(managers DB) *Service {
 	return &Service{
 		managers: managers,
-		config:   config,
 	}
 }
 
@@ -35,7 +33,7 @@ func (service *Service) Create(ctx context.Context, endedAt time.Time, userID, c
 	newManager := Manager{
 		UserID:  userID,
 		ClubID:  clubID,
-		EndedAt: endedAt,
+		EndedAt: endedAt.UTC(),
 	}
 
 	return ErrManagers.Wrap(service.managers.Create(ctx, newManager))
