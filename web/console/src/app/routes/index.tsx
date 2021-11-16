@@ -13,7 +13,7 @@ const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
 const Club = lazy(() => import('@/app/views/ClubPage'));
 const Card = lazy(() => import('@/app/views/CardPage'));
 const Lot = lazy(() => import('@/app/views/LotPage'));
-const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
+const Field = lazy(() => import('@/app/views/FieldPage'));
 const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
 const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
 const Store = lazy(() => import('@/app/views/StorePage'));
@@ -120,9 +120,9 @@ export class RouteConfig {
         Division,
         true
     );
-    public static FootballField: ComponentRoutes = new ComponentRoutes(
+    public static Field: ComponentRoutes = new ComponentRoutes(
         '/field',
-        FootballField,
+        Field,
         true
     );
     public static Store: ComponentRoutes = new ComponentRoutes(
@@ -192,7 +192,7 @@ export class RouteConfig {
     );
 
     public static routes: ComponentRoutes[] = [
-        RouteConfig.FootballField,
+        RouteConfig.Field,
         RouteConfig.MarketPlace,
         RouteConfig.Club,
         RouteConfig.Card,
