@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/clubs"
 	"ultimatedivision/pkg/pagination"
 )
 
@@ -144,6 +145,7 @@ type Page struct {
 
 // Statistic defined statistic of club in season.
 type Statistic struct {
+	clubs.Club
 	MatchPlayed    int `json:"matchPlayed"`
 	Wins           int `json:"wins"`
 	Losses         int `json:"losses"`
