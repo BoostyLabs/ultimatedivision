@@ -47,7 +47,7 @@ func NewChore(config Config, log logger.Logger, nfts *Service, users *users.Serv
 	}
 }
 
-// Run starts the chore for re-check the expiration time of the lot.
+// Run runs the task to re-own nft.
 func (chore *Chore) Run(ctx context.Context) (err error) {
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
 		nfts, err := chore.nfts.List(ctx)

@@ -85,6 +85,9 @@ const (
 	LengthHexPrefix Length = 2
 )
 
+// BlockTagLatest indicates that the last block will be used.
+const BlockTagLatest string = "latest"
+
 // Data entity describes values for data field in transacton.
 type Data struct {
 	AddressContractMethod Hex

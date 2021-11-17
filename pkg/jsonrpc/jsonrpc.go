@@ -39,7 +39,7 @@ func NewTransaction(method string, params Parameter, id cryptoutils.ChainID) Tra
 	return Transaction{
 		JSONRPC: VersionTwo,
 		Method:  method,
-		Params:  []interface{}{&params, "latest"},
+		Params:  []interface{}{&params, cryptoutils.BlockTagLatest},
 		ID:      id,
 	}
 }
