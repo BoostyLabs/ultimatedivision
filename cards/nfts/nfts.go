@@ -5,6 +5,7 @@ package nfts
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -19,6 +20,8 @@ type DB interface {
 	Create(ctx context.Context, nft NFT) error
 	// List returns all nft token from database.
 	List(ctx context.Context) ([]NFT, error)
+	// Update updates users wallet address for nft token in the database.
+	Update(ctx context.Context, walletAddress cryptoutils.Address, cardID uuid.UUID) error
 }
 
 // NFT entity describes values released nft token.
@@ -34,6 +37,12 @@ const MaxValueGameParameter = 100
 
 // Config defines values needed by create nft.
 type Config struct {
-	Description string `json:"description"`
-	ExternalURL string `json:"externalUrl"`
+	Description        string        `json:"description"`
+	ExternalURL        string        `json:"externalUrl"`
+	NFTRenewalInterval time.Duration `json:"nftRenewalInterval"`
+	Contract           struct {
+		Address       cryptoutils.Address `json:"address"`
+		AddressMethod cryptoutils.Hex     `json:"addressMethod"`
+	} `json:"contract"`
+	AddressNodeServer string `json:"addressNodeServer"`
 }
