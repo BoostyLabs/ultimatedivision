@@ -10,28 +10,30 @@ import {
     SELECTION_VISIBILITY,
 } from '@/app/store/actions/clubs';
 
+const ACTIVE_STATUS_VALUE = 1;
+
 /** TODO: replace by initial object */
 const clubState = new ClubState();
 
 export const clubsReducer = (state = clubState, action: any = {}) => {
     switch (action.type) {
-        case SET_CLUBS:
-            return {
-                ...state,
-                clubs: action.clubs,
-                activeClub: action.clubs.find((club:Club) => club.status === 1)
-            }
-        case SELECTION_VISIBILITY:
-            state.options.showCardSeletion = action.isVisible;
-            break;
-        case CARD_POSITION:
-            state.options.chosedCard = action.index;
-            break;
-        case DRAG_START:
-            state.options.dragStart = action.index;
-            break;
-        default:
-            break;
+    case SET_CLUBS:
+        return {
+            ...state,
+            clubs: action.clubs,
+            activeClub: action.clubs.find((club:Club) => club.status === ACTIVE_STATUS_VALUE),
+        };
+    case SELECTION_VISIBILITY:
+        state.options.showCardSeletion = action.isVisible;
+        break;
+    case CARD_POSITION:
+        state.options.chosedCard = action.index;
+        break;
+    case DRAG_START:
+        state.options.dragStart = action.index;
+        break;
+    default:
+        break;
     }
 
     return { ...state };

@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 const DEFAULT_VALUE = 0;
+const ACTIVE_STATUS_VALUE = 1;
 
 /** backend squad */
 export class Squad {
@@ -27,7 +28,7 @@ export class Club {
     public createdAt: string = '';
     public squad: Squad = new Squad();
     public squadCards: SquadCard[] = [];
-    public status: number = 1;
+    public status: number = ACTIVE_STATUS_VALUE;
 }
 
 /** for drag and drop implementation */

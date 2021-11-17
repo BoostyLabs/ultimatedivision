@@ -44,12 +44,12 @@ const FootballField: React.FC = () => {
         })();
     }, []);
     const dragStartIndex = useSelector(
-        (state: RootState) => state.clubsReducer && state.clubsReducer.options.dragStart
+        (state: RootState) => state.clubsReducer.options.dragStart
     );
 
-    const squad = useSelector((state: RootState) =>  state.clubsReducer && state.clubsReducer.activeClub.squad);
-    const club = useSelector((state: RootState) =>  state.clubsReducer && state.clubsReducer.activeClub);
-    const cardSelectionVisibility = useSelector((state: RootState) => state.clubsReducer && state.clubsReducer.options.showCardSeletion);
+    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
+    const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
+    const cardSelectionVisibility = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
 
     /** prevent default user agent action */
     function dragOverHandler(e: DragEvent<HTMLDivElement>) {

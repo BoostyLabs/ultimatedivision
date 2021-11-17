@@ -33,11 +33,8 @@ export const FieldPlayingArea: React.FC = () => {
     const dragStartIndex = useSelector(
         (state: RootState) => state.clubsReducer.options.dragStart
     );
-
     const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
-    console.log(club.squadCards)
     const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
-
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     /** This var created to not allow mouseUpEvent without Dragging before it */
