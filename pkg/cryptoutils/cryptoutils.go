@@ -73,14 +73,17 @@ const (
 // HexPrefix defines the prefix of hex type.
 const HexPrefix Hex = "0x"
 
-// LengthOneBlockInputValue defines the length of one block of input data.
-const LengthOneBlockInputValue int = 64
+// Length defines the list of possible lengths of blockchain elements.
+type Length int
 
-// LengthAddress defines the length of address.
-const LengthAddress int = 40
-
-// LengthHexPrefix defines the length of hex prefix.
-const LengthHexPrefix int = 2
+const (
+	// LengthOneBlockInputValue defines the length of one block of input data.
+	LengthOneBlockInputValue Length = 64
+	// LengthAddress defines the length of address.
+	LengthAddress Length = 40
+	// LengthHexPrefix defines the length of hex prefix.
+	LengthHexPrefix Length = 2
+)
 
 // Data entity describes values for data field in transacton.
 type Data struct {
@@ -229,7 +232,7 @@ func GenerateSignatureWithToken(addressWallet Address, addressContract Address, 
 func createHexStringFixedLength(tokenID int) Hex {
 	tokenIDString := fmt.Sprintf("%x", tokenID)
 	var zeroString string
-	for i := 0; i < (LengthOneBlockInputValue - len(tokenIDString)); i++ {
+	for i := 0; i < (int(LengthOneBlockInputValue) - len(tokenIDString)); i++ {
 		zeroString += "0"
 	}
 

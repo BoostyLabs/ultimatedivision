@@ -11,7 +11,6 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards/nfts"
-	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/pkg/cryptoutils"
 )
 
@@ -78,7 +77,7 @@ func (nftsDB *nftsDB) Update(ctx context.Context, walletAddress cryptoutils.Addr
 		return ErrNFTs.Wrap(err)
 	}
 	if rowNum == 0 {
-		return matches.ErrNoMatch.New("nft does not exist")
+		return nfts.ErrNoNFTs.New("nft does not exist")
 	}
 
 	return ErrNFTs.Wrap(err)

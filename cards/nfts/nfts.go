@@ -8,9 +8,13 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/zeebo/errs"
 
 	"ultimatedivision/pkg/cryptoutils"
 )
+
+// ErrNoNFTs indicated that nfts does not exist.
+var ErrNoNFTs = errs.Class("nfts does not exist")
 
 // DB is exposing access to cards db.
 //
