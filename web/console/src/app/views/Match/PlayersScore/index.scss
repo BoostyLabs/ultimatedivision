@@ -66,6 +66,19 @@
             color: #fff;
         }
 
+        &__goal-time {
+            margin: auto  16px auto auto;
+            font-family: "BebasNeue", sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 24px;
+            line-height: 29px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #ffffff;
+        }
+
         &__goals {
             display: flex;
             align-items: center;
