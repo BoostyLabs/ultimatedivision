@@ -250,8 +250,8 @@ func (service *Service) ListByUserID(ctx context.Context, userID uuid.UUID) ([]C
 	}
 
 	managedClubs, err := service.managers.ListByUserID(ctx, userID)
-	for i := 0; i < len(managedClubs); i++ {
-		club, err := service.Get(ctx, managedClubs[i].ClubID)
+	for _,managedClub := range managedClubs {
+		club, err := service.Get(ctx, managedClub.ClubID)
 		if err != nil {
 			return userClubs, ErrClubs.Wrap(err)
 		}
