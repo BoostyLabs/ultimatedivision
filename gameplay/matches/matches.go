@@ -145,11 +145,11 @@ type Page struct {
 
 // Statistic defined statistic of club in season.
 type Statistic struct {
-	clubs.Club
-	MatchPlayed    int `json:"matchPlayed"`
-	Wins           int `json:"wins"`
-	Losses         int `json:"losses"`
-	Draws          int `json:"draws"`
-	GoalDifference int `json:"goalDifference"`
-	Points         int `json:"points"`
+	Club           clubs.Club `json:"club"`
+	MatchPlayed    int        `json:"matchPlayed"`
+	Wins           int        `json:"wins"`
+	Losses         int        `json:"losses"`
+	Draws          int        `json:"draws"`
+	GoalDifference int        `json:"goalDifference"`
+	Points         int        `json:"points"`
 }

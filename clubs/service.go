@@ -434,7 +434,7 @@ func (service *Service) CardsWithNewPositions(ctx context.Context, cards []Squad
 	return positionMap, nil
 }
 
-// UpdateTopClubToNewDivision is a method that update club to division.
-func (service *Service) UpdateTopClubToNewDivision(ctx context.Context, clubID uuid.UUID, divisionID uuid.UUID) error {
-	return ErrClubs.Wrap(service.clubs.UpdateTopClubToNewDivision(ctx, clubID, divisionID))
+// UpdateClubToNewDivision is a method that updates club to division.
+func (service *Service) UpdateClubToNewDivision(ctx context.Context, clubID uuid.UUID, divisionID uuid.UUID) error {
+	return ErrClubs.Wrap(service.clubs.UpdateClubToNewDivision(ctx, clubID, divisionID))
 }

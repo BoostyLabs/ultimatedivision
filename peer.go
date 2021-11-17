@@ -361,6 +361,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Database.Matches(),
 			config.Matches.Config,
 			peer.Clubs.Service,
+			peer.Seasons.Service,
+			peer.Divisions.Service,
 		)
 	}
 

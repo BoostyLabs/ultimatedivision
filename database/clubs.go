@@ -408,8 +408,8 @@ func (clubsDB *clubsDB) GetCaptainID(ctx context.Context, squadID uuid.UUID) (uu
 	return id, nil
 }
 
-// UpdateTopClubToNewDivision updates club to new division.
-func (clubsDB *clubsDB) UpdateTopClubToNewDivision(ctx context.Context, clubID uuid.UUID, newDivisionID uuid.UUID) error {
+// UpdateClubToNewDivision updates club to new division.
+func (clubsDB *clubsDB) UpdateClubToNewDivision(ctx context.Context, clubID uuid.UUID, newDivisionID uuid.UUID) error {
 	query := `UPDATE clubs
 			  SET division_id = $1
 			  WHERE id = $2`

@@ -387,7 +387,9 @@ func TestMatchService(t *testing.T) {
 		cardsService := cards.NewService(repositoryCards, cards.Config{})
 		usersService := users.NewService(repositoryUsers)
 		clubsService := clubs.NewService(repositoryClubs, usersService, cardsService, repositoryDivisions)
-		matchesService := matches.NewService(repositoryMatches, matches.Config{}, clubsService)
+		divisionService := divisions.NewService(repositoryDivisions, divisions.Config{})
+		seasonsService := seasons.NewService(repositorySeasons, seasons.Config{}, divisionService)
+		matchesService := matches.NewService(repositoryMatches, matches.Config{}, clubsService, seasonsService, divisionService)
 
 		var matchID uuid.UUID
 

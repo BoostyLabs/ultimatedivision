@@ -57,8 +57,8 @@ type DB interface {
 	UpdatePositions(ctx context.Context, squadCards []SquadCard) error
 	// UpdateFormation updates formation in the squad.
 	UpdateFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) error
-	// UpdateTopClubToNewDivision updates club to new division.
-	UpdateTopClubToNewDivision(ctx context.Context, clubID uuid.UUID, newDivisionID uuid.UUID) error
+	// UpdateClubToNewDivision updates club to new division.
+	UpdateClubToNewDivision(ctx context.Context, clubID uuid.UUID, newDivisionID uuid.UUID) error
 }
 
 // Status defines list of possible club statuses.
