@@ -21,15 +21,13 @@ export class SquadCard {
 
 
 /** backend club */
-export interface Club {
-    // TODO : change interface after backend changes
-    clubs: {
-        id: string;
-        name: string;
-        createdAt: string;
-    };
-    squad: Squad;
-    squadCards: SquadCard[];
+export class Club {
+    public id: string = '';
+    public name: string = '';
+    public createdAt: string = '';
+    public squad: Squad = new Squad();
+    public squadCards: SquadCard[] = [];
+    public status: number = 1;
 }
 
 /** for drag and drop implementation */
@@ -45,14 +43,8 @@ export class Options {
 
 /** club reducer state  */
 export class ClubState {
-    // clubs field will be deleted afted backend changes
-    public clubs: Club['clubs'] = {
-        id: '',
-        name: '',
-        createdAt: '',
-    };
-    public squad: Squad = new Squad();
-    public squadCards: SquadCard[] = [];
+    public clubs: Club[] = [];
+    public activeClub = new Club();
     public options: Options = new Options();
 }
 

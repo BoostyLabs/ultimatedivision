@@ -28,16 +28,15 @@ export const FieldPlayingArea: React.FC = () => {
         (state: RootState) => state.cardsReducer.cardsPage
     );
     const formation = useSelector(
-        (state: RootState) => state.clubsReducer.squad.formation
+        (state: RootState) => state.clubsReducer.activeClub.squad.formation
     );
     const dragStartIndex = useSelector(
         (state: RootState) => state.clubsReducer.options.dragStart
     );
 
-    const club = useSelector((state: RootState) => state.clubsReducer);
-    const squad = useSelector((state: RootState) => state.clubsReducer.squad);
-
-    const fieldSetup = useSelector((state: RootState) => state.clubsReducer);
+    const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
+    console.log(club.squadCards)
+    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
 
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -100,7 +99,7 @@ export const FieldPlayingArea: React.FC = () => {
     ): void {
         e.stopPropagation();
         if (isDragging && dragStartIndex !== null) {
-            const cards = fieldSetup.squadCards;
+            const cards = club.squadCards;
             getCard(cards[index].cardId) ?
                 dispatch(swapCards(
                     new CardEditIdentificators(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
@@ -149,7 +148,7 @@ export const FieldPlayingArea: React.FC = () => {
                     className={`playing-area__${formation}`}
                     onMouseUp={mouseUpOnArea}
                 >
-                    {fieldSetup.squadCards.map(
+                    {club.squadCards.map(
                         (fieldCard: SquadCard, index: number) => {
                             const card = getCard(fieldCard.cardId);
                             const equality = dragStartIndex === index;
@@ -185,7 +184,7 @@ export const FieldPlayingArea: React.FC = () => {
                         })}
                 </div>
                 <div className={`playing-area__${formation}-shadows`}>
-                    {fieldSetup.squadCards.map(
+                    {club.squadCards.map(
                         (fieldCard: SquadCard, index: number) => {
                             const card = getCard(fieldCard.cardId);
 
