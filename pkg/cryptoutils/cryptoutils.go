@@ -26,6 +26,9 @@ type CreateSignature struct {
 // Address defines address type.
 type Address string
 
+// Hex defines hex type.
+type Hex string
+
 // Signature defines signature type.
 type Signature string
 
@@ -48,6 +51,18 @@ const (
 	// PrivateKeyVTwentyEight indicates that the v of private key is 28.
 	PrivateKeyVTwentyEight PrivateKeyV = 28
 )
+
+// Contract entity describes addresses of contract and method.
+type Contract struct {
+	Address       Address `json:"address"`
+	AddressMethod Hex     `json:"addressMethod"`
+}
+
+// Transaction entity describes password wallet and smart contracts address.
+type Transaction struct {
+	Password Signature `json:"password"`
+	Contract `json:"contract"`
+}
 
 // Сhain defines the list of possible chains in blockchain.
 type Сhain string
