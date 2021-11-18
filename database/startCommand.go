@@ -73,7 +73,7 @@ func CreateAdmin(ctx context.Context, conn *sql.DB) error {
 	return ErrAdmins.Wrap(err)
 }
 
-// Create creates a division and writes to the database.
+// CreateDivisions creates a division and writes to the database.
 func CreateDivisions(ctx context.Context, conn *sql.DB) error {
 	division1 := divisions.Division{
 		ID:             uuid.New(),
