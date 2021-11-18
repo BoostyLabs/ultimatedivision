@@ -419,6 +419,10 @@ func (service *Service) CardsWithNewPositions(ctx context.Context, cards []Squad
 		return cards[i].Position < cards[j].Position
 	})
 
+	sort.Slice(positions, func(i, j int) bool {
+		return positions[i] < positions[j]
+	})
+
 	for _, position := range positions {
 		card, index, err := service.EffectiveCardForPosition(ctx, position, cards)
 		if err != nil {
