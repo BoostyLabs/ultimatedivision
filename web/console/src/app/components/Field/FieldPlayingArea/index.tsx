@@ -54,12 +54,10 @@ export const FieldPlayingArea: React.FC = () => {
         const playingArea = document.getElementById('playingArea');
         if (playingArea) {
             const position = playingArea.getBoundingClientRect();
-            const HALF_OF_CARD_WIDTH = 60;
-            const HALF_OF_CARD_HEIGHT = 100;
 
             handleOffset({
-                x: position.x + HALF_OF_CARD_WIDTH,
-                y: position.y + HALF_OF_CARD_HEIGHT,
+                x: position.x,
+                y: position.y,
             });
         }
     }, []);
@@ -156,6 +154,7 @@ export const FieldPlayingArea: React.FC = () => {
                                         equality ? {
                                             left: x - outerOffset.x,
                                             top: y - OFFSET_TOP,
+                                            transform: 'translateX(-55%)',
                                             zIndex: 5,
                                             pointerEvents: 'none',
                                         }
@@ -194,9 +193,7 @@ export const FieldPlayingArea: React.FC = () => {
                                         <img
                                             // If data exist it has maininfo, but TS do not let me use it even with check
                                             /** TODO: check for undefined will removed after correct Card type */
-                                            src={
-                                                card.style && card.style.shadow
-                                            }
+                                            src={card.style.shadow}
                                             alt="card shadow"
                                             className={`playing-area__${formation}-shadows__shadow`}
                                         />
