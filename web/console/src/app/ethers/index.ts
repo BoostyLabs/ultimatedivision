@@ -1,60 +1,69 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+export interface Transaction {
+    password: string;
+    tokenId: number;
+    contract: {
+        address: string;
+        addressMethod: string;
+    };
+}
+
 export const GAME_ABI = [
     {
-        "inputs": [
+        'inputs': [
             {
-                "internalType": "address",
-                "name": "_nftAddress",
-                "type": "address"
-            }
+                'internalType': 'address',
+                'name': '_nftAddress',
+                'type': 'address',
+            },
         ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
+        'stateMutability': 'nonpayable',
+        'type': 'constructor',
     },
     {
-        "inputs": [
+        'inputs': [
             {
-                "internalType": "bytes",
-                "name": "_signature",
-                "type": "bytes"
+                'internalType': 'bytes',
+                'name': '_signature',
+                'type': 'bytes',
             },
             {
-                "internalType": "uint256",
-                "name": "tokenID",
-                "type": "uint256"
-            }
+                'internalType': 'uint256',
+                'name': 'tokenID',
+                'type': 'uint256',
+            },
         ],
-        "name": "buyWithSignature",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        'name': 'buyWithSignature',
+        'outputs': [],
+        'stateMutability': 'nonpayable',
+        'type': 'function',
     },
     {
-        "inputs": [],
-        "name": "nft",
-        "outputs": [
+        'inputs': [],
+        'name': 'nft',
+        'outputs': [
             {
-                "internalType": "contract INFT",
-                "name": "",
-                "type": "address"
-            }
+                'internalType': 'contract INFT',
+                'name': '',
+                'type': 'address',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        'stateMutability': 'view',
+        'type': 'function',
     },
     {
-        "inputs": [],
-        "name": "verifyAddress",
-        "outputs": [
+        'inputs': [],
+        'name': 'verifyAddress',
+        'outputs': [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
+                'internalType': 'address',
+                'name': '',
+                'type': 'address',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
-    }
-]
+        'stateMutability': 'view',
+        'type': 'function',
+    },
+];

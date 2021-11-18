@@ -5,10 +5,12 @@ import { ethers } from 'ethers';
 
 import { Service } from '@/app/ethers/service';
 
+/** Class for creating ethers service */
 export class ServicePlugin {
+    /** Creates ethers provider instance */
     public static create() {
         try {
-            //@ts-ignore
+            // @ts-ignore
             const ethereumProvider = new ethers.providers.Web3Provider(window.ethereum);
 
             return new Service(ethereumProvider);

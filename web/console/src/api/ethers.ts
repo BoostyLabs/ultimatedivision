@@ -2,21 +2,17 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '.';
+import { Transaction } from '@/app/ethers';
 
+/** Ethers api client */
 export class EthersClient extends APIClient {
-    private readonly ROOT_PATH = '/api/v0/nft-waitlist'
+    private readonly ROOT_PATH = '/api/v0/nft-waitlist';
 
-    public async getAddress(wallet: string, id: string): Promise<{
-        "password": string,
-        "tokenId": number,
-        "contract": {
-            "address": string,
-            "addressMethod": string
-        }
-    }> {
+    /** Gets transaction from api  */
+    public async getTransaction(wallet: string, id: string): Promise<Transaction> {
         const response = await this.http.post(`${this.ROOT_PATH}`, JSON.stringify({
             'cardId': id,
-            'walletAddress': wallet
+            'walletAddress': wallet,
         }));
 
         if (!response.ok) {

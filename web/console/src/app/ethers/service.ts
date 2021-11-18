@@ -5,28 +5,31 @@ import { ethers } from 'ethers';
 
 import { EthersClient } from '@/api/ethers';
 import { buildHash } from '../utils/ethers';
+import { Transaction } from '.';
 
+/** Service for ethers methods */
 export class Service {
     private readonly provider;
     private readonly client = new EthersClient();
 
+    /** Applies ethereum provider for internal methons */
     public constructor(ethereumProvider: any) {
         this.provider = ethereumProvider;
     }
 
-    /** Get nft adress and password. */
-    public async getAddress(wallet: string, id: string) {
-        return await this.client.getAddress(wallet, id);
+    /** Gets transaction from api */
+    public async getAddress(wallet: string, id: string): Promise<Transaction> {
+        return await this.client.getTransaction(wallet, id);
     }
 
-    /** Get current wallet address. */
+    /** Gets current wallet address. */
     public async getWallet() {
         const signer = await this.provider.getSigner();
 
         return await signer.getAddress();
     }
 
-    /** Send smart contract transaction. */
+    /** Sends smart contract transaction. */
     public async sendTransaction(
         wallet: string,
         abi: any[],
@@ -39,6 +42,7 @@ export class Service {
             abi
         );
         const connect = await contract.connect(signer);
+        /* eslint-disable */
         const data = `${address.contract.addressMethod}${buildHash(40)}${buildHash(address.tokenId.toString(16))}${buildHash(60)}${buildHash(
             address.password.slice(-2)
         )}${address.password.slice(0, address.password.length - 2)}`;
