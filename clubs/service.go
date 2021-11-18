@@ -5,6 +5,7 @@ package clubs
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -354,6 +355,10 @@ func RemoveIndex(s []SquadCard, index int) []SquadCard {
 func (service *Service) EffectiveCardForPosition(ctx context.Context, position Position, squadCards []SquadCard) (cards.Card, int, error) {
 	cardCoefficients := make(map[float64]cards.Card)
 	var index int
+
+	sort.Slice(squadCards, func(i, j int) bool {
+		return squadCards[i].Position < squadCards[j].Position
+	})
 
 	for _, squadCard := range squadCards {
 		card, err := service.cards.Get(ctx, squadCard.CardID)
