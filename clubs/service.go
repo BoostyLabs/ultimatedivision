@@ -414,6 +414,7 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position P
 func (service *Service) CardsWithNewPositions(ctx context.Context, cards []SquadCard, positions []Position) (map[Position]uuid.UUID, error) {
 	positionMap := make(map[Position]uuid.UUID)
 	maxCards := SquadSize
+
 	sort.Slice(cards, func(i, j int) bool {
 		return cards[i].Position < cards[j].Position
 	})
