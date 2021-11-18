@@ -356,10 +356,6 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position P
 	cardCoefficients := make(map[float64]cards.Card)
 	var index int
 
-	sort.Slice(squadCards, func(i, j int) bool {
-		return squadCards[i].Position < squadCards[j].Position
-	})
-
 	for _, squadCard := range squadCards {
 		card, err := service.cards.Get(ctx, squadCard.CardID)
 		if err != nil {
@@ -418,6 +414,10 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position P
 func (service *Service) CardsWithNewPositions(ctx context.Context, cards []SquadCard, positions []Position) (map[Position]uuid.UUID, error) {
 	positionMap := make(map[Position]uuid.UUID)
 	maxCards := SquadSize
+	sort.Slice(cards, func(i, j int) bool {
+		return cards[i].Position < cards[j].Position
+	})
+
 	for _, position := range positions {
 		card, index, err := service.EffectiveCardForPosition(ctx, position, cards)
 		if err != nil {
