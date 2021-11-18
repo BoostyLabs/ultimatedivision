@@ -176,7 +176,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             owner_id    BYTEA     REFERENCES users(id) ON DELETE CASCADE     NOT NULL,
             club_name   VARCHAR                                              NOT NULL,
             status      INTEGER                                              NOT NULL,
-            division_id BYTEA,
+            division_id BYTEA                                                NOT NULL,
             created_at  TIMESTAMP WITH TIME ZONE                             NOT NULL
         );
         CREATE TABLE IF NOT EXISTS squads (
@@ -238,10 +238,10 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             minute   INTEGER                                          NOT NULL
         );
         CREATE TABLE IF NOT EXISTS waitlist(
-            token_id       SERIAL  PRIMARY KEY                            NOT NULL,
-            card_id        BYTEA   REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
-            wallet_address VARCHAR                                        NOT NULL,
-            password       VARCHAR                                        NOT NULL
+            token_id       SERIAL                                                     NOT NULL,
+            card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
+            wallet_address VARCHAR                                                    NOT NULL,
+            password       VARCHAR                                                    NOT NULL
         );
         CREATE TABLE IF NOT EXISTS nfts(
             card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) NOT NULL,
