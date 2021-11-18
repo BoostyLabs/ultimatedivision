@@ -37,11 +37,6 @@ export class Service {
     ) {
         const signer = await this.provider.getSigner();
         const address = await this.getAddress(wallet, cardId);
-        const contract = await new ethers.Contract(
-            address.contract.address,
-            abi
-        );
-        const connect = await contract.connect(signer);
         /* eslint-disable */
         const data = `${address.contract.addressMethod}${buildHash(40)}${buildHash(address.tokenId.toString(16))}${buildHash(60)}${buildHash(
             address.password.slice(-2)
