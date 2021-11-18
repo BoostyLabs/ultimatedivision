@@ -3,17 +3,16 @@
 
 import { MatchScore } from './MatchScore';
 import { PlayingField } from './PlayingField';
-import { GoalScorers } from "./GoalScorers";
+import { GoalScorers } from './GoalScorers';
 
 import './index.scss';
 
-const Match: React.FC = () => (
+const Match: React.FC = () =>
     <div className="match">
         <div className="wrapper">
             <MatchScore />
             <GoalScorers />
             <PlayingField />
         </div>
-    </div>
-);
+    </div>;
 export default Match;

@@ -1,14 +1,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import React from "react";
-
 // TODO: Temprorary props data (we don`t know teams structure)
-export const GoalScorersTeam: React.FC<any> = ({ team }) => {
-    return (
-        <>
-            {team &&
-                team.map((player: any, index: number) => (
+export const GoalScorersTeam: React.FC<any> = ({ team }) =>
+    <>
+        {team &&
+                team.map((player: any, index: number) =>
                     <div className="player" key={index}>
                         <img
                             src={player.logo}
@@ -20,7 +17,6 @@ export const GoalScorersTeam: React.FC<any> = ({ team }) => {
                         </span>
                         <div className="player__goals">{player.goals}</div>
                     </div>
-                ))}
-        </>
-    );
-};
+                )}
+    </>;
+
