@@ -115,6 +115,10 @@ type Config struct {
 		avatars.Config
 	} `json:"avatars"`
 
+	WaitList struct {
+		waitlist.Config
+	} `json:"waitlist"`
+
 	NFTs struct {
 		nfts.Config
 	} `json:"nfts"`
@@ -180,7 +184,8 @@ type Peer struct {
 
 	// exposes nfts related logic.
 	NFTs struct {
-		Service *nfts.Service
+		Service  *nfts.Service
+		NFTChore *nfts.Chore
 	}
 
 	// exposes clubs related logic.
@@ -309,10 +314,18 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.NFTs.Config,
 			peer.Database.NFTs(),
 		)
+		peer.NFTs.NFTChore = nfts.NewChore(
+			config.NFTs.Config,
+			peer.Log,
+			peer.NFTs.Service,
+			peer.Users.Service,
+			peer.Cards.Service,
+		)
 	}
 
 	{ // waitlist setup
 		peer.WaitList.Service = waitlist.NewService(
+			config.WaitList.Config,
 			peer.Database.WaitList(),
 			peer.Cards.Service,
 			peer.Avatars.Service,
@@ -475,6 +488,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
+	group.Go(func() error {
+		return ignoreCancel(peer.NFTs.NFTChore.Run(ctx))
+	})
 
 	return group.Wait()
 }
@@ -485,6 +501,9 @@ func (peer *Peer) Close() error {
 
 	errlist.Add(peer.Admin.Endpoint.Close())
 	errlist.Add(peer.Console.Endpoint.Close())
+	peer.Marketplace.ExpirationLotChore.Close()
+	peer.Queue.PlaceChore.Close()
+	peer.Seasons.ExpirationSeasons.Close()
 
 	return errlist.Err()
 }
