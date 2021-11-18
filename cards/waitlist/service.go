@@ -45,8 +45,8 @@ func NewService(config Config, waitList DB, cards *cards.Service, avatars *avata
 }
 
 // Create creates nft for wait list.
-func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (cryptoutils.Transaction, error) {
-	var transaction cryptoutils.Transaction
+func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transaction, error) {
+	var transaction Transaction
 	card, err := service.cards.Get(ctx, createNFT.CardID)
 	if err != nil {
 		return transaction, ErrWaitlist.Wrap(err)
@@ -57,9 +57,10 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (crypto
 	}
 
 	if item, err := service.GetByCardID(ctx, createNFT.CardID); item.Password != "" && err == nil {
-		transaction = cryptoutils.Transaction{
+		transaction = Transaction{
 			Password: item.Password,
 			Contract: service.config.Contract,
+			TokenID:  item.TokenID,
 		}
 		return transaction, nil
 	}
@@ -86,9 +87,10 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (crypto
 
 	for range time.NewTicker(time.Millisecond * service.config.WaitListRenewalInterval).C {
 		if item, err := service.GetByCardID(ctx, createNFT.CardID); item.Password != "" && err == nil {
-			transaction = cryptoutils.Transaction{
+			transaction = Transaction{
 				Password: item.Password,
 				Contract: service.config.Contract,
+				TokenID:  item.TokenID,
 			}
 			break
 		}

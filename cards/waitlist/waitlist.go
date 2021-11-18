@@ -51,6 +51,13 @@ type CreateNFT struct {
 	UserID        uuid.UUID           `json:"userId"`
 }
 
+// Transaction entity describes password wallet, smart contracts address and token id.
+type Transaction struct {
+	Password             cryptoutils.Signature `json:"password"`
+	cryptoutils.Contract `json:"contract"`
+	TokenID              int `json:"tokenId"`
+}
+
 // Config defines values needed by create wait list.
 type Config struct {
 	WaitListRenewalInterval time.Duration `json:"waitListRenewalInterval"`

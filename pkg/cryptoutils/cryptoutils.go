@@ -58,12 +58,6 @@ type Contract struct {
 	AddressMethod Hex     `json:"addressMethod"`
 }
 
-// Transaction entity describes password wallet and smart contracts address.
-type Transaction struct {
-	Password Signature `json:"password"`
-	Contract `json:"contract"`
-}
-
 // Сhain defines the list of possible chains in blockchain.
 type Сhain string
 
