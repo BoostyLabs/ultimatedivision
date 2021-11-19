@@ -60,7 +60,7 @@ func (controller *Matches) GetAllClubsStatistics(w http.ResponseWriter, r *http.
 	}
 }
 
-// UpdateTopClubsToNewDivision updates clubs to new division.
+// UpdatesClubsToNewDivision updates clubs to new division.
 func (controller *Matches) UpdatesClubsToNewDivision(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
