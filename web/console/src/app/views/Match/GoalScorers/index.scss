@@ -15,11 +15,28 @@
         display: flex;
         flex-direction: column;
         padding: 5px;
-    
 
         .scores-scroll {
             height: 265px;
             overflow-y: scroll;
+        }
+
+        .scores-scroll::-webkit-scrollbar-track {
+            border-radius: 10px;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            background-color: #616197;
+        }
+
+        .scores-scroll::-webkit-scrollbar {
+            width: 7px;
+            height: 5px;
+            background-color: #404070;
+        }
+
+        .scores-scroll::-webkit-scrollbar-thumb {
+            border-radius: 2px;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            background-color: #808094;
         }
     }
 
