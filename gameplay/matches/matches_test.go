@@ -189,7 +189,7 @@ func TestMatches(t *testing.T) {
 		})
 
 		t.Run("List squad matches", func(t *testing.T) {
-			allMatches, err := repositoryMatches.ListSquadMatches(ctx, testSquad1.ID, season1.ID)
+			allMatches, err := repositoryMatches.ListSquadMatches(ctx, season1.ID)
 			require.NoError(t, err)
 			compareMatchesSlice(t, allMatches, []matches.Match{testMatch})
 		})
