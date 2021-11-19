@@ -3,17 +3,15 @@
 
 import { APIClient } from '.';
 import { Transaction } from '@/app/ethers';
+import { TransactionIdentificators } from '@/app/types/ethers';
 
 /** Ethers api client */
 export class EthersClient extends APIClient {
     private readonly ROOT_PATH = '/api/v0/nft-waitlist';
 
     /** Gets transaction from api  */
-    public async getTransaction(wallet: string, id: string): Promise<Transaction> {
-        const response = await this.http.post(`${this.ROOT_PATH}`, JSON.stringify({
-            'cardId': id,
-            'walletAddress': wallet,
-        }));
+    public async getTransaction(signature: TransactionIdentificators): Promise<Transaction> {
+        const response = await this.http.post(`${this.ROOT_PATH}`, JSON.stringify(signature));
 
         if (!response.ok) {
             await this.handleError(response);

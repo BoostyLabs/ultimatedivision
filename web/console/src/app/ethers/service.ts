@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 import { EthersClient } from '@/api/ethers';
 import { buildHash } from '../utils/ethers';
 import { Transaction } from '.';
+import { TransactionIdentificators } from '@/app/types/ethers';
 
 /** Service for ethers methods */
 export class Service {
@@ -18,8 +19,8 @@ export class Service {
     }
 
     /** Gets transaction from api */
-    public async getAddress(wallet: string, id: string): Promise<Transaction> {
-        return await this.client.getTransaction(wallet, id);
+    public async getTransaction(signature: TransactionIdentificators): Promise<Transaction> {
+        return await this.client.getTransaction(signature);
     }
 
     /** Gets current wallet address. */
@@ -31,12 +32,12 @@ export class Service {
 
     /** Sends smart contract transaction. */
     public async sendTransaction(
-        wallet: string,
+        walletAddress: string,
         abi: any[],
         cardId: string,
     ) {
         const signer = await this.provider.getSigner();
-        const address = await this.getAddress(wallet, cardId);
+        const address = await this.getTransaction(new TransactionIdentificators(walletAddress, cardId));
         /* eslint-disable */
         const data = `${address.contract.addressMethod}${buildHash(40)}${buildHash(address.tokenId.toString(16))}${buildHash(60)}${buildHash(
             address.password.slice(-2)
@@ -55,13 +56,8 @@ export class Service {
     }
 
     public async getBalance(id: string) {
-        try {
-            const balance = await this.provider.getBalance(id);
+        const balance = await this.provider.getBalance(id);
 
-            return ethers.utils.formatEther(balance);
-        } catch (error: any) {
-            /* eslint-disable-next-line */
-            console.log(error.message);
-        }
+        return ethers.utils.formatEther(balance);
     }
 }

@@ -4,7 +4,7 @@
 const FIRST_ELEMENT_INDEX = 0;
 /** Creates needed hash by replacing last part of hashBase by value. */
 export const buildHash = (hashSignature: number | string) => {
-    const hashBase = '0000000000000000000000000000000000000000000000000000000000000000';
+    const HASH_BASE = '0000000000000000000000000000000000000000000000000000000000000000';
 
-    return hashBase.slice(FIRST_ELEMENT_INDEX, hashBase.length - hashSignature.toString().length) + hashSignature;
+    return HASH_BASE.slice(FIRST_ELEMENT_INDEX, HASH_BASE.length - hashSignature.toString().length) + hashSignature;
 };
