@@ -431,6 +431,7 @@ func (service *Service) GetAllClubsStatistics(ctx context.Context) (map[division
 }
 
 // @TODO replace to clubs service.
+
 // UpdatesClubsToNewDivision updates clubs to new division.
 func (service *Service) UpdatesClubsToNewDivision(ctx context.Context) error {
 	clubsStatisticsByDivision, err := service.GetAllClubsStatistics(ctx)
