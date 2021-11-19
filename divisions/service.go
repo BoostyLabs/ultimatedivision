@@ -60,6 +60,12 @@ func (service *Service) GetByName(ctx context.Context, divisionName int) (Divisi
 	return division, ErrDivisions.Wrap(err)
 }
 
+// GetLastDivision returns last division.
+func (service *Service) GetLastDivision(ctx context.Context) (Division, error) {
+	division, err := service.divisions.GetLastDivision(ctx)
+	return division, ErrDivisions.Wrap(err)
+}
+
 // Delete deletes a division.
 func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
 	return ErrDivisions.Wrap(service.divisions.Delete(ctx, id))

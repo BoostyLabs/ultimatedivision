@@ -289,8 +289,8 @@ func (service *Service) GetMatchResult(ctx context.Context, matchID uuid.UUID) (
 }
 
 // ListSquadMatches returns all club matches in season.
-func (service *Service) ListSquadMatches(ctx context.Context, seasonID int, squadID uuid.UUID) ([]Match, error) {
-	allMatches, err := service.matches.ListSquadMatches(ctx, squadID, seasonID)
+func (service *Service) ListSquadMatches(ctx context.Context, seasonID int) ([]Match, error) {
+	allMatches, err := service.matches.ListSquadMatches(ctx, seasonID)
 	return allMatches, ErrMatches.Wrap(err)
 }
 
@@ -333,12 +333,7 @@ func (service *Service) GetStatistic(ctx context.Context, clubID uuid.UUID, seas
 		return statistic, ErrMatches.Wrap(err)
 	}
 
-	squad, err := service.clubs.GetSquadByClubID(ctx, clubID)
-	if err != nil {
-		return statistic, ErrMatches.Wrap(err)
-	}
-
-	allMatches, err := service.ListSquadMatches(ctx, seasonID, squad.ID)
+	allMatches, err := service.ListSquadMatches(ctx, seasonID)
 	if err != nil {
 		return statistic, ErrMatches.Wrap(err)
 	}
@@ -363,25 +358,19 @@ func (service *Service) GetStatistic(ctx context.Context, clubID uuid.UUID, seas
 			switch {
 			case match.User1Points == service.config.NumberOfPointsForWin:
 				statistic.Wins++
-				statistic.Points += match.User1Points
 			case match.User1Points == service.config.NumberOfPointsForDraw:
 				statistic.Draws++
-				statistic.Points += match.User1Points
 			case match.User1Points == service.config.NumberOfPointsForLosing:
 				statistic.Losses++
-				statistic.Points += match.User1Points
 			}
 		} else {
 			switch {
 			case match.User2Points == service.config.NumberOfPointsForWin:
 				statistic.Wins++
-				statistic.Points += match.User1Points
 			case match.User2Points == service.config.NumberOfPointsForDraw:
 				statistic.Draws++
-				statistic.Points += match.User1Points
 			case match.User2Points == service.config.NumberOfPointsForLosing:
 				statistic.Losses++
-				statistic.Points += match.User1Points
 			}
 		}
 		matchGoals, err := service.ListMatchGoals(ctx, match.ID)
@@ -397,14 +386,17 @@ func (service *Service) GetStatistic(ctx context.Context, clubID uuid.UUID, seas
 		}
 	}
 
+	statistic.Points = service.config.NumberOfPointsForWin*statistic.Wins + service.config.NumberOfPointsForDraw*statistic.Draws +
+		+service.config.NumberOfPointsForLosing*statistic.Losses
+
 	statistic.GoalDifference = goalScored - goalsConceded
 	statistic.Club = club
 
 	return statistic, nil
 }
 
-// GetAllClubsStatisticsByDivision returns all clubs statistics by division.
-func (service *Service) GetAllClubsStatisticsByDivision(ctx context.Context) (map[divisions.Division][]Statistic, error) {
+// GetAllClubsStatistics returns all clubs statistics by division.
+func (service *Service) GetAllClubsStatistics(ctx context.Context) (map[divisions.Division][]Statistic, error) {
 	currentSeasons, err := service.seasons.GetCurrentSeasons(ctx)
 	if err != nil {
 		return nil, ErrMatches.Wrap(err)
@@ -426,8 +418,11 @@ func (service *Service) GetAllClubsStatisticsByDivision(ctx context.Context) (ma
 			if err != nil {
 				return nil, ErrMatches.Wrap(err)
 			}
-			if statistic.MatchPlayed < minNumberOfMatches {
-				statisticsMap[division] = append(statistics, statistic)
+			if statistic.MatchPlayed > minNumberOfMatches {
+				if division.ID == statistic.Club.DivisionID {
+					statistics = append(statistics, statistic)
+					statisticsMap[division] = statistics
+				}
 			}
 		}
 	}
@@ -435,28 +430,21 @@ func (service *Service) GetAllClubsStatisticsByDivision(ctx context.Context) (ma
 	return statisticsMap, nil
 }
 
-// UpdateTopClubsToNewDivision updates clubs to new division.
-func (service *Service) UpdateTopClubsToNewDivision(ctx context.Context) error {
-	clubsStatisticsByDivision, err := service.GetAllClubsStatisticsByDivision(ctx)
+// UpdatesClubsToNewDivision updates clubs to new division.
+func (service *Service) UpdatesClubsToNewDivision(ctx context.Context) error {
+	clubsStatisticsByDivision, err := service.GetAllClubsStatistics(ctx)
 	if err != nil {
 		return ErrMatches.Wrap(err)
 	}
 
 	var totalPassingClubs float64
 	for division, statistics := range clubsStatisticsByDivision {
-		divisionHihger, err := service.divisions.GetByName(ctx, division.Name+1)
-		if err != nil {
-			return ErrMatches.Wrap(err)
-		}
-		divisionLower, err := service.divisions.GetByName(ctx, division.Name-1)
-		if err != nil {
-			return ErrMatches.Wrap(err)
-		}
-
 		var percent float64
 		percent = 100 / float64(len(statistics))
 		if percent < float64(division.PassingPercent) {
 			totalPassingClubs = float64(division.PassingPercent) / percent
+		} else {
+			totalPassingClubs = 1
 		}
 		sortStatistics := statistics
 		sort.Slice(sortStatistics, func(i, j int) bool {
@@ -464,16 +452,33 @@ func (service *Service) UpdateTopClubsToNewDivision(ctx context.Context) error {
 		})
 		topStatisticsClubs := sortStatistics[int(totalPassingClubs):]
 		lowStatisticsClubs := sortStatistics[:int(totalPassingClubs)]
+
+		divisionHigher, err := service.divisions.GetByName(ctx, division.Name-1)
+		if err != nil {
+			return ErrMatches.Wrap(err)
+		}
 		for _, statistic := range topStatisticsClubs {
-			err := service.clubs.UpdateClubToNewDivision(ctx, statistic.Club.ID, divisionHihger.ID)
+			err := service.clubs.UpdateClubToNewDivision(ctx, statistic.Club.ID, divisionHigher.ID)
 			if err != nil {
 				return ErrMatches.Wrap(err)
 			}
 		}
-		for _, statistic := range lowStatisticsClubs {
-			err := service.clubs.UpdateClubToNewDivision(ctx, statistic.Club.ID, divisionLower.ID)
+
+		lastDivision, err := service.divisions.GetLastDivision(ctx)
+		if err != nil {
+			return ErrMatches.Wrap(err)
+		}
+		if division.Name > lastDivision.Name {
+			divisionLower, err := service.divisions.GetByName(ctx, division.Name+1)
 			if err != nil {
 				return ErrMatches.Wrap(err)
+
+			}
+			for _, statistic := range lowStatisticsClubs {
+				err := service.clubs.UpdateClubToNewDivision(ctx, statistic.Club.ID, divisionLower.ID)
+				if err != nil {
+					return ErrMatches.Wrap(err)
+				}
 			}
 		}
 	}
