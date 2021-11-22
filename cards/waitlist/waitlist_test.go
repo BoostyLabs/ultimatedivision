@@ -220,7 +220,7 @@ func TestWaitList(t *testing.T) {
 		t.Run("Get last token id", func(t *testing.T) {
 			largestTokenID, err := repositoryWaitList.GetLast(ctx)
 			require.NoError(t, err)
-			assert.Equal(t, 2, largestTokenID)
+			assert.Equal(t, int64(2), largestTokenID)
 		})
 
 		t.Run("Update sql no rows", func(t *testing.T) {
