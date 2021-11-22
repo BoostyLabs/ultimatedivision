@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useTimeCounter } from '@/app/hooks/useTimeCounter';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
 
-export const DelayTimer: React.FC = () => {
+export const AutoCloseTimer: React.FC = () => {
     const dispatch = useDispatch();
     const timeCounter = useTimeCounter();
 

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 
 import { Timer } from './Timer';
-import { DelayTimer } from './DelayTimer';
+import { AutoCloseTimer } from './AutoCloseTimer';
 
 import { RootState } from '@/app/store';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
@@ -32,7 +32,7 @@ const MatchFinder: React.FC = () => {
             <h1 className="match-finder__title">
                 {title}
             </h1>
-            {isMatchFound ? <DelayTimer /> : <Timer />}
+            {isMatchFound ? <AutoCloseTimer /> : <Timer />}
             <div className="match-finder__form">
                 <input
                     className="match-finder__form__accept"
