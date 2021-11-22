@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
@@ -120,6 +119,6 @@ func (service *Service) List(ctx context.Context) ([]NFT, error) {
 }
 
 // Update updates users wallet address for nft token in the database.
-func (service *Service) Update(ctx context.Context, walletAddress cryptoutils.Address, cardID uuid.UUID) error {
-	return ErrNFTs.Wrap(service.nfts.Update(ctx, walletAddress, cardID))
+func (service *Service) Update(ctx context.Context, nft NFT) error {
+	return ErrNFTs.Wrap(service.nfts.Update(ctx, nft))
 }

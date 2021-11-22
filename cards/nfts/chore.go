@@ -80,7 +80,12 @@ func (chore *Chore) RunNFTSynchronization(ctx context.Context) (err error) {
 				continue
 			}
 
-			if err = chore.nfts.Update(ctx, ownersWalletAddress, nft.CardID); err != nil {
+			nft := NFT{
+				Chain:         cryptoutils.ChainPolygon,
+				TokenID:       nft.TokenID,
+				WalletAddress: ownersWalletAddress,
+			}
+			if err = chore.nfts.Update(ctx, nft); err != nil {
 				return ChoreError.Wrap(err)
 			}
 

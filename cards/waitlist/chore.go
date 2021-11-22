@@ -9,11 +9,13 @@ import (
 
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cards"
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/cryptoutils"
 	"ultimatedivision/pkg/jsonrpc"
 	"ultimatedivision/pkg/sync"
+	"ultimatedivision/users"
 )
 
 var (
@@ -30,16 +32,20 @@ type Chore struct {
 	Loop     *sync.Cycle
 	waitList *Service
 	nfts     *nfts.Service
+	users    *users.Service
+	cards    *cards.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(config Config, log logger.Logger, waitList *Service, nfts *nfts.Service) *Chore {
+func NewChore(config Config, log logger.Logger, waitList *Service, nfts *nfts.Service, users *users.Service, cards *cards.Service) *Chore {
 	return &Chore{
 		config:   config,
 		log:      log,
 		Loop:     sync.NewCycle(config.WaitListRenewalInterval),
 		waitList: waitList,
 		nfts:     nfts,
+		users:    users,
+		cards:    cards,
 	}
 }
 
@@ -87,13 +93,18 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 				return ChoreError.Wrap(err)
 			}
 
+			to, err := strconv.ParseInt(toStr[cryptoutils.LengthHexPrefix:], 16, 64)
+			if err != nil {
+				return ChoreError.Wrap(err)
+			}
+
+			tokenID, err := strconv.ParseInt(tokenIDStr[cryptoutils.LengthHexPrefix:], 16, 64)
+			if err != nil {
+				return ChoreError.Wrap(err)
+			}
+
 			// mint
 			if from == 0 {
-				tokenID, err := strconv.ParseInt(tokenIDStr[cryptoutils.LengthHexPrefix:], 16, 64)
-				if err != nil {
-					return ChoreError.Wrap(err)
-				}
-
 				nftWaitList, err := chore.waitList.GetByTokenID(ctx, tokenID)
 				if err != nil {
 					return ChoreError.Wrap(err)
@@ -108,6 +119,29 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 				if err = chore.nfts.Create(ctx, nft); err != nil {
 					return ChoreError.Wrap(err)
 				}
+				continue
+			}
+
+			if to == 0 {
+				continue
+			}
+
+			nft := nfts.NFT{
+				Chain:         cryptoutils.ChainPolygon,
+				TokenID:       tokenID,
+				WalletAddress: cryptoutils.Address(toStr),
+			}
+			if err = chore.nfts.Update(ctx, nft); err != nil {
+				return ChoreError.Wrap(err)
+			}
+
+			user, err := chore.users.GetByWalletAddress(ctx, cryptoutils.Address(toStr))
+			if err != nil {
+				return ChoreError.Wrap(err)
+			}
+
+			if err = chore.cards.UpdateUserID(ctx, nft.CardID, user.ID); err != nil {
+				return ChoreError.Wrap(err)
 			}
 		}
 

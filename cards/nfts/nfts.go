@@ -25,7 +25,7 @@ type DB interface {
 	// List returns all nft token from database.
 	List(ctx context.Context) ([]NFT, error)
 	// Update updates users wallet address for nft token in the database.
-	Update(ctx context.Context, walletAddress cryptoutils.Address, cardID uuid.UUID) error
+	Update(ctx context.Context, nft NFT) error
 }
 
 // NFT entity describes values released nft token.

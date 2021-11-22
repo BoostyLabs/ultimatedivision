@@ -339,6 +339,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Log,
 			peer.WaitList.Service,
 			peer.NFTs.Service,
+			peer.Users.Service,
+			peer.Cards.Service,
 		)
 	}
 

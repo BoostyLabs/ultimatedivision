@@ -7,11 +7,9 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards/nfts"
-	"ultimatedivision/pkg/cryptoutils"
 )
 
 // ensures that nftsDB implements nfts.DB.
@@ -62,12 +60,12 @@ func (nftsDB *nftsDB) List(ctx context.Context) ([]nfts.NFT, error) {
 }
 
 // Update updates users wallet address for nft token in the database.
-func (nftsDB *nftsDB) Update(ctx context.Context, walletAddress cryptoutils.Address, cardID uuid.UUID) error {
+func (nftsDB *nftsDB) Update(ctx context.Context, nft nfts.NFT) error {
 	query := `UPDATE nfts
 	          SET wallet_address = $1
-	          WHERE card_id = $2`
+	          WHERE chain = $2 AND token_id = $3`
 
-	result, err := nftsDB.conn.ExecContext(ctx, query, walletAddress, cardID)
+	result, err := nftsDB.conn.ExecContext(ctx, query, nft.WalletAddress, nft.Chain, nft.TokenID)
 	if err != nil {
 		return ErrNFTs.Wrap(err)
 	}
