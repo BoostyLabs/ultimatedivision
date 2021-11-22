@@ -35,9 +35,6 @@ type Signature string
 // PrivateKey defines private key type.
 type PrivateKey string
 
-// LengthPrivateKey defines length private key.
-const LengthPrivateKey int = 64
-
 // PrivateKeyV defines v of private key type.
 type PrivateKeyV int
 
@@ -77,6 +74,8 @@ const HexPrefix Hex = "0x"
 type Length int
 
 const (
+	// LengthPrivateKey defines length private key.
+	LengthPrivateKey Length = 64
 	// LengthOneBlockInputValue defines the length of one block of input data.
 	LengthOneBlockInputValue Length = 64
 	// LengthAddress defines the length of address.
@@ -85,13 +84,16 @@ const (
 	LengthHexPrefix Length = 2
 )
 
+// BlockTag defines the list of possible block tags in blockchain.
+type BlockTag string
+
 // BlockTagLatest indicates that the last block will be used.
-const BlockTagLatest string = "latest"
+const BlockTagLatest BlockTag = "latest"
 
 // Data entity describes values for data field in transacton.
 type Data struct {
 	AddressContractMethod Hex
-	TokenID               int
+	TokenID               int64
 }
 
 // NewDataHex is a constructor for data entity, but returns hex string.
@@ -107,7 +109,7 @@ func (address Address) IsValidAddress() bool {
 
 // IsValidPrivateKey validates whether each byte is valid hexadecimal private key.
 func (privateKey PrivateKey) IsValidPrivateKey() bool {
-	if len(string(privateKey)) != LengthPrivateKey {
+	if Length(len(string(privateKey))) != LengthPrivateKey {
 		return false
 	}
 	for _, c := range []byte(string(privateKey)) {
@@ -175,7 +177,7 @@ func GenerateSignature(addressWallet Address, addressContract Address, privateKe
 }
 
 // GenerateSignatureWithToken generates signature for user's wallet with token.
-func GenerateSignatureWithToken(addressWallet Address, addressContract Address, tokenID int, privateKey *ecdsa.PrivateKey) (Signature, error) {
+func GenerateSignatureWithToken(addressWallet Address, addressContract Address, tokenID int64, privateKey *ecdsa.PrivateKey) (Signature, error) {
 	if !addressWallet.IsValidAddress() {
 		return "", fmt.Errorf("invalid address of user's wallet")
 	}
@@ -232,7 +234,7 @@ func GenerateSignatureWithToken(addressWallet Address, addressContract Address, 
 }
 
 // createHexStringFixedLength creates srings with fixed length and number in hex formate in the end.
-func createHexStringFixedLength(tokenID int) Hex {
+func createHexStringFixedLength(tokenID int64) Hex {
 	tokenIDString := fmt.Sprintf("%x", tokenID)
 	var zeroString string
 	for i := 0; i < (int(LengthOneBlockInputValue) - len(tokenIDString)); i++ {

@@ -5,8 +5,6 @@ package nfts
 
 import (
 	"context"
-	"encoding/json"
-	"strings"
 
 	"github.com/zeebo/errs"
 
@@ -47,8 +45,8 @@ func NewChore(config Config, log logger.Logger, nfts *Service, users *users.Serv
 	}
 }
 
-// Run runs the task to re-own nft.
-func (chore *Chore) Run(ctx context.Context) (err error) {
+// RunNFTSynchronization runs the task to re-own nft.
+func (chore *Chore) RunNFTSynchronization(ctx context.Context) (err error) {
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
 		nfts, err := chore.nfts.List(ctx)
 		if err != nil {
@@ -67,14 +65,13 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				Data: dataHex,
 			}
 
-			transaction := jsonrpc.NewTransaction(jsonrpc.EthCall, params, cryptoutils.ChainIDRinkeby)
-			payloadJSON, err := json.Marshal(transaction)
+			transaction := jsonrpc.NewTransaction(jsonrpc.MethodEthCall, []interface{}{&params, cryptoutils.BlockTagLatest}, cryptoutils.ChainIDRinkeby)
+			body, err := jsonrpc.Send(chore.config.AddressNodeServer, transaction)
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}
 
-			payloadReader := strings.NewReader(string(payloadJSON))
-			ownersWalletAddress, err := jsonrpc.Send(chore.config.AddressNodeServer, payloadReader)
+			ownersWalletAddress, err := jsonrpc.GetOwnersWalletAddress(body)
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}

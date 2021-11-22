@@ -95,8 +95,8 @@ func (waitlistDB *waitlistDB) ListWithoutPassword(ctx context.Context) ([]waitli
 	return WaitListWithoutPassword, ErrWaitlist.Wrap(rows.Err())
 }
 
-// Get returns nft for wait list by card id.
-func (waitlistDB *waitlistDB) Get(ctx context.Context, tokenID int) (waitlist.Item, error) {
+// Get returns nft for wait list by token id.
+func (waitlistDB *waitlistDB) GetByTokenID(ctx context.Context, tokenID int64) (waitlist.Item, error) {
 	query := `SELECT *
 	          FROM waitlist
 	          WHERE token_id = $1`
@@ -112,13 +112,13 @@ func (waitlistDB *waitlistDB) Get(ctx context.Context, tokenID int) (waitlist.It
 }
 
 // GetLast returns id of last inserted nft for wait list.
-func (waitlistDB *waitlistDB) GetLast(ctx context.Context) (int, error) {
+func (waitlistDB *waitlistDB) GetLast(ctx context.Context) (int64, error) {
 	query := `SELECT token_id
 	          FROM waitlist
 	          ORDER BY token_id DESC
 	          LIMIT 1`
 
-	var lastToken int
+	var lastToken int64
 
 	err := waitlistDB.conn.QueryRowContext(ctx, query).Scan(&lastToken)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -129,7 +129,7 @@ func (waitlistDB *waitlistDB) GetLast(ctx context.Context) (int, error) {
 }
 
 // Delete deletes nft from wait list by id of token.
-func (waitlistDB *waitlistDB) Delete(ctx context.Context, tokenIDs []int) error {
+func (waitlistDB *waitlistDB) Delete(ctx context.Context, tokenIDs []int64) error {
 	query := `DELETE FROM waitlist
 	          WHERE token_id = $1`
 
@@ -160,7 +160,7 @@ func (waitlistDB *waitlistDB) Delete(ctx context.Context, tokenIDs []int) error 
 }
 
 // Update updates signature to nft token.
-func (waitlistDB *waitlistDB) Update(ctx context.Context, tokenID int, password cryptoutils.Signature) error {
+func (waitlistDB *waitlistDB) Update(ctx context.Context, tokenID int64, password cryptoutils.Signature) error {
 	query := `UPDATE waitlist
 	          SET password = $1
 	          WHERE token_id = $2`
@@ -174,7 +174,7 @@ func (waitlistDB *waitlistDB) Update(ctx context.Context, tokenID int, password 
 		return ErrWaitlist.Wrap(err)
 	}
 	if rowNum == 0 {
-		return waitlist.ErrNoItem.New("nft token does not exist")
+		return waitlist.ErrNoItem.New("nft for wait list does not exist")
 	}
 
 	return nil

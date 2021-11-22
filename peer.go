@@ -119,6 +119,10 @@ type Config struct {
 		nfts.Config
 	} `json:"nfts"`
 
+	WaitList struct {
+		waitlist.Config
+	} `json:"waitList"`
+
 	LootBoxes struct {
 		Config lootboxes.Config `json:"lootBoxes"`
 	} `json:"lootBoxes"`
@@ -175,7 +179,8 @@ type Peer struct {
 
 	// exposes waitlist related logic.
 	WaitList struct {
-		Service *waitlist.Service
+		Service       *waitlist.Service
+		WaitListChore *waitlist.Chore
 	}
 
 	// exposes nfts related logic.
@@ -325,6 +330,13 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Cards.Service,
 			peer.Avatars.Service,
 			peer.Users.Service,
+			peer.NFTs.Service,
+		)
+
+		peer.WaitList.WaitListChore = waitlist.NewChore(
+			config.WaitList.Config,
+			peer.Log,
+			peer.WaitList.Service,
 			peer.NFTs.Service,
 		)
 	}
@@ -480,7 +492,10 @@ func (peer *Peer) Run(ctx context.Context) error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
 	group.Go(func() error {
-		return ignoreCancel(peer.NFTs.NFTChore.Run(ctx))
+		return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
+	})
+	group.Go(func() error {
+		return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
 	})
 
 	return group.Wait()

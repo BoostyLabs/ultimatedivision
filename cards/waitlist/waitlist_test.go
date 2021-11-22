@@ -204,7 +204,7 @@ func TestWaitList(t *testing.T) {
 		})
 
 		t.Run("Get", func(t *testing.T) {
-			nftDB, err := repositoryWaitList.Get(ctx, 1)
+			nftDB, err := repositoryWaitList.GetByTokenID(ctx, 1)
 			require.NoError(t, err)
 
 			compareNFTs(t, nftDB, nft1)
@@ -228,13 +228,13 @@ func TestWaitList(t *testing.T) {
 		})
 
 		t.Run("Delete sql no rows", func(t *testing.T) {
-			err := repositoryWaitList.Delete(ctx, []int{-1})
+			err := repositoryWaitList.Delete(ctx, []int64{-1})
 			require.Error(t, err)
 			assert.Equal(t, true, waitlist.ErrNoItem.Has(err))
 		})
 
 		t.Run("Delete", func(t *testing.T) {
-			err := repositoryWaitList.Delete(ctx, []int{1, 2})
+			err := repositoryWaitList.Delete(ctx, []int64{1, 2})
 			require.NoError(t, err)
 		})
 	})

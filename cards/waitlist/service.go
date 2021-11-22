@@ -76,14 +76,14 @@ func (service *Service) List(ctx context.Context) ([]Item, error) {
 	return allNFT, ErrWaitlist.Wrap(err)
 }
 
-// Get returns nft for wait list by token id.
-func (service *Service) Get(ctx context.Context, tokenID int) (Item, error) {
-	nft, err := service.waitList.Get(ctx, tokenID)
+// GetByTokenID returns nft for wait list by token id.
+func (service *Service) GetByTokenID(ctx context.Context, tokenID int64) (Item, error) {
+	nft, err := service.waitList.GetByTokenID(ctx, tokenID)
 	return nft, ErrWaitlist.Wrap(err)
 }
 
 // GetLastTokenID returns id of latest nft for wait list.
-func (service *Service) GetLastTokenID(ctx context.Context) (int, error) {
+func (service *Service) GetLastTokenID(ctx context.Context) (int64, error) {
 	lastID, err := service.waitList.GetLast(ctx)
 	return lastID, ErrWaitlist.Wrap(err)
 }
@@ -95,11 +95,11 @@ func (service *Service) ListWithoutPassword(ctx context.Context) ([]Item, error)
 }
 
 // Delete deletes nft for wait list.
-func (service *Service) Delete(ctx context.Context, tokenIDs []int) error {
+func (service *Service) Delete(ctx context.Context, tokenIDs []int64) error {
 	return ErrWaitlist.Wrap(service.waitList.Delete(ctx, tokenIDs))
 }
 
 // Update updates signature to nft token.
-func (service *Service) Update(ctx context.Context, tokenID int, password cryptoutils.Signature) error {
+func (service *Service) Update(ctx context.Context, tokenID int64, password cryptoutils.Signature) error {
 	return ErrWaitlist.Wrap(service.waitList.Update(ctx, tokenID, password))
 }

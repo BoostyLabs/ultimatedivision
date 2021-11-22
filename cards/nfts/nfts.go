@@ -32,7 +32,7 @@ type DB interface {
 type NFT struct {
 	CardID        uuid.UUID           `json:"cardId"`
 	Chain         cryptoutils.Сhain   `json:"chain"`
-	TokenID       int                 `json:"tokenId"`
+	TokenID       int64               `json:"tokenId"`
 	WalletAddress cryptoutils.Address `json:"walletAddress"`
 }
 
