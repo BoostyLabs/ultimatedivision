@@ -11,8 +11,8 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
-	"ultimatedivision/clubs/managers"
 	"ultimatedivision/divisions"
+	"ultimatedivision/managers"
 	"ultimatedivision/users"
 )
 
@@ -78,6 +78,12 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 	return clubID, ErrClubs.Wrap(err)
 }
 
+// List returns all clubs.
+func (service *Service) List(ctx context.Context) ([]Club, error) {
+	clubs, err := service.clubs.List(ctx)
+	return clubs, ErrClubs.Wrap(err)
+}
+
 // CreateSquad creates new squad for club.
 func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid.UUID, error) {
 	newSquad := Squad{
@@ -93,7 +99,23 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 }
 
 // AddSquadCard adds card to the squad.
-func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, newSquadCard SquadCard) error {
+func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.UUID, newSquadCard SquadCard) error {
+	squad, err := service.GetSquad(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	managedClubs, err := service.managers.ListByUserID(ctx, userID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	for _, club := range managedClubs {
+		if club.ClubID == squad.ClubID {
+			return ClubsForbiddenAction.New("invalid action")
+		}
+	}
+
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
@@ -127,7 +149,23 @@ func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, new
 }
 
 // Delete deletes card from squad.
-func (service *Service) Delete(ctx context.Context, squadID, cardID uuid.UUID) error {
+func (service *Service) Delete(ctx context.Context, userID, squadID, cardID uuid.UUID) error {
+	squad, err := service.GetSquad(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	managedClubs, err := service.managers.ListByUserID(ctx, userID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	for _, club := range managedClubs {
+		if club.ClubID == squad.ClubID {
+			return ClubsForbiddenAction.New("invalid action")
+		}
+	}
+
 	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, squadID, cardID))
 }
 
@@ -445,4 +483,9 @@ func (service *Service) CardsWithNewPositions(ctx context.Context, cards []Squad
 	}
 
 	return positionMap, nil
+}
+
+// UpdateClubToNewDivision is a method that updates club to division.
+func (service *Service) UpdateClubToNewDivision(ctx context.Context, clubID uuid.UUID, divisionID uuid.UUID) error {
+	return ErrClubs.Wrap(service.clubs.UpdateClubToNewDivision(ctx, clubID, divisionID))
 }

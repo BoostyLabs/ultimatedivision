@@ -21,12 +21,17 @@ var ErrNoSquad = errs.Class("squad does not exist")
 // ErrNoSquadCard indicated that squad card does not exist.
 var ErrNoSquadCard = errs.Class("squad card does not exist")
 
+// ClubsForbiddenAction indicated that user is forbidden to make action with club.
+var ClubsForbiddenAction = errs.Class("forbidden action")
+
 // DB is exposing access to clubs db.
 //
 // architecture: DB
 type DB interface {
 	// Create creates club in the database.
 	Create(ctx context.Context, club Club) (uuid.UUID, error)
+	// List returns all clubs.
+	List(ctx context.Context) ([]Club, error)
 	// CreateSquad creates squad for clubs in the database.
 	CreateSquad(ctx context.Context, squad Squad) (uuid.UUID, error)
 	// ListByUserID returns clubs owned by the user.
@@ -55,6 +60,8 @@ type DB interface {
 	UpdatePositions(ctx context.Context, squadCards []SquadCard) error
 	// UpdateFormation updates formation in the squad.
 	UpdateFormation(ctx context.Context, newFormation Formation, squadID uuid.UUID) error
+	// UpdateClubToNewDivision updates club to new division.
+	UpdateClubToNewDivision(ctx context.Context, clubID uuid.UUID, newDivisionID uuid.UUID) error
 }
 
 // Status defines list of possible club statuses.

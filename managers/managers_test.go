@@ -14,9 +14,9 @@ import (
 
 	"ultimatedivision"
 	"ultimatedivision/clubs"
-	"ultimatedivision/clubs/managers"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/divisions"
+	"ultimatedivision/managers"
 	"ultimatedivision/users"
 )
 
@@ -35,7 +35,7 @@ func TestManager(t *testing.T) {
 
 	division1 := divisions.Division{
 		ID:             uuid.New(),
-		Name:           "10",
+		Name:           10,
 		PassingPercent: 10,
 		CreatedAt:      time.Now().UTC(),
 	}

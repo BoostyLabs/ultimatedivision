@@ -20,13 +20,13 @@ import (
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
-	"ultimatedivision/clubs/managers"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/console/emails"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
+	"ultimatedivision/managers"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
@@ -119,6 +119,10 @@ type Config struct {
 		avatars.Config
 	} `json:"avatars"`
 
+	WaitList struct {
+		waitlist.Config
+	} `json:"waitlist"`
+
 	NFTs struct {
 		nfts.Config
 	} `json:"nfts"`
@@ -188,7 +192,8 @@ type Peer struct {
 
 	// exposes nfts related logic.
 	NFTs struct {
-		Service *nfts.Service
+		Service  *nfts.Service
+		NFTChore *nfts.Chore
 	}
 
 	// exposes clubs related logic.
@@ -323,10 +328,18 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			config.NFTs.Config,
 			peer.Database.NFTs(),
 		)
+		peer.NFTs.NFTChore = nfts.NewChore(
+			config.NFTs.Config,
+			peer.Log,
+			peer.NFTs.Service,
+			peer.Users.Service,
+			peer.Cards.Service,
+		)
 	}
 
 	{ // waitlist setup
 		peer.WaitList.Service = waitlist.NewService(
+			config.WaitList.Config,
 			peer.Database.WaitList(),
 			peer.Cards.Service,
 			peer.Avatars.Service,
@@ -382,11 +395,32 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // divisions setup
+		peer.Divisions.Service = divisions.NewService(
+			peer.Database.Divisions(),
+			config.Divisions.Config)
+	}
+
+	{ // seasons setup
+		peer.Seasons.Service = seasons.NewService(
+			peer.Database.Seasons(),
+			config.Seasons.Config,
+			peer.Divisions.Service,
+		)
+
+		peer.Seasons.ExpirationSeasons = seasons.NewChore(
+			config.Seasons.Config,
+			peer.Seasons.Service,
+		)
+	}
+
 	{ // matches setup
 		peer.Matches.Service = matches.NewService(
 			peer.Database.Matches(),
 			config.Matches.Config,
 			peer.Clubs.Service,
+			peer.Seasons.Service,
+			peer.Divisions.Service,
 		)
 	}
 
@@ -405,25 +439,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Matches.Service,
 			peer.Seasons.Service,
 			peer.Clubs.Service,
-		)
-	}
-
-	{ // divisions setup
-		peer.Divisions.Service = divisions.NewService(
-			peer.Database.Divisions(),
-			config.Divisions.Config)
-	}
-
-	{ // seasons setup
-		peer.Seasons.Service = seasons.NewService(
-			peer.Database.Seasons(),
-			config.Seasons.Config,
-			peer.Divisions.Service,
-		)
-
-		peer.Seasons.ExpirationSeasons = seasons.NewChore(
-			config.Seasons.Config,
-			peer.Seasons.Service,
 		)
 	}
 
@@ -475,6 +490,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Queue.Service,
 			peer.Seasons.Service,
 			peer.WaitList.Service,
+			peer.Matches.Service,
 			peer.Managers.Service,
 		)
 	}
@@ -503,6 +519,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
 	group.Go(func() error {
+		return ignoreCancel(peer.NFTs.NFTChore.Run(ctx))
+	})
+	group.Go(func() error {
 		return ignoreCancel(peer.Managers.ExpirationManagerContract.Run(ctx))
 	})
 
@@ -515,6 +534,9 @@ func (peer *Peer) Close() error {
 
 	errlist.Add(peer.Admin.Endpoint.Close())
 	errlist.Add(peer.Console.Endpoint.Close())
+	peer.Marketplace.ExpirationLotChore.Close()
+	peer.Queue.PlaceChore.Close()
+	peer.Seasons.ExpirationSeasons.Close()
 
 	return errlist.Err()
 }

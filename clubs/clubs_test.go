@@ -35,7 +35,7 @@ func TestTeam(t *testing.T) {
 
 	division1 := divisions.Division{
 		ID:             uuid.New(),
-		Name:           "10",
+		Name:           10,
 		PassingPercent: 10,
 		CreatedAt:      time.Now().UTC(),
 	}
@@ -177,6 +177,13 @@ func TestTeam(t *testing.T) {
 			require.NoError(t, err)
 
 			compareSquads(t, squadDB, testSquad)
+		})
+
+		t.Run("Get club", func(t *testing.T) {
+			clubDB, err := repositoryClubs.Get(ctx, testSquad.ClubID)
+			require.NoError(t, err)
+
+			compareClubs(t, clubDB, testClub1)
 		})
 
 		t.Run("get formation sql no rows", func(t *testing.T) {

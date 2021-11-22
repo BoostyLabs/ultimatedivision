@@ -26,6 +26,9 @@ type CreateSignature struct {
 // Address defines address type.
 type Address string
 
+// Hex defines hex type.
+type Hex string
+
 // Signature defines signature type.
 type Signature string
 
@@ -49,6 +52,12 @@ const (
 	PrivateKeyVTwentyEight PrivateKeyV = 28
 )
 
+// Contract entity describes addresses of contract and method.
+type Contract struct {
+	Address       Address `json:"address"`
+	AddressMethod Hex     `json:"addressMethod"`
+}
+
 // Сhain defines the list of possible chains in blockchain.
 type Сhain string
 
@@ -58,6 +67,44 @@ const (
 	// ChainPolygon indicates that chain is polygon.
 	ChainPolygon Сhain = "polygon"
 )
+
+// ChainID defines the list of possible number chains in blockchain.
+type ChainID int
+
+const (
+	// ChainIDRinkeby indicates that chain id is 4.
+	ChainIDRinkeby ChainID = 4
+)
+
+// HexPrefix defines the prefix of hex type.
+const HexPrefix Hex = "0x"
+
+// Length defines the list of possible lengths of blockchain elements.
+type Length int
+
+const (
+	// LengthOneBlockInputValue defines the length of one block of input data.
+	LengthOneBlockInputValue Length = 64
+	// LengthAddress defines the length of address.
+	LengthAddress Length = 40
+	// LengthHexPrefix defines the length of hex prefix.
+	LengthHexPrefix Length = 2
+)
+
+// BlockTagLatest indicates that the last block will be used.
+const BlockTagLatest string = "latest"
+
+// Data entity describes values for data field in transacton.
+type Data struct {
+	AddressContractMethod Hex
+	TokenID               int
+}
+
+// NewDataHex is a constructor for data entity, but returns hex string.
+func NewDataHex(data Data) Hex {
+	tokenID := createHexStringFixedLength(data.TokenID)
+	return data.AddressContractMethod + tokenID
+}
 
 // IsValidAddress checks if the address is valid.
 func (address Address) IsValidAddress() bool {
@@ -157,14 +204,8 @@ func GenerateSignatureWithToken(addressWallet Address, addressContract Address, 
 		return "", err
 	}
 
-	tokenIDString := fmt.Sprintf("%x", tokenID)
-	var zeroString string
-	for i := 0; i < (64 - len(tokenIDString)); i++ {
-		zeroString += "0"
-	}
-
-	tokenIDStringWithZeros := zeroString + tokenIDString
-	tokenIDByte, err := hex.DecodeString(tokenIDStringWithZeros)
+	tokenIDStringWithZeros := createHexStringFixedLength(tokenID)
+	tokenIDByte, err := hex.DecodeString(string(tokenIDStringWithZeros))
 	if err != nil {
 		return "", err
 	}
@@ -194,6 +235,17 @@ func GenerateSignatureWithToken(addressWallet Address, addressContract Address, 
 	}
 
 	return "", fmt.Errorf("error private key format")
+}
+
+// createHexStringFixedLength creates srings with fixed length and number in hex formate in the end.
+func createHexStringFixedLength(tokenID int) Hex {
+	tokenIDString := fmt.Sprintf("%x", tokenID)
+	var zeroString string
+	for i := 0; i < (int(LengthOneBlockInputValue) - len(tokenIDString)); i++ {
+		zeroString += "0"
+	}
+
+	return Hex(zeroString + tokenIDString)
 }
 
 // makeSignature makes signature from addresses and private key.

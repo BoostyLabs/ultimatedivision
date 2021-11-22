@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/clubs/managers"
+	"ultimatedivision/managers"
 )
 
 // ensures that managersDB implements managers.DB.

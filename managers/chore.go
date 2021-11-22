@@ -42,7 +42,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		}
 
 		for _, manager := range allManagers {
-			if manager.EndedAt.After(time.Now().UTC()) {
+			if manager.EndedAt.Before(time.Now().UTC()) {
 				err = chore.service.Delete(ctx, manager.UserID, manager.ClubID)
 				if err != nil {
 					return ChoreError.Wrap(err)

@@ -172,6 +172,11 @@ func (controller *Clubs) Get(w http.ResponseWriter, r *http.Request) {
 		userClubs = append(userClubs, userClub)
 	}
 
+	if len(userClubs) == 0 {
+		controller.serveError(w, http.StatusNotFound, ErrClubs.New("club's does not exist"))
+		return
+	}
+
 	if err = json.NewEncoder(w).Encode(userClubs); err != nil {
 		controller.log.Error("failed to write json response", ErrClubs.Wrap(err))
 		return
@@ -304,6 +309,12 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var squadCard clubs.SquadCard
 
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+		return
+	}
+
 	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
@@ -315,8 +326,6 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 		return
 	}
-
-	squadCard.CardID = cardID
 
 	if err = json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
@@ -329,7 +338,12 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = controller.clubs.AddSquadCard(ctx, squadID, squadCard); err != nil {
+	if err = controller.clubs.AddSquadCard(ctx, claims.UserID, squadID, squadCard); err != nil {
+		if clubs.ClubsForbiddenAction.Has(err) {
+			controller.serveError(w, http.StatusForbidden, ErrClubs.Wrap(err))
+			return
+		}
+
 		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
@@ -341,6 +355,12 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 	params := mux.Vars(r)
+
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
+		return
+	}
 
 	cardID, err := uuid.Parse(params["cardId"])
 	if err != nil {
@@ -354,11 +374,16 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = controller.clubs.Delete(ctx, squadID, cardID); err != nil {
+	if err = controller.clubs.Delete(ctx, claims.UserID, squadID, cardID); err != nil {
 		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
 
 		if clubs.ErrNoSquadCard.Has(err) {
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+			return
+		}
+
+		if clubs.ClubsForbiddenAction.Has(err) {
+			controller.serveError(w, http.StatusForbidden, ErrClubs.Wrap(err))
 			return
 		}
 

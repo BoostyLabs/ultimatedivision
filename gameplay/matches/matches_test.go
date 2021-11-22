@@ -15,10 +15,10 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
-	"ultimatedivision/clubs/managers"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/managers"
 	"ultimatedivision/pkg/pagination"
 	"ultimatedivision/seasons"
 	"ultimatedivision/users"
@@ -56,7 +56,7 @@ func TestMatches(t *testing.T) {
 
 	division1 := divisions.Division{
 		ID:             uuid.New(),
-		Name:           "10",
+		Name:           10,
 		PassingPercent: 10,
 		CreatedAt:      time.Now().UTC(),
 	}
@@ -190,7 +190,7 @@ func TestMatches(t *testing.T) {
 		})
 
 		t.Run("List squad matches", func(t *testing.T) {
-			allMatches, err := repositoryMatches.ListSquadMatches(ctx, testSquad1.ID, season1.ID)
+			allMatches, err := repositoryMatches.ListSquadMatches(ctx, season1.ID)
 			require.NoError(t, err)
 			compareMatchesSlice(t, allMatches, []matches.Match{testMatch})
 		})
@@ -320,7 +320,7 @@ func TestMatchService(t *testing.T) {
 
 	division1 := divisions.Division{
 		ID:             uuid.New(),
-		Name:           "10",
+		Name:           10,
 		PassingPercent: 10,
 		CreatedAt:      time.Now().UTC(),
 	}
@@ -390,7 +390,9 @@ func TestMatchService(t *testing.T) {
 		usersService := users.NewService(repositoryUsers)
 		managersService := managers.NewService(repositoryManagers)
 		clubsService := clubs.NewService(repositoryClubs, usersService, cardsService, managersService, repositoryDivisions)
-		matchesService := matches.NewService(repositoryMatches, matches.Config{}, clubsService)
+		divisionService := divisions.NewService(repositoryDivisions, divisions.Config{})
+		seasonsService := seasons.NewService(repositorySeasons, seasons.Config{}, divisionService)
+		matchesService := matches.NewService(repositoryMatches, matches.Config{}, clubsService, seasonsService, divisionService)
 
 		var matchID uuid.UUID
 
