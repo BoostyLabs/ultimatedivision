@@ -203,8 +203,15 @@ func TestWaitList(t *testing.T) {
 			compareNFTsSlice(t, nftList, []waitlist.Item{nft1, nft2})
 		})
 
-		t.Run("Get", func(t *testing.T) {
+		t.Run("GetByTokenID", func(t *testing.T) {
 			nftDB, err := repositoryWaitList.GetByTokenID(ctx, 1)
+			require.NoError(t, err)
+
+			compareNFTs(t, nftDB, nft1)
+		})
+
+		t.Run("GetByCardID", func(t *testing.T) {
+			nftDB, err := repositoryWaitList.GetByCardID(ctx, nft1.CardID)
 			require.NoError(t, err)
 
 			compareNFTs(t, nftDB, nft1)

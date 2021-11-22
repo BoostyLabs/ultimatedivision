@@ -31,7 +31,7 @@ export class ClubsClient extends APIClient {
         return await response.json();
     }
     /** gets club from api */
-    public async getClub(): Promise<Club> {
+    public async getClubs(): Promise<Club[]> {
         const response = await this.http.get(`${this.ROOT_PATH}/clubs`);
         if (!response.ok) {
             await this.handleError(response);
@@ -104,6 +104,16 @@ export class ClubsClient extends APIClient {
         const { clubId, id } = squad;
         const response = await this.http.put(
             `${this.ROOT_PATH}/clubs/${clubId}/squads/${id}/formation/${formation}`
+        );
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+    }
+    /** chandes active club */
+    public async changeActiveClub(id: string): Promise<void> {
+        const response = await this.http.patch(
+            `${this.ROOT_PATH}/clubs/${id}`,
+            JSON.stringify({ 'status': 1 })
         );
         if (!response.ok) {
             await this.handleError(response);

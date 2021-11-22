@@ -1,8 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { FootballerCardIllustrationsDiagram }
-    from '@/app/components/common/Card/CardIllustrationsDiagram';
+import { FootballerCardIllustrationsDiagram } from '@/app/components/common/Card/CardIllustrationsDiagram';
 
 import { CardWithStats } from '@/card';
 
@@ -17,7 +16,7 @@ export const FootballerCardIllustrationsDiagramsArea: React.FC<{ card: CardWithS
                 <FootballerCardIllustrationsDiagram
                     key={index}
                     props={item}
-                />,
+                />
             )}
         </div>
     );

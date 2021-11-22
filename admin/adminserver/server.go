@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"ultimatedivision/seasons"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -82,7 +83,7 @@ type Server struct {
 func NewServer(config Config, log logger.Logger, listener net.Listener, authService *adminauth.Service,
 	admins *admins.Service, users *users.Service, cards *cards.Service, percentageQualities cards.PercentageQualities,
 	avatars *avatars.Service, marketplace *marketplace.Service, lootboxes *lootboxes.Service, clubs *clubs.Service,
-	queue *queue.Service, divisions *divisions.Service, matches *matches.Service) (*Server, error) {
+	queue *queue.Service, divisions *divisions.Service, matches *matches.Service, seasons *seasons.Service) (*Server, error) {
 	server := &Server{
 		log:    log,
 		config: config,
@@ -102,7 +103,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	router := mux.NewRouter()
 	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
 	router.HandleFunc("/login", authController.Login).Methods(http.MethodPost, http.MethodGet)
-	router.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
+	router.HandleFunc("/logout", authController.Logout).Methods(http.MethodGet)
 
 	adminsRouter := router.PathPrefix("/admins").Subrouter()
 	adminsRouter.Use(server.withAuth)
@@ -151,7 +152,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	clubsController := controllers.NewClubs(log, clubs, server.templates.club)
 	clubsRouter.HandleFunc("/create/{userId}", clubsController.Create).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{userId}", clubsController.List).Methods(http.MethodGet)
-	clubsRouter.HandleFunc("/{userId}/{clubId}", clubsController.UpdateStatus).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/{userId}/{clubId}/update", clubsController.UpdateStatus).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{clubId}/squad/create", clubsController.CreateSquad).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{clubId}/squad", clubsController.GetSquadByClubID).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{clubId}/squad/{squadId}/update", clubsController.UpdateSquad).Methods(http.MethodGet, http.MethodPost)
@@ -168,9 +169,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 
 	matchesRouter := router.PathPrefix("/matches").Subrouter()
 	matchesRouter.Use(server.withAuth)
-	matchesController := controllers.NewMatches(log, matches, server.templates.match)
+	matchesController := controllers.NewMatches(log, matches, server.templates.match, clubs, seasons)
 	matchesRouter.HandleFunc("/create", matchesController.Create).Methods(http.MethodGet, http.MethodPost)
-	matchesRouter.HandleFunc("/", matchesController.ListMatches).Methods(http.MethodGet)
+	matchesRouter.HandleFunc("", matchesController.ListMatches).Methods(http.MethodGet)
 	matchesRouter.HandleFunc("/delete/{id}", matchesController.Delete).Methods(http.MethodGet)
 	matchesRouter.HandleFunc("/{id}/goals", matchesController.ListMatchGoals).Methods(http.MethodGet)
 

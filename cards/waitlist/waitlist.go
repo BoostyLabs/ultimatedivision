@@ -24,6 +24,8 @@ type DB interface {
 	Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address) error
 	// Get returns nft for wait list by token id.
 	GetByTokenID(ctx context.Context, tokenID int64) (Item, error)
+	// GetByCardID returns nft for wait list by card id.
+	GetByCardID(ctx context.Context, cardID uuid.UUID) (Item, error)
 	// GetLast returns id of last inserted token.
 	GetLast(ctx context.Context) (int64, error)
 	// List returns all nft tokens from wait list from database.
@@ -51,6 +53,13 @@ type CreateNFT struct {
 	UserID        uuid.UUID           `json:"userId"`
 }
 
+// Transaction entity describes password wallet, smart contracts address and token id.
+type Transaction struct {
+	Password cryptoutils.Signature `json:"password"`
+	Contract cryptoutils.Contract  `json:"contract"`
+	TokenID  int64                 `json:"tokenId"`
+}
+
 // Config defines values needed by check mint nft in blockchain.
 type Config struct {
 	WaitListRenewalInterval time.Duration `json:"waitListRenewalInterval"`
@@ -58,5 +67,6 @@ type Config struct {
 		Address      cryptoutils.Address `json:"address"`
 		AddressEvent cryptoutils.Hex     `json:"addressEvent"`
 	} `json:"nftContract"`
-	AddressNodeServer string `json:"addressNodeServer"`
+	cryptoutils.Contract `json:"contract"`
+	AddressNodeServer    string `json:"addressNodeServer"`
 }

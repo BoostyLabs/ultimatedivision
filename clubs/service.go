@@ -11,6 +11,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/divisions"
 	"ultimatedivision/users"
 )
 
@@ -21,17 +22,19 @@ var ErrClubs = errs.Class("clubs service error")
 //
 // architecture: Service
 type Service struct {
-	clubs DB
-	users *users.Service
-	cards *cards.Service
+	clubs     DB
+	users     *users.Service
+	cards     *cards.Service
+	divisions divisions.DB
 }
 
 // NewService is a constructor for clubs service.
-func NewService(clubs DB, users *users.Service, cards *cards.Service) *Service {
+func NewService(clubs DB, users *users.Service, cards *cards.Service, divisions divisions.DB) *Service {
 	return &Service{
-		clubs: clubs,
-		users: users,
-		cards: cards,
+		clubs:     clubs,
+		users:     users,
+		cards:     cards,
+		divisions: divisions,
 	}
 }
 
@@ -42,11 +45,17 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 		return uuid.New(), ErrClubs.Wrap(err)
 	}
 
+	division, err := service.divisions.GetLastDivision(ctx)
+	if err != nil {
+		return uuid.Nil, ErrClubs.Wrap(err)
+	}
+
 	newClub := Club{
-		ID:        uuid.New(),
-		OwnerID:   userID,
-		Name:      nickname,
-		CreatedAt: time.Now().UTC(),
+		ID:         uuid.New(),
+		OwnerID:    userID,
+		Name:       nickname,
+		CreatedAt:  time.Now().UTC(),
+		DivisionID: division.ID,
 	}
 
 	allClubs, err := service.ListByUserID(ctx, userID)
@@ -63,6 +72,12 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 
 	clubID, err := service.clubs.Create(ctx, newClub)
 	return clubID, ErrClubs.Wrap(err)
+}
+
+// List returns all clubs.
+func (service *Service) List(ctx context.Context) ([]Club, error) {
+	clubs, err := service.clubs.List(ctx)
+	return clubs, ErrClubs.Wrap(err)
 }
 
 // CreateSquad creates new squad for club.
@@ -417,4 +432,9 @@ func (service *Service) CardsWithNewPositions(ctx context.Context, cards []Squad
 	}
 
 	return positionMap, nil
+}
+
+// UpdateClubToNewDivision is a method that updates club to division.
+func (service *Service) UpdateClubToNewDivision(ctx context.Context, clubID uuid.UUID, divisionID uuid.UUID) error {
+	return ErrClubs.Wrap(service.clubs.UpdateClubToNewDivision(ctx, clubID, divisionID))
 }

@@ -5,13 +5,13 @@ import { DragEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { FootballFieldCardSelection } from
-    '@components/FootballField/FootballFieldCardSelection';
-import { FootballFieldPlayingArea } from
-    '@components/FootballField/FotballFieldPlayingArea';
+import { FieldCardSelection } from
+    '@/app/components/Field/FieldCardSelection';
+import { FieldPlayingArea } from
+    '@/app/components/Field/FieldPlayingArea';
 
 import { RootState } from '@/app/store';
-import { createClub, deleteCard, getClub } from '@/app/store/actions/clubs';
+import { createClubs, deleteCard, getClubs } from '@/app/store/actions/clubs';
 import { CardEditIdentificators } from '@/api/club';
 import { NotFoundError } from '@/api';
 
@@ -22,7 +22,7 @@ const FootballField: React.FC = () => {
     useEffect(() => {
         (async function setClub() {
             try {
-                await dispatch(getClub());
+                await dispatch(getClubs());
             } catch (error: any) {
                 if (!(error instanceof NotFoundError)) {
                     toast.error('Something went wrong', {
@@ -33,7 +33,7 @@ const FootballField: React.FC = () => {
                     return;
                 }
                 try {
-                    await dispatch(createClub());
+                    await dispatch(createClubs());
                 } catch (error: any) {
                     toast.error('Something went wrong', {
                         position: toast.POSITION.TOP_RIGHT,
@@ -47,8 +47,8 @@ const FootballField: React.FC = () => {
         (state: RootState) => state.clubsReducer.options.dragStart
     );
 
-    const squad = useSelector((state: RootState) => state.clubsReducer.squad);
-    const club = useSelector((state: RootState) => state.clubsReducer);
+    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
+    const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
     const cardSelectionVisibility = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
 
     /** prevent default user agent action */
@@ -70,12 +70,12 @@ const FootballField: React.FC = () => {
             onDragOver={e => dragOverHandler(e)}
         >
             <h1 className="football-field__title">Football Field</h1>
-            <FootballFieldPlayingArea />
+            <FieldPlayingArea />
             <div
                 style={{ height: cardSelectionVisibility ? 'unset' : '0' }}
                 className="football-field__wrapper"
             >
-                < FootballFieldCardSelection />
+                <FieldCardSelection />
             </div>
         </div>
     );

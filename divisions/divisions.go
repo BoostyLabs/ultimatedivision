@@ -24,6 +24,10 @@ type DB interface {
 	List(ctx context.Context) ([]Division, error)
 	// Get returns division by id from the data base.
 	Get(ctx context.Context, id uuid.UUID) (Division, error)
+	// GetByName returns division by name from the data base.
+	GetByName(ctx context.Context, divisionName int) (Division, error)
+	// GetLastDivision returns last division from the data base.
+	GetLastDivision(ctx context.Context) (Division, error)
 	// Delete deletes a division in the database.
 	Delete(ctx context.Context, id uuid.UUID) error
 }
@@ -31,7 +35,7 @@ type DB interface {
 // Division describes divisions entity.
 type Division struct {
 	ID             uuid.UUID `json:"id"`
-	Name           string    `json:"name"`
+	Name           int       `json:"name"`
 	PassingPercent int       `json:"passingPercent"`
 	CreatedAt      time.Time `json:"createdAt"`
 }

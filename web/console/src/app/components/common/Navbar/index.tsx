@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
         { name: 'STORE', path: RouteConfig.Store.path },
         { name: 'MARKETPLACE', path: RouteConfig.MarketPlace.path },
         { name: 'CARDS', path: RouteConfig.Club.path },
-        { name: 'FIELD', path: RouteConfig.FootballField.path },
+        { name: 'FIELD', path: RouteConfig.Field.path },
     ];
 
     return (
@@ -39,8 +39,7 @@ const Navbar: React.FC = () => {
             >
                 {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
             </div>
-            <ul
-                className={`ultimatedivision-navbar__list${visibleClassName}`}>
+            <ul className={`ultimatedivision-navbar__list${visibleClassName}`}>
                 {navbarItems.map((item, index) =>
                     <li
                         key={index}

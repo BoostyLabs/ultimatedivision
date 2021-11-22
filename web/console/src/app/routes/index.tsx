@@ -13,12 +13,13 @@ const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
 const Club = lazy(() => import('@/app/views/ClubPage'));
 const Card = lazy(() => import('@/app/views/CardPage'));
 const Lot = lazy(() => import('@/app/views/LotPage'));
-const FootballField = lazy(() => import('@/app/views/FootballFieldPage'));
+const Field = lazy(() => import('@/app/views/FieldPage'));
 const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
 const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
 const Store = lazy(() => import('@/app/views/StorePage'));
 const Navbar = lazy(() => import('@/app/components/common/Navbar'));
 const Division = lazy(() => import('@/app/views/Division'));
+const Match = lazy(() => import('@/app/views/Match'));
 
 import Summary from '@components/WhitePaper/Summary';
 import GameMechanics from '@components/WhitePaper/GameMechanics';
@@ -37,7 +38,7 @@ export class ComponentRoutes {
         public component: React.FC<any>,
         public exact: boolean,
         public children?: ComponentRoutes[]
-    ) { }
+    ) {}
     /** Method for creating child subroutes path */
     public with(
         child: ComponentRoutes,
@@ -53,7 +54,7 @@ export class ComponentRoutes {
 
         return this;
     }
-};
+}
 /** Route config that implements auth actions */
 export class AuthRouteConfig {
     public static SignIn: ComponentRoutes = new ComponentRoutes(
@@ -74,12 +75,12 @@ export class AuthRouteConfig {
     public static ConfirmEmail: ComponentRoutes = new ComponentRoutes(
         '/email/confirm',
         ConfirmEmail,
-        true,
+        true
     );
     public static ResetPassword: ComponentRoutes = new ComponentRoutes(
         '/reset-password',
         RecoverPassword,
-        true,
+        true
     );
     public static Default: ComponentRoutes = new ComponentRoutes(
         '/',
@@ -94,7 +95,7 @@ export class AuthRouteConfig {
         AuthRouteConfig.SignIn,
         AuthRouteConfig.SignUp,
     ];
-};
+}
 
 /** Route config implementation */
 export class RouteConfig {
@@ -117,11 +118,11 @@ export class RouteConfig {
         /** TODO: it will be replaced with id parameter */
         '/division',
         Division,
-        true,
+        true
     );
-    public static FootballField: ComponentRoutes = new ComponentRoutes(
+    public static Field: ComponentRoutes = new ComponentRoutes(
         '/field',
-        FootballField,
+        Field,
         true
     );
     public static Store: ComponentRoutes = new ComponentRoutes(
@@ -132,6 +133,11 @@ export class RouteConfig {
     public static Club: ComponentRoutes = new ComponentRoutes(
         '/club',
         Club,
+        true
+    );
+    public static Match: ComponentRoutes = new ComponentRoutes(
+        '/match',
+        Match,
         true
     );
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
@@ -184,14 +190,16 @@ export class RouteConfig {
         Fund,
         true
     );
+
     public static routes: ComponentRoutes[] = [
-        RouteConfig.FootballField,
+        RouteConfig.Field,
         RouteConfig.MarketPlace,
         RouteConfig.Club,
         RouteConfig.Card,
         RouteConfig.Division,
         RouteConfig.Lot,
         RouteConfig.Store,
+        RouteConfig.Match,
         RouteConfig.Whitepaper.addChildren([
             RouteConfig.Summary,
             RouteConfig.GameMechanics,
@@ -205,7 +213,7 @@ export class RouteConfig {
             RouteConfig.Fund,
         ]),
     ];
-};
+}
 
 export const Routes = () =>
     <Switch>
@@ -228,4 +236,5 @@ export const Routes = () =>
                 />
             )}
         </Route>
-    </Switch >;
+    </Switch>;
+

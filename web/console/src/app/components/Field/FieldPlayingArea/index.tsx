@@ -4,8 +4,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { FootballFieldControlsArea } from '@/app/components/FootballField/FootballFieldControlsArea';
-import { PlayingAreaFootballerCard } from '@components/FootballField/PlayingAreaFootballerCard';
+import { FieldControlsArea } from '@/app/components/Field/FieldControlsArea';
+import { FootballerCard } from '@/app/components/Field/FootballerCard';
 
 import { CardEditIdentificators } from '@/api/club';
 import { RootState } from '@/app/store';
@@ -22,23 +22,19 @@ import {
 
 import './index.scss';
 
-export const FootballFieldPlayingArea: React.FC = () => {
+export const FieldPlayingArea: React.FC = () => {
     const dispatch = useDispatch();
     const { cards } = useSelector(
         (state: RootState) => state.cardsReducer.cardsPage
     );
     const formation = useSelector(
-        (state: RootState) => state.clubsReducer.squad.formation
+        (state: RootState) => state.clubsReducer.activeClub.squad.formation
     );
     const dragStartIndex = useSelector(
         (state: RootState) => state.clubsReducer.options.dragStart
     );
-
-    const club = useSelector((state: RootState) => state.clubsReducer);
-    const squad = useSelector((state: RootState) => state.clubsReducer.squad);
-
-    const fieldSetup = useSelector((state: RootState) => state.clubsReducer);
-
+    const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
+    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     /** This var created to not allow mouseUpEvent without Dragging before it */
@@ -58,12 +54,10 @@ export const FootballFieldPlayingArea: React.FC = () => {
         const playingArea = document.getElementById('playingArea');
         if (playingArea) {
             const position = playingArea.getBoundingClientRect();
-            const HALF_OF_CARD_WIDTH = 60;
-            const HALF_OF_CARD_HEIGHT = 100;
 
             handleOffset({
-                x: position.x + HALF_OF_CARD_WIDTH,
-                y: position.y + HALF_OF_CARD_HEIGHT,
+                x: position.x,
+                y: position.y,
             });
         }
     }, []);
@@ -86,15 +80,21 @@ export const FootballFieldPlayingArea: React.FC = () => {
     }
 
     /** getting dragged card index and changing state to allow mouseUp */
-    function dragStart(e: React.MouseEvent<HTMLDivElement>, index: number = DEFAULT_VALUE): void {
+    function dragStart(
+        e: React.MouseEvent<HTMLDivElement>,
+        index: number = DEFAULT_VALUE
+    ): void {
         handleDrag(true);
         dispatch(setDragStart(index));
     }
     /** getting second drag index  and exchanging with first index*/
-    function onMouseUp(e: React.MouseEvent<HTMLDivElement>, index: number = DEFAULT_VALUE): void {
+    function onMouseUp(
+        e: React.MouseEvent<HTMLDivElement>,
+        index: number = DEFAULT_VALUE
+    ): void {
         e.stopPropagation();
         if (isDragging && dragStartIndex !== null) {
-            const cards = fieldSetup.squadCards;
+            const cards = club.squadCards;
             getCard(cards[index].cardId) ?
                 dispatch(swapCards(
                     new CardEditIdentificators(squad.clubId, squad.id, cards[dragStartIndex].cardId, index),
@@ -143,65 +143,68 @@ export const FootballFieldPlayingArea: React.FC = () => {
                     className={`playing-area__${formation}`}
                     onMouseUp={mouseUpOnArea}
                 >
-                    {fieldSetup.squadCards.map((fieldCard: SquadCard, index: number) => {
-                        const card = getCard(fieldCard.cardId);
-                        const equality = dragStartIndex === index;
+                    {club.squadCards.map(
+                        (fieldCard: SquadCard, index: number) => {
+                            const card = getCard(fieldCard.cardId);
+                            const equality = dragStartIndex === index;
 
-                        return (
-                            <div
-                                style={
-                                    equality
-                                        ? {
+                            return (
+                                <div
+                                    style={
+                                        equality ? {
                                             left: x - outerOffset.x,
                                             top: y - OFFSET_TOP,
+                                            transform: 'translateX(-55%)',
                                             zIndex: 5,
                                             pointerEvents: 'none',
                                         }
-                                        : undefined
-                                }
-                                key={index}
-                                className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
+                                            : undefined
+                                    }
+                                    key={index}
+                                    className={`playing-area__${formation}__${card ? 'card' : 'empty-card'
                                     }`}
-                                onClick={() => handleClick(index)}
-                                onDragStart={(e) => dragStart(e, index)}
-                                onMouseUp={(e) => onMouseUp(e, index)}
-                                draggable={true}
-                            >
-                                {card &&
-                                    <PlayingAreaFootballerCard
+                                    onClick={() => handleClick(index)}
+                                    onDragStart={(e) => dragStart(e, index)}
+                                    onMouseUp={(e) => onMouseUp(e, index)}
+                                    draggable={true}
+                                >
+                                    {card &&
+                                    <FootballerCard
                                         card={card}
                                         index={index}
                                         place={'PlayingArea'}
                                     />
-                                }
-                            </div>
-                        );
-                    })}
+                                    }
+                                </div>
+                            );
+                        })}
                 </div>
                 <div className={`playing-area__${formation}-shadows`}>
-                    {fieldSetup.squadCards.map((fieldCard: SquadCard, index: number) => {
-                        const card = getCard(fieldCard.cardId);
+                    {club.squadCards.map(
+                        (fieldCard: SquadCard, index: number) => {
+                            const card = getCard(fieldCard.cardId);
 
-                        return (
-                            <div
-                                className={`playing-area__${formation}-shadows__card`}
-                                key={index}
-                            >
-                                {card &&
-                                    <img
-                                        // If data exist it has maininfo, but TS do not let me use it even with check
-                                        /** TODO: check for undefined will removed after correct Card type */
-                                        src={card.style && card.style.shadow}
-                                        alt="card shadow"
-                                        className={`playing-area__${formation}-shadows__shadow`}
-                                    />
-                                }
-                            </div>
-                        );
-                    })}
+                            return (
+                                <div
+                                    className={`playing-area__${formation}-shadows__card`}
+                                    key={index}
+                                >
+                                    {card &&
+                                        <img
+                                            // If data exist it has maininfo, but TS do not let me use it even with check
+                                            /** TODO: check for undefined will removed after correct Card type */
+                                            src={card.style.shadow}
+                                            alt="card shadow"
+                                            className={`playing-area__${formation}-shadows__shadow`}
+                                        />
+                                    }
+                                </div>
+                            );
+                        }
+                    )}
                 </div>
             </div>
-            <FootballFieldControlsArea />
+            <FieldControlsArea />
         </div>
     );
 };

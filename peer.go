@@ -326,6 +326,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 	{ // waitlist setup
 		peer.WaitList.Service = waitlist.NewService(
+			config.WaitList.Config,
 			peer.Database.WaitList(),
 			peer.Cards.Service,
 			peer.Avatars.Service,
@@ -346,6 +347,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Database.Clubs(),
 			peer.Users.Service,
 			peer.Cards.Service,
+			peer.Database.Divisions(),
 		)
 	}
 
@@ -375,30 +377,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
-	{ // matches setup
-		peer.Matches.Service = matches.NewService(
-			peer.Database.Matches(),
-			config.Matches.Config,
-			peer.Clubs.Service,
-		)
-	}
-
-	{ // queue setup
-		peer.Queue.Service = queue.NewService(
-			config.Queue.Config,
-			peer.Database.Queue(),
-			peer.Users.Service,
-			peer.Clubs.Service,
-		)
-
-		peer.Queue.PlaceChore = queue.NewChore(
-			peer.Log,
-			config.Queue.Config,
-			peer.Queue.Service,
-			peer.Matches.Service,
-		)
-	}
-
 	{ // divisions setup
 		peer.Divisions.Service = divisions.NewService(
 			peer.Database.Divisions(),
@@ -415,6 +393,34 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.Seasons.ExpirationSeasons = seasons.NewChore(
 			config.Seasons.Config,
 			peer.Seasons.Service,
+		)
+	}
+
+	{ // matches setup
+		peer.Matches.Service = matches.NewService(
+			peer.Database.Matches(),
+			config.Matches.Config,
+			peer.Clubs.Service,
+			peer.Seasons.Service,
+			peer.Divisions.Service,
+		)
+	}
+
+	{ // queue setup
+		peer.Queue.Service = queue.NewService(
+			config.Queue.Config,
+			peer.Database.Queue(),
+			peer.Users.Service,
+			peer.Clubs.Service,
+		)
+
+		peer.Queue.PlaceChore = queue.NewChore(
+			peer.Log,
+			config.Queue.Config,
+			peer.Queue.Service,
+			peer.Matches.Service,
+			peer.Seasons.Service,
+			peer.Clubs.Service,
 		)
 	}
 
@@ -440,6 +446,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Queue.Service,
 			peer.Divisions.Service,
 			peer.Matches.Service,
+			peer.Seasons.Service,
 		)
 		if err != nil {
 			return nil, err
@@ -465,6 +472,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Queue.Service,
 			peer.Seasons.Service,
 			peer.WaitList.Service,
+			peer.Matches.Service,
 		)
 	}
 
@@ -507,6 +515,9 @@ func (peer *Peer) Close() error {
 
 	errlist.Add(peer.Admin.Endpoint.Close())
 	errlist.Add(peer.Console.Endpoint.Close())
+	peer.Marketplace.ExpirationLotChore.Close()
+	peer.Queue.PlaceChore.Close()
+	peer.Seasons.ExpirationSeasons.Close()
 
 	return errlist.Err()
 }

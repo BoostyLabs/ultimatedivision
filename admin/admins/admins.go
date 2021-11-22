@@ -7,11 +7,13 @@ import (
 	"context"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 )
 
-// ErrNoAdmin indicates that user does not exist.
+// ErrNoAdmin indicates that admin does not exist.
 var ErrNoAdmin = errs.Class("admin does not exist")
 
 // DB is exposing access to admins db.
@@ -36,4 +38,14 @@ type Admin struct {
 	Email        string
 	PasswordHash []byte
 	CreatedAt    time.Time
+}
+
+// EncodePass is method to encode password.
+func (admin *Admin) EncodePass() error {
+	hash, err := bcrypt.GenerateFromPassword(admin.PasswordHash, bcrypt.DefaultCost)
+	if err != nil {
+		return ErrAdmins.Wrap(err)
+	}
+	admin.PasswordHash = hash
+	return nil
 }
