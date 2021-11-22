@@ -41,12 +41,9 @@ const MaxValueGameParameter = 100
 
 // Config defines values needed by create nft.
 type Config struct {
-	Description        string        `json:"description"`
-	ExternalURL        string        `json:"externalUrl"`
-	NFTRenewalInterval time.Duration `json:"nftRenewalInterval"`
-	Contract           struct {
-		Address       cryptoutils.Address `json:"address"`
-		AddressMethod cryptoutils.Hex     `json:"addressMethod"`
-	} `json:"contract"`
-	AddressNodeServer string `json:"addressNodeServer"`
+	Description        string               `json:"description"`
+	ExternalURL        string               `json:"externalUrl"`
+	NFTRenewalInterval time.Duration        `json:"nftRenewalInterval"`
+	Contract           cryptoutils.Contract `json:"contract"`
+	AddressNodeServer  string               `json:"addressNodeServer"`
 }

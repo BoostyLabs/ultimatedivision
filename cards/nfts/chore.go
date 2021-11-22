@@ -65,7 +65,7 @@ func (chore *Chore) RunNFTSynchronization(ctx context.Context) (err error) {
 				Data: dataHex,
 			}
 
-			transaction := jsonrpc.NewTransaction(jsonrpc.MethodEthCall, params, cryptoutils.ChainIDRinkeby)
+			transaction := jsonrpc.NewTransaction(jsonrpc.MethodEthCall, []interface{}{&params, cryptoutils.BlockTagLatest}, cryptoutils.ChainIDRinkeby)
 			body, err := jsonrpc.Send(chore.config.AddressNodeServer, transaction)
 			if err != nil {
 				return ChoreError.Wrap(err)
