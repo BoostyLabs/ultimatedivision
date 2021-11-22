@@ -22,9 +22,10 @@ const MatchFinder: React.FC = () => {
         dispatch(startSearchingMatch(false));
     };
 
-    /** needs for websocket response */
+    /** TODO: it will set after websocket implementation */
     const [isMatchFound, setIsMatchFound] = useState<boolean>(false);
-    /** TODO: title will be changed after websocket response */
+
+    /** TODO: it will set after websocket implementation */
     const [title, setTitle] = useState<string>('LOOKING FOR A MATCH');
 
     return isSearchingMatch ? <section className={isMatchFound ? 'match-finder__wrapper' : ''}>
