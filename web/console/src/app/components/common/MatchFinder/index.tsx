@@ -1,29 +1,51 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+
+import { Timer } from './Timer';
+import { DelayTimer } from './DelayTimer';
+
+import { RootState } from '@/app/store';
+import { startSearchingMatch } from '@/app/store/actions/clubs';
+
 import './index.scss';
 
-export const MatchFinder: React.FC = () =>
-    /** TODO: reworks this component by fetch datas. Right now uses just mock datas. */
-    <div className="match-finder">
-        <h1 className="match-finder__title">
-            LOOKING FOR A MATCH
-        </h1>
-        <div className="match-finder__timer">
-            <span className="match-finder__timer__text">
-                53:03
-            </span>
+const MatchFinder: React.FC = () => {
+    const dispatch = useDispatch();
+    const { isSearchingMatch } = useSelector((state: RootState) => state.clubsReducer);
+
+    const closeMatchFinder = () => {
+        dispatch(startSearchingMatch(false));
+    };
+
+    const [isMatchFound, setIsMatchFound] = useState<boolean>(false);
+
+    const [title, setTitle] = useState<string>('LOOKING FOR A MATCH');
+
+    return isSearchingMatch ? <section className={isMatchFound ? 'match-finder__wrapper' : ''}>
+        <div className="match-finder">
+            <h1 className="match-finder__title">
+                {title}
+            </h1>
+            {isMatchFound ? <DelayTimer /> : <Timer />}
+            <div className="match-finder__form">
+                <input
+                    className="match-finder__form__accept"
+                    value="Accept"
+                    type="button"
+                />
+                <input
+                    className="match-finder__form__cancel"
+                    value="Cancel"
+                    type="button"
+                    onClick={closeMatchFinder}
+                />
+            </div>
         </div>
-        <div className="match-finder__form">
-            <input
-                className="match-finder__form__accept"
-                value="Accept"
-                type="button"
-            />
-            <input
-                className="match-finder__form__cancel"
-                value="Cancel"
-                type="button"
-            />
-        </div>
-    </div>;
+    </section> : <></>
+};
+
+export default MatchFinder;
