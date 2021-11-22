@@ -537,6 +537,7 @@ func (peer *Peer) Close() error {
 	peer.Marketplace.ExpirationLotChore.Close()
 	peer.Queue.PlaceChore.Close()
 	peer.Seasons.ExpirationSeasons.Close()
+	peer.Managers.ExpirationManagerContract.Close()
 
 	return errlist.Err()
 }
