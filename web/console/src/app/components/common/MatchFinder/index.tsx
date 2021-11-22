@@ -17,12 +17,14 @@ const MatchFinder: React.FC = () => {
     const dispatch = useDispatch();
     const { isSearchingMatch } = useSelector((state: RootState) => state.clubsReducer);
 
+    /** closes MatchFinder component */
     const closeMatchFinder = () => {
         dispatch(startSearchingMatch(false));
     };
 
+    /** needs for websocket response */
     const [isMatchFound, setIsMatchFound] = useState<boolean>(false);
-
+    /** TODO: title will be changed after websocket response */
     const [title, setTitle] = useState<string>('LOOKING FOR A MATCH');
 
     return isSearchingMatch ? <section className={isMatchFound ? 'match-finder__wrapper' : ''}>
@@ -45,7 +47,7 @@ const MatchFinder: React.FC = () => {
                 />
             </div>
         </div>
-    </section> : <></>
+    </section> : <></>;
 };
 
 export default MatchFinder;

@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react';
 
 /** hook useTimeCounter uses for timing counter. */
 export const useTimeCounter = () => {
@@ -52,7 +52,6 @@ export const useTimeCounter = () => {
         }, DELAY);
 
         return () => clearInterval(timer);
-
     }, [seconds, minutes, timeCounter]);
 
     return timeCounter;

@@ -33,11 +33,11 @@ export const clubsReducer = (state = clubState, action: any = {}) => {
     case DRAG_START:
         state.options.dragStart = action.index;
         break;
-    case START_SEARCHING_MATCH: 
+    case START_SEARCHING_MATCH:
         return {
-        ...state,
-        isSearchingMatch: action.isSearchingMatch,
-        }
+            ...state,
+            isSearchingMatch: action.isSearchingMatch,
+        };
     default:
         break;
     }

@@ -10,5 +10,5 @@ export const Timer: React.FC = () => {
         <span className="match-finder__timer__text">
             {timeCounter.minutes} : {timeCounter.seconds}
         </span>
-    </div>
+    </div>;
 };
