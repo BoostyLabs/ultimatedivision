@@ -21,8 +21,8 @@ var ErrNoSquad = errs.Class("squad does not exist")
 // ErrNoSquadCard indicated that squad card does not exist.
 var ErrNoSquadCard = errs.Class("squad card does not exist")
 
-// ClubsForbiddenAction indicated that user is forbidden to make action with club.
-var ClubsForbiddenAction = errs.Class("forbidden action")
+// ForbiddenAction indicated that user is forbidden to make action with club.
+var ForbiddenAction = errs.Class("forbidden action")
 
 // DB is exposing access to clubs db.
 //
@@ -114,10 +114,10 @@ const SquadSize int = 11
 type Ownership int
 
 const (
-	// Manager defines manager type of ownership.
-	Manager Ownership = 0
-	// Owner defines owner type of ownership.
-	Owner Ownership = 1
+	// OwnershipManager defines manager type of ownership.
+	OwnershipManager Ownership = 0
+	// OwnershipOwner defines owner type of ownership.
+	OwnershipOwner Ownership = 1
 )
 
 // Formation defines a list of possible formations.

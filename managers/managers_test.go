@@ -46,7 +46,7 @@ func TestManager(t *testing.T) {
 		Name:       user1.NickName,
 		Status:     clubs.StatusActive,
 		DivisionID: division1.ID,
-		Ownership:  clubs.Owner,
+		Ownership:  clubs.OwnershipOwner,
 		CreatedAt:  time.Now().UTC(),
 	}
 
@@ -56,7 +56,7 @@ func TestManager(t *testing.T) {
 		Name:       user1.NickName,
 		Status:     clubs.StatusActive,
 		DivisionID: division1.ID,
-		Ownership:  clubs.Owner,
+		Ownership:  clubs.OwnershipOwner,
 		CreatedAt:  time.Now().UTC(),
 	}
 

@@ -46,7 +46,7 @@ func TestTeam(t *testing.T) {
 		Name:       testUser.NickName,
 		Status:     clubs.StatusActive,
 		DivisionID: division1.ID,
-		Ownership:  clubs.Owner,
+		Ownership:  clubs.OwnershipOwner,
 		CreatedAt:  time.Now().UTC(),
 	}
 
@@ -56,7 +56,7 @@ func TestTeam(t *testing.T) {
 		Name:       testUser.NickName,
 		Status:     clubs.StatusInactive,
 		DivisionID: division1.ID,
-		Ownership:  clubs.Owner,
+		Ownership:  clubs.OwnershipOwner,
 		CreatedAt:  time.Now().UTC(),
 	}
 
@@ -65,7 +65,7 @@ func TestTeam(t *testing.T) {
 		OwnerID:   testUser.ID,
 		Name:      testUser.NickName,
 		Status:    clubs.StatusInactive,
-		Ownership: clubs.Owner,
+		Ownership: clubs.OwnershipOwner,
 		CreatedAt: time.Now().UTC(),
 	}
 
@@ -74,7 +74,7 @@ func TestTeam(t *testing.T) {
 		OwnerID:   testUser.ID,
 		Name:      testUser.NickName,
 		Status:    clubs.StatusActive,
-		Ownership: clubs.Owner,
+		Ownership: clubs.OwnershipOwner,
 		CreatedAt: time.Now().UTC(),
 	}
 

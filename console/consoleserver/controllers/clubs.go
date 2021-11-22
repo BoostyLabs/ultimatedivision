@@ -339,7 +339,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = controller.clubs.AddSquadCard(ctx, claims.UserID, squadID, squadCard); err != nil {
-		if clubs.ClubsForbiddenAction.Has(err) {
+		if clubs.ForbiddenAction.Has(err) {
 			controller.serveError(w, http.StatusForbidden, ErrClubs.Wrap(err))
 			return
 		}
@@ -382,7 +382,7 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if clubs.ClubsForbiddenAction.Has(err) {
+		if clubs.ForbiddenAction.Has(err) {
 			controller.serveError(w, http.StatusForbidden, ErrClubs.Wrap(err))
 			return
 		}

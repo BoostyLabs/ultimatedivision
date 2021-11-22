@@ -411,7 +411,7 @@ func (controller *Clubs) DeleteCard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = controller.clubs.Delete(ctx, userID, squadID, cardID); err != nil {
-		if clubs.ClubsForbiddenAction.Has(err) {
+		if clubs.ForbiddenAction.Has(err) {
 			http.Error(w, err.Error(), http.StatusForbidden)
 		}
 		controller.log.Error("could not delete card", ErrClubs.Wrap(err))

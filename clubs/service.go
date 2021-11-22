@@ -59,7 +59,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 		Name:       nickname,
 		CreatedAt:  time.Now().UTC(),
 		DivisionID: division.ID,
-		Ownership:  Owner,
+		Ownership:  OwnershipOwner,
 	}
 
 	allClubs, err := service.ListByUserID(ctx, userID)
@@ -112,7 +112,7 @@ func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.U
 
 	for _, club := range managedClubs {
 		if club.ClubID == squad.ClubID {
-			return ClubsForbiddenAction.New("invalid action")
+			return ForbiddenAction.New("invalid action")
 		}
 	}
 
@@ -162,7 +162,7 @@ func (service *Service) Delete(ctx context.Context, userID, squadID, cardID uuid
 
 	for _, club := range managedClubs {
 		if club.ClubID == squad.ClubID {
-			return ClubsForbiddenAction.New("invalid action")
+			return ForbiddenAction.New("invalid action")
 		}
 	}
 
@@ -293,7 +293,7 @@ func (service *Service) ListByUserID(ctx context.Context, userID uuid.UUID) ([]C
 		if err != nil {
 			return userClubs, ErrClubs.Wrap(err)
 		}
-		club.Ownership = Manager
+		club.Ownership = OwnershipManager
 
 		userClubs = append(userClubs, club)
 	}
