@@ -9,7 +9,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-	"ultimatedivision/divisions"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -20,6 +19,7 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/database"
 	"ultimatedivision/database/dbtesting"
+	"ultimatedivision/divisions"
 	"ultimatedivision/pkg/pagination"
 	"ultimatedivision/pkg/sqlsearchoperators"
 	"ultimatedivision/users"
