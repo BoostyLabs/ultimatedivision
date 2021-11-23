@@ -63,6 +63,7 @@ type Transaction struct {
 // Config defines values needed by check mint nft in blockchain.
 type Config struct {
 	WaitListRenewalInterval time.Duration `json:"waitListRenewalInterval"`
+	WaitListCheckSignature  time.Duration `json:"waitListCheckSignature"`
 	NFTContract             struct {
 		Address      cryptoutils.Address `json:"address"`
 		AddressEvent cryptoutils.Hex     `json:"addressEvent"`

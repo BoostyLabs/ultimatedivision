@@ -22,17 +22,21 @@ var ErrNoNFTs = errs.Class("nfts does not exist")
 type DB interface {
 	// Create creates nft token in the database.
 	Create(ctx context.Context, nft NFT) error
+	// Get returns nft by token id and chain from database.
+	Get(ctx context.Context, tokenID int64, chain cryptoutils.Chain) (NFT, error)
 	// List returns all nft token from database.
 	List(ctx context.Context) ([]NFT, error)
 	// Update updates users wallet address for nft token in the database.
 	Update(ctx context.Context, nft NFT) error
+	// Delete deletes nft token in the database.
+	Delete(ctx context.Context, cardID uuid.UUID) error
 }
 
 // NFT entity describes values released nft token.
 type NFT struct {
 	CardID        uuid.UUID           `json:"cardId"`
-	Chain         cryptoutils.Сhain   `json:"chain"`
 	TokenID       int64               `json:"tokenId"`
+	Chain         cryptoutils.Chain   `json:"chain"`
 	WalletAddress cryptoutils.Address `json:"walletAddress"`
 }
 

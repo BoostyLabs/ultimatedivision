@@ -26,6 +26,11 @@ type CreateSignature struct {
 // Address defines address type.
 type Address string
 
+// CreateValidAddress creates valid address.
+func CreateValidAddress(address Hex) Address {
+	return Address(HexPrefix + address[LengthOneBlockInputValue-LengthAddress+LengthHexPrefix:])
+}
+
 // Hex defines hex type.
 type Hex string
 
@@ -55,14 +60,14 @@ type Contract struct {
 	AddressMethod Hex     `json:"addressMethod"`
 }
 
-// Сhain defines the list of possible chains in blockchain.
-type Сhain string
+// Chain defines the list of possible chains in blockchain.
+type Chain string
 
 const (
 	// ChainEthereum indicates that chain is ethereum.
-	ChainEthereum Сhain = "ethereum"
+	ChainEthereum Chain = "ethereum"
 	// ChainPolygon indicates that chain is polygon.
-	ChainPolygon Сhain = "polygon"
+	ChainPolygon Chain = "polygon"
 )
 
 // ChainID defines the list of possible number chains in blockchain.

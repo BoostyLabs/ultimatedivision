@@ -85,7 +85,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 		return transaction, ErrWaitlist.Wrap(err)
 	}
 
-	for range time.NewTicker(time.Millisecond * service.config.WaitListRenewalInterval).C {
+	for range time.NewTicker(time.Millisecond * service.config.WaitListCheckSignature).C {
 		if item, err := service.GetByCardID(ctx, createNFT.CardID); item.Password != "" && err == nil {
 			transaction = Transaction{
 				Password: item.Password,

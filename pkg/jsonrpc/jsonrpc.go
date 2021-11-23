@@ -134,7 +134,7 @@ func GetOwnersWalletAddress(body io.ReadCloser) (cryptoutils.Address, error) {
 	}()
 
 	err = json.NewDecoder(body).Decode(&response)
-	return cryptoutils.Address(cryptoutils.HexPrefix + response.Result[cryptoutils.LengthOneBlockInputValue-cryptoutils.LengthAddress+cryptoutils.LengthHexPrefix:]), err
+	return cryptoutils.CreateValidAddress(response.Result), err
 }
 
 // GetAddressOfFilter returns address of new filter.
