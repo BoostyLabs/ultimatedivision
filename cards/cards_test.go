@@ -370,6 +370,8 @@ func TestCards(t *testing.T) {
 
 		t.Run("get cards from squad", func(t *testing.T) {
 			err := repositoryDivisions.Create(ctx, division1)
+			require.NoError(t, err)
+
 			_, err = repositoryClubs.Create(ctx, testClub)
 			require.NoError(t, err)
 
