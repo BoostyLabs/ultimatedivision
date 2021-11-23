@@ -13,6 +13,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/divisions"
+	"ultimatedivision/managers"
 	"ultimatedivision/users"
 )
 
@@ -26,15 +27,17 @@ type Service struct {
 	clubs     DB
 	users     *users.Service
 	cards     *cards.Service
+	managers  *managers.Service
 	divisions divisions.DB
 }
 
 // NewService is a constructor for clubs service.
-func NewService(clubs DB, users *users.Service, cards *cards.Service, divisions divisions.DB) *Service {
+func NewService(clubs DB, users *users.Service, cards *cards.Service, managers *managers.Service, divisions divisions.DB) *Service {
 	return &Service{
 		clubs:     clubs,
 		users:     users,
 		cards:     cards,
+		managers:  managers,
 		divisions: divisions,
 	}
 }
@@ -57,6 +60,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID) (uuid.UUID
 		Name:       nickname,
 		CreatedAt:  time.Now().UTC(),
 		DivisionID: division.ID,
+		Ownership:  OwnershipOwner,
 	}
 
 	allClubs, err := service.ListByUserID(ctx, userID)
@@ -97,6 +101,20 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 
 // AddSquadCard adds card to the squad.
 func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, newSquadCard SquadCard) error {
+	squad, err := service.GetSquad(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	isClubManaged, err := service.managers.IsClubHasManager(ctx, squad.ClubID)
+	if err != nil {
+		return managers.ErrManagers.Wrap(err)
+	}
+
+	if isClubManaged {
+		return ForbiddenAction.New("could not delete card from squad: club has manager")
+	}
+
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
@@ -131,6 +149,20 @@ func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, new
 
 // Delete deletes card from squad.
 func (service *Service) Delete(ctx context.Context, squadID, cardID uuid.UUID) error {
+	squad, err := service.GetSquad(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	isClubManaged, err := service.managers.IsClubHasManager(ctx, squad.ClubID)
+	if err != nil {
+		return managers.ErrManagers.Wrap(err)
+	}
+
+	if isClubManaged {
+		return ForbiddenAction.New("could not delete card from squad: club has manager")
+	}
+
 	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, squadID, cardID))
 }
 
@@ -247,8 +279,23 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 
 // ListByUserID returns user's clubs.
 func (service *Service) ListByUserID(ctx context.Context, userID uuid.UUID) ([]Club, error) {
-	club, err := service.clubs.ListByUserID(ctx, userID)
-	return club, ErrClubs.Wrap(err)
+	userClubs, err := service.clubs.ListByUserID(ctx, userID)
+	if err != nil {
+		return userClubs, ErrClubs.Wrap(err)
+	}
+
+	managedClubs, err := service.managers.ListByUserID(ctx, userID)
+	for _, managedClub := range managedClubs {
+		club, err := service.Get(ctx, managedClub.ClubID)
+		if err != nil {
+			return userClubs, ErrClubs.Wrap(err)
+		}
+		club.Ownership = OwnershipManager
+
+		userClubs = append(userClubs, club)
+	}
+
+	return userClubs, ErrClubs.Wrap(err)
 }
 
 // Get returns club.

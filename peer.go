@@ -26,6 +26,7 @@ import (
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
+	"ultimatedivision/managers"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
@@ -77,6 +78,9 @@ type DB interface {
 
 	// Seasons provides access to seasons db.
 	Seasons() seasons.DB
+
+	// Managers provides access to managers db.
+	Managers() managers.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -146,6 +150,10 @@ type Config struct {
 	Matches struct {
 		matches.Config
 	} `json:"matches"`
+
+	Managers struct {
+		managers.Config
+	} `json:"managers"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -224,6 +232,12 @@ type Peer struct {
 	Seasons struct {
 		Service           *seasons.Service
 		ExpirationSeasons *seasons.Chore
+	}
+
+	// exposes managers related logic.
+	Managers struct {
+		Service                   *managers.Service
+		ExpirationManagerContract *managers.Chore
 	}
 
 	// Admin web server server with web UI.
@@ -334,11 +348,23 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // managers setup
+		peer.Managers.Service = managers.NewService(
+			peer.Database.Managers(),
+		)
+
+		peer.Managers.ExpirationManagerContract = managers.NewChore(
+			config.Managers.Config,
+			peer.Managers.Service,
+		)
+	}
+
 	{ // clubs setup
 		peer.Clubs.Service = clubs.NewService(
 			peer.Database.Clubs(),
 			peer.Users.Service,
 			peer.Cards.Service,
+			peer.Managers.Service,
 			peer.Database.Divisions(),
 		)
 	}
@@ -465,6 +491,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Seasons.Service,
 			peer.WaitList.Service,
 			peer.Matches.Service,
+			peer.Managers.Service,
 		)
 	}
 
@@ -494,6 +521,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.NFTs.NFTChore.Run(ctx))
 	})
+	group.Go(func() error {
+		return ignoreCancel(peer.Managers.ExpirationManagerContract.Run(ctx))
+	})
 
 	return group.Wait()
 }
@@ -507,6 +537,7 @@ func (peer *Peer) Close() error {
 	peer.Marketplace.ExpirationLotChore.Close()
 	peer.Queue.PlaceChore.Close()
 	peer.Seasons.ExpirationSeasons.Close()
+	peer.Managers.ExpirationManagerContract.Close()
 
 	return errlist.Err()
 }

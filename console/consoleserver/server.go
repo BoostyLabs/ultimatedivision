@@ -22,6 +22,7 @@ import (
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
+	"ultimatedivision/managers"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/queue"
@@ -68,7 +69,7 @@ type Server struct {
 // NewServer is a constructor for console web server.
 func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service,
 	marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
-	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, matches *matches.Service) *Server {
+	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, matches *matches.Service, managers *managers.Service) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -90,6 +91,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	seasonsController := controllers.NewSeasons(log, seasons)
 	waitListController := controllers.NewWaitList(log, waitList)
 	matchesController := controllers.NewMatches(log, matches)
+	managersController := controllers.NewManagers(log, managers)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -119,6 +121,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsRouter.Use(server.withAuth)
 	clubsRouter.HandleFunc("", clubsController.Create).Methods(http.MethodPost)
 	clubsRouter.HandleFunc("", clubsController.Get).Methods(http.MethodGet)
+	clubsRouter.HandleFunc("/{clubId}", managersController.Create).Methods(http.MethodPost)
 	clubsRouter.HandleFunc("/{clubId}", clubsController.UpdateStatus).Methods(http.MethodPatch)
 
 	squadRouter := clubsRouter.PathPrefix("/{clubId}/squads").Subrouter()

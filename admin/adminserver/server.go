@@ -10,7 +10,6 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/seasons"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -30,6 +29,7 @@ import (
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/queue"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 )
 

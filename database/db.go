@@ -20,6 +20,7 @@ import (
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/lootboxes"
+	"ultimatedivision/managers"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/queue"
 	"ultimatedivision/seasons"
@@ -177,6 +178,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             club_name   VARCHAR                                              NOT NULL,
             status      INTEGER                                              NOT NULL,
             division_id BYTEA     REFERENCES divisions(id) ON DELETE CASCADE NOT NULL,
+            ownership   INTEGER                                              NOT NULL,
             created_at  TIMESTAMP WITH TIME ZONE                             NOT NULL
         );
         CREATE TABLE IF NOT EXISTS squads (
@@ -248,6 +250,12 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             token_id       INTEGER                                  NOT NULL,
             chain          VARCHAR                                  NOT NULL,
             wallet_address VARCHAR                                  NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS managers(
+            user_id  BYTEA     REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            club_id  BYTEA     REFERENCES clubs(id) ON DELETE CASCADE NOT NULL,
+            ended_at TIMESTAMP WITH TIME ZONE                         NOT NULL,
+            PRIMARY KEY(user_id, club_id)
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -326,4 +334,9 @@ func (db *database) NFTs() nfts.DB {
 // WaitList provides access to accounts db.
 func (db *database) WaitList() waitlist.DB {
 	return &waitlistDB{conn: db.conn}
+}
+
+// Managers provides access to accounts db.
+func (db *database) Managers() managers.DB {
+	return &managersDB{conn: db.conn}
 }

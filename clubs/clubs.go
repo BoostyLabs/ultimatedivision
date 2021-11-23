@@ -21,6 +21,9 @@ var ErrNoSquad = errs.Class("squad does not exist")
 // ErrNoSquadCard indicated that squad card does not exist.
 var ErrNoSquadCard = errs.Class("squad card does not exist")
 
+// ForbiddenAction indicated that user is forbidden to make action with club.
+var ForbiddenAction = errs.Class("forbidden action")
+
 // DB is exposing access to clubs db.
 //
 // architecture: DB
@@ -83,6 +86,7 @@ type Club struct {
 	Name       string    `json:"name"`
 	Status     Status    `json:"status"`
 	DivisionID uuid.UUID `json:"divisionId"`
+	Ownership  Ownership `json:"ownership"`
 	CreatedAt  time.Time `json:"createdAt"`
 }
 
@@ -105,6 +109,16 @@ type SquadCard struct {
 
 // SquadSize defines number of cards in the full squad.
 const SquadSize int = 11
+
+// Ownership defines a list of possible ownerships.
+type Ownership int
+
+const (
+	// OwnershipManager defines manager type of ownership.
+	OwnershipManager Ownership = 0
+	// OwnershipOwner defines owner type of ownership.
+	OwnershipOwner Ownership = 1
+)
 
 // Formation defines a list of possible formations.
 type Formation int

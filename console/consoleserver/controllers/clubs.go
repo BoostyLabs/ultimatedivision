@@ -321,8 +321,6 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	squadCard.CardID = cardID
-
 	if err = json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 	}
@@ -335,6 +333,11 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = controller.clubs.AddSquadCard(ctx, squadID, squadCard); err != nil {
+		if clubs.ForbiddenAction.Has(err) {
+			controller.serveError(w, http.StatusForbidden, ErrClubs.Wrap(err))
+			return
+		}
+
 		controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
 		controller.serveError(w, http.StatusInternalServerError, ErrClubs.Wrap(err))
 		return
@@ -364,6 +367,11 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 
 		if clubs.ErrNoSquadCard.Has(err) {
 			controller.serveError(w, http.StatusNotFound, ErrClubs.Wrap(err))
+			return
+		}
+
+		if clubs.ForbiddenAction.Has(err) {
+			controller.serveError(w, http.StatusForbidden, ErrClubs.Wrap(err))
 			return
 		}
 
