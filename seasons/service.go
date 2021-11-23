@@ -131,8 +131,8 @@ func (service *Service) GetAllClubsStatistics(ctx context.Context) (map[division
 	return statisticsMap, nil
 }
 
-// UpdatesClubsToNewDivision updates clubs to new division.
-func (service *Service) UpdatesClubsToNewDivision(ctx context.Context) error {
+// UpdateClubsToNewDivision updates clubs to new division.
+func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 	clubsStatisticsByDivision, err := service.GetAllClubsStatistics(ctx)
 	if err != nil {
 		return ErrSeasons.Wrap(err)

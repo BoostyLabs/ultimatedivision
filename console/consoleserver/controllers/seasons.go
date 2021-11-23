@@ -63,9 +63,9 @@ func (controller *Seasons) GetAllClubsStatistics(w http.ResponseWriter, r *http.
 		return
 	}
 
-	var statistic seasons.ResultStatistics
+	var statistic seasons.SeasonStatistics
 	for division, statistics := range clubsStatistics {
-		statistic = seasons.ResultStatistics{
+		statistic = seasons.SeasonStatistics{
 			Division:   division,
 			Statistics: statistics,
 		}
@@ -82,7 +82,7 @@ func (controller *Seasons) UpdatesClubsToNewDivision(w http.ResponseWriter, r *h
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
-	err := controller.seasons.UpdatesClubsToNewDivision(ctx)
+	err := controller.seasons.UpdateClubsToNewDivision(ctx)
 	if err != nil {
 		controller.serveError(w, http.StatusInternalServerError, ErrSeasons.Wrap(err))
 		return

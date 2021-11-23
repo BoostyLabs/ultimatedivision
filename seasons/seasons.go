@@ -53,8 +53,8 @@ type Config struct {
 	SeasonTime time.Duration `json:"seasonTime"`
 }
 
-// ResultStatistics defines statistics of clubs in season.
-type ResultStatistics struct {
+// SeasonStatistics returns statistics of clubs in season.
+type SeasonStatistics struct {
 	Division   divisions.Division  `json:"division"`
 	Statistics []matches.Statistic `json:"statistics"`
 }
