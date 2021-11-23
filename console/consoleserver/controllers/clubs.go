@@ -309,12 +309,6 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var squadCard clubs.SquadCard
 
-	claims, err := auth.GetClaims(ctx)
-	if err != nil {
-		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-		return
-	}
-
 	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
@@ -338,7 +332,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = controller.clubs.AddSquadCard(ctx, claims.UserID, squadID, squadCard); err != nil {
+	if err = controller.clubs.AddSquadCard(ctx, squadID, squadCard); err != nil {
 		if clubs.ForbiddenAction.Has(err) {
 			controller.serveError(w, http.StatusForbidden, ErrClubs.Wrap(err))
 			return
@@ -356,12 +350,6 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 
-	claims, err := auth.GetClaims(ctx)
-	if err != nil {
-		controller.serveError(w, http.StatusUnauthorized, ErrClubs.Wrap(err))
-		return
-	}
-
 	cardID, err := uuid.Parse(params["cardId"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
@@ -374,7 +362,7 @@ func (controller *Clubs) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = controller.clubs.Delete(ctx, claims.UserID, squadID, cardID); err != nil {
+	if err = controller.clubs.Delete(ctx, squadID, cardID); err != nil {
 		controller.log.Error("could not delete card from the squad", ErrClubs.Wrap(err))
 
 		if clubs.ErrNoSquadCard.Has(err) {

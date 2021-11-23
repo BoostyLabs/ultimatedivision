@@ -55,3 +55,9 @@ func (service *Service) ListByUserID(ctx context.Context, userID uuid.UUID) ([]M
 func (service *Service) Delete(ctx context.Context, userID, clubID uuid.UUID) error {
 	return ErrManagers.Wrap(service.managers.Delete(ctx, userID, clubID))
 }
+
+// IsClubHasManager checks is club has manager or not.
+func (service *Service) IsClubHasManager(ctx context.Context, clubID uuid.UUID) (bool, error) {
+	isManaged, err := service.managers.IsClubHasManager(ctx, clubID)
+	return isManaged, ErrManagers.Wrap(err)
+}

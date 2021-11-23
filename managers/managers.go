@@ -26,9 +26,12 @@ type DB interface {
 	ListByUserID(ctx context.Context, userID uuid.UUID) ([]Manager, error)
 	// Delete deletes manager from the database.
 	Delete(ctx context.Context, userID, clubID uuid.UUID) error
+	// IsClubHasManager checks is club has manager or not.
+	IsClubHasManager(ctx context.Context, clubID uuid.UUID) (bool, error)
 }
 
-// Manager defines managers entity.
+// Manager is user who could manage another user's club until the end of the contract.
+// He could take part of different competition instead of owner of club.
 type Manager struct {
 	UserID  uuid.UUID `json:"userId"`
 	ClubID  uuid.UUID `json:"clubId"`

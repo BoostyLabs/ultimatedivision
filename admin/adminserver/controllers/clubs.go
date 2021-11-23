@@ -287,12 +287,6 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := uuid.Parse(params["userId"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	switch r.Method {
 	case http.MethodGet:
 		if err = controller.templates.AddCard.Execute(w, squadID); err != nil {
@@ -323,7 +317,7 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 			CardID:   cardID,
 		}
 
-		if err = controller.clubs.AddSquadCard(ctx, userID, squadID, squadCard); err != nil {
+		if err = controller.clubs.AddSquadCard(ctx, squadID, squadCard); err != nil {
 			controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -392,12 +386,6 @@ func (controller *Clubs) DeleteCard(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)
 
-	userID, err := uuid.Parse(params["userId"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	squadID, err := uuid.Parse(params["squadId"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -410,7 +398,7 @@ func (controller *Clubs) DeleteCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = controller.clubs.Delete(ctx, userID, squadID, cardID); err != nil {
+	if err = controller.clubs.Delete(ctx, squadID, cardID); err != nil {
 		if clubs.ForbiddenAction.Has(err) {
 			http.Error(w, err.Error(), http.StatusForbidden)
 		}

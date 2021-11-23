@@ -60,6 +60,16 @@ func TestManager(t *testing.T) {
 		CreatedAt:  time.Now().UTC(),
 	}
 
+	club3 := clubs.Club{
+		ID:         uuid.New(),
+		OwnerID:    user1.ID,
+		Name:       user1.NickName,
+		Status:     clubs.StatusActive,
+		DivisionID: division1.ID,
+		Ownership:  clubs.OwnershipOwner,
+		CreatedAt:  time.Now().UTC(),
+	}
+
 	manager1 := managers.Manager{
 		UserID:  user1.ID,
 		ClubID:  club1.ID,
@@ -97,6 +107,9 @@ func TestManager(t *testing.T) {
 			_, err = repositoryClubs.Create(ctx, club2)
 			require.NoError(t, err)
 
+			_, err = repositoryClubs.Create(ctx, club3)
+			require.NoError(t, err)
+
 			err = repositoryManagers.Create(ctx, manager1)
 			require.NoError(t, err)
 
@@ -118,6 +131,18 @@ func TestManager(t *testing.T) {
 			require.Equal(t, 2, len(allManagers))
 			compareManagers(t, allManagers[0], manager1)
 			compareManagers(t, allManagers[1], manager2)
+		})
+
+		t.Run("is club does not have manager", func(t *testing.T) {
+			isManaged, err := repositoryManagers.IsClubHasManager(ctx, club3.ID)
+			require.NoError(t, err)
+			assert.Equal(t, false, isManaged)
+		})
+
+		t.Run("is club has manager", func(t *testing.T) {
+			isManaged, err := repositoryManagers.IsClubHasManager(ctx, club1.ID)
+			require.NoError(t, err)
+			assert.Equal(t, true, isManaged)
 		})
 
 		t.Run("Delete sql no rows", func(t *testing.T) {

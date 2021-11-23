@@ -119,3 +119,15 @@ func (managersDB *managersDB) Delete(ctx context.Context, userID, clubID uuid.UU
 
 	return ErrManagers.Wrap(err)
 }
+
+func (managersDB *managersDB) IsClubHasManager(ctx context.Context, clubID uuid.UUID) (bool, error) {
+	query := `SELECT EXISTS(SELECT 1 
+	                        FROM managers 
+	                        WHERE club_id = $1)`
+
+	var isClubHasManager bool
+
+	err := managersDB.conn.QueryRowContext(ctx, query, clubID).Scan(&isClubHasManager)
+
+	return isClubHasManager, ErrManagers.Wrap(err)
+}

@@ -100,21 +100,19 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 }
 
 // AddSquadCard adds card to the squad.
-func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.UUID, newSquadCard SquadCard) error {
+func (service *Service) AddSquadCard(ctx context.Context, squadID uuid.UUID, newSquadCard SquadCard) error {
 	squad, err := service.GetSquad(ctx, squadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
 	}
 
-	managedClubs, err := service.managers.ListByUserID(ctx, userID)
+	isClubManaged, err := service.managers.IsClubHasManager(ctx, squad.ClubID)
 	if err != nil {
-		return ErrClubs.Wrap(err)
+		return managers.ErrManagers.Wrap(err)
 	}
 
-	for _, club := range managedClubs {
-		if club.ClubID == squad.ClubID {
-			return ForbiddenAction.New("invalid action")
-		}
+	if isClubManaged {
+		return ForbiddenAction.New("could not delete card from squad: club has manager")
 	}
 
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
@@ -150,21 +148,19 @@ func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.U
 }
 
 // Delete deletes card from squad.
-func (service *Service) Delete(ctx context.Context, userID, squadID, cardID uuid.UUID) error {
+func (service *Service) Delete(ctx context.Context, squadID, cardID uuid.UUID) error {
 	squad, err := service.GetSquad(ctx, squadID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
 	}
 
-	managedClubs, err := service.managers.ListByUserID(ctx, userID)
+	isClubManaged, err := service.managers.IsClubHasManager(ctx, squad.ClubID)
 	if err != nil {
-		return ErrClubs.Wrap(err)
+		return managers.ErrManagers.Wrap(err)
 	}
 
-	for _, club := range managedClubs {
-		if club.ClubID == squad.ClubID {
-			return ForbiddenAction.New("invalid action")
-		}
+	if isClubManaged {
+		return ForbiddenAction.New("could not delete card from squad: club has manager")
 	}
 
 	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, squadID, cardID))
