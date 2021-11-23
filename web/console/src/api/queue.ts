@@ -3,6 +3,10 @@
 
 import { WebSocketAPICLient } from './webSocketClient';
 
+/**
+ * QueueClient is a ws implementation of users API.
+ * Exposes queue-related functionality.
+ */
 export class QueueClient extends WebSocketAPICLient {
     public eventMessage: string = 'wrong action';
 
