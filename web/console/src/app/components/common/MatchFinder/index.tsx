@@ -16,7 +16,7 @@ import { startSearchingMatch } from '@/app/store/actions/clubs';
 import './index.scss';
 
 const MatchFinder: React.FC = () => {
-    const { squad } = useSelector((state: RootState) => state.clubsReducer.activeClub)
+    const { squad } = useSelector((state: RootState) => state.clubsReducer.activeClub);
     const { isSearchingMatch } = useSelector((state: RootState) => state.clubsReducer);
 
     const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const MatchFinder: React.FC = () => {
         /** TODO: also here handles errors */
         await queueClient.sendAction('confirm', squad.id);
         queueClient.ws.onmessage = async ({ data }) => {
-            /** TODO: dispatch match score here */
+            /** TODO: dispatch match score here after back-end fixes */
         };
 
         queueClient.ws.onerror = (event: Event) => {
@@ -50,7 +50,7 @@ const MatchFinder: React.FC = () => {
 
         setIsMatchFound(false);
 
-        /** TODO: here will be check for match score and after auto close connection. */
+        /** TODO: cheks match score and auto close connection after back-end fixes. */
         dispatch(startSearchingMatch(false));
     };
 

@@ -1,10 +1,9 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { WebSocketAPICLient } from "./webSocketClient";
+import { WebSocketAPICLient } from './webSocketClient';
 
 export class QueueClient extends WebSocketAPICLient {
-
     public eventMessage: string = 'wrong action';
 
     /** changes event Message after ws response */
@@ -24,7 +23,7 @@ export class QueueClient extends WebSocketAPICLient {
 
     /** starts searching match on first open webSocket connection. */
     public async startSearch(action: string, squadId: string): Promise<void> {
-        this.ws.onopen = async () => {
+        this.ws.onopen = async() => {
             await this.sendAction(action, squadId);
         };
     };
