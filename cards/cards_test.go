@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 	"time"
+	"ultimatedivision/divisions"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -172,11 +173,19 @@ func TestCards(t *testing.T) {
 		Throwing:         49,
 	}
 
+	division1 := divisions.Division{
+		ID:             uuid.New(),
+		Name:           10,
+		PassingPercent: 10,
+		CreatedAt:      time.Now().UTC(),
+	}
+
 	testClub := clubs.Club{
-		ID:        uuid.New(),
-		OwnerID:   user1.ID,
-		Name:      "",
-		CreatedAt: time.Now(),
+		ID:         uuid.New(),
+		OwnerID:    user1.ID,
+		Name:       "",
+		DivisionID: division1.ID,
+		CreatedAt:  time.Now(),
 	}
 
 	testSquad := clubs.Squad{
@@ -221,6 +230,8 @@ func TestCards(t *testing.T) {
 		repositoryCards := db.Cards()
 		repositoryUsers := db.Users()
 		repositoryClubs := db.Clubs()
+		repositoryDivisions := db.Divisions()
+
 		id := uuid.New()
 
 		t.Run("get sql no rows", func(t *testing.T) {
@@ -358,7 +369,8 @@ func TestCards(t *testing.T) {
 		})
 
 		t.Run("get cards from squad", func(t *testing.T) {
-			_, err := repositoryClubs.Create(ctx, testClub)
+			err := repositoryDivisions.Create(ctx, division1)
+			_, err = repositoryClubs.Create(ctx, testClub)
 			require.NoError(t, err)
 
 			_, err = repositoryClubs.CreateSquad(ctx, testSquad)
