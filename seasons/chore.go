@@ -50,6 +50,9 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		}
 
 		err = chore.seasons.UpdatesClubsToNewDivision(ctx)
+		if err != nil {
+			return ChoreError.Wrap(err)
+		}
 
 		err = chore.seasons.Create(ctx)
 		if err != nil {
