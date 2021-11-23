@@ -24,6 +24,8 @@ const MatchFinder: React.FC = () => {
     /** Indicates if match is found. */
     const [isMatchFound, setIsMatchFound] = useState<boolean>(false);
 
+    const queueClient = new QueueClient();
+
     /** closes MatchFinder component. */
     const closeMatchFinder = () => {
         dispatch(startSearchingMatch(false));
@@ -31,13 +33,11 @@ const MatchFinder: React.FC = () => {
         queueClient.ws.close();
     };
 
-    const queueClient = new QueueClient();
-
     /** exposes confirm match logic */
-    const confirmMatch = async () => {
+    const confirmMatch = () => {
         /** TODO: also here handles errors */
-        await queueClient.sendAction('confirm', squad.id);
-        queueClient.ws.onmessage = async ({ data }) => {
+        queueClient.sendAction('confirm', squad.id);
+        queueClient.ws.onmessage = ({ data }) => {
             /** TODO: dispatch match score here after back-end fixes */
         };
 
@@ -55,9 +55,9 @@ const MatchFinder: React.FC = () => {
     };
 
     /** exposes start searching match logic. */
-    const startSearchMatch = async () => {
-        await queueClient.startSearch('startSearch', squad.id);
-        queueClient.ws.onmessage = async ({ data }) => {
+    const startSearchMatch = () => {
+        queueClient.startSearch('startSearch', squad.id);
+        queueClient.ws.onmessage = ({ data }) => {
             const jsonEventMessage = JSON.parse(data);
             queueClient.changeEventMessage(jsonEventMessage.message);
             const eventMessage = queueClient.getEventMessage();

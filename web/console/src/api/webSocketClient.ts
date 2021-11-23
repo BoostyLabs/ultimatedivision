@@ -14,10 +14,8 @@ export const WRONG_ACTION_MESSAGE: string = 'wrong action';
  * WebSocketAPICLient is base client that holds webSocket.
  */
 export class WebSocketAPICLient {
-    private readonly ROOT_PATH: string = 'ws://localhost:8088/api/v0/queue';
-
     /** The WebSocket provides the API for creating and managing
      * a websocket connection to a server and for sending and
      * receiving data on the connection. */
-    public readonly ws: WebSocket = new WebSocket(this.ROOT_PATH);
+    public readonly ws: WebSocket = new WebSocket('ws://localhost:8088/api/v0/queue');
 };

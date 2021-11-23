@@ -21,14 +21,14 @@ export class QueueClient extends WebSocketAPICLient {
     };
 
     /** sends action to confirm match, finish search and others. */
-    public async sendAction(action: string, squadId: string): Promise<void> {
-        await this.ws.send(JSON.stringify({ action, squadId }));
+    public sendAction(action: string, squadId: string) {
+        this.ws.send(JSON.stringify({ action, squadId }));
     };
 
     /** starts searching match on first open webSocket connection. */
-    public async startSearch(action: string, squadId: string): Promise<void> {
-        this.ws.onopen = async() => {
-            await this.sendAction(action, squadId);
+    public startSearch(action: string, squadId: string) {
+        this.ws.onopen = () => {
+            this.sendAction(action, squadId);
         };
     };
 };
