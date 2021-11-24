@@ -21,4 +21,3 @@ export class LootboxService {
         return cards.map((card: Card) => new CardWithStats(card));
     };
 };
-
