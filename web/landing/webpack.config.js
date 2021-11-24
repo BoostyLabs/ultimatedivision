@@ -1,25 +1,25 @@
-const path = require("path");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const StylelintPlugin = require("stylelint-webpack-plugin");
-const zlib = require("zlib");
-const CompressionPlugin = require("compression-webpack-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const path = require('path');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const StylelintPlugin = require('stylelint-webpack-plugin');
+const zlib = require('zlib');
+const CompressionPlugin = require('compression-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const PRODUCTION_PLUGINS = [
     new HtmlWebpackPlugin({
-        title: "Ultimate Division",
-        template: "./public/index.html",
-        favicon: "./src/app/static/images/favicon.jpg",
+        title: 'Ultimate Division',
+        template: './public/index.html',
+        favicon: './src/app/static/images/favicon.jpg',
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
     new StylelintPlugin({ fix: true }),
     new CompressionPlugin({
-        filename: "[path][base].br",
-        algorithm: "brotliCompress",
+        filename: '[path][base].br',
+        algorithm: 'brotliCompress',
         test: /\.(js|css|html|svg)$/,
         compressionOptions: {
             params: {
@@ -34,15 +34,15 @@ const PRODUCTION_PLUGINS = [
 
 const DEVELOPMENT_PLUGINS = [
     new HtmlWebpackPlugin({
-        title: "Ultimate Division",
-        template: "./public/index.html",
-        favicon: "./src/app/static/images/favicon.jpg",
+        title: 'Ultimate Division',
+        template: './public/index.html',
+        favicon: './src/app/static/images/favicon.jpg',
     }),
 ];
 
 const OPTIMISATION = {
     splitChunks: {
-        chunks: "all",
+        chunks: 'all',
     },
     minimize: true,
     minimizer: [
@@ -55,7 +55,7 @@ const OPTIMISATION = {
 
 const IMAGE_COMPRESSION = [
     {
-        loader: "image-webpack-loader",
+        loader: 'image-webpack-loader',
         options: {
             mozjpeg: {
                 progressive: false,
@@ -78,12 +78,12 @@ module.exports = (env, argv) => {
         experiments: {
             asset: true,
         },
-        entry: "./src/index.tsx",
-        target: "web",
+        entry: './src/index.tsx',
+        target: 'web',
         output: {
-            path: path.resolve(__dirname, "dist/"),
-            filename: "[name].[hash].js",
-            publicPath: "/",
+            path: path.resolve(__dirname, 'dist/'),
+            filename: '[name].[hash].js',
+            publicPath: '/',
         },
         plugins: isProduction ? PRODUCTION_PLUGINS : DEVELOPMENT_PLUGINS,
         devServer: {
@@ -93,13 +93,13 @@ module.exports = (env, argv) => {
         },
         resolve: {
             alias: {
-                "@components": path.resolve(__dirname, "./src/app/components/"),
-                "@static": path.resolve(__dirname, "./src/app/static/"),
-                "@utils": path.resolve(__dirname, "./src/app/utils/"),
-                "@": path.resolve(__dirname, "./src/"),
+                '@components': path.resolve(__dirname, './src/app/components/'),
+                '@static': path.resolve(__dirname, './src/app/static/'),
+                '@utils': path.resolve(__dirname, './src/app/utils/'),
+                '@': path.resolve(__dirname, './src/'),
             },
-            extensions: [".ts", ".tsx", ".js", ".jsx"],
-            modules: ["node_modules"],
+            extensions: ['.ts', '.tsx', '.js', '.jsx'],
+            modules: ['node_modules'],
         },
         module: {
             rules: [
@@ -108,7 +108,7 @@ module.exports = (env, argv) => {
                     exclude: /(node_modules)/,
                     use: [
                         {
-                            loader: "ts-loader",
+                            loader: 'ts-loader',
                         },
                     ],
                 },
@@ -116,44 +116,42 @@ module.exports = (env, argv) => {
                     test: /\.(scss)$/,
                     exclude: /(node_modules)/,
                     use: isProduction
-                        ?
-                        [
+                        ? [
                             MiniCssExtractPlugin.loader,
-                            "css-loader",
-                            "sass-loader",
+                            'css-loader',
+                            'sass-loader',
                         ]
-                        :
-                        [
-                            "style-loader",
-                            "css-loader",
-                            "sass-loader",
+                        : [
+                            'style-loader',
+                            'css-loader',
+                            'sass-loader',
                         ]
                 },
                 {
                     test: /\.(css)$/,
                     use: [
-                        "style-loader",
-                        "css-loader",
+                        'style-loader',
+                        'css-loader',
                     ],
                 },
                 {
                     test: /\.(woff|woff2|eot|ttf|otf)$/i,
                     exclude: /(node_modules)/,
-                    type: "asset/resource",
+                    type: 'asset/resource',
                     generator: {
-                        filename: "fonts/[name][hash:5][ext]",
+                        filename: 'fonts/[name][hash:5][ext]',
                     },
                 },
                 {
                     test: /\.(jpe|jpg|png|svg)(\?.*$|$)/,
                     exclude: /(node_modules)/,
-                    type: "asset/resource",
+                    type: 'asset/resource',
                     generator: {
-                        filename: "images/[name][hash:5][ext]",
+                        filename: 'images/[name][hash:5][ext]',
                     }
                 },
             ],
         },
         optimization: isProduction ? OPTIMISATION : {},
     };
-}
+};

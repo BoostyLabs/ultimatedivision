@@ -4,8 +4,7 @@
         "es2021": true
     },
     "extends": [
-        "react-app",
-        "react-app/jest"
+        "react-app"
     ],
     "parserOptions": {
         "ecmaFeatures": {
@@ -45,7 +44,7 @@
         "max-len": [
             "warn",
             {
-                "code": 90,
+                "code": 100,
                 "comments": 80,
                 "ignoreUrls": true,
                 "ignoreRegExpLiterals": true
@@ -75,7 +74,7 @@
             "all"
         ],
         "no-shadow": [
-            "error",
+            "warn",
             {
                 "builtinGlobals": true,
                 "hoist": "all",
