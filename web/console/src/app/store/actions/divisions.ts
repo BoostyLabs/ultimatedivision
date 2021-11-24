@@ -3,27 +3,34 @@
 
 import { Dispatch } from "redux";
 import { DivisionsClient } from "@/api/divisions";
-import { CurrentSeasonsDivision, DivisionMatchesStatistics } from "@/divisions";
+import { CurrentSeasonsDivision, DivisionSeasonsStatistics } from "@/divisions";
 import { DivisionsService } from "@/divisions/service";
 
 export const GET_CURRENT_SEASONS_DIVISIONS = "GET_CURRENT_SEASONS_DIVISIONS";
-export const GET_DIVISION_MATCHES_STATISTICS =
-    "GET_DIVISION_MATCHES_STATISTICS";
+export const GET_DIVISION_SEASONS_STATISTICS =
+    "GET_DIVISION_SEASONS_STATISTICS";
+export const SET_ACTIVE_DIVISION = "SET_ACTIVE_DIVISION";
 
 /** handles gets current seasons divisions */
 export const getCurrentSeasonsDivisions = (
-    divisions: CurrentSeasonsDivision[]
+    currentSeasonsDivisions: CurrentSeasonsDivision[]
 ) => ({
     type: GET_CURRENT_SEASONS_DIVISIONS,
-    divisions,
+    currentSeasonsDivisions,
 });
 
 /** handles gets divisions matches statistics */
-export const getDivisionMatchesStatistics = (
-    statistics: DivisionMatchesStatistics
+export const getDivisionSeasonsStatistics = (
+    seasonsStatistics: DivisionSeasonsStatistics
 ) => ({
-    type: GET_DIVISION_MATCHES_STATISTICS,
-    statistics,
+    type: GET_DIVISION_SEASONS_STATISTICS,
+    seasonsStatistics,
+});
+
+/** handles sets active division */
+export const setActiveDivision = (activeDivision: CurrentSeasonsDivision) => ({
+    type: SET_ACTIVE_DIVISION,
+    activeDivision,
 });
 
 const client = new DivisionsClient();
@@ -36,33 +43,13 @@ export const listOfCurrentSeasonsDivisions = () =>
             await service.getCurrentSeasonsDivisions();
 
         currentSeasonsDivisions &&
-            dispatch(
-                getCurrentSeasonsDivisions(
-                    currentSeasonsDivisions.map(
-                        (division) =>
-                            new CurrentSeasonsDivision(
-                                division.id,
-                                division.divisionId,
-                                division.startedAt,
-                                division.endedAt
-                            )
-                    )
-                )
-            );
+            dispatch(getCurrentSeasonsDivisions(currentSeasonsDivisions));
     };
 
-// /** thunk that handles gets current seasons divisions */
-// export const listOfCurrentSeasonsDivisions = () =>
-//     async function (dispatch: Dispatch) {
-//         const currentSeasonsDivisions =
-//             await service.getCurrentSeasonsDivisions();
+/** thunk that handles gets seasons statistics */
+export const divisionSeasonsStatistics = () =>
+    async function (dispatch: Dispatch) {
+        const seasonsStatistics = await service.getDivisionSeasonsStatistics();
 
-//         currentSeasonsDivisions &&
-//             dispatch(
-//                 getCurrentSeasonsDivisions(
-//                     response.map(
-//                         (division) => new CurrentSeasonsDivision(division)
-//                     )
-//                 )
-//             );
-//     };
+        dispatch(getDivisionSeasonsStatistics(seasonsStatistics));
+    };

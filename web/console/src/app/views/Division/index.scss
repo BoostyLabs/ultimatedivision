@@ -4,11 +4,66 @@
     background: $mainBackground;
     padding: 5%;
 
+    &__dropdown {
+        position: relative;
+        margin-right: auto;
+        color: white;
+        list-style: none;
+        cursor: pointer;
+
+        &__picture {
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        &__list {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            &-active {
+                position: absolute;
+                top: 50px;
+                right: 18px;
+                min-width: 150px;
+                z-index: 4;
+                border-radius: 5px;
+                background-color: $highlightBackground;
+
+                &:before {
+                    content: "";
+                    height: 20px;
+                    width: 20px;
+                    position: absolute;
+                    top: -7px;
+                    left: 20px;
+                    border-radius: 3px;
+                    background-color: $highlightBackground;
+                    transform: rotate(45deg);
+                }
+            }
+            &-inactive {
+                display: none;
+            }
+        }
+
+        &__item {
+            z-index: 2;
+            padding: 10px 20px;
+            font-family: "BebasNeue", sans-serif;
+            cursor: pointer;
+
+            :hover {
+                color: $highlightColor;
+            }
+        }
+    }
     &__titles {
-        margin-bottom: 25px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
 
         &__main {
             color: $divisionTextColor;
@@ -83,12 +138,9 @@
                     background: $highlightColor;
                     width: 3px;
                     height: 3px;
-                    box-shadow: 2px 0 0 $highlightColor,
-                        4px 0 0 $highlightColor,
-                        4px -2px 0 $highlightColor,
-                        4px -4px 0 $highlightColor,
-                        4px -6px 0 $highlightColor,
-                        4px -8px 0 $highlightColor;
+                    box-shadow: 2px 0 0 $highlightColor, 4px 0 0 $highlightColor,
+                        4px -2px 0 $highlightColor, 4px -4px 0 $highlightColor,
+                        4px -6px 0 $highlightColor, 4px -8px 0 $highlightColor;
                     transform: rotate(45deg);
                 }
             }
@@ -108,9 +160,7 @@
             cursor: pointer;
 
             &:hover {
-
                 td {
-
                     &:first-child {
                         border-left: 2px solid $highlightColor;
                     }
@@ -181,15 +231,27 @@
         }
 
         &__club {
-            background: linear-gradient(0deg, rgba(100, 91, 169, 0.15), rgba(100, 91, 169, 0.15));
+            background: linear-gradient(
+                0deg,
+                rgba(100, 91, 169, 0.15),
+                rgba(100, 91, 169, 0.15)
+            );
         }
 
         &__club-lower {
-            background: linear-gradient(0deg, rgba(124, 0, 0, 0.35), rgba(124, 0, 0, 0.35));
+            background: linear-gradient(
+                0deg,
+                rgba(124, 0, 0, 0.35),
+                rgba(124, 0, 0, 0.35)
+            );
         }
 
         &__club-upper {
-            background: linear-gradient(0deg, rgba(60, 207, 93, 0.15), rgba(60, 207, 93, 0.15));
+            background: linear-gradient(
+                0deg,
+                rgba(60, 207, 93, 0.15),
+                rgba(60, 207, 93, 0.15)
+            );
         }
     }
 }

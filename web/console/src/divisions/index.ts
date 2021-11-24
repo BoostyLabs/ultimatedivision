@@ -14,24 +14,26 @@ export class Division {
 /** Divisions of current season entity. */
 export class CurrentSeasonsDivision {
     constructor(
-        public id: string,
-        public divisionId: string,
-        public startedAt: Date,
-        public endedAt: Date
+        public id: string = "",
+        public divisionId: string = "",
+        public startedAt: Date = new Date(),
+        public endedAt: Date = new Date()
     ) {}
 }
 
 /** Division matches statistics entity. */
-//TODO: statistics need rewrite (wait backend).
-export class DivisionMatchesStatistics {
+//TODO: statistics need rewrite (waiting for backend).
+export class DivisionSeasonsStatistics {
     public division: Division = new Division("0", 0, 0, new Date());
     public statistics: null = null;
 }
 
 /** divisions reducer initial state  */
-//TODO: Can be changed (waiting backend)
+//TODO: Can be changed (waiting for backend)
 export class DivisionsState {
-    public currentSeasonsDivisions: CurrentSeasonsDivision[] = [];
-    public matchesStatistics: DivisionMatchesStatistics =
-        new DivisionMatchesStatistics();
+    constructor(
+        public currentSeasonsDivisions: CurrentSeasonsDivision[] = [],
+        public seasonsStatistics: DivisionSeasonsStatistics = new DivisionSeasonsStatistics(),
+        public activeDivision: CurrentSeasonsDivision = new CurrentSeasonsDivision()
+    ) {}
 }

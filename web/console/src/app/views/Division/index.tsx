@@ -1,24 +1,60 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 import realMadrid from "@static/img/divisions/realmadrid.png";
+import rectangle from "@static/img/FilterField/rectangle.svg";
 
 import { RootState } from "@/app/store";
 import {
-    getCurrentSeasonsDivisions,
-    getDivisionMatchesStatistics,
+    listOfCurrentSeasonsDivisions,
+    divisionSeasonsStatistics,
+    setActiveDivision,
 } from "@/app/store/actions/divisions";
 import { DivisionClub } from "@/app/types/division";
+import { CurrentSeasonsDivision } from "@/divisions";
 
 import "./index.scss";
 
 const Division: React.FC = () => {
     const dispatch = useDispatch();
-    const state = useSelector((state: RootState) => state.divisionsReducer);
-    console.log(state);
+
+    const { currentSeasonsDivisions, seasonsStatistics, activeDivision } =
+        useSelector((state: RootState) => state.divisionsReducer);
+
+    const [isDropdownShow, setIsDropdownShow] = useState<boolean>(false);
+
+    /** Get current seasons divisions. */
+    async function getCurrentSeasonsDivisions() {
+        try {
+            await dispatch(listOfCurrentSeasonsDivisions());
+        } catch (error: any) {
+            toast.error("Failed to get current seasons divisions", {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: "colored",
+            });
+        }
+    }
+
+    /** Get divisions seasons statistics. */
+    async function getSeasonsStatistics() {
+        try {
+            await dispatch(divisionSeasonsStatistics());
+        } catch (error: any) {
+            toast.error("Failed to get matches statistics", {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: "colored",
+            });
+        }
+    }
+
+    useEffect(() => {
+        getCurrentSeasonsDivisions();
+        getSeasonsStatistics();
+    }, []);
 
     /** TODO: replase test datas. Just for test rigth now. */
     const divisionClub: DivisionClub = {
@@ -76,7 +112,44 @@ const Division: React.FC = () => {
     return (
         <section className="division">
             <div className="division__titles">
-                <h1 className="division__titles__main">Division 1</h1>
+                <h1 className="division__titles__main">
+                    Division {activeDivision.id}
+                </h1>
+
+                <div
+                    className="division__dropdown"
+                    onClick={() => setIsDropdownShow(!isDropdownShow)}
+                >
+                    {activeDivision.id && (
+                        <img
+                            className="division__dropdown__picture"
+                            src={rectangle}
+                            alt="Rectangle"
+                        />
+                    )}
+                    <div
+                        className={`division__dropdown__list division__dropdown__list${
+                            isDropdownShow ? "-active" : "-inactive"
+                        }`}
+                    >
+                        {currentSeasonsDivisions.map(
+                            (
+                                division: CurrentSeasonsDivision,
+                                index: number
+                            ) => (
+                                <div
+                                    className="division__dropdown__item"
+                                    key={index}
+                                    onClick={() =>
+                                        dispatch(setActiveDivision(division))
+                                    }
+                                >
+                                    Division {division.id}
+                                </div>
+                            )
+                        )}
+                    </div>
+                </div>
                 <span className="division__titles__count">
                     {CLUBS_COUNT}
                     <span className="division__titles__count__text">Teams</span>

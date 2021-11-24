@@ -3,7 +3,7 @@
 
 import { APIClient } from "@/api/index";
 
-import { CurrentSeasonsDivision, DivisionMatchesStatistics } from "@/divisions";
+import { CurrentSeasonsDivision, DivisionSeasonsStatistics } from "@/divisions";
 
 /** DivisionsClient base implementation */
 export class DivisionsClient extends APIClient {
@@ -24,10 +24,10 @@ export class DivisionsClient extends APIClient {
         return await response.json();
     }
 
-    /** gets division matches statistics */
-    public async getDivisionMatchesStatistics(): Promise<DivisionMatchesStatistics> {
+    /** gets division seasons statistics */
+    public async getDivisionSeasonsStatistics(): Promise<DivisionSeasonsStatistics> {
         const response = await this.http.get(
-            `${this.ROOT_PATH}/matches/statistics`
+            `${this.ROOT_PATH}/seasons/statistics`
         );
 
         if (!response.ok) {
