@@ -16,6 +16,7 @@ const Navbar: React.FC = () => {
 
     const visibleClassName = isDropdownActive ? '-active' : '';
 
+    /** TODO: it will be replaced with id parameter */
     const navbarItems: Array<{ name: string; path: string }> = [
         { name: 'HOME', path: RouteConfig.Summary.path },
         { name: 'STORE', path: RouteConfig.Store.path },
