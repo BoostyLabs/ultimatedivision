@@ -9,9 +9,8 @@ import { Service } from '@/app/ethers/service';
 export class ServicePlugin {
     /** Creates ethers provider instance */
     public static create() {
-        //@ts-ignore
-        const ethereumProvider = new ethers.providers.Web3Provider(window.ethereum) || null
+        const provider =  window.ethereum ? new ethers.providers.Web3Provider(window.ethereum) : null;
 
-        return new Service(ethereumProvider);
+        return new Service(provider);
     }
 }

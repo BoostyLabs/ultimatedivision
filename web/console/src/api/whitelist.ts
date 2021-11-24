@@ -5,8 +5,8 @@ import { APIClient } from '.';
 import { Transaction } from '@/app/ethers';
 import { TransactionIdentificators } from '@/app/types/ethers';
 
-/** Ethers api client */
-export class EthersClient extends APIClient {
+/** Whitelist api client */
+export class WhitelistClient extends APIClient {
     private readonly ROOT_PATH = '/api/v0/nft-waitlist';
 
     /** Gets transaction from api  */

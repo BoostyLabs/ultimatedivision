@@ -3,15 +3,17 @@
 
 import { ethers } from 'ethers';
 
-import { EthersClient } from '@/api/ethers';
+import { WhitelistClient } from '@/api/whitelist';
 import { buildHash } from '../utils/ethers';
 import { Transaction } from '.';
 import { TransactionIdentificators } from '@/app/types/ethers';
 
+const CHAIN_ID = 4
+
 /** Service for ethers methods */
 export class Service {
     private readonly provider;
-    private readonly client = new EthersClient();
+    private readonly client = new WhitelistClient();
 
     /** Applies ethereum provider for internal methons */
     public constructor(ethereumProvider: any) {
@@ -51,7 +53,7 @@ export class Service {
             to: address.contract.address,
             data,
             gasLimit,
-            chainId: 4,
+            chainId: CHAIN_ID,
         });
     }
 

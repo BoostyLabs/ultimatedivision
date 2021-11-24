@@ -1,6 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+/** Transaction props from api */
 export interface Transaction {
     password: string;
     tokenId: number;
@@ -10,7 +11,24 @@ export interface Transaction {
     };
 }
 
-export const GAME_ABI = [
+/** Abi input interface */
+interface Input {
+    internalType: string;
+    name: string;
+    type: string;
+}
+
+/** Abi block interface */
+interface Abi {
+    inputs: Input[];
+    outputs: Input[];
+    name: string;
+    stateMutability: string;
+    type: string;
+}
+
+/** Smart conract interface */
+export const GAME_ABI: Partial<Abi>[] = [
     {
         'inputs': [
             {
