@@ -57,7 +57,7 @@ func CreateUser(ctx context.Context, db *sql.DB) error {
 			return Error.Wrap(err)
 		}
 
-		emailNormalized := mail.Normalize(testUser1.Email)
+		emailNormalized := mail.Normalize(user.Email)
 		query := `INSERT INTO users(
                   id, 
                   email, 
