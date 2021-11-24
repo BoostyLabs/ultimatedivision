@@ -45,7 +45,7 @@ func NewChore(config Config, log logger.Logger, nfts *Service, users *users.Serv
 	}
 }
 
-// RunNFTSynchronization runs the task to re-own nft.
+// RunNFTSynchronization runs the check of re-own of nft.
 func (chore *Chore) RunNFTSynchronization(ctx context.Context) (err error) {
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
 		nfts, err := chore.nfts.List(ctx)

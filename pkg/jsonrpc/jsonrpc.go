@@ -164,3 +164,14 @@ func ListEvents(body io.ReadCloser) ([]Event, error) {
 	err = json.NewDecoder(body).Decode(&response)
 	return response.Result, err
 }
+
+// GetEvents sends request and returns events of filter.
+func GetEvents(addressNodeServer string, transaction Transaction) ([]Event, error) {
+	body, err := Send(addressNodeServer, transaction)
+	if err != nil {
+		return nil, err
+	}
+
+	events, err := ListEvents(body)
+	return events, err
+}

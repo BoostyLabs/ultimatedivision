@@ -72,14 +72,8 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 	}
 
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
-
 		transaction := jsonrpc.NewTransaction(jsonrpc.MethodEthGetFilterChanges, []cryptoutils.Address{addressOfFilter}, cryptoutils.ChainIDRinkeby)
-		body, err := jsonrpc.Send(chore.config.AddressNodeServer, transaction)
-		if err != nil {
-			return ChoreError.Wrap(err)
-		}
-
-		events, err := jsonrpc.ListEvents(body)
+		events, err := jsonrpc.GetEvents(chore.config.AddressNodeServer, transaction)
 		if err != nil {
 			return ChoreError.Wrap(err)
 		}
