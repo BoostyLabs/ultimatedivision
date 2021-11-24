@@ -13,3 +13,9 @@
 /.vs
 .idea/
 node_modules
+
+config.json
+config.json.APP.BACKUP
+config.json.BACKUP
+config.json.NFTDROP.BACKUP
+config_nft_signer.json

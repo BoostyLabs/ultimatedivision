@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  app:
+    container_name: "nftdropApp"
+    image: docker.hicrystal.com/nftdrop_app:0.0.4
+
+    ports:
+      - "8085:8085" # Forward the exposed port 5000 on the container to port 8088 on the host machine
+      - "8086:8086"
+    restart: unless-stopped
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/nftdrop/app:/app/data
+    depends_on:
+      - nftdropdb_test # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+    environment:
+      - DB_HOST=nftdropdb_test
+      - DB_DATABASE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
+
+  nftdropdb_test:
+    restart: always
+    image: postgres:latest
+    container_name: nftdropdb_test
+    ports:
+      - "5434:5432"
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/nftdrop/db:/var/lib/postgresql/data
+    networks:
+      - fullstack
+    environment:
+      - POSTGRES_DB=nftdropdb_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+
+# Networks to be created to facilitate communication between containers
+networks:
+  fullstack:
+    driver: bridge

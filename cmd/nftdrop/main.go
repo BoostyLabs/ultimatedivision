@@ -132,12 +132,6 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		err = errs.Combine(err, db.Close())
 	}()
 
-	// TODO: remove for production.
-	err = db.CreateSchema(ctx)
-	if err != nil {
-		log.Error("Error creating schema", Error.Wrap(err))
-	}
-
 	peer, err := nftdrop.New(log, runCfg.Config, db)
 	if err != nil {
 		log.Error("Error starting nftdrop bank service", Error.Wrap(err))
@@ -156,7 +150,7 @@ func cmdDestroy(cmd *cobra.Command, args []string) (err error) {
 
 // readConfig reads config from default config dir.
 func readConfig() (config Config, err error) {
-	configBytes, err := ioutil.ReadFile(path.Join(defaultConfigDir, "config.json"))
+	configBytes, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		return Config{}, err
 	}
