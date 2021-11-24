@@ -8,7 +8,7 @@ import { buildHash } from '../utils/ethers';
 import { Transaction } from '.';
 import { TransactionIdentificators } from '@/app/types/ethers';
 
-const CHAIN_ID = 4
+const CHAIN_ID = 4;
 
 /** Service for ethers methods */
 export class Service {

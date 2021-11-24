@@ -28,7 +28,7 @@ interface Abi {
 }
 
 /** Smart conract interface */
-export const GAME_ABI: Partial<Abi>[] = [
+export const GAME_ABI: Array<Partial<Abi>> = [
     {
         'inputs': [
             {
