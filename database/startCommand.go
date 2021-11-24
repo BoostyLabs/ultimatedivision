@@ -8,17 +8,16 @@ import (
 	"database/sql"
 	"errors"
 	"time"
-	"ultimatedivision/cards"
-	"ultimatedivision/lootboxes"
-
-	"github.com/zeebo/errs"
 
 	"github.com/google/uuid"
+	"github.com/zeebo/errs"
 
 	"ultimatedivision/admin/admins"
+	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/internal/mail"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
 )
 
