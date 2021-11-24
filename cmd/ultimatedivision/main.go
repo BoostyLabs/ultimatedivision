@@ -182,6 +182,18 @@ func seedRun(cmd *cobra.Command, args []string) (err error) {
 	if err != nil {
 		return Error.Wrap(err)
 	}
+	err = database.CreateClubs(ctx, conn)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+	err = database.CreateSquads(ctx, conn)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+	err = database.CreateSquadCards(ctx, conn, runCfg.Cards.Config, runCfg.LootBoxes.Config)
+	if err != nil {
+		return Error.Wrap(err)
+	}
 
 	return nil
 }
