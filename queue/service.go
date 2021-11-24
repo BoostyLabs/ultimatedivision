@@ -54,9 +54,13 @@ func (service *Service) Create(ctx context.Context, client Client) error {
 
 	// TODO: add division ID to client
 
-	_ = service.queues.Delete(client.UserID)
-	service.queues.Create(client)
-	return nil
+	err = service.queues.Delete(client.UserID)
+	if ErrNoClient.Has(err) || err == nil {
+		service.queues.Create(client)
+		return nil
+	}
+
+	return ErrQueue.Wrap(err)
 }
 
 // Get returns client from database.
