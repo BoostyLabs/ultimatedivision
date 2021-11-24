@@ -116,7 +116,7 @@ export class RouteConfig {
     );
     public static Division: ComponentRoutes = new ComponentRoutes(
         /** TODO: it will be replaced with id parameter */
-        '/division',
+        '/divisions',
         Division,
         true
     );
