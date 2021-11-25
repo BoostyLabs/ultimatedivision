@@ -7,6 +7,7 @@ import { WhitelistClient } from '@/api/whitelist';
 import { buildHash } from '../utils/ethers';
 import { Transaction } from '.';
 import { TransactionIdentificators } from '@/app/types/ethers';
+import { web3Provider } from '@/app/plugins/service';
 
 const CHAIN_ID = 4;
 
@@ -16,7 +17,7 @@ export class Service {
     private readonly client = new WhitelistClient();
 
     /** Applies ethereum provider for internal methons */
-    public constructor(ethereumProvider: any) {
+    public constructor(ethereumProvider: typeof web3Provider) {
         this.provider = ethereumProvider;
     }
 

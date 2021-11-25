@@ -11,8 +11,8 @@ export interface Transaction {
     };
 }
 
-/** Abi input interface */
-interface Input {
+/** Abi method interface */
+interface MethodAbi {
     internalType: string;
     name: string;
     type: string;
@@ -20,8 +20,8 @@ interface Input {
 
 /** Abi block interface */
 interface Abi {
-    inputs: Input[];
-    outputs: Input[];
+    inputs: MethodAbi[];
+    outputs: MethodAbi[];
     name: string;
     stateMutability: string;
     type: string;

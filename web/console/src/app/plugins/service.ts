@@ -4,13 +4,13 @@
 import { ethers } from 'ethers';
 
 import { Service } from '@/app/ethers/service';
+/** Web3 provider */
+export const web3Provider = window.ethereum && new ethers.providers.Web3Provider(window.ethereum);
 
 /** Class for creating ethers service */
 export class ServicePlugin {
     /** Creates ethers provider instance */
     public static create() {
-        const provider = window.ethereum ? new ethers.providers.Web3Provider(window.ethereum) : null;
-
-        return new Service(provider);
+        return new Service(web3Provider);
     }
 }
