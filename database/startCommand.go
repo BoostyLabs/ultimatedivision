@@ -16,8 +16,10 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/mail"
 	"ultimatedivision/lootboxes"
+	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 )
 
@@ -49,7 +51,59 @@ func CreateUser(ctx context.Context, db *sql.DB) error {
 		CreatedAt:    time.Now().UTC(),
 	}
 
-	testUsers := []users.User{testUser1, testUser2}
+	testUser3 := users.User{
+		ID:           uuid.New(),
+		Email:        "testUser3@test.com",
+		PasswordHash: []byte("Qwerty123-"),
+		NickName:     "Admin3",
+		FirstName:    "Test",
+		LastName:     "Test",
+		Wallet:       "Test",
+		LastLogin:    time.Time{},
+		Status:       1,
+		CreatedAt:    time.Now().UTC(),
+	}
+
+	testUser4 := users.User{
+		ID:           uuid.New(),
+		Email:        "testUser4@test.com",
+		PasswordHash: []byte("Qwerty123-"),
+		NickName:     "Admin4",
+		FirstName:    "Test",
+		LastName:     "Test",
+		Wallet:       "Test",
+		LastLogin:    time.Time{},
+		Status:       1,
+		CreatedAt:    time.Now().UTC(),
+	}
+
+	testUser5 := users.User{
+		ID:           uuid.New(),
+		Email:        "testUser5@test.com",
+		PasswordHash: []byte("Qwerty123-"),
+		NickName:     "Admin5",
+		FirstName:    "Test",
+		LastName:     "Test",
+		Wallet:       "Test",
+		LastLogin:    time.Time{},
+		Status:       1,
+		CreatedAt:    time.Now().UTC(),
+	}
+
+	testUser6 := users.User{
+		ID:           uuid.New(),
+		Email:        "testUser6@test.com",
+		PasswordHash: []byte("Qwerty123-"),
+		NickName:     "Admin6",
+		FirstName:    "Test",
+		LastName:     "Test",
+		Wallet:       "Test",
+		LastLogin:    time.Time{},
+		Status:       1,
+		CreatedAt:    time.Now().UTC(),
+	}
+
+	testUsers := []users.User{testUser1, testUser2, testUser3, testUser4, testUser5, testUser6}
 
 	for _, user := range testUsers {
 		err := user.EncodePass()
@@ -318,7 +372,7 @@ func ListClubs(ctx context.Context, conn *sql.DB) ([]clubs.Club, error) {
 	return allClubs, nil
 }
 
-// ListSquadByClubID returns all squads from the database.
+// ListSquadByClubID returns squad by club id from the database.
 func ListSquadByClubID(ctx context.Context, conn *sql.DB, clubID uuid.UUID) (clubs.Squad, error) {
 	query := `SELECT id, squad_name, club_id, tactic, formation, captain_id
 			  FROM squads
@@ -338,4 +392,96 @@ func ListSquadByClubID(ctx context.Context, conn *sql.DB, clubID uuid.UUID) (clu
 	}
 
 	return squad, nil
+}
+
+// matchDB provides access to accounts db.
+func matchDB(conn *sql.DB) matches.DB {
+	return &matchesDB{conn: conn}
+}
+
+// clubDB provides access to accounts db.
+func clubDB(conn *sql.DB) clubs.DB {
+	return &clubsDB{conn: conn}
+}
+
+// divisionDB provides access to accounts db.
+func divisionDB(conn *sql.DB) divisions.DB {
+	return &divisionsDB{conn: conn}
+}
+
+// userDB provides access to accounts db.
+func userDB(conn *sql.DB) users.DB {
+	return &usersDB{conn: conn}
+}
+
+// CreateMatches creates matches in the database.
+func CreateMatches(ctx context.Context, conn *sql.DB, matchesConfig matches.Config, cardsConfig cards.Config) error {
+	usersService := users.NewService(userDB(conn))
+	cardsService := cards.NewService(CardsDB(conn), cardsConfig)
+	clubsService := clubs.NewService(clubDB(conn), usersService, cardsService, divisionDB(conn))
+	matchesService := matches.NewService(matchDB(conn), matchesConfig, clubsService)
+
+	type player struct {
+		userID   uuid.UUID
+		squadID  uuid.UUID
+		seasonID int
+	}
+
+	var players []player
+
+	allClubs, err := ListClubs(ctx, conn)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	for _, club := range allClubs {
+		squad, err := ListSquadByClubID(ctx, conn, club.ID)
+		if err != nil {
+			return ErrClubs.Wrap(err)
+		}
+		season, err := GetSeasonByDivisionID(ctx, club.DivisionID, conn)
+		if err != nil {
+			return Error.Wrap(err)
+		}
+		player := player{
+			userID:   club.OwnerID,
+			squadID:  squad.ID,
+			seasonID: season.ID,
+		}
+
+		players = append(players, player)
+	}
+
+	index := 1
+
+	for _, player1 := range players {
+		for _, player2 := range players[:len(players)-index] {
+			_, err := matchesService.Create(ctx, player1.squadID, player2.squadID, player1.userID, player2.userID, player1.seasonID)
+			if err != nil {
+				return Error.Wrap(err)
+			}
+		}
+		index++
+	}
+
+	return nil
+}
+
+// GetSeasonByDivisionID returns season by division id from the data base.
+func GetSeasonByDivisionID(ctx context.Context, divisionID uuid.UUID, conn *sql.DB) (seasons.Season, error) {
+	query := `SELECT id, division_id, started_at, ended_at FROM seasons WHERE division_id=$1 AND ended_at=$2`
+	var season seasons.Season
+
+	row := conn.QueryRowContext(ctx, query, divisionID, time.Time{})
+
+	err := row.Scan(&season.ID, &season.DivisionID, &season.StartedAt, &season.EndedAt)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return season, seasons.ErrNoSeason.Wrap(err)
+		}
+
+		return season, ErrSeasons.Wrap(err)
+	}
+
+	return season, ErrSeasons.Wrap(err)
 }
