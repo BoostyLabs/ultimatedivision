@@ -23,9 +23,23 @@ import (
 	"ultimatedivision/users"
 )
 
-// cardsRepository provides access to accounts db.
-func cardsRepository(conn *sql.DB) cards.DB {
-	return &cardsDB{conn: conn}
+// seedDB provides access to accounts db.
+type seedDB struct {
+	users     *usersDB
+	clubs     *clubsDB
+	cards     *cardsDB
+	matches   *matchesDB
+	divisions *divisionsDB
+}
+
+func NewSeedDB(conn *sql.DB) *seedDB {
+	return &seedDB{
+		users:     &usersDB{conn: conn},
+		clubs:     &clubsDB{conn: conn},
+		cards:     &cardsDB{conn: conn},
+		matches:   &matchesDB{conn: conn},
+		divisions: &divisionsDB{conn: conn},
+	}
 }
 
 // CreateUser creates a user and writes to the database.
@@ -250,8 +264,8 @@ func CreateSquads(ctx context.Context, conn *sql.DB) error {
 }
 
 // CreateSquadCards creates and inserts squad cards to the database.
-func CreateSquadCards(ctx context.Context, conn *sql.DB, cardsConfig cards.Config, lootboxesConfig lootboxes.Config) error {
-	cardsService := cards.NewService(cardsRepository(conn), cardsConfig)
+func (seedDB *seedDB) CreateSquadCards(ctx context.Context, conn *sql.DB, cardsConfig cards.Config, lootboxesConfig lootboxes.Config) error {
+	cardsService := cards.NewService(seedDB.cards, cardsConfig)
 
 	allClubs, err := ListClubs(ctx, conn)
 	if err != nil {
@@ -394,32 +408,12 @@ func ListSquadByClubID(ctx context.Context, conn *sql.DB, clubID uuid.UUID) (clu
 	return squad, nil
 }
 
-// matchDB provides access to accounts db.
-func matchDB(conn *sql.DB) matches.DB {
-	return &matchesDB{conn: conn}
-}
-
-// clubDB provides access to accounts db.
-func clubDB(conn *sql.DB) clubs.DB {
-	return &clubsDB{conn: conn}
-}
-
-// divisionDB provides access to accounts db.
-func divisionDB(conn *sql.DB) divisions.DB {
-	return &divisionsDB{conn: conn}
-}
-
-// userDB provides access to accounts db.
-func userDB(conn *sql.DB) users.DB {
-	return &usersDB{conn: conn}
-}
-
 // CreateMatches creates matches in the database.
-func CreateMatches(ctx context.Context, conn *sql.DB, matchesConfig matches.Config, cardsConfig cards.Config) error {
-	usersService := users.NewService(userDB(conn))
-	cardsService := cards.NewService(CardsDB(conn), cardsConfig)
-	clubsService := clubs.NewService(clubDB(conn), usersService, cardsService, divisionDB(conn))
-	matchesService := matches.NewService(matchDB(conn), matchesConfig, clubsService)
+func (seedDB *seedDB) CreateMatches(ctx context.Context, conn *sql.DB, matchesConfig matches.Config, cardsConfig cards.Config) error {
+	usersService := users.NewService(seedDB.users)
+	cardsService := cards.NewService(seedDB.cards, cardsConfig)
+	clubsService := clubs.NewService(seedDB.clubs, usersService, cardsService, seedDB.divisions)
+	matchesService := matches.NewService(seedDB.matches, matchesConfig, clubsService)
 
 	type player struct {
 		userID   uuid.UUID
