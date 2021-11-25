@@ -21,7 +21,7 @@ import (
 	"ultimatedivision/users"
 )
 
-// CardsDB provides access to accounts db.
+// cardsRepository provides access to accounts db.
 func cardsRepository(conn *sql.DB) cards.DB {
 	return &cardsDB{conn: conn}
 }
