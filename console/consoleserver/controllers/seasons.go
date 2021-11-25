@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/divisions"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/seasons"
 )
@@ -68,7 +69,12 @@ func (controller *Seasons) GetAllClubsStatistics(w http.ResponseWriter, r *http.
 
 	division, err := controller.seasons.GetDivision(ctx, divisionName)
 	if err != nil {
-		controller.serveError(w, http.StatusInternalServerError, ErrSeasons.Wrap(err))
+		switch {
+		case divisions.ErrNoDivision.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrSeasons.New("division does not exist"))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrSeasons.Wrap(err))
+		}
 		return
 	}
 
