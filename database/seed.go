@@ -266,6 +266,7 @@ func CreateSquads(ctx context.Context, conn *sql.DB) error {
 // CreateSquadCards creates and inserts squad cards to the database.
 func (seedDB *seedDB) CreateSquadCards(ctx context.Context, conn *sql.DB, cardsConfig cards.Config, lootboxesConfig lootboxes.Config) error {
 	cardsService := cards.NewService(seedDB.cards, cardsConfig)
+	// TODO: fill every field.
 	clubsService := clubs.NewService(seedDB.clubs, nil, nil, nil)
 
 	allClubs, err := ListClubs(ctx, conn)
