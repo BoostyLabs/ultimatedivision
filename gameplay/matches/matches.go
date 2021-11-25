@@ -5,7 +5,6 @@ package matches
 
 import (
 	"context"
-	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -141,7 +140,7 @@ type MatchResult struct {
 
 // Goalscorer defines which card scored goal in which minute.
 type Goalscorer struct {
-	Card   cards.Card `json:"card"`
+	Card   string `json:"card"`
 	Minute int        `json:"minute"`
 }
 
