@@ -6,23 +6,28 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/zeebo/errs"
 
 	"ultimatedivision/admin/admins"
+	"ultimatedivision/cards"
+	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/internal/mail"
+	"ultimatedivision/lootboxes"
 	"ultimatedivision/users"
 )
 
 // CreateUser creates a user and writes to the database.
 func CreateUser(ctx context.Context, db *sql.DB) error {
-	testUser := users.User{
+	testUser1 := users.User{
 		ID:           uuid.New(),
-		Email:        "test@test.com",
+		Email:        "testUser1@test.com",
 		PasswordHash: []byte("Qwerty123-"),
-		NickName:     "Admin",
+		NickName:     "Admin1",
 		FirstName:    "Test",
 		LastName:     "Test",
 		Wallet:       "Test",
@@ -31,13 +36,29 @@ func CreateUser(ctx context.Context, db *sql.DB) error {
 		CreatedAt:    time.Now().UTC(),
 	}
 
-	err := testUser.EncodePass()
-	if err != nil {
-		return Error.Wrap(err)
+	testUser2 := users.User{
+		ID:           uuid.New(),
+		Email:        "testUser2@test.com",
+		PasswordHash: []byte("Qwerty123-"),
+		NickName:     "Admin2",
+		FirstName:    "Test",
+		LastName:     "Test",
+		Wallet:       "Test",
+		LastLogin:    time.Time{},
+		Status:       1,
+		CreatedAt:    time.Now().UTC(),
 	}
 
-	emailNormalized := mail.Normalize(testUser.Email)
-	query := `INSERT INTO users(
+	testUsers := []users.User{testUser1, testUser2}
+
+	for _, user := range testUsers {
+		err := user.EncodePass()
+		if err != nil {
+			return Error.Wrap(err)
+		}
+
+		emailNormalized := mail.Normalize(user.Email)
+		query := `INSERT INTO users(
                   id, 
                   email, 
                   email_normalized, 
@@ -51,10 +72,14 @@ func CreateUser(ctx context.Context, db *sql.DB) error {
                   created_at) 
                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
 
-	_, err = db.ExecContext(ctx, query, testUser.ID, testUser.Email, emailNormalized, testUser.PasswordHash,
-		testUser.NickName, testUser.FirstName, testUser.LastName, testUser.Wallet, testUser.LastLogin, testUser.Status, testUser.CreatedAt)
+		_, err = db.ExecContext(ctx, query, user.ID, user.Email, emailNormalized, user.PasswordHash,
+			user.NickName, user.FirstName, user.LastName, user.Wallet, user.LastLogin, user.Status, user.CreatedAt)
+		if err != nil {
+			return ErrUsers.Wrap(err)
+		}
+	}
 
-	return ErrUsers.Wrap(err)
+	return nil
 }
 
 // CreateAdmin inserts admin to DB.
@@ -76,44 +101,241 @@ func CreateAdmin(ctx context.Context, conn *sql.DB) error {
 	return ErrAdmins.Wrap(err)
 }
 
-// CreateDivisions creates a division and writes to the database.
+// CreateDivisions creates a divisions and writes to the database.
 func CreateDivisions(ctx context.Context, conn *sql.DB) error {
-	division1 := divisions.Division{
-		ID:             uuid.New(),
-		Name:           1,
-		PassingPercent: 10,
-		CreatedAt:      time.Now().UTC(),
-	}
-	division2 := divisions.Division{
-		ID:             uuid.New(),
-		Name:           2,
-		PassingPercent: 10,
-		CreatedAt:      time.Now().UTC(),
-	}
-	division3 := divisions.Division{
-		ID:             uuid.New(),
-		Name:           3,
-		PassingPercent: 10,
-		CreatedAt:      time.Now().UTC(),
-	}
-	division4 := divisions.Division{
-		ID:             uuid.New(),
-		Name:           4,
-		PassingPercent: 10,
-		CreatedAt:      time.Now().UTC(),
-	}
+	var allDivisions []divisions.Division
 
-	divisions := []divisions.Division{division1, division2, division3, division4}
+	for i := 1; i < 11; i++ {
+		division := divisions.Division{
+			ID:             uuid.New(),
+			Name:           i,
+			PassingPercent: 10,
+			CreatedAt:      time.Now().UTC(),
+		}
+
+		allDivisions = append(allDivisions, division)
+	}
 
 	query := `INSERT INTO divisions(id, name, passing_percent, created_at) 
 	VALUES ($1, $2, $3, $4)`
 
-	for _, d := range divisions {
-		_, err := conn.ExecContext(ctx, query, d.ID, d.Name, d.PassingPercent, d.CreatedAt)
+	for _, division := range allDivisions {
+		_, err := conn.ExecContext(ctx, query, division.ID, division.Name, division.PassingPercent, division.CreatedAt)
 		if err != nil {
 			return ErrDivisions.Wrap(err)
 		}
 	}
 
 	return nil
+}
+
+// CreateClubs creates clubs for each users and writes to the database.
+func CreateClubs(ctx context.Context, conn *sql.DB) error {
+	allUsers, err := ListUsers(ctx, conn)
+	if err != nil {
+		return ErrUsers.Wrap(err)
+	}
+
+	lastDivision, err := GetLastDivision(ctx, conn)
+	if err != nil {
+		return ErrDivisions.Wrap(err)
+	}
+
+	for _, user := range allUsers {
+		club := clubs.Club{
+			ID:         uuid.New(),
+			OwnerID:    user.ID,
+			Name:       user.NickName,
+			Status:     clubs.StatusActive,
+			DivisionID: lastDivision.ID,
+			CreatedAt:  time.Now(),
+		}
+
+		_, err = conn.ExecContext(ctx, "INSERT INTO clubs(id, owner_id, club_name, status, division_id, created_at)VALUES($1,$2,$3,$4,$5,$6)",
+			club.ID, club.OwnerID, club.Name, club.Status, club.DivisionID, club.CreatedAt)
+
+		if err != nil {
+			return ErrClubs.Wrap(err)
+		}
+	}
+
+	return nil
+}
+
+// CardsDB provides access to accounts db.
+func CardsDB(conn *sql.DB) cards.DB {
+	return &cardsDB{conn: conn}
+}
+
+// CreateSquads creates squads for all clubs from the database.
+func CreateSquads(ctx context.Context, conn *sql.DB) error {
+	allClubs, err := ListClubs(ctx, conn)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	for _, club := range allClubs {
+		squad := clubs.Squad{
+			ID:        uuid.New(),
+			Name:      "",
+			ClubID:    club.ID,
+			Formation: clubs.FourFourTwo,
+			Tactic:    clubs.Balanced,
+			CaptainID: uuid.Nil,
+		}
+
+		_, err = conn.ExecContext(ctx, "INSERT INTO squads(id, squad_name, club_id, formation, tactic, captain_id)VALUES($1,$2,$3,$4,$5,$6)",
+			squad.ID, squad.Name, squad.ClubID, squad.Formation, squad.Tactic, squad.CaptainID)
+
+		if err != nil {
+			return ErrClubs.Wrap(err)
+		}
+	}
+
+	return nil
+}
+
+// CreateSquadCards creates and inserts squad cards to the database.
+func CreateSquadCards(ctx context.Context, conn *sql.DB, cardsConfig cards.Config, lootboxesConfig lootboxes.Config) error {
+	cardsService := cards.NewService(CardsDB(conn), cardsConfig)
+
+	allClubs, err := ListClubs(ctx, conn)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	var squadCards []clubs.SquadCard
+
+	for _, club := range allClubs {
+		squad, err := ListSquadByClubID(ctx, conn, club.ID)
+		if err != nil {
+			return ErrClubs.Wrap(err)
+		}
+		for i := 0; i < 11; i++ {
+			probabilities := []int{lootboxesConfig.RegularBoxConfig.Wood, lootboxesConfig.RegularBoxConfig.Silver, lootboxesConfig.RegularBoxConfig.Gold, lootboxesConfig.RegularBoxConfig.Diamond}
+			card, err := cardsService.Create(ctx, club.OwnerID, probabilities, "")
+			if err != nil {
+				return ErrClubs.Wrap(err)
+			}
+
+			squadCard := clubs.SquadCard{
+				SquadID:  squad.ID,
+				CardID:   card.ID,
+				Position: clubs.Position(i),
+			}
+
+			squadCards = append(squadCards, squadCard)
+		}
+	}
+
+	for _, card := range squadCards {
+		query := `INSERT INTO squad_cards(id, card_id, card_position)
+		          VALUES($1,$2,$3)`
+
+		_, err := conn.ExecContext(ctx, query, card.SquadID, card.CardID, card.Position)
+		if err != nil {
+			return ErrClubs.Wrap(err)
+		}
+	}
+
+	return nil
+}
+
+// ListUsers returns all users from the database.
+func ListUsers(ctx context.Context, conn *sql.DB) ([]users.User, error) {
+	rows, err := conn.QueryContext(ctx, "SELECT id, email, password_hash, nick_name, first_name, last_name, wallet_address, last_login, status, created_at FROM users")
+	if err != nil {
+		return nil, ErrUsers.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	var data []users.User
+	for rows.Next() {
+		var user users.User
+		err := rows.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.Wallet, &user.LastLogin, &user.Status, &user.CreatedAt)
+		if err != nil {
+			return nil, ErrUsers.Wrap(err)
+		}
+
+		data = append(data, user)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, ErrUsers.Wrap(err)
+	}
+
+	return data, ErrUsers.Wrap(err)
+}
+
+// GetLastDivision returns last division from the database.
+func GetLastDivision(ctx context.Context, conn *sql.DB) (divisions.Division, error) {
+	query := `SELECT * FROM divisions WHERE name=(SELECT MAX(name) FROM divisions)`
+	var division divisions.Division
+
+	row := conn.QueryRowContext(ctx, query)
+
+	err := row.Scan(&division.ID, &division.Name, &division.PassingPercent, &division.CreatedAt)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return division, divisions.ErrNoDivision.Wrap(err)
+		}
+
+		return division, ErrDivisions.Wrap(err)
+	}
+
+	return division, ErrDivisions.Wrap(err)
+}
+
+// ListClubs returns all clubs from the database.
+func ListClubs(ctx context.Context, conn *sql.DB) ([]clubs.Club, error) {
+	query := `SELECT id, owner_id, club_name, status, division_id, created_at
+			  FROM clubs`
+
+	rows, err := conn.QueryContext(ctx, query)
+	if err != nil {
+		return nil, ErrClubs.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	var allClubs []clubs.Club
+
+	for rows.Next() {
+		var club clubs.Club
+		err = rows.Scan(&club.ID, &club.OwnerID, &club.Name, &club.Status, &club.DivisionID, &club.CreatedAt)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return allClubs, clubs.ErrNoClub.Wrap(err)
+			}
+			return allClubs, clubs.ErrClubs.Wrap(err)
+		}
+
+		allClubs = append(allClubs, club)
+	}
+
+	return allClubs, nil
+}
+
+// ListSquadByClubID returns all squads from the database.
+func ListSquadByClubID(ctx context.Context, conn *sql.DB, clubID uuid.UUID) (clubs.Squad, error) {
+	query := `SELECT id, squad_name, club_id, tactic, formation, captain_id
+			  FROM squads
+			  WHERE club_id = $1`
+
+	row := conn.QueryRowContext(ctx, query, clubID)
+
+	var squad clubs.Squad
+
+	err := row.Scan(&squad.ID, &squad.Name, &squad.ClubID, &squad.Tactic, &squad.Formation, &squad.CaptainID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return squad, clubs.ErrNoSquad.Wrap(err)
+		}
+
+		return squad, ErrClubs.Wrap(err)
+	}
+
+	return squad, nil
 }
