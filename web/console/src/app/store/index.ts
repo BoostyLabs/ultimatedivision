@@ -8,6 +8,7 @@ import { clubsReducer } from '@/app/store/reducers/clubs';
 import { lootboxReducer } from '@/app/store/reducers/lootboxes';
 import { marketplaceReducer } from '@/app/store/reducers/marketplace';
 import { divisionsReducer } from '@/app/store/reducers/divisions';
+import { matchesReducer } from '@/app/store/reducers/matches';
 import { usersReducer } from './reducers/users';
 
 const reducer = combineReducers({
@@ -17,6 +18,7 @@ const reducer = combineReducers({
     marketplaceReducer,
     usersReducer,
     divisionsReducer,
+    matchesReducer,
 });
 
 export const store = createStore(reducer, applyMiddleware(thunk));
