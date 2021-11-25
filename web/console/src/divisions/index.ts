@@ -14,22 +14,22 @@ export class Division {
 /** Divisions of current season entity. */
 export class CurrentSeasonsDivision {
     constructor(
-        public id: string = "",
-        public divisionId: string = "",
+        public id: string = '',
+        public divisionId: string = '',
         public startedAt: Date = new Date(),
         public endedAt: Date = new Date()
     ) {}
 }
 
 /** Division matches statistics entity. */
-//TODO: statistics need rewrite (waiting for backend).
+// TODO: statistics need rewrite (waiting for backend).
 export class DivisionSeasonsStatistics {
-    public division: Division = new Division("0", 0, 0, new Date());
+    public division: Division = new Division('0', 0, 0, new Date());
     public statistics: null = null;
 }
 
 /** divisions reducer initial state  */
-//TODO: Can be changed (waiting for backend)
+// TODO: Can be changed (waiting for backend)
 export class DivisionsState {
     constructor(
         public currentSeasonsDivisions: CurrentSeasonsDivision[] = [],

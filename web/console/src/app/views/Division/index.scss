@@ -4,63 +4,8 @@
     background: $mainBackground;
     padding: 5%;
 
-    &__dropdown {
-        position: relative;
-        margin-right: auto;
-        color: white;
-        list-style: none;
-        cursor: pointer;
-
-        &__picture {
-            margin-left: 5px;
-            vertical-align: middle;
-        }
-
-        &__list {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-
-            &-active {
-                position: absolute;
-                top: 50px;
-                right: 18px;
-                min-width: 150px;
-                z-index: 4;
-                border-radius: 5px;
-                background-color: $highlightBackground;
-
-                &:before {
-                    content: "";
-                    height: 20px;
-                    width: 20px;
-                    position: absolute;
-                    top: -7px;
-                    left: 20px;
-                    border-radius: 3px;
-                    background-color: $highlightBackground;
-                    transform: rotate(45deg);
-                }
-            }
-            &-inactive {
-                display: none;
-            }
-        }
-
-        &__item {
-            z-index: 2;
-            padding: 10px 20px;
-            font-family: "BebasNeue", sans-serif;
-            cursor: pointer;
-
-            :hover {
-                color: $highlightColor;
-            }
-        }
-    }
     &__titles {
         display: flex;
-        flex-direction: row;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 25px;
@@ -83,6 +28,48 @@
                 margin-left: 5px;
             }
         }
+    }
+
+    &__list {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__item {
+        border: 1px solid $divisionMainBackgroundColor;
+        font-family: "BebasNeue", sans-serif;
+        font-size: 24px;
+        line-height: 29px;
+        cursor: pointer;
+
+        &-active {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            height: 39px;
+            border-radius: 10px;
+            background-color: #404070;
+            border: 1px solid $divisionMainBackgroundColor;
+            color: #ffff;
+            cursor: pointer;
+        }
+
+        &-inactive {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            height: 39px;
+            border-radius: 10px;
+            background-color: none;
+            border: 1px solid $divisionMainBackgroundColor;
+            color: #404070;
+            cursor: pointer;
+        }
+    }
+
+    &__item:hover {
+        color: $highlightColor;
     }
 
     &__filters {

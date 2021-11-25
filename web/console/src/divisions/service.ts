@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { DivisionsClient } from "@/api/divisions";
-import { CurrentSeasonsDivision, DivisionSeasonsStatistics } from ".";
+import { DivisionsClient } from '@/api/divisions';
+import { CurrentSeasonsDivision, DivisionSeasonsStatistics } from '.';
 
 /** exposes all divisions related logic */
 export class DivisionsService {
@@ -15,7 +15,7 @@ export class DivisionsService {
 
     /** handles gets current seasons divisions */
     public async getCurrentSeasonsDivisions(): Promise<
-        CurrentSeasonsDivision[]
+    CurrentSeasonsDivision[]
     > {
         const divisions = await this.divisions.getCurrentSeasonsDivisions();
 

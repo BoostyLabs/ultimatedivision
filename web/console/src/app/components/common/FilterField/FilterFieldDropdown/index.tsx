@@ -20,11 +20,11 @@ export const FilterFieldDropdown: React.FC<{
             <img
                 className="filter-item__picture"
                 src={image}
-                alt={image && "filter icon"}
+                alt={image && 'filter icon'}
             />
             <div
                 className={`filter-item__dropdown${
-                    isDropdownShow ? "-active" : "-inactive"
+                    isDropdownShow ? '-active' : '-inactive'
                 }`}
             ></div>
         </div>
