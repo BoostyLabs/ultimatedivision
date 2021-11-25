@@ -266,6 +266,7 @@ func CreateSquads(ctx context.Context, conn *sql.DB) error {
 // CreateSquadCards creates and inserts squad cards to the database.
 func (seedDB *seedDB) CreateSquadCards(ctx context.Context, conn *sql.DB, cardsConfig cards.Config, lootboxesConfig lootboxes.Config) error {
 	cardsService := cards.NewService(seedDB.cards, cardsConfig)
+	clubsService := clubs.NewService(seedDB.clubs, nil, nil, nil)
 
 	allClubs, err := ListClubs(ctx, conn)
 	if err != nil {
@@ -297,10 +298,7 @@ func (seedDB *seedDB) CreateSquadCards(ctx context.Context, conn *sql.DB, cardsC
 	}
 
 	for _, card := range squadCards {
-		query := `INSERT INTO squad_cards(id, card_id, card_position)
-		          VALUES($1,$2,$3)`
-
-		_, err := conn.ExecContext(ctx, query, card.SquadID, card.CardID, card.Position)
+		err := clubsService.AddSquadCard(ctx, card.SquadID, card)
 		if err != nil {
 			return ErrClubs.Wrap(err)
 		}
