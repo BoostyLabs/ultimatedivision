@@ -20,13 +20,15 @@ export const FieldControlsArea: React.FC = () => {
     const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
 
     useEffect(() => {
-        (function isPossibleToStart() {
+        /** Function checks field cards and compare it with player cards array */
+        function isPossibleToStart() {
             const emptyCard = squadCards.find((card: SquadCard) => card.cardId === EMPTY_CARD_ID);
             emptyCard ?
                 setIsPossibleToStartMatch(false)
                 :
                 setIsPossibleToStartMatch(true);
-        })();
+        };
+        isPossibleToStart();
     });
 
     const CONTROLS_FIELDS = [
