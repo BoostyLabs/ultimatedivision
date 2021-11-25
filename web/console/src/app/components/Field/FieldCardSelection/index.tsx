@@ -12,18 +12,30 @@ import { listOfCards } from '@/app/store/actions/cards';
 import { CardWithStats } from '@/card';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/clubs';
 import { CardEditIdentificators } from '@/api/club';
+import { SquadCard } from '@/club';
 
 import './index.scss';
 
 export const FieldCardSelection = () => {
     const dispatch = useDispatch();
     const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
+    const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
     const { cards, page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
     const fieldSetup = useSelector((state: RootState) => state.clubsReducer);
 
     const Y_SCROLL_POINT = 200;
     const X_SCROLL_POINT = 0;
     const DELAY = 10;
+
+    /** Function filters card list each time when we add card on filed */
+    function cardSelection(squadCards: SquadCard[], userCards: CardWithStats[]) {
+        let cards = userCards;
+        for (const squadCard of squadCards) {
+            cards = cards.filter((card: CardWithStats) => card.id !== squadCard.cardId);
+        };
+
+        return cards;
+    }
 
     /** Add card to field, and hide card selection component */
     function setCard(cardId: string) {
@@ -41,18 +53,19 @@ export const FieldCardSelection = () => {
         <div id="cardList" className="card-selection">
             <FilterField />
             <div className="card-selection__list">
-                {cards.map((card: CardWithStats, index: number) =>
-                    <div
-                        key={index}
-                        className="card-selection__card"
-                        onClick={() => setCard(card.id)}
-                    >
-                        <PlayerCard
-                            card={card}
-                            parentClassName={'card-selection__card'}
-                        />
-                    </div>
-                )}
+                {cards &&
+                    cardSelection(squadCards, cards).map((card: CardWithStats, index: number) =>
+                        <div
+                            key={index}
+                            className="card-selection__card"
+                            onClick={() => setCard(card.id)}
+                        >
+                            <PlayerCard
+                                card={card}
+                                parentClassName={'card-selection__card'}
+                            />
+                        </div>
+                    )}
             </div>
             <Paginator
                 getCardsOnPage={listOfCards}
