@@ -5,6 +5,7 @@ package matches
 
 import (
 	"context"
+	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -124,17 +125,24 @@ type Match struct {
 
 // MatchGoals defines goals scored by clubs.
 type MatchGoals struct {
-	ID      uuid.UUID `json:"id"`
-	MatchID uuid.UUID `json:"matchId"`
-	UserID  uuid.UUID `json:"userId"`
+	ID      uuid.UUID `json:"-"`
+	MatchID uuid.UUID `json:"-"`
+	UserID  uuid.UUID `json:"-"`
 	CardID  uuid.UUID `json:"cardId"`
 	Minute  int       `json:"minute"`
 }
 
 // MatchResult defines quantity goals of each user in the match.
 type MatchResult struct {
-	UserID        uuid.UUID `json:"userId"`
-	QuantityGoals int       `json:"quantityGoals"`
+	UserID        uuid.UUID    `json:"userId"`
+	QuantityGoals int          `json:"quantityGoals"`
+	Goalscorers   []Goalscorer `json:"goals"`
+}
+
+// Goalscorer defines which card scored goal in which minute.
+type Goalscorer struct {
+	Card   cards.Card `json:"card"`
+	Minute int        `json:"minute"`
 }
 
 // Page holds match page entity which is used to show listed page of matches.

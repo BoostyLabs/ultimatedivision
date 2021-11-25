@@ -282,6 +282,11 @@ func (service *Service) GetMatchResult(ctx context.Context, matchID uuid.UUID) (
 		return nil, ErrMatches.Wrap(err)
 	}
 
+	matchGoals, err := service.ListMatchGoals(ctx, matchID)
+	if err != nil {
+		return nil, ErrMatches.Wrap(err)
+	}
+
 	if len(resultMatch) == 2 {
 		return resultMatch, nil
 	}
