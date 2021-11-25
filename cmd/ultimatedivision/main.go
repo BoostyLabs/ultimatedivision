@@ -5,7 +5,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -20,6 +19,7 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/database"
 	"ultimatedivision/internal/logger/zaplog"
+	"ultimatedivision/seed"
 )
 
 // Error is a default error type for ultimatedivision cli.
@@ -168,65 +168,65 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 // TODO: remove for production.
 func seedRun(cmd *cobra.Command, args []string) (err error) {
 	ctx := context.Background()
+	log := zaplog.NewLog()
 	runCfg, err = readConfig()
 	if err != nil {
-		return Error.Wrap(err)
-	}
-	conn, err := sql.Open("postgres", runCfg.Database)
-	if err != nil {
+		log.Error("Could not read config from default place", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
 
-	seedDB := database.NewSeedDB(conn)
+	db, err := database.New(runCfg.Database)
+	if err != nil {
+		log.Error("Error starting master database on ultimatedivision bank service", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, db.Close())
+	}()
 
-	err = database.CreateUser(ctx, conn)
+	// TODO: remove for production.
+	err = db.CreateSchema(ctx)
 	if err != nil {
-		return Error.Wrap(err)
-	}
-	err = database.CreateAdmin(ctx, conn)
-	if err != nil {
-		return Error.Wrap(err)
-	}
-	err = database.CreateDivisions(ctx, conn)
-	if err != nil {
-		return Error.Wrap(err)
-	}
-	err = database.CreateClubs(ctx, conn)
-	if err != nil {
-		return Error.Wrap(err)
-	}
-	err = database.CreateSquads(ctx, conn)
-	if err != nil {
-		return Error.Wrap(err)
-	}
-	err = seedDB.CreateSquadCards(ctx, conn, runCfg.Cards.Config, runCfg.LootBoxes.Config)
-	if err != nil {
-		return Error.Wrap(err)
+		log.Error("Error creating schema", Error.Wrap(err))
 	}
 
-	return nil
+	seedCmd := seed.New(db, runCfg.Config)
+
+	err = seedCmd.Seed(ctx)
+
+	return err
 }
 
 // TODO: remove for production.
 func matchRun(cmd *cobra.Command, args []string) (err error) {
 	ctx := context.Background()
+	log := zaplog.NewLog()
 	runCfg, err = readConfig()
 	if err != nil {
+		log.Error("Could not read config from default place", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
-	conn, err := sql.Open("postgres", runCfg.Database)
+
+	db, err := database.New(runCfg.Database)
 	if err != nil {
+		log.Error("Error starting master database on ultimatedivision bank service", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
+	defer func() {
+		err = errs.Combine(err, db.Close())
+	}()
 
-	seedDB := database.NewSeedDB(conn)
-
-	err = seedDB.CreateMatches(ctx, conn, runCfg.Matches.Config, runCfg.Cards.Config)
+	// TODO: remove for production.
+	err = db.CreateSchema(ctx)
 	if err != nil {
-		return Error.Wrap(err)
+		log.Error("Error creating schema", Error.Wrap(err))
 	}
 
-	return nil
+	seedCmd := seed.New(db, runCfg.Config)
+
+	err = seedCmd.Match(ctx)
+
+	return err
 }
 
 func cmdDestroy(cmd *cobra.Command, args []string) (err error) {

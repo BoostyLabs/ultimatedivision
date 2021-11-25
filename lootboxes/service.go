@@ -5,8 +5,6 @@ package lootboxes
 
 import (
 	"context"
-	"strconv"
-
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
@@ -68,7 +66,7 @@ func (service *Service) Open(ctx context.Context, userID, lootboxID uuid.UUID) (
 	var lootBoxCards []cards.Card
 
 	for i := 0; i < cardsNum; i++ {
-		card, err := service.cards.Create(ctx, userID, probabilities, strconv.Itoa(i+1))
+		card, err := service.cards.Create(ctx, userID, probabilities)
 		if err != nil {
 			return lootBoxCards, ErrLootBoxes.Wrap(err)
 		}
