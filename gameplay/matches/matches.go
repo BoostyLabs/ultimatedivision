@@ -124,14 +124,15 @@ type Match struct {
 
 // MatchGoals defines goals scored by clubs.
 type MatchGoals struct {
-	ID      uuid.UUID `json:"-"`
-	MatchID uuid.UUID `json:"-"`
-	UserID  uuid.UUID `json:"-"`
+	ID      uuid.UUID `json:"id"`
+	MatchID uuid.UUID `json:"matchId"`
+	UserID  uuid.UUID `json:"userId"`
 	CardID  uuid.UUID `json:"cardId"`
 	Minute  int       `json:"minute"`
 }
 
-// MatchResult defines quantity goals of each user in the match.
+// MatchResult defines quantity goals of each user in the match
+// and which cards of user's squad scored in which minute.
 type MatchResult struct {
 	UserID        uuid.UUID    `json:"userId"`
 	QuantityGoals int          `json:"quantityGoals"`
@@ -141,7 +142,7 @@ type MatchResult struct {
 // Goalscorer defines which card scored goal in which minute.
 type Goalscorer struct {
 	Card   string `json:"card"`
-	Minute int        `json:"minute"`
+	Minute int    `json:"minute"`
 }
 
 // Page holds match page entity which is used to show listed page of matches.
