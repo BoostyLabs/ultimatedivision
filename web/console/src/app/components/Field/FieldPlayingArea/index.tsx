@@ -39,6 +39,7 @@ export const FieldPlayingArea: React.FC = () => {
     const [playingAreaPosition, setplayingAreaPosition] = useState({ x: 0, y: 0 });
 
     const DEFAULT_VALUE = 0;
+    const X_SCROLL_POINT = 0;
     const Y_SCROLL_POINT = 1200;
     const DELAY = 100;
 
@@ -65,7 +66,7 @@ export const FieldPlayingArea: React.FC = () => {
         dispatch(choosePosition(index));
         dispatch(cardSelectionVisibility(true));
         setTimeout(() => {
-            window.scroll(DEFAULT_VALUE, Y_SCROLL_POINT);
+            window.scroll(X_SCROLL_POINT, Y_SCROLL_POINT);
         }, DELAY);
     }
 
