@@ -8,6 +8,9 @@ import {
     SET_ACTIVE_DIVISION,
 } from '@/app/store/actions/divisions';
 
+/** First divisions index from list. */
+const FIRST_DIVISIONS_INDEX: number = 0;
+
 export const divisionsReducer = (
     divisionsState: DivisionsState = new DivisionsState(),
     action: any = {}
@@ -18,7 +21,7 @@ export const divisionsReducer = (
             ...divisionsState,
             currentSeasonsDivisions: action.currentSeasonsDivisions,
             activeDivision: action.currentSeasonsDivisions.length
-                ? action.currentSeasonsDivisions[0]
+                ? action.currentSeasonsDivisions[FIRST_DIVISIONS_INDEX]
                 : new CurrentSeasonsDivision(),
         };
     case GET_DIVISION_SEASONS_STATISTICS:

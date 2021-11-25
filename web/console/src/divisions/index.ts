@@ -21,15 +21,22 @@ export class CurrentSeasonsDivision {
     ) {}
 }
 
-/** Division matches statistics entity. */
 // TODO: statistics need rewrite (waiting for backend).
+const INITIAL_DIVISION_NAME: number = 0;
+const INITIAL_DIVISION_PERSENT: number = 0;
+/** Division matches statistics entity. */
 export class DivisionSeasonsStatistics {
-    public division: Division = new Division('0', 0, 0, new Date());
+    public division: Division = new Division(
+        '0',
+        INITIAL_DIVISION_NAME,
+        INITIAL_DIVISION_PERSENT,
+        new Date()
+    );
     public statistics: null = null;
 }
 
-/** divisions reducer initial state  */
 // TODO: Can be changed (waiting for backend)
+/** divisions reducer initial state. */
 export class DivisionsState {
     constructor(
         public currentSeasonsDivisions: CurrentSeasonsDivision[] = [],
