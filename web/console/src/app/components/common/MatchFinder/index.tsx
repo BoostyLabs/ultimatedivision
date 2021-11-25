@@ -123,15 +123,17 @@ const MatchFinder: React.FC = () => {
         queueClient.startSearch('startSearch', squad.id);
     };
 
-    queueClient.ws.onerror = (event: Event) => {
-        toast.error('Something wrong, please, try later.', {
-            position: toast.POSITION.TOP_RIGHT,
-            theme: 'colored',
-        });
-    };
 
     useEffect(() => {
         isSearchingMatch && startSearchMatch();
+        if (queueClient.ws.readyState) {
+            queueClient.ws.onerror = (event: Event) => {
+                toast.error('Something wrong, please, try later.', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored',
+                });
+            };
+        }
     }, [isSearchingMatch]);
 
     return isSearchingMatch && <section className={isMatchFound ? 'match-finder__wrapper' : ''}>
