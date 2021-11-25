@@ -42,8 +42,9 @@ const MatchFinder: React.FC = () => {
     /** Delay is time delay for redirect user to match page */
     const DELAY: number = 2000;
 
-    const FIRST_MATCH_SCORE_INDEX: number = 0;
-    const SECOND_MATCH_SCORE_INDEX: number = 1;
+    /** variables describes first and second teams indexes for eventAction response. */
+    const FIRST_TEAM_INDEX: number = 0;
+    const SECOND_TEAM_INDEX: number = 1;
 
     /** canceles searching game and closes MatchFinder component. */
     const canselSearchingGame = () => {
@@ -100,9 +101,9 @@ const MatchFinder: React.FC = () => {
             return;
         default:
             const firstTeamGoalsCrored =
-                    eventAction.message[FIRST_MATCH_SCORE_INDEX].quantityGoals;
+                    eventAction.message[FIRST_TEAM_INDEX].quantityGoals;
             const secondTeamGoalsScored =
-                    eventAction.message[SECOND_MATCH_SCORE_INDEX].quantityGoals;
+                    eventAction.message[SECOND_TEAM_INDEX].quantityGoals;
 
             toast.success('Successfully! You will be redirected to match page', {
                 position: toast.POSITION.TOP_RIGHT,
