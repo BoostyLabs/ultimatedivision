@@ -29,7 +29,7 @@ const Division: React.FC = () => {
     async function getCurrentSeasonsDivisions() {
         try {
             await dispatch(listOfCurrentSeasonsDivisions());
-        } catch (error: any) {
+        } catch (error: Error) {
             toast.error('Failed to get current seasons divisions', {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
@@ -41,8 +41,8 @@ const Division: React.FC = () => {
     async function getSeasonsStatistics() {
         try {
             await dispatch(divisionSeasonsStatistics());
-        } catch (error: any) {
-            toast.error('Failed to get matches statistics', {
+        } catch (error: Error) {
+            toast.error('Failed to get seasons statistics', {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });

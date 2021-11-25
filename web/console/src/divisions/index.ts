@@ -21,13 +21,17 @@ export class CurrentSeasonsDivision {
     ) {}
 }
 
-// TODO: statistics need rewrite (waiting for backend).
+//* * initial name for divisions state */
 const INITIAL_DIVISION_NAME: number = 0;
+
+//* * initial parsing percent for divisions state */
 const INITIAL_DIVISION_PERSENT: number = 0;
+
+// TODO: statistics need rewrite (waiting for backend).
 /** Division matches statistics entity. */
 export class DivisionSeasonsStatistics {
     public division: Division = new Division(
-        '0',
+        '',
         INITIAL_DIVISION_NAME,
         INITIAL_DIVISION_PERSENT,
         new Date()

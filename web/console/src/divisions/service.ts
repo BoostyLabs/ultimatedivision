@@ -14,9 +14,7 @@ export class DivisionsService {
     }
 
     /** handles gets current seasons divisions */
-    public async getCurrentSeasonsDivisions(): Promise<
-    CurrentSeasonsDivision[]
-    > {
+    public async getCurrentSeasonsDivisions(): Promise<CurrentSeasonsDivision[]> {
         const divisions = await this.divisions.getCurrentSeasonsDivisions();
 
         return divisions;
