@@ -19,7 +19,13 @@ export class DivisionsClient extends APIClient {
             await this.handleError(response);
         }
 
-        return await response.json();
+        const currentSeasonsDivisions = await response.json();
+
+        if (!currentSeasonsDivisions) {
+            this.handleError(currentSeasonsDivisions);
+        }
+
+        return currentSeasonsDivisions;
     }
 
     /** gets division seasons statistics */
@@ -32,6 +38,12 @@ export class DivisionsClient extends APIClient {
             await this.handleError(response);
         }
 
-        return await response.json();
+        const divisionsSeasonsStatistics = await response.json();
+
+        if (!divisionsSeasonsStatistics) {
+            this.handleError(divisionsSeasonsStatistics);
+        }
+
+        return divisionsSeasonsStatistics;
     }
 }
