@@ -21,7 +21,11 @@ const MatchFinder: React.FC = () => {
     const { squad } = useSelector((state: RootState) => state.clubsReducer.activeClub);
     const { isSearchingMatch } = useSelector((state: RootState) => state.clubsReducer);
 
-    const queueClient = useMemo(() => new QueueClient(), [isSearchingMatch]);
+    /** Describes host path for webSocket connection. */
+    const host = window.location.host;
+
+    const queueClient = useMemo(() => new QueueClient(host), [isSearchingMatch]);
+
     const dispatch = useDispatch();
     const history = useHistory();
 
