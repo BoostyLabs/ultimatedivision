@@ -4,7 +4,7 @@
 import { ethers } from 'ethers';
 
 import { WhitelistClient } from '@/api/whitelist';
-import { buildHash } from '../utils/ethers';
+import { buildHash } from '../internal/ethers';
 import { Transaction } from '.';
 import { TransactionIdentificators } from '@/app/types/ethers';
 import { web3Provider } from '@/app/plugins/service';
