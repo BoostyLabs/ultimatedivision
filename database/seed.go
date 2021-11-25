@@ -21,6 +21,11 @@ import (
 	"ultimatedivision/users"
 )
 
+// CardsDB provides access to accounts db.
+func cardsRepository(conn *sql.DB) cards.DB {
+	return &cardsDB{conn: conn}
+}
+
 // CreateUser creates a user and writes to the database.
 func CreateUser(ctx context.Context, db *sql.DB) error {
 	testUser1 := users.User{
@@ -162,11 +167,6 @@ func CreateClubs(ctx context.Context, conn *sql.DB) error {
 	return nil
 }
 
-// CardsDB provides access to accounts db.
-func CardsDB(conn *sql.DB) cards.DB {
-	return &cardsDB{conn: conn}
-}
-
 // CreateSquads creates squads for all clubs from the database.
 func CreateSquads(ctx context.Context, conn *sql.DB) error {
 	allClubs, err := ListClubs(ctx, conn)
@@ -197,7 +197,7 @@ func CreateSquads(ctx context.Context, conn *sql.DB) error {
 
 // CreateSquadCards creates and inserts squad cards to the database.
 func CreateSquadCards(ctx context.Context, conn *sql.DB, cardsConfig cards.Config, lootboxesConfig lootboxes.Config) error {
-	cardsService := cards.NewService(CardsDB(conn), cardsConfig)
+	cardsService := cards.NewService(cardsRepository(conn), cardsConfig)
 
 	allClubs, err := ListClubs(ctx, conn)
 	if err != nil {
