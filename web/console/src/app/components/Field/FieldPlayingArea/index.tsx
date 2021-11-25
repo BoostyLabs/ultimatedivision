@@ -108,10 +108,11 @@ export const FieldPlayingArea: React.FC = () => {
 
     /** deleting card when release beyond playing area */
     function removeFromArea() {
-        isDragging && dragStartIndex &&
+        if (isDragging && dragStartIndex) {
             dispatch(deleteCard(
                 new CardEditIdentificators(squad.clubId, squad.id, club.squadCards[dragStartIndex].cardId, dragStartIndex))
             );
+        }
         dispatch(setDragStart());
         handleDrag(false);
     }
@@ -132,12 +133,12 @@ export const FieldPlayingArea: React.FC = () => {
                     {club.squadCards.map(
                         (fieldCard: SquadCard, index: number) => {
                             const card = getCard(fieldCard.cardId);
-                            const dragging = dragStartIndex === index;
+                            const isDragging = dragStartIndex === index;
 
                             return (
                                 <div
                                     style={
-                                        dragging ? {
+                                        isDragging ? {
                                             left: mousePosition.x - playingAreaPosition.x,
                                             top: mousePosition.y - playingAreaPosition.y,
                                             transform: 'translate(-55%, -55%)',
