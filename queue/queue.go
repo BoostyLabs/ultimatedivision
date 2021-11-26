@@ -31,6 +31,10 @@ type DB interface {
 	Get(userID uuid.UUID) (Client, error)
 	// List returns clients from database.
 	List() []Client
+	// ListNotPlay returns clients who don't play game from database.
+	ListNotPlay() []Client
+	// UpdateIsPlay updates is play status of client in database.
+	UpdateIsPlay(userID uuid.UUID, isPlay bool) error
 	// Delete deletes client record in database.
 	Delete(userID uuid.UUID) error
 }
@@ -40,6 +44,7 @@ type Client struct {
 	UserID     uuid.UUID
 	Connection *websocket.Conn
 	SquadID    uuid.UUID
+	IsPlay     bool
 }
 
 // Request entity describes values sent by client.

@@ -32,6 +32,7 @@ type seedDB struct {
 	divisions *divisionsDB
 }
 
+// NewSeedDB is a constructor for seed db.
 func NewSeedDB(conn *sql.DB) *seedDB {
 	return &seedDB{
 		users:     &usersDB{conn: conn},

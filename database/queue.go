@@ -44,6 +44,28 @@ func (queueHub *queueHub) List() []queue.Client {
 	return queueHub.hub.Queue
 }
 
+// ListNotPlay returns clients who don't play game from database.
+func (queueHub *queueHub) ListNotPlay() []queue.Client {
+	var listNotPlay []queue.Client
+	for _, client := range queueHub.hub.Queue {
+		if client.IsPlay == false {
+			listNotPlay = append(listNotPlay, client)
+		}
+	}
+	return listNotPlay
+}
+
+// UpdateIsPlay updates is play status of client in database.
+func (queueHub *queueHub) UpdateIsPlay(userID uuid.UUID, isPlay bool) error {
+	for k, client := range queueHub.hub.Queue {
+		if client.UserID == userID {
+			queueHub.hub.Queue[k].IsPlay = isPlay
+			return nil
+		}
+	}
+	return queue.ErrNoClient.New("not found user's values")
+}
+
 // Delete deletes record client in the hub of queue.
 func (queueHub *queueHub) Delete(userID uuid.UUID) error {
 	for k, client := range queueHub.hub.Queue {
