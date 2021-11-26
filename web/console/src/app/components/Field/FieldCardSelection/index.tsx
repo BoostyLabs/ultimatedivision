@@ -27,18 +27,14 @@ export const FieldCardSelection = () => {
     const X_SCROLL_POINT = 0;
     const DELAY = 10;
 
-    /** Function filters card list each time when we add card on filed */
-    function availableCards() {
-        let userCards = [...cards];
-        for (const squadCard of squadCards) {
-            userCards = userCards.filter((card: CardWithStats) => card.id !== squadCard.cardId);
-        };
-
-        return userCards;
-    }
+    /** Function filters card list each time when we add card on field */
+    function getAvailableCards() {
+        const squadCardsIds = squadCards.map(card => card.cardId);
+        return cards.filter((card: CardWithStats) => squadCardsIds.includes(card.id));
+    };
 
     /** Add card to field, and hide card selection component */
-    function setCard(cardId: string) {
+    function addCardOnField(cardId: string) {
         dispatch(
             addCard(
                 new CardEditIdentificators(squad.clubId, squad.id, cardId, club.options.chosedCard)
@@ -49,16 +45,18 @@ export const FieldCardSelection = () => {
         }, DELAY);
     }
 
+    const availableCards = getAvailableCards();
+
     return (
         <div id="cardList" className="card-selection">
             <FilterField />
             <div className="card-selection__list">
                 {cards &&
-                    availableCards().map((card: CardWithStats, index: number) =>
+                    availableCards.map((card: CardWithStats, index: number) =>
                         <div
                             key={index}
                             className="card-selection__card"
-                            onClick={() => setCard(card.id)}
+                            onClick={() => addCardOnField(card.id)}
                         >
                             <PlayerCard
                                 card={card}
