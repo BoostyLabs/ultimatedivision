@@ -21,9 +21,10 @@ export class DivisionsService {
     }
 
     /** handles gets divisions matches statistics */
-    public async getDivisionSeasonsStatistics(): Promise<DivisionSeasonsStatistics> {
+    public async getDivisionSeasonsStatistics(id: string): Promise<DivisionSeasonsStatistics> {
         const divisionsSeasonsStatistics =
-            await this.divisions.getDivisionSeasonsStatistics();
+            await this.divisions.getDivisionSeasonsStatistics(id);
+            console.log("servise", divisionsSeasonsStatistics);
 
         return divisionsSeasonsStatistics;
     }

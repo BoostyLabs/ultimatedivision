@@ -1,23 +1,23 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
-import realMadrid from '@static/img/divisions/realmadrid.png';
-import rectangle from '@static/img/FilterField/rectangle.svg';
+import realMadrid from "@static/img/divisions/realmadrid.png";
+import rectangle from "@static/img/FilterField/rectangle.svg";
 
-import { RootState } from '@/app/store';
+import { RootState } from "@/app/store";
 import {
     listOfCurrentSeasonsDivisions,
     divisionSeasonsStatistics,
     setActiveDivision,
-} from '@/app/store/actions/divisions';
-import { DivisionClub } from '@/app/types/division';
-import { CurrentSeasonsDivision } from '@/divisions';
+} from "@/app/store/actions/divisions";
+import { DivisionClub } from "@/app/types/division";
+import { CurrentSeasonsDivision } from "@/divisions";
 
-import './index.scss';
+import "./index.scss";
 
 const Division: React.FC = () => {
     const dispatch = useDispatch();
@@ -25,48 +25,52 @@ const Division: React.FC = () => {
     const { currentSeasonsDivisions, seasonsStatistics, activeDivision } =
         useSelector((state: RootState) => state.divisionsReducer);
 
-    /** Get current seasons divisions. */
-    async function getCurrentSeasonsDivisions() {
-        try {
-            await dispatch(listOfCurrentSeasonsDivisions());
-        } catch (error: any) {
-            toast.error('Failed to get current seasons divisions', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
-        }
-    }
+    const [activeDivisions, setActiveDivisions] = useState<string>("10");
+
+    console.log("seasonsStatistics", seasonsStatistics);
+
+    // /** Get current seasons divisions. */
+    // async function getCurrentSeasonsDivisions() {
+    //     try {
+    //         await dispatch(listOfCurrentSeasonsDivisions());
+    //     } catch (error: any) {
+    //         toast.error("Failed to get current seasons divisions", {
+    //             position: toast.POSITION.TOP_RIGHT,
+    //             theme: "colored",
+    //         });
+    //     }
+    // }
 
     /** Get divisions seasons statistics. */
     async function getSeasonsStatistics() {
         try {
-            await dispatch(divisionSeasonsStatistics());
+            await dispatch(divisionSeasonsStatistics(activeDivisions));
         } catch (error: any) {
-            toast.error('Failed to get seasons statistics', {
+            toast.error("Failed to get seasons statistics", {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
+                theme: "colored",
             });
         }
     }
 
     useEffect(() => {
-        getCurrentSeasonsDivisions();
+        // getCurrentSeasonsDivisions();
         getSeasonsStatistics();
-    }, []);
+    }, [activeDivisions]);
 
     /** TODO: replase test datas. Just for test rigth now. */
     const divisionClub: DivisionClub = {
-        position: '1',
+        position: "1",
         club: {
-            name: 'Real Madrid',
+            name: "Real Madrid",
             icon: realMadrid,
         },
-        games: '30',
-        wins: '20',
-        draws: '6',
-        defeats: '5',
-        goalDifference: '+50',
-        points: '50',
+        games: "30",
+        wins: "20",
+        draws: "6",
+        defeats: "5",
+        goalDifference: "+50",
+        points: "50",
     };
 
     /** TODO: delete this. Rigth now for test */
@@ -83,40 +87,52 @@ const Division: React.FC = () => {
     const LOWER_BREAKPOINT: number = divisionClubs.length - UPPER_BREAKPOINT;
 
     const titles: string[] = [
-        '#',
-        'Club',
-        'Games',
-        'Wins',
-        'Draws',
-        'Defeats',
-        'The difference of goals conceded',
-        'Points',
+        "#",
+        "Club",
+        "Games",
+        "Wins",
+        "Draws",
+        "Defeats",
+        "The difference of goals conceded",
+        "Points",
     ];
 
     const changeGradationDivisionClassName = (position: string) => {
-        let className: string = '';
+        let className: string = "";
 
         if (+position <= UPPER_BREAKPOINT) {
-            className = '-upper';
+            className = "-upper";
         }
 
         if (+position >= LOWER_BREAKPOINT) {
-            className = '-lower';
+            className = "-lower";
         }
 
         return className;
     };
 
     /** Check active division and change him className */
-    const changeChoosedDivisionClass = (division: CurrentSeasonsDivision) => `division__item${
-        division.id === activeDivision.id ? '-active' : '-inactive'
-    }`;
+    const changeChoosedDivisionClass = (div: string) =>
+        `division__item${activeDivisions === div ? "-active" : "-inactive"}`;
+
+    const divisions: string[] = [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+    ];
 
     return (
         <section className="division">
             <div className="division__titles">
                 <h1 className="division__titles__main">
-                    Division {activeDivision.id}
+                    Division {activeDivisions}
                 </h1>
                 <span className="division__titles__count">
                     {CLUBS_COUNT}
@@ -124,17 +140,15 @@ const Division: React.FC = () => {
                 </span>
             </div>
             <div className="division__list">
-                {currentSeasonsDivisions.map(
-                    (division: CurrentSeasonsDivision, index: number) =>
-                        <div
-                            className={changeChoosedDivisionClass(division)}
-                            key={index}
-                            onClick={() => dispatch(setActiveDivision(division))}
-                        >
-                            Division {division.id}
-                        </div>
-
-                )}
+                {divisions.map((division: string, index: number) => (
+                    <div
+                        className={changeChoosedDivisionClass(division)}
+                        key={index}
+                        onClick={() => setActiveDivisions(division)}
+                    >
+                        Division {division}
+                    </div>
+                ))}
             </div>
             <div className="division__filters">
                 <span className="division__filters__title">Filters</span>
@@ -168,58 +182,59 @@ const Division: React.FC = () => {
             <table className="division__clubs">
                 <thead>
                     <tr className="division__clubs__titles">
-                        {titles.map((title: string, index: number) =>
+                        {titles.map((title: string, index: number) => (
                             <th
                                 key={index}
                                 className="division__clubs__titles__item"
                             >
                                 {title}
                             </th>
-                        )}
+                        ))}
                     </tr>
                 </thead>
                 <tbody>
-                    {divisionClubs.map(
-                        (divisionClub: DivisionClub, index: number) =>
-                            <tr
-                                className={`division__clubs__club${changeGradationDivisionClassName(
-                                    divisionClub.position
-                                )}`}
-                                key={index}
-                            >
-                                <td className="division__clubs__club__item">
-                                    <span className="division__clubs__club__item__position">
-                                        {divisionClub.position}
-                                    </span>
-                                </td>
-                                <td className="division__clubs__club__item">
-                                    <img
-                                        src={divisionClub.club.icon}
-                                        className="division__clubs__club__item__icon"
-                                    />
-                                    {divisionClub.club.name}
-                                </td>
-                                <td className="division__clubs__club__item">
-                                    {divisionClub.games}
-                                </td>
-                                <td className="division__clubs__club__item">
-                                    {divisionClub.wins}
-                                </td>
-                                <td className="division__clubs__club__item">
-                                    {divisionClub.draws}
-                                </td>
-                                <td className="division__clubs__club__item">
-                                    {divisionClub.defeats}
-                                </td>
-                                <td className="division__clubs__club__item">
-                                    {divisionClub.goalDifference}
-                                </td>
-                                <td className="division__clubs__club__item">
-                                    {divisionClub.points}
-                                </td>
-                            </tr>
-
-                    )}
+                    {seasonsStatistics.statistics &&
+                        seasonsStatistics.statistics.map(
+                            (divisionClub: any, index: number) => (
+                                <tr
+                                    className={`division__clubs__club${changeGradationDivisionClassName(
+                                        divisionClub.club.name
+                                    )}`}
+                                    key={index}
+                                >
+                                    <td className="division__clubs__club__item">
+                                        <span className="division__clubs__club__item__position">
+                                            {index + 1}
+                                        </span>
+                                    </td>
+                                    <td className="division__clubs__club__item">
+                                        <img
+                                            src=""
+                                            className="division__clubs__club__item__icon"
+                                            alt=""
+                                        />
+                                    </td>
+                                    <td className="division__clubs__club__item">
+                                        {divisionClub.matchPlayed}
+                                    </td>
+                                    <td className="division__clubs__club__item">
+                                        {divisionClub.wins}
+                                    </td>
+                                    <td className="division__clubs__club__item">
+                                        {divisionClub.draws}
+                                    </td>
+                                    <td className="division__clubs__club__item">
+                                        {divisionClub.losses}
+                                    </td>
+                                    <td className="division__clubs__club__item">
+                                        {divisionClub.goalDifference}
+                                    </td>
+                                    <td className="division__clubs__club__item">
+                                        {divisionClub.points}
+                                    </td>
+                                </tr>
+                            )
+                        )}
                 </tbody>
             </table>
         </section>

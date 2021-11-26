@@ -36,7 +36,7 @@ export class DivisionSeasonsStatistics {
         INITIAL_DIVISION_PERCENT,
         new Date()
     );
-    public statistics: null = null;
+    public statistics: null | any[] = null;
 }
 
 // TODO: Can be changed (waiting for backend)
