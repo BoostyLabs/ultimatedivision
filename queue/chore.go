@@ -226,17 +226,29 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		}
 	}
 
-	resultMatch, err := chore.matches.GetMatchResult(ctx, matchesID)
+	matchResult, err := chore.matches.GetMatchResult(ctx, matchesID)
 	if err != nil {
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not get result of match"); err != nil {
 			return ChoreError.Wrap(err)
 		}
 	}
 
-	if err := firstClient.WriteJSON(http.StatusOK, resultMatch); err != nil {
+	firstClientResult := make([]matches.MatchResult, len(matchResult))
+	_ = copy(firstClientResult, matchResult)
+	secondClientResult := make([]matches.MatchResult, len(matchResult))
+	_ = copy(secondClientResult, matchResult)
+
+	switch {
+	case firstClient.UserID == matchResult[0].UserID:
+		secondClientResult = matches.Swap(matchResult)
+	case secondClient.UserID == matchResult[0].UserID:
+		firstClientResult = matches.Swap(matchResult)
+	}
+
+	if err := firstClient.WriteJSON(http.StatusOK, firstClientResult); err != nil {
 		return ChoreError.Wrap(err)
 	}
-	if err := secondClient.WriteJSON(http.StatusOK, resultMatch); err != nil {
+	if err := secondClient.WriteJSON(http.StatusOK, secondClientResult); err != nil {
 		return ChoreError.Wrap(err)
 	}
 
