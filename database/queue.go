@@ -44,22 +44,22 @@ func (queueHub *queueHub) List() []queue.Client {
 	return queueHub.hub.Queue
 }
 
-// ListNotPlay returns clients who don't play game from database.
-func (queueHub *queueHub) ListNotPlay() []queue.Client {
-	var listNotPlay []queue.Client
+// ListNotPlayingUsers returns clients who don't play game from database.
+func (queueHub *queueHub) ListNotPlayingUsers() []queue.Client {
+	var listNotPlayingUsers []queue.Client
 	for _, client := range queueHub.hub.Queue {
-		if client.IsPlay == false {
-			listNotPlay = append(listNotPlay, client)
+		if client.IsPlaying == false {
+			listNotPlayingUsers = append(listNotPlayingUsers, client)
 		}
 	}
-	return listNotPlay
+	return listNotPlayingUsers
 }
 
-// UpdateIsPlay updates is play status of client in database.
-func (queueHub *queueHub) UpdateIsPlay(userID uuid.UUID, isPlay bool) error {
+// UpdateIsPlaying updates is playing status of client in database.
+func (queueHub *queueHub) UpdateIsPlaying(userID uuid.UUID, isPlaying bool) error {
 	for k, client := range queueHub.hub.Queue {
 		if client.UserID == userID {
-			queueHub.hub.Queue[k].IsPlay = isPlay
+			queueHub.hub.Queue[k].IsPlaying = isPlaying
 			return nil
 		}
 	}

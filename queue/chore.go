@@ -51,7 +51,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 	secondRequestChan := make(chan Request)
 
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
-		clients := chore.service.ListNotPlay()
+		clients := chore.service.ListNotPlayingUsers()
 
 		if len(clients) >= 2 {
 			for k := range clients {
@@ -64,10 +64,10 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					firstClient := clients[k]
 					secondClient := clients[k+1]
 
-					if err = chore.service.UpdateIsPlay(firstClient.UserID, true); err != nil {
+					if err = chore.service.UpdateIsPlaying(firstClient.UserID, true); err != nil {
 						chore.log.Error("could not update is play", ChoreError.Wrap(err))
 					}
-					if err = chore.service.UpdateIsPlay(secondClient.UserID, true); err != nil {
+					if err = chore.service.UpdateIsPlaying(secondClient.UserID, true); err != nil {
 						chore.log.Error("could not update is play", ChoreError.Wrap(err))
 					}
 
@@ -104,10 +104,10 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 										chore.log.Error("could not write json", ChoreError.Wrap(err))
 									}
 
-									if err = chore.service.UpdateIsPlay(firstClient.UserID, false); err != nil {
+									if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
 										chore.log.Error("could not update is play", ChoreError.Wrap(err))
 									}
-									if err = chore.service.UpdateIsPlay(secondClient.UserID, false); err != nil {
+									if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
 										chore.log.Error("could not update is play", ChoreError.Wrap(err))
 									}
 									return
@@ -120,10 +120,10 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 										chore.log.Error("could not write json", ChoreError.Wrap(err))
 									}
 
-									if err = chore.service.UpdateIsPlay(firstClient.UserID, false); err != nil {
+									if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
 										chore.log.Error("could not update is play", ChoreError.Wrap(err))
 									}
-									if err = chore.service.UpdateIsPlay(secondClient.UserID, false); err != nil {
+									if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
 										chore.log.Error("could not update is play", ChoreError.Wrap(err))
 									}
 									return
@@ -157,10 +157,10 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 						}
 
 						if err = chore.Play(ctx, firstClient, secondClient); err != nil {
-							if err = chore.service.UpdateIsPlay(firstClient.UserID, false); err != nil {
+							if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
 								chore.log.Error("could not update is play", ChoreError.Wrap(err))
 							}
-							if err = chore.service.UpdateIsPlay(secondClient.UserID, false); err != nil {
+							if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
 								chore.log.Error("could not update is play", ChoreError.Wrap(err))
 							}
 							chore.log.Error("could not play game", ChoreError.Wrap(err))
