@@ -3,6 +3,8 @@
 
 import { Card } from '@/card';
 
+const DEFAULT_VALUE = 0;
+
 /** Class defines Marketplace lot entity */
 export class Lot {
     public id: string = '';
@@ -11,13 +13,14 @@ export class Lot {
     public userId: string = '';
     public shopperId: string = '';
     public status: string = '';
-    public startPrice: number = 0;
-    public maxPrice: number = 0;
-    public currentPrice: number = 0;
+    public startPrice: number = DEFAULT_VALUE;
+    public maxPrice: number = DEFAULT_VALUE;
+    public currentPrice: number = DEFAULT_VALUE;
     public startTime: string = '';
     public endTime: string = '';
-    public period: number = 0;
-    public card: Card = new Card()
+    public period: number = DEFAULT_VALUE;
+    public card: Card = new Card();
+    /** Tooks each field of parameter and assign it with exist fields */
     constructor(lot: Lot) {
         Object.assign(this, lot);
         this.card = new Card(lot.card);
@@ -26,6 +29,7 @@ export class Lot {
 
 /** Class defines Marketplace response */
 export class MarketPlacePage {
+    /** Includes lots and page field */
     constructor(
         public lots: Lot[],
         public page: {

@@ -22,6 +22,7 @@ export class SquadCard {
 
 /** Club defines club entity. */
 export class Club {
+    /** Includes id, name cleatedAt, squad, squadCards and status fields  */
     constructor(
         public id: string = '',
         public name: string = '',

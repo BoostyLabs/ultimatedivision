@@ -20,7 +20,6 @@ export class Marketplaces {
 
     /** returns marketplace domain entity with list of lots */
     public async list({ selectedPage, limit }: Pagination): Promise<MarketPlacePage> {
-
         return await this.marketplace.list({ selectedPage, limit });
     };
 
@@ -31,7 +30,6 @@ export class Marketplaces {
 
     /** returns list of lots by filter parameters */
     public async filteredList(lowRange: string, topRange: string): Promise<MarketPlacePage> {
-
         return await this.marketplace.filteredList(lowRange, topRange);
     };
 

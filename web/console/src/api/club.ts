@@ -37,7 +37,7 @@ export class ClubsClient extends APIClient {
             await this.handleError(response);
         }
 
-        const clubs = await response.json()
+        const clubs = await response.json();
 
         return clubs.map((club: Club) =>
             new Club(
@@ -48,7 +48,7 @@ export class ClubsClient extends APIClient {
                 club.squadCards,
                 club.status
             )
-        )
+        );
     }
     /** creates squad based on exist club id */
     public async createSquad(clubId: string): Promise<string> {

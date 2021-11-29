@@ -5,7 +5,6 @@
 import { Lot, MarketPlacePage } from '@/marketplace';
 
 import { CreatedLot } from '@/app/types/marketplace';
-import { Card } from '@/card';
 import { Pagination } from '@/app/types/pagination';
 import { APIClient } from '.';
 

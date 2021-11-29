@@ -18,19 +18,16 @@ export class CardService {
 
     /** gets list of cards by user */
     public async list({ selectedPage, limit }: Pagination): Promise<CardsPage> {
-
         return await this.card.list({ selectedPage, limit });
     };
 
     /** gets card by id from list of cards */
     public async getCardById(id: string): Promise<Card> {
-
         return await this.card.getCardById(id);
     };
 
     /** gets list of filtered cards */
     public async filteredList(lowRange: string, topRange: string): Promise<CardsPage> {
-
         return await this.card.filteredList(lowRange, topRange);
     };
 };
