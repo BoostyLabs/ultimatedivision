@@ -10,9 +10,7 @@ export class DivisionsClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0';
 
     /** gets divisions of current seasons */
-    public async getCurrentDivisionSeasons(): Promise<
-    CurrentDivisionSeasons[]
-    > {
+    public async getCurrentDivisionSeasons(): Promise<CurrentDivisionSeasons[]> {
         const response = await this.http.get(
             `${this.ROOT_PATH}/seasons/current`
         );
@@ -35,9 +33,7 @@ export class DivisionsClient extends APIClient {
     }
 
     /** gets division seasons statistics */
-    public async getDivisionSeasonsStatistics(
-        id: string
-    ): Promise<DivisionSeasonsStatistics> {
+    public async getDivisionSeasonsStatistics(id: string): Promise<DivisionSeasonsStatistics> {
         const response = await this.http.get(
             `${this.ROOT_PATH}/seasons/statistics/division/${id}`
         );
