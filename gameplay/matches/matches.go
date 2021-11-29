@@ -131,10 +131,25 @@ type MatchGoals struct {
 	Minute  int       `json:"minute"`
 }
 
-// MatchResult defines quantity goals of each user in the match.
+// MatchResult defines quantity goals of each user in the match
+// and which cards of user's squad scored in which minute.
 type MatchResult struct {
-	UserID        uuid.UUID `json:"userId"`
-	QuantityGoals int       `json:"quantityGoals"`
+	UserID        uuid.UUID    `json:"userId"`
+	QuantityGoals int          `json:"quantityGoals"`
+	Goalscorers   []Goalscorer `json:"goals"`
+}
+
+// Swap swaps match results.
+func Swap(matchResults []MatchResult) []MatchResult {
+	matchResults[0], matchResults[1] = matchResults[1], matchResults[0]
+
+	return matchResults
+}
+
+// Goalscorer defines which card scored goal in which minute.
+type Goalscorer struct {
+	Card   string `json:"card"`
+	Minute int    `json:"minute"`
 }
 
 // Page holds match page entity which is used to show listed page of matches.
