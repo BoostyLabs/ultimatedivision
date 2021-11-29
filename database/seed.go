@@ -23,8 +23,8 @@ import (
 	"ultimatedivision/users"
 )
 
-// seedDB provides access to accounts db.
-type seedDB struct {
+// SeedDB provides access to accounts db.
+type SeedDB struct {
 	users     *usersDB
 	clubs     *clubsDB
 	cards     *cardsDB
@@ -33,8 +33,8 @@ type seedDB struct {
 }
 
 // NewSeedDB is a constructor for seed db.
-func NewSeedDB(conn *sql.DB) *seedDB {
-	return &seedDB{
+func NewSeedDB(conn *sql.DB) *SeedDB {
+	return &SeedDB{
 		users:     &usersDB{conn: conn},
 		clubs:     &clubsDB{conn: conn},
 		cards:     &cardsDB{conn: conn},
@@ -265,7 +265,7 @@ func CreateSquads(ctx context.Context, conn *sql.DB) error {
 }
 
 // CreateSquadCards creates and inserts squad cards to the database.
-func (seedDB *seedDB) CreateSquadCards(ctx context.Context, conn *sql.DB, cardsConfig cards.Config, lootboxesConfig lootboxes.Config) error {
+func (seedDB *SeedDB) CreateSquadCards(ctx context.Context, conn *sql.DB, cardsConfig cards.Config, lootboxesConfig lootboxes.Config) error {
 	cardsService := cards.NewService(seedDB.cards, cardsConfig)
 
 	allClubs, err := ListClubs(ctx, conn)
@@ -410,7 +410,7 @@ func ListSquadByClubID(ctx context.Context, conn *sql.DB, clubID uuid.UUID) (clu
 }
 
 // CreateMatches creates matches in the database.
-func (seedDB *seedDB) CreateMatches(ctx context.Context, conn *sql.DB, matchesConfig matches.Config, cardsConfig cards.Config) error {
+func (seedDB *SeedDB) CreateMatches(ctx context.Context, conn *sql.DB, matchesConfig matches.Config, cardsConfig cards.Config) error {
 	usersService := users.NewService(seedDB.users)
 	cardsService := cards.NewService(seedDB.cards, cardsConfig)
 	clubsService := clubs.NewService(seedDB.clubs, usersService, cardsService, seedDB.divisions)
