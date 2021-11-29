@@ -1,76 +1,60 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
-import realMadrid from "@static/img/divisions/realmadrid.png";
-import rectangle from "@static/img/FilterField/rectangle.svg";
+import realMadrid from '@static/img/divisions/realmadrid.png';
+import rectangle from '@static/img/FilterField/rectangle.svg';
 
-import { RootState } from "@/app/store";
+import { RootState } from '@/app/store';
 import {
-    listOfCurrentSeasonsDivisions,
     divisionSeasonsStatistics,
     setActiveDivision,
-} from "@/app/store/actions/divisions";
-import { DivisionClub } from "@/app/types/division";
-import { CurrentSeasonsDivision } from "@/divisions";
+} from '@/app/store/actions/divisions';
+import { DivisionClub } from '@/app/types/division';
+import { CurrentDivisionSeasons } from '@/divisions';
 
-import "./index.scss";
+import './index.scss';
 
 const Division: React.FC = () => {
     const dispatch = useDispatch();
 
-    const { currentSeasonsDivisions, seasonsStatistics, activeDivision } =
+    const { currentDivisionsSeasons, seasonsStatistics, activeDivision } =
         useSelector((state: RootState) => state.divisionsReducer);
 
-    const [activeDivisions, setActiveDivisions] = useState<string>("10");
-
-    console.log("seasonsStatistics", seasonsStatistics);
-
-    // /** Get current seasons divisions. */
-    // async function getCurrentSeasonsDivisions() {
-    //     try {
-    //         await dispatch(listOfCurrentSeasonsDivisions());
-    //     } catch (error: any) {
-    //         toast.error("Failed to get current seasons divisions", {
-    //             position: toast.POSITION.TOP_RIGHT,
-    //             theme: "colored",
-    //         });
-    //     }
-    // }
+    const [activeDivisions, setActiveDivisions] = useState<string>('10');
 
     /** Get divisions seasons statistics. */
     async function getSeasonsStatistics() {
         try {
             await dispatch(divisionSeasonsStatistics(activeDivisions));
         } catch (error: any) {
-            toast.error("Failed to get seasons statistics", {
+            toast.error('Failed to get seasons statistics', {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
     }
 
     useEffect(() => {
-        // getCurrentSeasonsDivisions();
         getSeasonsStatistics();
     }, [activeDivisions]);
 
     /** TODO: replase test datas. Just for test rigth now. */
     const divisionClub: DivisionClub = {
-        position: "1",
+        position: '1',
         club: {
-            name: "Real Madrid",
+            name: 'Real Madrid',
             icon: realMadrid,
         },
-        games: "30",
-        wins: "20",
-        draws: "6",
-        defeats: "5",
-        goalDifference: "+50",
-        points: "50",
+        games: '30',
+        wins: '20',
+        draws: '6',
+        defeats: '5',
+        goalDifference: '+50',
+        points: '50',
     };
 
     /** TODO: delete this. Rigth now for test */
@@ -87,25 +71,25 @@ const Division: React.FC = () => {
     const LOWER_BREAKPOINT: number = divisionClubs.length - UPPER_BREAKPOINT;
 
     const titles: string[] = [
-        "#",
-        "Club",
-        "Games",
-        "Wins",
-        "Draws",
-        "Defeats",
-        "The difference of goals conceded",
-        "Points",
+        '#',
+        'Club',
+        'Games',
+        'Wins',
+        'Draws',
+        'Defeats',
+        'The difference of goals conceded',
+        'Points',
     ];
 
     const changeGradationDivisionClassName = (position: string) => {
-        let className: string = "";
+        let className: string = '';
 
         if (+position <= UPPER_BREAKPOINT) {
-            className = "-upper";
+            className = '-upper';
         }
 
         if (+position >= LOWER_BREAKPOINT) {
-            className = "-lower";
+            className = '-lower';
         }
 
         return className;
@@ -113,19 +97,20 @@ const Division: React.FC = () => {
 
     /** Check active division and change him className */
     const changeChoosedDivisionClass = (div: string) =>
-        `division__item${activeDivisions === div ? "-active" : "-inactive"}`;
+        `division__item${activeDivisions === div ? '-active' : '-inactive'}`;
 
+    // TODO: Mock data (waiting backend)
     const divisions: string[] = [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+        '10',
     ];
 
     return (
@@ -140,15 +125,15 @@ const Division: React.FC = () => {
                 </span>
             </div>
             <div className="division__list">
-                {divisions.map((division: string, index: number) => (
+                {divisions.map((division: string, index: number) =>
                     <div
                         className={changeChoosedDivisionClass(division)}
                         key={index}
                         onClick={() => setActiveDivisions(division)}
                     >
-                        Division {division}
+                        Division&nbsp;{division}
                     </div>
-                ))}
+                )}
             </div>
             <div className="division__filters">
                 <span className="division__filters__title">Filters</span>
@@ -179,23 +164,28 @@ const Division: React.FC = () => {
                     </label>
                 </div>
             </div>
-            <table className="division__clubs">
-                <thead>
-                    <tr className="division__clubs__titles">
-                        {titles.map((title: string, index: number) => (
-                            <th
-                                key={index}
-                                className="division__clubs__titles__item"
-                            >
-                                {title}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {seasonsStatistics.statistics &&
-                        seasonsStatistics.statistics.map(
-                            (divisionClub: any, index: number) => (
+            {!seasonsStatistics.statistics ?
+                <h2 className="division__clubs__no-results">
+                    You need to play at least 3 matches, but not more than 30
+                </h2>
+                :
+                <table className="division__clubs">
+                    <thead>
+                        <tr className="division__clubs__titles">
+                            {titles.map((title: string, index: number) =>
+                                <th
+                                    key={index}
+                                    className="division__clubs__titles__item"
+                                >
+                                    {title}
+                                </th>
+                            )}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {/* TODO: Need change type of divisionClub */}
+                        {seasonsStatistics.statistics.map(
+                            (divisionClub: any, index: number) =>
                                 <tr
                                     className={`division__clubs__club${changeGradationDivisionClassName(
                                         divisionClub.club.name
@@ -204,7 +194,7 @@ const Division: React.FC = () => {
                                 >
                                     <td className="division__clubs__club__item">
                                         <span className="division__clubs__club__item__position">
-                                            {index + 1}
+                                            {activeDivisions}
                                         </span>
                                     </td>
                                     <td className="division__clubs__club__item">
@@ -213,6 +203,7 @@ const Division: React.FC = () => {
                                             className="division__clubs__club__item__icon"
                                             alt=""
                                         />
+                                        <span>{divisionClub.club.name}</span>
                                     </td>
                                     <td className="division__clubs__club__item">
                                         {divisionClub.matchPlayed}
@@ -233,10 +224,11 @@ const Division: React.FC = () => {
                                         {divisionClub.points}
                                     </td>
                                 </tr>
-                            )
+
                         )}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            }
         </section>
     );
 };

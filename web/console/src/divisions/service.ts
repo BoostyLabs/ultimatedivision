@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { DivisionsClient } from '@/api/divisions';
-import { CurrentSeasonsDivision, DivisionSeasonsStatistics } from '.';
+import { CurrentDivisionSeasons, DivisionSeasonsStatistics } from '.';
 
 /** exposes all divisions related logic */
 export class DivisionsService {
@@ -14,17 +14,20 @@ export class DivisionsService {
     }
 
     /** handles gets current seasons divisions */
-    public async getCurrentSeasonsDivisions(): Promise<CurrentSeasonsDivision[]> {
-        const divisions = await this.divisions.getCurrentSeasonsDivisions();
+    public async getCurrentDivisionSeasons(): Promise<
+    CurrentDivisionSeasons[]
+    > {
+        const divisions = await this.divisions.getCurrentDivisionSeasons();
 
         return divisions;
     }
 
     /** handles gets divisions matches statistics */
-    public async getDivisionSeasonsStatistics(id: string): Promise<DivisionSeasonsStatistics> {
+    public async getDivisionSeasonsStatistics(
+        id: string
+    ): Promise<DivisionSeasonsStatistics> {
         const divisionsSeasonsStatistics =
             await this.divisions.getDivisionSeasonsStatistics(id);
-            console.log("servise", divisionsSeasonsStatistics);
 
         return divisionsSeasonsStatistics;
     }

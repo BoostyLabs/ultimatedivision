@@ -1,16 +1,18 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { APIClient } from "@/api/index";
+import { APIClient } from '@/api/index';
 
-import { CurrentSeasonsDivision, DivisionSeasonsStatistics } from "@/divisions";
+import { CurrentDivisionSeasons, DivisionSeasonsStatistics } from '@/divisions';
 
 /** DivisionsClient base implementation */
 export class DivisionsClient extends APIClient {
-    private readonly ROOT_PATH: string = "/api/v0";
+    private readonly ROOT_PATH: string = '/api/v0';
 
     /** gets divisions of current seasons */
-    public async getCurrentSeasonsDivisions(): Promise<CurrentSeasonsDivision[]> {
+    public async getCurrentDivisionSeasons(): Promise<
+    CurrentDivisionSeasons[]
+    > {
         const response = await this.http.get(
             `${this.ROOT_PATH}/seasons/current`
         );
@@ -19,13 +21,17 @@ export class DivisionsClient extends APIClient {
             await this.handleError(response);
         }
 
-        const currentSeasonsDivisions = await response.json();
+        const currentDivisionSeasons = await response.json();
 
-        if (!currentSeasonsDivisions) {
-            this.handleError(currentSeasonsDivisions);
-        }
-
-        return currentSeasonsDivisions;
+        return currentDivisionSeasons.map(
+            (season: CurrentDivisionSeasons, index: number) =>
+                new CurrentDivisionSeasons(
+                    season.id,
+                    season.divisionId,
+                    season.startedAt,
+                    season.endedAt
+                )
+        );
     }
 
     /** gets division seasons statistics */
@@ -36,22 +42,15 @@ export class DivisionsClient extends APIClient {
             `${this.ROOT_PATH}/seasons/statistics/division/${id}`
         );
 
-        console.log(
-            "path",
-            `${this.ROOT_PATH}/seasons/statistics/division/${id}`
-        );
-
         if (!response.ok) {
             await this.handleError(response);
         }
 
-        const divisionsSeasonsStatistics = await response.json();
-        console.log("api", divisionsSeasonsStatistics);
+        const responseData = await response.json();
 
-        if (!divisionsSeasonsStatistics) {
-            this.handleError(divisionsSeasonsStatistics);
-        }
-
-        return divisionsSeasonsStatistics;
+        return new DivisionSeasonsStatistics(
+            responseData.division,
+            responseData.statistics
+        );
     }
 }

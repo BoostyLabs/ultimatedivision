@@ -1,9 +1,9 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { DivisionsState, CurrentSeasonsDivision } from '@/divisions';
+import { DivisionsState, CurrentDivisionSeasons } from '@/divisions';
 import {
-    GET_CURRENT_SEASONS_DIVISIONS,
+    GET_CURRENT_DIVISION_SEASONS,
     GET_DIVISION_SEASONS_STATISTICS,
     SET_ACTIVE_DIVISION,
 } from '@/app/store/actions/divisions';
@@ -16,13 +16,13 @@ export const divisionsReducer = (
     action: any = {}
 ) => {
     switch (action.type) {
-    case GET_CURRENT_SEASONS_DIVISIONS:
+    case GET_CURRENT_DIVISION_SEASONS:
         return {
             ...divisionsState,
-            currentSeasonsDivisions: action.currentSeasonsDivisions,
-            activeDivision: action.currentSeasonsDivisions.length
-                ? action.currentSeasonsDivisions[FIRST_DIVISIONS_INDEX]
-                : new CurrentSeasonsDivision(),
+            currentDivisionSeasons: action.currentDivisionSeasons,
+            activeDivision: action.currentDivisionSeasons.length
+                ? action.currentDivisionSeasons[FIRST_DIVISIONS_INDEX]
+                : new CurrentDivisionSeasons(),
         };
     case GET_DIVISION_SEASONS_STATISTICS:
         return {

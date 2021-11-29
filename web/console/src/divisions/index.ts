@@ -12,7 +12,7 @@ export class Division {
 }
 
 /** Divisions of current season entity. */
-export class CurrentSeasonsDivision {
+export class CurrentDivisionSeasons {
     constructor(
         public id: string = '',
         public divisionId: string = '',
@@ -30,21 +30,23 @@ const INITIAL_DIVISION_PERCENT: number = 0;
 // TODO: statistics need rewrite (waiting for backend).
 /** Division matches statistics entity. */
 export class DivisionSeasonsStatistics {
-    public division: Division = new Division(
-        "",
-        INITIAL_DIVISION_NAME,
-        INITIAL_DIVISION_PERCENT,
-        new Date()
-    );
-    public statistics: null | any[] = null;
+    constructor(
+        public division: Division = new Division(
+            '',
+            INITIAL_DIVISION_NAME,
+            INITIAL_DIVISION_PERCENT,
+            new Date()
+        ),
+        public statistics: null | any[] = null
+    ) {}
 }
 
 // TODO: Can be changed (waiting for backend)
 /** divisions reducer initial state. */
 export class DivisionsState {
     constructor(
-        public currentSeasonsDivisions: CurrentSeasonsDivision[] = [],
+        public currentDivisionsSeasons: CurrentDivisionSeasons[] = [],
         public seasonsStatistics: DivisionSeasonsStatistics = new DivisionSeasonsStatistics(),
-        public activeDivision: CurrentSeasonsDivision = new CurrentSeasonsDivision()
+        public activeDivision: CurrentDivisionSeasons = new CurrentDivisionSeasons()
     ) {}
 }
