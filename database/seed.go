@@ -414,7 +414,7 @@ func (seedDB *seedDB) CreateMatches(ctx context.Context, conn *sql.DB, matchesCo
 	usersService := users.NewService(seedDB.users)
 	cardsService := cards.NewService(seedDB.cards, cardsConfig)
 	clubsService := clubs.NewService(seedDB.clubs, usersService, cardsService, seedDB.divisions)
-	matchesService := matches.NewService(seedDB.matches, matchesConfig, clubsService)
+	matchesService := matches.NewService(seedDB.matches, matchesConfig, clubsService, cardsService)
 
 	type player struct {
 		userID   uuid.UUID
