@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/clubs"
 	"ultimatedivision/pkg/pagination"
 )
 
@@ -26,7 +27,7 @@ type DB interface {
 	// ListMatches returns page of matches from the database.
 	ListMatches(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// ListSquadMatches returns all matches played by squad in season.
-	ListSquadMatches(ctx context.Context, squadID uuid.UUID, seasonID int) ([]Match, error)
+	ListSquadMatches(ctx context.Context, seasonID int) ([]Match, error)
 	// UpdateMatch updates the number of points that users received for a played match.
 	UpdateMatch(ctx context.Context, match Match) error
 	// Delete deletes match from the database.
@@ -130,10 +131,18 @@ type MatchGoals struct {
 	Minute  int       `json:"minute"`
 }
 
-// MatchResult defines quantity goals of each user in the match.
+// MatchResult defines quantity goals of each user in the match
+// and which cards of user's squad scored in which minute.
 type MatchResult struct {
-	UserID        uuid.UUID `json:"userId"`
-	QuantityGoals int       `json:"quantityGoals"`
+	UserID        uuid.UUID    `json:"userId"`
+	QuantityGoals int          `json:"quantityGoals"`
+	Goalscorers   []Goalscorer `json:"goals"`
+}
+
+// Goalscorer defines which card scored goal in which minute.
+type Goalscorer struct {
+	Card   string `json:"card"`
+	Minute int    `json:"minute"`
 }
 
 // Page holds match page entity which is used to show listed page of matches.
@@ -144,10 +153,11 @@ type Page struct {
 
 // Statistic defined statistic of club in season.
 type Statistic struct {
-	MatchPlayed    int `json:"matchPlayed"`
-	Wins           int `json:"wins"`
-	Losses         int `json:"losses"`
-	Draws          int `json:"draws"`
-	GoalDifference int `json:"goalDifference"`
-	Points         int `json:"points"`
+	Club           clubs.Club `json:"club"`
+	MatchPlayed    int        `json:"matchPlayed"`
+	Wins           int        `json:"wins"`
+	Losses         int        `json:"losses"`
+	Draws          int        `json:"draws"`
+	GoalDifference int        `json:"goalDifference"`
+	Points         int        `json:"points"`
 }

@@ -115,13 +115,13 @@ type Config struct {
 		avatars.Config
 	} `json:"avatars"`
 
-	WaitList struct {
-		waitlist.Config
-	} `json:"waitlist"`
-
 	NFTs struct {
 		nfts.Config
 	} `json:"nfts"`
+
+	WaitList struct {
+		waitlist.Config
+	} `json:"waitList"`
 
 	LootBoxes struct {
 		Config lootboxes.Config `json:"lootBoxes"`
@@ -179,7 +179,8 @@ type Peer struct {
 
 	// exposes waitlist related logic.
 	WaitList struct {
-		Service *waitlist.Service
+		Service       *waitlist.Service
+		WaitListChore *waitlist.Chore
 	}
 
 	// exposes nfts related logic.
@@ -332,6 +333,15 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Service,
 			peer.NFTs.Service,
 		)
+
+		peer.WaitList.WaitListChore = waitlist.NewChore(
+			config.WaitList.Config,
+			peer.Log,
+			peer.WaitList.Service,
+			peer.NFTs.Service,
+			peer.Users.Service,
+			peer.Cards.Service,
+		)
 	}
 
 	{ // clubs setup
@@ -369,11 +379,33 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // divisions setup
+		peer.Divisions.Service = divisions.NewService(
+			peer.Database.Divisions(),
+			config.Divisions.Config)
+	}
+
 	{ // matches setup
 		peer.Matches.Service = matches.NewService(
 			peer.Database.Matches(),
 			config.Matches.Config,
 			peer.Clubs.Service,
+			peer.Cards.Service,
+		)
+	}
+
+	{ // seasons setup
+		peer.Seasons.Service = seasons.NewService(
+			peer.Database.Seasons(),
+			config.Seasons.Config,
+			peer.Divisions.Service,
+			peer.Matches.Service,
+			peer.Clubs.Service,
+		)
+
+		peer.Seasons.ExpirationSeasons = seasons.NewChore(
+			config.Seasons.Config,
+			peer.Seasons.Service,
 		)
 	}
 
@@ -392,25 +424,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Matches.Service,
 			peer.Seasons.Service,
 			peer.Clubs.Service,
-		)
-	}
-
-	{ // divisions setup
-		peer.Divisions.Service = divisions.NewService(
-			peer.Database.Divisions(),
-			config.Divisions.Config)
-	}
-
-	{ // seasons setup
-		peer.Seasons.Service = seasons.NewService(
-			peer.Database.Seasons(),
-			config.Seasons.Config,
-			peer.Divisions.Service,
-		)
-
-		peer.Seasons.ExpirationSeasons = seasons.NewChore(
-			config.Seasons.Config,
-			peer.Seasons.Service,
 		)
 	}
 
@@ -489,7 +502,10 @@ func (peer *Peer) Run(ctx context.Context) error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
 	group.Go(func() error {
-		return ignoreCancel(peer.NFTs.NFTChore.Run(ctx))
+		return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
+	})
+	group.Go(func() error {
+		return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
 	})
 
 	return group.Wait()

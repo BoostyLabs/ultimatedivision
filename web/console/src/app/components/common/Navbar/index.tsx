@@ -16,12 +16,14 @@ const Navbar: React.FC = () => {
 
     const visibleClassName = isDropdownActive ? '-active' : '';
 
+    /** TODO: DIVISIONS will be replaced with id parameter */
     const navbarItems: Array<{ name: string; path: string }> = [
         { name: 'HOME', path: RouteConfig.Summary.path },
         { name: 'STORE', path: RouteConfig.Store.path },
         { name: 'MARKETPLACE', path: RouteConfig.MarketPlace.path },
         { name: 'CARDS', path: RouteConfig.Club.path },
         { name: 'FIELD', path: RouteConfig.Field.path },
+        { name: 'DIVISIONS', path: RouteConfig.Division.path },
     ];
 
     return (

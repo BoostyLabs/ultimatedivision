@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/pkg/pagination"
 	rand2 "ultimatedivision/pkg/rand"
@@ -26,14 +27,16 @@ type Service struct {
 	matches DB
 	config  Config
 	clubs   *clubs.Service
+	cards   *cards.Service
 }
 
 // NewService is a constructor for matches service.
-func NewService(matches DB, config Config, clubs *clubs.Service) *Service {
+func NewService(matches DB, config Config, clubs *clubs.Service, cards *cards.Service) *Service {
 	return &Service{
 		matches: matches,
 		config:  config,
 		clubs:   clubs,
+		cards:   cards,
 	}
 }
 
@@ -43,10 +46,10 @@ const periodBegin = 0
 // periodEnd defines index of the ending of period.
 const periodEnd = 1
 
-// minNumberOfGames defines minimal number of matches to participate in weekly competition.
-const minNumberOfMatches = 3
+// MinNumberOfMatches defines minimal number of matches to participate in weekly competition.
+const MinNumberOfMatches = 3
 
-// minNumberOfGames defines maximal number of matches in weekly competition.
+// maxNumberOfMatches defines maximal number of matches in weekly competition.
 const maxNumberOfMatches = 30
 
 // Play initiates match between users, calls methods to generate result.
@@ -278,12 +281,72 @@ func (service *Service) ListMatchGoals(ctx context.Context, matchID uuid.UUID) (
 // GetMatchResult returns goals of each user in the match.
 func (service *Service) GetMatchResult(ctx context.Context, matchID uuid.UUID) ([]MatchResult, error) {
 	resultMatch, err := service.matches.GetMatchResult(ctx, matchID)
-	return resultMatch, ErrMatches.Wrap(err)
+	if err != nil {
+		return nil, ErrMatches.Wrap(err)
+	}
+
+	matchGoals, err := service.ListMatchGoals(ctx, matchID)
+	if err != nil {
+		return nil, ErrMatches.Wrap(err)
+	}
+
+	if len(resultMatch) == 2 {
+		for k, result := range resultMatch {
+			for _, goal := range matchGoals {
+				if goal.UserID == result.UserID {
+					card, err := service.cards.Get(ctx, goal.CardID)
+					if err != nil {
+						return resultMatch, ErrMatches.Wrap(err)
+					}
+
+					resultMatch[k].Goalscorers = append(resultMatch[k].Goalscorers, Goalscorer{
+						Card:   card.PlayerName,
+						Minute: goal.Minute,
+					})
+				}
+			}
+		}
+
+		return resultMatch, nil
+	}
+
+	match, err := service.matches.Get(ctx, matchID)
+	if err != nil {
+		return nil, ErrMatches.Wrap(err)
+	}
+
+	var results []MatchResult
+	results = append(results, MatchResult{UserID: match.User1ID})
+	results = append(results, MatchResult{UserID: match.User2ID})
+
+	for k, result := range results {
+		for _, res := range resultMatch {
+			if result.UserID == res.UserID {
+				results[k].QuantityGoals = res.QuantityGoals
+			}
+		}
+
+		for _, goal := range matchGoals {
+			if goal.UserID == result.UserID {
+				card, err := service.cards.Get(ctx, goal.CardID)
+				if err != nil {
+					return results, ErrMatches.Wrap(err)
+				}
+
+				results[k].Goalscorers = append(results[k].Goalscorers, Goalscorer{
+					Card:   card.PlayerName,
+					Minute: goal.Minute,
+				})
+			}
+		}
+	}
+
+	return results, nil
 }
 
 // ListSquadMatches returns all club matches in season.
-func (service *Service) ListSquadMatches(ctx context.Context, seasonID int, squadID uuid.UUID) ([]Match, error) {
-	allMatches, err := service.matches.ListSquadMatches(ctx, squadID, seasonID)
+func (service *Service) ListSquadMatches(ctx context.Context, seasonID int) ([]Match, error) {
+	allMatches, err := service.matches.ListSquadMatches(ctx, seasonID)
 	return allMatches, ErrMatches.Wrap(err)
 }
 
@@ -318,25 +381,15 @@ func (service *Service) RankMatch(ctx context.Context, match Match, matchGoals [
 }
 
 // GetStatistic returns statistic of club in season.
-func (service *Service) GetStatistic(ctx context.Context, clubID uuid.UUID, seasonID int) (Statistic, error) {
+func (service *Service) GetStatistic(ctx context.Context, club clubs.Club, seasonID int) (Statistic, error) {
 	var statistic Statistic
 
-	club, err := service.clubs.Get(ctx, clubID)
+	allMatches, err := service.ListSquadMatches(ctx, seasonID)
 	if err != nil {
 		return statistic, ErrMatches.Wrap(err)
 	}
 
-	squad, err := service.clubs.GetSquadByClubID(ctx, clubID)
-	if err != nil {
-		return statistic, ErrMatches.Wrap(err)
-	}
-
-	allMatches, err := service.ListSquadMatches(ctx, seasonID, squad.ID)
-	if err != nil {
-		return statistic, ErrMatches.Wrap(err)
-	}
-
-	if len(allMatches) < minNumberOfMatches {
+	if len(allMatches) < MinNumberOfMatches {
 		return statistic, nil
 	}
 
@@ -361,7 +414,7 @@ func (service *Service) GetStatistic(ctx context.Context, clubID uuid.UUID, seas
 			case match.User1Points == service.config.NumberOfPointsForLosing:
 				statistic.Losses++
 			}
-		} else {
+		} else if match.User2ID == club.OwnerID {
 			switch {
 			case match.User2Points == service.config.NumberOfPointsForWin:
 				statistic.Wins++
@@ -370,8 +423,9 @@ func (service *Service) GetStatistic(ctx context.Context, clubID uuid.UUID, seas
 			case match.User2Points == service.config.NumberOfPointsForLosing:
 				statistic.Losses++
 			}
+		} else {
+			return statistic, err
 		}
-
 		matchGoals, err := service.ListMatchGoals(ctx, match.ID)
 		if err != nil {
 			return statistic, ErrMatches.Wrap(err)
@@ -385,7 +439,11 @@ func (service *Service) GetStatistic(ctx context.Context, clubID uuid.UUID, seas
 		}
 	}
 
+	statistic.Points = service.config.NumberOfPointsForWin*statistic.Wins + service.config.NumberOfPointsForDraw*statistic.Draws +
+		+service.config.NumberOfPointsForLosing*statistic.Losses
+
 	statistic.GoalDifference = goalScored - goalsConceded
+	statistic.Club = club
 
 	return statistic, nil
 }

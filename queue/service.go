@@ -54,8 +54,13 @@ func (service *Service) Create(ctx context.Context, client Client) error {
 
 	// TODO: add division ID to client
 
-	service.queues.Create(client)
-	return nil
+	err = service.queues.Delete(client.UserID)
+	if ErrNoClient.Has(err) || err == nil {
+		service.queues.Create(client)
+		return nil
+	}
+
+	return ErrQueue.Wrap(err)
 }
 
 // Get returns client from database.
@@ -67,6 +72,16 @@ func (service *Service) Get(userID uuid.UUID) (Client, error) {
 // List returns clients from database.
 func (service *Service) List() []Client {
 	return service.queues.List()
+}
+
+// ListNotPlayingUsers returns clients who don't play game from database.
+func (service *Service) ListNotPlayingUsers() []Client {
+	return service.queues.ListNotPlayingUsers()
+}
+
+// UpdateIsPlaying updates is playing status of client in database.
+func (service *Service) UpdateIsPlaying(userID uuid.UUID, isPlaying bool) error {
+	return service.queues.UpdateIsPlaying(userID, isPlaying)
 }
 
 // Finish finishes client's queue in database.
