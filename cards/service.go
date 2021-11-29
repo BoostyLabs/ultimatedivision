@@ -243,6 +243,12 @@ func round(x, unit float64) float64 {
 
 // GeneratePlayerName generates player name of card.
 func (service *Service) GeneratePlayerName() (string, error) {
+	var (
+		fullName   string
+		firstName  string
+		secondName string
+	)
+
 	file, err := os.Open(service.config.PathToNamesDataset)
 	if err != nil {
 		return "", ErrCards.Wrap(err)
@@ -265,9 +271,29 @@ func (service *Service) GeneratePlayerName() (string, error) {
 		return "", ErrCards.Wrap(err)
 	}
 
-	name, err := fileutils.ReadLine(file, randomNum)
+	fullName, err = fileutils.ReadLine(file, randomNum)
 
-	return name, ErrCards.Wrap(err)
+	splitFullName := strings.Split(fullName, " ")
+	if len(splitFullName) == 2 {
+		firstName = splitFullName[0]
+	}
+
+	randomNum = rand.Intn(totalCount) + 1
+
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return "", ErrCards.Wrap(err)
+	}
+
+	fullName, err = fileutils.ReadLine(file, randomNum)
+
+	splitFullName = strings.Split(fullName, " ")
+	if len(splitFullName) == 2 {
+		secondName = splitFullName[1]
+	}
+
+	fullName = firstName + " " + secondName
+	return fullName, ErrCards.Wrap(err)
 }
 
 // Get returns card from DB.
