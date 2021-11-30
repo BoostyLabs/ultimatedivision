@@ -27,9 +27,6 @@
         padding: 0 30px;
         margin: 0 auto;
     }
-    &__card {
-        width: 170px;
-    }
 
     &__title {
         font-size: 48px;
@@ -46,6 +43,7 @@
     }
 
     &__card {
+        width: 170px;
         transition: transform 0.3s;
 
         &:hover {
