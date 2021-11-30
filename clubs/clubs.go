@@ -7,10 +7,11 @@ import (
 	"context"
 	"sort"
 	"time"
-	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/cards"
 )
 
 // ErrNoClub indicated that club does not exist.
