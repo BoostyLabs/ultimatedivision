@@ -150,7 +150,6 @@ func (service *Service) Generate(ctx context.Context, userID uuid.UUID, percenta
 			}
 			return Card{}, ErrCards.Wrap(err)
 		}
-		continue
 	}
 
 	card := Card{
