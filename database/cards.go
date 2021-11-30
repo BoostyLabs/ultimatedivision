@@ -92,6 +92,33 @@ func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, erro
 	return card, ErrCard.Wrap(err)
 }
 
+// GetByPlayerName returns card by player name from DB.
+func (cardsDB *cardsDB) GetByPlayerName(ctx context.Context, playerName string) (cards.Card, error) {
+	card := cards.Card{}
+	query :=
+		`SELECT
+		` + allFields + `
+        FROM 
+            cards
+        WHERE 
+            player_name = $1`
+
+	err := cardsDB.conn.QueryRowContext(ctx, query, playerName).Scan(
+		&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
+		&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed,
+		&card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling,
+		&card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing,
+		&card.ForwardPass, &card.Offence, &card.FinishingAbility, &card.ShotPower, &card.Accuracy, &card.Distance, &card.Penalty, &card.FreeKicks,
+		&card.Corners, &card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus, &card.Interceptions,
+		&card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return card, cards.ErrNoCard.Wrap(err)
+	}
+
+	return card, ErrCard.Wrap(err)
+}
+
 // List returns all cards from the data base.
 func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (cards.Page, error) {
 	var cardsListPage cards.Page
