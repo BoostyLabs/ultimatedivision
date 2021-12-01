@@ -1,4 +1,4 @@
-package remote_file_storage
+package remotefilestorage
 
 import (
 	"context"
