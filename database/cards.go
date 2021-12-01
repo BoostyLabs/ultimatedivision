@@ -69,9 +69,7 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, error) {
 	card := cards.Card{}
 	query :=
-		`SELECT
-		` + allFields + `
-        FROM 
+		`SELECT * FROM  
             cards
         WHERE 
             id = $1`
@@ -96,9 +94,7 @@ func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, erro
 func (cardsDB *cardsDB) GetByPlayerName(ctx context.Context, playerName string) (cards.Card, error) {
 	card := cards.Card{}
 	query :=
-		`SELECT
-		` + allFields + `
-        FROM 
+		`SELECT * FROM 
             cards
         WHERE 
             player_name = $1`
@@ -124,9 +120,7 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (car
 	var cardsListPage cards.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 	query :=
-		`SELECT 
-			` + allFields + ` 
-		FROM 
+		`SELECT * FROM
 			cards 
 		LIMIT 
 			$1
@@ -170,9 +164,7 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (car
 // ListByUserID returns all users cards from the database.
 func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID) ([]cards.Card, error) {
 	query :=
-		`SELECT 
-			` + allFields + ` 
-		FROM 
+		`SELECT * FROM  
 			cards 
 		WHERE 
 			user_id = $1`
@@ -309,7 +301,7 @@ func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filte
 	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
 	valuesInterface := ValidDBParameters(valuesString)
 	offset := (cursor.Page - 1) * cursor.Limit
-	query := fmt.Sprintf(`SELECT %s FROM cards %s LIMIT %d OFFSET %d`, allFields, whereClause, cursor.Limit, offset)
+	query := fmt.Sprintf(`SELECT * FROM cards %s LIMIT %d OFFSET %d`, whereClause, cursor.Limit, offset)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
@@ -544,8 +536,8 @@ func (cardsDB *cardsDB) Delete(ctx context.Context, id uuid.UUID) error {
 // GetSquadCards returns all cards with characteristics from the squad from the database.
 func (cardsDB *cardsDB) GetSquadCards(ctx context.Context, id uuid.UUID) ([]cards.Card, error) {
 	var cardsFromSquad []cards.Card
-	query := `SELECT ` + allFields + `
-        FROM cards
+	query := `SELECT * FROM 
+            cards
         WHERE id IN (SELECT card_id
                      FROM squad_cards
                      WHERE id = $1)
