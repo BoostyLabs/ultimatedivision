@@ -23,24 +23,24 @@ type DB interface {
 	// Create creates nft for wait list in the database.
 	Create(ctx context.Context, cardID uuid.UUID, wallet cryptoutils.Address) error
 	// Get returns nft for wait list by token id.
-	GetByTokenID(ctx context.Context, tokenID int64) (Item, error)
+	GetByTokenID(ctx context.Context, tokenID uint64) (Item, error)
 	// GetByCardID returns nft for wait list by card id.
 	GetByCardID(ctx context.Context, cardID uuid.UUID) (Item, error)
 	// GetLast returns id of last inserted token.
-	GetLast(ctx context.Context) (int64, error)
+	GetLast(ctx context.Context) (uint64, error)
 	// List returns all nft tokens from wait list from database.
 	List(ctx context.Context) ([]Item, error)
 	// ListWithoutPassword returns nfts for wait list without password from database.
 	ListWithoutPassword(ctx context.Context) ([]Item, error)
 	// Delete deletes nft from wait list by id of token.
-	Delete(ctx context.Context, tokenIDs []int64) error
+	Delete(ctx context.Context, tokenIDs []uint64) error
 	// Update updates signature to nft token.
-	Update(ctx context.Context, tokenID int64, password cryptoutils.Signature) error
+	Update(ctx context.Context, tokenID uint64, password cryptoutils.Signature) error
 }
 
 // Item entity describes item fot wait list nfts.
 type Item struct {
-	TokenID  int64                 `json:"tokenId"`
+	TokenID  uint64                `json:"tokenId"`
 	CardID   uuid.UUID             `json:"cardId"`
 	Wallet   cryptoutils.Address   `json:"wallet"`
 	Password cryptoutils.Signature `json:"password"`
@@ -57,7 +57,7 @@ type CreateNFT struct {
 type Transaction struct {
 	Password cryptoutils.Signature `json:"password"`
 	Contract cryptoutils.Contract  `json:"contract"`
-	TokenID  int64                 `json:"tokenId"`
+	TokenID  uint64                `json:"tokenId"`
 }
 
 // Config defines values needed by check mint nft in blockchain.

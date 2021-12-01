@@ -90,9 +90,10 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}
+			uTokenID := uint64(tokenID)
 
 			if from == 0 {
-				nftWaitList, err := chore.waitList.GetByTokenID(ctx, tokenID)
+				nftWaitList, err := chore.waitList.GetByTokenID(ctx, uTokenID)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
@@ -100,7 +101,7 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 				nft := nfts.NFT{
 					CardID:        nftWaitList.CardID,
 					Chain:         cryptoutils.ChainPolygon,
-					TokenID:       tokenID,
+					TokenID:       uTokenID,
 					WalletAddress: toAddress,
 				}
 				if err = chore.nfts.Create(ctx, nft); err != nil {
@@ -109,7 +110,7 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 				continue
 			}
 
-			nft, err := chore.nfts.Get(ctx, tokenID, cryptoutils.ChainPolygon)
+			nft, err := chore.nfts.Get(ctx, uTokenID, cryptoutils.ChainPolygon)
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}

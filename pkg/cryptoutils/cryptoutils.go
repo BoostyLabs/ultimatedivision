@@ -104,7 +104,7 @@ const BlockTagLatest BlockTag = "latest"
 // Data entity describes values for data field in transacton.
 type Data struct {
 	AddressContractMethod Hex
-	TokenID               int64
+	TokenID               uint64
 }
 
 // NewDataHex is a constructor for data entity, but returns hex string.
@@ -187,8 +187,8 @@ func GenerateSignature(addressWallet Address, addressContract Address, privateKe
 	return "", fmt.Errorf("error private key format")
 }
 
-// GenerateSignatureWithToken generates signature for user's wallet with token.
-func GenerateSignatureWithToken(addressWallet Address, addressContract Address, tokenID int64, privateKey *ecdsa.PrivateKey) (Signature, error) {
+// GenerateSignatureWithValue generates signature for user's wallet with value.
+func GenerateSignatureWithValue(addressWallet Address, addressContract Address, value uint64, privateKey *ecdsa.PrivateKey) (Signature, error) {
 	if !addressWallet.IsValidAddress() {
 		return "", fmt.Errorf("invalid address of user's wallet")
 	}
@@ -211,8 +211,8 @@ func GenerateSignatureWithToken(addressWallet Address, addressContract Address, 
 		return "", err
 	}
 
-	tokenIDStringWithZeros := createHexStringFixedLength(tokenID)
-	tokenIDByte, err := hex.DecodeString(string(tokenIDStringWithZeros))
+	valueStringWithZeros := createHexStringFixedLength(value)
+	valueByte, err := hex.DecodeString(string(valueStringWithZeros))
 	if err != nil {
 		return "", err
 	}
@@ -224,7 +224,7 @@ func GenerateSignatureWithToken(addressWallet Address, addressContract Address, 
 		PrivateKey:            privateKey,
 	}
 
-	signature, err := makeSignatureWithToken(createSignature, tokenIDByte)
+	signature, err := makeSignatureWithToken(createSignature, valueByte)
 	if err != nil {
 		return "", err
 	}
@@ -245,7 +245,7 @@ func GenerateSignatureWithToken(addressWallet Address, addressContract Address, 
 }
 
 // createHexStringFixedLength creates srings with fixed length and number in hex formate in the end.
-func createHexStringFixedLength(tokenID int64) Hex {
+func createHexStringFixedLength(tokenID uint64) Hex {
 	tokenIDString := fmt.Sprintf("%x", tokenID)
 	var zeroString string
 	for i := 0; i < (int(LengthOneBlockInputValue) - len(tokenIDString)); i++ {
