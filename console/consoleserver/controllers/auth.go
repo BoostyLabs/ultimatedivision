@@ -60,6 +60,11 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if request.Email == "" || request.Password == "" || request.NickName == "" || request.FirstName == "" || request.LastName == "" {
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("did not fill in all the fields"))
+		return
+	}
+
 	err = auth.userAuth.Register(ctx, request.Email, request.Password, request.NickName, request.FirstName, request.LastName)
 	if err != nil {
 		switch {
