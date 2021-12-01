@@ -111,7 +111,7 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if request.Email == "" || request.Password == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("Missing email address or password"))
 		return
 	}
 
