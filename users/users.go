@@ -121,7 +121,7 @@ func IsPasswordValid(s string) bool {
 	return len(s) >= 8 && letters >= 1 && number && upper && special
 }
 
-// IsRequestValid check the request for all conditions.
+// IsValid check the request for all conditions.
 func (createUserFields *CreateUserFields) IsValid() bool {
 	switch {
 	case createUserFields.Email == "":
