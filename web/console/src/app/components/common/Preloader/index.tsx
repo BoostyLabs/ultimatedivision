@@ -1,8 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState } from 'react';
-
 import ball from '@static/img/Preloader/ball.svg';
 import ultimateLogo from '@static/img/Preloader/ultimatedivision-logo.svg';
 
