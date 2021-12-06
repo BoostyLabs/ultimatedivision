@@ -25,17 +25,15 @@ import star from '@static/img/FootballerCardPage/star.svg';
 
 /** class for our getters to get label and value while mapping */
 export class CardField {
-    /** label and value for mapping */
-    constructor(public label: string, public value: string | number) { }
+  /** label and value for mapping */
+  constructor(public label: string, public value: string | number) { }
 }
 
-/* eslint-disable */
 /** player stats implementation */
 export class CardStats {
   /** main stat with substats */
   constructor(
     public title: string = "",
-    public abbreviated: string = "",
     public fields: CardField[] = []
   ) { }
   get average() {
@@ -45,10 +43,7 @@ export class CardStats {
         .reduce((prev, current) => prev + current) / this.fields.length
     );
   }
-  /** abbreviated title of card stat name */
-  get abbr(): string {
-    return this.title.slice(0, 3);
-  }
+
   /** stat giagram color depend on avarage stat value */
   get color(): string {
     const STATISTIC_UPPER_BOUND = 90;
@@ -70,7 +65,7 @@ export class CardStats {
 }
 
 
-/** Class defines with needed getters */
+/** Class defines with getters */
 export class Card {
   id: string = "00000000-0000-0000-0000-000000000000";
   playerName: string = "Taras";
@@ -142,34 +137,20 @@ export class Card {
     Object.assign(this, card);
   }
 
-  /** returns background type and shadow type according to quality */
-  get style() {
+  /** Returns background type and shadow type according to quality */
+  get shadow() {
     switch (this.quality) {
       case "wood":
-        return {
-          background: wood,
-          shadow: woodShadow,
-        };
+        return woodShadow
       case "silver":
-        return {
-          background: silver,
-          shadow: silverShadow,
-        };
+        return silverShadow;
       case "gold":
-        return {
-          background: gold,
-          shadow: goldShadow,
-        };
+        return goldShadow;
       case "diamond":
-        return {
-          background: diamond,
-          shadow: diamondShadow,
-        };
+        return diamondShadow;
+      default:
+        return woodShadow;
     }
-  }
-  /** will be replaced by backend face implementation */
-  get face() {
-    return playerFace;
   }
 
   /**TODO: for testing, will be replaced */
@@ -252,10 +233,10 @@ export class Card {
     ];
   }
 
-  /** returns fields for card stats area in footballerCard */
+  /** Returns fields for card stats area in footballerCard */
   get statsArea() {
     return [
-      new CardStats("tactics", "tac", [
+      new CardStats("tactics", [
         new CardField("positioning", this.positioning),
         new CardField("composure", this.composure),
         new CardField("aggression", this.aggression),
@@ -263,7 +244,7 @@ export class Card {
         new CardField("awareness", this.awareness),
         new CardField("crosses", this.crosses),
       ]),
-      new CardStats("physique", "phy", [
+      new CardStats("physique", [
         new CardField("acceleration", this.acceleration),
         new CardField("running speed", this.runningSpeed),
         new CardField("reaction speed", this.reactionSpeed),
@@ -273,7 +254,7 @@ export class Card {
         new CardField("jumping", this.jumping),
         new CardField("balance", this.jumping),
       ]),
-      new CardStats("technique", "tec", [
+      new CardStats("technique", [
         new CardField("dribbing", this.dribbling),
         new CardField("ball fontrol", this.ballControl),
         new CardField("weak foot", this.weakFoot),
@@ -285,7 +266,7 @@ export class Card {
         new CardField("long passing", this.longPassing),
         new CardField("forward pass", this.forwardPass),
       ]),
-      new CardStats("offence", "off", [
+      new CardStats("offence", [
         new CardField("finishing ability", this.finishingAbility),
         new CardField("shot power", this.shotPower),
         new CardField("accuracy", this.accuracy),
@@ -295,14 +276,14 @@ export class Card {
         new CardField("corners", this.corners),
         new CardField("heading accuracy", this.headingAccuracy),
       ]),
-      new CardStats("defence", "def", [
+      new CardStats("defence", [
         new CardField("offside trap", this.offsideTrap),
         new CardField("tackles", this.tackles),
         new CardField("ball focus", this.ballFocus),
         new CardField("interceptions", this.interceptions),
         new CardField("vigilance", this.vigilance),
       ]),
-      new CardStats("goalkeeping", "gk", [
+      new CardStats("goalkeeping", [
         new CardField("diving", this.diving),
         new CardField("handling", this.handling),
         new CardField("sweeping", this.sweeping),

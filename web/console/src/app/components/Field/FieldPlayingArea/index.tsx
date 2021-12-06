@@ -152,7 +152,7 @@ export const FieldPlayingArea: React.FC = () => {
                                     }
                                     key={index}
                                     className={`playing-area__${formation}__${isDefined ? 'card' : 'empty-card'
-                                    }`}
+                                        }`}
                                     onClick={() => handleClick(index)}
                                     onDragStart={(e) => dragStart(e, index)}
                                     onMouseUp={(e) => onMouseUp(e, index)}
@@ -179,9 +179,9 @@ export const FieldPlayingArea: React.FC = () => {
                                     className={`playing-area__${formation}-shadows__card`}
                                     key={index}
                                 >
-                                    {isDefined && fieldCard.card.style &&
+                                    {isDefined &&
                                         <img
-                                            src={fieldCard.card.style.shadow}
+                                            src={fieldCard.card.shadow}
                                             alt="card shadow"
                                             className={`playing-area__${formation}-shadows__shadow`}
                                         />
