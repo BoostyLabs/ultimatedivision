@@ -69,7 +69,6 @@ export class CardStats {
   }
 }
 
-
 /** Class defines with needed getters */
 export class Card {
   id: string = "00000000-0000-0000-0000-000000000000";
