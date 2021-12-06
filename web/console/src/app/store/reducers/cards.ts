@@ -43,81 +43,81 @@ const openedCard = new Card();
 
 export const cardsReducer = (cardsState: CardsState = new CardsState(cardsPage, openedCard), action: any = {}) => {
     switch (action.type) {
-        case SEARCH_CARDS_BY_DEFENCE:
-            return {
-                ...cardsState,
-                queryParameters: {
-                    ...cardsState.queryParameters,
-                    deffence: action.payload,
-                },
-            };
-        case SEARCH_CARDS_BY_GOALKEEPING:
-            return {
-                ...cardsState,
-                queryParameters: {
-                    ...cardsState.queryParameters,
-                    goalkeeping: action.payload,
-                },
-            };
-        case SEARCH_CARDS_BY_OFFENSE:
-            return {
-                ...cardsState,
-                queryParameters: {
-                    ...cardsState.queryParameters,
-                    offense: action.payload,
-                },
-            };
-        case SEACH_CARDS_BY_PHYSIQUE:
-            return {
-                ...cardsState,
-                queryParameters: {
-                    ...cardsState.queryParameters,
-                    physique: action.payload,
-                },
-            };
-        case SEARCH_CARDS_BY_QUALITY:
-            return {
-                ...cardsState,
-                queryParameters: {
-                    ...cardsState.queryParameters,
-                    quality: action.payload,
-                },
-            };
-        case SEARCH_CARDS_BY_STATUS:
-            return {
-                ...cardsState,
-                searchParams: {
-                    ...cardsState.queryParameters,
-                    status: action.payload,
-                },
-            };
-        case SEARCH_CARDS_BY_TACTIC:
-            return {
-                ...cardsState,
-                queryParameters: {
-                    ...cardsState.queryParameters,
-                    tactic: action.payload,
-                },
-            };
-        case SEACH_CARDS_BY_TECHNIQUE:
-            return {
-                ...cardsState,
-                queryParameters: {
-                    ...cardsState.queryParameters,
-                    technique: action.payload,
-                },
-            };
-        case GET_USER_CARDS:
-            return {
-                ...cardsState,
-                cardsPage: action.cardsPage,
-            };
-        case USER_CARD:
-            return {
-                ...cardsState,
-                card: action.card,
-            };
-        default:
-            return cardsState;
+    case GET_USER_CARDS:
+        return {
+            ...cardsState,
+            cardsPage: action.cardsPage,
+        };
+    case SEARCH_CARDS_BY_DEFENCE:
+        return {
+            ...cardsState,
+            queryParameters: {
+                ...cardsState.queryParameters,
+                deffence: action.payload,
+            },
+        };
+    case SEARCH_CARDS_BY_GOALKEEPING:
+        return {
+            ...cardsState,
+            queryParameters: {
+                ...cardsState.queryParameters,
+                goalkeeping: action.payload,
+            },
+        };
+    case SEARCH_CARDS_BY_OFFENSE:
+        return {
+            ...cardsState,
+            queryParameters: {
+                ...cardsState.queryParameters,
+                offense: action.payload,
+            },
+        };
+    case SEACH_CARDS_BY_PHYSIQUE:
+        return {
+            ...cardsState,
+            queryParameters: {
+                ...cardsState.queryParameters,
+                physique: action.payload,
+            },
+        };
+    case SEARCH_CARDS_BY_QUALITY:
+        return {
+            ...cardsState,
+            queryParameters: {
+                ...cardsState.queryParameters,
+                quality: action.payload,
+            },
+        };
+    case SEARCH_CARDS_BY_STATUS:
+        return {
+            ...cardsState,
+            searchParams: {
+                ...cardsState.queryParameters,
+                status: action.payload,
+            },
+        };
+    case SEARCH_CARDS_BY_TACTIC:
+        return {
+            ...cardsState,
+            queryParameters: {
+                ...cardsState.queryParameters,
+                tactic: action.payload,
+            },
+        };
+    case SEACH_CARDS_BY_TECHNIQUE:
+        return {
+            ...cardsState,
+            queryParameters: {
+                ...cardsState.queryParameters,
+                technique: action.payload,
+            },
+        };
+    case USER_CARD:
+        return {
+            ...cardsState,
+            card: action.card,
+        };
+    default:
+        return cardsState;
     };
 };

@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { CardClient } from '@/api/cards';
-import { Card,CardsPage, CardsQueryParameters } from '@/card';
+import { Card, CardsPage, CardsQueryParameters } from '@/card';
 
 /**
  * exposes all bandwidth related logic

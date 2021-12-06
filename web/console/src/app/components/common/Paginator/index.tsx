@@ -163,27 +163,27 @@ export const Paginator: React.FC<{
         const STEP_FROM_CURRENT_PAGE = 1;
 
         switch (type) {
-            case 'next page':
-                if (pageNumber < pages.length) {
-                    setCurrentPage(pageNumber + STEP_FROM_CURRENT_PAGE);
-                }
-                populatePages();
-    
-                return;
-            case 'previous page':
-                if (pageNumber > SECOND_PAGE_INDEX) {
-                    setCurrentPage(pageNumber - STEP_FROM_CURRENT_PAGE);
-                }
-                populatePages();
-    
-                return;
-            case 'change page':
-                setCurrentPage(pageNumber);
-                populatePages();
+        case 'next page':
+            if (pageNumber < pages.length) {
+                setCurrentPage(pageNumber + STEP_FROM_CURRENT_PAGE);
+            }
+            populatePages();
 
-                return;
-            default:
-                populatePages();
+            return;
+        case 'previous page':
+            if (pageNumber > SECOND_PAGE_INDEX) {
+                setCurrentPage(pageNumber - STEP_FROM_CURRENT_PAGE);
+            }
+            populatePages();
+
+            return;
+        case 'change page':
+            setCurrentPage(pageNumber);
+            populatePages();
+
+            return;
+        default:
+            populatePages();
         }
     };
 
