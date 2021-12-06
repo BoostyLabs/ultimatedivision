@@ -37,6 +37,7 @@ export class CardStats {
         public title: string = '',
         public fields: CardField[] = []
     ) { }
+    /** Returns average value of fields */
     get average() {
         return Math.round(
             this.fields
