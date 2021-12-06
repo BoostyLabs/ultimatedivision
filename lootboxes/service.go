@@ -5,9 +5,7 @@ package lootboxes
 
 import (
 	"context"
-	"fmt"
 	"sync"
-	"time"
 	"ultimatedivision/internal/logger"
 
 	"github.com/google/uuid"
@@ -72,17 +70,12 @@ func (service *Service) Open(ctx context.Context, userID, lootboxID uuid.UUID) (
 
 	var lootBoxCards []cards.Card
 
-	// TODO: add here goroutine for every generated avatar.
-
-	start := time.Now()
-
 	for i := 0; i < cardsNum; i++ {
 		card, err := service.cards.Create(ctx, userID, probabilities)
 		if err != nil {
 			return lootBoxCards, ErrLootBoxes.Wrap(err)
 		}
 
-		// mutex
 		lootBoxCards = append(lootBoxCards, card)
 	}
 
@@ -93,28 +86,26 @@ func (service *Service) Open(ctx context.Context, userID, lootboxID uuid.UUID) (
 	for _, card := range lootBoxCards {
 		go service.GenerateAvatarForLootboxCards(ctx, card, &wg)
 	}
-
 	wg.Wait()
 
-	end := time.Now()
-
 	err = service.lootboxes.Delete(ctx, lootboxID)
-
-	fmt.Println(end.Sub(start))
 
 	return lootBoxCards, ErrLootBoxes.Wrap(err)
 }
 
-func(service *Service) GenerateAvatarForLootboxCards(ctx context.Context, card cards.Card, wg *sync.WaitGroup) {
+// GenerateAvatarForLootboxCards generates and saves avatar for card.
+func (service *Service) GenerateAvatarForLootboxCards(ctx context.Context, card cards.Card, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	avatar, err := service.avatars.Generate(ctx, card, card.ID.String())
 	if err != nil {
 		service.log.Error("could not create card", err)
+		return
 	}
 
 	if err := service.avatars.Create(ctx, avatar); err != nil {
 		service.log.Error("could not create card", err)
+		return
 	}
 }
 
