@@ -5,11 +5,11 @@ package matches
 
 import (
 	"context"
-	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/pkg/pagination"
 )
