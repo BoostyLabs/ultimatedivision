@@ -1,6 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-import { Card, CardsPage, CardsQueryParameters } from '@/card';
+
 import {
     GET_USER_CARDS,
     SEACH_CARDS_BY_PHYSIQUE,
@@ -13,6 +13,7 @@ import {
     SEACH_CARDS_BY_TECHNIQUE,
     USER_CARD,
 } from '@/app/store/actions/cards';
+import { Card, CardsPage, CardsQueryParameters } from '@/card';
 
 const DEFAULT_OFFSET_VALUE: number = 0;
 const DEFAULT_LIMIT_VALUE: number = 24;
