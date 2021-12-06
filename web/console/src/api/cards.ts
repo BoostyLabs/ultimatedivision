@@ -4,14 +4,12 @@
 import { APIClient } from '@/api/index';
 import { Card, CardsPage, CardsQueryParameters } from '@/card';
 
-/** Variable describes default selected page. */
-const DEFAULT_SELECTED_PAGE_NUMBER: number = 1;
 /** CardClient base implementation */
 export class CardClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/cards';
 
     /** method calls get method from APIClient */
-    public async list(queryParameters?: Partial<CardsQueryParameters>, selectedPage: number = DEFAULT_SELECTED_PAGE_NUMBER): Promise<CardsPage> {
+    public async list(selectedPage: number, queryParameters?: Partial<CardsQueryParameters>): Promise<CardsPage> {
         /** Variable limit is default limit value of cards on page. */
         const limit: number = 24;
 
