@@ -10,8 +10,6 @@ import { Goal } from '@/matches';
 import { SquadCard } from '@/club';
 import { RootState } from '@/app/store';
 
-import player from '@/app/static/img/match/player.svg';
-
 export const GoalScorersTeam: React.FC<{ goals: Goal[] }> = ({ goals }) => {
     const [cardId, setCardId] = useState<number | null>(null);
     /** COUNTER is counter that describes index number of each scored goal. */
@@ -40,7 +38,6 @@ export const GoalScorersTeam: React.FC<{ goals: Goal[] }> = ({ goals }) => {
                             />
                         }
                     </div>
-                    {/* <img src={player} alt="player avatar"></img> */}
                     <span className="player__name">{goal.card.playerName}</span>
                     <span className="player__goal-time">{goal.minute}</span>
                     <div className="player__goals">{index + COUNTER}</div>
