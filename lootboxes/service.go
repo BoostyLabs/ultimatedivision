@@ -6,13 +6,13 @@ package lootboxes
 import (
 	"context"
 	"sync"
-	"ultimatedivision/internal/logger"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/internal/logger"
 )
 
 // ErrLootBoxes indicates that there was an error in the service.
