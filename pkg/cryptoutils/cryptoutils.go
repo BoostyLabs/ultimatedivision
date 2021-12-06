@@ -127,12 +127,12 @@ func isHexCharacter(c byte) bool {
 // Data entity describes values for data field in transacton.
 type Data struct {
 	AddressContractMethod Hex
-	TokenID               uint64
+	TokenID               int64
 }
 
 // NewDataHex is a constructor for data entity, but returns hex string.
 func NewDataHex(data Data) Hex {
-	tokenID := createHexStringFixedLength(new(big.Int).SetUint64(data.TokenID))
+	tokenID := createHexStringFixedLength(new(big.Int).SetInt64(data.TokenID))
 	return data.AddressContractMethod + tokenID
 }
 
@@ -177,7 +177,7 @@ func GenerateSignature(addressWallet Address, addressContract Address, privateKe
 }
 
 // GenerateSignatureWithValue generates signature for user's wallet with value.
-func GenerateSignatureWithValue(addressWallet Address, addressContract Address, value uint64, privateKey *ecdsa.PrivateKey) (Signature, error) {
+func GenerateSignatureWithValue(addressWallet Address, addressContract Address, value int64, privateKey *ecdsa.PrivateKey) (Signature, error) {
 	var values [][]byte
 	if !addressWallet.IsValidAddress() {
 		return "", fmt.Errorf("invalid address of user's wallet")
@@ -201,7 +201,7 @@ func GenerateSignatureWithValue(addressWallet Address, addressContract Address, 
 		return "", err
 	}
 
-	valueStringWithZeros := createHexStringFixedLength(new(big.Int).SetUint64(value))
+	valueStringWithZeros := createHexStringFixedLength(new(big.Int).SetInt64(value))
 	valueByte, err := hex.DecodeString(string(valueStringWithZeros))
 	if err != nil {
 		return "", err
@@ -223,7 +223,7 @@ func GenerateSignatureWithValue(addressWallet Address, addressContract Address, 
 }
 
 // GenerateSignatureWithValueAndNonce generates signature for user's wallet with value and nonce.
-func GenerateSignatureWithValueAndNonce(addressWallet Address, addressContract Address, value *big.Int, nonce uint64, privateKey *ecdsa.PrivateKey) (Signature, error) {
+func GenerateSignatureWithValueAndNonce(addressWallet Address, addressContract Address, value *big.Int, nonce int64, privateKey *ecdsa.PrivateKey) (Signature, error) {
 	var values [][]byte
 	if !addressWallet.IsValidAddress() {
 		return "", fmt.Errorf("invalid address of user's wallet")
@@ -253,7 +253,7 @@ func GenerateSignatureWithValueAndNonce(addressWallet Address, addressContract A
 		return "", err
 	}
 
-	nonceStringWithZeros := createHexStringFixedLength(new(big.Int).SetUint64(nonce))
+	nonceStringWithZeros := createHexStringFixedLength(new(big.Int).SetInt64(nonce))
 	nonceByte, err := hex.DecodeString(string(nonceStringWithZeros))
 	if err != nil {
 		return "", err

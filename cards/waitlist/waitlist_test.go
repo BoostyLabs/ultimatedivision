@@ -220,11 +220,11 @@ func TestWaitList(t *testing.T) {
 		t.Run("Get last token id", func(t *testing.T) {
 			largestTokenID, err := repositoryWaitList.GetLast(ctx)
 			require.NoError(t, err)
-			assert.Equal(t, uint64(2), largestTokenID)
+			assert.Equal(t, int64(2), largestTokenID)
 		})
 
 		t.Run("Update sql no rows", func(t *testing.T) {
-			err := repositoryWaitList.Update(ctx, uint64(0), "password")
+			err := repositoryWaitList.Update(ctx, int64(0), "password")
 			require.Error(t, err)
 			assert.Equal(t, true, waitlist.ErrNoItem.Has(err))
 		})
@@ -235,13 +235,13 @@ func TestWaitList(t *testing.T) {
 		})
 
 		t.Run("Delete sql no rows", func(t *testing.T) {
-			err := repositoryWaitList.Delete(ctx, []uint64{0})
+			err := repositoryWaitList.Delete(ctx, []int64{0})
 			require.Error(t, err)
 			assert.Equal(t, true, waitlist.ErrNoItem.Has(err))
 		})
 
 		t.Run("Delete", func(t *testing.T) {
-			err := repositoryWaitList.Delete(ctx, []uint64{1, 2})
+			err := repositoryWaitList.Delete(ctx, []int64{1, 2})
 			require.NoError(t, err)
 		})
 	})
