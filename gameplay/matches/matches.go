@@ -5,6 +5,7 @@ package matches
 
 import (
 	"context"
+	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -148,8 +149,8 @@ func Swap(matchResults []MatchResult) []MatchResult {
 
 // Goalscorer defines which card scored goal in which minute.
 type Goalscorer struct {
-	Card   string `json:"card"`
-	Minute int    `json:"minute"`
+	Card   cards.Card `json:"card"`
+	Minute int        `json:"minute"`
 }
 
 // Page holds match page entity which is used to show listed page of matches.
