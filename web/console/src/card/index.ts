@@ -29,6 +29,24 @@ export class CardField {
     constructor(public label: string, public value: string | number) { }
 }
 
+/** NumericCardsQueryParameters is an intreface that uses for numerical values query parameters. */
+export interface NumericCardsQueryParameters {
+    min: number | string,
+    max: number | string,
+};
+
+/** CardsQueryParameters is an interface that uses for filtering cards by queries. */
+export interface CardsQueryParameters {
+    deffence: NumericCardsQueryParameters,
+    goalkeeping: NumericCardsQueryParameters,
+    offense: NumericCardsQueryParameters,
+    physique: NumericCardsQueryParameters,
+    quality: string,
+    status: number,
+    tactic: NumericCardsQueryParameters,
+    technique: NumericCardsQueryParameters,
+};
+
 /* eslint-disable */
 /** player stats implementation */
 export class CardStats {

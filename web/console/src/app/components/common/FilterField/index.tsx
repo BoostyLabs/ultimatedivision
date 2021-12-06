@@ -2,7 +2,6 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-import { AnyAction, Dispatch } from 'redux';
 
 import { FilterFieldDropdown } from './FilterFieldDropdown';
 
@@ -16,13 +15,7 @@ import filters from '@static/img/MarketPlacePage/filter_icon.svg';
 
 import './index.scss';
 
-export const FilterField: React.FC<{
-    title: string;
-    thunk: (
-        lowRange: string,
-        topRange: string
-    ) => (dispatch: Dispatch<AnyAction>) => Promise<void>;
-}> = ({ title, thunk }) => {
+export const FilterField: React.FC = () => {
     const [searchData, setSearchData] = useState('');
 
     /** Class for each filter field item */
@@ -54,7 +47,6 @@ export const FilterField: React.FC<{
 
     return (
         <section className="filter-field">
-            <h1 className="filter-field__title">{title}</h1>
             <div className="filter-field__wrapper">
                 <div className="filter-field__use-filters">
                     <img
