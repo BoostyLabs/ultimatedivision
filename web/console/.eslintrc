@@ -133,7 +133,7 @@
         "dot-notation": "error",
         "eqeqeq": "error",
         "grouped-accessor-pairs": "error",
-        "guard-for-in": "error",
+        "guard-for-in": "warn",
         "no-alert": "error",
         "no-caller": "error",
         "no-constructor-return": "error",

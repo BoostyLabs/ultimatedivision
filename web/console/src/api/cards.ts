@@ -11,10 +11,10 @@ export class CardClient extends APIClient {
     private queryParameters: CardsQueryParameters | null = new CardsQueryParameters();
 
     /** Changes queryParameters object. */
-    public changeCardsQueryParameters(parameters: CardsQueryParametersField[]) {
-        parameters.forEach(parameter => {
+    public changeCardsQueryParameters(queryParameters: CardsQueryParametersField[]) {
+        queryParameters.forEach(queryParameter => {
             if (this.queryParameters) {
-                this.queryParameters[parameter.key] = parameter.value;
+                this.queryParameters[queryParameter.key] = queryParameter.value;
             };
         });
     };
@@ -26,11 +26,11 @@ export class CardClient extends APIClient {
 
         let queryParametersPath = '';
 
-        for (let queryParameter in this.queryParameters) {
+        for (const queryParameter in this.queryParameters) {
             if (this.queryParameters[queryParameter]) {
-                queryParametersPath += `&${queryParameter}=${this.queryParameters[queryParameter]}`
-            }
-        }
+                queryParametersPath += `&${queryParameter}=${this.queryParameters[queryParameter]}`;
+            };
+        };
 
         const path = `${this.ROOT_PATH}?page=${selectedPage}&limit=${limit}${queryParametersPath}`;
 

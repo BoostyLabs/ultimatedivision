@@ -16,8 +16,8 @@ export class CardService {
     };
 
     /** Changes cards query parameters. */
-    public changeCardsQueryParameters(parameters: CardsQueryParametersField[]) {
-        this.card.changeCardsQueryParameters(parameters);
+    public changeCardsQueryParameters(queryParameters: CardsQueryParametersField[]) {
+        this.card.changeCardsQueryParameters(queryParameters);
     };
     /** gets list of cards by user */
     public async list(selectedPage: number): Promise<CardsPage> {

@@ -23,22 +23,22 @@ const userCard = (card: Card) => ({
 });
 
 /** Exposes an action object that sets query parameters to cardsReducer. */
-export const setCardsQueryParameters = (parameters: CardsQueryParametersField[]) => ({
+export const setCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => ({
     type: SEARCH_CARDS_BY_QUERY_PARAMETERS,
-    payload: parameters,
+    payload: queryParameters,
 });
 
 const client = new CardClient();
 const service = new CardService(client);
 
 /** Creates cards query parameters and sets them to CardsService. */
-export const createCardsQueryParameters = (parameters: CardsQueryParametersField[]) => async function (dispatch: Dispatch) {
-    await service.changeCardsQueryParameters(parameters);
-    dispatch(setCardsQueryParameters(parameters));
+export const createCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => async function(dispatch: Dispatch) {
+    await service.changeCardsQueryParameters(queryParameters);
+    dispatch(setCardsQueryParameters(queryParameters));
 };
 
 /** thunk for creating user cards list */
-export const listOfCards = (selectedPage: number) => async function (dispatch: Dispatch) {
+export const listOfCards = (selectedPage: number) => async function(dispatch: Dispatch) {
     const response = await service.list(selectedPage);
     const page = response.page;
     const cards = response.cards;
@@ -46,7 +46,7 @@ export const listOfCards = (selectedPage: number) => async function (dispatch: D
     dispatch(getCards({ cards, page }));
 };
 /** thunk for opening fotballerCardPage with reload possibility */
-export const openUserCard = (id: string) => async function (dispatch: Dispatch) {
+export const openUserCard = (id: string) => async function(dispatch: Dispatch) {
     const card = await service.getCardById(id);
 
     dispatch(userCard(card));

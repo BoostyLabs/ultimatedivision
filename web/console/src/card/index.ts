@@ -31,8 +31,8 @@ export class CardField {
 
 /** CardsQueryParametersField is an interface for cards query parameters field, that consist of key and value. */
 export interface CardsQueryParametersField {
-    key: string, 
-    value: string,
+    key: string;
+    value: string;
 };
 
 /** CardsQueryParameters is class that uses for filtering cards by queries. */
