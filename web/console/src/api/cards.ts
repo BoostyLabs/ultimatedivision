@@ -5,16 +5,18 @@ import { APIClient } from '@/api/index';
 import { Card, CardsPage, CardsQueryParameters, CardsQueryParametersField } from '@/card';
 
 /** CardClient base implementation */
-export class CardClient extends APIClient {
+export class CardsClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/cards';
 
-    private queryParameters: CardsQueryParameters | null = new CardsQueryParameters();
+    private queryParameters: CardsQueryParameters = new CardsQueryParameters();
 
     /** Changes queryParameters object. */
     public changeCardsQueryParameters(queryParameters: CardsQueryParametersField[]) {
         queryParameters.forEach(queryParameter => {
-            if (this.queryParameters) {
-                this.queryParameters[queryParameter.key] = queryParameter.value;
+            for (const queryProperty in queryParameter) {
+                if (queryParameter) {
+                    this.queryParameters[queryProperty] = queryParameter[queryProperty];
+                }
             };
         });
     };
@@ -29,7 +31,7 @@ export class CardClient extends APIClient {
         for (const queryParameter in this.queryParameters) {
             if (this.queryParameters[queryParameter]) {
                 queryParametersPath += `&${queryParameter}=${this.queryParameters[queryParameter]}`;
-            };
+            }
         };
 
         const path = `${this.ROOT_PATH}?page=${selectedPage}&limit=${limit}${queryParametersPath}`;

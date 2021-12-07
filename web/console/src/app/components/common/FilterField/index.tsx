@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 
-import { FilterFieldDropdown } from './FilterFieldDropdown';
+import { FilterFieldDropdown1 } from './FilterFieldDropdown';
 
 import rectangle from '@static/img/FilterField/rectangle.svg';
 import search from '@static/img/FilterField/search.svg';
@@ -74,7 +74,7 @@ export const FilterField: React.FC = () => {
                     </li>
                     {filterFieldTitles.map((item, index) =>
                         <li className="filter-field__list__item" key={index}>
-                            <FilterFieldDropdown props={item} />
+                            <FilterFieldDropdown1 props={item} />
                         </li>
                     )}
                 </ul>
