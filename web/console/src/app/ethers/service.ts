@@ -33,6 +33,14 @@ export class Service {
         return await signer.getAddress();
     }
 
+    /** Signs message and creates message raw signature */
+    public async signMessage() {
+        const signer = await this.provider.getSigner();
+        const adress = await signer.getAddress();
+        // message is mocked, will be receive from backend
+        const signedMessage = await signer.signMessage('hello');
+    }
+
     /** Sends smart contract transaction. */
     public async sendTransaction(
         walletAddress: string,

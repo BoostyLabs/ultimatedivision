@@ -15,6 +15,7 @@ import ultimate from '@static/img/registerPage/ultimate.svg';
 import { AuthRouteConfig, RouteConfig } from '@/app/routes';
 import { loginUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
+import { ServicePlugin } from '@/app/plugins/service';
 
 import './index.scss';
 
