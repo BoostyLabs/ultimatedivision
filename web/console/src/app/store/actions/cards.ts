@@ -10,9 +10,6 @@ import { CardService } from '@/card/service';
 export const GET_USER_CARDS = ' GET_USER_CARDS';
 export const USER_CARD = 'OPEN_USER_CARD';
 
-/** Exposes action type to search cards by query parameters. */
-export const SEARCH_CARDS_BY_QUERY_PARAMETERS: string = 'SEARCH_CARDS_BY_QUERY_PARAMETERS';
-
 const getCards = (cardsPage: CardsPage) => ({
     type: GET_USER_CARDS,
     cardsPage,
@@ -22,19 +19,12 @@ const userCard = (card: Card) => ({
     card,
 });
 
-/** Exposes an action object that sets query parameters to cardsReducer. */
-export const setCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => ({
-    type: SEARCH_CARDS_BY_QUERY_PARAMETERS,
-    payload: queryParameters,
-});
-
 const client = new CardClient();
 const service = new CardService(client);
 
 /** Creates cards query parameters and sets them to CardsService. */
-export const createCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => async function(dispatch: Dispatch) {
-    await service.changeCardsQueryParameters(queryParameters);
-    dispatch(setCardsQueryParameters(queryParameters));
+export const createCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
+    service.changeCardsQueryParameters(queryParameters);
 };
 
 /** thunk for creating user cards list */

@@ -16,7 +16,6 @@ class CardsState {
     constructor(
         public cardsPage: CardsPage,
         public card: Card,
-        public queryParameters?: Partial<CardsQueryParameters>,
     ) { };
 };
 
@@ -37,11 +36,6 @@ export const cardsReducer = (cardsState: CardsState = new CardsState(cardsPage, 
         return {
             ...cardsState,
             cardsPage: action.cardsPage,
-        };
-    case SEARCH_CARDS_BY_QUERY_PARAMETERS:
-        return {
-            ...cardsState,
-            queryParameters: action.payload,
         };
     case USER_CARD:
         return {
