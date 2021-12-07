@@ -15,7 +15,7 @@ import (
 )
 
 // ensures that Client implements remote_file_storage.RemoteFileStorage.
-var _ remote_file_storage.RemoteFileStorage = (*Client)(nil)
+var _ remotefilestorage.RemoteFileStorage = (*Client)(nil)
 
 var (
 	// MinioError is class for minio errors.
