@@ -1,18 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import {
-    GET_USER_CARDS,
-    SEACH_CARDS_BY_PHYSIQUE,
-    SEARCH_CARDS_BY_DEFENCE,
-    SEARCH_CARDS_BY_GOALKEEPING,
-    SEARCH_CARDS_BY_OFFENSE,
-    SEARCH_CARDS_BY_STATUS,
-    SEARCH_CARDS_BY_TACTIC,
-    SEARCH_CARDS_BY_QUALITY,
-    SEACH_CARDS_BY_TECHNIQUE,
-    USER_CARD,
-} from '@/app/store/actions/cards';
+import { GET_USER_CARDS, SEARCH_CARDS_BY_QUERY_PARAMETERS, USER_CARD } from '@/app/store/actions/cards';
 import { Card, CardsPage, CardsQueryParameters } from '@/card';
 
 const DEFAULT_OFFSET_VALUE: number = 0;
@@ -49,69 +38,10 @@ export const cardsReducer = (cardsState: CardsState = new CardsState(cardsPage, 
             ...cardsState,
             cardsPage: action.cardsPage,
         };
-    case SEARCH_CARDS_BY_DEFENCE:
+    case SEARCH_CARDS_BY_QUERY_PARAMETERS:
         return {
             ...cardsState,
-            queryParameters: {
-                ...cardsState.queryParameters,
-                deffence: action.payload,
-            },
-        };
-    case SEARCH_CARDS_BY_GOALKEEPING:
-        return {
-            ...cardsState,
-            queryParameters: {
-                ...cardsState.queryParameters,
-                goalkeeping: action.payload,
-            },
-        };
-    case SEARCH_CARDS_BY_OFFENSE:
-        return {
-            ...cardsState,
-            queryParameters: {
-                ...cardsState.queryParameters,
-                offense: action.payload,
-            },
-        };
-    case SEACH_CARDS_BY_PHYSIQUE:
-        return {
-            ...cardsState,
-            queryParameters: {
-                ...cardsState.queryParameters,
-                physique: action.payload,
-            },
-        };
-    case SEARCH_CARDS_BY_QUALITY:
-        return {
-            ...cardsState,
-            queryParameters: {
-                ...cardsState.queryParameters,
-                quality: action.payload,
-            },
-        };
-    case SEARCH_CARDS_BY_STATUS:
-        return {
-            ...cardsState,
-            searchParams: {
-                ...cardsState.queryParameters,
-                status: action.payload,
-            },
-        };
-    case SEARCH_CARDS_BY_TACTIC:
-        return {
-            ...cardsState,
-            queryParameters: {
-                ...cardsState.queryParameters,
-                tactic: action.payload,
-            },
-        };
-    case SEACH_CARDS_BY_TECHNIQUE:
-        return {
-            ...cardsState,
-            queryParameters: {
-                ...cardsState.queryParameters,
-                technique: action.payload,
-            },
+            queryParameters: action.payload,
         };
     case USER_CARD:
         return {

@@ -2,46 +2,37 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '@/api/index';
-import { Card, CardsPage, CardsQueryParameters } from '@/card';
+import { Card, CardsPage, CardsQueryParameters, CardsQueryParametersField } from '@/card';
 
 /** CardClient base implementation */
 export class CardClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/cards';
 
+    private queryParameters: CardsQueryParameters | null = new CardsQueryParameters();
+
+    /** Changes queryParameters object. */
+    public changeCardsQueryParameters(parameters: CardsQueryParametersField[]) {
+        parameters.forEach(parameter => {
+            if (this.queryParameters) {
+                this.queryParameters[parameter.key] = parameter.value;
+            };
+        });
+    };
+
     /** method calls get method from APIClient */
-    public async list(selectedPage: number, queryParameters?: Partial<CardsQueryParameters>): Promise<CardsPage> {
+    public async list(selectedPage: number): Promise<CardsPage> {
         /** Variable limit is default limit value of cards on page. */
         const limit: number = 24;
 
-        let path = `${this.ROOT_PATH}?page=${selectedPage}&limit=${limit}`;
+        let queryParametersPath = '';
 
-        if (queryParameters && queryParameters.deffence) {
-            path += `&defence_gte=${queryParameters.deffence.min}&defence_lt=${queryParameters.deffence.max}`;
-        };
+        for (let queryParameter in this.queryParameters) {
+            if (this.queryParameters[queryParameter]) {
+                queryParametersPath += `&${queryParameter}=${this.queryParameters[queryParameter]}`
+            }
+        }
 
-        if (queryParameters && queryParameters.goalkeeping) {
-            path += `&goalkeeping_gte=${queryParameters.goalkeeping.min}&goalkeeping_lt=${queryParameters.goalkeeping.max}`;
-        };
-
-        if (queryParameters && queryParameters.offense) {
-            path += `&offside_trap_gte=${queryParameters.offense.min}&offside_trap_lt=${queryParameters.offense.max}`;
-        };
-
-        if (queryParameters && queryParameters.physique) {
-            path += `&physique_gte=${queryParameters.physique.min}&physique_lt=${queryParameters.physique.max}`;
-        };
-
-        if (queryParameters && queryParameters.quality) {
-            path += `&quality=${queryParameters.quality}`;
-        };
-
-        if (queryParameters && queryParameters.tactic) {
-            path += `&tactics_gte=${queryParameters.tactic.min}&tactics_lt=${queryParameters.tactic.max}`;
-        };
-
-        if (queryParameters && queryParameters.technique) {
-            path += `&technique_gte=${queryParameters.technique.min}&technique_lt=${queryParameters.technique.max}`;
-        };
+        const path = `${this.ROOT_PATH}?page=${selectedPage}&limit=${limit}${queryParametersPath}`;
 
         const response = await this.http.get(path);
 

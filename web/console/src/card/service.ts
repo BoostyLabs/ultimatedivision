@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { CardClient } from '@/api/cards';
-import { Card, CardsPage, CardsQueryParameters } from '@/card';
+import { Card, CardsPage, CardsQueryParametersField } from '@/card';
 
 /**
  * exposes all bandwidth related logic
@@ -15,9 +15,13 @@ export class CardService {
         this.card = card;
     };
 
+    /** Changes cards query parameters. */
+    public changeCardsQueryParameters(parameters: CardsQueryParametersField[]) {
+        this.card.changeCardsQueryParameters(parameters);
+    };
     /** gets list of cards by user */
-    public async list(selectedPage: number, queryParameters?: Partial<CardsQueryParameters>): Promise<CardsPage> {
-        return await this.card.list(selectedPage, queryParameters);
+    public async list(selectedPage: number): Promise<CardsPage> {
+        return await this.card.list(selectedPage);
     };
 
     /** gets card by id from list of cards */
