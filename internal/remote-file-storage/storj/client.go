@@ -6,11 +6,12 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
-	remote_file_storage "ultimatedivision/internal/remote-file-storage"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/internal/remote-file-storage"
 )
 
 // ensures that Client implements remote_file_storage.RemoteFileStorage.
