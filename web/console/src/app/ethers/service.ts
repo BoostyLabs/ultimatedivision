@@ -37,7 +37,7 @@ export class Service {
     public async signMessage() {
         const signer = await this.provider.getSigner();
         const adress = await signer.getAddress();
-        // message is mocked, will be receive from backend
+        // message is mocked, will be receiveв from backend
         const signedMessage = await signer.signMessage('hello');
     }
 
