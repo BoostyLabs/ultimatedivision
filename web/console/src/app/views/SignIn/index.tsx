@@ -10,6 +10,7 @@ import { UserDataArea } from '@components/common/UserDataArea';
 
 import facebook from '@static/img/registerPage/facebook_logo.svg';
 import google from '@static/img/registerPage/google_logo.svg';
+import metamask from '@static/img/registerPage/metamask.svg';
 import ultimate from '@static/img/registerPage/ultimate.svg';
 
 import { AuthRouteConfig, RouteConfig } from '@/app/routes';
@@ -151,6 +152,11 @@ const SignIn: React.FC = () => {
                                 src={facebook}
                                 alt="Facebook logo"
                                 className="register__sign-in__sign-form__logos__facebook"
+                            />
+                            <img
+                                src={metamask}
+                                alt="Metamask logo"
+                                className="register__sign-in__sign-form__logos__metamask"
                             />
                         </div>
                     </div>

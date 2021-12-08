@@ -158,8 +158,8 @@
                 width: 65%;
                 color: black;
                 border-radius: 5px;
-                margin-top: 20px;
                 margin-right: 20px;
+                margin-top: 0;
                 font-family: "BebasNeue", sans-serif;
                 font-weight: bold;
                 cursor: pointer;
@@ -211,24 +211,33 @@
             }
 
             &__forgot-password {
+                margin-top: 40px;
                 color: $signInMainTextColor;
                 text-decoration: none;
                 cursor: pointer;
             }
 
             &__auth-internal {
+                margin-top: 40px;
+                display: flex;
+                align-items: center;
                 color: $signInMainTextColor;
             }
 
             &__logos {
                 float: right;
-                margin-top: 20px;
+                display: flex;
+                align-items: center;
 
                 &__google,
-                &__facebook {
+                &__facebook
+                &__metamask {
                     vertical-align: middle;
                     margin-left: 15px;
-                    margin-top: 30px;
+                }
+                &__metamask {
+                    width: 24px;
+                    height: 24px;
                 }
             }
         }
@@ -245,9 +254,6 @@
         &__sign-form {
             margin-top: 10%;
 
-            &__confirm {
-                margin-top: 40px;
-            }
         }
     }
 }
