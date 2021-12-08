@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { ClubCardsArea } from '@components/Club/ClubCardsArea';
 import { FilterField } from '@components/common/FilterField';
@@ -13,7 +13,6 @@ import { listOfCards } from '@/app/store/actions/cards';
 import './index.scss';
 
 const Club: React.FC = () => {
-    const dispatch = useDispatch();
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
 
     return (
