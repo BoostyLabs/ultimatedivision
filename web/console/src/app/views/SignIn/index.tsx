@@ -1,9 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
+import MetaMaskOnboarding from '@metamask/onboarding';
 import { toast } from 'react-toastify';
 
 import { UserDataArea } from '@components/common/UserDataArea';
@@ -21,6 +22,8 @@ import { ServicePlugin } from '@/app/plugins/service';
 import './index.scss';
 
 const SignIn: React.FC = () => {
+    const onboarding = useRef<MetaMaskOnboarding>();
+    const service = ServicePlugin.create();
     const dispatch = useDispatch();
     const history = useHistory();
     /** controlled values for form inputs */
@@ -48,7 +51,7 @@ const SignIn: React.FC = () => {
         return isFormValid;
     };
     /** user data that will send to server */
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
@@ -88,6 +91,30 @@ const SignIn: React.FC = () => {
             validate: Validator.isPassword,
         },
     ];
+
+    useEffect(() => {
+        if (!onboarding.current) {
+            onboarding.current = new MetaMaskOnboarding();
+        }
+    }, []);
+
+    const metamaskLogin = async () => {
+        if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+            } catch (error: any) {
+                toast.error('Please open metamask manually!', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored'
+                });
+
+                return;
+            }
+        } else {
+            onboarding.current = new MetaMaskOnboarding();
+            onboarding.current?.startOnboarding();
+        }
+    }
 
     return (
         <div className="register">
@@ -157,6 +184,7 @@ const SignIn: React.FC = () => {
                                 src={metamask}
                                 alt="Metamask logo"
                                 className="register__sign-in__sign-form__logos__metamask"
+                                onClick={() => metamaskLogin()}
                             />
                         </div>
                     </div>

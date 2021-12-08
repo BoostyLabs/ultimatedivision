@@ -36,6 +36,7 @@
         }
     }
 
+
     &__sign-up,
     &__sign-in,
     &__reset,
@@ -167,7 +168,7 @@
             }
 
             &__checkbox-wrapper {
-                margin-top: 10px;
+                margin-top: 40px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -211,7 +212,6 @@
             }
 
             &__forgot-password {
-                margin-top: 40px;
                 color: $signInMainTextColor;
                 text-decoration: none;
                 cursor: pointer;
@@ -230,15 +230,23 @@
                 align-items: center;
 
                 &__google,
-                &__facebook
+                &__facebook,
                 &__metamask {
-                    vertical-align: middle;
                     margin-left: 15px;
+                    cursor: pointer;
                 }
                 &__metamask {
                     width: 24px;
                     height: 24px;
                 }
+            }
+        }
+    }
+
+    &__sign-up {
+        &__sign-form {
+            &__confirm {
+                margin-top: 40px;
             }
         }
     }
