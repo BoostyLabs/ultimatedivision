@@ -51,7 +51,7 @@ const SignIn: React.FC = () => {
         return isFormValid;
     };
     /** user data that will send to server */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
@@ -98,35 +98,32 @@ const SignIn: React.FC = () => {
         }
     }, []);
 
-    const metamaskLogin = async () => {
+    const metamaskLogin = async() => {
         /** Code which indicates that 'eth_requestAccounts' already processing */
         const METAMASK_RPC_ERROR_CODE = -32002;
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
-                //@ts-ignore
+                // @ts-ignore
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
-                await service.signMessage()
+                await service.signMessage();
             } catch (error: any) {
-                console.log(error);
-                if (error.code === METAMASK_RPC_ERROR_CODE) {
+                error.code === METAMASK_RPC_ERROR_CODE
+                    ?
                     toast.error('Please open metamask manually!', {
                         position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored'
-                    });
-                } else {
+                        theme: 'colored',
+                    })
+                    :
                     toast.error('Something went wrong', {
                         position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored'
+                        theme: 'colored',
                     });
-                }
-
-                return;
             }
         } else {
             onboarding.current = new MetaMaskOnboarding();
             onboarding.current?.startOnboarding();
         }
-    }
+    };
 
     return (
         <div className="register">
