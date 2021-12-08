@@ -31,6 +31,7 @@ import (
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
 	"ultimatedivision/seasons"
+	"ultimatedivision/udts"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -77,6 +78,9 @@ type DB interface {
 
 	// Seasons provides access to seasons db.
 	Seasons() seasons.DB
+
+	// UDTs provides access to udts db.
+	UDTs() udts.DB
 
 	// Close closes underlying db connection.
 	Close() error
