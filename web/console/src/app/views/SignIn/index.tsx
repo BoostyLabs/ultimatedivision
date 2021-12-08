@@ -99,14 +99,26 @@ const SignIn: React.FC = () => {
     }, []);
 
     const metamaskLogin = async () => {
+        /** Code which indicates that 'eth_requestAccounts' already processing */
+        const METAMASK_RPC_ERROR_CODE = -32002;
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
+                //@ts-ignore
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await service.signMessage()
             } catch (error: any) {
-                toast.error('Please open metamask manually!', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored'
-                });
+                console.log(error);
+                if (error.code === METAMASK_RPC_ERROR_CODE) {
+                    toast.error('Please open metamask manually!', {
+                        position: toast.POSITION.TOP_RIGHT,
+                        theme: 'colored'
+                    });
+                } else {
+                    toast.error('Something went wrong', {
+                        position: toast.POSITION.TOP_RIGHT,
+                        theme: 'colored'
+                    });
+                }
 
                 return;
             }
