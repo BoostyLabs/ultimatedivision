@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { FilterByWrapper } from '@/app/components/common/FilterField/FilterByWrapper';
+import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
 import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
 
@@ -46,7 +46,7 @@ export const FilterByPrice: React.FC = () => {
     };
 
     return (
-        <FilterByWrapper
+        <FilterByParameterWrapper
             showComponent={showFilterByPrice}
             isComponentShown={isFilterByPriceShown}
             title='Price'
@@ -71,6 +71,6 @@ export const FilterByPrice: React.FC = () => {
                 className="filter-item__dropdown-active__apply"
                 onClick={handleSubmit}
             />
-        </FilterByWrapper>
+        </FilterByParameterWrapper>
     );
 };

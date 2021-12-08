@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { FilterByWrapper } from '@/app/components/common/FilterField/FilterByWrapper';
+import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
 import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
 
@@ -82,7 +82,7 @@ export const FilterByVersion: React.FC = () => {
     };
 
     return (
-        <FilterByWrapper
+        <FilterByParameterWrapper
             showComponent={showFilterByVersion}
             isComponentShown={isFilterByVersionShown}
             title='Version'
@@ -141,6 +141,6 @@ export const FilterByVersion: React.FC = () => {
                 className="filter-item__dropdown-active__apply"
                 onClick={handleSubmit}
             />
-        </FilterByWrapper>
+        </FilterByParameterWrapper>
     );
 };

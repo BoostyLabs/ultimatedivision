@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { FilterByWrapper } from '@/app/components/common/FilterField/FilterByWrapper';
+import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 import { FilterFieldStatsArea, FilterFieldStatsAreaProps } from '@/app/components/common/FilterField/FilterFieldStatsArea';
 
 import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
@@ -190,7 +190,7 @@ export const FilterByStats: React.FC = () => {
     };
 
     return (
-        <FilterByWrapper
+        <FilterByParameterWrapper
             showComponent={showFilterByStats}
             isComponentShown={isFilterByStatsShown}
             title='Stats'
@@ -220,6 +220,6 @@ export const FilterByStats: React.FC = () => {
                     />
                 </div>
             </div>
-        </FilterByWrapper>
+        </FilterByParameterWrapper>
     );
 };
