@@ -306,6 +306,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // avatars setup
 		peer.Avatars.Service = avatars.NewService(
 			peer.Database.Avatars(),
+			peer.Log,
 			config.Avatars.Config,
 		)
 	}
@@ -502,12 +503,12 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
-	group.Go(func() error {
+	/*group.Go(func() error {
 		return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
 	})
 	group.Go(func() error {
 		return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
-	})
+	})*/
 
 	return group.Wait()
 }
