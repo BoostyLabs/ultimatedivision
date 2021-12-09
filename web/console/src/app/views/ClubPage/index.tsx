@@ -47,11 +47,14 @@ const Club: React.FC = () => {
     return (
         <section className="club">
             {isRegistrationRequired && <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />}
+            <h1 className="club__title">
+                MY CARDS
+            </h1>
             <FilterField />
             <ClubCardsArea />
             <Paginator
                 getCardsOnPage={listOfCards}
-                pagesCount={page.pageCount}
+                itemsCount={page.totalCount}
                 selectedPage={page.currentPage}
             />
         </section>
