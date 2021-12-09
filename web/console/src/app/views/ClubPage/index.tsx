@@ -31,7 +31,7 @@ const Club: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async (cardsQueryParameters: CardsQueryParametersField[]) => {
+    const submitSearch = async(cardsQueryParameters: CardsQueryParametersField[]) => {
         createCardsQueryParameters(cardsQueryParameters);
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
     };
@@ -42,7 +42,7 @@ const Club: React.FC = () => {
     };
 
     useEffect(() => {
-        (async () => {
+        (async() => {
             try {
                 await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
             } catch (error: any) {
