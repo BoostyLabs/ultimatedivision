@@ -6,7 +6,6 @@ package userauth
 import (
 	"context"
 	"crypto/subtle"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -458,11 +457,6 @@ func (service *Service) MetamaskLoginToken(ctx context.Context, loginMetamaskFie
 
 // verifyLoginMetamaskFields function that verifies the authenticity of the address.
 func verifyLoginMetamaskFields(loginMetamaskFields users.LoginMetamaskFields) (bool, error) {
-	message, err := json.Marshal(loginMetamaskFields.Message)
-	if err != nil {
-		return false, Error.Wrap(err)
-	}
-
 	fromAddr := common.HexToAddress(loginMetamaskFields.Address)
 	hash := hexutil.MustDecode(loginMetamaskFields.Hash)
 
@@ -471,7 +465,7 @@ func verifyLoginMetamaskFields(loginMetamaskFields users.LoginMetamaskFields) (b
 	}
 	hash[64] -= 27
 
-	pubKey, err := crypto.SigToPub(signHash(message), hash)
+	pubKey, err := crypto.SigToPub(signHash([]byte(loginMetamaskFields.Message)), hash)
 	if err != nil {
 		return false, Error.Wrap(err)
 	}

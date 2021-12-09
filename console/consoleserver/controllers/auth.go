@@ -364,7 +364,7 @@ func (auth *Auth) MetamaskLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !request.IsValid() {
-		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("did not fill in all the fields"))
 		return
 	}
 

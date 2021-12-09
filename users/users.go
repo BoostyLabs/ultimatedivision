@@ -116,6 +116,8 @@ func (lm LoginMetamaskFields) IsValid() bool {
 		return false
 	case lm.Message == "":
 		return false
+	case lm.Address == "":
+		return false
 	default:
 		return true
 	}
