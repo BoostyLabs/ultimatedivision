@@ -16,6 +16,7 @@ import { RouteConfig } from '@/app/routes';
 import { loginUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
 
+// TODO: it will be reworked on wrapper with children props.
 export const SignIn: React.FC<{
     showResetPasswordComponent: () => void;
     showSignUpComponent: () => void;
@@ -23,7 +24,7 @@ export const SignIn: React.FC<{
     const dispatch = useDispatch();
     const history = useHistory();
 
-    /** controlled values for form inputs */
+    /** Controlled values for form inputs */
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
     const [password, setPassword] = useState('');
@@ -33,7 +34,8 @@ export const SignIn: React.FC<{
 
     /** TODO: rework remember me implementation  */
     const handleIsRemember = () => setIsRemember(prev => !prev);
-    /** checks if values does't valid then set an error messages */
+
+    /** Checks if values does't valid. */
     const validateForm: () => boolean = () => {
         let isFormValid = true;
 
@@ -50,7 +52,7 @@ export const SignIn: React.FC<{
         return isFormValid;
     };
 
-    /** user data that will send to server */
+    /** Submits form values. */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -69,8 +71,8 @@ export const SignIn: React.FC<{
         };
     };
 
-    /** user datas for registration */
-    const signInDatas = [
+    /** Exposes form values. */
+    const formValues = [
         {
             value: email,
             placeHolder: 'E-mail',
@@ -107,25 +109,38 @@ export const SignIn: React.FC<{
                 className="register__sign-in__sign-form"
                 onSubmit={handleSubmit}
             >
-                {signInDatas.map((data, index) =>
+                {formValues.map((formValue, index) =>
                     <UserDataArea
                         key={index}
-                        value={data.value}
-                        placeHolder={data.placeHolder}
-                        onChange={data.onChange}
-                        className={data.className}
-                        type={data.type}
-                        error={data.error}
-                        clearError={data.clearError}
-                        validate={data.validate}
+                        value={formValue.value}
+                        placeHolder={formValue.placeHolder}
+                        onChange={formValue.onChange}
+                        className={formValue.className}
+                        type={formValue.type}
+                        error={formValue.error}
+                        clearError={formValue.clearError}
+                        validate={formValue.validate}
                     />
                 )}
-                <span
-                    onClick={showResetPasswordComponent}
-                    className="register__sign-in__sign-form__forgot-password"
-                >
-                    Forgot Password?
-                </span>
+                <div className="register__sign-in__sign-form__checkbox-wrapper">
+                    <input
+                        id="register-sign-in-checkbox"
+                        className="register__sign-in__sign-form__remember-me"
+                        type="checkbox"
+                    />
+                    <label
+                        className="register__sign-in__sign-form__remember-me__text"
+                        htmlFor="register-sign-in-checkbox"
+                    >
+                        Remember me
+                    </label>
+                    <span
+                        onClick={showResetPasswordComponent}
+                        className="register__sign-in__sign-form__forgot-password"
+                    >
+                        Forgot Password?
+                    </span>
+                </div>
                 <div className="register__sign-in__sign-form__auth-internal">
                     <input
                         className="register__sign-in__sign-form__confirm"

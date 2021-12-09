@@ -14,6 +14,7 @@ import closeButton from '@static/img/registerPage/close.svg';
 
 import './index.scss';
 
+// TODO: it will be reworked on wrapper with children props.
 export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }> = ({
     closeRegistrationPopup,
 }) => {

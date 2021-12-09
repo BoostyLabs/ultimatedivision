@@ -19,7 +19,9 @@ const Club: React.FC = () => {
     const dispatch = useDispatch();
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
 
+    /** Describes default page number. */
     const DEFAULT_PAGE_NUMBER: number = 1;
+
     /** Indicates if registration is required. */
     const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
 

@@ -13,27 +13,25 @@ import { BadRequestError } from '@/api';
 import { registerUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
 
+// TODO: it will be reworked on wrapper with children props.
 export const SignUp: React.FC<{ showSignUpComponent: () => void }> = ({
     showSignUpComponent,
 }) => {
     const dispatch = useDispatch();
-    /** controlled values for form inputs */
+
+    /** Controlled form values. */
     const [firstName, setFirstName] = useState('');
-    const [firstNameError, setFirstNameError]
-        = useState<SetStateAction<null | string>>(null);
+    const [firstNameError, setFirstNameError] = useState<SetStateAction<null | string>>(null);
     const [lastName, setLastName] = useState('');
-    const [lastNameError, setLastNameError]
-        = useState<SetStateAction<null | string>>(null);
+    const [lastNameError, setLastNameError] = useState<SetStateAction<null | string>>(null);
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError]
-        = useState<SetStateAction<null | string>>(null);
+    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
     const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError]
-        = useState<SetStateAction<null | string>>(null);
+    const [passwordError, setPasswordError] = useState<SetStateAction<null | string>>(null);
     const [nickName, setNickName] = useState('');
-    const [nickNameError, setNickNameError]
-        = useState<SetStateAction<null | string>>(null);
-    /** checks if values does't valid then set an error messages */
+    const [nickNameError, setNickNameError] = useState<SetStateAction<null | string>>(null);
+
+    /** Checks if values does't valid. */
     const validateForm: () => boolean = () => {
         let isFormValid = true;
 
@@ -65,6 +63,7 @@ export const SignUp: React.FC<{ showSignUpComponent: () => void }> = ({
         return isFormValid;
     };
 
+    /** Submits form values. */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -95,8 +94,8 @@ export const SignUp: React.FC<{ showSignUpComponent: () => void }> = ({
         };
     };
 
-    /** user datas for registration */
-    const signUpDatas = [
+    /** Exposes form values. */
+    const formValues = [
         {
             value: firstName,
             placeHolder: 'Name',
@@ -173,16 +172,16 @@ export const SignUp: React.FC<{ showSignUpComponent: () => void }> = ({
                     className="register__sign-in__sign-form"
                     onSubmit={handleSubmit}
                 >
-                    {signUpDatas.map((data, index) => <UserDataArea
+                    {formValues.map((formValue, index) => <UserDataArea
                         key={index}
-                        value={data.value}
-                        placeHolder={data.placeHolder}
-                        onChange={data.onChange}
-                        className={data.className}
-                        type={data.type}
-                        error={data.error}
-                        clearError={data.clearError}
-                        validate={data.validate}
+                        value={formValue.value}
+                        placeHolder={formValue.placeHolder}
+                        onChange={formValue.onChange}
+                        className={formValue.className}
+                        type={formValue.type}
+                        error={formValue.error}
+                        clearError={formValue.clearError}
+                        validate={formValue.validate}
                     />)}
                     <input
                         className="register__sign-up__sign-form__confirm"

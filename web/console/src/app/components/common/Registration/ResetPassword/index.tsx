@@ -13,14 +13,15 @@ import { UsersClient } from '@/api/users';
 import { UsersService } from '@/users/service';
 import { Validator } from '@/users/validation';
 
+// TODO: it will be reworked on wrapper with children props.
 export const ResetPassword: React.FC<{ showSignInComponent: () => void }> = ({
     showSignInComponent,
 }) => {
-    /** controlled values for form inputs */
+    /** Controlled values for form inputs */
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError]
-        = useState<SetStateAction<null | string>>(null);
-    /** checks if values does't valid then set an error messages */
+    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
+
+    /** Checks if values does't valid. */
     const validateForm: () => boolean = () => {
         let isFormValid = true;
 
@@ -34,7 +35,8 @@ export const ResetPassword: React.FC<{ showSignInComponent: () => void }> = ({
 
     const usersClient = new UsersClient();
     const usersService = new UsersService(usersClient);
-    /** submit changed password */
+
+    /** Submits form values. */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -55,19 +57,17 @@ export const ResetPassword: React.FC<{ showSignInComponent: () => void }> = ({
         };
     };
 
-    /** user datas for registration */
-    const resetPasswordDatas = [
-        {
-            value: email,
-            placeHolder: 'Enter your email',
-            onChange: setEmail,
-            className: 'register__reset__sign-form__email',
-            type: 'text',
-            error: emailError,
-            clearError: setEmailError,
-            validate: Validator.isEmail,
-        },
-    ];
+    /** Exposes form values that will sends. */
+    const formValue = {
+        value: email,
+        placeHolder: 'Enter your email',
+        onChange: setEmail,
+        className: 'register__reset__sign-form__email',
+        type: 'text',
+        error: emailError,
+        clearError: setEmailError,
+        validate: Validator.isEmail,
+    };
 
     return (
         <div className="register">
@@ -87,7 +87,7 @@ export const ResetPassword: React.FC<{ showSignInComponent: () => void }> = ({
                         alt="go back"
                     />
                     <span className="register__reset__go-back__title">
-                        GO BACK
+                    GO BACK
                     </span>
                 </div>
                 <h1 className="register__reset__title">Change your password</h1>
@@ -95,17 +95,7 @@ export const ResetPassword: React.FC<{ showSignInComponent: () => void }> = ({
                     className="register__reset__sign-form"
                     onSubmit={handleSubmit}
                 >
-                    {resetPasswordDatas.map((data, index) => <UserDataArea
-                        key={index}
-                        value={data.value}
-                        placeHolder={data.placeHolder}
-                        onChange={data.onChange}
-                        className={data.className}
-                        type={data.type}
-                        error={data.error}
-                        clearError={data.clearError}
-                        validate={data.validate}
-                    />)}
+                    <UserDataArea {...formValue} />
                     <input
                         className="register__reset__sign-form__confirm"
                         value="CHANGE PASSWORD"
