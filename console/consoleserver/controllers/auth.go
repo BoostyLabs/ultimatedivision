@@ -346,7 +346,7 @@ func (auth *Auth) SendMessageTokenForMetamask(w http.ResponseWriter, r *http.Req
 	}
 
 	if err = json.NewEncoder(w).Encode(messageToken); err != nil {
-		auth.log.Error("failed to write json response", ErrUsers.Wrap(err))
+		auth.log.Error("failed to write json response", AuthError.Wrap(err))
 		return
 	}
 }

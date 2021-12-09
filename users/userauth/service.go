@@ -6,7 +6,6 @@ package userauth
 import (
 	"context"
 	"crypto/subtle"
-	"fmt"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -79,7 +78,7 @@ func (service *Service) Token(ctx context.Context, email string, password string
 	claims := auth.Claims{
 		UserID:    user.ID,
 		Email:     user.Email,
-		ExpiresAt: time.Now().Add(TokenExpirationTime),
+		ExpiresAt: time.Now().UTC().Add(TokenExpirationTime),
 	}
 
 	token, err = service.signer.CreateToken(ctx, &claims)
@@ -114,7 +113,7 @@ func (service *Service) LoginToken(ctx context.Context, email string, password s
 	claims := auth.Claims{
 		UserID:    user.ID,
 		Email:     user.Email,
-		ExpiresAt: time.Now().Add(TokenExpirationTime),
+		ExpiresAt: time.Now().UTC().Add(TokenExpirationTime),
 	}
 
 	token, err = service.signer.CreateToken(ctx, &claims)
@@ -135,7 +134,7 @@ func (service *Service) PreAuthToken(ctx context.Context, email string) (token s
 	claims := auth.Claims{
 		UserID:    user.ID,
 		Email:     user.Email,
-		ExpiresAt: time.Now().Add(PreAuthTokenExpirationTime),
+		ExpiresAt: time.Now().UTC().Add(PreAuthTokenExpirationTime),
 	}
 
 	token, err = service.signer.CreateToken(ctx, &claims)
@@ -190,7 +189,7 @@ func (service *Service) authenticate(token auth.Token) (_ *auth.Claims, err erro
 // authorize checks claims and returns authorized User.
 func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err error) {
 	if !claims.ExpiresAt.IsZero() && claims.ExpiresAt.Before(time.Now()) {
-		return ErrUnauthenticated.Wrap(err)
+		return ErrUnauthenticated.New("token expiration time has expired")
 	}
 
 	user, err := service.users.GetByEmail(ctx, claims.Email)
@@ -276,7 +275,7 @@ func (service *Service) ConfirmUserEmail(ctx context.Context, activationToken st
 	}
 
 	if !claims.ExpiresAt.IsZero() && claims.ExpiresAt.Before(time.Now()) {
-		return ErrUnauthenticated.Wrap(err)
+		return ErrUnauthenticated.New("token expiration time has expired")
 	}
 
 	user, err := service.users.GetByEmail(ctx, claims.Email)
@@ -360,7 +359,7 @@ func (service *Service) CheckAuthToken(ctx context.Context, tokenStr string) err
 	}
 
 	if !claims.ExpiresAt.IsZero() && claims.ExpiresAt.Before(time.Now()) {
-		return ErrUnauthenticated.Wrap(err)
+		return ErrUnauthenticated.New("token expiration time has expired")
 	}
 
 	_, err = service.users.GetByEmail(ctx, claims.Email)
@@ -395,18 +394,14 @@ func (service *Service) ResetPassword(ctx context.Context, newPassword string) e
 // MessageToken creates message token and send to metamask for login.
 func (service *Service) MessageToken(ctx context.Context) (token string, err error) {
 	claims := auth.Claims{
-		ExpiresAt: time.Now().Add(PreAuthTokenExpirationTime),
+		ExpiresAt: time.Now().UTC().Add(PreAuthTokenExpirationTime),
 	}
 
 	token, err = service.signer.CreateToken(ctx, &claims)
-	if err != nil {
-		return "", Error.Wrap(err)
-	}
-
-	return token, nil
+	return token, Error.Wrap(err)
 }
 
-// CheckMetamaskTokenMessage - parse token-message and and check for expiration time.
+// CheckMetamaskTokenMessage - parses token-message and checks for expiration time.
 func (service *Service) CheckMetamaskTokenMessage(ctx context.Context, messageToken string) error {
 	token, err := auth.FromBase64URLString(messageToken)
 	if err != nil {
@@ -419,7 +414,7 @@ func (service *Service) CheckMetamaskTokenMessage(ctx context.Context, messageTo
 	}
 
 	if !claims.ExpiresAt.IsZero() && claims.ExpiresAt.Before(time.Now()) {
-		return ErrUnauthenticated.Wrap(err)
+		return ErrUnauthenticated.New("token expiration time has expired")
 	}
 
 	return Error.Wrap(err)
@@ -446,28 +441,24 @@ func (service *Service) MetamaskLoginToken(ctx context.Context, loginMetamaskFie
 	claims := auth.Claims{
 		UserID:    user.ID,
 		Email:     user.Email,
-		ExpiresAt: time.Now().Add(TokenExpirationTime),
+		ExpiresAt: time.Now().UTC().Add(TokenExpirationTime),
 	}
 
 	token, err = service.signer.CreateToken(ctx, &claims)
-	if err != nil {
-		return "", Error.Wrap(err)
-	}
-
-	return token, nil
+	return token, Error.Wrap(err)
 }
 
 // verifyLoginMetamaskFields function that verifies the authenticity of the address.
 func verifyLoginMetamaskFields(loginMetamaskFields users.LoginMetamaskFields) (bool, error) {
-	fromAddr := common.HexToAddress(loginMetamaskFields.Address)
+	fromAddr := common.HexToAddress(string(loginMetamaskFields.Address))
 	hash := hexutil.MustDecode(loginMetamaskFields.Hash)
 
 	if hash[64] != 27 && hash[64] != 28 {
-		return false, Error.New("")
+		return false, Error.New("hash is wrong")
 	}
 	hash[64] -= 27
 
-	pubKey, err := crypto.SigToPub(signHash([]byte(loginMetamaskFields.Message)), hash)
+	pubKey, err := crypto.SigToPub(cryptoutils.SignHash([]byte(loginMetamaskFields.Message)), hash)
 	if err != nil {
 		return false, Error.Wrap(err)
 	}
@@ -475,10 +466,4 @@ func verifyLoginMetamaskFields(loginMetamaskFields users.LoginMetamaskFields) (b
 	recoveredAddr := crypto.PubkeyToAddress(*pubKey)
 
 	return fromAddr == recoveredAddr, nil
-}
-
-// signHash is a function that calculates a hash for the given message.
-func signHash(data []byte) []byte {
-	msg := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(data), data)
-	return crypto.Keccak256([]byte(msg))
 }

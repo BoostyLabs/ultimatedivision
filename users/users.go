@@ -105,9 +105,9 @@ type Password struct {
 
 // LoginMetamaskFields for login user from metamask.
 type LoginMetamaskFields struct {
-	Message string `json:"message"`
-	Hash    string `json:"hash"`
-	Address string `json:"address"`
+	Message string              `json:"message"`
+	Hash    string              `json:"hash"`
+	Address cryptoutils.Address `json:"address"`
 }
 
 // IsValid for check login user from metamask fields.
