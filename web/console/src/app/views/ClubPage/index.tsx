@@ -44,12 +44,9 @@ const Club: React.FC = () => {
         })();
     }, []);
 
-    if (isRegistrationRequired) {
-        return <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />;
-    };
-
     return (
         <section className="club">
+            {isRegistrationRequired && <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />}
             <FilterField />
             <ClubCardsArea />
             <Paginator

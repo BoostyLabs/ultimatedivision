@@ -79,24 +79,23 @@ const FootballField: React.FC = () => {
         }
     };
 
-    if (isRegistrationRequired) {
-        return <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />;
-    };
-
     return (
-        <div className="football-field"
-            onDrop={e => drop(e)}
-            onDragOver={e => dragOverHandler(e)}
-        >
-            <h1 className="football-field__title">Football Field</h1>
-            <FieldPlayingArea />
-            <div
-                style={{ height: cardSelectionVisibility ? 'unset' : '0' }}
-                className="football-field__wrapper"
+        <>
+            {isRegistrationRequired && <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />}
+            <div className="football-field"
+                onDrop={e => drop(e)}
+                onDragOver={e => dragOverHandler(e)}
             >
-                <FieldCardSelection />
+                <h1 className="football-field__title">Football Field</h1>
+                <FieldPlayingArea />
+                <div
+                    style={{ height: cardSelectionVisibility ? 'unset' : '0' }}
+                    className="football-field__wrapper"
+                >
+                    <FieldCardSelection />
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
