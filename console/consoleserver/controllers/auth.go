@@ -327,3 +327,68 @@ func (auth *Auth) serveError(w http.ResponseWriter, status int, err error) {
 		auth.log.Error("failed to write json error response", AuthError.Wrap(err))
 	}
 }
+
+// SendMessageTokenForMetamask is an endpoint to send message to metamask for login.
+func (auth *Auth) SendMessageTokenForMetamask(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	messageToken, err := auth.userAuth.MessageToken(ctx)
+	if err != nil {
+		auth.log.Error("could not get message token", AuthError.Wrap(err))
+		auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(messageToken); err != nil {
+		auth.log.Error("failed to write json response", ErrUsers.Wrap(err))
+		return
+	}
+}
+
+// MetamaskLogin is an endpoint to authorize user from metamask and set auth cookie in browser.
+func (auth *Auth) MetamaskLogin(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	var err error
+	var request users.LoginMetamaskFields
+	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		return
+	}
+
+	if !request.IsValid() {
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		return
+	}
+
+	err = auth.userAuth.CheckMetamaskTokenMessage(ctx, request.Message)
+	if err != nil {
+		auth.log.Error("could not get auth token", AuthError.Wrap(err))
+		switch {
+		case userauth.ErrUnauthenticated.Has(err):
+			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
+		default:
+			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
+		}
+		return
+	}
+
+	authToken, err := auth.userAuth.MetamaskLoginToken(ctx, request)
+	if err != nil {
+		auth.log.Error("could not get auth token", AuthError.Wrap(err))
+		switch {
+		case users.ErrNoUser.Has(err):
+			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
+			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
+		default:
+			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
+		}
+
+		return
+	}
+
+	auth.cookie.SetTokenCookie(w, authToken)
+}

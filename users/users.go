@@ -102,6 +102,25 @@ type Password struct {
 	NewPassword string `json:"newPassword"`
 }
 
+// LoginMetamaskFields for login user from metamask.
+type LoginMetamaskFields struct {
+	Message string `json:"message"`
+	Hash    string `json:"hash"`
+	Address string `json:"address"`
+}
+
+// IsValid for check login user from metamask fields.
+func (lm LoginMetamaskFields) IsValid() bool {
+	switch {
+	case lm.Hash == "":
+		return false
+	case lm.Message == "":
+		return false
+	default:
+		return true
+	}
+}
+
 // IsPasswordValid check the password for all conditions.
 func IsPasswordValid(s string) bool {
 	var number, upper, special bool

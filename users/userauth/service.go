@@ -6,8 +6,13 @@ package userauth
 import (
 	"context"
 	"crypto/subtle"
+	"encoding/json"
+	"fmt"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 	"golang.org/x/crypto/bcrypt"
@@ -15,6 +20,7 @@ import (
 	"ultimatedivision/console/emails"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/auth"
+	"ultimatedivision/pkg/cryptoutils"
 	"ultimatedivision/users"
 )
 
@@ -383,4 +389,100 @@ func (service *Service) ResetPassword(ctx context.Context, newPassword string) e
 	}
 
 	return Error.Wrap(service.users.UpdatePassword(ctx, user.PasswordHash, user.ID))
+}
+
+// MessageToken creates message token and send to metamask for login.
+func (service *Service) MessageToken(ctx context.Context) (token string, err error) {
+	claims := auth.Claims{
+		ExpiresAt: time.Now().Add(PreAuthTokenExpirationTime),
+	}
+
+	token, err = service.signer.CreateToken(ctx, &claims)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	return token, nil
+}
+
+// CheckMetamaskTokenMessage - parse token-message and and check for expiration time.
+func (service *Service) CheckMetamaskTokenMessage(ctx context.Context, messageToken string) error {
+	token, err := auth.FromBase64URLString(messageToken)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	claims, err := service.authenticate(token)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	if !claims.ExpiresAt.IsZero() && claims.ExpiresAt.Before(time.Now()) {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	return Error.Wrap(err)
+}
+
+// MetamaskLoginToken authenticates user by credentials and returns login token.
+func (service *Service) MetamaskLoginToken(ctx context.Context, loginMetamaskFields users.LoginMetamaskFields) (token string, err error) {
+	verifyLoginMetamaskFields, err := verifyLoginMetamaskFields(loginMetamaskFields)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	if !verifyLoginMetamaskFields {
+		return "", Error.New("login metamask fields are wrong")
+	}
+
+	address := cryptoutils.Address(loginMetamaskFields.Address)
+
+	user, err := service.users.GetByWalletAddress(ctx, address)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	claims := auth.Claims{
+		UserID:    user.ID,
+		Email:     user.Email,
+		ExpiresAt: time.Now().Add(TokenExpirationTime),
+	}
+
+	token, err = service.signer.CreateToken(ctx, &claims)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	return token, nil
+}
+
+// verifyLoginMetamaskFields function that verifies the authenticity of the address.
+func verifyLoginMetamaskFields(loginMetamaskFields users.LoginMetamaskFields) (bool, error) {
+	message, err := json.Marshal(loginMetamaskFields.Message)
+	if err != nil {
+		return false, Error.Wrap(err)
+	}
+
+	fromAddr := common.HexToAddress(loginMetamaskFields.Address)
+	hash := hexutil.MustDecode(loginMetamaskFields.Hash)
+
+	if hash[64] != 27 && hash[64] != 28 {
+		return false, Error.New("")
+	}
+	hash[64] -= 27
+
+	pubKey, err := crypto.SigToPub(signHash(message), hash)
+	if err != nil {
+		return false, Error.Wrap(err)
+	}
+
+	recoveredAddr := crypto.PubkeyToAddress(*pubKey)
+
+	return fromAddr == recoveredAddr, nil
+}
+
+// signHash is a function that calculates a hash for the given message.
+func signHash(data []byte) []byte {
+	msg := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(data), data)
+	return crypto.Keccak256([]byte(msg))
 }
