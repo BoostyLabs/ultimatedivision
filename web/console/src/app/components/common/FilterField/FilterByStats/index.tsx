@@ -6,11 +6,10 @@ import { useState } from 'react';
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 import { FilterFieldStatsArea, FilterFieldStatsAreaProps } from '@/app/components/common/FilterField/FilterFieldStatsArea';
 
-import { CardsQueryParametersField } from '@/card';
-import { LotsQueryParametersField } from '@/marketplace';
+import { QueryParametersField } from '@/card';
 
 // TODO: rework functionality.
-export const FilterByStats: React.FC<{submitSearch: (queryParameters: CardsQueryParametersField[] | LotsQueryParametersField[]) => void}> = ({ submitSearch }) => {
+export const FilterByStats: React.FC<{submitSearch: (queryParameters: QueryParametersField[]) => void}> = ({ submitSearch }) => {
     /** Indicates if FilterByStats component shown. */
     const [isFilterByStatsShown, setIsFilterByStatsShown] = useState(false);
 

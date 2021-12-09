@@ -3,16 +3,17 @@
 
 import { APIClient } from '@/api/index';
 import { CreatedLot } from '@/app/types/marketplace';
-import { Lot, LotsQueryParameters, LotsQueryParametersField, MarketPlacePage } from '@/marketplace';
+import { QueryParameters, QueryParametersField } from '@/card';
+import { Lot, MarketPlacePage } from '@/marketplace';
 
 /** client for marketplace of api */
 export class MarketplaceClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/marketplace';
 
-    private queryParameters: LotsQueryParameters = new LotsQueryParameters();
+    private queryParameters: QueryParameters = new QueryParameters();
 
     /** Changes queryParameters object. */
-    public changeLotsQueryParameters(queryParameters: LotsQueryParametersField[]) {
+    public changeLotsQueryParameters(queryParameters: QueryParametersField[]) {
         queryParameters.forEach(queryParameter => {
             for (const queryProperty in queryParameter) {
                 if (queryParameter) {

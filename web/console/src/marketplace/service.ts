@@ -2,7 +2,8 @@
 // See LICENSE for copying information.
 
 import { MarketplaceClient } from '@/api/marketplace';
-import { Lot, LotsQueryParametersField, MarketPlacePage } from '@/marketplace';
+import { QueryParametersField } from '@/card';
+import { Lot, MarketPlacePage } from '@/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
 
 /**
@@ -17,7 +18,7 @@ export class Marketplaces {
     };
 
     /** Changes lots query parameters. */
-    public changeLotsQueryParameters(queryParameters: LotsQueryParametersField[]) {
+    public changeLotsQueryParameters(queryParameters: QueryParametersField[]) {
         this.marketplace.changeLotsQueryParameters(queryParameters);
     };
 

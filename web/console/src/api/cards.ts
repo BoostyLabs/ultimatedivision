@@ -2,16 +2,16 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '@/api/index';
-import { Card, CardsPage, CardsQueryParameters, CardsQueryParametersField } from '@/card';
+import { Card, CardsPage, QueryParameters, QueryParametersField } from '@/card';
 
 /** CardClient base implementation */
 export class CardsClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/cards';
 
-    private queryParameters: CardsQueryParameters = new CardsQueryParameters();
+    private queryParameters: QueryParameters = new QueryParameters();
 
     /** Changes queryParameters object. */
-    public changeCardsQueryParameters(queryParameters: CardsQueryParametersField[]) {
+    public changeCardsQueryParameters(queryParameters: QueryParametersField[]) {
         queryParameters.forEach(queryParameter => {
             for (const queryProperty in queryParameter) {
                 if (queryParameter) {
