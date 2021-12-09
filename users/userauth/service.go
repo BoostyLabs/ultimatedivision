@@ -431,9 +431,7 @@ func (service *Service) MetamaskLoginToken(ctx context.Context, loginMetamaskFie
 		return "", Error.New("login metamask fields are wrong")
 	}
 
-	address := cryptoutils.Address(loginMetamaskFields.Address)
-
-	user, err := service.users.GetByWalletAddress(ctx, address)
+	user, err := service.users.GetByWalletAddress(ctx, loginMetamaskFields.Address)
 	if err != nil {
 		return "", Error.Wrap(err)
 	}
