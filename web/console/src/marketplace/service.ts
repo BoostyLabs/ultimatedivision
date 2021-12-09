@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { MarketplaceClient } from '@/api/marketplace';
-import { Lot, MarketPlacePage } from '@/marketplace';
+import { Lot, LotsQueryParametersField, MarketPlacePage } from '@/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
 
 /**
@@ -14,6 +14,11 @@ export class Marketplaces {
     /** default marketplaceClient implementation */
     public constructor(marketplace: MarketplaceClient) {
         this.marketplace = marketplace;
+    };
+
+    /** Changes cards query parameters. */
+    public changeCardsQueryParameters(queryParameters: LotsQueryParametersField[]) {
+        this.marketplace.changeCardsQueryParameters(queryParameters);
     };
 
     /** returns marketplace domain entity with list of lots */

@@ -6,7 +6,7 @@ import { Dispatch } from 'redux';
 import { MarketplaceClient } from '@/api/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
 import { Card } from '@/card';
-import { MarketPlacePage } from '@/marketplace';
+import { LotsQueryParametersField, MarketPlacePage } from '@/marketplace';
 import { Marketplaces } from '@/marketplace/service';
 
 export const GET_SELLING_CARDS = ' GET_SELLING_CARDS';
@@ -23,8 +23,14 @@ const marketplaceCard = (card: Card) => ({
 
 const marketplaceClient = new MarketplaceClient();
 const marketplaces = new Marketplaces(marketplaceClient);
+
+/** Creates lots query parameters and sets them to marketplace service. */
+export const createLotsQueryParameters = (queryParameters: LotsQueryParametersField[]) => {
+    marketplaces.changeCardsQueryParameters(queryParameters);
+};
+
 /** thunk for creating user cards list */
-export const listOfLots = (selectedPage: number) => async function(dispatch: Dispatch) {
+export const listOfLots = (selectedPage: number) => async function (dispatch: Dispatch) {
     const marketplace = await marketplaces.list(selectedPage);
     const lots = marketplace.lots;
     const page = marketplace.page;
@@ -32,12 +38,12 @@ export const listOfLots = (selectedPage: number) => async function(dispatch: Dis
     dispatch(getLots({ lots, page }));
 };
 
-export const createLot = (lot: CreatedLot) => async function(dispatch: Dispatch) {
+export const createLot = (lot: CreatedLot) => async function (dispatch: Dispatch) {
     await marketplaces.createLot(lot);
 };
 
 /** thunk for opening fotballerCardPage with reload possibility */
-export const openMarketplaceCard = (id: string) => async function(dispatch: Dispatch) {
+export const openMarketplaceCard = (id: string) => async function (dispatch: Dispatch) {
     const lot = await marketplaces.getLotById(id);
 
     dispatch(marketplaceCard(lot.card));
