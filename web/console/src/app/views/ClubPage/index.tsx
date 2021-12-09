@@ -1,6 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import {useState, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ClubCardsArea } from '@components/Club/ClubCardsArea';
@@ -10,7 +11,9 @@ import { FilterByStats } from '@components/common/FilterField/FilterByStats';
 import { FilterByStatus } from '@components/common/FilterField/FilterByStatus';
 import { FilterByVersion } from '@components/common/FilterField/FilterByVersion';
 import { Paginator } from '@components/common/Paginator';
+import { RegistrationPopup } from '@/app/components/common/Registration/Registration';
 
+import { UnauthorizedError } from '@/api';
 import { RootState } from '@/app/store';
 import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
 import { CardsQueryParametersField } from '@/card';
@@ -20,18 +23,44 @@ import './index.scss';
 const Club: React.FC = () => {
     /** Exposes default page number. */
     const DEFAULT_PAGE_INDEX: number = 1;
-
-    const dispatch = useDispatch();
-
+    
+    /** Submits searchs  */
     const submitSearch = async(cardsQueryParameters: CardsQueryParametersField[]) => {
         createCardsQueryParameters(cardsQueryParameters);
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
     };
 
+    const dispatch = useDispatch();
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
+
+    /** Describes default page number. */
+    const DEFAULT_PAGE_NUMBER: number = 1;
+
+    /** Indicates if registration is required. */
+    const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
+
+    /** Closes RegistrationPopup componnet. */
+    const closeRegistrationPopup = () => {
+        setIsRegistrationRequired(false);
+    };
+
+    useEffect(() => {
+        (async() => {
+            try {
+                await dispatch(listOfCards(DEFAULT_PAGE_NUMBER));
+            } catch (error: any) {
+                if (error instanceof UnauthorizedError) {
+                    setIsRegistrationRequired(true);
+
+                    return;
+                };
+            };
+        })();
+    }, []);
 
     return (
         <section className="club">
+            {isRegistrationRequired && <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />}
             <h1 className="club__title">
                 MY CARDS
             </h1>
