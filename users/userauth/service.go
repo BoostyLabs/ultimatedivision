@@ -209,7 +209,7 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 	return nil
 }
 
-// Register - register a new user.
+// Register - registers a new user.
 func (service *Service) Register(ctx context.Context, email, password, nickName, firstName, lastName string, wallet cryptoutils.Address) error {
 	// check if the user email address already exists.
 	_, err := service.users.GetByEmail(ctx, email)
@@ -391,8 +391,8 @@ func (service *Service) ResetPassword(ctx context.Context, newPassword string) e
 	return Error.Wrap(service.users.UpdatePassword(ctx, user.PasswordHash, user.ID))
 }
 
-// MessageToken creates message token and send to metamask for login.
-func (service *Service) MessageToken(ctx context.Context) (token string, err error) {
+// TokenMessage creates message token and send to metamask for login.
+func (service *Service) TokenMessage(ctx context.Context) (token string, err error) {
 	claims := auth.Claims{
 		ExpiresAt: time.Now().UTC().Add(PreAuthTokenExpirationTime),
 	}
@@ -402,8 +402,8 @@ func (service *Service) MessageToken(ctx context.Context) (token string, err err
 }
 
 // CheckMetamaskTokenMessage - parses token-message and checks for expiration time.
-func (service *Service) CheckMetamaskTokenMessage(ctx context.Context, messageToken string) error {
-	token, err := auth.FromBase64URLString(messageToken)
+func (service *Service) CheckMetamaskTokenMessage(ctx context.Context, tokenMessage string) error {
+	token, err := auth.FromBase64URLString(tokenMessage)
 	if err != nil {
 		return Error.Wrap(err)
 	}
@@ -420,8 +420,8 @@ func (service *Service) CheckMetamaskTokenMessage(ctx context.Context, messageTo
 	return Error.Wrap(err)
 }
 
-// MetamaskLoginToken authenticates user by credentials and returns login token.
-func (service *Service) MetamaskLoginToken(ctx context.Context, loginMetamaskFields users.LoginMetamaskFields) (token string, err error) {
+// LoginWithMetamask authenticates user by credentials and returns login token.
+func (service *Service) LoginWithMetamask(ctx context.Context, loginMetamaskFields users.LoginMetamaskFields) (token string, err error) {
 	verifyLoginMetamaskFields, err := verifyLoginMetamaskFields(loginMetamaskFields)
 	if err != nil {
 		return "", Error.Wrap(err)
