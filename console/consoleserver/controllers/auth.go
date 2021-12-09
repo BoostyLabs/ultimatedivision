@@ -65,7 +65,7 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.userAuth.Register(ctx, request.Email, request.Password, request.NickName, request.FirstName, request.LastName)
+	err = auth.userAuth.Register(ctx, request.Email, request.Password, request.NickName, request.FirstName, request.LastName, request.Wallet)
 	if err != nil {
 		switch {
 		case userauth.ErrAddressAlreadyInUse.Has(err):

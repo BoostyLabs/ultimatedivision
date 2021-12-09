@@ -211,7 +211,7 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 }
 
 // Register - register a new user.
-func (service *Service) Register(ctx context.Context, email, password, nickName, firstName, lastName string) error {
+func (service *Service) Register(ctx context.Context, email, password, nickName, firstName, lastName string, wallet cryptoutils.Address) error {
 	// check if the user email address already exists.
 	_, err := service.users.GetByEmail(ctx, email)
 	if err == nil {
@@ -233,6 +233,8 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 		LastLogin:    time.Time{},
 		Status:       users.StatusCreated,
 		CreatedAt:    time.Now().UTC(),
+		// @TODO at the time of testing login through metamask.
+		Wallet: wallet,
 	}
 
 	err = user.EncodePass()
