@@ -7,13 +7,12 @@ import { useDispatch } from 'react-redux';
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 import { FilterFieldStatsArea, FilterFieldStatsAreaProps } from '@/app/components/common/FilterField/FilterFieldStatsArea';
 
-import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
+import { CardsQueryParametersField } from '@/card';
 
-export const FilterByStats: React.FC = () => {
+// TODO: rework functionality.
+export const FilterByStats: React.FC<{submitSearch: (cardsQueryParameters: CardsQueryParametersField[]) => void}> = ({ submitSearch }) => {
     /** Indicates if FilterByStats component shown. */
     const [isFilterByStatsShown, setIsFilterByStatsShown] = useState(false);
-
-    const dispatch = useDispatch();
 
     /** Shows and closes FilterByStats component. */
     const showFilterByStats = () => {
@@ -123,7 +122,7 @@ export const FilterByStats: React.FC = () => {
         {
             label: 'TEC',
             minValue: techniqueMin,
-            maxValue: techniqueMin,
+            maxValue: techniqueMax,
             changeMinValue: changeTechniqueMin,
             changeMaxValue: changeTechniqueMax,
         },
@@ -150,12 +149,9 @@ export const FilterByStats: React.FC = () => {
         },
     ];
 
-    /** Exposes default page number. */
-    const DEFAULT_PAGE_INDEX: number = 1;
-
     /** Submits query parameters by stats. */
-    const handleSubmit = async () => {
-        createCardsQueryParameters([
+    const handleSubmit = async() => {
+        await submitSearch([
             { 'defence_gte': defenceMin },
             { 'defence_lt': defenceMax },
             { 'goalkeeping_gte': goalkeepingMin },
@@ -169,7 +165,6 @@ export const FilterByStats: React.FC = () => {
             { 'technique_gte': techniqueMin },
             { 'technique_lt': techniqueMax },
         ]);
-        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
         showFilterByStats();
     };
 
@@ -184,7 +179,7 @@ export const FilterByStats: React.FC = () => {
         setPhysiqueMin('');
         setPhysiqueMax('');
         setTacticsMin('');
-        setTacticsMin('');
+        setTacticsMax('');
         setTechniqueMin('');
         setTechniqueMax('');
     };
@@ -193,7 +188,7 @@ export const FilterByStats: React.FC = () => {
         <FilterByParameterWrapper
             showComponent={showFilterByStats}
             isComponentShown={isFilterByStatsShown}
-            title='Stats'
+            title="Stats"
         >
             <div className="filter-item__dropdown-active__stats__wrapper">
                 {stats.map((stat: FilterFieldStatsAreaProps) => <FilterFieldStatsArea

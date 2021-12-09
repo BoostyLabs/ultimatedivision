@@ -6,9 +6,10 @@ import { useDispatch } from 'react-redux';
 
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
-import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
+import { CardsQueryParametersField } from '@/card';
 
-export const FilterByVersion: React.FC = () => {
+// TODO: rework functionality.
+export const FilterByVersion: React.FC<{ submitSearch: (cardsQueryParameters: CardsQueryParametersField[]) => void }> = ({ submitSearch }) => {
     /** Indicates if FilterByVersion component shown. */
     const [isFilterByVersionShown, setIsFilterByVersionShown] = useState(false);
 
@@ -75,9 +76,8 @@ export const FilterByVersion: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits query parameters by quality. */
-    const handleSubmit = async () => {
-        createCardsQueryParameters([{ quality: changeQuality() }]);
-        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+    const handleSubmit = async() => {
+        await submitSearch([{ quality: changeQuality() }]);
         showFilterByVersion();
     };
 
@@ -85,7 +85,7 @@ export const FilterByVersion: React.FC = () => {
         <FilterByParameterWrapper
             showComponent={showFilterByVersion}
             isComponentShown={isFilterByVersionShown}
-            title='Version'
+            title="Version"
         >
             <input
                 id="division-checkbox-wood"

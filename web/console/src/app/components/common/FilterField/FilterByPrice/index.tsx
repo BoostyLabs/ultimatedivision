@@ -6,8 +6,9 @@ import { useDispatch } from 'react-redux';
 
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
-import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
+import { listOfCards } from '@/app/store/actions/cards';
 
+// TODO: rework functionality.
 export const FilterByPrice: React.FC = () => {
     /** Indicates if FilterByPrice component shown. */
     const [isFilterByPriceShown, setIsFilterByPriceShown] = useState(false);
@@ -39,8 +40,7 @@ export const FilterByPrice: React.FC = () => {
 
     /** TODO: it is not added yet to query parameters on back-end. */
     /** Submits query parameters by status. */
-    const handleSubmit = async () => {
-        createCardsQueryParameters([{ 'price_gte': minPrice }, { 'price_lt': maxPrice }]);
+    const handleSubmit = async() => {
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
         showFilterByPrice();
     };
@@ -49,7 +49,7 @@ export const FilterByPrice: React.FC = () => {
         <FilterByParameterWrapper
             showComponent={showFilterByPrice}
             isComponentShown={isFilterByPriceShown}
-            title='Price'
+            title="Price"
         >
             <div className="filter-item__dropdown-active__wrapper">
                 <input
