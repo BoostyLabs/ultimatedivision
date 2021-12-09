@@ -5,10 +5,10 @@ import { useState } from 'react';
 
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
-import { QueryParametersField } from '@/card';
+import { CardsQueryParametersField } from '@/card';
 
 // TODO: rework functionality.
-export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: QueryParametersField[]) => void }> = ({ submitSearch }) => {
+export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: CardsQueryParametersField[]) => void }> = ({ submitSearch }) => {
     /** Indicates if FilterByVersion component shown. */
     const [isFilterByVersionShown, setIsFilterByVersionShown] = useState(false);
 

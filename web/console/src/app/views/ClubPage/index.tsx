@@ -16,7 +16,7 @@ import { RegistrationPopup } from '@/app/components/common/Registration/Registra
 import { UnauthorizedError } from '@/api';
 import { RootState } from '@/app/store';
 import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
-import { QueryParametersField } from '@/card';
+import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
 
@@ -31,7 +31,7 @@ const Club: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async(queryParameters: QueryParametersField[]) => {
+    const submitSearch = async(queryParameters: CardsQueryParametersField[]) => {
         createCardsQueryParameters(queryParameters);
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
     };

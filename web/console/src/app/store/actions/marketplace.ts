@@ -5,7 +5,7 @@ import { Dispatch } from 'redux';
 
 import { MarketplaceClient } from '@/api/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
-import { Card, QueryParametersField } from '@/card';
+import { Card, CardsQueryParametersField } from '@/card';
 import { MarketPlacePage } from '@/marketplace';
 import { Marketplaces } from '@/marketplace/service';
 
@@ -25,7 +25,7 @@ const marketplaceClient = new MarketplaceClient();
 const marketplaces = new Marketplaces(marketplaceClient);
 
 /** Creates lots query parameters and sets them to marketplace service. */
-export const createLotsQueryParameters = (queryParameters: QueryParametersField[]) => {
+export const createLotsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
     marketplaces.changeLotsQueryParameters(queryParameters);
 };
 

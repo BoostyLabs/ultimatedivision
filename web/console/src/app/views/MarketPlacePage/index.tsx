@@ -13,7 +13,7 @@ import { MarketPlaceCardsGroup } from '@components/MarketPlace/MarketPlaceCardsG
 
 import { RootState } from '@/app/store';
 import { listOfLots, createLotsQueryParameters } from '@/app/store/actions/marketplace';
-import { QueryParametersField } from '@/card';
+import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
 
@@ -25,7 +25,7 @@ const MarketPlace: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by lots query parameters. */
-    const submitSearch = async(queryParameters: QueryParametersField[]) => {
+    const submitSearch = async(queryParameters: CardsQueryParametersField[]) => {
         createLotsQueryParameters(queryParameters);
         await dispatch(listOfLots(DEFAULT_PAGE_INDEX));
     };

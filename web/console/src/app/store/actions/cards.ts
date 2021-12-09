@@ -4,7 +4,7 @@
 import { Dispatch } from 'redux';
 
 import { CardsClient } from '@/api/cards';
-import { Card, CardsPage, QueryParametersField } from '@/card';
+import { Card, CardsPage, CardsQueryParametersField } from '@/card';
 import { CardService } from '@/card/service';
 
 export const GET_USER_CARDS = ' GET_USER_CARDS';
@@ -23,7 +23,7 @@ const cardsClient = new CardsClient();
 const cardsService = new CardService(cardsClient);
 
 /** Creates cards query parameters and sets them to CardsService. */
-export const createCardsQueryParameters = (queryParameters: QueryParametersField[]) => {
+export const createCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
     cardsService.changeCardsQueryParameters(queryParameters);
 };
 
