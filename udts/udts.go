@@ -24,7 +24,7 @@ type DB interface {
 	Get(ctx context.Context, userID uuid.UUID) (UDT, error)
 	// List returns udts from database.
 	List(ctx context.Context) ([]UDT, error)
-	// Update updates nft by user's id in the database.
+	// Update updates udt by user's id in the database.
 	Update(ctx context.Context, udt UDT) error
 	// Delete deletes udt by user's id in the database.
 	Delete(ctx context.Context, userID uuid.UUID) error
@@ -36,3 +36,6 @@ type UDT struct {
 	Value  big.Int   `json:"value"`
 	Nonce  int64     `json:"nonce"`
 }
+
+// Config defines values needed by create udt.
+type Config struct{}
