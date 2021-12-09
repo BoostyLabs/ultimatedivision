@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ClubCardsArea } from '@components/Club/ClubCardsArea';
@@ -21,23 +21,20 @@ import { CardsQueryParametersField } from '@/card';
 import './index.scss';
 
 const Club: React.FC = () => {
-    /** Exposes default page number. */
-    const DEFAULT_PAGE_INDEX: number = 1;
-    
-    /** Submits searchs  */
-    const submitSearch = async(cardsQueryParameters: CardsQueryParametersField[]) => {
-        createCardsQueryParameters(cardsQueryParameters);
-        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
-    };
-
-    const dispatch = useDispatch();
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
-
-    /** Describes default page number. */
-    const DEFAULT_PAGE_NUMBER: number = 1;
+    const dispatch = useDispatch();
 
     /** Indicates if registration is required. */
     const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
+
+    /** Exposes default page number. */
+    const DEFAULT_PAGE_INDEX: number = 1;
+
+    /** Submits search by cards query parameters. */
+    const submitSearch = async (cardsQueryParameters: CardsQueryParametersField[]) => {
+        createCardsQueryParameters(cardsQueryParameters);
+        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+    };
 
     /** Closes RegistrationPopup componnet. */
     const closeRegistrationPopup = () => {
@@ -45,9 +42,9 @@ const Club: React.FC = () => {
     };
 
     useEffect(() => {
-        (async() => {
+        (async () => {
             try {
-                await dispatch(listOfCards(DEFAULT_PAGE_NUMBER));
+                await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
             } catch (error: any) {
                 if (error instanceof UnauthorizedError) {
                     setIsRegistrationRequired(true);
@@ -65,9 +62,9 @@ const Club: React.FC = () => {
                 MY CARDS
             </h1>
             <FilterField >
-                <FilterByVersion submitSearch={submitSearch}/>
-                <FilterByStats submitSearch={submitSearch}/>
-                <FilterByPrice/>
+                <FilterByVersion submitSearch={submitSearch} />
+                <FilterByStats submitSearch={submitSearch} />
+                <FilterByPrice />
                 <FilterByStatus />
             </FilterField>
             <ClubCardsArea />
