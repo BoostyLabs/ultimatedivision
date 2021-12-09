@@ -2,15 +2,15 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 import { FilterFieldStatsArea, FilterFieldStatsAreaProps } from '@/app/components/common/FilterField/FilterFieldStatsArea';
 
 import { CardsQueryParametersField } from '@/card';
+import { LotsQueryParametersField } from '@/marketplace';
 
 // TODO: rework functionality.
-export const FilterByStats: React.FC<{submitSearch: (cardsQueryParameters: CardsQueryParametersField[]) => void}> = ({ submitSearch }) => {
+export const FilterByStats: React.FC<{submitSearch: (cardsQueryParameters: CardsQueryParametersField[] | LotsQueryParametersField[]) => void}> = ({ submitSearch }) => {
     /** Indicates if FilterByStats component shown. */
     const [isFilterByStatsShown, setIsFilterByStatsShown] = useState(false);
 

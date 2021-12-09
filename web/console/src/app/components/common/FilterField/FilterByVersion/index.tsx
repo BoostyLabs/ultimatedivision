@@ -7,13 +7,12 @@ import { useDispatch } from 'react-redux';
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
 import { CardsQueryParametersField } from '@/card';
+import {LotsQueryParametersField} from '@/marketplace';
 
 // TODO: rework functionality.
-export const FilterByVersion: React.FC<{ submitSearch: (cardsQueryParameters: CardsQueryParametersField[]) => void }> = ({ submitSearch }) => {
+export const FilterByVersion: React.FC<{ submitSearch: (cardsQueryParameters: CardsQueryParametersField[] | LotsQueryParametersField[]) => void }> = ({ submitSearch }) => {
     /** Indicates if FilterByVersion component shown. */
     const [isFilterByVersionShown, setIsFilterByVersionShown] = useState(false);
-
-    const dispatch = useDispatch();
 
     /** Shows and closes FilterByVersion component. */
     const showFilterByVersion = () => {
@@ -76,7 +75,7 @@ export const FilterByVersion: React.FC<{ submitSearch: (cardsQueryParameters: Ca
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits query parameters by quality. */
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
         await submitSearch([{ quality: changeQuality() }]);
         showFilterByVersion();
     };
