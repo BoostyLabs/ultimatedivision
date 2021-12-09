@@ -49,7 +49,7 @@ export class TransactionIdentificators {
 export class SignedMessage {
     /** Includes message from API, signed message, and wallet address */
     constructor(
-        public messsage: string,
+        public message: string,
         public hash: string,
         public address: string
     ) { }

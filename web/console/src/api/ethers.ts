@@ -22,7 +22,7 @@ export class EthersClient extends APIClient {
 
     /** Gets message from API for sign */
     public async getMessage(): Promise<string> {
-        const response = await this.http.get(`${this.ROOT_PATH}/metamask/send-message`);
+        const response = await this.http.get(`${this.ROOT_PATH}/auth/metamask/message-token`);
 
         if (!response.ok) {
             await this.handleError(response);
@@ -33,7 +33,7 @@ export class EthersClient extends APIClient {
 
     /** Sends signed message, and logs-in */
     public async signMessage(message: SignedMessage): Promise<void> {
-        const response = await this.http.post(`${this.ROOT_PATH}/metamask/login`, JSON.stringify(message));
+        const response = await this.http.post(`${this.ROOT_PATH}/auth/metamask/login`, JSON.stringify(message));
 
         if (!response.ok) {
             await this.handleError(response);
