@@ -1,3 +1,6 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 package storj
 
 import (
@@ -11,7 +14,7 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/zeebo/errs"
 
-	"ultimatedivision/internal/remote-file-storage"
+	"ultimatedivision/internal/remotefilestorage"
 )
 
 // ensures that Client implements remote_file_storage.RemoteFileStorage.
