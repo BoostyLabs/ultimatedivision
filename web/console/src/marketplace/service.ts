@@ -16,9 +16,9 @@ export class Marketplaces {
         this.marketplace = marketplace;
     };
 
-    /** Changes cards query parameters. */
-    public changeCardsQueryParameters(queryParameters: LotsQueryParametersField[]) {
-        this.marketplace.changeCardsQueryParameters(queryParameters);
+    /** Changes lots query parameters. */
+    public changeLotsQueryParameters(queryParameters: LotsQueryParametersField[]) {
+        this.marketplace.changeLotsQueryParameters(queryParameters);
     };
 
     /** returns marketplace domain entity with list of lots */

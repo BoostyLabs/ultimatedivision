@@ -25,8 +25,8 @@ const MarketPlace: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by lots query parameters. */
-    const submitSearch = async(lotsQueryParameters: LotsQueryParametersField[]) => {
-        createLotsQueryParameters(lotsQueryParameters);
+    const submitSearch = async(queryParameters: LotsQueryParametersField[]) => {
+        createLotsQueryParameters(queryParameters);
         await dispatch(listOfLots(DEFAULT_PAGE_INDEX));
     };
 

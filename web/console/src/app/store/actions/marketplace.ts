@@ -26,7 +26,7 @@ const marketplaces = new Marketplaces(marketplaceClient);
 
 /** Creates lots query parameters and sets them to marketplace service. */
 export const createLotsQueryParameters = (queryParameters: LotsQueryParametersField[]) => {
-    marketplaces.changeCardsQueryParameters(queryParameters);
+    marketplaces.changeLotsQueryParameters(queryParameters);
 };
 
 /** thunk for creating user cards list */

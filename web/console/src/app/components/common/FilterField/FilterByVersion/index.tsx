@@ -10,7 +10,7 @@ import { CardsQueryParametersField } from '@/card';
 import {LotsQueryParametersField} from '@/marketplace';
 
 // TODO: rework functionality.
-export const FilterByVersion: React.FC<{ submitSearch: (cardsQueryParameters: CardsQueryParametersField[] | LotsQueryParametersField[]) => void }> = ({ submitSearch }) => {
+export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: CardsQueryParametersField[] | LotsQueryParametersField[]) => void }> = ({ submitSearch }) => {
     /** Indicates if FilterByVersion component shown. */
     const [isFilterByVersionShown, setIsFilterByVersionShown] = useState(false);
 
