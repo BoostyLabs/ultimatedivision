@@ -77,7 +77,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             nick_name        VARCHAR                  NOT NULL,
             first_name       VARCHAR                  NOT NULL,
             last_name        VARCHAR                  NOT NULL,
-            wallet_address   VARCHAR   UNIQUE,
+            wallet_address   VARCHAR,
             last_login       TIMESTAMP WITH TIME ZONE NOT NULL,
             status           INTEGER                  NOT NULL,
             created_at       TIMESTAMP WITH TIME ZONE NOT NULL
@@ -252,10 +252,10 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             wallet_address VARCHAR                                  NOT NULL
         );
         CREATE TABLE IF NOT EXISTS currencywaitlist(
-            wallet_address VARCHAR REFERENCES users(wallet_address) NOT NULL,
-            value          BYTEA                                    NOT NULL,
-            nonce          INTEGER                                  NOT NULL,
-            signature      VARCHAR                                  NOT NULL,
+            wallet_address VARCHAR NOT NULL,
+            value          BYTEA   NOT NULL,
+            nonce          INTEGER NOT NULL,
+            signature      VARCHAR NOT NULL,
             PRIMARY KEY(wallet_address, nonce)
         );
         CREATE TABLE IF NOT EXISTS udts(
