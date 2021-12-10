@@ -82,11 +82,12 @@ func (user *User) EncodePass() error {
 
 // CreateUserFields for crete user.
 type CreateUserFields struct {
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	NickName  string `json:"nickName"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	Email     string              `json:"email"`
+	Password  string              `json:"password"`
+	NickName  string              `json:"nickName"`
+	FirstName string              `json:"firstName"`
+	LastName  string              `json:"lastName"`
+	Wallet    cryptoutils.Address `json:"wallet"`
 }
 
 // Profile for user profile.
@@ -104,9 +105,9 @@ type Password struct {
 
 // LoginMetamaskFields for login user from metamask.
 type LoginMetamaskFields struct {
-	Message string `json:"message"`
-	Hash    string `json:"hash"`
-	Address string `json:"address"`
+	Message string              `json:"message"`
+	Hash    string              `json:"hash"`
+	Address cryptoutils.Address `json:"address"`
 }
 
 // IsValid for check login user from metamask fields.
@@ -115,6 +116,8 @@ func (lm LoginMetamaskFields) IsValid() bool {
 	case lm.Hash == "":
 		return false
 	case lm.Message == "":
+		return false
+	case lm.Address == "":
 		return false
 	default:
 		return true

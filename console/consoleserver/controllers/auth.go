@@ -65,7 +65,7 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.userAuth.Register(ctx, request.Email, request.Password, request.NickName, request.FirstName, request.LastName)
+	err = auth.userAuth.Register(ctx, request.Email, request.Password, request.NickName, request.FirstName, request.LastName, request.Wallet)
 	if err != nil {
 		switch {
 		case userauth.ErrAddressAlreadyInUse.Has(err):
@@ -333,20 +333,20 @@ func (auth *Auth) serveError(w http.ResponseWriter, status int, err error) {
 	}
 }
 
-// SendMessageTokenForMetamask is an endpoint to send message to metamask for login.
-func (auth *Auth) SendMessageTokenForMetamask(w http.ResponseWriter, r *http.Request) {
+// SendTokenMessageForMetamask is an endpoint to send message to metamask for login.
+func (auth *Auth) SendTokenMessageForMetamask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
-	messageToken, err := auth.userAuth.MessageToken(ctx)
+	tokenMessage, err := auth.userAuth.TokenMessage(ctx)
 	if err != nil {
 		auth.log.Error("could not get message token", AuthError.Wrap(err))
 		auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(messageToken); err != nil {
-		auth.log.Error("failed to write json response", ErrUsers.Wrap(err))
+	if err = json.NewEncoder(w).Encode(tokenMessage); err != nil {
+		auth.log.Error("failed to write json response", AuthError.Wrap(err))
 		return
 	}
 }
@@ -364,7 +364,7 @@ func (auth *Auth) MetamaskLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !request.IsValid() {
-		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("did not fill in all the fields"))
 		return
 	}
 
@@ -380,7 +380,7 @@ func (auth *Auth) MetamaskLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authToken, err := auth.userAuth.MetamaskLoginToken(ctx, request)
+	authToken, err := auth.userAuth.LoginWithMetamask(ctx, request)
 	if err != nil {
 		auth.log.Error("could not get auth token", AuthError.Wrap(err))
 		switch {

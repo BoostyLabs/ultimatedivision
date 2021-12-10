@@ -13,10 +13,10 @@ import (
 	"ultimatedivision/pkg/cryptoutils"
 )
 
-// ErrNoNFTs indicated that nfts does not exist.
-var ErrNoNFTs = errs.Class("nfts does not exist")
+// ErrNoNFT indicated that nft does not exist.
+var ErrNoNFT = errs.Class("nft does not exist")
 
-// DB is exposing access to cards db.
+// DB is exposing access to nfts db.
 //
 // architecture: DB
 type DB interface {

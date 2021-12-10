@@ -19,11 +19,11 @@ import (
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver/controllers"
+	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
-	"ultimatedivision/queue"
 	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
@@ -99,8 +99,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/login", authController.Login).Methods(http.MethodPost)
 
 	metamaskRouter := authRouter.PathPrefix("/metamask").Subrouter()
-	metamaskRouter.HandleFunc("message-token", authController.SendMessageTokenForMetamask).Methods(http.MethodGet)
-	metamaskRouter.HandleFunc("login", authController.MetamaskLogin).Methods(http.MethodPost)
+	metamaskRouter.HandleFunc("/token-message", authController.SendTokenMessageForMetamask).Methods(http.MethodGet)
+	metamaskRouter.HandleFunc("/login", authController.MetamaskLogin).Methods(http.MethodPost)
 
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
