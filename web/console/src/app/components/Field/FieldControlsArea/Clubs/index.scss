@@ -24,7 +24,20 @@
         overflow-x: scroll;
         overflow-y: hidden;
 
-        .club {
+        .club-active {
+            svg {
+                path {
+                    fill: #58e271;
+                }
+            }
+
+            span {
+                color: #58e271;
+            }
+        }
+
+        .club,
+        .club-active {
             display: flex;
             align-items: center;
             padding-right: 31px;
