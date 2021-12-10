@@ -12,13 +12,15 @@ const Clubs: React.FC = () => {
     const [activeComposition, setActiveComposition] =
         useState<string>('Composition 1');
     const [isActiveDropdown, setIsActiveDropdown] = useState<boolean>(false);
-    const [whoseClubId, setWhoseClubId] = useState<number | null>(null);
+    const [clubId, setClubId] = useState<number | null>(null);
 
     // TODO: Mock data
     const clubs: Array<{ logo: any; name: string; whose: string }> = [
         { logo: <Owner />, name: 'CLUB 1', whose: 'owner' },
         { logo: <Owner />, name: 'CLUB 2', whose: 'owner' },
         { logo: <Owner />, name: 'CLUB 3', whose: 'owner' },
+        { logo: <Manager />, name: 'CLUB 4', whose: 'manager' },
+        { logo: <Manager />, name: 'CLUB 4', whose: 'manager' },
         { logo: <Manager />, name: 'CLUB 4', whose: 'manager' },
     ];
 
@@ -46,13 +48,13 @@ const Clubs: React.FC = () => {
                         className="club"
                         key={index}
                         onClick={() => setActiveClub(club.name)}
-                        onMouseLeave={() => setWhoseClubId(null)}
-                        onMouseEnter={() => setWhoseClubId(index)}
+                        onMouseLeave={() => setClubId(null)}
+                        onMouseEnter={() => setClubId(index)}
                     >
                         {club.logo}
                         <span className="club__name">{club.name}</span>
-                        {whoseClubId === index &&
-                            <div className="club__whoose">
+                        {clubId === index &&
+                            <div className="club__info">
                                 {club.whose === 'owner'
                                     ? `are you the ${club.whose}`
                                     : 'you are the manager'}
@@ -76,13 +78,13 @@ const Clubs: React.FC = () => {
                     }`}
                 >
                     {compositions.map((composition, index) =>
-                        <span
+                        <div
                             className="composition__list-item"
                             key={index}
                             onClick={() => handleChooseComposition(composition)}
                         >
-                            {composition}
-                        </span>
+                            <span>{composition}</span>
+                        </div>
                     )}
                 </div>
             </div>
