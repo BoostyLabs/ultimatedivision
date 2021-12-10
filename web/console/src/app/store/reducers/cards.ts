@@ -1,8 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { GET_USER_CARDS, USER_CARD } from '@/app/store/actions/cards';
 import { Card, CardsPage } from '@/card';
+import { getList, getCard } from '@/app/store/actions/cards';
+
+import { createSlice } from '@reduxjs/toolkit';
 
 const DEFAULT_OFFSET_VALUE: number = 0;
 const DEFAULT_LIMIT_VALUE: number = 24;
@@ -30,19 +32,17 @@ const page = {
 const cardsPage = new CardsPage([], page);
 const openedCard = new Card();
 
-export const cardsReducer = (cardsState: CardsState = new CardsState(cardsPage, openedCard), action: any = {}) => {
-    switch (action.type) {
-    case GET_USER_CARDS:
-        return {
-            ...cardsState,
-            cardsPage: action.cardsPage,
-        };
-    case USER_CARD:
-        return {
-            ...cardsState,
-            card: action.card,
-        };
-    default:
-        return cardsState;
-    };
-};
+export const cardsSlice = createSlice({
+    name: 'cards',
+    initialState: new CardsState(cardsPage, openedCard),
+    reducers: {
+    },
+    extraReducers: (builder) => {
+        builder.addCase(getList.fulfilled, (state, action) => {
+            state.cardsPage = action.payload;
+        })
+        builder.addCase(getCard.fulfilled, (state, action) => {
+            state.card = action.payload;
+        })
+    }
+})
