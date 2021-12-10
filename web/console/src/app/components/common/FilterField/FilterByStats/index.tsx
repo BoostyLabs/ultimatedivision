@@ -143,7 +143,7 @@ export const FilterByStats: React.FC<{submitSearch: (cardsQueryParameters: Cards
         {
             label: 'GK',
             minValue: goalkeepingMin,
-            maxValue: goalkeepingMin,
+            maxValue: goalkeepingMax,
             changeMinValue: changeGoalkeepingMin,
             changeMaxValue: changeGoalkeepingMax,
         },
