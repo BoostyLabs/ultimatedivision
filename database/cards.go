@@ -391,7 +391,6 @@ func (cardsDB *cardsDB) ListCardIDsByPlayerNameWhereActiveLot(ctx context.Contex
 func (cardsDB *cardsDB) listPaginated(ctx context.Context, cursor pagination.Cursor, cardsList []cards.Card, totalCount int) (cards.Page, error) {
 	var cardsListPage cards.Page
 	offset := (cursor.Page - 1) * cursor.Limit
-
 	pageCount := totalCount / cursor.Limit
 	if totalCount%cursor.Limit != 0 {
 		pageCount++
