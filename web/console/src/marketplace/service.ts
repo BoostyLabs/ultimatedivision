@@ -2,10 +2,9 @@
 // See LICENSE for copying information.
 
 import { MarketplaceClient } from '@/api/marketplace';
+import { CardsQueryParametersField } from '@/card';
+import { Lot, MarketPlacePage } from '@/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
-import { Pagination } from '@/app/types/pagination';
-import { Card } from '@/card';
-import { Lot, MarketPlacePage } from '.';
 
 /**
  * exposes all arketplace domain entity related logic
@@ -18,19 +17,19 @@ export class Marketplaces {
         this.marketplace = marketplace;
     };
 
+    /** Changes lots query parameters. */
+    public changeLotsQueryParameters(queryParameters: CardsQueryParametersField[]) {
+        this.marketplace.changeLotsQueryParameters(queryParameters);
+    };
+
     /** returns marketplace domain entity with list of lots */
-    public async list({ selectedPage, limit }: Pagination): Promise<MarketPlacePage> {
-        return await this.marketplace.list({ selectedPage, limit });
+    public async list(selectedPage: number): Promise<MarketPlacePage> {
+        return await this.marketplace.list(selectedPage);
     };
 
     /** creates lot */
     public async createLot(lot: CreatedLot): Promise<void> {
         await this.marketplace.createLot(lot);
-    };
-
-    /** returns list of lots by filter parameters */
-    public async filteredList(lowRange: string, topRange: string): Promise<MarketPlacePage> {
-        return await this.marketplace.filteredList(lowRange, topRange);
     };
 
     /** returns lot by id */

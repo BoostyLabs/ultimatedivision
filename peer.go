@@ -24,13 +24,15 @@ import (
 	"ultimatedivision/console/emails"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
-	"ultimatedivision/queue"
 	"ultimatedivision/seasons"
+	"ultimatedivision/udts"
+	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -77,6 +79,12 @@ type DB interface {
 
 	// Seasons provides access to seasons db.
 	Seasons() seasons.DB
+
+	// CurrencyWaitList provides access to currencywaitlist db.
+	CurrencyWaitList() currencywaitlist.DB
+
+	// UDTs provides access to udts db.
+	UDTs() udts.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -146,6 +154,10 @@ type Config struct {
 	Matches struct {
 		matches.Config
 	} `json:"matches"`
+
+	UDTs struct {
+		udts.Config
+	} `json:"udts"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -225,6 +237,11 @@ type Peer struct {
 	Seasons struct {
 		Service           *seasons.Service
 		ExpirationSeasons *seasons.Chore
+	}
+
+	// exposes udts related logic.
+	UDTs struct {
+		Service *udts.Service
 	}
 
 	// Admin web server server with web UI.
@@ -355,6 +372,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 	{ // lootboxes setup
 		peer.LootBoxes.Service = lootboxes.NewService(
+			peer.Log,
 			config.LootBoxes.Config,
 			peer.Database.LootBoxes(),
 			peer.Cards.Service,
@@ -424,6 +442,13 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Matches.Service,
 			peer.Seasons.Service,
 			peer.Clubs.Service,
+		)
+	}
+
+	{ // udts setup
+		peer.UDTs.Service = udts.NewService(
+			config.UDTs.Config,
+			peer.Database.UDTs(),
 		)
 	}
 
@@ -501,12 +526,13 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
-	group.Go(func() error {
-		return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
-	})
-	group.Go(func() error {
-		return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
-	})
+	// TODO: uncomment when the Ethereum node is running
+	// group.Go(func() error {
+	// 	return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
+	// })
+	// group.Go(func() error {
+	// 	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
+	// })
 
 	return group.Wait()
 }

@@ -54,7 +54,7 @@ func (controller *Cards) Get(w http.ResponseWriter, r *http.Request) {
 
 	card, err := controller.cards.Get(ctx, id)
 	if err != nil {
-		controller.log.Error("could not get cards list", ErrCards.Wrap(err))
+		controller.log.Error("could not get card", ErrCards.Wrap(err))
 		switch {
 		case cards.ErrNoCard.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrCards.Wrap(err))
@@ -106,7 +106,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 
 	if playerName == "" {
 		if err := filters.DecodingURLParameters(urlQuery); err != nil {
-			controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
+			controller.serveError(w, http.StatusBadRequest, ErrCards.Wrap(err))
 		}
 		if len(filters) > 0 {
 			cardsListPage, err = controller.cards.ListWithFilters(ctx, filters, cursor)

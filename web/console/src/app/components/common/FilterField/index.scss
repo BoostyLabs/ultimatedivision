@@ -7,14 +7,6 @@
     margin-top: 50px;
     width: 100%;
 
-    &__title {
-        color: white;
-        margin: 70px 0 50px 40px;
-        font-size: 48px;
-        font-weight: 100;
-        position: relative;
-    }
-
     &__wrapper {
         position: relative;
 
@@ -74,6 +66,15 @@
                 &::placeholder {
                     color: rgb(189, 189, 189);
                     font-size: 14px;
+                }
+            }
+
+            &:nth-child(3) {
+                .filter-item__dropdown-active {
+                    left: -65px;
+                    &:before {
+                        left: 65px;
+                    }
                 }
             }
         }

@@ -82,11 +82,12 @@ func (user *User) EncodePass() error {
 
 // CreateUserFields for crete user.
 type CreateUserFields struct {
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	NickName  string `json:"nickName"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	Email     string              `json:"email"`
+	Password  string              `json:"password"`
+	NickName  string              `json:"nickName"`
+	FirstName string              `json:"firstName"`
+	LastName  string              `json:"lastName"`
+	Wallet    cryptoutils.Address `json:"wallet"`
 }
 
 // Profile for user profile.
@@ -100,6 +101,27 @@ type Profile struct {
 type Password struct {
 	Password    string `json:"password"`
 	NewPassword string `json:"newPassword"`
+}
+
+// LoginMetamaskFields for login user from metamask.
+type LoginMetamaskFields struct {
+	Message string              `json:"message"`
+	Hash    string              `json:"hash"`
+	Address cryptoutils.Address `json:"address"`
+}
+
+// IsValid for check login user from metamask fields.
+func (lm LoginMetamaskFields) IsValid() bool {
+	switch {
+	case lm.Hash == "":
+		return false
+	case lm.Message == "":
+		return false
+	case lm.Address == "":
+		return false
+	default:
+		return true
+	}
 }
 
 // IsPasswordValid check the password for all conditions.
@@ -119,4 +141,22 @@ func IsPasswordValid(s string) bool {
 		}
 	}
 	return len(s) >= 8 && letters >= 1 && number && upper && special
+}
+
+// IsValid check the request for all conditions.
+func (createUserFields *CreateUserFields) IsValid() bool {
+	switch {
+	case createUserFields.Email == "":
+		return false
+	case createUserFields.Password == "":
+		return false
+	case createUserFields.FirstName == "":
+		return false
+	case createUserFields.LastName == "":
+		return false
+	case createUserFields.NickName == "":
+		return false
+	default:
+		return true
+	}
 }

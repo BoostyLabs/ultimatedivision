@@ -19,10 +19,12 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
-	"ultimatedivision/queue"
 	"ultimatedivision/seasons"
+	"ultimatedivision/udts"
+	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
 )
 
@@ -68,7 +70,7 @@ func NewHub() *Hub {
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
 		`CREATE TABLE IF NOT EXISTS users (
-            id               BYTEA PRIMARY KEY        NOT NULL,
+            id               BYTEA     PRIMARY KEY    NOT NULL,
             email            VARCHAR                  NOT NULL,
             email_normalized VARCHAR                  NOT NULL,
             password_hash    BYTEA                    NOT NULL,
@@ -206,9 +208,9 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             user_id       BYTEA                    REFERENCES users(id) ON DELETE CASCADE NOT NULL,
             shopper_id    BYTEA,
             status        VARCHAR                                                         NOT NULL,
-            start_price   NUMERIC(16,2)                                                   NOT NULL,
-            max_price     NUMERIC(16,2),
-            current_price NUMERIC(16,2),
+            start_price   BYTEA                                                           NOT NULL,
+            max_price     BYTEA,
+            current_price BYTEA,
             start_time    TIMESTAMP WITH TIME ZONE                                        NOT NULL,
             end_time      TIMESTAMP WITH TIME ZONE                                        NOT NULL,
             period        INTEGER                                                         NOT NULL
@@ -248,6 +250,18 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             token_id       INTEGER                                  NOT NULL,
             chain          VARCHAR                                  NOT NULL,
             wallet_address VARCHAR                                  NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS currencywaitlist(
+            wallet_address VARCHAR NOT NULL,
+            value          BYTEA   NOT NULL,
+            nonce          INTEGER NOT NULL,
+            signature      VARCHAR NOT NULL,
+            PRIMARY KEY(wallet_address, nonce)
+        );
+        CREATE TABLE IF NOT EXISTS udts(
+            user_id        BYTEA   PRIMARY KEY REFERENCES users(id) NOT NULL,
+            value          BYTEA                                    NOT NULL,
+            nonce          INTEGER                                  NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -318,12 +332,22 @@ func (db *database) Seasons() seasons.DB {
 	return &seasonsDB{conn: db.conn}
 }
 
+// WaitList provides access to accounts db.
+func (db *database) WaitList() waitlist.DB {
+	return &waitlistDB{conn: db.conn}
+}
+
 // NFTs provides access to accounts db.
 func (db *database) NFTs() nfts.DB {
 	return &nftsDB{conn: db.conn}
 }
 
-// WaitList provides access to accounts db.
-func (db *database) WaitList() waitlist.DB {
-	return &waitlistDB{conn: db.conn}
+// CurrencyWaitList provides access to accounts db.
+func (db *database) CurrencyWaitList() currencywaitlist.DB {
+	return &currencywaitlistDB{conn: db.conn}
+}
+
+// UDTs provides access to accounts db.
+func (db *database) UDTs() udts.DB {
+	return &udtsDB{conn: db.conn}
 }

@@ -69,9 +69,7 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, error) {
 	card := cards.Card{}
 	query :=
-		`SELECT
-		` + allFields + `
-        FROM 
+		`SELECT * FROM  
             cards
         WHERE 
             id = $1`
@@ -92,14 +90,37 @@ func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, erro
 	return card, ErrCard.Wrap(err)
 }
 
+// GetByPlayerName returns card by player name from DB.
+func (cardsDB *cardsDB) GetByPlayerName(ctx context.Context, playerName string) (cards.Card, error) {
+	card := cards.Card{}
+	query :=
+		`SELECT * FROM 
+            cards
+        WHERE 
+            player_name = $1`
+
+	err := cardsDB.conn.QueryRowContext(ctx, query, playerName).Scan(
+		&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
+		&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed,
+		&card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling,
+		&card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing,
+		&card.ForwardPass, &card.Offence, &card.FinishingAbility, &card.ShotPower, &card.Accuracy, &card.Distance, &card.Penalty, &card.FreeKicks,
+		&card.Corners, &card.HeadingAccuracy, &card.Defence, &card.OffsideTrap, &card.Sliding, &card.Tackles, &card.BallFocus, &card.Interceptions,
+		&card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping, &card.Throwing,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return card, cards.ErrNoCard.Wrap(err)
+	}
+
+	return card, ErrCard.Wrap(err)
+}
+
 // List returns all cards from the data base.
 func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (cards.Page, error) {
 	var cardsListPage cards.Page
 	offset := (cursor.Page - 1) * cursor.Limit
 	query :=
-		`SELECT 
-			` + allFields + ` 
-		FROM 
+		`SELECT * FROM
 			cards 
 		LIMIT 
 			$1
@@ -136,16 +157,19 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (car
 		return cardsListPage, ErrCard.Wrap(err)
 	}
 
-	cardsListPage, err = cardsDB.listPaginated(ctx, cursor, data)
+	totalCount, err := cardsDB.totalCount(ctx)
+	if err != nil {
+		return cardsListPage, ErrCard.Wrap(err)
+	}
+
+	cardsListPage, err = cardsDB.listPaginated(ctx, cursor, data, totalCount)
 	return cardsListPage, ErrCard.Wrap(err)
 }
 
 // ListByUserID returns all users cards from the database.
 func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID) ([]cards.Card, error) {
 	query :=
-		`SELECT 
-			` + allFields + ` 
-		FROM 
+		`SELECT * FROM  
 			cards 
 		WHERE 
 			user_id = $1`
@@ -235,7 +259,12 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 		return cardsListPage, ErrCard.Wrap(err)
 	}
 
-	cardsListPage, err = cardsDB.listPaginated(ctx, cursor, data)
+	totalCount, err := cardsDB.totalCountWithFilters(ctx, whereClause, valuesInterface)
+	if err != nil {
+		return cardsListPage, ErrCard.Wrap(err)
+	}
+
+	cardsListPage, err = cardsDB.listPaginated(ctx, cursor, data, totalCount)
 	return cardsListPage, ErrCard.Wrap(err)
 }
 
@@ -282,7 +311,7 @@ func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filte
 	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
 	valuesInterface := ValidDBParameters(valuesString)
 	offset := (cursor.Page - 1) * cursor.Limit
-	query := fmt.Sprintf(`SELECT %s FROM cards %s LIMIT %d OFFSET %d`, allFields, whereClause, cursor.Limit, offset)
+	query := fmt.Sprintf(`SELECT * FROM cards %s LIMIT %d OFFSET %d`, whereClause, cursor.Limit, offset)
 
 	rows, err := cardsDB.conn.QueryContext(ctx, query, valuesInterface...)
 	if err != nil {
@@ -314,7 +343,12 @@ func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filte
 		return cardsListPage, ErrCard.Wrap(err)
 	}
 
-	cardsListPage, err = cardsDB.listPaginated(ctx, cursor, data)
+	totalCount, err := cardsDB.totalCountWithFilters(ctx, whereClause, valuesInterface)
+	if err != nil {
+		return cardsListPage, ErrCard.Wrap(err)
+	}
+
+	cardsListPage, err = cardsDB.listPaginated(ctx, cursor, data, totalCount)
 	return cardsListPage, ErrCard.Wrap(err)
 }
 
@@ -354,15 +388,9 @@ func (cardsDB *cardsDB) ListCardIDsByPlayerNameWhereActiveLot(ctx context.Contex
 }
 
 // listPaginated returns paginated list of cards.
-func (cardsDB *cardsDB) listPaginated(ctx context.Context, cursor pagination.Cursor, cardsList []cards.Card) (cards.Page, error) {
+func (cardsDB *cardsDB) listPaginated(ctx context.Context, cursor pagination.Cursor, cardsList []cards.Card, totalCount int) (cards.Page, error) {
 	var cardsListPage cards.Page
 	offset := (cursor.Page - 1) * cursor.Limit
-
-	totalCount, err := cardsDB.totalCount(ctx)
-	if err != nil {
-		return cardsListPage, ErrCard.Wrap(err)
-	}
-
 	pageCount := totalCount / cursor.Limit
 	if totalCount%cursor.Limit != 0 {
 		pageCount++
@@ -387,6 +415,17 @@ func (cardsDB *cardsDB) totalCount(ctx context.Context) (int, error) {
 	var count int
 	query := fmt.Sprintf("SELECT COUNT(*) FROM cards")
 	err := cardsDB.conn.QueryRowContext(ctx, query).Scan(&count)
+	if errors.Is(err, sql.ErrNoRows) {
+		return 0, cards.ErrNoCard.Wrap(err)
+	}
+	return count, ErrCard.Wrap(err)
+}
+
+// totalCountWithFilters counts cards with filtes in the table.
+func (cardsDB *cardsDB) totalCountWithFilters(ctx context.Context, whereClause string, valuesInterface []interface{}) (int, error) {
+	var count int
+	query := fmt.Sprintf("SELECT COUNT(*) FROM cards %s", whereClause)
+	err := cardsDB.conn.QueryRowContext(ctx, query, valuesInterface...).Scan(&count)
 	if errors.Is(err, sql.ErrNoRows) {
 		return 0, cards.ErrNoCard.Wrap(err)
 	}
@@ -517,8 +556,8 @@ func (cardsDB *cardsDB) Delete(ctx context.Context, id uuid.UUID) error {
 // GetSquadCards returns all cards with characteristics from the squad from the database.
 func (cardsDB *cardsDB) GetSquadCards(ctx context.Context, id uuid.UUID) ([]cards.Card, error) {
 	var cardsFromSquad []cards.Card
-	query := `SELECT ` + allFields + `
-        FROM cards
+	query := `SELECT * FROM 
+            cards
         WHERE id IN (SELECT card_id
                      FROM squad_cards
                      WHERE id = $1)

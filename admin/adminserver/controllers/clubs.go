@@ -257,7 +257,7 @@ func (controller *Clubs) ListSquadCards(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	squadCards, err := controller.clubs.ListSquadCards(ctx, squadID)
+	squadCards, err := controller.clubs.ListSquadCardIDs(ctx, squadID)
 	if err != nil {
 		controller.log.Error("could not get squad cards", ErrClubs.Wrap(err))
 		switch {
@@ -312,12 +312,28 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		squad, err := controller.clubs.GetSquad(ctx, squadID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		club, err := controller.clubs.Get(ctx, squad.ClubID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		squadCard := clubs.SquadCard{
 			Position: clubs.Position(position),
 			CardID:   cardID,
 		}
 
-		if err = controller.clubs.AddSquadCard(ctx, squadID, squadCard); err != nil {
+		if err = controller.clubs.AddSquadCard(ctx, club.OwnerID, squadID, squadCard); err != nil {
+			if clubs.ErrInvalidOperation.Has(err) {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
 			controller.log.Error("could not add card to the squad", ErrClubs.Wrap(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

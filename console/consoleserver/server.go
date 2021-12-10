@@ -19,11 +19,11 @@ import (
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/consoleserver/controllers"
+	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
-	"ultimatedivision/queue"
 	"ultimatedivision/seasons"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
@@ -36,8 +36,9 @@ var (
 
 // Config contains configuration for console web server.
 type Config struct {
-	Address   string `json:"address"`
-	StaticDir string `json:"staticDir"`
+	Address    string `json:"address"`
+	StaticDir  string `json:"staticDir"`
+	AvatarsDir string `json:"avatarsDir"`
 
 	Auth struct {
 		CookieName string `json:"cookieName"`
@@ -96,6 +97,11 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	apiRouter := router.PathPrefix("/api/v0").Subrouter()
 	authRouter := apiRouter.PathPrefix("/auth").Subrouter()
 	authRouter.HandleFunc("/login", authController.Login).Methods(http.MethodPost)
+
+	metamaskRouter := authRouter.PathPrefix("/metamask").Subrouter()
+	metamaskRouter.HandleFunc("/token-message", authController.SendTokenMessageForMetamask).Methods(http.MethodGet)
+	metamaskRouter.HandleFunc("/login", authController.MetamaskLogin).Methods(http.MethodPost)
+
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
 	authRouter.HandleFunc("/email/confirm/{token}", authController.ConfirmEmail).Methods(http.MethodGet)
@@ -135,11 +141,12 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	lootBoxesRouter.HandleFunc("/{id}", lootBoxesController.Open).Methods(http.MethodPost)
 
 	marketplaceRouter := apiRouter.PathPrefix("/marketplace").Subrouter()
-	marketplaceRouter.Use(server.withAuth)
 	marketplaceRouter.HandleFunc("", marketplaceController.ListActiveLots).Methods(http.MethodGet)
-	marketplaceRouter.HandleFunc("/{id}", marketplaceController.GetLotByID).Methods(http.MethodGet)
-	marketplaceRouter.HandleFunc("", marketplaceController.CreateLot).Methods(http.MethodPost)
-	marketplaceRouter.HandleFunc("/bet", marketplaceController.PlaceBetLot).Methods(http.MethodPost)
+	marketplaceRouterWithAuth := marketplaceRouter
+	marketplaceRouterWithAuth.Use(server.withAuth)
+	marketplaceRouterWithAuth.HandleFunc("/{id}", marketplaceController.GetLotByID).Methods(http.MethodGet)
+	marketplaceRouterWithAuth.HandleFunc("", marketplaceController.CreateLot).Methods(http.MethodPost)
+	marketplaceRouterWithAuth.HandleFunc("/bet", marketplaceController.PlaceBetLot).Methods(http.MethodPost)
 
 	queueRouter := apiRouter.PathPrefix("/queue").Subrouter()
 	queueRouter.Use(server.withAuth)
@@ -154,6 +161,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	waitListRouter := apiRouter.PathPrefix("/nft-waitlist").Subrouter()
 	waitListRouter.Use(server.withAuth)
 	waitListRouter.HandleFunc("", waitListController.Create).Methods(http.MethodPost)
+
+	av := http.FileServer(http.Dir(server.config.AvatarsDir))
+	router.PathPrefix("/avatars/").Handler(http.StripPrefix("/avatars/", av))
 
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))

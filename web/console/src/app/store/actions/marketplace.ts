@@ -2,12 +2,12 @@
 // See LICENSE for copying information.
 
 import { Dispatch } from 'redux';
+
 import { MarketplaceClient } from '@/api/marketplace';
-import { Marketplaces } from '@/marketplace/service';
-import { Card } from '@/card';
-import { Lot, MarketPlacePage } from '@/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
-import { Pagination } from '@/app/types/pagination';
+import { Card, CardsQueryParametersField } from '@/card';
+import { MarketPlacePage } from '@/marketplace';
+import { Marketplaces } from '@/marketplace/service';
 
 export const GET_SELLING_CARDS = ' GET_SELLING_CARDS';
 export const MARKETPLACE_CARD = 'OPEN_MARKETPLACE_CARD';
@@ -23,9 +23,15 @@ const marketplaceCard = (card: Card) => ({
 
 const marketplaceClient = new MarketplaceClient();
 const marketplaces = new Marketplaces(marketplaceClient);
+
+/** Creates lots query parameters and sets them to marketplace service. */
+export const createLotsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
+    marketplaces.changeLotsQueryParameters(queryParameters);
+};
+
 /** thunk for creating user cards list */
-export const listOfLots = ({ selectedPage, limit }: Pagination) => async function(dispatch: Dispatch) {
-    const marketplace = await marketplaces.list({ selectedPage, limit });
+export const listOfLots = (selectedPage: number) => async function(dispatch: Dispatch) {
+    const marketplace = await marketplaces.list(selectedPage);
     const lots = marketplace.lots;
     const page = marketplace.page;
 
@@ -41,13 +47,4 @@ export const openMarketplaceCard = (id: string) => async function(dispatch: Disp
     const lot = await marketplaces.getLotById(id);
 
     dispatch(marketplaceCard(lot.card));
-};
-
-/** thunk returns filtered lots */
-export const filteredLots = (lowRange: string, topRange: string) => async function(dispatch: Dispatch) {
-    const marketplace = await marketplaces.filteredList(lowRange, topRange);
-    const lots = marketplace.lots;
-    const page = marketplace.page;
-
-    dispatch(getLots({ lots, page }));
 };
