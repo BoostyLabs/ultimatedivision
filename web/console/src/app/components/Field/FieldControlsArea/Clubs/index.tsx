@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import { useEffect, useState } from "react";
+import Slider from "react-slick";
 
 import { Manager, Owner } from "@static/img/FieldPage/clubs";
 
@@ -20,6 +21,8 @@ const Clubs: React.FC = () => {
         { logo: <Owner />, name: "CLUB 2", whose: "owner" },
         { logo: <Owner />, name: "CLUB 3", whose: "owner" },
         { logo: <Manager />, name: "CLUB 4", whose: "manager" },
+        { logo: <Manager />, name: "CLUB 5", whose: "manager" },
+        { logo: <Manager />, name: "CLUB 6", whose: "manager" },
     ];
 
     // TODO: Mock data
@@ -30,9 +33,33 @@ const Clubs: React.FC = () => {
         "Composition 4",
     ];
 
+    /** Method for set choosed composition to state and close dropdown block. */
     const handleChooseComposition = (composition: string) => {
         setActiveComposition(composition);
         setIsActiveDropdown(false);
+    };
+
+    /** Property for clubs slider. */
+    const settings = {
+        adaptiveHeight: true,
+        dots: false,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+    };
+
+    /** Show or hide helper for clubs. */
+    const visabilityClubsHelper = (index: number, club: any) => {
+        return (
+            clubId === index && (
+                <div className="club__info">
+                    {club.whose === "owner"
+                        ? `are you the ${club.whose}`
+                        : "you are the manager"}
+                </div>
+            )
+        );
     };
 
     return (
@@ -41,27 +68,25 @@ const Clubs: React.FC = () => {
                 {activeClub}
             </span>
             <div className="clubs">
-                {clubs.map((club, index) => (
-                    <div
-                        className={`club${
-                            club.name === activeClub ? "-active" : ""
-                        }`}
-                        key={index}
-                        onClick={() => setActiveClub(club.name)}
-                        onMouseLeave={() => setClubId(null)}
-                        onMouseEnter={() => setClubId(index)}
-                    >
-                        {club.logo}
-                        <span className="club__name">{club.name}</span>
-                        {clubId === index && (
-                            <div className="club__info">
-                                {club.whose === "owner"
-                                    ? `are you the ${club.whose}`
-                                    : "you are the manager"}
+                <Slider {...settings} className="slider">
+                    {clubs.map((club, index) => (
+                        <div key={index}>
+                            <div
+                                className={`club${
+                                    club.name === activeClub ? "-active" : ""
+                                }`}
+                                key={index}
+                                onClick={() => setActiveClub(club.name)}
+                                onMouseLeave={() => setClubId(null)}
+                                onMouseEnter={() => setClubId(index)}
+                            >
+                                {club.logo}
+                                <span className="club__name">{club.name}</span>
+                                {visabilityClubsHelper(index, club)}
                             </div>
-                        )}
-                    </div>
-                ))}
+                        </div>
+                    ))}
+                </Slider>
             </div>
             <div className="composition">
                 <div

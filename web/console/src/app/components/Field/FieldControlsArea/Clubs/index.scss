@@ -1,4 +1,6 @@
 @import "@/index.scss";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
 
 .field-controls-area__clubs {
     display: flex;
@@ -21,8 +23,25 @@
     .clubs {
         display: flex;
         flex-direction: row;
-        overflow-x: scroll;
-        overflow-y: hidden;
+        width: 100%;
+
+        .slider {
+            overflow: visible;
+
+            .slick-prev {
+                left: -25px;
+                top: 14px;
+            }
+
+            .slick-next {
+                left: 310px;
+                top: 14px;
+            }
+        }
+
+        div {
+            width: 100%;
+        }
 
         .club-active {
             svg {
@@ -40,7 +59,9 @@
         .club-active {
             display: flex;
             align-items: center;
+            position: relative;
             padding-right: 31px;
+            margin-bottom: 40px;
             cursor: pointer;
 
             svg {
@@ -73,7 +94,7 @@
             &__info {
                 position: absolute;
                 z-index: 2;
-                top: 350px;
+                top: 30px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -112,6 +133,8 @@
     .clubs::-webkit-scrollbar {
         width: 7px;
         height: 5px;
+        position: absolute;
+        top: 150px;
         background-color: #36335c;
     }
 
