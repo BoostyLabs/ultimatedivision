@@ -147,11 +147,11 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		err = errs.Combine(err, db.Close())
 	}()
 
-	// TODO: remove for production.
-	err = db.CreateSchema(ctx)
-	if err != nil {
-		log.Error("Error creating schema", Error.Wrap(err))
-	}
+	//// TODO: remove for production.
+	//err = db.CreateSchema(ctx)
+	//if err != nil {
+	//	log.Error("Error creating schema", Error.Wrap(err))
+	//}
 
 	peer, err := ultimatedivision.New(log, runCfg.Config, db)
 	if err != nil {
