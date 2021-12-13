@@ -72,6 +72,8 @@ const (
 	ChainEthereum Chain = "ethereum"
 	// ChainPolygon indicates that chain is polygon.
 	ChainPolygon Chain = "polygon"
+	// ChainRopsten indicates that chain is ropsten.
+	ChainRopsten Chain = "ropsten"
 )
 
 // ChainID defines the list of possible number chains in blockchain.

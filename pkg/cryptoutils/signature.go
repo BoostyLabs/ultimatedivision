@@ -160,6 +160,62 @@ func GenerateSignatureWithValueAndNonce(addressWallet Address, addressContract A
 	return signature, ErrCreateSignature.Wrap(err)
 }
 
+// GenerateSignatureWithTokenIDAndValue generates signature for user's wallet with tokenID and value.
+func GenerateSignatureWithTokenIDAndValue(addressWallet Address, addressSaleContract Address, addressNFTContract Address, tokenID int64, value *big.Int, privateKey *ecdsa.PrivateKey) (Signature, error) {
+	var values [][]byte
+	if !addressWallet.IsValidAddress() {
+		return "", ErrCreateSignature.New("invalid address of user's wallet")
+	}
+	if !addressSaleContract.IsValidAddress() {
+		return "", ErrCreateSignature.New("invalid address of sale contract")
+	}
+	if !addressNFTContract.IsValidAddress() {
+		return "", ErrCreateSignature.New("invalid address of nft contract")
+	}
+
+	addressWalletByte, err := hex.DecodeString(string(addressWallet)[LengthHexPrefix:])
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	addressSaleContractByte, err := hex.DecodeString(string(addressSaleContract)[LengthHexPrefix:])
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	addressNFTContractByte, err := hex.DecodeString(string(addressNFTContract)[LengthHexPrefix:])
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	tokenIDStringWithZeros := createHexStringFixedLength(new(big.Int).SetInt64(tokenID))
+	tokenIDByte, err := hex.DecodeString(string(tokenIDStringWithZeros))
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	valueStringWithZeros := createHexStringFixedLength(value)
+	valueByte, err := hex.DecodeString(string(valueStringWithZeros))
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	values = append(values, addressWalletByte, addressSaleContractByte, addressNFTContractByte, tokenIDByte, valueByte)
+	createSignature := CreateSignature{
+		Values:     values,
+		PrivateKey: privateKey,
+	}
+
+	signatureByte, err := makeSignature(createSignature)
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	signature, err := reformSignature(signatureByte)
+
+	return signature, ErrCreateSignature.Wrap(err)
+}
+
 // makeSignatureWithToken makes signature from addresses, private key and token id.
 func makeSignature(createSignature CreateSignature) ([]byte, error) {
 	var allValues []byte
