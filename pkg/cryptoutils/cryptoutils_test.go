@@ -36,7 +36,6 @@ func TestCryptoUtils(t *testing.T) {
 		"privateKey":      "5aefce0a2d473f59578fa7dee6a122d6509af1e0f79fcbee700dfcfeddabe4cc",
 		"signature":       "53f7f1e623364fa4f1bd6e7df67a66edcc06cba01462193d397bbe72fcdba31f04e50d9f65e387be1ea2351110166ad2cb882ccc28be05725e6877645941a3471b",
 	}
-
 	var value = new(big.Int)
 	value.SetString("5000000000000000000", 10)
 	var nonce int64 = 0
