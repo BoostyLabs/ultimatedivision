@@ -46,35 +46,18 @@ export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: CardsQu
         setIsWoodQuality(isWoodQuality => !isWoodQuality);
     };
 
-    /** Changes quality of cards. */
-    const changeQuality: () => string = () => {
-        let quality: string = '';
+    const [quality, setQuality] = useState<CardsQueryParametersField[]>([{ 'quality': '' }]);
 
-        if (isDiamondQuality) {
-            quality = 'diamond';
-        };
+    const possibleQalities: string[] = ['wood, silver, gold, diamond'];
 
-        if (isGoldQuality) {
-            quality = 'gold';
-        };
-
-        if (isSilverQuality) {
-            quality = 'silver';
-        };
-
-        if (isWoodQuality) {
-            quality = 'wood';
-        };
-
-        return quality;
+    const changeQuality = (index: number) => {
+        let updatedQuality = [...quality, { 'quality': possibleQalities[index] }];
+        setQuality(updatedQuality)
     };
 
-    /** Exposes default page number. */
-    const DEFAULT_PAGE_INDEX: number = 1;
-
     /** Submits query parameters by quality. */
-    const handleSubmit = async() => {
-        await submitSearch([{ quality: changeQuality() }]);
+    const handleSubmit = async () => {
+        await submitSearch(quality);
         showFilterByVersion();
     };
 
@@ -84,54 +67,22 @@ export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: CardsQu
             isComponentShown={isFilterByVersionShown}
             title="Version"
         >
-            <input
-                id="division-checkbox-wood"
-                className="filter-item__dropdown-active__checkbox"
-                type="checkbox"
-                onClick={chooseWoodQuality}
-            />
-            <label
-                className="filter-item__dropdown-active__text"
-                htmlFor="division-checkbox-wood"
-            >
-                wood
-            </label>
-            <input
-                id="checkbox-silver"
-                className="filter-item__dropdown-active__checkbox"
-                type="checkbox"
-                onClick={chooseSilverQuality}
-            />
-            <label
-                className="filter-item__dropdown-active__text"
-                htmlFor="checkbox-silver"
-            >
-                silver
-            </label>
-            <input
-                id="checkbox-gold"
-                className="filter-item__dropdown-active__checkbox"
-                type="checkbox"
-                onClick={chooseGoldQuality}
-            />
-            <label
-                className="filter-item__dropdown-active__text"
-                htmlFor="checkbox-gold"
-            >
-                gold
-            </label>
-            <input
-                id="checkbox-diamond"
-                className="filter-item__dropdown-active__checkbox"
-                type="checkbox"
-                onClick={chooseDiamondQuality}
-            />
-            <label
-                className="filter-item__dropdown-active__text"
-                htmlFor="checkbox-diamond"
-            >
-                diamond
-            </label>
+            {possibleQalities.map((quality, index: number) => {
+                return <>
+                    <input
+                        id={`division-checkbox-${quality}`}
+                        className="filter-item__dropdown-active__checkbox"
+                        type="checkbox"
+                        onClick={() => changeQuality(index)}
+                    />
+                    <label
+                        className="filter-item__dropdown-active__text"
+                        htmlFor={`division-checkbox-${quality}`}
+                    >
+                        {quality}
+                    </label>
+                </>
+            })}
             <input
                 value="APPLY"
                 type="submit"
