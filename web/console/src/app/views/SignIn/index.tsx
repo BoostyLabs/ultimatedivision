@@ -28,7 +28,7 @@ const SignIn: React.FC = () => {
     const history = useHistory();
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null;
+    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState<SetStateAction<null | string>>(null);
     const [isRemember, setIsRemember] = useState(false);
