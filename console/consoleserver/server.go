@@ -25,6 +25,7 @@ import (
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/seasons"
+	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -68,7 +69,7 @@ type Server struct {
 // NewServer is a constructor for console web server.
 func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service,
 	marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
-	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service) *Server {
+	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, currencyWaitList *currencywaitlist.Service) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -89,6 +90,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	queueController := controllers.NewQueue(log, queue)
 	seasonsController := controllers.NewSeasons(log, seasons)
 	waitListController := controllers.NewWaitList(log, waitList)
+	currencyWaitListController := controllers.NewCurrencyWaitList(log, currencyWaitList)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -161,6 +163,10 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	waitListRouter := apiRouter.PathPrefix("/nft-waitlist").Subrouter()
 	waitListRouter.Use(server.withAuth)
 	waitListRouter.HandleFunc("", waitListController.Create).Methods(http.MethodPost)
+
+	currencyWaitListRouter := apiRouter.PathPrefix("/currency-waitlist").Subrouter()
+	currencyWaitListRouter.Use(server.withAuth)
+	currencyWaitListRouter.HandleFunc("", currencyWaitListController.Create).Methods(http.MethodPost)
 
 	av := http.FileServer(http.Dir(server.config.AvatarsDir))
 	router.PathPrefix("/avatars/").Handler(http.StripPrefix("/avatars/", av))

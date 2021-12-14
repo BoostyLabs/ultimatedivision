@@ -74,8 +74,8 @@ func TestUDTs(t *testing.T) {
 			require.NoError(t, err)
 		})
 
-		t.Run("Get", func(t *testing.T) {
-			udtGet, err := repositoryUDTs.Get(ctx, udt1.UserID)
+		t.Run("GetByUserID", func(t *testing.T) {
+			udtGet, err := repositoryUDTs.GetByUserID(ctx, udt1.UserID)
 			require.NoError(t, err)
 
 			compareUDTsSlice(t, []udts.UDT{udtGet}, []udts.UDT{udt1})
@@ -94,7 +94,7 @@ func TestUDTs(t *testing.T) {
 			err := repositoryUDTs.Update(ctx, udt1)
 			require.NoError(t, err)
 
-			udtGet, err := repositoryUDTs.Get(ctx, udt1.UserID)
+			udtGet, err := repositoryUDTs.GetByUserID(ctx, udt1.UserID)
 			require.NoError(t, err)
 
 			compareUDTsSlice(t, []udts.UDT{udtGet}, []udts.UDT{udt1})

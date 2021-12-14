@@ -34,8 +34,8 @@ func (udtsDB *udtsDB) Create(ctx context.Context, udt udts.UDT) error {
 	return ErrUDTs.Wrap(err)
 }
 
-// Get returns udt by user's id from database.
-func (udtsDB *udtsDB) Get(ctx context.Context, userID uuid.UUID) (udts.UDT, error) {
+// GetByUserID returns udt by user's id from database.
+func (udtsDB *udtsDB) GetByUserID(ctx context.Context, userID uuid.UUID) (udts.UDT, error) {
 	var (
 		udt   udts.UDT
 		value []byte

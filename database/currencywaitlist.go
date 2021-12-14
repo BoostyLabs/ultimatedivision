@@ -6,6 +6,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/zeebo/errs"
 
@@ -33,6 +34,25 @@ func (currencywaitlistDB *currencywaitlistDB) Create(ctx context.Context, item c
 
 	_, err := currencywaitlistDB.conn.ExecContext(ctx, query, item.WalletAddress, item.Value.Bytes(), item.Nonce, item.Signature)
 	return ErrCurrencyWaitlist.Wrap(err)
+}
+
+// GetByWalletAddressAndNonce returns item of currency wait list by wallet address and nonce.
+func (currencywaitlistDB *currencywaitlistDB) GetByWalletAddressAndNonce(ctx context.Context, walletAddress cryptoutils.Address, nonce int64) (currencywaitlist.Item, error) {
+	var (
+		item  currencywaitlist.Item
+		value []byte
+	)
+	query := `SELECT *
+	          FROM currency_waitlist
+	          WHERE wallet_address = $1 and nonce = $2`
+
+	err := currencywaitlistDB.conn.QueryRowContext(ctx, query, walletAddress, nonce).Scan(&item.WalletAddress, &value, &item.Nonce, &item.Signature)
+	if errors.Is(err, sql.ErrNoRows) {
+		return item, currencywaitlist.ErrNoItem.Wrap(err)
+	}
+	item.Value.SetBytes(value)
+
+	return item, ErrCurrencyWaitlist.Wrap(err)
 }
 
 // List returns items of currency waitlist from database.

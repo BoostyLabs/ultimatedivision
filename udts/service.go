@@ -34,9 +34,9 @@ func (service *Service) Create(ctx context.Context, udt UDT) error {
 	return ErrUDTs.Wrap(service.udts.Create(ctx, udt))
 }
 
-// Get returns udt by user id from database.
-func (service *Service) Get(ctx context.Context, userID uuid.UUID) (UDT, error) {
-	udt, err := service.udts.Get(ctx, userID)
+// GetByUserID returns udt by user id from database.
+func (service *Service) GetByUserID(ctx context.Context, userID uuid.UUID) (UDT, error) {
+	udt, err := service.udts.GetByUserID(ctx, userID)
 	return udt, ErrUDTs.Wrap(err)
 }
 

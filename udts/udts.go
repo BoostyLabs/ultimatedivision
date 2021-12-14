@@ -20,8 +20,8 @@ var ErrNoUDT = errs.Class("udt does not exist")
 type DB interface {
 	// Create creates udt in the database.
 	Create(ctx context.Context, udt UDT) error
-	// Get returns udt by user's id from database.
-	Get(ctx context.Context, userID uuid.UUID) (UDT, error)
+	// GetByUserID returns udt by user's id from database.
+	GetByUserID(ctx context.Context, userID uuid.UUID) (UDT, error)
 	// List returns udts from database.
 	List(ctx context.Context) ([]UDT, error)
 	// Update updates udt by user's id in the database.

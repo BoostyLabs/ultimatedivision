@@ -155,6 +155,10 @@ type Config struct {
 		matches.Config
 	} `json:"matches"`
 
+	CurrencyWaitList struct {
+		currencywaitlist.Config
+	} `json:"currencyWaitList"`
+
 	UDTs struct {
 		udts.Config
 	} `json:"udts"`
@@ -237,6 +241,11 @@ type Peer struct {
 	Seasons struct {
 		Service           *seasons.Service
 		ExpirationSeasons *seasons.Chore
+	}
+
+	// exposes currencywaitlist related logic.
+	CurrencyWaitList struct {
+		Service *currencywaitlist.Service
 	}
 
 	// exposes udts related logic.
@@ -452,6 +461,15 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // currencywaitlist setup
+		peer.CurrencyWaitList.Service = currencywaitlist.NewService(
+			config.CurrencyWaitList.Config,
+			peer.Database.CurrencyWaitList(),
+			peer.Users.Service,
+			peer.UDTs.Service,
+		)
+	}
+
 	{ // admin setup
 		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
 		if err != nil {
@@ -500,6 +518,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Queue.Service,
 			peer.Seasons.Service,
 			peer.WaitList.Service,
+			peer.CurrencyWaitList.Service,
 		)
 	}
 
