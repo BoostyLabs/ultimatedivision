@@ -31,6 +31,7 @@ import PlayToEarn from '@components/Tokenomics/PlayToEarn';
 import Spending from '@components/Tokenomics/Spending';
 import Staking from '@components/Tokenomics/Staking';
 
+/* Boolean value from localStorage, which indicates whether the user is logged in or not. */
 const isLoggined = window.localStorage.getItem('IS_LOGGINED');
 
 /** Route base config implementation */
