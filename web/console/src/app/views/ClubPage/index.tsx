@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ClubCardsArea } from '@components/Club/ClubCardsArea';
@@ -15,7 +15,7 @@ import { RegistrationPopup } from '@/app/components/common/Registration/Registra
 
 import { UnauthorizedError } from '@/api';
 import { RootState } from '@/app/store';
-import { listOfCards, clearCardsQueryParameters, createCardsQueryParameters } from '@/app/store/actions/cards';
+import { listOfCards, clearCardsQueryParameters, createCardsQueryParameters, getQueryParameters } from '@/app/store/actions/cards';
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
@@ -23,6 +23,25 @@ import './index.scss';
 const Club: React.FC = () => {
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
     const isCardsVisible = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
+
+    const cardsQueryParameters = getQueryParameters();
+
+    const [statistics, setStatisctis] = useState<CardsQueryParametersField[]>([
+        {'defence_gte': cardsQueryParameters['defence_gte'] },
+        { 'defence_lt': cardsQueryParameters['defence_lt'] },
+        { 'goalkeeping_gte': cardsQueryParameters['goalkeeping_gte'] },
+        { 'goalkeeping_lt': cardsQueryParameters['goalkeeping_lt'] },
+        { 'offense_gte': cardsQueryParameters['offense_gte'] },
+        { 'offense_lt': cardsQueryParameters['offense_lt']  },
+        { 'physique_gte': cardsQueryParameters['physique_gte']  },
+        { 'physique_lt': cardsQueryParameters['physique_lt']  },
+        { 'tactics_gte': cardsQueryParameters['tactics_gte']  },
+        { 'tactics_lt': cardsQueryParameters['tactics_lt']  },
+        { 'technique_gte': cardsQueryParameters['technique_gte']  },
+        { 'technique_lt': cardsQueryParameters['technique_lt']  }
+    ]);
+
+    // const stats = useMemo(() => statistics, [statistics]);
 
     const dispatch = useDispatch();
 
@@ -33,7 +52,7 @@ const Club: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async(queryParameters: CardsQueryParametersField[]) => {
+    const submitSearch = async (queryParameters: CardsQueryParametersField[]) => {
         createCardsQueryParameters(queryParameters);
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
     };
@@ -44,9 +63,10 @@ const Club: React.FC = () => {
     };
 
     useEffect(() => {
-        (async() => {
+        console.log('stats in club: ', statistics);
+        (async () => {
             try {
-                clearCardsQueryParameters();
+                // clearCardsQueryParameters();
                 await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
             } catch (error: any) {
                 if (error instanceof UnauthorizedError) {
@@ -56,7 +76,7 @@ const Club: React.FC = () => {
                 };
             };
         })();
-    }, [isCardsVisible]);
+    }, [isCardsVisible, statistics]);
 
     return (
         <section className="club">
@@ -66,7 +86,10 @@ const Club: React.FC = () => {
             </h1>
             <FilterField >
                 <FilterByVersion submitSearch={submitSearch} />
-                <FilterByStats submitSearch={submitSearch} />
+                <FilterByStats
+                    statistics={statistics}
+                    setStatistics={setStatisctis}
+                    submitSearch={submitSearch} />
                 <FilterByPrice />
                 <FilterByStatus />
             </FilterField>

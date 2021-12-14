@@ -8,7 +8,11 @@ import { FilterByParameterWrapper } from '@/app/components/common/FilterField/Fi
 import { CardsQueryParametersField } from '@/card';
 
 // TODO: rework functionality.
-export const FilterByStats: React.FC<{ submitSearch: (queryParameters: CardsQueryParametersField[]) => void }> = ({ submitSearch }) => {
+export const FilterByStats: React.FC<{
+    submitSearch: (queryParameters: CardsQueryParametersField[]) => void;
+    statistics?: CardsQueryParametersField[],
+    setStatistics?: any,
+}> = ({ submitSearch, setStatistics, statistics }) => {
     /** Indicates if FilterByStats component shown. */
     const [isFilterByStatsShown, setIsFilterByStatsShown] = useState(false);
 
@@ -17,31 +21,21 @@ export const FilterByStats: React.FC<{ submitSearch: (queryParameters: CardsQuer
         setIsFilterByStatsShown(isFilterByStatsShown => !isFilterByStatsShown);
     };
 
-    const [statistics, setStatisctis] = useState<CardsQueryParametersField[]>([
-        { 'defence_gte': '' },
-        { 'defence_lt': '' },
-        { 'goalkeeping_gte': '' },
-        { 'goalkeeping_lt': '' },
-        { 'offense_gte': '' },
-        { 'offense_lt': '' },
-        { 'physique_gte': '' },
-        { 'physique_lt': '' },
-        { 'tactics_gte': '' },
-        { 'tactics_lt': '' },
-        { 'technique_gte': '' },
-        { 'technique_lt': '' }
-    ]);
-
     /** Submits query parameters by stats. */
     const handleSubmit = async () => {
-        await submitSearch([...statistics]);
+        console.log('submit: ', statistics);
+        statistics && await submitSearch([...statistics]);
         showFilterByStats();
     };
 
     const setField = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newStatistics = [...statistics];
-        newStatistics[index] = { [e.target.name]: e.target.value };
-        setStatisctis(newStatistics)
+        const newStatistics = statistics && [...statistics];
+        if (newStatistics) {
+            newStatistics[index] = { [e.target.name]: e.target.value };
+        }
+        console.log('new:', newStatistics)
+        setStatistics(newStatistics)
+        console.log('stat: ', statistics);
     };
 
     return (
@@ -51,7 +45,7 @@ export const FilterByStats: React.FC<{ submitSearch: (queryParameters: CardsQuer
             title="Stats"
         >
             <div className="filter-item__dropdown-active__stats__wrapper">
-                {statistics.map((stat, index: number) => {
+                {statistics && statistics.map((stat, index: number) => {
                     for (let i in stat) {
                         return <div>
                             <input

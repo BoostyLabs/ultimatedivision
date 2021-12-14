@@ -23,6 +23,11 @@ const cardsClient = new CardsClient();
 const cardsService = new CardService(cardsClient);
 
 /** Clears cards query parameters. */
+export const getQueryParameters = () => {
+    return cardsService.getQueryParameters();
+};
+
+/** Clears cards query parameters. */
 export const clearCardsQueryParameters = () => {
     cardsService.clearCardsQueryParameters();
 };
