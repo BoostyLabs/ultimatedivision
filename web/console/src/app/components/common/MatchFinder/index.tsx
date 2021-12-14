@@ -134,7 +134,7 @@ const MatchFinder: React.FC = () => {
                     setIsRejectedUser(false);
 
                     return;
-                }
+                };
 
                 startSearchAfterReject();
 
@@ -189,51 +189,37 @@ const MatchFinder: React.FC = () => {
         };
     }
 
-    return (
-        isSearchingMatch &&
-            <section className={isMatchFound ? 'match-finder__wrapper' : ''}>
-                <div className="match-finder">
-                    <h1 className="match-finder__title">
-                        {isMatchFound
-                            ? 'YOUR MATCH WAS FOUND'
-                            : 'LOOKING FOR A MATCH'}
-                    </h1>
-                    {isMatchFound ? <AutoCloseTimer /> : <Timer />}
-                    <div className="match-finder__form">
-                        {isMatchFound ?
-                            <input
-                                className="match-finder__form__accept"
-                                value="Accept"
-                                type="button"
-                                onClick={confirmMatch}
-                            />
-                            :
-                            <input
-                                className="match-finder__form__accept-not-allowed"
-                                value="Accept"
-                                type="button"
-                            />
-                        }
-                        {isMatchFound ?
-                            <input
-                                className="match-finder__form__cancel"
-                                value="Cancel"
-                                type="button"
-                                onClick={cancelConfirmationGame}
-                            />
-                            :
-                            <input
-                                className="match-finder__form__cancel"
-                                value="Cancel"
-                                type="button"
-                                onClick={canselSearchingGame}
-                            />
-                        }
-                    </div>
-                </div>
-            </section>
-
-    );
+    return isSearchingMatch && <section className={isMatchFound ? 'match-finder__wrapper' : ''}>
+        <div className="match-finder">
+            <h1 className="match-finder__title">
+                {isMatchFound ? 'YOUR MATCH WAS FOUND' : 'LOOKING FOR A MATCH'}
+            </h1>
+            {isMatchFound ? <AutoCloseTimer /> : <Timer />}
+            <div className="match-finder__form">
+                {isMatchFound ? <input
+                    className="match-finder__form__accept"
+                    value="Accept"
+                    type="button"
+                    onClick={confirmMatch}
+                /> : <input
+                    className="match-finder__form__accept-not-allowed"
+                    value="Accept"
+                    type="button"
+                />}
+                {isMatchFound ? <input
+                    className="match-finder__form__cancel"
+                    value="Cancel"
+                    type="button"
+                    onClick={cancelConfirmationGame}
+                /> : <input
+                    className="match-finder__form__cancel"
+                    value="Cancel"
+                    type="button"
+                    onClick={canselSearchingGame}
+                />}
+            </div>
+        </div>
+    </section>;
 };
 
 export default MatchFinder;
