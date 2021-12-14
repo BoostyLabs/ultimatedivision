@@ -60,17 +60,15 @@ func (controller *CurrencyWaitList) Create(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		controller.log.Error("could not create nft token", ErrCurrencyWaitList.Wrap(err))
 
-		if users.ErrNoUser.Has(err) {
+		switch {
+		case users.ErrNoUser.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrCurrencyWaitList.Wrap(err))
-			return
-		}
 
-		if udts.ErrNoUDT.Has(err) {
+		case udts.ErrNoUDT.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrCurrencyWaitList.Wrap(err))
-			return
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrCurrencyWaitList.Wrap(err))
 		}
-
-		controller.serveError(w, http.StatusInternalServerError, ErrCurrencyWaitList.Wrap(err))
 		return
 	}
 

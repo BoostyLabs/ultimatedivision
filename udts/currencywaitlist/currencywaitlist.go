@@ -50,7 +50,7 @@ type Transaction struct {
 
 // Config defines values needed by mint udt tokens in blockchain.
 type Config struct {
-	IntervalCheckSignature time.Duration        `json:"intervalCheckSignature"`
+	IntervalSignatureCheck time.Duration        `json:"intervalSignatureCheck"`
 	GameContract           cryptoutils.Contract `json:"gameContract"`
 	WinValue               string               `json:"winValue"`
 }

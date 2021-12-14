@@ -87,7 +87,7 @@ func (service *Service) Create(ctx context.Context, walletAddress cryptoutils.Ad
 		return transaction, ErrCurrencyWaitlist.Wrap(err)
 	}
 
-	for range time.NewTicker(time.Millisecond * service.config.IntervalCheckSignature).C {
+	for range time.NewTicker(time.Millisecond * service.config.IntervalSignatureCheck).C {
 		if item, err := service.GetByWalletAddressAndNonce(ctx, walletAddress, udt.Nonce); item.Signature != "" && err == nil {
 			transaction = Transaction{
 				Signature:    item.Signature,
