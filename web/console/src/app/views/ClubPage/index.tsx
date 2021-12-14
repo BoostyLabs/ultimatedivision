@@ -15,13 +15,15 @@ import { RegistrationPopup } from '@/app/components/common/Registration/Registra
 
 import { UnauthorizedError } from '@/api';
 import { RootState } from '@/app/store';
-import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
+import { listOfCards, clearCardsQueryParameters, createCardsQueryParameters } from '@/app/store/actions/cards';
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
 
 const Club: React.FC = () => {
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
+    const isCardsVisible = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
+
     const dispatch = useDispatch();
 
     /** Indicates if registration is required. */
@@ -31,8 +33,8 @@ const Club: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async(cardsQueryParameters: CardsQueryParametersField[]) => {
-        createCardsQueryParameters(cardsQueryParameters);
+    const submitSearch = async(queryParameters: CardsQueryParametersField[]) => {
+        createCardsQueryParameters(queryParameters);
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
     };
 
@@ -44,6 +46,7 @@ const Club: React.FC = () => {
     useEffect(() => {
         (async() => {
             try {
+                clearCardsQueryParameters();
                 await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
             } catch (error: any) {
                 if (error instanceof UnauthorizedError) {
@@ -53,7 +56,7 @@ const Club: React.FC = () => {
                 };
             };
         })();
-    }, []);
+    }, [isCardsVisible]);
 
     return (
         <section className="club">
