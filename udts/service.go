@@ -17,15 +17,13 @@ var ErrUDTs = errs.Class("UDTs service error")
 //
 // architecture: Service
 type Service struct {
-	config Config
-	udts   DB
+	udts DB
 }
 
 // NewService is a constructor for UDTs service.
-func NewService(config Config, udts DB) *Service {
+func NewService(udts DB) *Service {
 	return &Service{
-		config: config,
-		udts:   udts,
+		udts: udts,
 	}
 }
 

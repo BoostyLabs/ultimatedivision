@@ -84,6 +84,35 @@ func (currencywaitlistDB *currencywaitlistDB) List(ctx context.Context) ([]curre
 	return itemList, ErrCurrencyWaitlist.Wrap(rows.Err())
 }
 
+// ListWithoutSignature returns items of currency waitlist without signature from database.
+func (currencywaitlistDB *currencywaitlistDB) ListWithoutSignature(ctx context.Context) ([]currencywaitlist.Item, error) {
+	var (
+		itemList []currencywaitlist.Item
+		value    []byte
+	)
+	query := `SELECT * FROM currency_waitlist WHERE signature = ''`
+
+	rows, err := currencywaitlistDB.conn.QueryContext(ctx, query)
+	if err != nil {
+		return itemList, ErrCurrencyWaitlist.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	for rows.Next() {
+		var item currencywaitlist.Item
+
+		if err = rows.Scan(&item.WalletAddress, &value, &item.Nonce, &item.Signature); err != nil {
+			return itemList, ErrCurrencyWaitlist.Wrap(err)
+		}
+		item.Value.SetBytes(value)
+		itemList = append(itemList, item)
+	}
+
+	return itemList, ErrCurrencyWaitlist.Wrap(rows.Err())
+}
+
 // UpdateSignature updates signature of item by wallet address and nonce in the database.
 func (currencywaitlistDB *currencywaitlistDB) UpdateSignature(ctx context.Context, signature cryptoutils.Signature, walletAddress cryptoutils.Address, nonce int64) error {
 	query := `UPDATE currency_waitlist

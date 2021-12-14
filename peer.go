@@ -158,10 +158,6 @@ type Config struct {
 	CurrencyWaitList struct {
 		currencywaitlist.Config
 	} `json:"currencyWaitList"`
-
-	UDTs struct {
-		udts.Config
-	} `json:"udts"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -456,7 +452,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 	{ // udts setup
 		peer.UDTs.Service = udts.NewService(
-			config.UDTs.Config,
 			peer.Database.UDTs(),
 		)
 	}

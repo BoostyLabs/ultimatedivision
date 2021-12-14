@@ -59,6 +59,13 @@ func TestCurrencycurrencywaitlist(t *testing.T) {
 			compareItemsSlice(t, itemList, []currencywaitlist.Item{item1, item2})
 		})
 
+		t.Run("ListWithoutSignature", func(t *testing.T) {
+			itemList, err := repositoryCurrencyWaitList.ListWithoutSignature(ctx)
+			require.NoError(t, err)
+
+			compareItemsSlice(t, itemList, []currencywaitlist.Item{item1, item2})
+		})
+
 		t.Run("UpdateSignature", func(t *testing.T) {
 			item1.Signature = cryptoutils.Signature("707fb93c61be8d54c6d1fdf4b83c8642831c480194f7cc93ebdd6fe1ac7474ae63efd077cf6398bf00dc0f7ea96be9f3f9a05dfac1382c4d2f1bb11ec46148491b")
 			err := repositoryCurrencyWaitList.UpdateSignature(ctx, item1.Signature, item1.WalletAddress, item1.Nonce)
