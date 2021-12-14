@@ -22,7 +22,7 @@ var _ waitlist.DB = (*waitlistDB)(nil)
 // ErrWaitlist indicates that there was an error in the database.
 var ErrWaitlist = errs.Class("ErrWaitlist repository error")
 
-// waitlistDB provide access to waitlist DB.
+// waitlistDB provides access to waitlist DB.
 //
 // architecture: Database
 type waitlistDB struct {
@@ -157,7 +157,7 @@ func (waitlistDB *waitlistDB) Update(ctx context.Context, tokenID int64, passwor
 	}
 	rowNum, err := result.RowsAffected()
 	if err == nil && rowNum == 0 {
-		return waitlist.ErrNoItem.New("item for wait list does not exist")
+		return waitlist.ErrNoItem.New("item of wait list does not exist")
 	}
 
 	return nil
