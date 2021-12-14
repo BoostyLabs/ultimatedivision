@@ -52,6 +52,8 @@ const Club: React.FC = () => {
                 if (error instanceof UnauthorizedError) {
                     setIsRegistrationRequired(true);
 
+                    window.localStorage.setItem('IS_LOGGINED', '');
+
                     return;
                 };
             };

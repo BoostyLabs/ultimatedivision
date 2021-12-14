@@ -20,7 +20,7 @@ const Store = lazy(() => import('@/app/views/StorePage'));
 const Navbar = lazy(() => import('@/app/components/common/Navbar'));
 const Division = lazy(() => import('@/app/views/Division'));
 const Match = lazy(() => import('@/app/views/Match'));
-const MatchFinder = (lazy(() => import('@components/common/MatchFinder')));
+const MatchFinder = lazy(() => import('@components/common/MatchFinder'));
 
 import Summary from '@components/WhitePaper/Summary';
 import GameMechanics from '@components/WhitePaper/GameMechanics';
@@ -31,15 +31,17 @@ import PlayToEarn from '@components/Tokenomics/PlayToEarn';
 import Spending from '@components/Tokenomics/Spending';
 import Staking from '@components/Tokenomics/Staking';
 
+const isLoggined = window.localStorage.getItem('IS_LOGGINED');
+
 /** Route base config implementation */
 export class ComponentRoutes {
     /** data route config*/
     constructor(
         public path: string,
-        public component: React.FC<any>,
+        public component: any,
         public exact: boolean,
         public children?: ComponentRoutes[]
-    ) { }
+    ) {}
     /** Method for creating child subroutes path */
     public with(
         child: ComponentRoutes,
@@ -55,47 +57,6 @@ export class ComponentRoutes {
 
         return this;
     }
-}
-/** Route config that implements auth actions */
-export class AuthRouteConfig {
-    public static SignIn: ComponentRoutes = new ComponentRoutes(
-        '/sign-in',
-        SignIn,
-        true
-    );
-    public static SignUp: ComponentRoutes = new ComponentRoutes(
-        '/sign-up',
-        SignUp,
-        true
-    );
-    public static ChangePassword: ComponentRoutes = new ComponentRoutes(
-        '/change-password',
-        ChangePassword,
-        true
-    );
-    public static ConfirmEmail: ComponentRoutes = new ComponentRoutes(
-        '/email/confirm',
-        ConfirmEmail,
-        true
-    );
-    public static ResetPassword: ComponentRoutes = new ComponentRoutes(
-        '/reset-password',
-        RecoverPassword,
-        true
-    );
-    public static Default: ComponentRoutes = new ComponentRoutes(
-        '/',
-        SignIn,
-        true
-    );
-    public static routes: ComponentRoutes[] = [
-        AuthRouteConfig.ConfirmEmail,
-        AuthRouteConfig.Default,
-        AuthRouteConfig.ResetPassword,
-        AuthRouteConfig.ChangePassword,
-        AuthRouteConfig.SignIn,
-        AuthRouteConfig.SignUp,
-    ];
 }
 
 /** Route config implementation */
@@ -216,6 +177,48 @@ export class RouteConfig {
     ];
 }
 
+/** Route config that implements auth actions */
+export class AuthRouteConfig {
+    public static SignIn: ComponentRoutes = new ComponentRoutes(
+        '/sign-in',
+        SignIn,
+        true
+    );
+    public static SignUp: ComponentRoutes = new ComponentRoutes(
+        '/sign-up',
+        SignUp,
+        true
+    );
+    public static ChangePassword: ComponentRoutes = new ComponentRoutes(
+        '/change-password',
+        ChangePassword,
+        true
+    );
+    public static ConfirmEmail: ComponentRoutes = new ComponentRoutes(
+        '/email/confirm',
+        ConfirmEmail,
+        true
+    );
+    public static ResetPassword: ComponentRoutes = new ComponentRoutes(
+        '/reset-password',
+        RecoverPassword,
+        true
+    );
+    public static Default: ComponentRoutes = new ComponentRoutes(
+        '/',
+        !!isLoggined ? RouteConfig.MarketPlace.component : SignIn,
+        true
+    );
+    public static routes: ComponentRoutes[] = [
+        AuthRouteConfig.ConfirmEmail,
+        AuthRouteConfig.Default,
+        AuthRouteConfig.ResetPassword,
+        AuthRouteConfig.ChangePassword,
+        AuthRouteConfig.SignIn,
+        AuthRouteConfig.SignUp,
+    ];
+}
+
 export const Routes = () =>
     <Switch>
         {AuthRouteConfig.routes.map((route, index) =>
@@ -239,3 +242,4 @@ export const Routes = () =>
             )}
         </Route>
     </Switch>;
+

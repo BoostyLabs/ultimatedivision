@@ -28,12 +28,12 @@ const SignIn: React.FC = () => {
     const history = useHistory();
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
+    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null;
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState<SetStateAction<null | string>>(null);
     const [isRemember, setIsRemember] = useState(false);
     /** TODO: rework remember me implementation  */
-    const handleIsRemember = () => setIsRemember(prev => !prev);
+    const handleIsRemember = () => setIsRemember((prev) => !prev);
     /** checks if values does't valid then set an error messages */
     const validateForm: () => boolean = () => {
         let isFormValid = true;
@@ -41,12 +41,12 @@ const SignIn: React.FC = () => {
         if (!Validator.isEmail(email)) {
             setEmailError('Email is not valid');
             isFormValid = false;
-        };
+        }
 
         if (!Validator.isPassword(password)) {
             setPasswordError('Password is not valid');
             isFormValid = false;
-        };
+        }
 
         return isFormValid;
     };
@@ -56,17 +56,19 @@ const SignIn: React.FC = () => {
 
         if (!validateForm()) {
             return;
-        };
+        }
 
         try {
             await dispatch(loginUser(email, password));
+            window.localStorage.setItem('IS_LOGGINED', 'true');
+
             history.push(RouteConfig.MarketPlace.path);
         } catch (error: any) {
             toast.error('Incorrect email or password', {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
-        };
+        }
     };
     /** user datas for registration */
     const signInDatas = [
@@ -104,17 +106,19 @@ const SignIn: React.FC = () => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 // @ts-ignore
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await window.ethereum.request({
+                    method: 'eth_requestAccounts',
+                });
                 await service.signMessage();
                 history.push(RouteConfig.MarketPlace.path);
             } catch (error: any) {
                 error.code === METAMASK_RPC_ERROR_CODE
-                    ?
+                    ? 
                     toast.error('Please open metamask manually!', {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
                     })
-                    :
+                    : 
                     toast.error('Something went wrong', {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
@@ -152,7 +156,8 @@ const SignIn: React.FC = () => {
                             error={data.error}
                             clearError={data.clearError}
                             validate={data.validate}
-                        />)}
+                        />
+                    )}
                     <div className="register__sign-in__sign-form__checkbox-wrapper">
                         <input
                             id="register-sign-in-checkbox"
@@ -210,7 +215,7 @@ const SignIn: React.FC = () => {
                         </Link>
                     </p>
                 </div>
-            </div >
+            </div>
         </div>
     );
 };
