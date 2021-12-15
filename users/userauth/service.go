@@ -6,6 +6,7 @@ package userauth
 import (
 	"context"
 	"crypto/subtle"
+	"strings"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -432,6 +433,8 @@ func (service *Service) LoginWithMetamask(ctx context.Context, loginMetamaskFiel
 		return "", Error.New("login metamask fields are wrong")
 	}
 
+	wallet := cryptoutils.Address(strings.ToLower(string(loginMetamaskFields.Address)))
+
 	user, err := service.users.GetByWalletAddress(ctx, loginMetamaskFields.Address)
 	switch {
 	case users.ErrNoUser.Has(err):
@@ -440,7 +443,7 @@ func (service *Service) LoginWithMetamask(ctx context.Context, loginMetamaskFiel
 			LastLogin: time.Time{},
 			Status:    users.StatusActive,
 			CreatedAt: time.Now().UTC(),
-			Wallet:    loginMetamaskFields.Address,
+			Wallet:    wallet,
 		}
 		err = service.users.Create(ctx, user)
 		if err != nil {
