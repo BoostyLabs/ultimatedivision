@@ -30,20 +30,20 @@ export class CardField {
     constructor(public label: string, public value: string | number) { }
 }
 
-/** CardsQueryParametersField is an interface for cards query parameters field, that consist of key and value. */
+/** CardsQueryParametersField is an interface for cards and lots query parameters field, that consist of key and value. */
 export interface CardsQueryParametersField {
     [key: string]: string | number;
 };
 
-/** CardsQueryParameters is class that uses for filtering cards by queries. */
+/** CardsQueryParameters is class that uses for filtering cards and lots by queries. */
 export class CardsQueryParameters {
     [key: string]: number | string | null;
     public 'defence_gte': number | null = null;
     public 'defence_lt': number | null = null;
     public 'goalkeeping_gte': number | null = null;
     public 'goalkeeping_lt': number | null = null;
-    public 'offside_trap_gte': number | null = null;
-    public 'offside_trap_lt': number | null = null;
+    public 'offense_gte': number | null = null;
+    public 'offense_lt': number | null = null;
     public 'physique_gte': number | null = null;
     public 'physique_lt': number | null = null;
     public 'tactics_gte': string | null = null;
