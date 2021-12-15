@@ -4,6 +4,8 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
+import { JoinButton } from "@components/common/JoinButton";
+
 import { CloseDropdownIcon, DropdownIcon } from "@/app/static/img/Navbar";
 import ultimate from "@static/img/Navbar/ultimate.svg";
 
@@ -11,7 +13,7 @@ import { RouteConfig } from "@/app/routes";
 
 import "./index.scss";
 
-const Navbar: React.FC = () => {
+export const Navbar: React.FC = () => {
     const [isDropdownActive, setIsDropdownActive] = useState<boolean>(false);
 
     /** Сlass visibility for navbar items. */
@@ -19,12 +21,10 @@ const Navbar: React.FC = () => {
 
     /** TODO: DIVISIONS will be replaced with id parameter */
     const navbarItems: Array<{ name: string; path: string }> = [
-        { name: "HOME", path: RouteConfig.Summary.path },
-        { name: "STORE", path: RouteConfig.Store.path },
-        { name: "MARKETPLACE", path: RouteConfig.MarketPlace.path },
-        { name: "CARDS", path: RouteConfig.Club.path },
-        { name: "FIELD", path: RouteConfig.Field.path },
-        { name: "DIVISIONS", path: RouteConfig.Division.path },
+        { name: "My Club", path: RouteConfig.Club.path },
+        { name: "Store", path: RouteConfig.Store.path },
+        { name: "Marketplace", path: RouteConfig.MarketPlace.path },
+        { name: "FAQ", path: RouteConfig.Summary.path },
     ];
 
     /** Marketplace component index from navbar items. */
@@ -61,9 +61,8 @@ const Navbar: React.FC = () => {
                         </NavLink>
                     </li>
                 ))}
+                <JoinButton />
             </ul>
         </div>
     );
 };
-
-export default Navbar;
