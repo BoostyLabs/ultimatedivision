@@ -1,30 +1,30 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
-import { CloseDropdownIcon, DropdownIcon } from "@/app/static/img/Navbar";
-import ultimate from "@static/img/Navbar/ultimate.svg";
+import { CloseDropdownIcon, DropdownIcon } from '@/app/static/img/Navbar';
+import ultimate from '@static/img/Navbar/ultimate.svg';
 
-import { RouteConfig } from "@/app/routes";
+import { RouteConfig } from '@/app/routes';
 
-import "./index.scss";
+import './index.scss';
 
 const Navbar: React.FC = () => {
     const [isDropdownActive, setIsDropdownActive] = useState<boolean>(false);
 
     /** Сlass visibility for navbar items. */
-    const visibleClassName = isDropdownActive ? "-active" : "";
+    const visibleClassName = isDropdownActive ? '-active' : '';
 
     /** TODO: DIVISIONS will be replaced with id parameter */
     const navbarItems: Array<{ name: string; path: string }> = [
-        { name: "HOME", path: RouteConfig.Summary.path },
-        { name: "STORE", path: RouteConfig.Store.path },
-        { name: "MARKETPLACE", path: RouteConfig.MarketPlace.path },
-        { name: "CARDS", path: RouteConfig.Club.path },
-        { name: "FIELD", path: RouteConfig.Field.path },
-        { name: "DIVISIONS", path: RouteConfig.Division.path },
+        { name: 'HOME', path: RouteConfig.Summary.path },
+        { name: 'STORE', path: RouteConfig.Store.path },
+        { name: 'MARKETPLACE', path: RouteConfig.MarketPlace.path },
+        { name: 'CARDS', path: RouteConfig.Club.path },
+        { name: 'FIELD', path: RouteConfig.Field.path },
+        { name: 'DIVISIONS', path: RouteConfig.Division.path },
     ];
 
     /** Marketplace component index from navbar items. */
@@ -46,7 +46,7 @@ const Navbar: React.FC = () => {
                 {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
             </div>
             <ul className={`ultimatedivision-navbar__list${visibleClassName}`}>
-                {navbarItems.map((item, index) => (
+                {navbarItems.map((item, index) =>
                     <li
                         key={index}
                         className={`ultimatedivision-navbar__list${visibleClassName}__item`}
@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
                             {item.name}
                         </NavLink>
                     </li>
-                ))}
+                )}
             </ul>
         </div>
     );

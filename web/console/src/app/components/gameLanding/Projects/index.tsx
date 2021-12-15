@@ -2,18 +2,17 @@
 // See LICENSE for copying information.
 
 import affinidi from '@static/img/gameLanding/projects/affinidi.svg';
-import elixir from "@static/img/gameLanding/projects/elixir.svg";
-import bloom from "@static/img/gameLanding/projects/bloom.svg";
-import consensys from "@static/img/gameLanding/projects/consensys.svg";
-import near from "@static/img/gameLanding/projects/near.svg";
-import nem from "@static/img/gameLanding/projects/nem.svg";
-import storj from "@static/img/gameLanding/projects/storj.svg";
-import trustana from "@static/img/gameLanding/projects/trustana.svg";
+import elixir from '@static/img/gameLanding/projects/elixir.svg';
+import bloom from '@static/img/gameLanding/projects/bloom.svg';
+import consensys from '@static/img/gameLanding/projects/consensys.svg';
+import near from '@static/img/gameLanding/projects/near.svg';
+import nem from '@static/img/gameLanding/projects/nem.svg';
+import storj from '@static/img/gameLanding/projects/storj.svg';
+import trustana from '@static/img/gameLanding/projects/trustana.svg';
 
 import './index.scss';
 
 export const Projects: React.FC = () => {
-
     const logos = [
         consensys,
         nem,
@@ -33,7 +32,7 @@ export const Projects: React.FC = () => {
                     of well-known crypto projects
                 </h2>
                 <div className="projects__area">
-                    {logos.map((logo, index) => (
+                    {logos.map((logo, index) =>
                         <div
                             key={index}
                             className="projects__area__item"
@@ -46,7 +45,7 @@ export const Projects: React.FC = () => {
                             />
                         </div>
 
-                    ))}
+                    )}
                 </div>
             </div >
         </section >

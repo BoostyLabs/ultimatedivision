@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import discord from "@static/img/gameLanding/footer/discord.svg";
-import twitter from "@static/img/gameLanding/footer/twitter.svg";
+import discord from '@static/img/gameLanding/footer/discord.svg';
+import twitter from '@static/img/gameLanding/footer/twitter.svg';
 
 import './index.scss';
 
@@ -41,7 +41,7 @@ export const Footer: React.FC = () => {
                 </div>
                 <div className="footer__social">
                     <ul className="footer__list">
-                        {socialList.map((social) => (
+                        {socialList.map((social) =>
                             <a
                                 key={social.id}
                                 className="footer__social-item"
@@ -61,7 +61,7 @@ export const Footer: React.FC = () => {
                                     </span>
                                 </div>
                             </a>
-                        ))}
+                        )}
                     </ul>
                 </div>
             </div>
