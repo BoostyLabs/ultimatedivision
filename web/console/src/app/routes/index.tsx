@@ -20,7 +20,7 @@ const Store = lazy(() => import('@/app/views/StorePage'));
 const Navbar = lazy(() => import('@/app/components/common/Navbar'));
 const Division = lazy(() => import('@/app/views/Division'));
 const Match = lazy(() => import('@/app/views/Match'));
-const MatchFinder = (lazy(() => import('@components/common/MatchFinder')));
+const MatchFinder = lazy(() => import('@components/common/MatchFinder'));
 
 import Summary from '@components/WhitePaper/Summary';
 import GameMechanics from '@components/WhitePaper/GameMechanics';
