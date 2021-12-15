@@ -158,10 +158,6 @@ type Config struct {
 	CurrencyWaitList struct {
 		currencywaitlist.Config
 	} `json:"currencyWaitList"`
-
-	UDTs struct {
-		udts.Config
-	} `json:"udts"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -436,27 +432,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
-	{ // queue setup
-		peer.Queue.Service = queue.NewService(
-			config.Queue.Config,
-			peer.Database.Queue(),
-			peer.Users.Service,
-			peer.Clubs.Service,
-		)
-
-		peer.Queue.PlaceChore = queue.NewChore(
-			peer.Log,
-			config.Queue.Config,
-			peer.Queue.Service,
-			peer.Matches.Service,
-			peer.Seasons.Service,
-			peer.Clubs.Service,
-		)
-	}
-
 	{ // udts setup
 		peer.UDTs.Service = udts.NewService(
-			config.UDTs.Config,
 			peer.Database.UDTs(),
 		)
 	}
@@ -467,6 +444,25 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Database.CurrencyWaitList(),
 			peer.Users.Service,
 			peer.UDTs.Service,
+		)
+	}
+
+	{ // queue setup
+		peer.Queue.Service = queue.NewService(
+			config.Queue.Config,
+			peer.Database.Queue(),
+			peer.Users.Service,
+			peer.Clubs.Service,
+		)
+
+		peer.Queue.PlaceChore = queue.NewChore(
+			config.Queue.Config,
+			peer.Log,
+			peer.Queue.Service,
+			peer.Matches.Service,
+			peer.Seasons.Service,
+			peer.Clubs.Service,
+			peer.CurrencyWaitList.Service,
 		)
 	}
 
@@ -518,7 +514,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Queue.Service,
 			peer.Seasons.Service,
 			peer.WaitList.Service,
-			peer.CurrencyWaitList.Service,
 		)
 	}
 

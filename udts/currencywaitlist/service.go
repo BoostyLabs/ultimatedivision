@@ -6,9 +6,9 @@ package currencywaitlist
 import (
 	"context"
 	"math/big"
-	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/pkg/cryptoutils"
@@ -40,11 +40,10 @@ func NewService(config Config, currencyWaitList DB, users *users.Service, udts *
 }
 
 // Create creates item of currency wait list.
-func (service *Service) Create(ctx context.Context, walletAddress cryptoutils.Address) (Transaction, error) {
+func (service *Service) Create(ctx context.Context, userID uuid.UUID, value big.Int) (Transaction, error) {
 	var transaction Transaction
 
-	walletAddress = cryptoutils.Address(strings.ToLower(string(walletAddress)))
-	user, err := service.users.GetByWalletAddress(ctx, walletAddress)
+	user, err := service.users.Get(ctx, userID)
 	if err != nil {
 		return transaction, ErrCurrencyWaitlist.Wrap(err)
 	}
@@ -57,7 +56,6 @@ func (service *Service) Create(ctx context.Context, walletAddress cryptoutils.Ad
 
 		udt = udts.UDT{
 			UserID: user.ID,
-			Value:  *big.NewInt(0),
 			Nonce:  0,
 		}
 		if err = service.udts.Create(ctx, udt); err != nil {
@@ -65,22 +63,10 @@ func (service *Service) Create(ctx context.Context, walletAddress cryptoutils.Ad
 		}
 	}
 
-	if item, err := service.GetByWalletAddressAndNonce(ctx, walletAddress, udt.Nonce); item.Signature != "" && err == nil {
-		transaction = Transaction{
-			Signature:    item.Signature,
-			GameContract: service.config.GameContract,
-			Value:        item.Value,
-			Nonce:        item.Nonce,
-		}
-		return transaction, nil
-	}
-
-	var value = new(big.Int)
-	value.SetString(service.config.WinValue, 10)
 	item := Item{
-		WalletAddress: walletAddress,
-		Value:         *value,
-		Nonce:         udt.Nonce,
+		WalletAddress: user.Wallet,
+		Value:         value,
+		Nonce:         udt.Nonce + 1,
 	}
 
 	if err = service.currencyWaitList.Create(ctx, item); err != nil {
@@ -88,12 +74,16 @@ func (service *Service) Create(ctx context.Context, walletAddress cryptoutils.Ad
 	}
 
 	for range time.NewTicker(time.Millisecond * service.config.IntervalSignatureCheck).C {
-		if item, err := service.GetByWalletAddressAndNonce(ctx, walletAddress, udt.Nonce); item.Signature != "" && err == nil {
+		if item, err := service.GetByWalletAddressAndNonce(ctx, user.Wallet, udt.Nonce); item.Signature != "" && err == nil {
+			udt.Nonce++
+			if err = service.udts.Update(ctx, udt); err != nil {
+				return transaction, ErrCurrencyWaitlist.Wrap(err)
+			}
 			transaction = Transaction{
-				Signature:    item.Signature,
-				GameContract: service.config.GameContract,
-				Value:        item.Value,
-				Nonce:        item.Nonce,
+				Signature:   item.Signature,
+				UDTContract: service.config.UDTContract,
+				Value:       item.Value.String(),
+				Nonce:       item.Nonce,
 			}
 			break
 		}
@@ -114,8 +104,14 @@ func (service *Service) List(ctx context.Context) ([]Item, error) {
 	return items, ErrCurrencyWaitlist.Wrap(err)
 }
 
-// Update updates signature of item by wallet address and nonce.
-func (service *Service) Update(ctx context.Context, signature cryptoutils.Signature, walletAddress cryptoutils.Address, nonce int64) error {
+// ListWithoutSignature returns items of currency waitlist without signature from database.
+func (service *Service) ListWithoutSignature(ctx context.Context) ([]Item, error) {
+	items, err := service.currencyWaitList.ListWithoutSignature(ctx)
+	return items, ErrCurrencyWaitlist.Wrap(err)
+}
+
+// UpdateSignature updates signature of item by wallet address and nonce.
+func (service *Service) UpdateSignature(ctx context.Context, signature cryptoutils.Signature, walletAddress cryptoutils.Address, nonce int64) error {
 	return ErrCurrencyWaitlist.Wrap(service.currencyWaitList.UpdateSignature(ctx, signature, walletAddress, nonce))
 }
 

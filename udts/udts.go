@@ -5,7 +5,6 @@ package udts
 
 import (
 	"context"
-	"math/big"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -33,9 +32,5 @@ type DB interface {
 // UDT entity describes how many tokens of udt and what nonce the user has.
 type UDT struct {
 	UserID uuid.UUID `json:"userId"`
-	Value  big.Int   `json:"value"`
 	Nonce  int64     `json:"nonce"`
 }
-
-// Config defines values needed by create udt.
-type Config struct{}
