@@ -59,14 +59,12 @@ export const LootboxCard: React.FC<{
         try {
             await dispatch(openLootbox({ id: data.id, type: data.type }));
 
-            window.localStorage.setItem('IS_LOGGINED', 'true');
-
             handleOpening(true);
         } catch (error: any) {
             if (error instanceof UnauthorizedError) {
                 setIsRegistrationRequired(true);
 
-                window.localStorage.setItem('IS_LOGGINED', '');
+                window.localStorage.setItem('IS_LOGGINED', 'false');
 
                 return;
             };

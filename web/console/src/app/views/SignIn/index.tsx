@@ -60,6 +60,7 @@ const SignIn: React.FC = () => {
 
         try {
             await dispatch(loginUser(email, password));
+
             window.localStorage.setItem('IS_LOGGINED', 'true');
 
             history.push(RouteConfig.MarketPlace.path);
@@ -111,12 +112,12 @@ const SignIn: React.FC = () => {
                 history.push(RouteConfig.MarketPlace.path);
             } catch (error: any) {
                 error.code === METAMASK_RPC_ERROR_CODE
-                    ? 
+                    ?
                     toast.error('Please open metamask manually!', {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
                     })
-                    : 
+                    :
                     toast.error('Something went wrong', {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',

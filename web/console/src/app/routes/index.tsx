@@ -31,8 +31,7 @@ import PlayToEarn from '@components/Tokenomics/PlayToEarn';
 import Spending from '@components/Tokenomics/Spending';
 import Staking from '@components/Tokenomics/Staking';
 
-/* Boolean value from localStorage, which indicates whether the user is logged in or not. */
-const isLoggined = window.localStorage.getItem('IS_LOGGINED');
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 
 /** Route base config implementation */
 export class ComponentRoutes {
@@ -207,7 +206,7 @@ export class AuthRouteConfig {
     );
     public static Default: ComponentRoutes = new ComponentRoutes(
         '/',
-        !!isLoggined ? RouteConfig.MarketPlace.component : SignIn,
+        useLocalStorage() ? RouteConfig.MarketPlace.component : SignIn,
         true
     );
     public static routes: ComponentRoutes[] = [
