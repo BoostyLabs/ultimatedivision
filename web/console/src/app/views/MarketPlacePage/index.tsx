@@ -37,7 +37,6 @@ const MarketPlace: React.FC = () => {
             </h1>
             <FilterField>
                 <FilterByVersion submitSearch={submitSearch} />
-                <FilterByStats submitSearch={submitSearch} />
                 <FilterByPrice />
                 <FilterByStatus />
             </FilterField>

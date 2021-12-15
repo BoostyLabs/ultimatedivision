@@ -15,8 +15,8 @@ import { RegistrationPopup } from '@/app/components/common/Registration/Registra
 
 import { UnauthorizedError } from '@/api';
 import { RootState } from '@/app/store';
-import { listOfCards, clearCardsQueryParameters, createCardsQueryParameters, getQueryParameters } from '@/app/store/actions/cards';
-import { CardsQueryParametersField } from '@/card';
+import { listOfCards, clearConcretCardsQueryParameters, createCardsQueryParameters, getQueryParameters } from '@/app/store/actions/cards';
+import { CardsQueryParametersField, CardsQueryParameters } from '@/card';
 
 import './index.scss';
 
@@ -24,26 +24,9 @@ const Club: React.FC = () => {
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
     const isCardsVisible = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
 
-    const cardsQueryParameters = getQueryParameters();
-
-    const [statistics, setStatisctis] = useState<CardsQueryParametersField[]>([
-        {'defence_gte': cardsQueryParameters['defence_gte'] },
-        { 'defence_lt': cardsQueryParameters['defence_lt'] },
-        { 'goalkeeping_gte': cardsQueryParameters['goalkeeping_gte'] },
-        { 'goalkeeping_lt': cardsQueryParameters['goalkeeping_lt'] },
-        { 'offense_gte': cardsQueryParameters['offense_gte'] },
-        { 'offense_lt': cardsQueryParameters['offense_lt']  },
-        { 'physique_gte': cardsQueryParameters['physique_gte']  },
-        { 'physique_lt': cardsQueryParameters['physique_lt']  },
-        { 'tactics_gte': cardsQueryParameters['tactics_gte']  },
-        { 'tactics_lt': cardsQueryParameters['tactics_lt']  },
-        { 'technique_gte': cardsQueryParameters['technique_gte']  },
-        { 'technique_lt': cardsQueryParameters['technique_lt']  }
-    ]);
-
-    // const stats = useMemo(() => statistics, [statistics]);
-
     const dispatch = useDispatch();
+
+    const cardsQueryParameters = getQueryParameters();
 
     /** Indicates if registration is required. */
     const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
@@ -52,10 +35,15 @@ const Club: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async (queryParameters: CardsQueryParametersField[]) => {
+    const submitSearch = async(queryParameters: CardsQueryParametersField[]) => {
         createCardsQueryParameters(queryParameters);
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
     };
+
+    const clearsStatisticsField = async(queryParameters: CardsQueryParametersField[]) => {
+        clearConcretCardsQueryParameters(queryParameters);
+        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+    }
 
     /** Closes RegistrationPopup componnet. */
     const closeRegistrationPopup = () => {
@@ -63,7 +51,6 @@ const Club: React.FC = () => {
     };
 
     useEffect(() => {
-        console.log('stats in club: ', statistics);
         (async () => {
             try {
                 // clearCardsQueryParameters();
@@ -76,7 +63,7 @@ const Club: React.FC = () => {
                 };
             };
         })();
-    }, [isCardsVisible, statistics]);
+    }, [isCardsVisible]);
 
     return (
         <section className="club">
@@ -87,8 +74,8 @@ const Club: React.FC = () => {
             <FilterField >
                 <FilterByVersion submitSearch={submitSearch} />
                 <FilterByStats
-                    statistics={statistics}
-                    setStatistics={setStatisctis}
+                    cardsQueryParameters={cardsQueryParameters}
+                    clearsStatisticsField={clearsStatisticsField}
                     submitSearch={submitSearch} />
                 <FilterByPrice />
                 <FilterByStatus />

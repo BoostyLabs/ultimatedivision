@@ -1,6 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Paginator } from '@components/common/Paginator';
@@ -17,10 +18,10 @@ import { addCard, cardSelectionVisibility } from '@/app/store/actions/clubs';
 import { CardEditIdentificators } from '@/api/club';
 import { Card, CardsPage, CardsQueryParametersField } from '@/card';
 import { Squad, SquadCard } from '@/club';
+import { CardsClient } from '@/api/cards';
+import { CardService } from '@/card/service';
 
 import './index.scss';
-import { useEffect } from 'react';
-import { clearCardsQueryParameters } from '../../../store/actions/cards';
 
 export const FieldCardSelection = () => {
     const dispatch = useDispatch();
@@ -42,6 +43,8 @@ export const FieldCardSelection = () => {
         return cards.filter((card: Card) => !squadCardsIds.includes(card.id));
     };
 
+    const cardsClient = new CardsClient();
+    const cardsService = new CardService(cardsClient);
     /** Add card to field, and hide card selection component */
     function addCardOnField(cardId: string) {
         dispatch(
@@ -66,7 +69,7 @@ export const FieldCardSelection = () => {
 
     useEffect(() => {
         (async() => {
-            clearCardsQueryParameters();
+            // clearCardsQueryParameters();
             await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
         })();
     }, [isCardsVisible]);
@@ -75,8 +78,8 @@ export const FieldCardSelection = () => {
         <div id="cardList" className="card-selection">
             <FilterField >
                 <FilterByVersion submitSearch={submitSearch} />
-                <FilterByStats submitSearch={submitSearch} />
                 <FilterByPrice />
+                <FilterByStats />
                 <FilterByStatus />
             </FilterField>
             <div className="card-selection__list">

@@ -14,6 +14,7 @@ const getCards = (cardsPage: CardsPage) => ({
     type: GET_USER_CARDS,
     cardsPage,
 });
+
 const userCard = (card: Card) => ({
     type: USER_CARD,
     card,
@@ -27,6 +28,10 @@ export const getQueryParameters = () => {
     return cardsService.getQueryParameters();
 };
 
+export const clearConcretCardsQueryParameters = (queryParameters: CardsQueryParametersField[])  => {
+    cardsService.clearConcretCardsQueryParameters(queryParameters);
+};
+
 /** Clears cards query parameters. */
 export const clearCardsQueryParameters = () => {
     cardsService.clearCardsQueryParameters();
@@ -38,15 +43,16 @@ export const createCardsQueryParameters = (queryParameters: CardsQueryParameters
 };
 
 /** thunk for creating user cards list */
-export const listOfCards = (selectedPage: number) => async function(dispatch: Dispatch) {
+export const listOfCards = (selectedPage: number) => async function (dispatch: Dispatch) {
     const response = await cardsService.list(selectedPage);
     const page = response.page;
     const cards = response.cards;
 
     dispatch(getCards({ cards, page }));
 };
+
 /** thunk for opening fotballerCardPage with reload possibility */
-export const openUserCard = (id: string) => async function(dispatch: Dispatch) {
+export const openUserCard = (id: string) => async function (dispatch: Dispatch) {
     const card = await cardsService.getCardById(id);
 
     dispatch(userCard(card));

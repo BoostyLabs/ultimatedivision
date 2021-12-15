@@ -36,10 +36,6 @@ export const FilterByVersion: React.FC<{
         showFilterByVersion();
     };
 
-    useEffect(() => {
-        console.log(quality);
-    }, [])
-
     return (
         <FilterByParameterWrapper
             showComponent={showFilterByVersion}
