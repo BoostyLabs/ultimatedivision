@@ -106,9 +106,7 @@ const SignIn: React.FC = () => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 // @ts-ignore
-                await window.ethereum.request({
-                    method: 'eth_requestAccounts',
-                });
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
                 await service.signMessage();
                 history.push(RouteConfig.MarketPlace.path);
             } catch (error: any) {

@@ -13,19 +13,14 @@ import { MarketPlaceCardsGroup } from '@components/MarketPlace/MarketPlaceCardsG
 import Navbar from '@components/common/Navbar';
 
 import { RootState } from '@/app/store';
-import {
-    listOfLots,
-    createLotsQueryParameters,
-} from '@/app/store/actions/marketplace';
+import { listOfLots, createLotsQueryParameters } from '@/app/store/actions/marketplace';
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
 
 const MarketPlace: React.FC = () => {
     const dispatch = useDispatch();
-    const { lots, page } = useSelector(
-        (state: RootState) => state.marketplaceReducer.marketplacePage
-    );
+    const { lots, page } = useSelector((state: RootState) => state.marketplaceReducer.marketplacePage);
 
     /** Exposes default page number. */
     const DEFAULT_PAGE_INDEX: number = 1;
