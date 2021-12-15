@@ -54,5 +54,4 @@ type Transaction struct {
 type Config struct {
 	IntervalSignatureCheck time.Duration        `json:"intervalSignatureCheck"`
 	UDTContract            cryptoutils.Contract `json:"udtContract"`
-	WinValue               string               `json:"winValue"`
 }
