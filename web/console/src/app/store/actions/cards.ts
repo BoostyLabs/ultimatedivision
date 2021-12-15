@@ -55,6 +55,7 @@ export const createCardsQueryParameters = (queryParameters: CardsQueryParameters
     cardsService.changeCardsQueryParameters(queryParameters);
 };
 
+/** FieldCards exposes a middleware for cards entity that dispatches current cards on page . */
 export const fieldCards = (selectedPage: number) => async function(dispatch: Dispatch) {
     const response = await fieldCardsService.list(selectedPage);
     const page = response.page;

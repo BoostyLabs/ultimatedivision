@@ -22,7 +22,7 @@ import './index.scss';
 
 const Club: React.FC = () => {
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
-    const {currentCardsPage} = useSelector((state: RootState) => state.cardsReducer);
+    const { currentCardsPage } = useSelector((state: RootState) => state.cardsReducer);
 
     const dispatch = useDispatch();
 

@@ -41,18 +41,18 @@ export const cardsReducer = (cardsState: CardsState = new CardsState(cardsPage, 
             cardsPage: action.payload.cardsPage,
             currentCardsPage: action.payload.currentPage,
         };
-        case GET_FIELD_CARDS:
-            return {
+    case GET_FIELD_CARDS:
+        return {
             ...cardsState,
             cardsPage: action.payload.cardsPage,
             currentFieldCardsPage: action.payload.currentPage,
         };
-        case USER_CARD:
-            return {
+    case USER_CARD:
+        return {
             ...cardsState,
             card: action.card,
         };
-        default:
-            return cardsState;
+    default:
+        return cardsState;
     };
 };
