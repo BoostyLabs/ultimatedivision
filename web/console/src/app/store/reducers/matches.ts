@@ -30,11 +30,21 @@ const DEFALT_CONTRACT_ADDRESS_METHOD: string = '';
 const DEFAULT_NONCE_VALUE: number = 0;
 /** Describes default hash of signature. */
 const SIGNATURE_HASH: string = '';
+/** Describes default coins value. */
+const COINS_VALUE: string = ''
 
 const firstTeam = new Team(DEFAULT_FIRST_TEAM_GOALS, DEFAULT_FIRST_TEAM_GOAL_SCORERS, DEFAULT_FIRST_USER_ID);
 const secondTeam = new Team(DEFAULT_SECOND_TEAM_GOALS, DEFAULT_SECOND_TEAM_GOAL_SCORERS, DEFAULT_SECOND_USER_ID);
 
-const transaction = new Transaction(DEFAULT_NONCE_VALUE, SIGNATURE_HASH, { address: DEFAULT_ADDRESS_CONTRACT, addressMethod: DEFALT_CONTRACT_ADDRESS_METHOD });
+const transaction = new Transaction(
+    DEFAULT_NONCE_VALUE,
+    SIGNATURE_HASH,
+    {
+        address: DEFAULT_ADDRESS_CONTRACT,
+        addressMethod: DEFALT_CONTRACT_ADDRESS_METHOD
+    },
+    COINS_VALUE
+);
 
 /** Exposes matches result that return array of teams. */
 const teams = [firstTeam, secondTeam];
@@ -45,13 +55,13 @@ export const matchesReducer = (
     action: any = {}
 ) => {
     switch (action.type) {
-    case GET_MATCH_SCORE:
-        return {
-            ...matchesState,
-            teams: action.payload.teams,
-            transaction: action.payload.transaction,
-        };
-    default:
-        return matchesState;
+        case GET_MATCH_SCORE:
+            return {
+                ...matchesState,
+                teams: action.payload.teams,
+                transaction: action.payload.transaction,
+            };
+        default:
+            return matchesState;
     }
 };
