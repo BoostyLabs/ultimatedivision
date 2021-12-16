@@ -15,6 +15,7 @@ import metamask from '@static/img/registerPage/metamask.svg';
 import ultimate from '@static/img/registerPage/ultimate.svg';
 
 import { AuthRouteConfig, RouteConfig } from '@/app/routes';
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { loginUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
 import { ServicePlugin } from '@/app/plugins/service';
@@ -28,12 +29,17 @@ const SignIn: React.FC = () => {
     const history = useHistory();
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
+    const [emailError, setEmailError] =
+        useState<SetStateAction<null | string>>(null);
     const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] = useState<SetStateAction<null | string>>(null);
+    const [passwordError, setPasswordError] =
+        useState<SetStateAction<null | string>>(null);
     const [isRemember, setIsRemember] = useState(false);
     /** TODO: rework remember me implementation  */
     const handleIsRemember = () => setIsRemember((prev) => !prev);
+
+    const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
+
     /** checks if values does't valid then set an error messages */
     const validateForm: () => boolean = () => {
         let isFormValid = true;
@@ -61,7 +67,7 @@ const SignIn: React.FC = () => {
         try {
             await dispatch(loginUser(email, password));
 
-            window.localStorage.setItem('IS_LOGGINED', 'true');
+            setLocalStorageItem('IS_LOGGINED', true);
 
             history.push(RouteConfig.MarketPlace.path);
         } catch (error: any) {
@@ -107,18 +113,18 @@ const SignIn: React.FC = () => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 // @ts-ignore
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await window.ethereum.request({
+                    method: 'eth_requestAccounts',
+                });
                 await service.signMessage();
                 history.push(RouteConfig.MarketPlace.path);
             } catch (error: any) {
                 error.code === METAMASK_RPC_ERROR_CODE
-                    ?
-                    toast.error('Please open metamask manually!', {
+                    ? toast.error('Please open metamask manually!', {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
                     })
-                    :
-                    toast.error('Something went wrong', {
+                    : toast.error('Something went wrong', {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
                     });

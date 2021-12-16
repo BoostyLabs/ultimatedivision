@@ -12,6 +12,7 @@ import facebook from '@static/img/registerPage/facebook_logo.svg';
 import google from '@static/img/registerPage/google_logo.svg';
 import ultimate from '@static/img/registerPage/ultimate.svg';
 
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RouteConfig } from '@/app/routes';
 import { loginUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
@@ -33,6 +34,8 @@ export const SignIn: React.FC<{
         useState<SetStateAction<null | string>>(null);
 
     const [isRemember, setIsRemember] = useState(false);
+
+    const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
     /** TODO: rework remember me implementation  */
     const handleIsRemember = () => setIsRemember((prev) => !prev);
@@ -65,7 +68,7 @@ export const SignIn: React.FC<{
         try {
             await dispatch(loginUser(email, password));
 
-            window.localStorage.setItem('IS_LOGGINED', 'true');
+            setLocalStorageItem('IS_LOGGINED', true);
 
             history.push(RouteConfig.MarketPlace.path);
         } catch (error: any) {

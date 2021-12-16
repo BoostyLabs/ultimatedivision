@@ -1,10 +1,16 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-/** Hook for extracting a string from local storage and converting it to boolean. */
+/** Hook for get or set value from/to local storage. */
 export const useLocalStorage = () => {
-    /* Boolean value from localStorage, which indicates whether the user is logged in or not. */
-    const isLoggined = window.localStorage.getItem('IS_LOGGINED');
+    /* Set value to localStorage */
+    const setLocalStorageItem = (item: string, value: boolean) => {
+        window.localStorage.setItem(item, JSON.stringify(value));
+    };
 
-    return isLoggined === 'true';
+    /* Get value from localStorage */
+    const getLocalStorageItem = (item: string) =>
+        window.localStorage.getItem(item);
+
+    return [setLocalStorageItem, getLocalStorageItem];
 };

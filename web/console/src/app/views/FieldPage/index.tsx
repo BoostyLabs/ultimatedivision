@@ -10,6 +10,7 @@ import { FieldPlayingArea } from '@/app/components/Field/FieldPlayingArea';
 import { RegistrationPopup } from '@/app/components/common/Registration/Registration';
 
 import { NotFoundError, UnauthorizedError } from '@/api';
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RootState } from '@/app/store';
 import { createClubs, deleteCard, getClubs } from '@/app/store/actions/clubs';
 import { CardEditIdentificators } from '@/api/club';
@@ -20,6 +21,8 @@ const FootballField: React.FC = () => {
     const dispatch = useDispatch();
     /** Indicates if registration required. */
     const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
+
+    const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
     /** Closes RegistrationPopup componnet. */
     const closeRegistrationPopup = () => {
@@ -33,8 +36,8 @@ const FootballField: React.FC = () => {
             } catch (error: any) {
                 if (error instanceof UnauthorizedError) {
                     setIsRegistrationRequired(true);
-
-                    window.localStorage.setItem('IS_LOGGINED', 'false');
+                    
+                    setLocalStorageItem('IS_LOGGINED', false);
 
                     return;
                 }
@@ -59,11 +62,19 @@ const FootballField: React.FC = () => {
         })();
     }, []);
 
-    const dragStartIndex = useSelector((state: RootState) => state.clubsReducer.options.dragStart);
+    const dragStartIndex = useSelector(
+        (state: RootState) => state.clubsReducer.options.dragStart
+    );
 
-    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
-    const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
-    const cardSelectionVisibility = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
+    const squad = useSelector(
+        (state: RootState) => state.clubsReducer.activeClub.squad
+    );
+    const club = useSelector(
+        (state: RootState) => state.clubsReducer.activeClub
+    );
+    const cardSelectionVisibility = useSelector(
+        (state: RootState) => state.clubsReducer.options.showCardSeletion
+    );
 
     /** prevent default user agent action */
     function dragOverHandler(e: DragEvent<HTMLDivElement>) {

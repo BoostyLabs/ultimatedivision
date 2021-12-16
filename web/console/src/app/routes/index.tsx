@@ -33,6 +33,12 @@ import Staking from '@components/Tokenomics/Staking';
 
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 
+const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
+
+/* Boolean value from localstorge that indicates whether the user is logged in or not. */
+// @ts-ignore
+const isLoggined = JSON.parse(getLocalStorageItem('IS_LOGGINED'));
+
 /** Route base config implementation */
 export class ComponentRoutes {
     /** data route config*/
@@ -206,7 +212,8 @@ export class AuthRouteConfig {
     );
     public static Default: ComponentRoutes = new ComponentRoutes(
         '/',
-        useLocalStorage() ? RouteConfig.MarketPlace.component : SignIn,
+        // @ts-ignore
+        isLoggined ? RouteConfig.MarketPlace.component : SignIn,
         true
     );
     public static routes: ComponentRoutes[] = [
