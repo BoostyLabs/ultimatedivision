@@ -39,19 +39,19 @@ export interface CardsQueryParametersField {
 export class CardsQueryParameters {
     [key: string]: number | string | null;
     public 'defence_gte': number | null = null;
-    public 'defence_lt': number | null = null;
+    public 'defence_lte': number | null = null;
     public 'goalkeeping_gte': number | null = null;
-    public 'goalkeeping_lt': number | null = null;
+    public 'goalkeeping_lte': number | null = null;
     public 'offense_gte': number | null = null;
-    public 'offense_lt': number | null = null;
+    public 'offense_lte': number | null = null;
     public 'physique_gte': number | null = null;
-    public 'physique_lt': number | null = null;
+    public 'physique_lte': number | null = null;
     public 'tactics_gte': string | null = null;
-    public 'tactics_lt': string | null = null;
+    public 'tactics_lte': string | null = null;
     public 'quality': string | null = null;
     public 'status': number | null = null;
     public 'technique_gte': number | null = null;
-    public 'technique_lt': number| null = null;
+    public 'technique_lte': number| null = null;
 };
 
 /* eslint-disable */
