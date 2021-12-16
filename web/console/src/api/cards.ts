@@ -35,7 +35,12 @@ export class CardsClient extends APIClient {
 
         for (const queryParameter in this.queryParameters) {
             if (this.queryParameters[queryParameter]) {
-                queryParametersPath += `&${queryParameter}=${this.queryParameters[queryParameter]}`;
+                /* eslint-disable */
+                queryParameter === 'quality' ? this.queryParameters[queryParameter].forEach((quality: string) => {
+                /* eslint-enable */
+                    queryParametersPath += `&${queryParameter}=${quality}`;
+                }) :
+                    queryParametersPath += `&${queryParameter}=${this.queryParameters[queryParameter]}`;
             }
         };
 
