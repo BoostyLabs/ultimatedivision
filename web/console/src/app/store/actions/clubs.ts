@@ -1,22 +1,13 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Dispatch } from 'redux';
-
 import { CardEditIdentificators, ClubsClient } from '@/api/club';
-import { Club, Squad } from '@/club';
 import { Tactic, TacticsType, Formations, FormationsType, } from '@/app/types/club'
 import { ClubService } from '@/club/service';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { getList } from './cards';
-
-type dragParamType = number | null;
-const DEFAULT_CARD_INDEX = null;
 
 const client = new ClubsClient();
 const service = new ClubService(client);
-
-// Thunks
 
 export const createClub = createAsyncThunk(
     'clubs/createClub',
@@ -64,7 +55,7 @@ export const addCard = createAsyncThunk(
     });
 
 export const deleteCard = createAsyncThunk(
-    'clubs/addCard',
+    'clubs/deleteCard',
     async function (path: CardEditIdentificators) {
         await service.deleteCard(path);
         return await service.getClubs();
@@ -89,4 +80,4 @@ export const swapCards = createAsyncThunk(
     async function (id: string) {
         await service.changeActiveClub(id);
         return await service.getClubs();
-    })ZZz;
+    });

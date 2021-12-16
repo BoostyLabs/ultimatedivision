@@ -1,7 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import {immerable} from "immer"
+
 import { Card } from '@/card';
+
 
 const DEFAULT_VALUE = 0;
 const ACTIVE_STATUS_VALUE = 1;
@@ -51,6 +54,7 @@ export class Options {
 
 /** club reducer initial state  */
 export class ClubState {
+    [immerable] = true;
     public clubs: Club[] = [];
     public activeClub = new Club();
     public options: Options = new Options();

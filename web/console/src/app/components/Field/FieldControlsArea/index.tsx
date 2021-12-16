@@ -2,11 +2,12 @@
 // See LICENSE for copying information.
 
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 
 import { FieldControl } from '@/app/components/Field/FieldControlsArea/FieldControl';
 
-import { setCaptain, setFormation, setTactic, startSearchingMatch } from '@/app/store/actions/clubs';
+import { setCaptain, setFormation, setTactic } from '@/app/store/actions/clubs';
+import { startSearchingMatch } from '@/app/store/reducers/clubs';
 import { RootState } from '@/app/store';
 import { Control } from '@/app/types/club';
 import { SquadCard } from '@/club';
@@ -14,9 +15,9 @@ import { SquadCard } from '@/club';
 import './index.scss';
 
 export const FieldControlsArea: React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
-    const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
+    const squadCards = useAppSelector((state: RootState) => state.clubs.activeClub.squadCards);
     const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
 
     useEffect(() => {

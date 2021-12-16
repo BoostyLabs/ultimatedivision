@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 
 import triangle from '@static/img/FieldPage/triangle.svg';
 
@@ -13,11 +13,11 @@ import { DropdownStyle } from '@/app/internal/dropdownStyle';
 import './index.scss';
 
 export const FieldControl: React.FC<{ props: Control }> = ({ props }) => {
-    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
+    const squad = useAppSelector((state: RootState) => state.clubs.activeClub.squad);
     const [optionVisibility, changeVisibility] = useState(false);
     const optionStyle = new DropdownStyle(optionVisibility);
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     return (
         <div className="field-control">

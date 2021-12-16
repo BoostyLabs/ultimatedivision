@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/app/store';
 import { toast } from 'react-toastify';
 
 import { LootboxCardQuality } from './LootboxCardQuality';
@@ -33,7 +33,7 @@ export const LootboxCard: React.FC<{
         setIsRegistrationRequired(false);
     };
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const qualities = [
         {
@@ -54,7 +54,7 @@ export const LootboxCard: React.FC<{
         },
     ];
 
-    const handleAnimation = async() => {
+    const handleAnimation = async () => {
         // TODO: need add id lootbox from BD after be create endpoint fetch lootboxex.
         try {
             await dispatch(openLootbox({ id: data.id, type: data.type }));

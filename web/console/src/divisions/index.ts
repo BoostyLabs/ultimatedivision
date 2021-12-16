@@ -1,6 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import {immerable} from "immer"
+
 /** Domain entity Division implementation */
 export class Division {
     constructor(
@@ -44,6 +46,7 @@ export class DivisionSeasonsStatistics {
 // TODO: Can be changed (waiting for backend)
 /** divisions reducer initial state. */
 export class DivisionsState {
+    [immerable] = true;
     constructor(
         public currentDivisionsSeasons: CurrentDivisionSeasons[] = [],
         public seasonsStatistics: DivisionSeasonsStatistics = new DivisionSeasonsStatistics(),

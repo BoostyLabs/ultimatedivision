@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/app/store';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -15,13 +15,14 @@ import ultimate from '@static/img/registerPage/ultimate.svg';
 import { RouteConfig } from '@/app/routes';
 import { loginUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
+import { LoginFields } from '@/users';
 
 // TODO: it will be reworked on wrapper with children props.
 export const SignIn: React.FC<{
     showResetPasswordComponent: () => void;
     showSignUpComponent: () => void;
 }> = ({ showResetPasswordComponent, showSignUpComponent }) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const history = useHistory();
 
     /** Controlled values for form inputs */
@@ -53,7 +54,7 @@ export const SignIn: React.FC<{
     };
 
     /** Submits form values. */
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
@@ -61,7 +62,7 @@ export const SignIn: React.FC<{
         };
 
         try {
-            await dispatch(loginUser(email, password));
+            await dispatch(loginUser(new LoginFields(email, password)));
             history.push(RouteConfig.MarketPlace.path);
         } catch (error: any) {
             toast.error('Incorrect email or password', {

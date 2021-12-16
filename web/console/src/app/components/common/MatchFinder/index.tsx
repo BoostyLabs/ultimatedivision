@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -12,21 +12,21 @@ import { Timer } from './Timer';
 import { QueueClient } from '@/api/queue';
 import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
-import { getMatchScore } from '@/app/store/actions/mathes';
-import { startSearchingMatch } from '@/app/store/actions/clubs';
+import { getMatchScore } from '@/app/store/reducers/matches';
+import { startSearchingMatch } from '@/app/store/reducers/clubs';
 
 import './index.scss';
 
 const MatchFinder: React.FC = () => {
-    const { squad } = useSelector((state: RootState) => state.clubsReducer.activeClub);
-    const { isSearchingMatch } = useSelector((state: RootState) => state.clubsReducer);
+    const { squad } = useAppSelector((state: RootState) => state.clubs.activeClub);
+    const { isSearchingMatch } = useAppSelector((state: RootState) => state.clubs);
 
     /** Indicates that user have rejected game. */
     const [isRejectedUser, setIsRejectedUser] = useState<boolean>(false);
 
     const [queueClient, setQueueClient] = useState<QueueClient>(new QueueClient());
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const history = useHistory();
 
     /** Indicates if match is found. */
@@ -109,67 +109,67 @@ const MatchFinder: React.FC = () => {
         const messageEvent = JSON.parse(data);
 
         switch (messageEvent.message) {
-        case ERROR_MESSAGE:
-            toast.error('error message', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
-
-            return;
-        case STILL_SEARCHING_MESSAGE:
-            /** TODO: will be deleted after ./queue/chore.go reworks. */
-            queueClient.ws.close();
-            setIsMatchFound(false);
-
-            if (isRejectedUser) {
-                setTimeout(() => {
-                    startSearchAfterReject();
-                }, DELAY_AFTER_REJECT);
-
-                setIsRejectedUser(false);
+            case ERROR_MESSAGE:
+                toast.error('error message', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored',
+                });
 
                 return;
-            };
+            case STILL_SEARCHING_MESSAGE:
+                /** TODO: will be deleted after ./queue/chore.go reworks. */
+                queueClient.ws.close();
+                setIsMatchFound(false);
 
-            startSearchAfterReject();
+                if (isRejectedUser) {
+                    setTimeout(() => {
+                        startSearchAfterReject();
+                    }, DELAY_AFTER_REJECT);
 
-            return;
-        case WRONG_ACTION_MESSAGE:
-            toast.error('Something wrong, please, try later.', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+                    setIsRejectedUser(false);
 
-            return;
-        case YOU_ADDED_MESSAGE:
-            setIsMatchFound(false);
+                    return;
+                };
 
-            return;
-        case YOU_CONFIRM_PLAY_MESSAGE:
-            setIsMatchFound(true);
+                startSearchAfterReject();
 
-            return;
-        case YOU_LEAVED_MESSAGE:
-            dispatch(startSearchingMatch(false));
+                return;
+            case WRONG_ACTION_MESSAGE:
+                toast.error('Something wrong, please, try later.', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored',
+                });
 
-            return;
-        default:
-            const firstTeam =
+                return;
+            case YOU_ADDED_MESSAGE:
+                setIsMatchFound(false);
+
+                return;
+            case YOU_CONFIRM_PLAY_MESSAGE:
+                setIsMatchFound(true);
+
+                return;
+            case YOU_LEAVED_MESSAGE:
+                dispatch(startSearchingMatch(false));
+
+                return;
+            default:
+                const firstTeam =
                     messageEvent.message[FIRST_TEAM_INDEX];
-            const secondTeam =
+                const secondTeam =
                     messageEvent.message[SECOND_TEAM_INDEX];
 
-            toast.success('Successfully! You will be redirected to match page', {
-                position: toast.POSITION.TOP_RIGHT,
-            });
+                toast.success('Successfully! You will be redirected to match page', {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
 
-            dispatch(getMatchScore({ firstTeam, secondTeam }));
-            dispatch(startSearchingMatch(false));
+                dispatch(getMatchScore({ firstTeam, secondTeam }));
+                dispatch(startSearchingMatch(false));
 
-            /** implements redirect to match page after DELAY time.  */
-            setTimeout(() => {
-                history.push(RouteConfig.Match.path);
-            }, DELAY);
+                /** implements redirect to match page after DELAY time.  */
+                setTimeout(() => {
+                    history.push(RouteConfig.Match.path);
+                }, DELAY);
         }
     };
 
@@ -180,7 +180,7 @@ const MatchFinder: React.FC = () => {
         });
     };
 
-    return isSearchingMatch && <section className={isMatchFound ? 'match-finder__wrapper' : ''}>
+    return isSearchingMatch ? <section className={isMatchFound ? 'match-finder__wrapper' : ''}>
         <div className="match-finder">
             <h1 className="match-finder__title">
                 {isMatchFound ? 'YOUR MATCH WAS FOUND' : 'LOOKING FOR A MATCH'}
@@ -210,7 +210,9 @@ const MatchFinder: React.FC = () => {
                 />}
             </div>
         </div>
-    </section>;
+    </section>
+    :
+    <></>
 };
 
 export default MatchFinder;

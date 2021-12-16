@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 import { useParams } from 'react-router-dom';
 
 import { RootState } from '@/app/store';
@@ -15,8 +15,8 @@ import { FootballerCardInformation } from '@/app/components/common/Card/CardInfo
 import './index.scss';
 
 const Lot: React.FC = () => {
-    const dispatch = useDispatch();
-    const { card } = useSelector((state: RootState) => state.marketplaceReducer);
+    const dispatch = useAppDispatch();
+    const { card } = useAppSelector((state: RootState) => state.marketplace);
 
     const { id }: { id: string } = useParams();
     /** implements opening new card */

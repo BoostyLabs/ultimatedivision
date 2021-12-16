@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/app/store';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -18,7 +18,7 @@ import { Validator } from '@/users/validation';
 import './index.scss';
 
 const SignUp: React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     /** controlled values for form inputs */
     const [firstName, setFirstName] = useState('');
     const [firstNameError, setFirstNameError]
@@ -67,7 +67,7 @@ const SignUp: React.FC = () => {
         return isFormValid;
     };
 
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {

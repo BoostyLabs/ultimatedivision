@@ -1,12 +1,17 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import {immerable} from "immer";
+
 import { Card } from '@/card';
 import { MarketPlacePage } from '@/marketplace';
-import { GET_SELLING_CARDS, MARKETPLACE_CARD } from '../actions/marketplace';
+import { createSlice } from '@reduxjs/toolkit';
+import { listOfLots, openMarketplaceCard } from '../actions/marketplace';
+import { matchesSlice } from './matches';
 
 /** Markeplace state base implementation */
 class MarketplaceState {
+    [immerable] = true;
     /** default state implementation */
     constructor(
         public marketplacePage: MarketPlacePage,
@@ -31,19 +36,19 @@ const page = {
 const marketplacePage = new MarketPlacePage([], page);
 const card = new Card();
 
-export const marketplaceReducer = (marketplaceState: MarketplaceState = new MarketplaceState(marketplacePage, card), action: any = {}) => {
-    switch (action.type) {
-    case GET_SELLING_CARDS:
-        return {
-            ...marketplaceState,
-            marketplacePage: action.marketplacePage,
-        };
-    case MARKETPLACE_CARD:
-        return {
-            ...marketplaceState,
-            card: action.card,
-        };
-    default:
-        return marketplaceState;
+export const marketplaceSlice = createSlice({
+    name: 'marketplace',
+    initialState: new MarketplaceState(marketplacePage, card),
+    reducers: {
+    },
+    extraReducers: (builder) => {
+        builder.addCase(listOfLots.fulfilled, (state, action) => {
+            state.marketplacePage = action.payload;
+        })
+        builder.addCase(openMarketplaceCard.fulfilled, (state, action) => {
+            state.card = action.payload;
+        })
     }
-};
+})
+
+export default marketplaceSlice.reducer;

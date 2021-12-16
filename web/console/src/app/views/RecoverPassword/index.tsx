@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/app/store';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -20,7 +20,7 @@ import { Validator } from '@/users/validation';
 import './index.scss';
 
 const ResetPassword: React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const history = useHistory();
     const token = useQueryToken();
 
@@ -80,7 +80,7 @@ const ResetPassword: React.FC = () => {
     /** DELAY is the delay time in milliseconds for redirect to SignIn page. */
     const DELAY: number = 3000;
     /** sign in user data */
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {

@@ -1,10 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { GET_MATCH_SCORE } from '../actions/mathes';
-
-
 import { Goal, Match, Team } from '@/matches';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 /** Describes default summary goals scored by first team. */
 const DEFAULT_FIRST_TEAM_GOALS: number = 0;
@@ -25,19 +23,15 @@ const DEFAULT_SECOND_USER_ID: string = '';
 const firstTeam = new Team(DEFAULT_FIRST_TEAM_GOALS, DEFAULT_FIRST_TEAM_GOAL_SCORERS, DEFAULT_FIRST_USER_ID);
 const secondTeam = new Team(DEFAULT_SECOND_TEAM_GOALS, DEFAULT_SECOND_TEAM_GOAL_SCORERS, DEFAULT_SECOND_USER_ID);
 
-/** matchesReducer describes reducer for matches domain entity */
-export const matchesReducer = (
-    matchesState: Match = new Match(firstTeam, secondTeam),
-    action: any = {}
-) => {
-    switch (action.type) {
-    case GET_MATCH_SCORE:
-        return {
-            ...matchesState,
-            firstTeam: action.payload.firstTeam,
-            secondTeam: action.payload.secondTeam,
-        };
-    default:
-        return matchesState;
+export const matchesSlice = createSlice({
+    name: 'matches',
+    initialState: new Match(firstTeam, secondTeam),
+    reducers: {
+        getMatchScore: (state, action) => {
+            state = Object.assign(state, action.payload);
+        }
     }
-};
+})
+
+export const { getMatchScore } = matchesSlice.actions;
+export default matchesSlice.reducer;

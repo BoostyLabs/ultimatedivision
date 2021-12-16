@@ -1,25 +1,11 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Dispatch } from 'redux';
-
 import { MarketplaceClient } from '@/api/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
-import { Card, CardsQueryParametersField } from '@/card';
-import { MarketPlacePage } from '@/marketplace';
+import { CardsQueryParametersField } from '@/card';
 import { Marketplaces } from '@/marketplace/service';
-
-export const GET_SELLING_CARDS = ' GET_SELLING_CARDS';
-export const MARKETPLACE_CARD = 'OPEN_MARKETPLACE_CARD';
-
-const getLots = (marketplacePage: MarketPlacePage) => ({
-    type: GET_SELLING_CARDS,
-    marketplacePage,
-});
-const marketplaceCard = (card: Card) => ({
-    type: MARKETPLACE_CARD,
-    card,
-});
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const marketplaceClient = new MarketplaceClient();
 const marketplaces = new Marketplaces(marketplaceClient);
@@ -29,22 +15,29 @@ export const createLotsQueryParameters = (queryParameters: CardsQueryParametersF
     marketplaces.changeLotsQueryParameters(queryParameters);
 };
 
-/** thunk for creating user cards list */
-export const listOfLots = (selectedPage: number) => async function(dispatch: Dispatch) {
-    const marketplace = await marketplaces.list(selectedPage);
-    const lots = marketplace.lots;
-    const page = marketplace.page;
+/** Returns lots */
+export const listOfLots = createAsyncThunk(
+    'marketplace/listOfLots',
+    async function (selectedPage: number) {
+        const marketplace = await marketplaces.list(selectedPage);
+        const lots = marketplace.lots;
+        const page = marketplace.page;
 
-    dispatch(getLots({ lots, page }));
-};
+        return { lots, page }
+    });
 
-export const createLot = (lot: CreatedLot) => async function(dispatch: Dispatch) {
-    await marketplaces.createLot(lot);
-};
+/** Creates lot from users card */
+export const createLot = createAsyncThunk(
+    'marketplace/createLot',
+    async function (lot: CreatedLot) {
+        await marketplaces.createLot(lot);
+    });
 
-/** thunk for opening fotballerCardPage with reload possibility */
-export const openMarketplaceCard = (id: string) => async function(dispatch: Dispatch) {
-    const lot = await marketplaces.getLotById(id);
+/** Opens fotballerCardPage with reload possibility */
+export const openMarketplaceCard = createAsyncThunk(
+    'marketplace/openMarketplaceCard',
+    async function (id: string) {
+        const lot = await marketplaces.getLotById(id);
 
-    dispatch(marketplaceCard(lot.card));
-};
+        return lot.card;
+    });

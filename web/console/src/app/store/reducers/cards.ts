@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
-
+import {immerable} from "immer"
 import { Card, CardsPage } from '@/card';
-import { getList, getCard } from '@/app/store/actions/cards';
+import { getCards, getCard } from '@/app/store/actions/cards';
 
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -14,6 +14,7 @@ const CARDS_TOTAL_COUNT: number = 1;
 
 /** class for data from backent (test) */
 class CardsState {
+    [immerable] = true;
     /** class implementation */
     constructor(
         public cardsPage: CardsPage,
@@ -38,7 +39,7 @@ export const cardsSlice = createSlice({
     reducers: {
     },
     extraReducers: (builder) => {
-        builder.addCase(getList.fulfilled, (state, action) => {
+        builder.addCase(getCards.fulfilled, (state, action) => {
             state.cardsPage = action.payload;
         })
         builder.addCase(getCard.fulfilled, (state, action) => {
@@ -46,3 +47,5 @@ export const cardsSlice = createSlice({
         })
     }
 })
+
+export default cardsSlice.reducer;

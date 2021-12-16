@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 
 import { Paginator } from '@components/common/Paginator';
 import { PlayerCard } from '@components/common/PlayerCard';
@@ -12,8 +12,9 @@ import { FilterByStatus } from '@components/common/FilterField/FilterByStatus';
 import { FilterByVersion } from '@components/common/FilterField/FilterByVersion';
 
 import { RootState } from '@/app/store';
-import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
-import { addCard, cardSelectionVisibility } from '@/app/store/actions/clubs';
+import { getCards, createCardsQueryParameters } from '@/app/store/actions/cards';
+import { addCard } from '@/app/store/actions/clubs';
+import { cardSelectionVisibility } from '@/app/store/reducers/clubs';
 import { CardEditIdentificators } from '@/api/club';
 import { Card, CardsPage, CardsQueryParametersField } from '@/card';
 import { Squad, SquadCard } from '@/club';
@@ -23,13 +24,13 @@ import { useEffect } from 'react';
 import { clearCardsQueryParameters } from '../../../store/actions/cards';
 
 export const FieldCardSelection = () => {
-    const dispatch = useDispatch();
-    const squad: Squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
-    const squadCards: SquadCard[] = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
-    const isCardsVisible = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
+    const dispatch = useAppDispatch();
+    const squad: Squad = useAppSelector((state: RootState) => state.clubs.activeClub.squad);
+    const squadCards: SquadCard[] = useAppSelector((state: RootState) => state.clubs.activeClub.squadCards);
+    const isCardsVisible = useAppSelector((state: RootState) => state.clubs.options.showCardSeletion);
 
-    const { cards, page }: CardsPage = useSelector((state: RootState) => state.cardsReducer.cardsPage);
-    const club = useSelector((state: RootState) => state.clubsReducer);
+    const { cards, page }: CardsPage = useAppSelector((state: RootState) => state.cards.cardsPage);
+    const club = useAppSelector((state: RootState) => state.clubs);
 
     const Y_SCROLL_POINT = 200;
     const X_SCROLL_POINT = 0;
@@ -59,15 +60,15 @@ export const FieldCardSelection = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async(cardsQueryParameters: CardsQueryParametersField[]) => {
+    const submitSearch = async (cardsQueryParameters: CardsQueryParametersField[]) => {
         createCardsQueryParameters(cardsQueryParameters);
-        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+        await dispatch(getCards(DEFAULT_PAGE_INDEX));
     };
 
     useEffect(() => {
-        (async() => {
+        (async () => {
             clearCardsQueryParameters();
-            await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+            await dispatch(getCards(DEFAULT_PAGE_INDEX));
         })();
     }, [isCardsVisible]);
 
@@ -95,7 +96,7 @@ export const FieldCardSelection = () => {
                     )}
             </div>
             <Paginator
-                getCardsOnPage={listOfCards}
+                getCardsOnPage={getCards}
                 itemsCount={page.totalCount}
                 selectedPage={page.currentPage}
             />

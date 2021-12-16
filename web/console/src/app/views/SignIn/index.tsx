@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/app/store';
 import { Link, useHistory } from 'react-router-dom';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { toast } from 'react-toastify';
@@ -18,13 +18,14 @@ import { AuthRouteConfig, RouteConfig } from '@/app/routes';
 import { loginUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
 import { ServicePlugin } from '@/app/plugins/service';
+import { LoginFields } from '@/users';
 
 import './index.scss';
 
 const SignIn: React.FC = () => {
     const onboarding = useRef<MetaMaskOnboarding>();
     const service = ServicePlugin.create();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const history = useHistory();
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
@@ -51,7 +52,7 @@ const SignIn: React.FC = () => {
         return isFormValid;
     };
     /** user data that will send to server */
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
@@ -59,7 +60,7 @@ const SignIn: React.FC = () => {
         };
 
         try {
-            await dispatch(loginUser(email, password));
+            await dispatch(loginUser(new LoginFields(email, password)));
             history.push(RouteConfig.MarketPlace.path);
         } catch (error: any) {
             toast.error('Incorrect email or password', {
@@ -98,7 +99,7 @@ const SignIn: React.FC = () => {
         }
     }, []);
 
-    const metamaskLogin = async() => {
+    const metamaskLogin = async () => {
         /** Code which indicates that 'eth_requestAccounts' already processing */
         const METAMASK_RPC_ERROR_CODE = -32002;
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {

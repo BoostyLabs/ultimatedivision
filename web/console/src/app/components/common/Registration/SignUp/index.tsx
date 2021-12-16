@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { SetStateAction, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/app/store';
 import { toast } from 'react-toastify';
 
 import { UserDataArea } from '@components/common/UserDataArea';
@@ -17,7 +17,7 @@ import { Validator } from '@/users/validation';
 export const SignUp: React.FC<{ showSignUpComponent: () => void }> = ({
     showSignUpComponent,
 }) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     /** Controlled form values. */
     const [firstName, setFirstName] = useState('');
@@ -64,7 +64,7 @@ export const SignUp: React.FC<{ showSignUpComponent: () => void }> = ({
     };
 
     /** Submits form values. */
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {

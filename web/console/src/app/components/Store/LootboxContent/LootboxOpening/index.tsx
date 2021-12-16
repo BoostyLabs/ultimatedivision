@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@/app/store';
 
 import { MyCard } from '@/app/components/Club/ClubCardsArea/MyCard';
 
@@ -16,8 +16,8 @@ import './index.scss';
 export const LootboxOpening = () => {
     const FIRST_CARD = 0;
     const REGULAR_CARDS_AMOUNT: number = 5;
-    const cards = useSelector(
-        (state: RootState) => state.lootboxReducer.lootbox
+    const cards = useAppSelector(
+        (state: RootState) => state.lootboxes.cards
     );
 
     const box = boxStyle(cards.length);
@@ -28,10 +28,9 @@ export const LootboxOpening = () => {
                 <img
                     src={box.body}
                     alt="box body"
-                    className={`box-animation__box-body ${
-                        cards.length > REGULAR_CARDS_AMOUNT &&
+                    className={`box-animation__box-body ${cards.length > REGULAR_CARDS_AMOUNT &&
                         'box-animation__box-body__cool'
-                    }`}
+                        }`}
                 />
                 <img
                     src={box.cover}

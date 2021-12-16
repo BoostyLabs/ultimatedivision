@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@/app/store';
 
 import { GoalScorersTeam } from '@/app/views/Match/GoalScorers/GoalScorersTeam';
 
@@ -14,7 +14,7 @@ import './index.scss';
 const MAX_SCORED_PLAYERS_COUNT: number = 3;
 
 export const GoalScorers: React.FC = () => {
-    const { firstTeam, secondTeam } = useSelector((state: RootState) => state.matchesReducer);
+    const { firstTeam, secondTeam } = useAppSelector((state: RootState) => state.matches);
 
     const [visabilityTeamsAreaScroll, setVisabilityTeamsAreaScroll] = useState<{
         firstTeam: boolean;
@@ -24,8 +24,8 @@ export const GoalScorers: React.FC = () => {
     useEffect(() => {
         /** If the length of the array of players who scored a goal is more than 3 - add a scroll for the block. */
         setVisabilityTeamsAreaScroll({
-            firstTeam: firstTeam.goals && firstTeam.goals.length > MAX_SCORED_PLAYERS_COUNT,
-            secondTeam: secondTeam.goals && secondTeam.goals.length > MAX_SCORED_PLAYERS_COUNT,
+            firstTeam: firstTeam.goals && firstTeam.goals.length > MAX_SCORED_PLAYERS_COUNT || false,
+            secondTeam: secondTeam.goals && secondTeam.goals.length > MAX_SCORED_PLAYERS_COUNT || false,
         });
     }, []);
 
@@ -35,7 +35,7 @@ export const GoalScorers: React.FC = () => {
                 <span className="match__goal-scorers__title">Team 1</span>
                 <div
                     className={`scores${visabilityTeamsAreaScroll.firstTeam ? '-scroll' : ''
-                    }`}
+                        }`}
                 >
                     {firstTeam.goals && <GoalScorersTeam goals={firstTeam.goals} />}
                 </div>
@@ -44,7 +44,7 @@ export const GoalScorers: React.FC = () => {
                 <span className="match__goal-scorers__title">Team 2</span>
                 <div
                     className={`scores${visabilityTeamsAreaScroll.secondTeam ? '-scroll' : ''
-                    }`}
+                        }`}
                 >
                     {secondTeam.goals && <GoalScorersTeam goals={secondTeam.goals} />}
                 </div>

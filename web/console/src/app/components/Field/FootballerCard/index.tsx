@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 
@@ -14,8 +14,8 @@ import { RootState } from '@/app/store';
 import './index.scss';
 
 export const FootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card }) => {
-    const dispatch = useDispatch();
-    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
+    const dispatch = useAppDispatch();
+    const squad = useAppSelector((state: RootState) => state.clubs.activeClub.squad);
     const [isVisibile, setIsVisibile] = useState(false);
     const visibilityBlock = isVisibile ? '-active' : '-inactive';
 

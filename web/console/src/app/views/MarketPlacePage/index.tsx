@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 
 import { FilterField } from '@components/common/FilterField';
 import { FilterByPrice } from '@components/common/FilterField/FilterByPrice';
@@ -18,14 +18,14 @@ import { CardsQueryParametersField } from '@/card';
 import './index.scss';
 
 const MarketPlace: React.FC = () => {
-    const dispatch = useDispatch();
-    const { lots, page } = useSelector((state: RootState) => state.marketplaceReducer.marketplacePage);
+    const dispatch = useAppDispatch();
+    const { lots, page } = useAppSelector((state: RootState) => state.marketplace.marketplacePage);
 
     /** Exposes default page number. */
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by lots query parameters. */
-    const submitSearch = async(queryParameters: CardsQueryParametersField[]) => {
+    const submitSearch = async (queryParameters: CardsQueryParametersField[]) => {
         createLotsQueryParameters(queryParameters);
         await dispatch(listOfLots(DEFAULT_PAGE_INDEX));
     };

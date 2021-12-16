@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { Dispatch, SetStateAction } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@/app/store';
 import Slider from 'react-slick';
 
 import { PlayerCard } from '@/app/components/common/PlayerCard';
@@ -19,8 +19,8 @@ import './index.scss';
 export const LootboxKeeping: React.FC<{
     handleOpening: Dispatch<SetStateAction<boolean>>;
 }> = ({ handleOpening }) => {
-    const cards = useSelector(
-        (state: RootState) => state.lootboxReducer.lootbox
+    const cards = useAppSelector(
+        (state: RootState) => state.lootboxes.cards
     );
     const box = boxStyle(cards.length);
     /** variables that describe indexes of first and last cards,

@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 
 import { FieldControlsArea } from '@components/Field/FieldControlsArea';
 import { FootballerCard } from '@components/Field/FootballerCard';
@@ -12,24 +12,26 @@ import { RootState } from '@/app/store';
 import { Card } from '@/card';
 import { SquadCard } from '@/club';
 import {
-    cardSelectionVisibility,
-    changeCardPosition,
-    choosePosition,
     deleteCard,
-    setDragStart,
     swapCards,
+    changePosition,
 } from '@/app/store/actions/clubs';
+import {
+    cardSelectionVisibility,
+    choosePosition,
+    setDragStart,
+} from '@/app/store/reducers/clubs';
 
 import './index.scss';
 
 export const FieldPlayingArea: React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
-    const cards = useSelector((state: RootState) => state.cardsReducer.cardsPage.cards);
-    const formation = useSelector((state: RootState) => state.clubsReducer.activeClub.squad.formation);
-    const dragStartIndex = useSelector((state: RootState) => state.clubsReducer.options.dragStart);
-    const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
-    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
+    const cards = useAppSelector((state: RootState) => state.cards.cardsPage.cards);
+    const formation = useAppSelector((state: RootState) => state.clubs.activeClub.squad.formation);
+    const dragStartIndex = useAppSelector((state: RootState) => state.clubs.options.dragStart);
+    const club = useAppSelector((state: RootState) => state.clubs.activeClub);
+    const squad = useAppSelector((state: RootState) => state.clubs.activeClub.squad);
 
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -89,24 +91,24 @@ export const FieldPlayingArea: React.FC = () => {
         if (isDragging && dragStartIndex !== null) {
             const cards = club.squadCards;
             isCardDefined(cards[index].card.id) ?
-                dispatch(swapCards(
-                    new CardEditIdentificators(squad.clubId, squad.id, cards[dragStartIndex].card.id, index),
-                    new CardEditIdentificators(squad.clubId, squad.id, cards[index].card.id, dragStartIndex)
-                ))
+                dispatch(swapCards({
+                    currentCard: new CardEditIdentificators(squad.clubId, squad.id, cards[dragStartIndex].card.id, index),
+                    existCard: new CardEditIdentificators(squad.clubId, squad.id, cards[index].card.id, dragStartIndex)
+                }))
                 :
-                dispatch(changeCardPosition(
+                dispatch(changePosition(
                     new CardEditIdentificators(squad.clubId, squad.id, cards[dragStartIndex].card.id, index),
                 ));
         }
 
-        dispatch(setDragStart());
+        dispatch(setDragStart(null));
         handleDrag(false);
     }
 
     /** when we release card not on target it just brings it on start position*/
     function mouseUpOnArea(e: React.MouseEvent<HTMLInputElement>) {
         e.stopPropagation();
-        dispatch(setDragStart());
+        dispatch(setDragStart(null));
     }
 
     /** deleting card when release beyond playing area */
@@ -116,7 +118,7 @@ export const FieldPlayingArea: React.FC = () => {
                 new CardEditIdentificators(squad.clubId, squad.id, club.squadCards[dragStartIndex].card.id, dragStartIndex))
             );
         }
-        dispatch(setDragStart());
+        dispatch(setDragStart(null));
         handleDrag(false);
     }
 
@@ -152,7 +154,7 @@ export const FieldPlayingArea: React.FC = () => {
                                     }
                                     key={index}
                                     className={`playing-area__${formation}__${isDefined ? 'card' : 'empty-card'
-                                    }`}
+                                        }`}
                                     onClick={() => handleClick(index)}
                                     onDragStart={(e) => dragStart(e, index)}
                                     onMouseUp={(e) => onMouseUp(e, index)}

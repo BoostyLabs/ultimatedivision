@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 
 import { ClubCardsArea } from '@components/Club/ClubCardsArea';
 import { FilterField } from '@components/common/FilterField';
@@ -15,16 +15,16 @@ import { RegistrationPopup } from '@/app/components/common/Registration/Registra
 
 import { UnauthorizedError } from '@/api';
 import { RootState } from '@/app/store';
-import { listOfCards, clearCardsQueryParameters, createCardsQueryParameters } from '@/app/store/actions/cards';
+import { getCards, clearCardsQueryParameters, createCardsQueryParameters } from '@/app/store/actions/cards';
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
 
 const Club: React.FC = () => {
-    const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
-    const isCardsVisible = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
+    const { page } = useAppSelector((state: RootState) => state.cards.cardsPage);
+    const isCardsVisible = useAppSelector((state: RootState) => state.clubs.options.showCardSeletion);
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     /** Indicates if registration is required. */
     const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
@@ -33,9 +33,9 @@ const Club: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async(queryParameters: CardsQueryParametersField[]) => {
+    const submitSearch = async (queryParameters: CardsQueryParametersField[]) => {
         createCardsQueryParameters(queryParameters);
-        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+        await dispatch(getCards(DEFAULT_PAGE_INDEX));
     };
 
     /** Closes RegistrationPopup componnet. */
@@ -44,10 +44,10 @@ const Club: React.FC = () => {
     };
 
     useEffect(() => {
-        (async() => {
+        (async () => {
             try {
                 clearCardsQueryParameters();
-                await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+                await dispatch(getCards(DEFAULT_PAGE_INDEX));
             } catch (error: any) {
                 if (error instanceof UnauthorizedError) {
                     setIsRegistrationRequired(true);
@@ -72,7 +72,7 @@ const Club: React.FC = () => {
             </FilterField>
             <ClubCardsArea />
             <Paginator
-                getCardsOnPage={listOfCards}
+                getCardsOnPage={getCards}
                 itemsCount={page.totalCount}
                 selectedPage={page.currentPage}
             />

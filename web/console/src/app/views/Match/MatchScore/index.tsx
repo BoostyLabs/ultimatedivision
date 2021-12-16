@@ -1,14 +1,14 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@/app/store';
 
 import { RootState } from '@/app/store';
 
 import './index.scss';
 
 export const MatchScore: React.FC = () => {
-    const { firstTeam, secondTeam } = useSelector((state: RootState) => state.matchesReducer);
+    const { firstTeam, secondTeam } = useAppSelector((state: RootState) => state.matches);
 
     return <div className="match__score">
         <div className="match__score__board">

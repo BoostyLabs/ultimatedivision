@@ -1,6 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import {immerable} from "immer"
+
 import { Card } from '@/card';
 
 /** Goal is entity that describes scored goal. */
@@ -21,6 +23,7 @@ export class Team {
 
 /** Match exposes match domain entity. */
 export class Match {
+    [immerable] = true;
     /** Contains of firstTeamGoalsCrored and secondTeamGoalsScored. */
     constructor(public firstTeam: Team, public secondTeam: Team) {}
 }

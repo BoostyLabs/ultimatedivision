@@ -21,8 +21,8 @@ export const createCardsQueryParameters = (queryParameters: CardsQueryParameters
 };
 
 /** thunk for creating user cards list */
-export const getList = createAsyncThunk(
-    'cards/getList',
+export const getCards = createAsyncThunk(
+    'cards/getCards',
     async function (selectedPage: number) {
         return await cardsService.list(selectedPage);
     }

@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@/app/store';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 

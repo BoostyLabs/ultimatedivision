@@ -2,34 +2,31 @@
 // See LICENSE for copying information.
 
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 import { toast } from 'react-toastify';
 
 import realMadrid from '@static/img/divisions/realmadrid.png';
 import rectangle from '@static/img/FilterField/rectangle.svg';
 
 import { RootState } from '@/app/store';
-import {
-    divisionSeasonsStatistics,
-    setActiveDivision,
-} from '@/app/store/actions/divisions';
+import { getDivisionSeasonsStatistics, } from '@/app/store/actions/divisions';
 import { DivisionClub } from '@/app/types/division';
 import { CurrentDivisionSeasons } from '@/divisions';
 
 import './index.scss';
 
 const Division: React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const { currentDivisionsSeasons, seasonsStatistics, activeDivision } =
-        useSelector((state: RootState) => state.divisionsReducer);
+        useAppSelector((state: RootState) => state.divisions);
 
     const [activeDivisions, setActiveDivisions] = useState<string>('10');
 
     /** Get divisions seasons statistics. */
     async function getSeasonsStatistics() {
         try {
-            await dispatch(divisionSeasonsStatistics(activeDivisions));
+            await dispatch(getDivisionSeasonsStatistics(activeDivisions));
         } catch (error: any) {
             toast.error('Failed to get seasons statistics', {
                 position: toast.POSITION.TOP_RIGHT,

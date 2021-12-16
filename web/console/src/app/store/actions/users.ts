@@ -1,71 +1,41 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Dispatch } from 'redux';
-
-import { User } from '@/users';
+import { ChangePasswordFields, LoginFields, User } from '@/users';
 import { UsersClient } from '@/api/users';
 import { UsersService } from '@/users/service';
-
-/** action types implementation */
-export const REGISTER = 'REGISTER';
-export const LOGIN = 'LOGIN';
-export const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
-export const RECOVER_PASSWORD = 'RECOVER_PASSWORD';
-/** register action contains type and data for user registration */
-export const register = (user: User) => ({
-    type: REGISTER,
-    user,
-});
-/** login action contains type and data for user login */
-export const login = (email: string, password: string) => ({
-    type: LOGIN,
-    user: {
-        email,
-        password,
-    },
-});
-/** changePassword action contains type and data for changes password */
-export const changePassword = (password: string, newPassword: string) => ({
-    type: CHANGE_PASSWORD,
-    passwords: {
-        password,
-        newPassword,
-    },
-});
-/** recoverPassword action contains type and data for recover password */
-export const recoverPassword = (password: string) => ({
-    type: RECOVER_PASSWORD,
-    password,
-});
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const usersClient = new UsersClient();
 const usersService = new UsersService(usersClient);
 
 /** thunk that implements user registration */
-export const registerUser = (user: User) =>
-    async function(dispatch: Dispatch) {
+export const registerUser = createAsyncThunk(
+    'user/registerUser',
+    async function (user: User) {
         await usersService.register(user);
-        dispatch(register(user));
-    };
+    });
 
 /** thunk that implements user login */
-export const loginUser = (email: string, password: string) =>
-    async function(dispatch: Dispatch) {
-        await usersService.login(email, password);
-        dispatch(login(email, password));
-    };
+export const loginUser = createAsyncThunk(
+    'user/loginUser',
+    async function (fields: LoginFields) {
+        await usersService.login(fields.email, fields.password);
+        return fields;
+    });
 
 /** thunk that implements changes user password */
-export const changeUserPassword = (password: string, newPassword: string) =>
-    async function(dispatch: Dispatch) {
-        await usersService.changePassword(password, newPassword);
-        dispatch(changePassword(password, newPassword));
-    };
+export const changeUserPassword = createAsyncThunk(
+    'user/changePassword',
+    async function (fieds: ChangePasswordFields) {
+        await usersService.changePassword(fieds.password, fieds.newPassword);
+        return fieds.newPassword;
+    });
 
 /** thunk that implements resets user password */
-export const recoverUserPassword = (password: string) =>
-    async function(dispatch: Dispatch) {
+export const recoverUserPassword = createAsyncThunk(
+    'user/recoverUserPassword',
+    async function (password: string) {
         await usersService.recoverPassword(password);
-        dispatch(recoverPassword(password));
-    };
+        return password
+    });

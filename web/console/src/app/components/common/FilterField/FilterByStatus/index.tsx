@@ -2,18 +2,18 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/app/store';
 
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
-import { listOfCards } from '@/app/store/actions/cards';
+import { getCards } from '@/app/store/actions/cards';
 
 // TODO: rework functionality.
 export const FilterByStatus: React.FC = () => {
     /** Indicates if FilterByStatus component shown. */
     const [isFilterByStatusShown, setIsFilterByStatusShown] = useState(false);
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     /** Shows and closes FilterByStatus component. */
     const showFilterByStatus = () => {
@@ -40,8 +40,8 @@ export const FilterByStatus: React.FC = () => {
 
     /** TODO: it is not added yet to query parameters on back-end. */
     /** Submits query parameters by status. */
-    const handleSubmit = async() => {
-        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+    const handleSubmit = async () => {
+        await dispatch(getCards(DEFAULT_PAGE_INDEX));
         showFilterByStatus();
     };
 

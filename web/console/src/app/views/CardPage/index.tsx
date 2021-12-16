@@ -2,11 +2,11 @@
 // See LICENSE for copying information.
 
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/app/store';
 import { useParams } from 'react-router';
 
 import { RootState } from '@/app/store';
-import { openUserCard } from '@/app/store/actions/cards';
+import { getCard } from '@/app/store/actions/cards';
 import { FootballerCardIllustrations } from '@/app/components/common/Card/CardIllustrations';
 import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
 import { FootballerCardStatsArea } from '@/app/components/common/Card/CardStatsArea';
@@ -15,14 +15,14 @@ import { FootballerCardInformation } from '@/app/components/common/Card/CardInfo
 import './index.scss';
 
 const Card: React.FC = () => {
-    const dispatch = useDispatch();
-    const { card } = useSelector((state: RootState) => state.cardsReducer);
+    const dispatch = useAppDispatch();
+    const { card } = useAppSelector((state: RootState) => state.cards);
 
     const { id }: { id: string } = useParams();
     /** implements opening new card */
     async function openCard() {
         try {
-            await dispatch(openUserCard(id));
+            await dispatch(getCard(id));
         } catch (error: any) {
             /** TODO: it will be reworked with notification system */
         };

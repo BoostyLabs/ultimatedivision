@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/app/store';
 import { Link } from 'react-router-dom';
 
 import { PlayerCard } from '@components/common/PlayerCard';
@@ -17,7 +17,7 @@ import { Card } from '@/card';
 import './index.scss';
 
 export const MyCard: React.FC<{ card: Card }> = ({ card }) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const [controlVisibility, changeControlVisibility] = useState<boolean>(false);
 

@@ -12,3 +12,18 @@ export class User {
         public lastName: string,
     ) { };
 };
+
+/** Defines fields for login */
+export class LoginFields {
+    constructor (
+        public email: string = '',
+        public password: string = ''
+    ) {}
+}
+
+export class ChangePasswordFields {
+    constructor (
+        public password: string = '',
+        public newPassword: string = '',
+    ) {}
+}
