@@ -21,7 +21,7 @@ export class Team {
 
 /** Transaction describes transaction entity of match response. */
 export class Transaction {
-    /** Transaction contains of nonce, goals array and userId. */
+    /** Transaction contains of nonce, signature hash udtContract and value. */
     constructor(
         public nonce: number,
         public signature: string,
