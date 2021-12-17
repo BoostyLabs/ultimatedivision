@@ -1,6 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Paginator } from '@components/common/Paginator';
@@ -19,8 +20,6 @@ import { Card, CardsPage, CardsQueryParametersField } from '@/card';
 import { Squad, SquadCard } from '@/club';
 
 import './index.scss';
-import { useEffect } from 'react';
-import { clearCardsQueryParameters } from '../../../store/actions/cards';
 
 export const FieldCardSelection = () => {
     const dispatch = useDispatch();
@@ -60,7 +59,7 @@ export const FieldCardSelection = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async (cardsQueryParameters: CardsQueryParametersField[]) => {
+    const submitSearch = async(cardsQueryParameters: CardsQueryParametersField[]) => {
         createFieldCardsQueryParameters(cardsQueryParameters);
         await dispatch(fieldCards(DEFAULT_PAGE_INDEX));
     };
@@ -123,7 +122,3 @@ export const FieldCardSelection = () => {
         </div>
     );
 };
-function useState(DEFAULT_FILTER_ITEM_INDEX: number): [any, any] {
-    throw new Error('Function not implemented.');
-}
-

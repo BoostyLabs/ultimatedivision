@@ -18,87 +18,87 @@ export const FilterByStatus: React.FC<{
     activeFilterIndex,
     setActiveFilterIndex,
 }) => {
-        /** Exposes default index which does not exist in array. */
-        const DEFAULT_FILTER_ITEM_INDEX = -1;
-        /** Indicates if FilterByStatus component shown. */
-        const [isFilterByStatusShown, setIsFilterByStatusShown] = useState(false);
+    /** Exposes default index which does not exist in array. */
+    const DEFAULT_FILTER_ITEM_INDEX = -1;
+    /** Indicates if FilterByStatus component shown. */
+    const [isFilterByStatusShown, setIsFilterByStatusShown] = useState(false);
 
-        const isVisible = position === activeFilterIndex && isFilterByStatusShown;
+    const isVisible = position === activeFilterIndex && isFilterByStatusShown;
 
-        const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
-        /** Shows and closes FilterByStatus component. */
-        const showFilterByStatus = () => {
-            setActiveFilterIndex(position);
-            setIsFilterByStatusShown(isFilterByStatusShown => !isFilterByStatusShown);
-        };
-
-        /** Indicates if is choosed locked status of cards. */
-        const [isLockedStatus, setIsLockedStatus] = useState<boolean>(false);
-        /** Indicates if is choosed unlocked status of cards. */
-        const [isUnLockedStatus, setIsUnlockedStatus] = useState<boolean>(false);
-
-        /** Chooses locked status of cards. */
-        const chooseLockedStatus = () => {
-            setIsLockedStatus(isLockedStatus => !isLockedStatus);
-        };
-
-        /** Chooses unlocked status of cards. */
-        const chooseUnlockedStatus = () => {
-            setIsUnlockedStatus(isUnLockedStatus => !isUnLockedStatus);
-        };
-
-        /** Exposes default page number. */
-        const DEFAULT_PAGE_INDEX: number = 1;
-
-        /** TODO: it is not added yet to query parameters on back-end. */
-        /** Submits query parameters by status. */
-        const handleSubmit = async () => {
-            await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
-            setIsFilterByStatusShown(false);
-            setActiveFilterIndex(DEFAULT_FILTER_ITEM_INDEX);
-        };
-
-        useEffect(() => {
-            position !== activeFilterIndex && setIsFilterByStatusShown(false);
-        }, [activeFilterIndex]);
-
-        return (
-            <FilterByParameterWrapper
-                showComponent={showFilterByStatus}
-                isVisible={isVisible}
-                title="Status"
-            >
-                <input
-                    id="checkbox-locked"
-                    className="filter-item__dropdown-active__checkbox"
-                    type="checkbox"
-                    onClick={chooseLockedStatus}
-                />
-                <label
-                    className="filter-item__dropdown-active__text"
-                    htmlFor="checkbox-locked"
-                >
-                    Locked
-                </label>
-                <input
-                    id="checkbox-unlocked"
-                    className="filter-item__dropdown-active__checkbox"
-                    type="checkbox"
-                    onClick={chooseUnlockedStatus}
-                />
-                <label
-                    className="filter-item__dropdown-active__text"
-                    htmlFor="checkbox-unlocked"
-                >
-                    Unlocked
-                </label>
-                <input
-                    value="APPLY"
-                    type="submit"
-                    className="filter-item__dropdown-active__apply"
-                    onClick={handleSubmit}
-                />
-            </FilterByParameterWrapper>
-        );
+    /** Shows and closes FilterByStatus component. */
+    const showFilterByStatus = () => {
+        setActiveFilterIndex(position);
+        setIsFilterByStatusShown(isFilterByStatusShown => !isFilterByStatusShown);
     };
+
+    /** Indicates if is choosed locked status of cards. */
+    const [isLockedStatus, setIsLockedStatus] = useState<boolean>(false);
+    /** Indicates if is choosed unlocked status of cards. */
+    const [isUnLockedStatus, setIsUnlockedStatus] = useState<boolean>(false);
+
+    /** Chooses locked status of cards. */
+    const chooseLockedStatus = () => {
+        setIsLockedStatus(isLockedStatus => !isLockedStatus);
+    };
+
+    /** Chooses unlocked status of cards. */
+    const chooseUnlockedStatus = () => {
+        setIsUnlockedStatus(isUnLockedStatus => !isUnLockedStatus);
+    };
+
+    /** Exposes default page number. */
+    const DEFAULT_PAGE_INDEX: number = 1;
+
+    /** TODO: it is not added yet to query parameters on back-end. */
+    /** Submits query parameters by status. */
+    const handleSubmit = async() => {
+        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+        setIsFilterByStatusShown(false);
+        setActiveFilterIndex(DEFAULT_FILTER_ITEM_INDEX);
+    };
+
+    useEffect(() => {
+        position !== activeFilterIndex && setIsFilterByStatusShown(false);
+    }, [activeFilterIndex]);
+
+    return (
+        <FilterByParameterWrapper
+            showComponent={showFilterByStatus}
+            isVisible={isVisible}
+            title="Status"
+        >
+            <input
+                id="checkbox-locked"
+                className="filter-item__dropdown-active__checkbox"
+                type="checkbox"
+                onClick={chooseLockedStatus}
+            />
+            <label
+                className="filter-item__dropdown-active__text"
+                htmlFor="checkbox-locked"
+            >
+                    Locked
+            </label>
+            <input
+                id="checkbox-unlocked"
+                className="filter-item__dropdown-active__checkbox"
+                type="checkbox"
+                onClick={chooseUnlockedStatus}
+            />
+            <label
+                className="filter-item__dropdown-active__text"
+                htmlFor="checkbox-unlocked"
+            >
+                    Unlocked
+            </label>
+            <input
+                value="APPLY"
+                type="submit"
+                className="filter-item__dropdown-active__apply"
+                onClick={handleSubmit}
+            />
+        </FilterByParameterWrapper>
+    );
+};

@@ -18,8 +18,8 @@ export const FilterByPrice: React.FC<{
     activeFilterIndex,
     setActiveFilterIndex,
 }) => {
-        /** Exposes default index which does not exist in array. */
-        const DEFAULT_FILTER_ITEM_INDEX = -1;
+    /** Exposes default index which does not exist in array. */
+    const DEFAULT_FILTER_ITEM_INDEX = -1;
     /** Indicates if FilterByPrice component shown. */
     const [isFilterByPriceShown, setIsFilterByPriceShown] = useState(false);
 
