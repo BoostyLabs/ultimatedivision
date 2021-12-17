@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
@@ -16,6 +17,7 @@ import (
 	"ultimatedivision/pkg/sync"
 	"ultimatedivision/seasons"
 	"ultimatedivision/udts/currencywaitlist"
+	"ultimatedivision/users"
 )
 
 var (
@@ -35,10 +37,11 @@ type Chore struct {
 	seasons          *seasons.Service
 	clubs            *clubs.Service
 	currencywaitlist *currencywaitlist.Service
+	users            *users.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(config Config, log logger.Logger, service *Service, matches *matches.Service, seasons *seasons.Service, clubs *clubs.Service, currencywaitlist *currencywaitlist.Service) *Chore {
+func NewChore(config Config, log logger.Logger, service *Service, matches *matches.Service, seasons *seasons.Service, clubs *clubs.Service, currencywaitlist *currencywaitlist.Service, users *users.Service) *Chore {
 	return &Chore{
 		config:           config,
 		log:              log,
@@ -48,6 +51,7 @@ func NewChore(config Config, log logger.Logger, service *Service, matches *match
 		seasons:          seasons,
 		clubs:            clubs,
 		currencywaitlist: currencywaitlist,
+		users:            users,
 	}
 }
 
@@ -256,10 +260,56 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	var value = new(big.Int)
 	value.SetString(chore.config.WinValue, 10)
+	var winClient Client
+	var winClientResult matches.GameResult
 	if firstClientResult.MatchResults[0].QuantityGoals > secondClientResult.MatchResults[0].QuantityGoals {
-		firstClientResult.Transaction, err = chore.currencywaitlist.Create(ctx, firstClientResult.MatchResults[0].UserID, *value)
+		winClient = firstClient
 	} else if firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals {
-		secondClientResult.Transaction, err = chore.currencywaitlist.Create(ctx, secondClientResult.MatchResults[0].UserID, *value)
+		winClient = secondClient
+	}
+
+	if winClient.UserID != uuid.Nil {
+		user, err := chore.users.Get(ctx, winClient.UserID)
+		if err != nil {
+			return ChoreError.Wrap(err)
+		}
+
+		if user.Wallet != "" {
+			if winClientResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
+				return ChoreError.Wrap(err)
+			}
+		} else {
+			if err := winClient.WriteJSON(http.StatusOK, "you allow us to take your address?"); err != nil {
+				chore.log.Error("could not write json", ChoreError.Wrap(err))
+			}
+
+			request, err := winClient.ReadJSON()
+			if err != nil {
+				chore.log.Error("could not read json", ChoreError.Wrap(err))
+			}
+
+			if request.Action != ActionForbidAddress && request.Action != ActionAllowAddress {
+				if err := winClient.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
+					chore.log.Error("could not write json", ChoreError.Wrap(err))
+				}
+			}
+
+			if request.Action == ActionAllowAddress {
+				if !request.WalletAddress.IsValidAddress() {
+					if err := winClient.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
+						chore.log.Error("could not write json", ChoreError.Wrap(err))
+					}
+				}
+
+				if err = chore.users.UpdateWalletAddress(ctx, request.WalletAddress, winClient.UserID); err != nil {
+					return ChoreError.Wrap(err)
+				}
+
+				if winClientResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
+					return ChoreError.Wrap(err)
+				}
+			}
+		}
 	}
 
 	if err := firstClient.WriteJSON(http.StatusOK, firstClientResult); err != nil {

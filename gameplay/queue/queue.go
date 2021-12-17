@@ -10,6 +10,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/pkg/cryptoutils"
 )
 
 // ErrNoClient indicated that client does not exist.
@@ -49,8 +51,9 @@ type Client struct {
 
 // Request entity describes values sent by client.
 type Request struct {
-	Action  Action    `json:"action"`
-	SquadID uuid.UUID `json:"squadId"`
+	Action        Action              `json:"action"`
+	SquadID       uuid.UUID           `json:"squadId"`
+	WalletAddress cryptoutils.Address `json:"wallet_address"`
 }
 
 // Action defines list of possible clients action.
@@ -65,6 +68,10 @@ const (
 	ActionConfirm Action = "confirm"
 	// ActionReject indicates that the client rejects the game.
 	ActionReject Action = "reject"
+	// ActionAllowAddress indicates that the client allows to add address of wallet.
+	ActionAllowAddress Action = "allowAddress"
+	// ActionForbidAddress indicates that the client forbids adding address of wallet.
+	ActionForbidAddress Action = "forbidAddress"
 )
 
 // Response entity describes values sent to user.
