@@ -35,8 +35,6 @@ const UserCards: React.FC = () => {
 
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
-    const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
-
     const dispatch = useDispatch();
 
     /** Indicates if registration is required. */
@@ -72,6 +70,15 @@ const UserCards: React.FC = () => {
         })();
     }, []);
 
+        /** Exposes default index which does not exist in array. */
+        const DEFAULT_FILTER_ITEM_INDEX = -1;
+        const FILTER_BY_VERSION_INDEX = 1;
+        const FILTER_BY_STATS_INDEX = 2;
+        const FILTER_BY_PRICE_INDEX = 3;
+        const FILTER_BY_STATUS_INDEX = 4;
+    
+        const [activeFilterIndex, setActiveFilterIndex] = useState(DEFAULT_FILTER_ITEM_INDEX);
+
     return (
         <section className="user-cards">
             {isRegistrationRequired &&
@@ -81,10 +88,28 @@ const UserCards: React.FC = () => {
             }
             <h1 className="user-cards__title">MY CARDS</h1>
             <FilterField>
-                <FilterByVersion submitSearch={submitSearch} />
-                <FilterByStats submitSearch={submitSearch} />
-                <FilterByPrice />
-                <FilterByStatus />
+            <FilterByVersion
+                    submitSearch={submitSearch}
+                    position={FILTER_BY_VERSION_INDEX}
+                    activeFilterIndex={activeFilterIndex}
+                    setActiveFilterIndex={setActiveFilterIndex}
+                />
+                <FilterByStats
+                    submitSearch={submitSearch}
+                    position={FILTER_BY_STATS_INDEX}
+                    activeFilterIndex={activeFilterIndex}
+                    setActiveFilterIndex={setActiveFilterIndex}
+                />
+                <FilterByPrice
+                    position={FILTER_BY_PRICE_INDEX}
+                    activeFilterIndex={activeFilterIndex}
+                    setActiveFilterIndex={setActiveFilterIndex}
+                />
+                <FilterByStatus
+                    position={FILTER_BY_STATUS_INDEX}
+                    activeFilterIndex={activeFilterIndex}
+                    setActiveFilterIndex={setActiveFilterIndex}
+                />
             </FilterField>
             <CardsArea />
             <Paginator
