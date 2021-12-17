@@ -17,71 +17,73 @@ import './index.scss';
 import { useEffect, useState } from 'react';
 
 export const UserCard: React.FC<{
-    card: Card,
-    position: number,
-    sellingCardIndex: number,
-    setIndex: React.Dispatch<React.SetStateAction<number>>
+    card: Card;
+    position: number;
+    sellingCardIndex: number;
+    setIndex: React.Dispatch<React.SetStateAction<number>>;
 }> = ({
     card,
     position,
     sellingCardIndex,
-    setIndex
+    setIndex,
 }) => {
-        const dispatch = useDispatch();
-        const [sellButtonVisibility, setVisibility] = useState(false)
-        const isVisible = sellButtonVisibility && position === sellingCardIndex;
-        useEffect(() => {
-            position !== sellingCardIndex &&
-                setVisibility(false)
-        }, [sellingCardIndex])
+    /** Default index which does not exist in array */
+    const DEFAULT_INDEX = -1;
+    const dispatch = useDispatch();
+    const [sellButtonVisibility, setVisibility] = useState(false);
+    const isVisible = sellButtonVisibility && position === sellingCardIndex;
+    useEffect(() => {
+        position !== sellingCardIndex &&
+                setVisibility(false);
+    }, [sellingCardIndex]);
 
-        const handleControls = (e: React.MouseEvent<HTMLInputElement>, position: number) => {
-            e.preventDefault();
-            setIndex(position);
-            setVisibility(prev => !prev)
-        };
+    const handleControls = (e: React.MouseEvent<HTMLInputElement>, position: number) => {
+        e.preventDefault();
+        setIndex(position);
+        setVisibility(prev => !prev);
+    };
 
-        const handleSelling = (e: React.MouseEvent<HTMLInputElement>) => {
-            e.stopPropagation();
-            e.nativeEvent.stopImmediatePropagation();
-            /** TODO: create interface for adding selling parameters */
-            /* eslint-disable */
+    const handleSelling = (e: React.MouseEvent<HTMLInputElement>) => {
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+        /** TODO: create interface for adding selling parameters */
+        /* eslint-disable */
             dispatch(createLot(new CreatedLot(card.id, 200, 200, 1)));
             /* eslint-enable */
-            setIndex(-1);
-            setVisibility(false)
-        };
+        setIndex(DEFAULT_INDEX);
+        setVisibility(false);
+    };
 
-        return (
-            <div
-                className="user-card"
-                onContextMenu={(e: React.MouseEvent<HTMLInputElement>) => handleControls(e, position)}
+    return (
+        <div
+            className="user-card"
+            onContextMenu={(e: React.MouseEvent<HTMLInputElement>) => handleControls(e, position)}
+        >
+            <Link
+                className="user-card__link"
+                to={`/card/${card.id}`}
             >
-                <Link
-                    className="user-card__link"
-                    to={`/card/${card.id}`}
-                >
-                    <img
-                        className="user-card__confirm-icon"
-                        src={confirmIcon}
-                        alt="Confirm icon"
-                    />
-                    <img
-                        className="user-card__price-gold"
-                        src={priceGoldIcon}
-                        alt="Price icon"
-                    />
-                    <PlayerCard
-                        id={card.id}
-                        className={'user-card__image'}
-                    />
-                </Link>
-                {isVisible &&
+                <img
+                    className="user-card__confirm-icon"
+                    src={confirmIcon}
+                    alt="Confirm icon"
+                />
+                <img
+                    className="user-card__price-gold"
+                    src={priceGoldIcon}
+                    alt="Price icon"
+                />
+                <PlayerCard
+                    id={card.id}
+                    className={'user-card__image'}
+                />
+            </Link>
+            {isVisible &&
                     <div className="user-card__control"
                         onClick={(e: React.MouseEvent<HTMLInputElement>) => handleSelling(e)}>
                         Sell card
                     </div>
-                }
-            </div>
-        );
-    };
+            }
+        </div>
+    );
+};

@@ -52,7 +52,7 @@ export const LootboxOpening = () => {
             </div>
             <div className="box-animation__card-container">
                 <div className="box-animation__card-container-backlight">
-                    <PlayerCard className={"box-animation__card"} id={cards[FIRST_CARD].id}/>
+                    <PlayerCard className={'box-animation__card'} id={cards[FIRST_CARD].id}/>
                 </div>
             </div>
         </div>

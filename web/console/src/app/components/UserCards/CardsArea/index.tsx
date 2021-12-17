@@ -12,10 +12,12 @@ import './index.scss';
 import { useState } from 'react';
 
 export const CardsArea: React.FC = () => {
+    /** Default index which does not exist in array */
+    const DEFAULT_INDEX = -1;
     const { cards } =
         useSelector((state: RootState) => state.cardsReducer.cardsPage);
 
-    const [sellCardIndex, setIndex] = useState<number>(-1)
+    const [sellCardIndex, setIndex] = useState<number>(DEFAULT_INDEX);
 
     return <div className="cards-area">
         <div className="cards-area__wrapper">
