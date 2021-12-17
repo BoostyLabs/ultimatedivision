@@ -59,8 +59,7 @@ const Club: React.FC = () => {
     useEffect(() => {
         (async() => {
             try {
-                clearCardsQueryParameters();
-                await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+                await dispatch(listOfCards(currentCardsPage));
             } catch (error: any) {
                 if (error instanceof UnauthorizedError) {
                     setIsRegistrationRequired(true);
@@ -69,7 +68,7 @@ const Club: React.FC = () => {
                 }
             }
         })();
-    }, [isCardsVisible]);
+    }, []);
 
     return (
         <section className="club">
@@ -89,7 +88,7 @@ const Club: React.FC = () => {
             <Paginator
                 getCardsOnPage={listOfCards}
                 itemsCount={page.totalCount}
-                selectedPage={page.currentPage}
+                selectedPage={currentCardsPage}
             />
         </section>
     );
