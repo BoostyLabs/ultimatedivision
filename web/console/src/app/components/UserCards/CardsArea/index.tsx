@@ -3,23 +3,29 @@
 
 import { useSelector } from 'react-redux';
 
-import { MyCard } from './MyCard';
+import { UserCard } from './UserCard';
 
 import { RootState } from '@/app/store';
 import { Card } from '@/card';
 
 import './index.scss';
+import { useState } from 'react';
 
-export const ClubCardsArea: React.FC = () => {
+export const CardsArea: React.FC = () => {
     const { cards } =
         useSelector((state: RootState) => state.cardsReducer.cardsPage);
 
-    return <div className="club-cards">
-        <div className="club-cards__wrapper">
+    const [sellCardIndex, setIndex] = useState<number>(-1)
+
+    return <div className="cards-area">
+        <div className="cards-area__wrapper">
             {cards.map((card: Card, index: number) =>
-                <MyCard
-                    card={card}
+                <UserCard
                     key={index}
+                    card={card}
+                    position={index}
+                    sellingCardIndex={sellCardIndex}
+                    setIndex={setIndex}
                 />,
             )}
         </div>
