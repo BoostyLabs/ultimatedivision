@@ -333,7 +333,7 @@ func TestCards(t *testing.T) {
 
 			queryString, values := database.BuildWhereClauseDependsOnCardsFilters(filters)
 
-			assert.Equal(t, queryString, ` WHERE (cards.quality = $1 OR cards.quality = $2) cards.tactics >= $3 AND cards.type = $4`)
+			assert.Equal(t, queryString, ` WHERE (cards.quality = $1 OR cards.quality = $2) AND cards.tactics >= $3 AND cards.type = $4`)
 			assert.Equal(t, values, []string{"gold", "wood", "1", "won"})
 		})
 

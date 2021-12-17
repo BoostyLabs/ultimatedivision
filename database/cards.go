@@ -504,7 +504,7 @@ func BuildWhereClauseDependsOnCardsFilters(filters []cards.Filters) (string, []s
 	if len(whereOR) > 0 {
 		query += " WHERE (" + strings.Join(whereOR, " OR ") + ") "
 		if len(where) > 0 {
-			query += strings.Join(where, " AND ")
+			query += "AND " + strings.Join(where, " AND ")
 		}
 		return query, values
 	}
