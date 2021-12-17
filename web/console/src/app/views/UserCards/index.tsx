@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ClubCardsArea } from '@components/Club/ClubCardsArea';
+import { CardsArea } from '@components/UserCards/CardsArea';
 import { FilterField } from '@components/common/FilterField';
 import { FilterByPrice } from '@components/common/FilterField/FilterByPrice';
 import { FilterByStats } from '@components/common/FilterField/FilterByStats';
@@ -25,7 +25,7 @@ import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
 
-const Club: React.FC = () => {
+const UserCards: React.FC = () => {
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
     const { currentCardsPage } = useSelector((state: RootState) => state.cardsReducer);
 
@@ -67,20 +67,18 @@ const Club: React.FC = () => {
     }, []);
 
     return (
-        <section className="club">
-            {isRegistrationRequired &&
-                <RegistrationPopup
-                    closeRegistrationPopup={closeRegistrationPopup}
-                />
-            }
-            <h1 className="club__title">MY CARDS</h1>
-            <FilterField>
+        <section className="user-cards">
+            {isRegistrationRequired && <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />}
+            <h1 className="user-cards__title">
+                MY CARDS
+            </h1>
+            <FilterField >
                 <FilterByVersion submitSearch={submitSearch} />
                 <FilterByStats submitSearch={submitSearch} />
                 <FilterByPrice />
                 <FilterByStatus />
             </FilterField>
-            <ClubCardsArea />
+            <CardsArea />
             <Paginator
                 getCardsOnPage={listOfCards}
                 itemsCount={page.totalCount}
@@ -90,4 +88,4 @@ const Club: React.FC = () => {
     );
 };
 
-export default Club;
+export default UserCards;
