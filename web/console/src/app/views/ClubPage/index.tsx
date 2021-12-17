@@ -29,6 +29,8 @@ const Club: React.FC = () => {
     const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
     const { currentCardsPage } = useSelector((state: RootState) => state.cardsReducer);
 
+    const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
+
     const dispatch = useDispatch();
 
     /** Indicates if registration is required. */

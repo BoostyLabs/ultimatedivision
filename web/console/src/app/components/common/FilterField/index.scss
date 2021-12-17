@@ -70,8 +70,10 @@
             }
 
             &:nth-child(3) {
+
                 .filter-item__dropdown-active {
                     left: -65px;
+
                     &:before {
                         left: 65px;
                     }
