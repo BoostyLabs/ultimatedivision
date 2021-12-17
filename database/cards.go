@@ -317,8 +317,8 @@ func (cardsDB *cardsDB) ListCardIDsWithFiltersWhereActiveLot(ctx context.Context
 	return cardIDs, ErrCard.Wrap(err)
 }
 
-// ListByPlayerName returns all cards from DB by player name.
-func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, userID uuid.UUID, filter cards.Filters, cursor pagination.Cursor) (cards.Page, error) {
+// ListByUserIDAndPlayerName returns cards from DB by user id and player name.
+func (cardsDB *cardsDB) ListByUserIDAndPlayerName(ctx context.Context, userID uuid.UUID, filter cards.Filters, cursor pagination.Cursor) (cards.Page, error) {
 	var cardsListPage cards.Page
 	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
 	whereClause += fmt.Sprintf(" AND user_id = $%d", len(valuesString)+1)

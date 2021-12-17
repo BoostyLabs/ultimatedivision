@@ -316,7 +316,7 @@ func TestCards(t *testing.T) {
 				assert.NoError(t, err)
 			}
 
-			allCards, err := repositoryCards.ListByPlayerName(ctx, card1.UserID, filter3, cursor1)
+			allCards, err := repositoryCards.ListByUserIDAndPlayerName(ctx, card1.UserID, filter3, cursor1)
 			assert.NoError(t, err)
 			assert.Equal(t, len(allCards.Cards), 1)
 			compareCards(t, card1, allCards.Cards[0])

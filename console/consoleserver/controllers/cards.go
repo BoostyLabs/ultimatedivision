@@ -127,7 +127,7 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 			Value:          playerName,
 			SearchOperator: sqlsearchoperators.LIKE,
 		}
-		cardsListPage, err = controller.cards.ListByPlayerName(ctx, claims.UserID, filter, cursor)
+		cardsListPage, err = controller.cards.ListByUserIDAndPlayerName(ctx, claims.UserID, filter, cursor)
 	}
 	if err != nil {
 		controller.log.Error("could not get cards list", ErrCards.Wrap(err))

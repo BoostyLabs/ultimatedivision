@@ -378,8 +378,8 @@ func (service *Service) ListCardIDsWithFiltersWhereActiveLot(ctx context.Context
 	return cardsList, ErrCards.Wrap(err)
 }
 
-// ListByPlayerName returns cards from DB by player name.
-func (service *Service) ListByPlayerName(ctx context.Context, userID uuid.UUID, filter Filters, cursor pagination.Cursor) (Page, error) {
+// ListByUserIDAndPlayerName returns cards from DB by user id and player name.
+func (service *Service) ListByUserIDAndPlayerName(ctx context.Context, userID uuid.UUID, filter Filters, cursor pagination.Cursor) (Page, error) {
 	var cardsListPage Page
 	strings.ToValidUTF8(filter.Value, "")
 
@@ -396,7 +396,7 @@ func (service *Service) ListByPlayerName(ctx context.Context, userID uuid.UUID, 
 		cursor.Page = service.config.Cursor.Page
 	}
 
-	cardsListPage, err = service.cards.ListByPlayerName(ctx, userID, filter, cursor)
+	cardsListPage, err = service.cards.ListByUserIDAndPlayerName(ctx, userID, filter, cursor)
 	return cardsListPage, ErrCards.Wrap(err)
 }
 
