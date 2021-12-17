@@ -3,14 +3,14 @@
 
 import { useSelector } from 'react-redux';
 
-import { PlayerCard } from '../../../common/PlayerCard';
+import { PlayerCard } from '@components/common/PlayerCard';
 
 import boxLight from '@static/img/StorePage/BoxContent/boxLight.svg';
 import ribbons from '@static/img/StorePage/BoxContent/ribbons.svg';
 
 import { RootState } from '@/app/store';
 import { boxStyle } from '@/app/internal/lootboxStyle';
-import { Card } from '../../../../../card';
+import { Card } from '@/card';
 
 import './index.scss';
 
