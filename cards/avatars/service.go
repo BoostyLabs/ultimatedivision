@@ -382,6 +382,7 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, nameFile 
 	if err = imageprocessing.SaveImage(service.config.PathToOutputAvatarsLocal, filepath.Join(service.config.PathToOutputAvatarsLocal, nameFile+"."+string(TypeImagePNG)), originalImageWithLabelGk); err != nil {
 		return avatar, ErrAvatar.Wrap(err)
 	}
+
 	return avatar, nil
 }
 

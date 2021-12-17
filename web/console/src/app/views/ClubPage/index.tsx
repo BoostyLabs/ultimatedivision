@@ -26,14 +26,8 @@ import { CardsQueryParametersField } from '@/card';
 import './index.scss';
 
 const Club: React.FC = () => {
-    const { page } = useSelector(
-        (state: RootState) => state.cardsReducer.cardsPage
-    );
-    const isCardsVisible = useSelector(
-        (state: RootState) => state.clubsReducer.options.showCardSeletion
-    );
-
-    const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
+    const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
+    const { currentCardsPage } = useSelector((state: RootState) => state.cardsReducer);
 
     const dispatch = useDispatch();
 
@@ -59,8 +53,7 @@ const Club: React.FC = () => {
     useEffect(() => {
         (async() => {
             try {
-                clearCardsQueryParameters();
-                await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+                await dispatch(listOfCards(currentCardsPage));
             } catch (error: any) {
                 if (error instanceof UnauthorizedError) {
                     setIsRegistrationRequired(true);
@@ -69,7 +62,7 @@ const Club: React.FC = () => {
                 }
             }
         })();
-    }, [isCardsVisible]);
+    }, []);
 
     return (
         <section className="club">
@@ -89,7 +82,7 @@ const Club: React.FC = () => {
             <Paginator
                 getCardsOnPage={listOfCards}
                 itemsCount={page.totalCount}
-                selectedPage={page.currentPage}
+                selectedPage={currentCardsPage}
             />
         </section>
     );
