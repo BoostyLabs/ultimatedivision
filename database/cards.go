@@ -167,16 +167,22 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (car
 }
 
 // ListByUserID returns all users cards from the database.
-func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID) ([]cards.Card, error) {
+func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID, cursor pagination.Cursor) (cards.Page, error) {
+	var userCardsPage cards.Page
+	offset := (cursor.Page - 1) * cursor.Limit
 	query :=
 		`SELECT * FROM  
 			cards 
 		WHERE 
-			user_id = $1`
+			user_id = $1
+		LIMIT 
+			$2
+		OFFSET 
+			$3`
 
-	rows, err := cardsDB.conn.QueryContext(ctx, query, id)
+	rows, err := cardsDB.conn.QueryContext(ctx, query, id, cursor.Limit, offset)
 	if err != nil {
-		return nil, ErrCard.Wrap(err)
+		return userCardsPage, ErrCard.Wrap(err)
 	}
 	defer func() {
 		err = errs.Combine(err, rows.Close())
@@ -195,16 +201,22 @@ func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID) ([]cards
 			&card.BallFocus, &card.Interceptions, &card.Vigilance, &card.Goalkeeping, &card.Reflexes, &card.Diving, &card.Handling, &card.Sweeping,
 			&card.Throwing,
 		); err != nil {
-			return nil, ErrCard.Wrap(err)
+			return userCardsPage, ErrCard.Wrap(err)
 		}
 
 		userCards = append(userCards, card)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, ErrCard.Wrap(err)
+		return userCardsPage, ErrCard.Wrap(err)
 	}
 
-	return userCards, nil
+	totalCount, err := cardsDB.totalCount(ctx)
+	if err != nil {
+		return userCardsPage, ErrCard.Wrap(err)
+	}
+
+	userCardsPage, err = cardsDB.listPaginated(ctx, cursor, userCards, totalCount)
+	return userCardsPage, ErrCard.Wrap(err)
 }
 
 // ListWithFilters returns cards from DB, taking the necessary filters.
@@ -306,9 +318,11 @@ func (cardsDB *cardsDB) ListCardIDsWithFiltersWhereActiveLot(ctx context.Context
 }
 
 // ListByPlayerName returns all cards from DB by player name.
-func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, filter cards.Filters, cursor pagination.Cursor) (cards.Page, error) {
+func (cardsDB *cardsDB) ListByPlayerName(ctx context.Context, userID uuid.UUID, filter cards.Filters, cursor pagination.Cursor) (cards.Page, error) {
 	var cardsListPage cards.Page
 	whereClause, valuesString := BuildWhereClauseDependsOnPlayerNameCards(filter)
+	whereClause += fmt.Sprintf(" AND user_id = $%d", len(valuesString)+1)
+	valuesString = append(valuesString, userID.String())
 	valuesInterface := ValidDBParameters(valuesString)
 	offset := (cursor.Page - 1) * cursor.Limit
 	query := fmt.Sprintf(`SELECT * FROM cards %s LIMIT %d OFFSET %d`, whereClause, cursor.Limit, offset)
