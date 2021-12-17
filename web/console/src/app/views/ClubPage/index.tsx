@@ -29,8 +29,8 @@ const Club: React.FC = () => {
     const { page } = useSelector(
         (state: RootState) => state.cardsReducer.cardsPage
     );
-    const isCardsVisible = useSelector(
-        (state: RootState) => state.clubsReducer.options.showCardSeletion
+    const { currentCardsPage } = useSelector(
+        (state: RootState) => state.cardsReducer
     );
 
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
