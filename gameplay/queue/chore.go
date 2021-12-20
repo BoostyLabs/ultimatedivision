@@ -260,21 +260,22 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	var value = new(big.Int)
 	value.SetString(chore.config.WinValue, 10)
 	var winResults []WinResult
-	if firstClientResult.MatchResults[0].QuantityGoals > secondClientResult.MatchResults[0].QuantityGoals {
+	switch {
+	case firstClientResult.MatchResults[0].QuantityGoals > secondClientResult.MatchResults[0].QuantityGoals:
 		winResult := WinResult{
 			Client:     firstClient,
 			GameResult: firstClientResult,
 			Value:      *value,
 		}
 		winResults = append(winResults, winResult)
-	} else if firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals {
+	case firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals:
 		winResult := WinResult{
 			Client:     secondClient,
 			GameResult: secondClientResult,
 			Value:      *value,
 		}
 		winResults = append(winResults, winResult)
-	} else {
+	default:
 		var value = new(big.Int)
 		value.SetString(chore.config.DrawValue, 10)
 

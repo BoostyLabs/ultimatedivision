@@ -55,7 +55,7 @@ type Client struct {
 type Request struct {
 	Action        Action              `json:"action"`
 	SquadID       uuid.UUID           `json:"squadId"`
-	WalletAddress cryptoutils.Address `json:"wallet_address"`
+	WalletAddress cryptoutils.Address `json:"walletAddress"`
 }
 
 // Action defines list of possible clients action.
@@ -72,7 +72,7 @@ const (
 	ActionReject Action = "reject"
 	// ActionAllowAddress indicates that the client allows to add address of wallet.
 	ActionAllowAddress Action = "allowAddress"
-	// ActionForbidAddress indicates that the client forbids adding address of wallet.
+	// ActionForbidAddress indicates that the client is forbidden to add wallet address.
 	ActionForbidAddress Action = "forbidAddress"
 )
 
