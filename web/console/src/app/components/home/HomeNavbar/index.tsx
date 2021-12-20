@@ -27,13 +27,10 @@ const HomeNavbar: React.FC = () => {
         { name: 'FAQ', path: RouteConfig.Summary.path },
     ];
 
-    /** Marketplace component index from navbar items. */
-    const navbarMarketplaceIndex: number = 2;
-
     return (
         <nav className="ultimatedivision-home-navbar">
             <div className="wrapper">
-                <a href={navbarItems[navbarMarketplaceIndex].path}>
+                <a href={RouteConfig.Home.path}>
                     <img
                         className="ultimatedivision-home-navbar__logo"
                         src={ultimate}
