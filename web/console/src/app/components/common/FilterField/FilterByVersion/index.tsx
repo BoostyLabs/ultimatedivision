@@ -1,34 +1,32 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
 import { CardsQueryParametersField } from '@/card';
+import { FilterContext } from '../index';
 
 // TODO: rework functionality.
 export const FilterByVersion: React.FC<{
     submitSearch: (queryParameters: CardsQueryParametersField[]) => void;
-    position: number;
-    activeFilterIndex: number;
-    setActiveFilterIndex: React.Dispatch<React.SetStateAction<number>>;
-}> = ({
-    submitSearch,
-    position,
-    activeFilterIndex,
-    setActiveFilterIndex,
-}) => {
+}> = ({ submitSearch }) => {
+    const { activeFilterIndex, setActiveFilterIndex }: {
+        activeFilterIndex: number;
+        setActiveFilterIndex: React.Dispatch<React.SetStateAction<number>>;
+    } = useContext(FilterContext);
     /** Exposes default index which does not exist in array. */
     const DEFAULT_FILTER_ITEM_INDEX = -1;
+    const FILTER_BY_VERSION_INDEX = 1;
     /** Indicates if FilterByVersion component shown. */
     const [isFilterByVersionShown, setIsFilterByVersionShown] = useState(false);
 
-    const isVisible = position === activeFilterIndex && isFilterByVersionShown;
+    const isVisible = FILTER_BY_VERSION_INDEX === activeFilterIndex && isFilterByVersionShown;
 
     /** Shows and closes FilterByVersion component. */
     const showFilterByVersion = () => {
-        setActiveFilterIndex(position);
+        setActiveFilterIndex(FILTER_BY_VERSION_INDEX);
         setIsFilterByVersionShown(isFilterByVersionShown => !isFilterByVersionShown);
     };
 
@@ -92,7 +90,7 @@ export const FilterByVersion: React.FC<{
     };
 
     useEffect(() => {
-        position !== activeFilterIndex && setIsFilterByVersionShown(false);
+        FILTER_BY_VERSION_INDEX !== activeFilterIndex && setIsFilterByVersionShown(false);
     }, [activeFilterIndex]);
 
     return (
@@ -111,7 +109,7 @@ export const FilterByVersion: React.FC<{
                 className="filter-item__dropdown-active__text"
                 htmlFor="division-checkbox-wood"
             >
-                    wood
+                wood
             </label>
             <input
                 id="checkbox-silver"
@@ -123,7 +121,7 @@ export const FilterByVersion: React.FC<{
                 className="filter-item__dropdown-active__text"
                 htmlFor="checkbox-silver"
             >
-                    silver
+                silver
             </label>
             <input
                 id="checkbox-gold"
@@ -135,7 +133,7 @@ export const FilterByVersion: React.FC<{
                 className="filter-item__dropdown-active__text"
                 htmlFor="checkbox-gold"
             >
-                    gold
+                gold
             </label>
             <input
                 id="checkbox-diamond"
@@ -147,7 +145,7 @@ export const FilterByVersion: React.FC<{
                 className="filter-item__dropdown-active__text"
                 htmlFor="checkbox-diamond"
             >
-                    diamond
+                diamond
             </label>
             <input
                 value="APPLY"

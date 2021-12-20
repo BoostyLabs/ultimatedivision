@@ -64,40 +64,17 @@ export const FieldCardSelection = () => {
         await dispatch(fieldCards(DEFAULT_PAGE_INDEX));
     };
 
-    /** Exposes default index which does not exist in array. */
-    const DEFAULT_FILTER_ITEM_INDEX = -1;
-    const FILTER_BY_VERSION_INDEX = 1;
-    const FILTER_BY_STATS_INDEX = 2;
-    const FILTER_BY_PRICE_INDEX = 3;
-    const FILTER_BY_STATUS_INDEX = 4;
-
-    const [activeFilterIndex, setActiveFilterIndex] = useState(DEFAULT_FILTER_ITEM_INDEX);
-
     return (
         <div id="cardList" className="card-selection">
             <FilterField >
                 <FilterByVersion
                     submitSearch={submitSearch}
-                    position={FILTER_BY_VERSION_INDEX}
-                    activeFilterIndex={activeFilterIndex}
-                    setActiveFilterIndex={setActiveFilterIndex}
                 />
                 <FilterByStats
                     submitSearch={submitSearch}
-                    position={FILTER_BY_STATS_INDEX}
-                    activeFilterIndex={activeFilterIndex}
-                    setActiveFilterIndex={setActiveFilterIndex}
                 />
-                <FilterByPrice
-                    position={FILTER_BY_PRICE_INDEX}
-                    activeFilterIndex={activeFilterIndex}
-                    setActiveFilterIndex={setActiveFilterIndex}
-                />
-                <FilterByStatus
-                    position={FILTER_BY_STATUS_INDEX}
-                    activeFilterIndex={activeFilterIndex}
-                    setActiveFilterIndex={setActiveFilterIndex}
-                />
+                <FilterByPrice />
+                <FilterByStatus />
             </FilterField>
             <div className="card-selection__list">
                 {cards &&

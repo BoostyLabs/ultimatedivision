@@ -1,35 +1,33 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
 import { listOfCards } from '@/app/store/actions/cards';
+import { FilterContext } from '../index';
 
 // TODO: rework functionality.
-export const FilterByStatus: React.FC<{
-    position: number;
-    activeFilterIndex: number;
-    setActiveFilterIndex: React.Dispatch<React.SetStateAction<number>>;
-}> = ({
-    position,
-    activeFilterIndex,
-    setActiveFilterIndex,
-}) => {
+export const FilterByStatus: React.FC = () => {
+    const { activeFilterIndex, setActiveFilterIndex }: {
+        activeFilterIndex: number;
+        setActiveFilterIndex: React.Dispatch<React.SetStateAction<number>>;
+    } = useContext(FilterContext);
     /** Exposes default index which does not exist in array. */
     const DEFAULT_FILTER_ITEM_INDEX = -1;
+    const FILTER_BY_STATUS_INDEX = 4;
     /** Indicates if FilterByStatus component shown. */
     const [isFilterByStatusShown, setIsFilterByStatusShown] = useState(false);
 
-    const isVisible = position === activeFilterIndex && isFilterByStatusShown;
+    const isVisible = FILTER_BY_STATUS_INDEX === activeFilterIndex && isFilterByStatusShown;
 
     const dispatch = useDispatch();
 
     /** Shows and closes FilterByStatus component. */
     const showFilterByStatus = () => {
-        setActiveFilterIndex(position);
+        setActiveFilterIndex(FILTER_BY_STATUS_INDEX);
         setIsFilterByStatusShown(isFilterByStatusShown => !isFilterByStatusShown);
     };
 
@@ -60,7 +58,7 @@ export const FilterByStatus: React.FC<{
     };
 
     useEffect(() => {
-        position !== activeFilterIndex && setIsFilterByStatusShown(false);
+        FILTER_BY_STATUS_INDEX !== activeFilterIndex && setIsFilterByStatusShown(false);
     }, [activeFilterIndex]);
 
     return (

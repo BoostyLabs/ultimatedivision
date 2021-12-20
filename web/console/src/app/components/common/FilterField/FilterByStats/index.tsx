@@ -1,34 +1,32 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 import { FilterFieldStatsArea, FilterFieldStatsAreaProps } from '@/app/components/common/FilterField/FilterFieldStatsArea';
 
 import { CardsQueryParametersField } from '@/card';
+import { FilterContext } from '../index';
 
 export const FilterByStats: React.FC<{
     submitSearch: (queryParameters: CardsQueryParametersField[]) => void;
-    position: number;
-    activeFilterIndex: number;
-    setActiveFilterIndex: React.Dispatch<React.SetStateAction<number>>;
-}> = ({
-    submitSearch,
-    position,
-    activeFilterIndex,
-    setActiveFilterIndex,
-}) => {
+}> = ({ submitSearch }) => {
+    const { activeFilterIndex, setActiveFilterIndex }: {
+        activeFilterIndex: number;
+        setActiveFilterIndex: React.Dispatch<React.SetStateAction<number>>;
+    } = useContext(FilterContext);
     /** Exposes default index which does not exist in array. */
     const DEFAULT_FILTER_ITEM_INDEX = -1;
+    const FILTER_BY_STATS_INDEX = 2;
     /** Indicates if FilterByStats component shown. */
     const [isFilterByStatsShown, setIsFilterByStatsShown] = useState(false);
 
-    const isVisible = position === activeFilterIndex && isFilterByStatsShown;
+    const isVisible = FILTER_BY_STATS_INDEX === activeFilterIndex && isFilterByStatsShown;
 
     /** Shows and closes FilterByStats component. */
     const showFilterByStats = () => {
-        setActiveFilterIndex(position);
+        setActiveFilterIndex(FILTER_BY_STATS_INDEX);
         setIsFilterByStatsShown(isFilterByStatsShown => !isFilterByStatsShown);
     };
 
@@ -199,7 +197,7 @@ export const FilterByStats: React.FC<{
     };
 
     useEffect(() => {
-        position !== activeFilterIndex && setIsFilterByStatsShown(false);
+        FILTER_BY_STATS_INDEX !== activeFilterIndex && setIsFilterByStatsShown(false);
     }, [activeFilterIndex]);
 
     return (
