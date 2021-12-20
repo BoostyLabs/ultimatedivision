@@ -186,8 +186,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	if err != nil {
 		return ChoreError.Wrap(err)
 	}
-	if len(squadCardsFirstClient) != clubs.SquadSize {
-		if err := firstClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
+	if len(squadCardsFirstClient) > clubs.LineUpSize+clubs.LineUpSize && len(squadCardsFirstClient) < clubs.LineUpSize {
+		if err := firstClient.WriteJSON(http.StatusInternalServerError, "invalid numbers of squad cards"); err != nil {
 			return ChoreError.Wrap(err)
 		}
 	}
@@ -196,8 +196,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	if err != nil {
 		return ChoreError.Wrap(err)
 	}
-	if len(squadCardsSecondClient) != clubs.SquadSize {
-		if err := secondClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
+	if len(squadCardsSecondClient) > clubs.LineUpSize+clubs.LineUpSize && len(squadCardsSecondClient) < clubs.LineUpSize {
+		if err := secondClient.WriteJSON(http.StatusInternalServerError, "invalid numbers of squad cards"); err != nil {
 			return ChoreError.Wrap(err)
 		}
 	}

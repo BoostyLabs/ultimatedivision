@@ -107,8 +107,12 @@ type SquadCard struct {
 	Position Position  `json:"position"`
 }
 
-// SquadSize defines number of cards in the full squad.
-const SquadSize int = 11
+const (
+	// LineUpSize defines number of cards in the pitch.
+	LineUpSize int = 11
+	// BenchSize defines number of cards in the substitution.
+	BenchSize int = 6
+)
 
 // Formation defines a list of possible formations.
 type Formation int
@@ -219,20 +223,32 @@ const (
 	RST Position = 23
 	// CST defines center central forward.
 	CST Position = 24
+	// SubFirst defines first position of substitute player.
+	SubFirst Position = 25
+	// SubSecond defines second position of substitute player.
+	SubSecond Position = 26
+	// SubThird defines third position of substitute player.
+	SubThird Position = 27
+	// SubFourth defines fourth position of substitute player.
+	SubFourth Position = 28
+	// SubFifth defines fifth position of substitute player.
+	SubFifth Position = 29
+	// SubSixth defines sixth position of substitute player.
+	SubSixth Position = 30
 )
 
 // FormationToPosition defines positions that are present in the formation.
 var FormationToPosition = map[Formation][]Position{
-	FourFourTwo:     {GK, LB, LCD, RCD, RB, LM, LCM, RCM, RM, LST, RST},
-	FourTwoFour:     {GK, LB, LCD, RCD, RB, LCM, RCM, LW, LST, RST, RW},
-	FourTwoTwoTwo:   {GK, LB, LCD, RCD, RB, LCAM, LCDM, RCDM, RCAM, LST, RST},
-	FourThreeOneTwo: {GK, LB, LCD, RCD, RB, LCM, CCM, CCAM, RCM, LST, RST},
-	FourThreeThree:  {GK, LB, LCD, RCD, RB, LCM, CCM, RCM, LW, CST, RW},
-	FourTwoThreeOne: {GK, LB, LCD, RCD, RB, LCDM, LCAM, CCAM, RCAM, RCDM, CST},
-	FourThreeTwoOne: {GK, LB, LCD, RCD, RB, LCM, CCM, RCM, LW, CST, RW},
-	FourOneThreeTwo: {GK, LB, LCD, RCD, RB, LM, CCM, CCDM, RM, LST, RST},
-	FiveThreeTwo:    {GK, LWB, LCD, CCD, RCD, RWB, LCM, CCM, RCM, LST, RST},
-	ThreeFiveTwo:    {GK, LCD, CCD, RCD, LM, LCDM, CCAM, RCDM, RM, LST, RST},
+	FourFourTwo:     {GK, LB, LCD, RCD, RB, LM, LCM, RCM, RM, LST, RST, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
+	FourTwoFour:     {GK, LB, LCD, RCD, RB, LCM, RCM, LW, LST, RST, RW, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
+	FourTwoTwoTwo:   {GK, LB, LCD, RCD, RB, LCAM, LCDM, RCDM, RCAM, LST, RST, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
+	FourThreeOneTwo: {GK, LB, LCD, RCD, RB, LCM, CCM, CCAM, RCM, LST, RST, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
+	FourThreeThree:  {GK, LB, LCD, RCD, RB, LCM, CCM, RCM, LW, CST, RW, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
+	FourTwoThreeOne: {GK, LB, LCD, RCD, RB, LCDM, LCAM, CCAM, RCAM, RCDM, CST, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
+	FourThreeTwoOne: {GK, LB, LCD, RCD, RB, LCM, CCM, RCM, LW, CST, RW, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
+	FourOneThreeTwo: {GK, LB, LCD, RCD, RB, LM, CCM, CCDM, RM, LST, RST, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
+	FiveThreeTwo:    {GK, LWB, LCD, CCD, RCD, RWB, LCM, CCM, RCM, LST, RST, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
+	ThreeFiveTwo:    {GK, LCD, CCD, RCD, LM, LCDM, CCAM, RCDM, RM, LST, RST, SubFirst, SubSecond, SubThird, SubFourth, SubFifth, SubSixth},
 }
 
 // sortSquadCards sorts cards from the squad by positions.

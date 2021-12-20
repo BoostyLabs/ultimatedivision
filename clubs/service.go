@@ -120,7 +120,7 @@ func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.U
 		return ErrClubs.Wrap(err)
 	}
 
-	if len(squadCards) == SquadSize {
+	if len(squadCards) == LineUpSize+BenchSize {
 		return ErrClubs.New("squad is full")
 	}
 
@@ -235,8 +235,8 @@ func (service *Service) ListSquadCardIDs(ctx context.Context, squadID uuid.UUID)
 
 	squadCards = convertPositions(squadCards, formation)
 
-	if len(squadCards) < SquadSize {
-		for i := 0; i < SquadSize; i++ {
+	if len(squadCards) < LineUpSize+BenchSize {
+		for i := 0; i < LineUpSize+BenchSize; i++ {
 			var isPositionInTheSquad bool
 			for _, card := range squadCards {
 				if card.Position == Position(i) {
@@ -475,7 +475,7 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position P
 // CardsWithNewPositions returns cards with new position by new formation.
 func (service *Service) CardsWithNewPositions(ctx context.Context, cards []SquadCard, positions []Position) (map[Position]uuid.UUID, error) {
 	positionMap := make(map[Position]uuid.UUID)
-	maxCards := SquadSize
+	maxCards := LineUpSize + BenchSize
 
 	sort.Slice(cards, func(i, j int) bool {
 		return cards[i].Position < cards[j].Position
