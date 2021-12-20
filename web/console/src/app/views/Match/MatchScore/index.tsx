@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { toast } from 'react-toastify';
@@ -14,7 +14,7 @@ import { ServicePlugin } from '@/app/plugins/service';
 import './index.scss';
 
 export const MatchScore: React.FC = () => {
-    const onboarding = useRef<MetaMaskOnboarding>();
+    const onboarding = useMemo(() => new MetaMaskOnboarding(), [])
     const service = ServicePlugin.create();
     const { teams } = useSelector((state: RootState) => state.matchesReducer);
 
@@ -24,12 +24,12 @@ export const MatchScore: React.FC = () => {
     const SECOND_TEAM_INDEX: number = 1;
 
     /** Returns metamask wallet address for earning reward */
-    const earnReward = async() => {
+    const addWallet = async () => {
         /** Code which indicates that 'eth_requestAccounts' already processing */
         const METAMASK_RPC_ERROR_CODE = -32002;
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
-                // @ts-ignore
+                //@ts-ignore
                 await window.ethereum.request({
                     method: 'eth_requestAccounts',
                 });
@@ -46,8 +46,7 @@ export const MatchScore: React.FC = () => {
                     });
             }
         } else {
-            onboarding.current = new MetaMaskOnboarding();
-            onboarding.current?.startOnboarding();
+            onboarding.startOnboarding();
         }
     };
 
@@ -76,7 +75,7 @@ export const MatchScore: React.FC = () => {
                     </span>
                     <button
                         className="match__score__board__coins__btn"
-                        onClick={earnReward}
+                        onClick={addWallet}
                     >
                         <span className="match__score__board__coins__btn-text">
                             GET
