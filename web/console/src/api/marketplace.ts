@@ -1,13 +1,16 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
+
 import { APIClient } from '@/api/index';
 import { CreatedLot } from '@/app/types/marketplace';
 import { CardsQueryParameters, CardsQueryParametersField } from '@/card';
 import { Lot, MarketPlacePage } from '@/marketplace';
+
 /** client for marketplace of api */
 export class MarketplaceClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/marketplace';
     private queryParameters: CardsQueryParameters = new CardsQueryParameters();
+
     /** Changes queryParameters object. */
     public changeLotsQueryParameters(queryParameters: CardsQueryParametersField[]) {
         queryParameters.forEach(queryParameter => {
@@ -18,11 +21,13 @@ export class MarketplaceClient extends APIClient {
             };
         });
     };
+
     /** returns marketplace domain entity with list of lots*/
     public async list(selectedPage: number): Promise<MarketPlacePage> {
         /** Variable limit is default limit value of lots on page. */
         const limit: number = 24;
         let queryParametersPath = '';
+
         for (const queryParameter in this.queryParameters) {
             if (this.queryParameters[queryParameter]) {
                 queryParametersPath += `&${queryParameter}=${this.queryParameters[queryParameter]}`;
@@ -34,6 +39,7 @@ export class MarketplaceClient extends APIClient {
             await this.handleError(response);
         };
         const lotsPage = await response.json();
+
         return new MarketPlacePage(lotsPage.lots.map((lot: any) => new Lot(lot)), lotsPage.page);
     };
     /** implements opening lot */
@@ -44,12 +50,14 @@ export class MarketplaceClient extends APIClient {
             await this.handleError(response);
         };
         const lot = await response.json();
+
         return new Lot(lot);
     };
     /** implements creating lot (selling card) */
     public async createLot(lot: CreatedLot): Promise<void> {
         const path = `${this.ROOT_PATH}`;
         const response = await this.http.post(path, JSON.stringify(lot));
+
         if (!response.ok) {
             await this.handleError(response);
         };
