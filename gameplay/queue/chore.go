@@ -294,6 +294,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		winResults = append(winResults, winResult)
 	}
 
+	// TODO: add goroutine
 	for _, winResult := range winResults {
 		user, err := chore.users.Get(ctx, winResult.Client.UserID)
 		if err != nil {
@@ -305,6 +306,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 				return ChoreError.Wrap(err)
 			}
 		} else {
+			// TODO: send winResult also
 			if err := winResult.Client.WriteJSON(http.StatusOK, "you allow us to take your address?"); err != nil {
 				chore.log.Error("could not write json", ChoreError.Wrap(err))
 			}
