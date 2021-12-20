@@ -39,6 +39,23 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=123456
 
+  currency_signer:
+    container_name: "ultimatedisionCurrencySigner"
+    image: docker.hicrystal.com/ultimatedivision_currency_signer:0.0.1
+
+    restart: unless-stopped
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivision/currency_signer:/app/data
+    depends_on:
+      - ultimatedivisiondb_test # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+    environment:
+      - DB_HOST=ultimatedivisiondb_test
+      - DB_DATABASE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
+
   ultimatedivisiondb_test:
     restart: always
     image: postgres:latest
