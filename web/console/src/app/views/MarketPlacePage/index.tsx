@@ -73,7 +73,6 @@ const MarketPlace: React.FC = () => {
                     activeFilterIndex={activeFilterIndex}
                     setActiveFilterIndex={setActiveFilterIndex}
                 />
-
             </FilterField>
             <MarketPlaceCardsGroup lots={lots} />
             <Paginator
