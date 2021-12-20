@@ -18,8 +18,12 @@ import { startSearchingMatch } from '@/app/store/actions/clubs';
 import './index.scss';
 
 const MatchFinder: React.FC = () => {
-    const { squad } = useSelector((state: RootState) => state.clubsReducer.activeClub);
-    const { isSearchingMatch } = useSelector((state: RootState) => state.clubsReducer);
+    const { squad } = useSelector(
+        (state: RootState) => state.clubsReducer.activeClub
+    );
+    const { isSearchingMatch } = useSelector(
+        (state: RootState) => state.clubsReducer
+    );
 
     /** Indicates that user have rejected game. */
     const [isRejectedUser, setIsRejectedUser] = useState<boolean>(false);
@@ -155,9 +159,9 @@ const MatchFinder: React.FC = () => {
 
                 return;
             default:
-                const firstTeam = messageEvent.message[FIRST_TEAM_INDEX];
-                const secondTeam = messageEvent.message[SECOND_TEAM_INDEX];
+                const teams = messageEvent.message.matchResults;
 
+                const transaction = messageEvent.message.transaction;
                 toast.success(
                     'Successfully! You will be redirected to match page',
                     {
@@ -165,7 +169,7 @@ const MatchFinder: React.FC = () => {
                     }
                 );
 
-                dispatch(getMatchScore({ firstTeam, secondTeam }));
+                dispatch(getMatchScore({ teams, transaction }));
                 dispatch(startSearchingMatch(false));
 
                 /** implements redirect to match page after DELAY time.  */
