@@ -8,7 +8,6 @@ import (
 	"math/big"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
@@ -260,52 +259,78 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	var value = new(big.Int)
 	value.SetString(chore.config.WinValue, 10)
-	var winClient Client
-	var winClientResult matches.GameResult
+	var winResults []WinResult
 	if firstClientResult.MatchResults[0].QuantityGoals > secondClientResult.MatchResults[0].QuantityGoals {
-		winClient = firstClient
+		winResult := WinResult{
+			Client:     firstClient,
+			GameResult: firstClientResult,
+			Value:      *value,
+		}
+		winResults = append(winResults, winResult)
 	} else if firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals {
-		winClient = secondClient
+		winResult := WinResult{
+			Client:     secondClient,
+			GameResult: secondClientResult,
+			Value:      *value,
+		}
+		winResults = append(winResults, winResult)
+	} else {
+		var value = new(big.Int)
+		value.SetString(chore.config.DrawValue, 10)
+
+		winResult := WinResult{
+			Client:     firstClient,
+			GameResult: firstClientResult,
+			Value:      *value,
+		}
+		winResults = append(winResults, winResult)
+
+		winResult = WinResult{
+			Client:     secondClient,
+			GameResult: secondClientResult,
+			Value:      *value,
+		}
+		winResults = append(winResults, winResult)
 	}
 
-	if winClient.UserID != uuid.Nil {
-		user, err := chore.users.Get(ctx, winClient.UserID)
+	for _, winResult := range winResults {
+		user, err := chore.users.Get(ctx, winResult.Client.UserID)
 		if err != nil {
 			return ChoreError.Wrap(err)
 		}
 
 		if user.Wallet != "" {
-			if winClientResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
+			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
 				return ChoreError.Wrap(err)
 			}
 		} else {
-			if err := winClient.WriteJSON(http.StatusOK, "you allow us to take your address?"); err != nil {
+			if err := winResult.Client.WriteJSON(http.StatusOK, "you allow us to take your address?"); err != nil {
 				chore.log.Error("could not write json", ChoreError.Wrap(err))
 			}
 
-			request, err := winClient.ReadJSON()
+			request, err := winResult.Client.ReadJSON()
 			if err != nil {
 				chore.log.Error("could not read json", ChoreError.Wrap(err))
 			}
 
 			if request.Action != ActionForbidAddress && request.Action != ActionAllowAddress {
-				if err := winClient.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
+				if err := winResult.Client.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
 					chore.log.Error("could not write json", ChoreError.Wrap(err))
 				}
 			}
 
 			if request.Action == ActionAllowAddress {
 				if !request.WalletAddress.IsValidAddress() {
-					if err := winClient.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
+					if err := winResult.Client.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
 						chore.log.Error("could not write json", ChoreError.Wrap(err))
 					}
 				}
 
-				if err = chore.users.UpdateWalletAddress(ctx, request.WalletAddress, winClient.UserID); err != nil {
+				if err = chore.users.UpdateWalletAddress(ctx, request.WalletAddress, winResult.Client.UserID); err != nil {
 					return ChoreError.Wrap(err)
 				}
 
-				if winClientResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
+				if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
 					return ChoreError.Wrap(err)
 				}
 			}

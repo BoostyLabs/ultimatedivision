@@ -4,6 +4,7 @@
 package queue
 
 import (
+	"math/big"
 	"net/http"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/pkg/cryptoutils"
 )
 
@@ -84,6 +86,7 @@ type Response struct {
 type Config struct {
 	PlaceRenewalInterval time.Duration `json:"placeRenewalInterval"`
 	WinValue             string        `json:"winValue"`
+	DrawValue            string        `json:"drawValue"`
 }
 
 // ReadJSON reads request sent by client.
@@ -104,4 +107,11 @@ func (client *Client) WriteJSON(status int, message interface{}) error {
 		return ErrWrite.Wrap(ErrQueue.Wrap(err))
 	}
 	return nil
+}
+
+// WinResult entity describes values which send to user after win game.
+type WinResult struct {
+	Client     Client             `json:"client"`
+	GameResult matches.GameResult `json:"gameResult"`
+	Value      big.Int            `json:"value"`
 }
