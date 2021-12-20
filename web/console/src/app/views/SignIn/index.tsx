@@ -116,7 +116,7 @@ const SignIn: React.FC = () => {
                 await window.ethereum.request({
                     method: 'eth_requestAccounts',
                 });
-                await service.signMessage();
+                await service.login();
                 history.push(RouteConfig.MarketPlace.path);
             } catch (error: any) {
                 error.code === METAMASK_RPC_ERROR_CODE
