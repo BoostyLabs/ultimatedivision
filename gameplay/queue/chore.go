@@ -7,15 +7,17 @@ import (
 	"context"
 	"math/big"
 	"net/http"
+	"sync"
 
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/pkg/sync"
+	sync2 "ultimatedivision/pkg/sync"
 	"ultimatedivision/seasons"
 	"ultimatedivision/udts/currencywaitlist"
+	"ultimatedivision/users"
 )
 
 var (
@@ -30,24 +32,26 @@ type Chore struct {
 	config           Config
 	log              logger.Logger
 	service          *Service
-	Loop             *sync.Cycle
+	Loop             *sync2.Cycle
 	matches          *matches.Service
 	seasons          *seasons.Service
 	clubs            *clubs.Service
 	currencywaitlist *currencywaitlist.Service
+	users            *users.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(config Config, log logger.Logger, service *Service, matches *matches.Service, seasons *seasons.Service, clubs *clubs.Service, currencywaitlist *currencywaitlist.Service) *Chore {
+func NewChore(config Config, log logger.Logger, service *Service, matches *matches.Service, seasons *seasons.Service, clubs *clubs.Service, currencywaitlist *currencywaitlist.Service, users *users.Service) *Chore {
 	return &Chore{
 		config:           config,
 		log:              log,
 		service:          service,
-		Loop:             sync.NewCycle(config.PlaceRenewalInterval),
+		Loop:             sync2.NewCycle(config.PlaceRenewalInterval),
 		matches:          matches,
 		seasons:          seasons,
 		clubs:            clubs,
 		currencywaitlist: currencywaitlist,
+		users:            users,
 	}
 }
 
@@ -256,15 +260,107 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	var value = new(big.Int)
 	value.SetString(chore.config.WinValue, 10)
-	if firstClientResult.MatchResults[0].QuantityGoals > secondClientResult.MatchResults[0].QuantityGoals {
-		if firstClientResult.Transaction, err = chore.currencywaitlist.Create(ctx, firstClientResult.MatchResults[0].UserID, *value); err != nil {
-			return ChoreError.Wrap(err)
+	var winResults []WinResult
+	switch {
+	case firstClientResult.MatchResults[0].QuantityGoals > secondClientResult.MatchResults[0].QuantityGoals:
+		winResult := WinResult{
+			Client:     firstClient,
+			GameResult: firstClientResult,
+			Value:      *value,
 		}
-	} else if firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals {
-		if secondClientResult.Transaction, err = chore.currencywaitlist.Create(ctx, secondClientResult.MatchResults[0].UserID, *value); err != nil {
-			return ChoreError.Wrap(err)
+		winResults = append(winResults, winResult)
+	case firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals:
+		winResult := WinResult{
+			Client:     secondClient,
+			GameResult: secondClientResult,
+			Value:      *value,
 		}
+		winResults = append(winResults, winResult)
+	default:
+		var value = new(big.Int)
+		value.SetString(chore.config.DrawValue, 10)
+
+		winResult := WinResult{
+			Client:     firstClient,
+			GameResult: firstClientResult,
+			Value:      *value,
+		}
+		winResults = append(winResults, winResult)
+
+		winResult = WinResult{
+			Client:     secondClient,
+			GameResult: secondClientResult,
+			Value:      *value,
+		}
+		winResults = append(winResults, winResult)
 	}
+
+	var wg sync.WaitGroup
+	wg.Add(len(winResults))
+
+	for _, winResult := range winResults {
+		go func(winResult WinResult) {
+			defer wg.Done()
+
+			user, err := chore.users.Get(ctx, winResult.Client.UserID)
+			if err != nil {
+				chore.log.Error("could not get user", ChoreError.Wrap(err))
+				return
+			}
+
+			if user.Wallet != "" {
+				if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
+					chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
+					return
+				}
+			} else {
+				resultMessage := WinResponse{
+					Question:   "you allow us to take your address?",
+					GameResult: winResult.GameResult,
+					Value:      winResult.Value,
+				}
+
+				if err := winResult.Client.WriteJSON(http.StatusOK, resultMessage); err != nil {
+					chore.log.Error("could not write json", ChoreError.Wrap(err))
+					return
+				}
+
+				request, err := winResult.Client.ReadJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
+					return
+				}
+
+				if request.Action != ActionForbidAddress && request.Action != ActionAllowAddress {
+					if err := winResult.Client.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
+						chore.log.Error("could not write json", ChoreError.Wrap(err))
+						return
+					}
+				}
+
+				if request.Action == ActionAllowAddress {
+					if !request.WalletAddress.IsValidAddress() {
+						if err := winResult.Client.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
+							chore.log.Error("could not write json", ChoreError.Wrap(err))
+							return
+						}
+					}
+
+					if err = chore.users.UpdateWalletAddress(ctx, request.WalletAddress, winResult.Client.UserID); err != nil {
+						chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
+						return
+					}
+
+					if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
+						chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
+						return
+					}
+				}
+			}
+		}(winResult)
+	}
+
+	wg.Wait()
 
 	if err := firstClient.WriteJSON(http.StatusOK, firstClientResult); err != nil {
 		return ChoreError.Wrap(err)

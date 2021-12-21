@@ -4,12 +4,16 @@
 package queue
 
 import (
+	"math/big"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/pkg/cryptoutils"
 )
 
 // ErrNoClient indicated that client does not exist.
@@ -49,8 +53,9 @@ type Client struct {
 
 // Request entity describes values sent by client.
 type Request struct {
-	Action  Action    `json:"action"`
-	SquadID uuid.UUID `json:"squadId"`
+	Action        Action              `json:"action"`
+	SquadID       uuid.UUID           `json:"squadId"`
+	WalletAddress cryptoutils.Address `json:"walletAddress"`
 }
 
 // Action defines list of possible clients action.
@@ -65,6 +70,10 @@ const (
 	ActionConfirm Action = "confirm"
 	// ActionReject indicates that the client rejects the game.
 	ActionReject Action = "reject"
+	// ActionAllowAddress indicates that the client allows to add address of wallet.
+	ActionAllowAddress Action = "allowAddress"
+	// ActionForbidAddress indicates that the client is forbidden to add wallet address.
+	ActionForbidAddress Action = "forbidAddress"
 )
 
 // Response entity describes values sent to user.
@@ -73,10 +82,18 @@ type Response struct {
 	Message interface{} `json:"message"`
 }
 
+// WinResponse entity describes values sent to user when he won.
+type WinResponse struct {
+	Question   string             `json:"question"`
+	GameResult matches.GameResult `json:"gameResult"`
+	Value      big.Int            `json:"value"`
+}
+
 // Config defines configuration for queue.
 type Config struct {
 	PlaceRenewalInterval time.Duration `json:"placeRenewalInterval"`
 	WinValue             string        `json:"winValue"`
+	DrawValue            string        `json:"drawValue"`
 }
 
 // ReadJSON reads request sent by client.
@@ -97,4 +114,11 @@ func (client *Client) WriteJSON(status int, message interface{}) error {
 		return ErrWrite.Wrap(ErrQueue.Wrap(err))
 	}
 	return nil
+}
+
+// WinResult entity describes values which send to user after win game.
+type WinResult struct {
+	Client     Client             `json:"client"`
+	GameResult matches.GameResult `json:"gameResult"`
+	Value      big.Int            `json:"value"`
 }
