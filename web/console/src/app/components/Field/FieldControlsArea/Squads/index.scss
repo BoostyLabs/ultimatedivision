@@ -2,10 +2,11 @@
 
 .field-controls-area__squads {
     display: flex;
+    margin: 24px 0 16px 0;
 
     &-composition {
         display: flex;
-        width: 100%;
+        width: 82%;
         flex-direction: column;
         margin: 0 auto 0 auto;
 
@@ -13,7 +14,6 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            margin: 24px 0 16px 0;
 
             &__choosed-item {
                 display: flex;
@@ -112,5 +112,6 @@
         margin-left: 4px;
         border-radius: 5px;
         background: #4f4f8b;
+        cursor: pointer;
     }
 }

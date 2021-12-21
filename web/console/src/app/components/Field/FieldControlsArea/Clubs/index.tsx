@@ -2,13 +2,30 @@
 // See LICENSE for copying information.
 
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import { Manager, Owner, Cross } from "@static/img/FieldPage/clubs";
+
+import { RootState } from "@/app/store";
+import { Club } from "@/club";
 
 import "./index.scss";
 
 const Clubs: React.FC = () => {
     const [activeClub, setActiveClub] = useState<string>("CLUB 1");
     const [clubId, setClubId] = useState<number | null>(null);
+
+    const dispatch = useDispatch();
+
+    const currentClub = useSelector(
+        (state: RootState) => state.clubsReducer.activeClub
+    );
+
+    // const clubs = useSelector(
+    //     (state: RootState) => state.clubsReducer.clubs
+    // );
+
+    // console.log("clubs", clubs);
 
     // TODO: Mock data
     const clubs: Array<{ logo: any; name: string; whose: string }> = [
@@ -33,31 +50,34 @@ const Clubs: React.FC = () => {
     return (
         <div className="field-controls-area__clubs">
             <span className="field-controls-area__clubs-name">
+                {/* {currentClub.name} */}
                 {activeClub}
             </span>
             <div className="field-controls-area__clubs__add">
                 <Cross />
             </div>
             <div className="clubs">
-                {clubs.map((club, index) => (
-                    <>
-                        <div
-                            className={`club ${
-                                club.name === activeClub ? "active" : ""
-                            }`}
-                            key={index}
-                            onClick={() => setActiveClub(club.name)}
-                            onMouseLeave={() => setClubId(null)}
-                            onMouseEnter={() => setClubId(index)}
-                        >
-                            {club.logo}
-                            <span className="club__name" key={index}>
-                                {club.name}
-                            </span>
-                            {visabilityClubsHelper(index, club)}
-                        </div>
-                    </>
-                ))}
+                {clubs &&
+                    clubs.map((club: any, index: number) => (
+                        <>
+                            <div
+                                className={`club ${
+                                    // index === currentClub.index ? "active" : ""
+                                    club.name === activeClub ? "active" : ""
+                                }`}
+                                key={index}
+                                onClick={() => setActiveClub(club.name)}
+                                onMouseLeave={() => setClubId(null)}
+                                onMouseEnter={() => setClubId(index)}
+                            >
+                                {club.logo}
+                                <span className="club__name" key={index}>
+                                    {club.name}
+                                </span>
+                                {visabilityClubsHelper(index, club)}
+                            </div>
+                        </>
+                    ))}
             </div>
         </div>
     );
