@@ -33,8 +33,21 @@ export class Transaction {
     ) { }
 };
 
+/** GameResult describes game result of match response. */
+export class GameResult {
+    /** GameResult contains of teams and transaction. */
+    constructor(
+        public matchResults: Team[],
+        public transaction: Transaction,
+    ) { };
+};
+
 /** Match exposes match domain entity. */
 export class Match {
-    /** Contains of teams and transaction. */
-    constructor(public teams: Team[], public transaction: Transaction) { }
-}
+    /** Contains of gameResult and question. */
+    constructor(
+        public gameResult: GameResult,
+        public question: string,
+        public value: {},
+    ) { };
+};
