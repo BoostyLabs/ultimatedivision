@@ -56,6 +56,7 @@ const SignIn: React.FC = () => {
 
         return isFormValid;
     };
+
     /** user data that will send to server */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -101,6 +102,7 @@ const SignIn: React.FC = () => {
         },
     ];
 
+    /** Login with matamask. */
     const metamaskLogin = async() => {
         /** Code which indicates that 'eth_requestAccounts' already processing */
         const METAMASK_RPC_ERROR_CODE = -32002;
@@ -110,7 +112,11 @@ const SignIn: React.FC = () => {
                 await window.ethereum.request({
                     method: 'eth_requestAccounts',
                 });
+
                 await service.login();
+
+                setLocalStorageItem('IS_LOGGINED', true);
+
                 history.push(RouteConfig.MarketPlace.path);
             } catch (error: any) {
                 error.code === METAMASK_RPC_ERROR_CODE
