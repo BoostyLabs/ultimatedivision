@@ -11,12 +11,28 @@
     background-position: center;
     cursor: default;
     position: relative;
-    margin-bottom: 5%;
 
     &__wrapper {
         display: flex;
         width: 100%;
-        padding: 5px;
+        background: linear-gradient(
+                180deg,
+                rgba(36, 36, 62, 0.496) 0%,
+                rgba(31, 31, 52, 0.8) 100%
+            ),
+            radial-gradient(
+                170.68% 341.01% at 97.11% 95.96%,
+                rgba(46, 46, 80, 0) 0%,
+                rgba(99, 62, 146, 0.9) 100%
+            ),
+            radial-gradient(
+                130.06% 157.22% at 46.4% 72.11%,
+                rgba(46, 46, 80, 0) 0%,
+                rgba(57, 89, 137, 0.9) 100%
+            ),
+            radial-gradient(158.27% 83.8% at 50% 50%, #2e2e50 0%, #3b3b68 100%);
+        border-radius: 10px;
+        padding: 27px;
         overflow: hidden;
     }
 
@@ -123,10 +139,8 @@
     &__3-shadows,
     &__6,
     &__6-shadows {
-
         &__card,
         &__empty-card {
-
             &:nth-child(6) {
                 @include footballFieldCardPosition(62%, 40%);
             }
@@ -155,10 +169,8 @@
 
     &__3,
     &__3-shadows {
-
         &__card,
         &__empty-card {
-
             &:nth-child(8) {
                 @include footballFieldCardPosition(44%, 28%);
             }
@@ -183,10 +195,8 @@
     &__5-shadows,
     &__7,
     &__7-shadows {
-
         &__card,
         &__empty-card {
-
             &:nth-child(6) {
                 @include footballFieldCardPosition(60%, 25%);
             }
@@ -215,10 +225,8 @@
 
     &__5,
     &__5-shadows {
-
         &__card,
         &__empty-card {
-
             &:nth-child(9) {
                 @include footballFieldCardPosition(40%, 20%);
             }
@@ -235,10 +243,8 @@
 
     &__6,
     &__6-shadows {
-
         &__card,
         &__empty-card {
-
             &:nth-child(8) {
                 @include footballFieldCardPosition(44%, 28%);
             }
@@ -259,10 +265,8 @@
 
     &__7,
     &__7-shadows {
-
         &__card,
         &__empty-card {
-
             &:nth-child(9) {
                 @include footballFieldCardPosition(46%, 37%);
             }
@@ -279,10 +283,8 @@
 
     &__8,
     &__8-shadows {
-
         &__card,
         &__empty-card {
-
             &:nth-child(6) {
                 @include footballFieldCardPosition(67%, 50%);
             }
@@ -311,10 +313,8 @@
 
     &__9,
     &__9-shadows {
-
         &__card,
         &__empty-card {
-
             &:nth-child(1) {
                 @include footballFieldCardPosition(89%, 50%);
             }
@@ -363,10 +363,8 @@
 
     &__10,
     &__10-shadows {
-
         &__card,
         &__empty-card {
-
             &:nth-child(6) {
                 @include footballFieldCardPosition(50%, 15%);
             }
@@ -428,9 +426,7 @@
 }
 
 @media screen and (max-width: $desktopBreakPoint) {
-
     .playing-area {
-
         &__wrapper {
             display: flex;
         }
@@ -457,7 +453,6 @@
         &__8-shadows,
         &__9-shadows,
         &__10-shadows {
-
             &__card,
             &__empty-card {
                 position: absolute;
@@ -478,10 +473,8 @@
         &__3-shadows,
         &__6,
         &__6-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPosition(60%, 40%);
                 }
@@ -510,10 +503,8 @@
 
         &__3,
         &__3-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(8) {
                     @include footballFieldCardPosition(44%, 20%);
                 }
@@ -538,10 +529,8 @@
         &__5-shadows,
         &__7,
         &__7-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPosition(58%, 29%);
                 }
@@ -570,10 +559,8 @@
 
         &__5,
         &__5-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(9) {
                     @include footballFieldCardPosition(39%, 20%);
                 }
@@ -590,10 +577,8 @@
 
         &__6,
         &__6-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPosition(60%, 30%);
                 }
@@ -622,10 +607,8 @@
 
         &__7,
         &__7-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(9) {
                     @include footballFieldCardPosition(38%, 25%);
                 }
@@ -642,10 +625,8 @@
 
         &__8,
         &__8-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPosition(67%, 50%);
                 }
@@ -674,10 +655,8 @@
 
         &__9,
         &__9-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(1) {
                     @include footballFieldCardPosition(89%, 50%);
                 }
@@ -726,10 +705,8 @@
 
         &__10,
         &__10-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPosition(50%, 10%);
                 }
@@ -792,7 +769,6 @@
 }
 
 @media screen and (max-width: $tabletBreakPoint) {
-
     .playing-area {
         width: 100%;
 
@@ -803,10 +779,8 @@
 
         &__3,
         &__3-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPosition(59%, 40%);
                 }
@@ -831,10 +805,8 @@
         &__5-shadows,
         &__7,
         &__7-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPosition(59%, 25%);
                 }
@@ -851,10 +823,8 @@
 
         &__5,
         &__5-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(7) {
                     @include footballFieldCardPosition(62%, 50%);
                 }
@@ -863,10 +833,8 @@
 
         &__6,
         &__6-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(8) {
                     @include footballFieldCardPosition(44%, 15%);
                 }
@@ -879,10 +847,8 @@
 
         &__7,
         &__7-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(9) {
                     @include footballFieldCardPosition(40%, 36%);
                 }
@@ -899,10 +865,8 @@
 
         &__8,
         &__8-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(10) {
                     @include footballFieldCardPosition(28%, 40%);
                 }
@@ -915,10 +879,8 @@
 
         &__9,
         &__9-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(1) {
                     @include footballFieldCardPosition(89%, 50%);
                 }
@@ -935,10 +897,8 @@
 
         &__10,
         &__10-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPosition(50%, 12%);
                 }
@@ -952,7 +912,6 @@
 }
 
 @media screen and (max-width: $phoneBreakPoint) {
-
     .playing-area {
         width: 100%;
         height: 500px;
@@ -984,7 +943,6 @@
         &__8-shadows,
         &__9-shadows,
         &__10-shadows {
-
             &__card,
             &__empty-card {
                 position: absolute;
@@ -992,7 +950,6 @@
                 height: 78px;
 
                 .football-field-card {
-
                     &__name {
                         margin-top: 10px;
                         font-size: 7px;
@@ -1084,10 +1041,8 @@
         &__3-shadows,
         &__6,
         &__6-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(1) {
                     @include footballFieldCardPositionPhone(90%, 50%);
                 }
@@ -1120,10 +1075,8 @@
 
         &__3,
         &__3-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(8) {
                     @include footballFieldCardPositionPhone(44%, 25%);
                 }
@@ -1148,10 +1101,8 @@
         &__5-shadows,
         &__7,
         &__7-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPositionPhone(60%, 25%);
                 }
@@ -1180,10 +1131,8 @@
 
         &__5,
         &__5-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(9) {
                     @include footballFieldCardPositionPhone(40%, 20%);
                 }
@@ -1200,10 +1149,8 @@
 
         &__6,
         &__6-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(8) {
                     @include footballFieldCardPositionPhone(44%, 28%);
                 }
@@ -1224,10 +1171,8 @@
 
         &__7,
         &__7-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(9) {
                     @include footballFieldCardPositionPhone(46%, 40%);
                 }
@@ -1244,10 +1189,8 @@
 
         &__8,
         &__8-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPositionPhone(67%, 50%);
                 }
@@ -1276,10 +1219,8 @@
 
         &__9,
         &__9-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(2) {
                     @include footballFieldCardPositionPhone(60%, 10%);
                 }
@@ -1324,10 +1265,8 @@
 
         &__10,
         &__10-shadows {
-
             &__card,
             &__empty-card {
-
                 &:nth-child(6) {
                     @include footballFieldCardPositionPhone(50%, 15%);
                 }

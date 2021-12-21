@@ -1,0 +1,116 @@
+@import "@/index.scss";
+
+.field-controls-area__squads {
+    display: flex;
+
+    &-composition {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        margin: 0 auto 0 auto;
+
+        .composition {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin: 24px 0 16px 0;
+
+            &__choosed-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                height: 48px;
+                padding: 17px 14px 14px 14px;
+                background: #4f4f8b;
+                border-radius: 5px;
+                font-family: "BebasNeue", sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 24px;
+                line-height: 29px;
+                color: #fff;
+                text-transform: uppercase;
+                cursor: pointer;
+
+                &:after {
+                    content: "";
+                    border-style: solid;
+                    border-width: 5px 5px 5px 0;
+                    border-color: transparent #fff transparent transparent;
+                    position: absolute;
+                    transform: rotate(-90deg);
+                    right: 17px;
+                }
+            }
+
+            .active-dropdown {
+                &:after {
+                    content: "";
+                    border-style: solid;
+                    border-width: 5px 5px 5px 0;
+                    border-color: transparent #fff transparent transparent;
+                    position: absolute;
+                    transform: rotate(90deg);
+                    right: 17px;
+                }
+            }
+
+            &__list {
+                display: none;
+
+                &-item {
+                    width: 100%;
+                    border-bottom: 2px solid #444683;
+                    padding: 14px;
+
+                    &:first-child {
+                        border-top: 2px solid #444683;
+                    }
+
+                    &:last-child {
+                        border-bottom: unset;
+                    }
+
+                    span {
+                        font-family: "BebasNeue", sans-serif;
+                        font-style: normal;
+                        font-weight: normal;
+                        font-size: 24px;
+                        line-height: 29px;
+                        color: #fff;
+                        text-transform: uppercase;
+                        cursor: pointer;
+                    }
+                }
+
+                &-item:hover {
+                    span {
+                        color: #3ccf5d;
+                    }
+                }
+            }
+
+            &__list-active {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                margin-top: -5px;
+                padding: 14px 0 0 0;
+                background: #4f4f8b;
+                border-radius: 5px;
+            }
+        }
+    }
+
+    &-add {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        margin-left: 4px;
+        border-radius: 5px;
+        background: #4f4f8b;
+    }
+}

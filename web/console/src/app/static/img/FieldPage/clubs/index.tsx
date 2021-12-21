@@ -47,3 +47,20 @@ export function Manager() {
         </svg>
     );
 }
+
+export function Cross() {
+    return (
+        <svg
+            width="8"
+            height="8"
+            viewBox="0 0 8 8"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M4.90173 0H3.09827V3.08571H0V4.86857H3.09827V8H4.90173V4.86857H8V3.08571H4.90173V0Z"
+                fill="white"
+            />
+        </svg>
+    );
+}
