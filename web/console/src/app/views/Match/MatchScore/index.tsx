@@ -45,12 +45,13 @@ export const MatchScore: React.FC = () => {
                 await window.ethereum.request({
                     method: 'eth_requestAccounts',
                 });
+
                 toast.success('Please, add your wallet to get coins!', {
                     position: toast.POSITION.TOP_RIGHT,
                     theme: 'light',
                 });
 
-                const wallet = await service.confirmReward();
+                const wallet = await service.getWallet();
 
                 const currentQueueClient = getCurrentQueueClient();
 

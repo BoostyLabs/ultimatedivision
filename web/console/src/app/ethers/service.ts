@@ -53,12 +53,6 @@ export class Service {
         await this.client.signMessage(new SignedMessage(message, signedMessage, adress));
     }
 
-    /** Returns wallet adrress after user submit. */
-    public async confirmReward() {
-        const signedMessage = await this.signMessage('Are you allow us to take your address?');
-        return await this.getWallet();
-    };
-
     /** Sends smart contract transaction. */
     public async sendTransaction(
         walletAddress: string,
