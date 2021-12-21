@@ -82,6 +82,12 @@ type Response struct {
 	Message interface{} `json:"message"`
 }
 
+// WinResponse entity describes values sent to user when he won.
+type WinResponse struct {
+	Question   string             `json:"question"`
+	GameResult matches.GameResult `json:"gameResult"`
+}
+
 // Config defines configuration for queue.
 type Config struct {
 	PlaceRenewalInterval time.Duration `json:"placeRenewalInterval"`

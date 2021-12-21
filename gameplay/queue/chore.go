@@ -307,7 +307,12 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			}
 		} else {
 			// TODO: send winResult also
-			if err := winResult.Client.WriteJSON(http.StatusOK, "you allow us to take your address?"); err != nil {
+			resultMessage := WinResponse{
+				Question:   "you allow us to take your address?",
+				GameResult: winResult.GameResult,
+			}
+
+			if err := winResult.Client.WriteJSON(http.StatusOK, resultMessage); err != nil {
 				chore.log.Error("could not write json", ChoreError.Wrap(err))
 			}
 
