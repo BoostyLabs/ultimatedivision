@@ -306,7 +306,6 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 				return ChoreError.Wrap(err)
 			}
 		} else {
-			// TODO: send winResult also
 			resultMessage := WinResponse{
 				Question:   "you allow us to take your address?",
 				GameResult: winResult.GameResult,
