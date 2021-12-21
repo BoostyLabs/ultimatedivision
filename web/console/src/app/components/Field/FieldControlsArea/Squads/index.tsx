@@ -1,23 +1,23 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Manager, Owner, Cross } from "@static/img/FieldPage/clubs";
+import { Manager, Owner, Cross } from '@static/img/FieldPage/clubs';
 
-import "./index.scss";
+import './index.scss';
 
 const Squads: React.FC = () => {
     const [activeComposition, setActiveComposition] =
-        useState<string>("Composition 1");
+        useState<string>('Composition 1');
     const [isActiveDropdown, setIsActiveDropdown] = useState<boolean>(false);
 
     // TODO: Mock data
     const compositions: string[] = [
-        "Composition 1",
-        "Composition 2",
-        "Composition 3",
-        "Composition 4",
+        'Composition 1',
+        'Composition 2',
+        'Composition 3',
+        'Composition 4',
     ];
 
     /** Method for set choosed composition to state and close dropdown block. */
@@ -32,7 +32,7 @@ const Squads: React.FC = () => {
                 <div className="composition">
                     <div
                         className={`composition__choosed-item ${
-                            isActiveDropdown ? "active-dropdown" : ""
+                            isActiveDropdown ? 'active-dropdown' : ''
                         }`}
                         onClick={() => setIsActiveDropdown(!isActiveDropdown)}
                     >
@@ -40,10 +40,10 @@ const Squads: React.FC = () => {
                     </div>
                     <div
                         className={`composition__list${
-                            isActiveDropdown ? "-active" : ""
+                            isActiveDropdown ? '-active' : ''
                         }`}
                     >
-                        {compositions.map((composition, index) => (
+                        {compositions.map((composition, index) =>
                             <div
                                 className="composition__list-item"
                                 key={index}
@@ -53,7 +53,7 @@ const Squads: React.FC = () => {
                             >
                                 <span>{composition}</span>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </div>
