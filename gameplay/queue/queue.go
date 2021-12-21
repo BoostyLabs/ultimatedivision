@@ -86,6 +86,7 @@ type Response struct {
 type WinResponse struct {
 	Question   string             `json:"question"`
 	GameResult matches.GameResult `json:"gameResult"`
+	Value      big.Int            `json:"value"`
 }
 
 // Config defines configuration for queue.

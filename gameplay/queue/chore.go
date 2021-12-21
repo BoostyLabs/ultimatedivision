@@ -7,13 +7,14 @@ import (
 	"context"
 	"math/big"
 	"net/http"
+	"sync"
 
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/pkg/sync"
+	sync2 "ultimatedivision/pkg/sync"
 	"ultimatedivision/seasons"
 	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
@@ -31,7 +32,7 @@ type Chore struct {
 	config           Config
 	log              logger.Logger
 	service          *Service
-	Loop             *sync.Cycle
+	Loop             *sync2.Cycle
 	matches          *matches.Service
 	seasons          *seasons.Service
 	clubs            *clubs.Service
@@ -45,7 +46,7 @@ func NewChore(config Config, log logger.Logger, service *Service, matches *match
 		config:           config,
 		log:              log,
 		service:          service,
-		Loop:             sync.NewCycle(config.PlaceRenewalInterval),
+		Loop:             sync2.NewCycle(config.PlaceRenewalInterval),
 		matches:          matches,
 		seasons:          seasons,
 		clubs:            clubs,
@@ -294,55 +295,64 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		winResults = append(winResults, winResult)
 	}
 
-	// TODO: add goroutine
+	var wg sync.WaitGroup
+	wg.Add(len(winResults))
+
 	for _, winResult := range winResults {
-		user, err := chore.users.Get(ctx, winResult.Client.UserID)
-		if err != nil {
-			return ChoreError.Wrap(err)
-		}
-
-		if user.Wallet != "" {
-			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
-				return ChoreError.Wrap(err)
-			}
-		} else {
-			resultMessage := WinResponse{
-				Question:   "you allow us to take your address?",
-				GameResult: winResult.GameResult,
-			}
-
-			if err := winResult.Client.WriteJSON(http.StatusOK, resultMessage); err != nil {
-				chore.log.Error("could not write json", ChoreError.Wrap(err))
-			}
-
-			request, err := winResult.Client.ReadJSON()
+		go func(winResult WinResult) {
+			user, err := chore.users.Get(ctx, winResult.Client.UserID)
 			if err != nil {
-				chore.log.Error("could not read json", ChoreError.Wrap(err))
+				chore.log.Error("could not get user", ChoreError.Wrap(err))
 			}
 
-			if request.Action != ActionForbidAddress && request.Action != ActionAllowAddress {
-				if err := winResult.Client.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
+			if user.Wallet != "" {
+				if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
+					chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
+				}
+			} else {
+				resultMessage := WinResponse{
+					Question:   "you allow us to take your address?",
+					GameResult: winResult.GameResult,
+					Value:      winResult.Value,
+				}
+
+				if err := winResult.Client.WriteJSON(http.StatusOK, resultMessage); err != nil {
 					chore.log.Error("could not write json", ChoreError.Wrap(err))
 				}
-			}
 
-			if request.Action == ActionAllowAddress {
-				if !request.WalletAddress.IsValidAddress() {
-					if err := winResult.Client.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
+				request, err := winResult.Client.ReadJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
+				}
+
+				if request.Action != ActionForbidAddress && request.Action != ActionAllowAddress {
+					if err := winResult.Client.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
 						chore.log.Error("could not write json", ChoreError.Wrap(err))
 					}
 				}
 
-				if err = chore.users.UpdateWalletAddress(ctx, request.WalletAddress, winResult.Client.UserID); err != nil {
-					return ChoreError.Wrap(err)
-				}
+				if request.Action == ActionAllowAddress {
+					if !request.WalletAddress.IsValidAddress() {
+						if err := winResult.Client.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
+							chore.log.Error("could not write json", ChoreError.Wrap(err))
+						}
+					}
 
-				if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
-					return ChoreError.Wrap(err)
+					if err = chore.users.UpdateWalletAddress(ctx, request.WalletAddress, winResult.Client.UserID); err != nil {
+						chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
+
+					}
+
+					if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
+						chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
+					}
 				}
 			}
-		}
+			defer wg.Done()
+		}(winResult)
 	}
+
+	wg.Wait()
 
 	if err := firstClient.WriteJSON(http.StatusOK, firstClientResult); err != nil {
 		return ChoreError.Wrap(err)
