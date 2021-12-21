@@ -300,14 +300,18 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	for _, winResult := range winResults {
 		go func(winResult WinResult) {
+			defer wg.Done()
+
 			user, err := chore.users.Get(ctx, winResult.Client.UserID)
 			if err != nil {
 				chore.log.Error("could not get user", ChoreError.Wrap(err))
+				return
 			}
 
 			if user.Wallet != "" {
 				if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
 					chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
+					return
 				}
 			} else {
 				resultMessage := WinResponse{
@@ -318,16 +322,19 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 				if err := winResult.Client.WriteJSON(http.StatusOK, resultMessage); err != nil {
 					chore.log.Error("could not write json", ChoreError.Wrap(err))
+					return
 				}
 
 				request, err := winResult.Client.ReadJSON()
 				if err != nil {
 					chore.log.Error("could not read json", ChoreError.Wrap(err))
+					return
 				}
 
 				if request.Action != ActionForbidAddress && request.Action != ActionAllowAddress {
 					if err := winResult.Client.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
 						chore.log.Error("could not write json", ChoreError.Wrap(err))
+						return
 					}
 				}
 
@@ -335,20 +342,21 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 					if !request.WalletAddress.IsValidAddress() {
 						if err := winResult.Client.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
 							chore.log.Error("could not write json", ChoreError.Wrap(err))
+							return
 						}
 					}
 
 					if err = chore.users.UpdateWalletAddress(ctx, request.WalletAddress, winResult.Client.UserID); err != nil {
 						chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
-
+						return
 					}
 
 					if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *value); err != nil {
 						chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
+						return
 					}
 				}
 			}
-			defer wg.Done()
 		}(winResult)
 	}
 
