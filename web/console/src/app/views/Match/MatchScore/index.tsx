@@ -50,7 +50,7 @@ export const MatchScore: React.FC = () => {
                     theme: 'light',
                 });
 
-                const wallet = await service.getWallet();
+                const wallet = await service.confirmReward();
 
                 const currentQueueClient = getCurrentQueueClient();
 
