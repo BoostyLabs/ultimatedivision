@@ -9,6 +9,7 @@ import { CardsQueryParameters, CardsQueryParametersField } from '@/card';
 
 import { FilterContext } from '../index';
 
+// TODO: rework functionality.
 export const FilterByStats: React.FC<{
     submitSearch: (queryParameters: CardsQueryParametersField[]) => Promise<void>;
     cardsQueryParameters: CardsQueryParameters;

@@ -87,7 +87,7 @@ export const FilterByVersion: React.FC<{
     };
 
     /** Submits query parameters by quality. */
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
         await submitSearch([{ quality: changeQuality() }]);
         setIsFilterByVersionShown(false);
         setActiveFilterIndex(DEFAULT_FILTER_ITEM_INDEX);
@@ -95,6 +95,7 @@ export const FilterByVersion: React.FC<{
 
     /** Checks current versions. */
     const checkCurrentVersion = () => {
+        // TODO: rework functionality.
         setIsDiamondQuality(Boolean(version && version.includes('diamond')));
         setIsGoldQuality(Boolean(version && version.includes('gold')));
         setIsSilverQuality(Boolean(version && version.includes('silver')));
