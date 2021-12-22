@@ -315,13 +315,8 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 			return
 		}
 	} else {
-		resultMessage := WinResponse{
-			Question:   "you allow us to take your address?",
-			GameResult: winResult.GameResult,
-			Value:      winResult.Value,
-		}
-
-		if err := winResult.Client.WriteJSON(http.StatusOK, resultMessage); err != nil {
+		winResult.GameResult.Question = "you allow us to take your address?"
+		if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 			chore.log.Error("could not write json", ChoreError.Wrap(err))
 			return
 		}
