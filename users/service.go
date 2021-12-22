@@ -126,7 +126,7 @@ func (service *Service) UpdateWalletAddress(ctx context.Context, wallet cryptout
 	return ErrUsers.Wrap(service.users.UpdateWalletAddress(ctx, wallet, id))
 }
 
-// ChangeWalletAddress change wallet address.
+// ChangeWalletAddress changes wallet address.
 func (service *Service) ChangeWalletAddress(ctx context.Context, wallet cryptoutils.Address, id uuid.UUID) error {
 	wallet = cryptoutils.Address(strings.ToLower(string(wallet)))
 

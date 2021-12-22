@@ -100,7 +100,7 @@ func (controller *Users) CreateWalletFromMetamask(w http.ResponseWriter, r *http
 	}
 }
 
-// ChangeWalletFromMetamask change wallet from metamask.
+// ChangeWalletFromMetamask changes wallet from metamask.
 func (controller *Users) ChangeWalletFromMetamask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
