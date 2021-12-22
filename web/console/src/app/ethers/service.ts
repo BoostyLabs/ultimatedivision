@@ -8,6 +8,7 @@ import { buildHash } from '../internal/ethers';
 import { SignedMessage, Transaction } from '.';
 import { TransactionIdentificators } from '@/app/ethers';
 import { web3Provider } from '@/app/plugins/service';
+import { MatchTransaction } from '../../matches';
 
 const CHAIN_ID = 4;
 
@@ -52,6 +53,28 @@ export class Service {
         const signedMessage = await this.signMessage(message);
         await this.client.signMessage(new SignedMessage(message, signedMessage, adress));
     }
+
+    /** Mints UDT. */
+    public async mintUDT(transaction: MatchTransaction) {
+        const signer = await this.provider.getSigner();
+        const address = await this.getWallet();
+
+        let value = transaction.value && ethers.utils.parseEther(transaction.value);
+
+        const data = value && `${transaction.udtContract.addressMethod}${buildHash(value.toString(16))}${buildHash(transaction.nonce)}${buildHash(60)}${buildHash(60)}${buildHash(transaction.signature.slice(-2))}${transaction.signature.slice(0, transaction.signature.length - 2)}`;
+
+        const gasLimit = await signer.estimateGas({
+            to: transaction.udtContract.address,
+            data,
+        });
+
+        const transactionUDT = await signer.sendTransaction({
+            to: transaction.udtContract.address,
+            data,
+            gasLimit,
+            chainId: 4,
+        });
+    };
 
     /** Sends smart contract transaction. */
     public async sendTransaction(

@@ -23,7 +23,7 @@ export const MatchScore: React.FC = () => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const service = ServicePlugin.create();
 
-    const { matchResults, transaction } = useSelector((state: RootState) => state.matchesReducer.gameResult);
+    const { matchResults, transaction } = useSelector((state: RootState) => state.matchesReducer);
 
     const { question } = useSelector((state: RootState) => state.matchesReducer);
 
@@ -52,12 +52,13 @@ export const MatchScore: React.FC = () => {
                 });
 
                 const wallet = await service.getWallet();
+                console.log('wallet: ', wallet);
 
                 const currentQueueClient = getCurrentQueueClient();
 
                 setQueueClient(currentQueueClient);
 
-                setWallet(wallet);
+                queueActionAllowAddress(wallet);
             } catch (error: any) {
                 error.code === METAMASK_RPC_ERROR_CODE
                     ? toast.error('Please open metamask manually!', {
@@ -74,17 +75,13 @@ export const MatchScore: React.FC = () => {
         }
     };
 
-    queueClient.ws.onmessage = ({ data }: MessageEvent) => {
-        const messageEvent = JSON.parse(data);
-        console.log(messageEvent);
-        switch (messageEvent.message) {
-            case CONFIRM_ADD_WALLET:
-                wallet ? queueActionAllowAddress(wallet) : actionForbidAddress();
-                return;
-            default:
-                return
-        }
-    };
+    if (queueClient) {
+        queueClient.ws.onmessage = ({ data }: MessageEvent) => {
+            const messageEvent = JSON.parse(data);
+            console.log(messageEvent);
+            service.mintUDT(transaction);
+        };
+    }
 
     return (
         <div className="match__score">
@@ -100,7 +97,7 @@ export const MatchScore: React.FC = () => {
                         {matchResults[SECOND_TEAM_INDEX].quantityGoals}
                     </div>
                 </div>
-                <div className="match__score__board__coins">
+                {question === CONFIRM_ADD_WALLET && <div className="match__score__board__coins">
                     <img
                         className="match__score__board__coins-image"
                         src={coin}
@@ -109,15 +106,16 @@ export const MatchScore: React.FC = () => {
                     <span className="match__score__board__coins-value">
                         {transaction.value}
                     </span>
-                    {question === CONFIRM_ADD_WALLET && <button
+                    <button
                         className="match__score__board__coins__btn"
                         onClick={addWallet}
                     >
                         <span className="match__score__board__coins__btn-text">
                             GET
                         </span>
-                    </button>}
+                    </button>
                 </div>
+                }
             </div>
         </div>
     );

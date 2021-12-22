@@ -4,7 +4,7 @@
 import { GET_MATCH_SCORE } from '../actions/mathes';
 
 
-import { Goal, Match, Team, Transaction } from '@/matches';
+import { Goal, Match, Team, MatchTransaction } from '@/matches';
 
 /** Describes default summary goals scored by first team. */
 const DEFAULT_FIRST_TEAM_GOALS: number = 0;
@@ -39,7 +39,7 @@ const CONFIRM_QUESTION: string = '';
 const firstTeam = new Team(DEFAULT_FIRST_TEAM_GOALS, DEFAULT_FIRST_TEAM_GOAL_SCORERS, DEFAULT_FIRST_USER_ID);
 const secondTeam = new Team(DEFAULT_SECOND_TEAM_GOALS, DEFAULT_SECOND_TEAM_GOAL_SCORERS, DEFAULT_SECOND_USER_ID);
 
-const transaction = new Transaction(
+const transaction = new MatchTransaction(
     DEFAULT_NONCE_VALUE,
     SIGNATURE_HASH,
     {

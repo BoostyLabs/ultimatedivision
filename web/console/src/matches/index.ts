@@ -20,7 +20,7 @@ export class Team {
 };
 
 /** Transaction describes transaction entity of match response. */
-export class Transaction {
+export class MatchTransaction {
     /** Transaction contains of nonce, signature hash udtContract and value. */
     constructor(
         public nonce: number,
@@ -39,6 +39,6 @@ export class Match {
     constructor(
         public matchResults: Team[],
         public question: string,
-        public transaction: Transaction,
+        public transaction: MatchTransaction,
     ) { };
 };
