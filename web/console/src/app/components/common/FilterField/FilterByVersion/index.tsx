@@ -6,7 +6,6 @@ import { useState, useEffect, useContext } from 'react';
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
 import { CardsQueryParametersField, CardsQueryParameters } from '@/card';
-import { useCardsQueryParameters } from '@/app/hooks/useCardsQueryParameters';
 import { FilterContext } from '../index';
 
 // TODO: rework functionality.
@@ -32,12 +31,8 @@ export const FilterByVersion: React.FC<{
         setIsFilterByVersionShown(isFilterByVersionShown => !isFilterByVersionShown);
     };
 
-    /** Describes all statistics required fields. */
-    const cardsQueryParametersFields = useCardsQueryParameters([
-        'quality',
-    ], cardsQueryParameters);
-
-    const [quality, setQuality] = useState<CardsQueryParametersField[]>(cardsQueryParametersFields);
+    /** Describes version parameters. */
+    const [version, setVersion] = useState<string[]>(cardsQueryParameters.quality && cardsQueryParameters.quality);
 
     /** Indicates if is choosed diamond quality of cards. */
     const [isDiamondQuality, setIsDiamondQuality] = useState<boolean>(false);
@@ -69,8 +64,8 @@ export const FilterByVersion: React.FC<{
     };
 
     /** Changes quality of cards. */
-    const changeQuality = () => {
-        const qualities = [];
+    const changeQuality: () => string[] = () => {
+        const qualities: string[] = [];
 
         if (isDiamondQuality) {
             qualities.push('diamond');
@@ -88,29 +83,29 @@ export const FilterByVersion: React.FC<{
             qualities.push('wood');
         };
 
-        const updatedQuality = [...quality];
-
-        updatedQuality[0].quality = qualities;
-
-        setQuality(updatedQuality);
+        return qualities;
     };
 
     /** Submits query parameters by quality. */
     const handleSubmit = async () => {
-        changeQuality();
-        await submitSearch(quality);
+        await submitSearch([{ quality: changeQuality() }]);
         setIsFilterByVersionShown(false);
         setActiveFilterIndex(DEFAULT_FILTER_ITEM_INDEX);
     };
 
+    /** Checks current versions. */
+    const checkCurrentVersion = () => {
+        setIsDiamondQuality(Boolean(version && version.includes('diamond')));
+        setIsGoldQuality(Boolean(version && version.includes('gold')));
+        setIsSilverQuality(Boolean(version && version.includes('silver')));
+        setIsWoodQuality(Boolean(version && version.includes('wood')));
+    };
+
     useEffect(() => {
         FILTER_BY_VERSION_INDEX !== activeFilterIndex && setIsFilterByVersionShown(false);
-        setQuality(cardsQueryParametersFields);
-        setIsDiamondQuality(Boolean(quality[0] && quality[0].quality?.includes('diamond')));
-        setIsGoldQuality(Boolean(quality[0] && quality[0].quality?.includes('gold')));
-        setIsSilverQuality(Boolean(quality[0] && quality[0].quality?.includes('silver')));
-        setIsWoodQuality(Boolean(quality[0] && quality[0].quality?.includes('wood')));
-    }, [activeFilterIndex, cardsQueryParametersFields]);
+        setVersion(cardsQueryParameters.quality);
+        checkCurrentVersion();
+    }, [activeFilterIndex, cardsQueryParameters]);
 
     return (
         <FilterByParameterWrapper
@@ -119,14 +114,15 @@ export const FilterByVersion: React.FC<{
             title="Version"
         >
             <input
-                id="checkbox-wood"
-                className="filter-item__dropdown-active__checkbox111"
-                type="text"
+                id="division-checkbox-wood"
+                className="filter-item__dropdown-active__checkbox"
+                type="checkbox"
+                checked={isWoodQuality}
                 onClick={chooseWoodQuality}
             />
             <label
-                className="filter-item__dropdown-active__text111"
-                htmlFor="division-checkbox-wooaaaad"
+                className="filter-item__dropdown-active__text"
+                htmlFor="division-checkbox-wood"
             >
                 wood
             </label>
@@ -148,7 +144,7 @@ export const FilterByVersion: React.FC<{
                 className="filter-item__dropdown-active__checkbox"
                 type="checkbox"
                 checked={isGoldQuality}
-                onClick={chooseGoldQuality}
+                onChange={chooseGoldQuality}
             />
             <label
                 className="filter-item__dropdown-active__text"

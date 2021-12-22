@@ -29,11 +29,6 @@ export const getCurrentLotsQueryParameters = () => {
     return marketplaces.getCurrentQueryParameters();
 };
 
-/** Clears lots query parameters. */
-export const clearConcretLotsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
-    marketplaces.clearConcretLotsQueryParameters(queryParameters);
-};
-
 /** Creates lots query parameters and sets them to marketplace service. */
 export const createLotsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
     marketplaces.changeLotsQueryParameters(queryParameters);

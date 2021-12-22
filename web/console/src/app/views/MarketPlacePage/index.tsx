@@ -16,7 +16,6 @@ import {
     listOfLots,
     createLotsQueryParameters,
     getCurrentLotsQueryParameters,
-    clearConcretLotsQueryParameters,
 } from '@/app/store/actions/marketplace';
 import { CardsQueryParametersField } from '@/card';
 
@@ -41,12 +40,6 @@ const MarketPlace: React.FC = () => {
         await dispatch(listOfLots(DEFAULT_PAGE_INDEX));
     };
 
-
-    const clearsStatisticsField = async (queryParameters: CardsQueryParametersField[]) => {
-        clearConcretLotsQueryParameters(queryParameters);
-        await dispatch(listOfLots(DEFAULT_PAGE_INDEX));
-    }
-
     return (
         <section className="marketplace">
             <h1 className="marketplace__title">MARKETPLACE</h1>
@@ -57,7 +50,6 @@ const MarketPlace: React.FC = () => {
                 />
                 <FilterByStats
                     cardsQueryParameters={lotsQueryParameters}
-                    clearsStatisticsField={clearsStatisticsField}
                     submitSearch={submitSearch}
                 />
                 <FilterByPrice />

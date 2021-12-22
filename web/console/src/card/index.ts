@@ -39,19 +39,19 @@ export interface CardsQueryParametersField {
 export class CardsQueryParameters {
     [key: string]: string | string[] | undefined;
     public 'defence_gte': string | undefined = undefined;
-    public 'defence_lt': string | undefined = undefined;
+    public 'defence_lte': string | undefined = undefined;
     public 'goalkeeping_gte': string | undefined = undefined;
-    public 'goalkeeping_lt': string | undefined = undefined;
+    public 'goalkeeping_lte': string | undefined = undefined;
     public 'offense_gte': string | undefined = undefined;
-    public 'offense_lt': string | undefined = undefined;
+    public 'offense_lte': string | undefined = undefined;
     public 'physique_gte': string | undefined = undefined;
-    public 'physique_lt': string | undefined = undefined;
+    public 'physique_lte': string | undefined = undefined;
     public 'tactics_gte': string | undefined = undefined;
-    public 'tactics_lt': string | undefined = undefined;
+    public 'tactics_lte': string | undefined = undefined;
     public 'quality': string[] = [];
     public 'status': string | undefined = undefined;
     public 'technique_gte': string | undefined = undefined;
-    public 'technique_lt': string | undefined = undefined;
+    public 'technique_lte': string | undefined = undefined;
 };
 
 export class CardsStatisticQueryParameters {

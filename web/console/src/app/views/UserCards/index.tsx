@@ -16,7 +16,7 @@ import { RegistrationPopup } from '@/app/components/common/Registration/Registra
 import { UnauthorizedError } from '@/api';
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RootState } from '@/app/store';
-import { listOfCards, clearConcretCardsQueryParameters, createCardsQueryParameters, getCurrentCardsQueryParameters } from '@/app/store/actions/cards';
+import { listOfCards, createCardsQueryParameters, getCurrentCardsQueryParameters } from '@/app/store/actions/cards';
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
@@ -48,11 +48,6 @@ const UserCards: React.FC = () => {
         createCardsQueryParameters(queryParameters);
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
     };
-
-    const clearsStatisticsField = async (queryParameters: CardsQueryParametersField[]) => {
-        clearConcretCardsQueryParameters(queryParameters);
-        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
-    }
 
     /** Closes RegistrationPopup componnet. */
     const closeRegistrationPopup = () => {
@@ -88,7 +83,6 @@ const UserCards: React.FC = () => {
                 />
                 <FilterByStats
                     cardsQueryParameters={cardsQueryParameters}
-                    clearsStatisticsField={clearsStatisticsField}
                     submitSearch={submitSearch}
                 />
                 <FilterByPrice />

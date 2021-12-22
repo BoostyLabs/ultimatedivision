@@ -22,11 +22,6 @@ export class Marketplaces {
         return this.marketplace.getCurrentQueryParameters();
     }
 
-    /** Clears cards query parameters. */
-    public clearConcretLotsQueryParameters(queryParameters: CardsQueryParametersField[]) {
-        this.marketplace.clearConcretLotsQueryParameters(queryParameters);
-    };
-
     /** Changes lots query parameters. */
     public changeLotsQueryParameters(queryParameters: CardsQueryParametersField[]) {
         this.marketplace.changeLotsQueryParameters(queryParameters);

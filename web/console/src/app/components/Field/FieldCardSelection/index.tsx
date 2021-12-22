@@ -12,13 +12,11 @@ import { FilterByStatus } from '@components/common/FilterField/FilterByStatus';
 import { FilterByVersion } from '@components/common/FilterField/FilterByVersion';
 
 import { RootState } from '@/app/store';
-import { fieldCards, getCurrentFieldCardsQueryParameters, clearConcretFieldCardsQueryParameters, createFieldCardsQueryParameters } from '@/app/store/actions/cards';
+import { fieldCards, getCurrentFieldCardsQueryParameters, createFieldCardsQueryParameters } from '@/app/store/actions/cards';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/clubs';
 import { CardEditIdentificators } from '@/api/club';
 import { Card, CardsPage, CardsQueryParametersField } from '@/card';
 import { Squad, SquadCard } from '@/club';
-import { CardsClient } from '@/api/cards';
-import { CardService } from '@/card/service';
 
 import './index.scss';
 
@@ -60,12 +58,6 @@ export const FieldCardSelection = () => {
     /** Exposes default page number. */
     const DEFAULT_PAGE_INDEX: number = 1;
 
-    /** Clears current statistics fields. */
-    const clearsStatisticsField = async (queryParameters: CardsQueryParametersField[]) => {
-        clearConcretFieldCardsQueryParameters(queryParameters);
-        await dispatch(fieldCards(DEFAULT_PAGE_INDEX));
-    }
-
     /** Submits search by cards query parameters. */
     const submitSearch = async(cardsQueryParameters: CardsQueryParametersField[]) => {
         createFieldCardsQueryParameters(cardsQueryParameters);
@@ -81,7 +73,6 @@ export const FieldCardSelection = () => {
                 />
                 <FilterByStats
                     cardsQueryParameters={fieldCardsQueryParameters}
-                    clearsStatisticsField={clearsStatisticsField}
                     submitSearch={submitSearch}
                 />
                 <FilterByPrice />

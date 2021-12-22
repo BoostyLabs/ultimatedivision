@@ -16,17 +16,6 @@ export class MarketplaceClient extends APIClient {
         return this.queryParameters;
     };
 
-    /** Clears concret lots query Parameters. */
-    public clearConcretLotsQueryParameters(queryParameters: CardsQueryParametersField[]) {
-        queryParameters.forEach(queryParameter => {
-            for (const queryProperty in queryParameter) {
-                if (queryParameter) {
-                    this.queryParameters[queryProperty] = undefined;
-                }
-            };
-        });
-    };
-
     /** Changes queryParameters object. */
     public changeLotsQueryParameters(queryParameters: CardsQueryParametersField[]) {
         queryParameters.forEach(queryParameter => {

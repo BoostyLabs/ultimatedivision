@@ -26,17 +26,6 @@ export class CardsClient extends APIClient {
         });
     };
 
-    /** Clears concret cards query Parameters. */
-    public clearConcretCardsQueryParameters(queryParameters: CardsQueryParametersField[]) {
-        queryParameters.forEach(queryParameter => {
-            for (const queryProperty in queryParameter) {
-                if (queryParameter) {
-                    this.queryParameters[queryProperty] = undefined;
-                }
-            };
-        });
-    };
-
     /** method calls get method from APIClient */
     public async list(selectedPage: number): Promise<CardsPage> {
         /** Variable limit is default limit value of cards on page. */

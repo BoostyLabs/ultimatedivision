@@ -45,7 +45,7 @@ export const getCurrentCardsQueryParameters = () => {
     return cardsService.getCurrentQueryParameters();
 };
 
-/** Returns current cards queryParameters object. */
+/** Returns current field cards queryParameters object. */
 export const getCurrentFieldCardsQueryParameters = () => {
     return fieldCardsService.getCurrentQueryParameters();
 };
@@ -54,14 +54,6 @@ export const getCurrentFieldCardsQueryParameters = () => {
 export const createFieldCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
     fieldCardsService.changeCardsQueryParameters(queryParameters);
 }
-
-export const clearConcretFieldCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
-    fieldCardsService.clearConcretCardsQueryParameters(queryParameters);
-};
-
-export const clearConcretCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
-    cardsService.clearConcretCardsQueryParameters(queryParameters);
-};
 
 /** Creates cards query parameters and sets them to CardsService. */
 export const createCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
