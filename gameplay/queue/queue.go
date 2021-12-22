@@ -113,5 +113,5 @@ func (client *Client) WriteJSON(status int, message interface{}) error {
 type WinResult struct {
 	Client     Client             `json:"client"`
 	GameResult matches.GameResult `json:"gameResult"`
-	Value      big.Int            `json:"value"`
+	Value      *big.Int           `json:"value"`
 }

@@ -13,6 +13,7 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/pkg/cryptoutils"
 	sync2 "ultimatedivision/pkg/sync"
 	"ultimatedivision/seasons"
 	"ultimatedivision/udts/currencywaitlist"
@@ -265,7 +266,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		winResult := WinResult{
 			Client:     firstClient,
 			GameResult: firstClientResult,
-			Value:      *value,
+			Value:      value,
 		}
 
 		go chore.FinishWithWinResult(ctx, winResult)
@@ -274,7 +275,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		winResult := WinResult{
 			Client:     secondClient,
 			GameResult: secondClientResult,
-			Value:      *value,
+			Value:      value,
 		}
 
 		go chore.FinishWithWinResult(ctx, winResult)
@@ -286,14 +287,14 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		winResult := WinResult{
 			Client:     firstClient,
 			GameResult: firstClientResult,
-			Value:      *value,
+			Value:      value,
 		}
 		go chore.FinishWithWinResult(ctx, winResult)
 
 		winResult = WinResult{
 			Client:     secondClient,
 			GameResult: secondClientResult,
-			Value:      *value,
+			Value:      value,
 		}
 		go chore.FinishWithWinResult(ctx, winResult)
 	}
@@ -310,13 +311,13 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	}
 
 	if user.Wallet != "" {
-		if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, winResult.Value); err != nil {
+		if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value); err != nil {
 			chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
 			return
 		}
 	} else {
 		winResult.GameResult.Question = "you allow us to take your address?"
-		winResult.GameResult.Transaction.Value = winResult.Value.String()
+		winResult.GameResult.Transaction.Value = cryptoutils.WeiToEthereum(winResult.Value).String()
 		if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 			chore.log.Error("could not write json", ChoreError.Wrap(err))
 			return
@@ -344,11 +345,13 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 			}
 
 			if err = chore.users.UpdateWalletAddress(ctx, request.WalletAddress, winResult.Client.UserID); err != nil {
-				chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
-				return
+				if !users.ErrWalletAddressAlreadyInUse.Has(err) {
+					chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
+					return
+				}
 			}
 
-			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, winResult.Value); err != nil {
+			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value); err != nil {
 				chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
