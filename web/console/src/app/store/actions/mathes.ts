@@ -7,7 +7,7 @@ import { Match } from '@/matches';
 export const GET_MATCH_SCORE = 'GET_MATCH_SCORE';
 
 /** GetMatchScore dispatch updates match result and transaction values. */
-export const getMatchScore = ( match: Match) => ({
+export const getMatchScore = (match: Match) => ({
     type: GET_MATCH_SCORE,
     payload: match,
 });

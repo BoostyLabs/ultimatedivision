@@ -29,25 +29,16 @@ export class Transaction {
             address: string;
             addressMethod: string;
         },
-        public value: string,
+        public value: string | undefined,
     ) { }
-};
-
-/** GameResult describes game result of match response. */
-export class GameResult {
-    /** GameResult contains of teams and transaction. */
-    constructor(
-        public matchResults: Team[],
-        public transaction: Transaction,
-    ) { };
 };
 
 /** Match exposes match domain entity. */
 export class Match {
-    /** Contains of gameResult and question. */
+    /** Contains of matchResults, transaction and question. */
     constructor(
-        public gameResult: GameResult,
+        public matchResults: Team[],
         public question: string,
-        public value: {},
+        public transaction: Transaction,
     ) { };
 };

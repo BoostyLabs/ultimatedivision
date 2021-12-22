@@ -113,7 +113,6 @@ const MatchFinder: React.FC = () => {
     if (queueClient) {
         queueClient.ws.onmessage = ({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
-            console.log('match: ', messageEvent);
             switch (messageEvent.message) {
             case ERROR_MESSAGE:
                 toast.error('error message', {
@@ -160,12 +159,7 @@ const MatchFinder: React.FC = () => {
 
                 return;
             default:
-                const gameResult = messageEvent.message.gameResult;
 
-                const question = messageEvent.message.question;
-                
-                const value = messageEvent.message.value;
-                
                 toast.success(
                     'Successfully! You will be redirected to match page',
                     {
@@ -173,7 +167,7 @@ const MatchFinder: React.FC = () => {
                     }
                 );
 
-                dispatch(getMatchScore({ gameResult, question, value }));
+                dispatch(getMatchScore(messageEvent.message));
                 dispatch(startSearchingMatch(false));
 
                 /** implements redirect to match page after DELAY time.  */

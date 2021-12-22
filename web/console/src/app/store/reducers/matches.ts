@@ -4,7 +4,7 @@
 import { GET_MATCH_SCORE } from '../actions/mathes';
 
 
-import { Goal, GameResult, Match, Team, Transaction } from '@/matches';
+import { Goal, Match, Team, Transaction } from '@/matches';
 
 /** Describes default summary goals scored by first team. */
 const DEFAULT_FIRST_TEAM_GOALS: number = 0;
@@ -52,25 +52,20 @@ const transaction = new Transaction(
 /** Exposes matches result that return array of teams. */
 const matchResults = [firstTeam, secondTeam];
 
-const gameResult = new GameResult(matchResults, transaction);
-
 /** MatchesReducer describes reducer for matches domain entity */
 export const matchesReducer = (
-    matchesState: Match = new Match(gameResult, CONFIRM_QUESTION, {}),
+    matchesState: Match = new Match(matchResults, CONFIRM_QUESTION, transaction),
     action: any = {}
 ) => {
     switch (action.type) {
-        case GET_MATCH_SCORE:
-            return {
-                ...matchesState,
-                question: action.payload.question,
-                gameResult: {
-                    ...gameResult,
-                    matchResults: action.payload.gameResult.matchResults,
-                    transaction: action.payload.gameResult.transaction,
-                },
-            };
-        default:
-            return matchesState;
+    case GET_MATCH_SCORE:
+        return {
+            ...matchesState,
+            question: action.payload.question,
+            matchResults:  action.payload.matchResults,
+            transaction: action.payload.transaction,
+        };
+    default:
+        return matchesState;
     }
 };

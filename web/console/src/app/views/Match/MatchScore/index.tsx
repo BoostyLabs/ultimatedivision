@@ -22,7 +22,7 @@ export const MatchScore: React.FC = () => {
 
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const service = ServicePlugin.create();
-    
+
     const { matchResults, transaction } = useSelector((state: RootState) => state.matchesReducer.gameResult);
 
     const { question } = useSelector((state: RootState) => state.matchesReducer);
@@ -36,7 +36,7 @@ export const MatchScore: React.FC = () => {
     const CONFIRM_ADD_WALLET: string = 'you allow us to take your address?';
 
     /** Returns metamask wallet address for earning reward */
-    const addWallet = async() => {
+    const addWallet = async () => {
         /** Code which indicates that 'eth_requestAccounts' already processing */
         const METAMASK_RPC_ERROR_CODE = -32002;
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
@@ -74,18 +74,18 @@ export const MatchScore: React.FC = () => {
         }
     };
 
-    if (queueClient) {
-        queueClient.ws.onmessage = ({ data }: MessageEvent) => {
-            const messageEvent = JSON.parse(data);
-            console.log(messageEvent);
-            switch (messageEvent.message) {
-                case CONFIRM_ADD_WALLET: {
-                    wallet ? queueActionAllowAddress(wallet) : actionForbidAddress();
-                    return;
-                };
-            }
-        };
-    }
+    queueClient.ws.onmessage = ({ data }: MessageEvent) => {
+        const messageEvent = JSON.parse(data);
+        console.log(messageEvent);
+        switch (messageEvent.message) {
+            case CONFIRM_ADD_WALLET:
+                wallet ? queueActionAllowAddress(wallet) : actionForbidAddress();
+                return;
+            default:
+                return
+        }
+    };
+
     return (
         <div className="match__score">
             <div className="match__score__board">

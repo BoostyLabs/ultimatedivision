@@ -14,7 +14,7 @@ import './index.scss';
 const MAX_SCORED_PLAYERS_COUNT: number = 3;
 
 export const GoalScorers: React.FC = () => {
-    const { matchResults } = useSelector((state: RootState) => state.matchesReducer.gameResult);
+    const { matchResults } = useSelector((state: RootState) => state.matchesReducer);
 
     /** FIRST_TEAM_INDEX is variable that describes first team index in teams array. */
     const FIRST_TEAM_INDEX: number = 0;
@@ -29,8 +29,8 @@ export const GoalScorers: React.FC = () => {
     useEffect(() => {
         /** If the length of the array of players who scored a goal is more than 3 - add a scroll for the block. */
         setVisabilityTeamsAreaScroll({
-            firstTeam: matchResults[FIRST_TEAM_INDEX].goals && matchResults[FIRST_TEAM_INDEX].goals.length > MAX_SCORED_PLAYERS_COUNT,
-            secondTeam: matchResults[SECOND_TEAM_INDEX].goals && matchResults[SECOND_TEAM_INDEX].goals.length > MAX_SCORED_PLAYERS_COUNT,
+            firstTeam: Boolean(matchResults[FIRST_TEAM_INDEX].goals && matchResults[FIRST_TEAM_INDEX].goals.length > MAX_SCORED_PLAYERS_COUNT),
+            secondTeam: Boolean(matchResults[SECOND_TEAM_INDEX].goals && matchResults[SECOND_TEAM_INDEX].goals.length > MAX_SCORED_PLAYERS_COUNT),
         });
     }, []);
 
