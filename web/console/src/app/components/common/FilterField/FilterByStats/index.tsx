@@ -117,10 +117,10 @@ export const FilterByStats: React.FC<{
                 </div>
                 <div className="filter-item__dropdown-active__stats">
                     <input
+                        onClick={clearAllValues}
                         type="submit"
                         className="filter-item__dropdown-active__stats__clear"
                         value="CLEAR ALL"
-                        onClick={clearAllValues}
                     />
                 </div>
             </div>

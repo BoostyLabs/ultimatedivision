@@ -48,6 +48,18 @@ export const getCardsQueryParameters = () => {
 /** Creates field cards query parameters and sets them to fieldCardsService. */
 export const createFieldCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
     fieldCardsService.changeCardsQueryParameters(queryParameters);
+/** Clears cards query parameters. */
+export const getQueryParameters = () => {
+    return cardsService.getQueryParameters();
+};
+
+export const clearConcretCardsQueryParameters = (queryParameters: CardsQueryParametersField[])  => {
+    cardsService.clearConcretCardsQueryParameters(queryParameters);
+};
+
+/** Clears cards query parameters. */
+export const clearCardsQueryParameters = () => {
+    cardsService.clearCardsQueryParameters();
 };
 
 /** Creates cards query parameters and sets them to CardsService. */
@@ -66,7 +78,7 @@ export const fieldCards = (selectedPage: number) => async function(dispatch: Dis
 };
 
 /** thunk for creating user cards list */
-export const listOfCards = (selectedPage: number) => async function(dispatch: Dispatch) {
+export const listOfCards = (selectedPage: number) => async function (dispatch: Dispatch) {
     const response = await cardsService.list(selectedPage);
     const page = response.page;
     const cards = response.cards;
@@ -74,8 +86,9 @@ export const listOfCards = (selectedPage: number) => async function(dispatch: Di
 
     dispatch(getCards({ cards, page }, currentPage));
 };
+
 /** thunk for opening fotballerCardPage with reload possibility */
-export const openUserCard = (id: string) => async function(dispatch: Dispatch) {
+export const openUserCard = (id: string) => async function (dispatch: Dispatch) {
     const card = await cardsService.getCardById(id);
 
     dispatch(userCard(card));

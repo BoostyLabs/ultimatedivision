@@ -19,12 +19,28 @@ export class CardsClient extends APIClient {
         this.queryParameters = new CardsQueryParameters();
     };
 
+    /** Returns current cards queryParameters object. */
+    public getCardsQueryParameters() {
+        return this.queryParameters;
+    };
+
     /** Changes queryParameters object. */
     public changeCardsQueryParameters(queryParameters: CardsQueryParametersField[]) {
         queryParameters.forEach(queryParameter => {
             for (const queryProperty in queryParameter) {
                 if (queryParameter) {
                     this.queryParameters[queryProperty] = queryParameter[queryProperty];
+                }
+            };
+        });
+    };
+
+    /** Clears concret cards query Parameters. */
+    public clearConcretCardsQueryParameters(queryParameters: CardsQueryParametersField[]) {
+        queryParameters.forEach(queryParameter => {
+            for (const queryProperty in queryParameter) {
+                if (queryParameter) {
+                    this.queryParameters[queryProperty] = undefined;
                 }
             };
         });

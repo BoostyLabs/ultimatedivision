@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { CardsArea } from '@components/UserCards/CardsArea';
@@ -16,12 +16,8 @@ import { RegistrationPopup } from '@/app/components/common/Registration/Registra
 import { UnauthorizedError } from '@/api';
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RootState } from '@/app/store';
-import {
-    listOfCards,
-    clearCardsQueryParameters,
-    createCardsQueryParameters,
-} from '@/app/store/actions/cards';
-import { CardsQueryParametersField } from '@/card';
+import { listOfCards, clearConcretCardsQueryParameters, createCardsQueryParameters, getQueryParameters } from '@/app/store/actions/cards';
+import { CardsQueryParametersField, CardsQueryParameters } from '@/card';
 
 import './index.scss';
 import { getCardsQueryParameters } from '../../store/actions/cards';
@@ -38,6 +34,8 @@ const UserCards: React.FC = () => {
 
     const dispatch = useDispatch();
 
+    const cardsQueryParameters = getQueryParameters();
+
     /** Indicates if registration is required. */
     const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
 
@@ -45,22 +43,25 @@ const UserCards: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async(
+    const submitSearch = async (
         queryParameters: CardsQueryParametersField[]
     ) => {
         createCardsQueryParameters(queryParameters);
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
     };
 
+    const clearsStatisticsField = async (queryParameters: CardsQueryParametersField[]) => {
+        clearConcretCardsQueryParameters(queryParameters);
+        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+    }
+
     /** Closes RegistrationPopup componnet. */
     const closeRegistrationPopup = () => {
         setIsRegistrationRequired(false);
     };
 
-    const cardsQueryParameters = getCardsQueryParameters();
-    
     useEffect(() => {
-        (async() => {
+        (async () => {
             try {
                 await dispatch(listOfCards(currentCardsPage));
             } catch (error: any) {
@@ -82,12 +83,11 @@ const UserCards: React.FC = () => {
             }
             <h1 className="user-cards__title">MY CARDS</h1>
             <FilterField>
-                <FilterByVersion
-                    submitSearch={submitSearch}
-                />
+                <FilterByVersion submitSearch={submitSearch} />
                 <FilterByStats
-                    submitSearch={submitSearch}
                     cardsQueryParameters={cardsQueryParameters}
+                    clearsStatisticsField={clearsStatisticsField}
+                    submitSearch={submitSearch}
                 />
                 <FilterByPrice />
                 <FilterByStatus />
