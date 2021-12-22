@@ -37,7 +37,8 @@ const Card: React.FC = () => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const service = ServicePlugin.create();
 
-    const mint = async () => {
+    /** Mints chosed card */
+    const mint = async() => {
         /** Code which indicates that 'eth_requestAccounts' already processing */
         const METAMASK_RPC_ERROR_CODE = -32002;
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
@@ -80,7 +81,7 @@ const Card: React.FC = () => {
                         <FootballerCardInformation card={card} />
                     </div>
                 </div>
-                    <button className="card__mint" onClick={mint}>Mint</button>
+                <button className="card__mint" onClick={mint}>Mint</button>
             </div>
         </div>
     );
