@@ -301,6 +301,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	return nil
 }
 
+// FinishWithWinResult sends win result and finishes the connection.
 func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult) {
 	user, err := chore.users.Get(ctx, winResult.Client.UserID)
 	if err != nil {
@@ -361,6 +362,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	}
 }
 
+// Finish sends result and finishes the connection.
 func (chore *Chore) Finish(client Client, gameResult matches.GameResult) {
 	var err error
 
