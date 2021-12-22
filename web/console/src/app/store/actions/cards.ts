@@ -40,26 +40,27 @@ const cardsService = new CardService(cardsClient);
 const fieldCardsClient = new CardsClient();
 const fieldCardsService = new CardService(fieldCardsClient);
 
-/** Gets cards query parameters. */
-export const getCardsQueryParameters = () => {
-    cardsService.getCardsQueryParameters();
+/** Returns current cards queryParameters object. */
+export const getCurrentCardsQueryParameters = () => {
+    return cardsService.getCurrentQueryParameters();
+};
+
+/** Returns current cards queryParameters object. */
+export const getCurrentFieldCardsQueryParameters = () => {
+    return fieldCardsService.getCurrentQueryParameters();
 };
 
 /** Creates field cards query parameters and sets them to fieldCardsService. */
 export const createFieldCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
     fieldCardsService.changeCardsQueryParameters(queryParameters);
-/** Clears cards query parameters. */
-export const getQueryParameters = () => {
-    return cardsService.getQueryParameters();
+}
+
+export const clearConcretFieldCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
+    fieldCardsService.clearConcretCardsQueryParameters(queryParameters);
 };
 
-export const clearConcretCardsQueryParameters = (queryParameters: CardsQueryParametersField[])  => {
+export const clearConcretCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
     cardsService.clearConcretCardsQueryParameters(queryParameters);
-};
-
-/** Clears cards query parameters. */
-export const clearCardsQueryParameters = () => {
-    cardsService.clearCardsQueryParameters();
 };
 
 /** Creates cards query parameters and sets them to CardsService. */
@@ -68,7 +69,7 @@ export const createCardsQueryParameters = (queryParameters: CardsQueryParameters
 };
 
 /** FieldCards exposes a middleware for cards entity that dispatches current cards on page . */
-export const fieldCards = (selectedPage: number) => async function(dispatch: Dispatch) {
+export const fieldCards = (selectedPage: number) => async function (dispatch: Dispatch) {
     const response = await fieldCardsService.list(selectedPage);
     const page = response.page;
     const cards = response.cards;

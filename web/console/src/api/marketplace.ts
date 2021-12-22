@@ -11,6 +11,22 @@ export class MarketplaceClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/marketplace';
     private queryParameters: CardsQueryParameters = new CardsQueryParameters();
 
+    /** Returns current cards queryParameters object. */
+    public getCurrentQueryParameters(): CardsQueryParameters {
+        return this.queryParameters;
+    };
+
+    /** Clears concret lots query Parameters. */
+    public clearConcretLotsQueryParameters(queryParameters: CardsQueryParametersField[]) {
+        queryParameters.forEach(queryParameter => {
+            for (const queryProperty in queryParameter) {
+                if (queryParameter) {
+                    this.queryParameters[queryProperty] = undefined;
+                }
+            };
+        });
+    };
+
     /** Changes queryParameters object. */
     public changeLotsQueryParameters(queryParameters: CardsQueryParametersField[]) {
         queryParameters.forEach(queryParameter => {

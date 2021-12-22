@@ -16,11 +16,10 @@ import { RegistrationPopup } from '@/app/components/common/Registration/Registra
 import { UnauthorizedError } from '@/api';
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RootState } from '@/app/store';
-import { listOfCards, clearConcretCardsQueryParameters, createCardsQueryParameters, getQueryParameters } from '@/app/store/actions/cards';
-import { CardsQueryParametersField, CardsQueryParameters } from '@/card';
+import { listOfCards, clearConcretCardsQueryParameters, createCardsQueryParameters, getCurrentCardsQueryParameters } from '@/app/store/actions/cards';
+import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
-import { getCardsQueryParameters } from '../../store/actions/cards';
 
 const UserCards: React.FC = () => {
     const { page } = useSelector(
@@ -34,7 +33,7 @@ const UserCards: React.FC = () => {
 
     const dispatch = useDispatch();
 
-    const cardsQueryParameters = getQueryParameters();
+    const cardsQueryParameters = getCurrentCardsQueryParameters();
 
     /** Indicates if registration is required. */
     const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
@@ -83,7 +82,10 @@ const UserCards: React.FC = () => {
             }
             <h1 className="user-cards__title">MY CARDS</h1>
             <FilterField>
-                <FilterByVersion submitSearch={submitSearch} />
+                <FilterByVersion
+                    submitSearch={submitSearch}
+                    cardsQueryParameters={cardsQueryParameters}
+                />
                 <FilterByStats
                     cardsQueryParameters={cardsQueryParameters}
                     clearsStatisticsField={clearsStatisticsField}

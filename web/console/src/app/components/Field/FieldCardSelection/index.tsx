@@ -1,7 +1,6 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Paginator } from '@components/common/Paginator';
@@ -13,7 +12,7 @@ import { FilterByStatus } from '@components/common/FilterField/FilterByStatus';
 import { FilterByVersion } from '@components/common/FilterField/FilterByVersion';
 
 import { RootState } from '@/app/store';
-import { fieldCards, createFieldCardsQueryParameters } from '@/app/store/actions/cards';
+import { fieldCards, getCurrentFieldCardsQueryParameters, clearConcretFieldCardsQueryParameters, createFieldCardsQueryParameters } from '@/app/store/actions/cards';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/clubs';
 import { CardEditIdentificators } from '@/api/club';
 import { Card, CardsPage, CardsQueryParametersField } from '@/card';
@@ -27,7 +26,6 @@ export const FieldCardSelection = () => {
     const dispatch = useDispatch();
     const squad: Squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
     const squadCards: SquadCard[] = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
-    const isCardsVisible = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
 
     const { cards, page }: CardsPage = useSelector((state: RootState) => state.cardsReducer.cardsPage);
     const { currentFieldCardsPage } = useSelector((state: RootState) => state.cardsReducer);
@@ -44,8 +42,8 @@ export const FieldCardSelection = () => {
         return cards.filter((card: Card) => !squadCardsIds.includes(card.id));
     };
 
-    const cardsClient = new CardsClient();
-    const cardsService = new CardService(cardsClient);
+    const fieldCardsQueryParameters = getCurrentFieldCardsQueryParameters();
+
     /** Add card to field, and hide card selection component */
     function addCardOnField(cardId: string) {
         dispatch(
@@ -62,6 +60,12 @@ export const FieldCardSelection = () => {
     /** Exposes default page number. */
     const DEFAULT_PAGE_INDEX: number = 1;
 
+    /** Clears current statistics fields. */
+    const clearsStatisticsField = async (queryParameters: CardsQueryParametersField[]) => {
+        clearConcretFieldCardsQueryParameters(queryParameters);
+        await dispatch(fieldCards(DEFAULT_PAGE_INDEX));
+    }
+
     /** Submits search by cards query parameters. */
     const submitSearch = async(cardsQueryParameters: CardsQueryParametersField[]) => {
         createFieldCardsQueryParameters(cardsQueryParameters);
@@ -73,12 +77,14 @@ export const FieldCardSelection = () => {
             <FilterField >
                 <FilterByVersion
                     submitSearch={submitSearch}
+                    cardsQueryParameters={fieldCardsQueryParameters}
                 />
                 <FilterByStats
+                    cardsQueryParameters={fieldCardsQueryParameters}
+                    clearsStatisticsField={clearsStatisticsField}
                     submitSearch={submitSearch}
                 />
                 <FilterByPrice />
-                <FilterByStats />
                 <FilterByStatus />
             </FilterField>
             <div className="card-selection__list">

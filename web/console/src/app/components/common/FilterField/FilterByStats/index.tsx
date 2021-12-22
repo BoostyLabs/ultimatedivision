@@ -12,8 +12,8 @@ import { FilterContext } from '../index';
 
 export const FilterByStats: React.FC<{
     submitSearch: (queryParameters: CardsQueryParametersField[]) => Promise<void>;
-    clearsStatisticsField: (queryParameters: CardsQueryParametersField[]) => Promise<void>,
-    cardsQueryParameters: CardsQueryParameters,
+    clearsStatisticsField: (queryParameters: CardsQueryParametersField[]) => Promise<void>;
+    cardsQueryParameters: CardsQueryParameters;
 }> = ({ submitSearch, clearsStatisticsField, cardsQueryParameters }) => {
     const { activeFilterIndex, setActiveFilterIndex }: {
         activeFilterIndex: number;
@@ -35,18 +35,18 @@ export const FilterByStats: React.FC<{
 
     /** Describes all statistics required fields. */
     const cardsQueryParametersFields = useCardsQueryParameters([
+        'tactics_gte',
+        'tactics_lt',
+        'offense_gte',
+        'offense_lt',
+        'technique_gte',
+        'technique_lt',
+        'physique_gte',
+        'physique_lt',
         'defence_gte',
         'defence_lt',
         'goalkeeping_gte',
         'goalkeeping_lt',
-        'offense_gte',
-        'offense_lt',
-        'physique_gte',
-        'physique_lt',
-        'tactics_gte',
-        'tactics_lt',
-        'technique_gte',
-        'technique_lt'
     ], cardsQueryParameters);
 
     /** Desrcribes stats values. */
@@ -86,7 +86,8 @@ export const FilterByStats: React.FC<{
 
     useEffect(() => {
         FILTER_BY_STATS_INDEX !== activeFilterIndex && setIsFilterByStatsShown(false);
-    }, [activeFilterIndex]);
+        setStats(cardsQueryParametersFields);
+    }, [activeFilterIndex, cardsQueryParametersFields]);
 
     return (
         <FilterByParameterWrapper
@@ -95,18 +96,114 @@ export const FilterByStats: React.FC<{
             title="Stats"
         >
             <div className="filter-item__dropdown-active__stats__wrapper">
-                {stats.map((stat: CardsQueryParametersField, index: number) => {
-                    for (let property in stat) {
-                        return <div>
-                            <input
+                <div className="filter-item__dropdown-active__stats">
+                    <span className="filter-item__dropdown-active__stats__label">
+                        TAC
+                    </span>
+                    {stats.slice(0, 2).map((stat: CardsQueryParametersField, index: number) => {
+                        for (let property in stat) {
+                            return < input
+                                className="filter-item__dropdown-active__stats__area"
                                 name={property}
+                                type='text'
                                 value={stat[property]}
                                 onChange={changeCurrentStatsField(index)}
-                                placeholder={`${index % 2 === 0 ? 'Min' : 'Max'}`}
+                                placeholder={`${index === 0 ? 'Min' : 'Max'} Rating`
+                                }
                             />
-                        </div>
-                    }
-                })}
+                        }
+                    })}
+                </div>
+                <div className="filter-item__dropdown-active__stats">
+                    <span className="filter-item__dropdown-active__stats__label">
+                        OFF
+                    </span>
+                    {stats.slice(2, 4).map((stat: CardsQueryParametersField, index: number) => {
+                        for (let property in stat) {
+                            return < input
+                                className="filter-item__dropdown-active__stats__area"
+                                name={property}
+                                type='text'
+                                value={stat[property]}
+                                onChange={changeCurrentStatsField(index + 2)}
+                                placeholder={`${index === 2 ? 'Min' : 'Max'} Rating`
+                                }
+                            />
+                        }
+                    })}
+                </div>
+                <div className="filter-item__dropdown-active__stats">
+                    <span className="filter-item__dropdown-active__stats__label">
+                        TEC
+                    </span>
+                    {stats.slice(4, 6).map((stat: CardsQueryParametersField, index: number) => {
+                        for (let property in stat) {
+                            return < input
+                                className="filter-item__dropdown-active__stats__area"
+                                name={property}
+                                type='text'
+                                value={stat[property]}
+                                onChange={changeCurrentStatsField(index + 4)}
+                                placeholder={`${index === 4 ? 'Min' : 'Max'} Rating`
+                                }
+                            />
+                        }
+                    })}
+                </div>
+                <div className="filter-item__dropdown-active__stats">
+                    <span className="filter-item__dropdown-active__stats__label">
+                        PHY
+                    </span>
+                    {stats.slice(6, 8).map((stat: CardsQueryParametersField, index: number) => {
+                        for (let property in stat) {
+                            return < input
+                                className="filter-item__dropdown-active__stats__area"
+                                name={property}
+                                type='text'
+                                value={stat[property]}
+                                onChange={changeCurrentStatsField(index + 6)}
+                                placeholder={`${index === 6 ? 'Min' : 'Max'} Rating`
+                                }
+                            />
+                        }
+                    })}
+                </div>
+                <div className="filter-item__dropdown-active__stats">
+                    <span className="filter-item__dropdown-active__stats__label">
+                        DEF
+                    </span>
+                    {stats.slice(8, 10).map((stat: CardsQueryParametersField, index: number) => {
+                        for (let property in stat) {
+                            return < input
+                                className="filter-item__dropdown-active__stats__area"
+                                name={property}
+                                type='text'
+                                value={stat[property]}
+                                onChange={changeCurrentStatsField(index + 8)}
+                                placeholder={`${index === 8 ? 'Min' : 'Max'} Rating`
+                                }
+                            />
+                        }
+                    })}
+                </div>
+                <div className="filter-item__dropdown-active__stats">
+                    <span className="filter-item__dropdown-active__stats__label">
+                        GK
+                    </span>
+                    {stats.slice(10, 12).map((stat: CardsQueryParametersField, index: number) => {
+                        for (let property in stat) {
+                            return < input
+                                className="filter-item__dropdown-active__stats__area"
+                                name={property}
+                                type='text'
+                                value={stat[property]}
+                                onChange={changeCurrentStatsField(index + 10)}
+                                placeholder={`${index === 10 ? 'Min' : 'Max'} Rating`
+                                }
+                            />
+                        }
+                    })}
+                </div>
                 <div className="filter-item__dropdown-active__stats">
                     <input
                         value="APPLY"

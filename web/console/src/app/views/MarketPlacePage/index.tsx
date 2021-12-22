@@ -15,11 +15,12 @@ import { RootState } from '@/app/store';
 import {
     listOfLots,
     createLotsQueryParameters,
+    getCurrentLotsQueryParameters,
+    clearConcretLotsQueryParameters,
 } from '@/app/store/actions/marketplace';
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
-import { useState } from 'react';
 
 const MarketPlace: React.FC = () => {
     const dispatch = useDispatch();
@@ -30,22 +31,33 @@ const MarketPlace: React.FC = () => {
     /** Exposes default page number. */
     const DEFAULT_PAGE_INDEX: number = 1;
 
+    const lotsQueryParameters = getCurrentLotsQueryParameters();
+
     /** Submits search by lots query parameters. */
-    const submitSearch = async(
+    const submitSearch = async (
         queryParameters: CardsQueryParametersField[]
     ) => {
         createLotsQueryParameters(queryParameters);
         await dispatch(listOfLots(DEFAULT_PAGE_INDEX));
     };
 
+
+    const clearsStatisticsField = async (queryParameters: CardsQueryParametersField[]) => {
+        clearConcretLotsQueryParameters(queryParameters);
+        await dispatch(listOfLots(DEFAULT_PAGE_INDEX));
+    }
+
     return (
         <section className="marketplace">
             <h1 className="marketplace__title">MARKETPLACE</h1>
             <FilterField>
                 <FilterByVersion
+                    cardsQueryParameters={lotsQueryParameters}
                     submitSearch={submitSearch}
                 />
                 <FilterByStats
+                    cardsQueryParameters={lotsQueryParameters}
+                    clearsStatisticsField={clearsStatisticsField}
                     submitSearch={submitSearch}
                 />
                 <FilterByPrice />

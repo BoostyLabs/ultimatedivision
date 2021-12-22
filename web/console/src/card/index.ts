@@ -32,12 +32,12 @@ export class CardField {
 
 /** CardsQueryParametersField is an interface for cards and lots query parameters field, that consist of key and value. */
 export interface CardsQueryParametersField {
-    [key: string]: string | undefined;
+    [key: string]:string [] | string | undefined;
 };
 
 /** CardsQueryParameters is class that uses for filtering cards and lots by queries. */
 export class CardsQueryParameters {
-    [key: string]: string | undefined;
+    [key: string]: string | string[] | undefined;
     public 'defence_gte': string | undefined = undefined;
     public 'defence_lt': string | undefined = undefined;
     public 'goalkeeping_gte': string | undefined = undefined;
@@ -48,7 +48,7 @@ export class CardsQueryParameters {
     public 'physique_lt': string | undefined = undefined;
     public 'tactics_gte': string | undefined = undefined;
     public 'tactics_lt': string | undefined = undefined;
-    public 'quality': string | undefined = undefined;
+    public 'quality': string[] = [];
     public 'status': string | undefined = undefined;
     public 'technique_gte': string | undefined = undefined;
     public 'technique_lt': string | undefined = undefined;
