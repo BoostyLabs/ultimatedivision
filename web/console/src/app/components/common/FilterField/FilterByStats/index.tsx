@@ -162,7 +162,7 @@ export const FilterByStats: React.FC<{
     ];
 
     /** Submits query parameters by stats. */
-    const handleSubmit = async () => {
+    const handleSubmit = async() => {
         await submitSearch([
             { 'defence_gte': defenceMin },
             { 'defence_lte': defenceMax },

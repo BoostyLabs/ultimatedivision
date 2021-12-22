@@ -33,7 +33,7 @@ const MarketPlace: React.FC = () => {
     const lotsQueryParameters = getCurrentLotsQueryParameters();
 
     /** Submits search by lots query parameters. */
-    const submitSearch = async (
+    const submitSearch = async(
         queryParameters: CardsQueryParametersField[]
     ) => {
         createLotsQueryParameters(queryParameters);

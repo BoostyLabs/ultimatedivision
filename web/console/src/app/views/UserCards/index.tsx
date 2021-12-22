@@ -42,7 +42,7 @@ const UserCards: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async (
+    const submitSearch = async(
         queryParameters: CardsQueryParametersField[]
     ) => {
         createCardsQueryParameters(queryParameters);
@@ -55,7 +55,7 @@ const UserCards: React.FC = () => {
     };
 
     useEffect(() => {
-        (async () => {
+        (async() => {
             try {
                 await dispatch(listOfCards(currentCardsPage));
             } catch (error: any) {

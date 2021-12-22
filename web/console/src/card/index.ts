@@ -54,9 +54,6 @@ export class CardsQueryParameters {
     public 'technique_lte': string | undefined = undefined;
 };
 
-export class CardsStatisticQueryParameters {
-    
-}
 
 /* eslint-disable */
 /** player stats implementation */

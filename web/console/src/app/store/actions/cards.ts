@@ -41,19 +41,15 @@ const fieldCardsClient = new CardsClient();
 const fieldCardsService = new CardService(fieldCardsClient);
 
 /** Returns current cards queryParameters object. */
-export const getCurrentCardsQueryParameters = () => {
-    return cardsService.getCurrentQueryParameters();
-};
+export const getCurrentCardsQueryParameters = () => cardsService.getCurrentQueryParameters();
 
 /** Returns current field cards queryParameters object. */
-export const getCurrentFieldCardsQueryParameters = () => {
-    return fieldCardsService.getCurrentQueryParameters();
-};
+export const getCurrentFieldCardsQueryParameters = () => fieldCardsService.getCurrentQueryParameters();
 
 /** Creates field cards query parameters and sets them to fieldCardsService. */
 export const createFieldCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
     fieldCardsService.changeCardsQueryParameters(queryParameters);
-}
+};
 
 /** Creates cards query parameters and sets them to CardsService. */
 export const createCardsQueryParameters = (queryParameters: CardsQueryParametersField[]) => {
@@ -61,7 +57,7 @@ export const createCardsQueryParameters = (queryParameters: CardsQueryParameters
 };
 
 /** FieldCards exposes a middleware for cards entity that dispatches current cards on page . */
-export const fieldCards = (selectedPage: number) => async function (dispatch: Dispatch) {
+export const fieldCards = (selectedPage: number) => async function(dispatch: Dispatch) {
     const response = await fieldCardsService.list(selectedPage);
     const page = response.page;
     const cards = response.cards;
@@ -71,7 +67,7 @@ export const fieldCards = (selectedPage: number) => async function (dispatch: Di
 };
 
 /** thunk for creating user cards list */
-export const listOfCards = (selectedPage: number) => async function (dispatch: Dispatch) {
+export const listOfCards = (selectedPage: number) => async function(dispatch: Dispatch) {
     const response = await cardsService.list(selectedPage);
     const page = response.page;
     const cards = response.cards;
@@ -81,7 +77,7 @@ export const listOfCards = (selectedPage: number) => async function (dispatch: D
 };
 
 /** thunk for opening fotballerCardPage with reload possibility */
-export const openUserCard = (id: string) => async function (dispatch: Dispatch) {
+export const openUserCard = (id: string) => async function(dispatch: Dispatch) {
     const card = await cardsService.getCardById(id);
 
     dispatch(userCard(card));
