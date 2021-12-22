@@ -129,12 +129,9 @@
                     background: $highlightColor;
                     width: 3px;
                     height: 3px;
-                    box-shadow: 2px 0 0 $highlightColor,
-                        4px 0 0 $highlightColor,
-                        4px -2px 0 $highlightColor,
-                        4px -4px 0 $highlightColor,
-                        4px -6px 0 $highlightColor,
-                        4px -8px 0 $highlightColor;
+                    box-shadow: 2px 0 0 $highlightColor, 4px 0 0 $highlightColor,
+                        4px -2px 0 $highlightColor, 4px -4px 0 $highlightColor,
+                        4px -6px 0 $highlightColor, 4px -8px 0 $highlightColor;
                     transform: rotate(45deg);
                 }
             }
@@ -161,9 +158,7 @@
             cursor: pointer;
 
             &:hover {
-
                 td {
-
                     &:first-child {
                         border-left: 2px solid $highlightColor;
                     }
@@ -260,11 +255,8 @@
 }
 
 @media screen and (max-width: $desktopBreakPoint) {
-
     .division {
-
         &__item {
-
             &-active {
                 padding: 10px 20px;
                 height: 39px;
@@ -281,11 +273,8 @@
 }
 
 @media screen and (max-width: $tabletBreakPoint) {
-
     .division {
-
         &__item {
-
             &-active,
             &-inactive {
                 padding: 10px;
@@ -297,9 +286,7 @@
 }
 
 @media screen and (max-width: $phoneBreakPoint) {
-
     .division {
-
         &__list {
             display: flex;
             align-items: center;
@@ -309,7 +296,6 @@
         }
 
         &__item {
-
             &-active,
             &-inactive {
                 padding: 10px;
@@ -333,7 +319,7 @@
             &__item {
                 float: right;
                 padding-top: 8px;
-                margin-left: 0;
+                margin-left: 0px;
             }
         }
     }
