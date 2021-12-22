@@ -1,6 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Paginator } from '@components/common/Paginator';
@@ -12,15 +13,13 @@ import { FilterByStatus } from '@components/common/FilterField/FilterByStatus';
 import { FilterByVersion } from '@components/common/FilterField/FilterByVersion';
 
 import { RootState } from '@/app/store';
-import { listOfCards, createCardsQueryParameters } from '@/app/store/actions/cards';
+import { fieldCards, createFieldCardsQueryParameters } from '@/app/store/actions/cards';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/clubs';
 import { CardEditIdentificators } from '@/api/club';
 import { Card, CardsPage, CardsQueryParametersField } from '@/card';
 import { Squad, SquadCard } from '@/club';
 
 import './index.scss';
-import { useEffect } from 'react';
-import { clearCardsQueryParameters } from '../../../store/actions/cards';
 
 export const FieldCardSelection = () => {
     const dispatch = useDispatch();
@@ -29,6 +28,7 @@ export const FieldCardSelection = () => {
     const isCardsVisible = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
 
     const { cards, page }: CardsPage = useSelector((state: RootState) => state.cardsReducer.cardsPage);
+    const { currentFieldCardsPage } = useSelector((state: RootState) => state.cardsReducer);
     const club = useSelector((state: RootState) => state.clubsReducer);
 
     const Y_SCROLL_POINT = 200;
@@ -60,22 +60,19 @@ export const FieldCardSelection = () => {
 
     /** Submits search by cards query parameters. */
     const submitSearch = async(cardsQueryParameters: CardsQueryParametersField[]) => {
-        createCardsQueryParameters(cardsQueryParameters);
-        await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
+        createFieldCardsQueryParameters(cardsQueryParameters);
+        await dispatch(fieldCards(DEFAULT_PAGE_INDEX));
     };
-
-    useEffect(() => {
-        (async() => {
-            clearCardsQueryParameters();
-            await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
-        })();
-    }, [isCardsVisible]);
 
     return (
         <div id="cardList" className="card-selection">
             <FilterField >
-                <FilterByVersion submitSearch={submitSearch} />
-                <FilterByStats submitSearch={submitSearch} />
+                <FilterByVersion
+                    submitSearch={submitSearch}
+                />
+                <FilterByStats
+                    submitSearch={submitSearch}
+                />
                 <FilterByPrice />
                 <FilterByStatus />
             </FilterField>
@@ -95,9 +92,9 @@ export const FieldCardSelection = () => {
                     )}
             </div>
             <Paginator
-                getCardsOnPage={listOfCards}
+                getCardsOnPage={fieldCards}
                 itemsCount={page.totalCount}
-                selectedPage={page.currentPage}
+                selectedPage={currentFieldCardsPage}
             />
         </div>
     );

@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { SetStateAction, useEffect, useRef, useState } from 'react';
+import { SetStateAction, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import MetaMaskOnboarding from '@metamask/onboarding';
@@ -15,6 +15,7 @@ import metamask from '@static/img/registerPage/metamask.svg';
 import ultimate from '@static/img/registerPage/ultimate.svg';
 
 import { AuthRouteConfig, RouteConfig } from '@/app/routes';
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { loginUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
 import { ServicePlugin } from '@/app/plugins/service';
@@ -22,18 +23,23 @@ import { ServicePlugin } from '@/app/plugins/service';
 import './index.scss';
 
 const SignIn: React.FC = () => {
-    const onboarding = useRef<MetaMaskOnboarding>();
+    const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const service = ServicePlugin.create();
     const dispatch = useDispatch();
     const history = useHistory();
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
+    const [emailError, setEmailError] =
+        useState<SetStateAction<null | string>>(null);
     const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] = useState<SetStateAction<null | string>>(null);
+    const [passwordError, setPasswordError] =
+        useState<SetStateAction<null | string>>(null);
     const [isRemember, setIsRemember] = useState(false);
     /** TODO: rework remember me implementation  */
-    const handleIsRemember = () => setIsRemember(prev => !prev);
+    const handleIsRemember = () => setIsRemember((prev) => !prev);
+
+    const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
+
     /** checks if values does't valid then set an error messages */
     const validateForm: () => boolean = () => {
         let isFormValid = true;
@@ -41,32 +47,36 @@ const SignIn: React.FC = () => {
         if (!Validator.isEmail(email)) {
             setEmailError('Email is not valid');
             isFormValid = false;
-        };
+        }
 
         if (!Validator.isPassword(password)) {
             setPasswordError('Password is not valid');
             isFormValid = false;
-        };
+        }
 
         return isFormValid;
     };
+
     /** user data that will send to server */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
             return;
-        };
+        }
 
         try {
             await dispatch(loginUser(email, password));
+
+            setLocalStorageItem('IS_LOGGINED', true);
+
             history.push(RouteConfig.MarketPlace.path);
         } catch (error: any) {
             toast.error('Incorrect email or password', {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
-        };
+        }
     };
     /** user datas for registration */
     const signInDatas = [
@@ -92,37 +102,35 @@ const SignIn: React.FC = () => {
         },
     ];
 
-    useEffect(() => {
-        if (!onboarding.current) {
-            onboarding.current = new MetaMaskOnboarding();
-        }
-    }, []);
-
+    /** Login with matamask. */
     const metamaskLogin = async() => {
         /** Code which indicates that 'eth_requestAccounts' already processing */
         const METAMASK_RPC_ERROR_CODE = -32002;
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 // @ts-ignore
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-                await service.signMessage();
+                await window.ethereum.request({
+                    method: 'eth_requestAccounts',
+                });
+
+                await service.login();
+
+                setLocalStorageItem('IS_LOGGINED', true);
+
                 history.push(RouteConfig.MarketPlace.path);
             } catch (error: any) {
                 error.code === METAMASK_RPC_ERROR_CODE
-                    ?
-                    toast.error('Please open metamask manually!', {
+                    ? toast.error('Please open metamask manually!', {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
                     })
-                    :
-                    toast.error('Something went wrong', {
+                    : toast.error('Something went wrong', {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
                     });
             }
         } else {
-            onboarding.current = new MetaMaskOnboarding();
-            onboarding.current?.startOnboarding();
+            onboarding.startOnboarding();
         }
     };
 
@@ -152,7 +160,8 @@ const SignIn: React.FC = () => {
                             error={data.error}
                             clearError={data.clearError}
                             validate={data.validate}
-                        />)}
+                        />
+                    )}
                     <div className="register__sign-in__sign-form__checkbox-wrapper">
                         <input
                             id="register-sign-in-checkbox"
@@ -210,7 +219,7 @@ const SignIn: React.FC = () => {
                         </Link>
                     </p>
                 </div>
-            </div >
+            </div>
         </div>
     );
 };

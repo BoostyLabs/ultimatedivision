@@ -10,16 +10,18 @@ const ChangePassword = lazy(() => import('@/app/views/ChangePassword'));
 const ConfirmEmail = lazy(() => import('@/app/views/ConfirmEmail'));
 const RecoverPassword = lazy(() => import('@/app/views/RecoverPassword'));
 const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
-const Club = lazy(() => import('@/app/views/ClubPage'));
+const UserCards = lazy(() => import('@/app/views/UserCards'));
 const Card = lazy(() => import('@/app/views/CardPage'));
 const Lot = lazy(() => import('@/app/views/LotPage'));
 const Field = lazy(() => import('@/app/views/FieldPage'));
 const WhitePaper = lazy(() => import('@/app/views/WhitePaperPage'));
 const Tokenomics = lazy(() => import('@/app/views/TokenomicsPage'));
 const Store = lazy(() => import('@/app/views/StorePage'));
-const Navbar = lazy(() => import('@/app/components/common/Navbar'));
 const Division = lazy(() => import('@/app/views/Division'));
 const Match = lazy(() => import('@/app/views/Match'));
+const MatchFinder = lazy(() => import('@components/common/MatchFinder'));
+const Home = lazy(() => import('@/app/views/Home'));
+const Navbar = lazy(() => import('@/app/components/common/Navbar'));
 
 import Summary from '@components/WhitePaper/Summary';
 import GameMechanics from '@components/WhitePaper/GameMechanics';
@@ -29,17 +31,16 @@ import Fund from '@components/Tokenomics/Fund';
 import PlayToEarn from '@components/Tokenomics/PlayToEarn';
 import Spending from '@components/Tokenomics/Spending';
 import Staking from '@components/Tokenomics/Staking';
-import MatchFinder from '@components/common/MatchFinder';
 
 /** Route base config implementation */
 export class ComponentRoutes {
     /** data route config*/
     constructor(
         public path: string,
-        public component: React.FC<any>,
+        public component: any,
         public exact: boolean,
         public children?: ComponentRoutes[]
-    ) { }
+    ) {}
     /** Method for creating child subroutes path */
     public with(
         child: ComponentRoutes,
@@ -55,47 +56,6 @@ export class ComponentRoutes {
 
         return this;
     }
-}
-/** Route config that implements auth actions */
-export class AuthRouteConfig {
-    public static SignIn: ComponentRoutes = new ComponentRoutes(
-        '/sign-in',
-        SignIn,
-        true
-    );
-    public static SignUp: ComponentRoutes = new ComponentRoutes(
-        '/sign-up',
-        SignUp,
-        true
-    );
-    public static ChangePassword: ComponentRoutes = new ComponentRoutes(
-        '/change-password',
-        ChangePassword,
-        true
-    );
-    public static ConfirmEmail: ComponentRoutes = new ComponentRoutes(
-        '/email/confirm',
-        ConfirmEmail,
-        true
-    );
-    public static ResetPassword: ComponentRoutes = new ComponentRoutes(
-        '/reset-password',
-        RecoverPassword,
-        true
-    );
-    public static Default: ComponentRoutes = new ComponentRoutes(
-        '/',
-        SignIn,
-        true
-    );
-    public static routes: ComponentRoutes[] = [
-        AuthRouteConfig.ConfirmEmail,
-        AuthRouteConfig.Default,
-        AuthRouteConfig.ResetPassword,
-        AuthRouteConfig.ChangePassword,
-        AuthRouteConfig.SignIn,
-        AuthRouteConfig.SignUp,
-    ];
 }
 
 /** Route config implementation */
@@ -131,14 +91,19 @@ export class RouteConfig {
         Store,
         true
     );
-    public static Club: ComponentRoutes = new ComponentRoutes(
-        '/club',
-        Club,
+    public static Cards: ComponentRoutes = new ComponentRoutes(
+        '/cards',
+        UserCards,
         true
     );
     public static Match: ComponentRoutes = new ComponentRoutes(
         '/match',
         Match,
+        true
+    );
+    public static Home: ComponentRoutes = new ComponentRoutes(
+        '/home',
+        Home,
         true
     );
     public static Whitepaper: ComponentRoutes = new ComponentRoutes(
@@ -193,9 +158,10 @@ export class RouteConfig {
     );
 
     public static routes: ComponentRoutes[] = [
+        RouteConfig.Home,
         RouteConfig.Field,
         RouteConfig.MarketPlace,
-        RouteConfig.Club,
+        RouteConfig.Cards,
         RouteConfig.Card,
         RouteConfig.Division,
         RouteConfig.Lot,
@@ -213,6 +179,48 @@ export class RouteConfig {
             RouteConfig.Staking,
             RouteConfig.Fund,
         ]),
+    ];
+}
+
+/** Route config that implements auth actions */
+export class AuthRouteConfig {
+    public static SignIn: ComponentRoutes = new ComponentRoutes(
+        '/sign-in',
+        SignIn,
+        true
+    );
+    public static SignUp: ComponentRoutes = new ComponentRoutes(
+        '/sign-up',
+        SignUp,
+        true
+    );
+    public static ChangePassword: ComponentRoutes = new ComponentRoutes(
+        '/change-password',
+        ChangePassword,
+        true
+    );
+    public static ConfirmEmail: ComponentRoutes = new ComponentRoutes(
+        '/email/confirm',
+        ConfirmEmail,
+        true
+    );
+    public static ResetPassword: ComponentRoutes = new ComponentRoutes(
+        '/reset-password',
+        RecoverPassword,
+        true
+    );
+    public static Default: ComponentRoutes = new ComponentRoutes(
+        '/',
+        RouteConfig.Home.component,
+        true
+    );
+    public static routes: ComponentRoutes[] = [
+        AuthRouteConfig.ConfirmEmail,
+        AuthRouteConfig.Default,
+        AuthRouteConfig.ResetPassword,
+        AuthRouteConfig.ChangePassword,
+        AuthRouteConfig.SignIn,
+        AuthRouteConfig.SignUp,
     ];
 }
 
@@ -239,3 +247,4 @@ export const Routes = () =>
             )}
         </Route>
     </Switch>;
+

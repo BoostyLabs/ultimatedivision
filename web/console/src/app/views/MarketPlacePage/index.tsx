@@ -12,32 +12,42 @@ import { Paginator } from '@components/common/Paginator';
 import { MarketPlaceCardsGroup } from '@components/MarketPlace/MarketPlaceCardsGroup';
 
 import { RootState } from '@/app/store';
-import { listOfLots, createLotsQueryParameters } from '@/app/store/actions/marketplace';
+import {
+    listOfLots,
+    createLotsQueryParameters,
+} from '@/app/store/actions/marketplace';
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
+import { useState } from 'react';
 
 const MarketPlace: React.FC = () => {
     const dispatch = useDispatch();
-    const { lots, page } = useSelector((state: RootState) => state.marketplaceReducer.marketplacePage);
+    const { lots, page } = useSelector(
+        (state: RootState) => state.marketplaceReducer.marketplacePage
+    );
 
     /** Exposes default page number. */
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by lots query parameters. */
-    const submitSearch = async(queryParameters: CardsQueryParametersField[]) => {
+    const submitSearch = async(
+        queryParameters: CardsQueryParametersField[]
+    ) => {
         createLotsQueryParameters(queryParameters);
         await dispatch(listOfLots(DEFAULT_PAGE_INDEX));
     };
 
     return (
         <section className="marketplace">
-            <h1 className="marketplace__title">
-                MARKETPLACE
-            </h1>
+            <h1 className="marketplace__title">MARKETPLACE</h1>
             <FilterField>
-                <FilterByVersion submitSearch={submitSearch} />
-                <FilterByStats submitSearch={submitSearch} />
+                <FilterByVersion
+                    submitSearch={submitSearch}
+                />
+                <FilterByStats
+                    submitSearch={submitSearch}
+                />
                 <FilterByPrice />
                 <FilterByStatus />
             </FilterField>

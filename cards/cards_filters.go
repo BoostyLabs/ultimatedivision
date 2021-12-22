@@ -1,3 +1,6 @@
+// Copyright (C) 2021 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 package cards
 
 import (
@@ -8,11 +11,6 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/pkg/sqlsearchoperators"
-)
-
-const (
-	// numberPositionOfURLParameter is a number that shows the position of the url parameter.
-	numberPositionOfURLParameter = 0
 )
 
 // ErrInvalidFilter indicated that filter does not valid.
@@ -163,30 +161,32 @@ func (filters *SliceFilters) DecodingURLParameters(urlQuery url.Values) error {
 			continue
 		}
 
-		filter := Filters{
-			Name:           "",
-			Value:          value[numberPositionOfURLParameter],
-			SearchOperator: "",
-		}
-
-		for k, v := range sqlsearchoperators.SearchOperators {
-			if strings.HasSuffix(key, k) {
-				countName := len(key) - (1 + len(k))
-				filter.Name = Filter(key[:countName])
-				filter.SearchOperator = v
+		for _, val := range value {
+			filter := Filters{
+				Name:           "",
+				Value:          val,
+				SearchOperator: "",
 			}
-		}
 
-		keyFilter := Filter(key)
-		if keyFilter == FilterQuality || keyFilter == FilterDominantFoot || keyFilter == FilterType {
-			filter.Name = Filter(key)
-			filter.SearchOperator = sqlsearchoperators.EQ
-		}
+			for k, v := range sqlsearchoperators.SearchOperators {
+				if strings.HasSuffix(key, k) {
+					countName := len(key) - (1 + len(k))
+					filter.Name = Filter(key[:countName])
+					filter.SearchOperator = v
+				}
+			}
 
-		if filter.Name == "" {
-			return ErrInvalidFilter.New("invalid name parameter - " + key)
+			keyFilter := Filter(key)
+			if keyFilter == FilterQuality || keyFilter == FilterDominantFoot || keyFilter == FilterType {
+				filter.Name = Filter(key)
+				filter.SearchOperator = sqlsearchoperators.EQ
+			}
+
+			if filter.Name == "" {
+				return ErrInvalidFilter.New("invalid name parameter - " + key)
+			}
+			*filters = append(*filters, filter)
 		}
-		*filters = append(*filters, filter)
 	}
 	return nil
 }
