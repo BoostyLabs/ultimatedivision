@@ -40,7 +40,7 @@ export const FilterByVersion: React.FC<{
     const [quality, setQuality] = useState<CardsQueryParametersField[]>(cardsQueryParametersFields);
 
     /** Indicates if is choosed diamond quality of cards. */
-    const [isDiamondQuality, setIsDiamondQuality] = useState<boolean>(!!(quality[0] && quality[0].quality?.includes('diamond')));
+    const [isDiamondQuality, setIsDiamondQuality] = useState<boolean>(false);
     /** Indicates if is choosed gold quality of cards. */
     const [isGoldQuality, setIsGoldQuality] = useState<boolean>(false);
     /** Indicates if is choosed silver quality of cards. */
@@ -48,9 +48,6 @@ export const FilterByVersion: React.FC<{
     /** Indicates if is choosed wood quality of cards. */
     const [isWoodQuality, setIsWoodQuality] = useState<boolean>(false);
 
-    console.log('quality', quality);
-    // console.log('diamond: ', !!(quality[0] && quality[0].quality?.includes('diamond')));
-    console.log('isDiamond:', isDiamondQuality);
     /** Chooses diamond quality of cards. */
     const chooseDiamondQuality = () => {
         setIsDiamondQuality(isDiamondQuality => !isDiamondQuality);
@@ -109,6 +106,10 @@ export const FilterByVersion: React.FC<{
     useEffect(() => {
         FILTER_BY_VERSION_INDEX !== activeFilterIndex && setIsFilterByVersionShown(false);
         setQuality(cardsQueryParametersFields);
+        setIsDiamondQuality(Boolean(quality[0] && quality[0].quality?.includes('diamond')));
+        setIsGoldQuality(Boolean(quality[0] && quality[0].quality?.includes('gold')));
+        setIsSilverQuality(Boolean(quality[0] && quality[0].quality?.includes('silver')));
+        setIsWoodQuality(Boolean(quality[0] && quality[0].quality?.includes('wood')));
     }, [activeFilterIndex, cardsQueryParametersFields]);
 
     return (
@@ -118,10 +119,10 @@ export const FilterByVersion: React.FC<{
             title="Version"
         >
             <input
-                id="division-checkbox-wooaaaad"
+                id="checkbox-wood"
                 className="filter-item__dropdown-active__checkbox111"
                 type="text"
-                onClick={chooseDiamondQuality}
+                onClick={chooseWoodQuality}
             />
             <label
                 className="filter-item__dropdown-active__text111"
@@ -130,21 +131,10 @@ export const FilterByVersion: React.FC<{
                 wood
             </label>
             <input
-                id="division-checkbox-wood"
-                className="filter-item__dropdown-active__checkbox"
-                type="checkbox"
-                onClick={chooseWoodQuality}
-            />
-            <label
-                className="filter-item__dropdown-active__text"
-                htmlFor="division-checkbox-wood"
-            >
-                wood
-            </label>
-            <input
                 id="checkbox-silver"
                 className="filter-item__dropdown-active__checkbox"
                 type="checkbox"
+                checked={isSilverQuality}
                 onChange={chooseSilverQuality}
             />
             <label
@@ -157,6 +147,7 @@ export const FilterByVersion: React.FC<{
                 id="checkbox-gold"
                 className="filter-item__dropdown-active__checkbox"
                 type="checkbox"
+                checked={isGoldQuality}
                 onClick={chooseGoldQuality}
             />
             <label
