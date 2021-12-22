@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { CardsClient } from '@/api/cards';
-import { Card, CardsPage, CardsQueryParametersField } from '@/card';
+import { Card, CardsPage, CardsQueryParameters, CardsQueryParametersField } from '@/card';
 
 /**
  * exposes all bandwidth related logic
@@ -13,6 +13,10 @@ export class CardService {
     /** sets CardClient into card field */
     public constructor(cards: CardsClient) {
         this.cards = cards;
+    };
+
+    public getCurrentQueryParameters(): CardsQueryParameters {
+        return this.cards.getCurrentQueryParameters;
     };
 
     /** Clears cards query parameters. */

@@ -40,9 +40,9 @@ const cardsService = new CardService(cardsClient);
 const fieldCardsClient = new CardsClient();
 const fieldCardsService = new CardService(fieldCardsClient);
 
-/** Clears cards query parameters. */
-export const clearCardsQueryParameters = () => {
-    cardsService.clearCardsQueryParameters();
+/** Gets cards query parameters. */
+export const getCardsQueryParameters = () => {
+    cardsService.getCardsQueryParameters();
 };
 
 /** Creates field cards query parameters and sets them to fieldCardsService. */

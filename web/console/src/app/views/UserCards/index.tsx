@@ -24,6 +24,7 @@ import {
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
+import { getCardsQueryParameters } from '../../store/actions/cards';
 
 const UserCards: React.FC = () => {
     const { page } = useSelector(
@@ -56,6 +57,8 @@ const UserCards: React.FC = () => {
         setIsRegistrationRequired(false);
     };
 
+    const cardsQueryParameters = getCardsQueryParameters();
+    
     useEffect(() => {
         (async() => {
             try {
@@ -84,6 +87,7 @@ const UserCards: React.FC = () => {
                 />
                 <FilterByStats
                     submitSearch={submitSearch}
+                    cardsQueryParameters={cardsQueryParameters}
                 />
                 <FilterByPrice />
                 <FilterByStatus />
