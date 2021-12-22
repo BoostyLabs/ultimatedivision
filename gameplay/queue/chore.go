@@ -316,6 +316,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 		}
 	} else {
 		winResult.GameResult.Question = "you allow us to take your address?"
+		winResult.GameResult.Transaction.Value = winResult.Value.String()
 		if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 			chore.log.Error("could not write json", ChoreError.Wrap(err))
 			return
