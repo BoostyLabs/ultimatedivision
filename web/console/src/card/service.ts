@@ -17,8 +17,8 @@ export class CardService {
 
     /** Returns current cards queryParameters object. */
     public getCurrentQueryParameters() {
-        return this.cards.getCurrentQueryParameters();
-    }
+        return this.cards.queryParameters;
+    };
 
     /** Changes cards query parameters. */
     public changeCardsQueryParameters(queryParameters: CardsQueryParametersField[]) {

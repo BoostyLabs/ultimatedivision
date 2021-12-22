@@ -9,12 +9,8 @@ import { Lot, MarketPlacePage } from '@/marketplace';
 /** client for marketplace of api */
 export class MarketplaceClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0/marketplace';
-    private queryParameters: CardsQueryParameters = new CardsQueryParameters();
-
-    /** Returns current cards queryParameters object. */
-    public getCurrentQueryParameters(): CardsQueryParameters {
-        return this.queryParameters;
-    };
+    
+    public queryParameters: CardsQueryParameters = new CardsQueryParameters();
 
     /** Changes queryParameters object. */
     public changeLotsQueryParameters(queryParameters: CardsQueryParametersField[]) {
