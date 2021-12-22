@@ -48,7 +48,9 @@ export const FilterByVersion: React.FC<{
     /** Indicates if is choosed wood quality of cards. */
     const [isWoodQuality, setIsWoodQuality] = useState<boolean>(false);
 
-    console.log(!!(quality[0] && quality[0].quality?.includes('diamond')))
+    console.log('quality', quality);
+    // console.log('diamond: ', !!(quality[0] && quality[0].quality?.includes('diamond')));
+    console.log('isDiamond:', isDiamondQuality);
     /** Chooses diamond quality of cards. */
     const chooseDiamondQuality = () => {
         setIsDiamondQuality(isDiamondQuality => !isDiamondQuality);
@@ -68,7 +70,7 @@ export const FilterByVersion: React.FC<{
     const chooseWoodQuality = () => {
         setIsWoodQuality(isWoodQuality => !isWoodQuality);
     };
-    
+
     /** Changes quality of cards. */
     const changeQuality = () => {
         const qualities = [];
@@ -107,7 +109,7 @@ export const FilterByVersion: React.FC<{
     useEffect(() => {
         FILTER_BY_VERSION_INDEX !== activeFilterIndex && setIsFilterByVersionShown(false);
         setQuality(cardsQueryParametersFields);
-    }, [activeFilterIndex, cardsQueryParametersFields, quality]);
+    }, [activeFilterIndex, cardsQueryParametersFields]);
 
     return (
         <FilterByParameterWrapper
@@ -115,6 +117,18 @@ export const FilterByVersion: React.FC<{
             isVisible={isVisible}
             title="Version"
         >
+            <input
+                id="division-checkbox-wooaaaad"
+                className="filter-item__dropdown-active__checkbox111"
+                type="text"
+                onClick={chooseDiamondQuality}
+            />
+            <label
+                className="filter-item__dropdown-active__text111"
+                htmlFor="division-checkbox-wooaaaad"
+            >
+                wood
+            </label>
             <input
                 id="division-checkbox-wood"
                 className="filter-item__dropdown-active__checkbox"
