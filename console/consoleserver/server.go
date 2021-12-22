@@ -117,6 +117,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	metamaskRouterWithAuth := apiRouter.PathPrefix("/metamask").Subrouter()
 	metamaskRouterWithAuth.Use(server.withAuth)
 	metamaskRouterWithAuth.HandleFunc("/wallet", userController.CreateWalletFromMetamask).Methods(http.MethodPatch)
+	metamaskRouterWithAuth.HandleFunc("/wallet/change", userController.ChangeWalletFromMetamask).Methods(http.MethodPatch)
 
 	cardsRouter := apiRouter.PathPrefix("/cards").Subrouter()
 	cardsRouter.Use(server.withAuth)
