@@ -193,7 +193,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		}
 	}
 
-	firstPlayer := GetMatchPlayer{
+	firstPlayer := GetMatchPlayerResponse{
 		UserID:     firstClient.UserID,
 		SquadCards: squadCardsFirstClient,
 	}
@@ -208,13 +208,13 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		}
 	}
 
-	secondPlayers := GetMatchPlayer{
+	secondPlayers := GetMatchPlayerResponse{
 		UserID:     secondClient.UserID,
 		SquadCards: squadCardsSecondClient,
 	}
 
 	// TODO: think about swapping first and second for different responses.
-	matchPlayers := []GetMatchPlayer{firstPlayer, secondPlayers}
+	matchPlayers := []GetMatchPlayerResponse{firstPlayer, secondPlayers}
 
 	if err := firstClient.WriteJSON(http.StatusOK, matchPlayers); err != nil {
 		return ChoreError.Wrap(err)
@@ -315,8 +315,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	return nil
 }
 
-// GetMatchPlayer replies to request with id of user and squad cards.
-type GetMatchPlayer struct {
+// GetMatchPlayerResponse replies to request with id of user and squad cards.
+type GetMatchPlayerResponse struct {
 	UserID     uuid.UUID            `json:"userId"`
 	SquadCards []clubs.GetSquadCard `json:"squadCards"`
 }
