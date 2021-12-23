@@ -54,6 +54,16 @@ export class Service {
         await this.client.signMessage(new SignedMessage(message, signedMessage, adress));
     }
 
+    public async getNonce(abi: any) {
+        const signer = await this.provider.getSigner();
+        const address = await this.getWallet();
+        const contract = await new ethers.Contract(address.smartContractAddress.nftSale, abi);
+        const connect = await contract.connect(signer);
+
+        const nonce = await connect.functions.claimNonce(address);
+
+        return nonce;
+    }
     /** Mints UDT. */
     public async mintUDT(transaction: MatchTransaction) {
         console.log('transaction: ', transaction);
@@ -62,16 +72,13 @@ export class Service {
 
         const value = await ethers.utils.parseEther('0');
 
-        const data = transaction.value && `${transaction.udtContract.addressMethod}${buildHash(Number(transaction.value).toString(16))}${buildHash(transaction.nonce.toString(16))}${buildHash(60)}${buildHash(60)}${buildHash(transaction.signature.slice(-2))}${transaction.signature.slice(0, transaction.signature.length - 2)}`;
+        const data = transaction.value && `${transaction.udtContract.addressMethod}${buildHash(Number(transaction.value).toString(16))}${buildHash(60)}${buildHash(60)}${buildHash(transaction.signature.slice(-2))}${transaction.signature.slice(0, transaction.signature.length - 2)}`;
 
         console.log('data: ', data);
 
         const gasLimit = await signer.estimateGas({
             to: transaction.udtContract.address,
             data,
-            chainId: 3,
-            value,
-            from: address,
         });
 
         console.log('gas limit: ', gasLimit);
@@ -80,7 +87,7 @@ export class Service {
             to: transaction.udtContract.address,
             data,
             gasLimit,
-            chainId: 3,
+            chainId: 4,
         });
     };
 

@@ -17,10 +17,10 @@ export class QueueClient {
     };
 
     /** Sends action that indicates that the client allows to add address of wallet. */
-    public actionAllowAddress(WalletAddress: string) {
+    public actionAllowAddress(WalletAddress: string, nonce: number) {
         const action: string = 'allowAddress';
 
-        this.ws.send(JSON.stringify({ action, WalletAddress }));
+        this.ws.send(JSON.stringify({ action, WalletAddress, nonce }));
     };
 
     /** Sends action that indicates that the client is forbidden to add wallet address. */

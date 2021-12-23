@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import coin from '@static/img/match/money.svg';
 
 import { QueueClient } from '@/api/queue';
+import { UDT_ABI } from '@/app/ethers';
 import { RootState } from '@/app/store';
 import { ServicePlugin } from '@/app/plugins/service';
 import { actionForbidAddress, getCurrentQueueClient, queueActionAllowAddress } from '@/queue/service';
@@ -56,9 +57,12 @@ export const MatchScore: React.FC = () => {
 
                 const currentQueueClient = getCurrentQueueClient();
 
+                const nonce = await service.getNonce(UDT_ABI);
+
                 setQueueClient(currentQueueClient);
 
-                queueActionAllowAddress(wallet);
+                queueActionAllowAddress(wallet, nonce);
+
             } catch (error: any) {
                 error.code === METAMASK_RPC_ERROR_CODE
                     ? toast.error('Please open metamask manually!', {

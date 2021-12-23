@@ -13,8 +13,8 @@ export class QueueService {
     };
 
     /** Sends action that indicates that the client allows to add address of wallet. */
-    public actionAllowAddress(wallet: string): void {
-        this.queueClient.actionAllowAddress(wallet);
+    public actionAllowAddress(wallet: string, nonce: number): void {
+        this.queueClient.actionAllowAddress(wallet, nonce);
     };
 
 
@@ -49,8 +49,8 @@ export const onOpenConnectionSendAction = (action: string, squadId: string) => {
 };
 
 /** Sends action that indicates that the client allows to add address of wallet. */
-export const queueActionAllowAddress = (wallet: string) => {
-    queueService.actionAllowAddress(wallet);
+export const queueActionAllowAddress = (wallet: string, nonce: number) => {
+    queueService.actionAllowAddress(wallet, nonce);
 };
 
 /** Sends action that indicates that the client allows to add address of wallet. */
