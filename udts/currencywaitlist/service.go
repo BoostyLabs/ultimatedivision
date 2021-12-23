@@ -64,7 +64,6 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, value big.
 				Signature:   item.Signature,
 				UDTContract: service.config.UDTContract,
 				Value:       item.Value.String(),
-				Nonce:       item.Nonce,
 			}
 			break
 		}
