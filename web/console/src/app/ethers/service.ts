@@ -56,12 +56,11 @@ export class Service {
 
     /** Mints UDT. */
     public async mintUDT(transaction: MatchTransaction) {
+        console.log('transaction: ', transaction.value);
         const signer = await this.provider.getSigner();
         const address = await this.getWallet();
 
-        let value = transaction.value && ethers.utils.parseEther(transaction.value);
-
-        const data = value && `${transaction.udtContract.addressMethod}${buildHash(value.toString(16))}${buildHash(transaction.nonce)}${buildHash(60)}${buildHash(60)}${buildHash(transaction.signature.slice(-2))}${transaction.signature.slice(0, transaction.signature.length - 2)}`;
+        const data = transaction.value && `${transaction.udtContract.addressMethod}${buildHash(Number(transaction.value).toString(16))}${buildHash(transaction.nonce.toString(16))}${buildHash(60)}${buildHash(60)}${buildHash(transaction.signature.slice(-2))}${transaction.signature.slice(0, transaction.signature.length - 2)}`;
 
         const gasLimit = await signer.estimateGas({
             to: transaction.udtContract.address,

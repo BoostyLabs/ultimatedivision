@@ -79,7 +79,7 @@ export const MatchScore: React.FC = () => {
         queueClient.ws.onmessage = ({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
             console.log(messageEvent);
-            service.mintUDT(transaction);
+            service.mintUDT(messageEvent.message.transaction);
         };
     }
 
