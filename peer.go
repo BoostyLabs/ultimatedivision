@@ -541,13 +541,12 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
-	// TODO: uncomment when the Ethereum node is running
-	// group.Go(func() error {
-	// 	return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
-	// })
-	// group.Go(func() error {
-	// 	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
-	// })
+	group.Go(func() error {
+		return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
+	})
+	group.Go(func() error {
+		return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
+	})
 
 	return group.Wait()
 }
