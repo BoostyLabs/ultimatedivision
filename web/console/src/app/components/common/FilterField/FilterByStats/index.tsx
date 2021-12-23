@@ -1,46 +1,60 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 
-import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 import { FilterFieldStatsArea, FilterFieldStatsAreaProps } from '@/app/components/common/FilterField/FilterFieldStatsArea';
+import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
+import { CardsQueryParameters, CardsQueryParametersField } from '@/card';
 
-import { CardsQueryParametersField } from '@/card';
+import { FilterContext } from '../index';
 
 // TODO: rework functionality.
-export const FilterByStats: React.FC<{submitSearch: (queryParameters: CardsQueryParametersField[]) => void}> = ({ submitSearch }) => {
+export const FilterByStats: React.FC<{
+    submitSearch: (queryParameters: CardsQueryParametersField[]) => Promise<void>;
+    cardsQueryParameters: CardsQueryParameters;
+}> = ({ submitSearch, cardsQueryParameters }) => {
+    const { activeFilterIndex, setActiveFilterIndex }: {
+        activeFilterIndex: number;
+        setActiveFilterIndex: React.Dispatch<React.SetStateAction<number>>;
+    } = useContext(FilterContext);
+    /** Exposes default index which does not exist in array. */
+    const DEFAULT_FILTER_ITEM_INDEX = -1;
+    const FILTER_BY_STATS_INDEX = 2;
     /** Indicates if FilterByStats component shown. */
     const [isFilterByStatsShown, setIsFilterByStatsShown] = useState(false);
 
+    const isVisible = FILTER_BY_STATS_INDEX === activeFilterIndex && isFilterByStatsShown;
+
     /** Shows and closes FilterByStats component. */
     const showFilterByStats = () => {
+        setActiveFilterIndex(FILTER_BY_STATS_INDEX);
         setIsFilterByStatsShown(isFilterByStatsShown => !isFilterByStatsShown);
     };
 
     /** Describes defence skills of each card. */
-    const [defenceMin, setDefenceMin] = useState('');
-    const [defenceMax, setDefenceMax] = useState('');
+    const [defenceMin, setDefenceMin] = useState(cardsQueryParameters.defence_gte);
+    const [defenceMax, setDefenceMax] = useState(cardsQueryParameters.defence_lte);
 
     /** Describes goalkeeping skills of each card. */
-    const [goalkeepingMin, setGoalkeepingMin] = useState('');
-    const [goalkeepingMax, setGoalkeepingMax] = useState('');
+    const [goalkeepingMin, setGoalkeepingMin] = useState(cardsQueryParameters.goalkeeping_gte);
+    const [goalkeepingMax, setGoalkeepingMax] = useState(cardsQueryParameters.goalkeeping_lte);
 
     /** Describes offense skills of each card. */
-    const [offenseMin, setOffenseMin] = useState('');
-    const [offenseMax, setOffenseMax] = useState('');
+    const [offenseMin, setOffenseMin] = useState(cardsQueryParameters.offense_gte);
+    const [offenseMax, setOffenseMax] = useState(cardsQueryParameters.offense_lte);
 
     /** Describes physique skills of each card. */
-    const [physiqueMin, setPhysiqueMin] = useState('');
-    const [physiqueMax, setPhysiqueMax] = useState('');
+    const [physiqueMin, setPhysiqueMin] = useState(cardsQueryParameters.physique_gte);
+    const [physiqueMax, setPhysiqueMax] = useState(cardsQueryParameters.goalkeeping_lte);
 
     /** Describes tactics skills of each card. */
-    const [tacticsMin, setTacticsMin] = useState('');
-    const [tacticsMax, setTacticsMax] = useState('');
+    const [tacticsMin, setTacticsMin] = useState(cardsQueryParameters.tactics_gte);
+    const [tacticsMax, setTacticsMax] = useState(cardsQueryParameters.tactics_lte);
 
     /** Describes technique skills of each card. */
-    const [techniqueMin, setTechniqueMin] = useState('');
-    const [techniqueMax, setTechniqueMax] = useState('');
+    const [techniqueMin, setTechniqueMin] = useState(cardsQueryParameters.technique_gte);
+    const [techniqueMax, setTechniqueMax] = useState(cardsQueryParameters.technique_lte);
 
     /** Changes min defence value. */
     const changeDefenceMin = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,7 +178,8 @@ export const FilterByStats: React.FC<{submitSearch: (queryParameters: CardsQuery
             { 'technique_gte': techniqueMin },
             { 'technique_lte': techniqueMax },
         ]);
-        showFilterByStats();
+        setIsFilterByStatsShown(false);
+        setActiveFilterIndex(DEFAULT_FILTER_ITEM_INDEX);
     };
 
     /** Clears all stats values. */
@@ -183,10 +198,14 @@ export const FilterByStats: React.FC<{submitSearch: (queryParameters: CardsQuery
         setTechniqueMax('');
     };
 
+    useEffect(() => {
+        FILTER_BY_STATS_INDEX !== activeFilterIndex && setIsFilterByStatsShown(false);
+    }, [activeFilterIndex]);
+
     return (
         <FilterByParameterWrapper
             showComponent={showFilterByStats}
-            isComponentShown={isFilterByStatsShown}
+            isVisible={isVisible}
             title="Stats"
         >
             <div className="filter-item__dropdown-active__stats__wrapper">

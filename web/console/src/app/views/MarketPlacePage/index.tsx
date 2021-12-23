@@ -10,20 +10,27 @@ import { FilterByStatus } from '@components/common/FilterField/FilterByStatus';
 import { FilterByVersion } from '@components/common/FilterField/FilterByVersion';
 import { Paginator } from '@components/common/Paginator';
 import { MarketPlaceCardsGroup } from '@components/MarketPlace/MarketPlaceCardsGroup';
-import Navbar from '@components/common/Navbar';
 
 import { RootState } from '@/app/store';
-import { listOfLots, createLotsQueryParameters } from '@/app/store/actions/marketplace';
+import {
+    listOfLots,
+    createLotsQueryParameters,
+    getCurrentLotsQueryParameters,
+} from '@/app/store/actions/marketplace';
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
 
 const MarketPlace: React.FC = () => {
     const dispatch = useDispatch();
-    const { lots, page } = useSelector((state: RootState) => state.marketplaceReducer.marketplacePage);
+    const { lots, page } = useSelector(
+        (state: RootState) => state.marketplaceReducer.marketplacePage
+    );
 
     /** Exposes default page number. */
     const DEFAULT_PAGE_INDEX: number = 1;
+
+    const lotsQueryParameters = getCurrentLotsQueryParameters();
 
     /** Submits search by lots query parameters. */
     const submitSearch = async(
@@ -34,24 +41,27 @@ const MarketPlace: React.FC = () => {
     };
 
     return (
-        <>
-            {window.location.pathname === '/' && <Navbar />}
-            <section className="marketplace">
-                <h1 className="marketplace__title">MARKETPLACE</h1>
-                <FilterField>
-                    <FilterByVersion submitSearch={submitSearch} />
-                    <FilterByStats submitSearch={submitSearch} />
-                    <FilterByPrice />
-                    <FilterByStatus />
-                </FilterField>
-                <MarketPlaceCardsGroup lots={lots} />
-                <Paginator
-                    getCardsOnPage={listOfLots}
-                    itemsCount={page.totalCount}
-                    selectedPage={page.currentPage}
+        <section className="marketplace">
+            <h1 className="marketplace__title">MARKETPLACE</h1>
+            <FilterField>
+                <FilterByVersion
+                    cardsQueryParameters={lotsQueryParameters}
+                    submitSearch={submitSearch}
                 />
-            </section>
-        </>
+                <FilterByStats
+                    cardsQueryParameters={lotsQueryParameters}
+                    submitSearch={submitSearch}
+                />
+                <FilterByPrice />
+                <FilterByStatus />
+            </FilterField>
+            <MarketPlaceCardsGroup lots={lots} />
+            <Paginator
+                getCardsOnPage={listOfLots}
+                itemsCount={page.totalCount}
+                selectedPage={page.currentPage}
+            />
+        </section>
     );
 };
 
