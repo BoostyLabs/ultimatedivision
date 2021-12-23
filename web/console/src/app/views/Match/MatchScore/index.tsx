@@ -12,14 +12,12 @@ import { QueueClient } from '@/api/queue';
 import { UDT_ABI } from '@/app/ethers';
 import { RootState } from '@/app/store';
 import { ServicePlugin } from '@/app/plugins/service';
-import { actionForbidAddress, getCurrentQueueClient, queueActionAllowAddress } from '@/queue/service';
+import { getCurrentQueueClient, queueActionAllowAddress } from '@/queue/service';
 
 import './index.scss';
 
 export const MatchScore: React.FC = () => {
     const [queueClient, setQueueClient] = useState<QueueClient | null>(null);
-
-    const [wallet, setWallet] = useState<string | null>(null);
 
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const service = ServicePlugin.create();
@@ -34,10 +32,10 @@ export const MatchScore: React.FC = () => {
     const SECOND_TEAM_INDEX: number = 1;
 
     /** Variable describes that it needs alllow to add address or forbid add adress. */
-    const CONFIRM_ADD_WALLET: string = 'you allow us to take your address?';
+    const CONFIRM_ADD_WALLET: string = 'do you allow us to take your address?';
 
-    /** Returns metamask wallet address for earning reward */
-    const addWallet = async () => {
+    /** Adds metamask wallet address for earning reward. */
+    const addWallet = async() => {
         /** Code which indicates that 'eth_requestAccounts' already processing */
         const METAMASK_RPC_ERROR_CODE = -32002;
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
@@ -47,22 +45,15 @@ export const MatchScore: React.FC = () => {
                     method: 'eth_requestAccounts',
                 });
 
-                toast.success('Please, add your wallet to get coins!', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'light',
-                });
-
                 const wallet = await service.getWallet();
-                console.log('wallet: ', wallet);
 
                 const currentQueueClient = getCurrentQueueClient();
 
-                const nonce = await service.getNonce(UDT_ABI);
+                const nonce = await service.getNonce(transaction.udtContract.address, UDT_ABI);
 
                 setQueueClient(currentQueueClient);
 
                 queueActionAllowAddress(wallet, nonce);
-
             } catch (error: any) {
                 error.code === METAMASK_RPC_ERROR_CODE
                     ? toast.error('Please open metamask manually!', {
@@ -82,7 +73,6 @@ export const MatchScore: React.FC = () => {
     if (queueClient) {
         queueClient.ws.onmessage = ({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
-            console.log(messageEvent);
             service.mintUDT(messageEvent.message.transaction);
         };
     }

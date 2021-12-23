@@ -114,7 +114,6 @@ const MatchFinder: React.FC = () => {
         queueClient.ws.onmessage = ({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
 
-            console.log('messageEvent: ', messageEvent);
             switch (messageEvent.message) {
             case ERROR_MESSAGE:
                 toast.error('error message', {
