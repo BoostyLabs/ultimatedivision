@@ -196,6 +196,7 @@ type MatchResult struct {
 type GameResult struct {
 	MatchResults []MatchResult                `json:"matchResults"`
 	Transaction  currencywaitlist.Transaction `json:"transaction"`
+	Question     string                       `json:"question"`
 }
 
 // SquadCardWithPosition contains which card and where it located in the field.
