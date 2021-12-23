@@ -348,7 +348,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 			}
 		}
 
-		if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value); err != nil {
+		if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value, request.Nonce); err != nil {
 			chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
 			return
 		}
