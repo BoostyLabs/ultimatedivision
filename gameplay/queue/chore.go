@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
@@ -187,9 +188,14 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 	if len(squadCardsFirstClient) != clubs.SquadSize {
-		if err := firstClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
+		if err := firstClient.WriteJSON(http.StatusBadRequest, "squad is not full"); err != nil {
 			return ChoreError.Wrap(err)
 		}
+	}
+
+	firstPlayer := GetMatchPlayerResponse{
+		UserID:     firstClient.UserID,
+		SquadCards: squadCardsFirstClient,
 	}
 
 	squadCardsSecondClient, err := chore.service.clubs.ListSquadCards(ctx, secondClient.SquadID)
@@ -197,9 +203,24 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 	if len(squadCardsSecondClient) != clubs.SquadSize {
-		if err := secondClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
+		if err := secondClient.WriteJSON(http.StatusBadRequest, "squad is not full"); err != nil {
 			return ChoreError.Wrap(err)
 		}
+	}
+
+	secondPlayers := GetMatchPlayerResponse{
+		UserID:     secondClient.UserID,
+		SquadCards: squadCardsSecondClient,
+	}
+
+	// TODO: think about swapping first and second for different responses.
+	matchPlayers := []GetMatchPlayerResponse{firstPlayer, secondPlayers}
+
+	if err := firstClient.WriteJSON(http.StatusOK, matchPlayers); err != nil {
+		return ChoreError.Wrap(err)
+	}
+	if err := secondClient.WriteJSON(http.StatusOK, matchPlayers); err != nil {
+		return ChoreError.Wrap(err)
 	}
 
 	firstClientSquad, err := chore.clubs.GetSquad(ctx, firstClient.SquadID)
@@ -292,6 +313,12 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	}()
 
 	return nil
+}
+
+// GetMatchPlayerResponse replies to request with id of user and squad cards.
+type GetMatchPlayerResponse struct {
+	UserID     uuid.UUID            `json:"userId"`
+	SquadCards []clubs.GetSquadCard `json:"squadCards"`
 }
 
 // Close closes the chore chore for re-check the expiration time of the token.
