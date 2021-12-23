@@ -224,6 +224,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
 			return ChoreError.Wrap(err)
 		}
+		return ChoreError.Wrap(err)
 	}
 
 	matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, season.ID)
@@ -234,6 +235,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
 			return ChoreError.Wrap(err)
 		}
+		return ChoreError.Wrap(err)
 	}
 
 	gameResult, err := chore.matches.GetGameResult(ctx, matchesID)
@@ -241,6 +243,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not get result of match"); err != nil {
 			return ChoreError.Wrap(err)
 		}
+		return ChoreError.Wrap(err)
 	}
 
 	var firstClientResult matches.GameResult
