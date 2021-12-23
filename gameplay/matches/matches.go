@@ -42,68 +42,91 @@ type DB interface {
 	GetMatchResult(ctx context.Context, matchID uuid.UUID) ([]MatchResult, error)
 }
 
+// PositionInTheField defines position(coordinate) of player/ball in the field.
+type PositionInTheField struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+
 // Config defines configuration for matches.
 type Config struct {
-	Periods struct {
-		First struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"first"`
-		Second struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"second"`
-		Third struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"third"`
-		Fourth struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"fourth"`
-		Fifth struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"fifth"`
-		Sixth struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"sixth"`
-		Seventh struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"seventh"`
-		Eighth struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"eighth"`
-		Ninth struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"ninth"`
-		Tenth struct {
-			Begin int `json:"begin"`
-			End   int `json:"end"`
-		} `json:"tenth"`
-	} `json:"periods"`
+	SizeOfFieldByOX int `json:"sizeOfFieldByOX"`
+	SizeOfFieldByOY int `json:"sizeOfFieldByOY"`
 
-	GoalProbability int `json:"goalProbability"`
-
-	SquadPowerAccuracy int `json:"squadPowerAccuracy"`
-
-	GoalProbabilityByPosition struct {
-		ST  int `json:"st"`
-		RW  int `json:"rw"`
-		LW  int `json:"lw"`
-		CAM int `json:"cam"`
-		CM  int `json:"cm"`
-		RM  int `json:"rm"`
-		LM  int `json:"lm"`
-		CDM int `json:"cdm"`
-		CD  int `json:"cd"`
-		LB  int `json:"lb"`
-		RB  int `json:"rb"`
-	} `json:"goalProbabilityByPosition"`
+	Positions struct {
+		GK struct {
+			PositionInTheField
+		} `json:"gk"`
+		LB struct {
+			PositionInTheField
+		} `json:"lb"`
+		LCB struct {
+			PositionInTheField
+		} `json:"lcb"`
+		CCB struct {
+			PositionInTheField
+		} `json:"ccb"`
+		RCB struct {
+			PositionInTheField
+		} `json:"rcb"`
+		RB struct {
+			PositionInTheField
+		} `json:"rb"`
+		LCDM struct {
+			PositionInTheField
+		} `json:"lcdm"`
+		CCDM struct {
+			PositionInTheField
+		} `json:"ccdm"`
+		RCDM struct {
+			PositionInTheField
+		} `json:"rcdm"`
+		LCM struct {
+			PositionInTheField
+		} `json:"lcm"`
+		CCM struct {
+			PositionInTheField
+		} `json:"ccm"`
+		RCM struct {
+			PositionInTheField
+		} `json:"rcm"`
+		LM struct {
+			PositionInTheField
+		} `json:"lm"`
+		RM struct {
+			PositionInTheField
+		} `json:"rm"`
+		LCAM struct {
+			PositionInTheField
+		} `json:"lcam"`
+		CCAM struct {
+			PositionInTheField
+		} `json:"ccam"`
+		RCAM struct {
+			PositionInTheField
+		} `json:"rcam"`
+		LWB struct {
+			PositionInTheField
+		} `json:"lwb"`
+		RWB struct {
+			PositionInTheField
+		} `json:"rwb"`
+		LW struct {
+			PositionInTheField
+		} `json:"lw"`
+		RW struct {
+			PositionInTheField
+		} `json:"rw"`
+		LST struct {
+			PositionInTheField
+		} `json:"lst"`
+		CST struct {
+			PositionInTheField
+		} `json:"cst"`
+		RST struct {
+			PositionInTheField
+		} `json:"rst"`
+	} `json:"positions"`
 
 	pagination.Cursor `json:"pagination"`
 
@@ -111,6 +134,34 @@ type Config struct {
 	NumberOfPointsForDraw   int `json:"numberOfPointsForDraw"`
 	NumberOfPointsForLosing int `json:"numberOfPointsForLosing"`
 }
+
+// Actions defines list of possible player action in the field.
+type Actions string
+
+const (
+	// ActionsMove defines move action by player.
+	ActionsMove Actions = "move"
+	// ActionsPass defines pass by player to another player.
+	ActionsPass Actions = "pass"
+	// ActionsCrossPass defines passing the ball by throwing it into the air in the direction of a player on his team.
+	ActionsCrossPass Actions = "crossPass"
+	// ActionsPassThrough defines pass in free zone on the move often between players of the other team.
+	ActionsPassThrough Actions = "passTrough"
+	// ActionsDirectShot defines direct shot.
+	ActionsDirectShot Actions = "directShot"
+	// ActionsCurlShot defines curl shot.
+	ActionsCurlShot Actions = "curlShot"
+	// ActionsTakeawayShot defines powerful shot from the box.
+	ActionsTakeawayShot Actions = "takeawayShot"
+	// ActionsTackle defines tackling the ball from an opponent.
+	ActionsTackle Actions = "tackle"
+	// ActionsSlidingTackle defines tackle by sliding on the field.
+	ActionsSlidingTackle Actions = "slidingTackle"
+	// ActionsDribbling defines action when player move with some feints ot tricks.
+	ActionsDribbling Actions = "dribbling"
+	// ActionsFeints defines action when player show feints.
+	ActionsFeints Actions = "dribbling"
+)
 
 // Match describes match entity.
 type Match struct {
@@ -145,6 +196,12 @@ type MatchResult struct {
 type GameResult struct {
 	MatchResults []MatchResult                `json:"matchResults"`
 	Transaction  currencywaitlist.Transaction `json:"transaction"`
+}
+
+// SquadCardWithPosition contains which card and where it located in the field.
+type SquadCardWithPosition struct {
+	Card     cards.Card         `json:"card"`
+	Position PositionInTheField `json:"position"`
 }
 
 // Swap swaps match results.
