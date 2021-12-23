@@ -5,6 +5,8 @@ package waitlist
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,7 +15,9 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/cards/nfts"
+	"ultimatedivision/internal/remotefilestorage/storj"
 	"ultimatedivision/pkg/cryptoutils"
+	"ultimatedivision/pkg/imageprocessing"
 	"ultimatedivision/users"
 )
 
@@ -65,20 +69,44 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 		return transaction, nil
 	}
 
-	avatar, err := service.avatars.Get(ctx, createNFT.CardID)
+	image, err := service.avatars.GetImage(ctx, createNFT.CardID)
 	if err != nil {
 		return transaction, ErrWaitlist.Wrap(err)
 	}
 
-	// TODO: save avatar in file storage
+	client, err := storj.NewClient(service.config.Storj)
+	if err != nil {
+		return transaction, ErrWaitlist.Wrap(err)
+	}
 
-	service.nfts.Generate(ctx, card, avatar.OriginalURL)
+	// TODO: add transaction and mb lock db
+	lastTokenID, err := service.GetLastTokenID(ctx)
+	if err != nil {
+		if !ErrNoItem.Has(err) {
+			return transaction, ErrWaitlist.Wrap(err)
+		}
+	}
 
-	// TODO: save metadata in file storage
-	// TODO: add transaction
+	nextTokenID := lastTokenID + 1
+
+	if err = client.Upload(ctx, service.config.Bucket, fmt.Sprintf("%d.%s", nextTokenID, imageprocessing.TypeFilePNG), image); err != nil {
+		return transaction, ErrWaitlist.Wrap(err)
+	}
+
+	nft := service.nfts.Generate(ctx, card, fmt.Sprintf(service.config.URLToAvatar, nextTokenID))
+	fileMetadata, err := json.MarshalIndent(nft, "", " ")
+	if err != nil {
+		return transaction, ErrWaitlist.Wrap(err)
+	}
+
+	if err = client.Upload(ctx, service.config.Bucket, fmt.Sprintf("%d.%s", nextTokenID, imageprocessing.TypeFileJSON), fileMetadata); err != nil {
+		return transaction, ErrWaitlist.Wrap(err)
+	}
 
 	if err = service.users.UpdateWalletAddress(ctx, createNFT.WalletAddress, createNFT.UserID); err != nil {
-		return transaction, ErrWaitlist.Wrap(err)
+		if !users.ErrWalletAddressAlreadyInUse.Has(err) {
+			return transaction, ErrWaitlist.Wrap(err)
+		}
 	}
 
 	if err = service.waitList.Create(ctx, createNFT.CardID, createNFT.WalletAddress); err != nil {
@@ -113,7 +141,7 @@ func (service *Service) GetByCardID(ctx context.Context, cardID uuid.UUID) (Item
 
 // GetLastTokenID returns id of latest nft for wait list.
 func (service *Service) GetLastTokenID(ctx context.Context) (int64, error) {
-	lastID, err := service.waitList.GetLast(ctx)
+	lastID, err := service.waitList.GetLastTokenID(ctx)
 	return lastID, ErrWaitlist.Wrap(err)
 }
 
