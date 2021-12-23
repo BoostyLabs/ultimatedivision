@@ -77,9 +77,7 @@ export class Service {
 
         const value = await ethers.utils.parseEther('0');
         /* eslint-disable */
-        const data = transaction.value && `${transaction.udtContract.addressMethod}${buildHash(Number(transaction.value).toString(16))}
-        ${buildHash(40)}${buildHash(60)}${buildHash(transaction.signature.slice(-2))}
-        ${transaction.signature.slice(0, transaction.signature.length - 2)}`;
+        const data = transaction.value && `${transaction.udtContract.addressMethod}${buildHash(Number(transaction.value).toString(16))}${buildHash(40)}${buildHash(60)}${buildHash(transaction.signature.slice(-2))}${transaction.signature.slice(0, transaction.signature.length - 2)}`;
 
         const gasLimit = await signer.estimateGas({
             to: transaction.udtContract.address,
