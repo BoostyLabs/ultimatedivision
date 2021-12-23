@@ -5,6 +5,7 @@ package queue
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 	"net/http"
 
@@ -216,6 +217,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 
+	fmt.Println("before GetSeasonByDivisionID")
 	season, err := chore.seasons.GetSeasonByDivisionID(ctx, firstClientClub.DivisionID)
 	if err != nil {
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
@@ -226,6 +228,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		}
 		return ChoreError.Wrap(err)
 	}
+
+	fmt.Println("after GetSeasonByDivisionID")
 
 	matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, season.ID)
 	if err != nil {
@@ -238,6 +242,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 
+	fmt.Println("before gameResult")
+
 	gameResult, err := chore.matches.GetGameResult(ctx, matchesID)
 	if err != nil {
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not get result of match"); err != nil {
@@ -245,6 +251,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		}
 		return ChoreError.Wrap(err)
 	}
+
+	fmt.Println("after gameResult")
 
 	var firstClientResult matches.GameResult
 	var secondClientResult matches.GameResult
@@ -272,17 +280,24 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			Value:      value,
 		}
 
+		fmt.Println("after is win 1")
+
 		go chore.FinishWithWinResult(ctx, winResult)
 		go chore.Finish(secondClient, secondClientResult)
+		fmt.Println("after send win 1")
+
 	case firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals:
 		winResult := WinResult{
 			Client:     secondClient,
 			GameResult: secondClientResult,
 			Value:      value,
 		}
+		fmt.Println("after is win 2")
 
 		go chore.FinishWithWinResult(ctx, winResult)
 		go chore.Finish(firstClient, firstClientResult)
+		fmt.Println("after send win 2")
+
 	default:
 		var value = new(big.Int)
 		value.SetString(chore.config.DrawValue, 10)
