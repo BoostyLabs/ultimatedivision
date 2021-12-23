@@ -14,7 +14,7 @@ import (
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/cryptoutils"
-	sync2 "ultimatedivision/pkg/sync"
+	"ultimatedivision/pkg/sync"
 	"ultimatedivision/seasons"
 	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
@@ -32,7 +32,7 @@ type Chore struct {
 	config           Config
 	log              logger.Logger
 	service          *Service
-	Loop             *sync2.Cycle
+	Loop             *sync.Cycle
 	matches          *matches.Service
 	seasons          *seasons.Service
 	clubs            *clubs.Service
@@ -46,7 +46,7 @@ func NewChore(config Config, log logger.Logger, service *Service, matches *match
 		config:           config,
 		log:              log,
 		service:          service,
-		Loop:             sync2.NewCycle(config.PlaceRenewalInterval),
+		Loop:             sync.NewCycle(config.PlaceRenewalInterval),
 		matches:          matches,
 		seasons:          seasons,
 		clubs:            clubs,
