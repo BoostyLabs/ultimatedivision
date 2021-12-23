@@ -5,7 +5,6 @@ package queue
 
 import (
 	"context"
-	"fmt"
 	"math/big"
 	"net/http"
 
@@ -217,11 +216,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 
-	fmt.Println("before GetSeasonByDivisionID")
 	season, err := chore.seasons.GetSeasonByDivisionID(ctx, firstClientClub.DivisionID)
 	if err != nil {
-		fmt.Println("err season - ", err)
-
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
 			return ChoreError.Wrap(err)
 		}
@@ -231,12 +227,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 
-	fmt.Println("after GetSeasonByDivisionID")
-
 	matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, season.ID)
 	if err != nil {
-		fmt.Println("err matchesID - ", err)
-
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
 			return ChoreError.Wrap(err)
 		}
@@ -246,19 +238,14 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 
-	fmt.Println("before gameResult")
-
 	gameResult, err := chore.matches.GetGameResult(ctx, matchesID)
 	if err != nil {
-		fmt.Println("err gameResult - ", err)
 
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not get result of match"); err != nil {
 			return ChoreError.Wrap(err)
 		}
 		return ChoreError.Wrap(err)
 	}
-
-	fmt.Println("after gameResult")
 
 	var firstClientResult matches.GameResult
 	var secondClientResult matches.GameResult
@@ -286,11 +273,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			Value:      value,
 		}
 
-		fmt.Println("after is win 1")
-
 		go chore.FinishWithWinResult(ctx, winResult)
 		go chore.Finish(secondClient, secondClientResult)
-		fmt.Println("after send win 1")
 
 	case firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals:
 		winResult := WinResult{
@@ -298,11 +282,9 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			GameResult: secondClientResult,
 			Value:      value,
 		}
-		fmt.Println("after is win 2")
 
 		go chore.FinishWithWinResult(ctx, winResult)
 		go chore.Finish(firstClient, firstClientResult)
-		fmt.Println("after send win 2")
 
 	default:
 		var value = new(big.Int)
@@ -368,8 +350,6 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 				chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
 				return
 			}
-			fmt.Println("after create transaction - ", winResult.GameResult.Transaction)
-
 		}
 
 		if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value, request.Nonce); err != nil {
@@ -383,8 +363,6 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 // Finish sends result and finishes the connection.
 func (chore *Chore) Finish(client Client, gameResult matches.GameResult) {
 	var err error
-
-	fmt.Println("last finish client - ", client, gameResult)
 
 	if err = client.WriteJSON(http.StatusOK, gameResult); err != nil {
 		chore.log.Error("could not write json", ChoreError.Wrap(err))
