@@ -12,21 +12,18 @@ import { FilterByStatus } from '@components/common/FilterField/FilterByStatus';
 import { FilterByVersion } from '@components/common/FilterField/FilterByVersion';
 
 import { RootState } from '@/app/store';
-import { fieldCards, createFieldCardsQueryParameters } from '@/app/store/actions/cards';
+import { fieldCards, getCurrentFieldCardsQueryParameters, createFieldCardsQueryParameters } from '@/app/store/actions/cards';
 import { addCard, cardSelectionVisibility } from '@/app/store/actions/clubs';
 import { CardEditIdentificators } from '@/api/club';
 import { Card, CardsPage, CardsQueryParametersField } from '@/card';
 import { Squad, SquadCard } from '@/club';
 
 import './index.scss';
-import { useEffect } from 'react';
-import { clearCardsQueryParameters } from '../../../store/actions/cards';
 
 export const FieldCardSelection = () => {
     const dispatch = useDispatch();
     const squad: Squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
     const squadCards: SquadCard[] = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
-    const isCardsVisible = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
 
     const { cards, page }: CardsPage = useSelector((state: RootState) => state.cardsReducer.cardsPage);
     const { currentFieldCardsPage } = useSelector((state: RootState) => state.cardsReducer);
@@ -42,6 +39,8 @@ export const FieldCardSelection = () => {
 
         return cards.filter((card: Card) => !squadCardsIds.includes(card.id));
     };
+
+    const fieldCardsQueryParameters = getCurrentFieldCardsQueryParameters();
 
     /** Add card to field, and hide card selection component */
     function addCardOnField(cardId: string) {
@@ -68,8 +67,14 @@ export const FieldCardSelection = () => {
     return (
         <div id="cardList" className="card-selection">
             <FilterField >
-                <FilterByVersion submitSearch={submitSearch} />
-                <FilterByStats submitSearch={submitSearch} />
+                <FilterByVersion
+                    submitSearch={submitSearch}
+                    cardsQueryParameters={fieldCardsQueryParameters}
+                />
+                <FilterByStats
+                    cardsQueryParameters={fieldCardsQueryParameters}
+                    submitSearch={submitSearch}
+                />
                 <FilterByPrice />
                 <FilterByStatus />
             </FilterField>

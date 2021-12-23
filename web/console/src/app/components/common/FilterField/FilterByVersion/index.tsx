@@ -1,21 +1,38 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
 
-import { CardsQueryParametersField } from '@/card';
+import { CardsQueryParametersField, CardsQueryParameters } from '@/card';
+import { FilterContext } from '../index';
 
 // TODO: rework functionality.
-export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: CardsQueryParametersField[]) => void }> = ({ submitSearch }) => {
+export const FilterByVersion: React.FC<{
+    submitSearch: (queryParameters: CardsQueryParametersField[]) => void;
+    cardsQueryParameters: CardsQueryParameters;
+}> = ({ submitSearch, cardsQueryParameters }) => {
+    const { activeFilterIndex, setActiveFilterIndex }: {
+        activeFilterIndex: number;
+        setActiveFilterIndex: React.Dispatch<React.SetStateAction<number>>;
+    } = useContext(FilterContext);
+    /** Exposes default index which does not exist in array. */
+    const DEFAULT_FILTER_ITEM_INDEX = -1;
+    const FILTER_BY_VERSION_INDEX = 1;
     /** Indicates if FilterByVersion component shown. */
     const [isFilterByVersionShown, setIsFilterByVersionShown] = useState(false);
 
+    const isVisible = FILTER_BY_VERSION_INDEX === activeFilterIndex && isFilterByVersionShown;
+
     /** Shows and closes FilterByVersion component. */
     const showFilterByVersion = () => {
+        setActiveFilterIndex(FILTER_BY_VERSION_INDEX);
         setIsFilterByVersionShown(isFilterByVersionShown => !isFilterByVersionShown);
     };
+
+    /** Describes version parameters. */
+    const [version, setVersion] = useState<string[]>(cardsQueryParameters.quality && cardsQueryParameters.quality);
 
     /** Indicates if is choosed diamond quality of cards. */
     const [isDiamondQuality, setIsDiamondQuality] = useState<boolean>(false);
@@ -70,21 +87,38 @@ export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: CardsQu
     };
 
     /** Submits query parameters by quality. */
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
         await submitSearch([{ quality: changeQuality() }]);
-        showFilterByVersion();
+        setIsFilterByVersionShown(false);
+        setActiveFilterIndex(DEFAULT_FILTER_ITEM_INDEX);
     };
+
+    /** Checks current versions. */
+    const checkCurrentVersion = () => {
+        // TODO: rework functionality.
+        setIsDiamondQuality(Boolean(version && version.includes('diamond')));
+        setIsGoldQuality(Boolean(version && version.includes('gold')));
+        setIsSilverQuality(Boolean(version && version.includes('silver')));
+        setIsWoodQuality(Boolean(version && version.includes('wood')));
+    };
+
+    useEffect(() => {
+        FILTER_BY_VERSION_INDEX !== activeFilterIndex && setIsFilterByVersionShown(false);
+        setVersion(cardsQueryParameters.quality);
+        checkCurrentVersion();
+    }, [activeFilterIndex, cardsQueryParameters]);
 
     return (
         <FilterByParameterWrapper
             showComponent={showFilterByVersion}
-            isComponentShown={isFilterByVersionShown}
+            isVisible={isVisible}
             title="Version"
         >
             <input
                 id="division-checkbox-wood"
                 className="filter-item__dropdown-active__checkbox"
                 type="checkbox"
+                checked={isWoodQuality}
                 onClick={chooseWoodQuality}
             />
             <label
@@ -97,7 +131,8 @@ export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: CardsQu
                 id="checkbox-silver"
                 className="filter-item__dropdown-active__checkbox"
                 type="checkbox"
-                onClick={chooseSilverQuality}
+                checked={isSilverQuality}
+                onChange={chooseSilverQuality}
             />
             <label
                 className="filter-item__dropdown-active__text"
@@ -109,7 +144,8 @@ export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: CardsQu
                 id="checkbox-gold"
                 className="filter-item__dropdown-active__checkbox"
                 type="checkbox"
-                onClick={chooseGoldQuality}
+                checked={isGoldQuality}
+                onChange={chooseGoldQuality}
             />
             <label
                 className="filter-item__dropdown-active__text"
@@ -121,7 +157,8 @@ export const FilterByVersion: React.FC<{ submitSearch: (queryParameters: CardsQu
                 id="checkbox-diamond"
                 className="filter-item__dropdown-active__checkbox"
                 type="checkbox"
-                onClick={chooseDiamondQuality}
+                checked={isDiamondQuality}
+                onChange={chooseDiamondQuality}
             />
             <label
                 className="filter-item__dropdown-active__text"
