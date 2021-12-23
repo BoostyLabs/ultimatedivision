@@ -85,13 +85,13 @@ type Response struct {
 
 // Config defines configuration for queue.
 type Config struct {
-	PlaceRenewalInterval time.Duration        `json:"placeRenewalInterval"`
-	WinValue             string               `json:"winValue"`
-	DrawValue            string               `json:"drawValue"`
-	UDTContract          cryptoutils.Contract `json:"udtContract"`
-	MatchActionRenewalInterval time.Duration `json:"matchActionRenewalInterval"`
-	RoundDuration              time.Duration `json:"roundDuration"`
-	NumberOfRounds             int           `json:"numberOfRounds"`
+	PlaceRenewalInterval       time.Duration        `json:"placeRenewalInterval"`
+	WinValue                   string               `json:"winValue"`
+	DrawValue                  string               `json:"drawValue"`
+	UDTContract                cryptoutils.Contract `json:"udtContract"`
+	MatchActionRenewalInterval time.Duration        `json:"matchActionRenewalInterval"`
+	RoundDuration              time.Duration        `json:"roundDuration"`
+	NumberOfRounds             int                  `json:"numberOfRounds"`
 }
 
 // ReadJSON reads request sent by client.
