@@ -220,6 +220,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	fmt.Println("before GetSeasonByDivisionID")
 	season, err := chore.seasons.GetSeasonByDivisionID(ctx, firstClientClub.DivisionID)
 	if err != nil {
+		fmt.Println("err season - ", err)
+
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
 			return ChoreError.Wrap(err)
 		}
@@ -233,6 +235,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, season.ID)
 	if err != nil {
+		fmt.Println("err matchesID - ", err)
+
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
 			return ChoreError.Wrap(err)
 		}
@@ -246,6 +250,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	gameResult, err := chore.matches.GetGameResult(ctx, matchesID)
 	if err != nil {
+		fmt.Println("err gameResult - ", err)
+
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not get result of match"); err != nil {
 			return ChoreError.Wrap(err)
 		}
@@ -328,6 +334,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 		return
 	}
 
+	fmt.Println("FinishWithWinResult user - ", user)
 	if user.Wallet != "" {
 		if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value); err != nil {
 			chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
@@ -336,6 +343,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	} else {
 		winResult.GameResult.Question = "you allow us to take your address?"
 		winResult.GameResult.Transaction.Value = cryptoutils.WeiToEthereum(winResult.Value).String()
+		fmt.Println("before send game result - ", winResult.GameResult)
 		if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 			chore.log.Error("could not write json", ChoreError.Wrap(err))
 			return
@@ -346,6 +354,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 			chore.log.Error("could not read json", ChoreError.Wrap(err))
 			return
 		}
+		fmt.Println("after read wallet - ", request)
 
 		if request.Action != ActionForbidAddress && request.Action != ActionAllowAddress {
 			if err := winResult.Client.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
@@ -373,6 +382,8 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 				chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
+			fmt.Println("after create transaction - ", winResult.GameResult.Transaction)
+
 		}
 
 		chore.Finish(winResult.Client, winResult.GameResult)
@@ -382,6 +393,8 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 // Finish sends result and finishes the connection.
 func (chore *Chore) Finish(client Client, gameResult matches.GameResult) {
 	var err error
+
+	fmt.Println("last finish client - ", client, gameResult)
 
 	if err = client.WriteJSON(http.StatusOK, gameResult); err != nil {
 		chore.log.Error("could not write json", ChoreError.Wrap(err))
