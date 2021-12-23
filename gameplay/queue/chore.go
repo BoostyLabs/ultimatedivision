@@ -240,7 +240,6 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	gameResult, err := chore.matches.GetGameResult(ctx, matchesID)
 	if err != nil {
-
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not get result of match"); err != nil {
 			return ChoreError.Wrap(err)
 		}
@@ -275,7 +274,6 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 		go chore.FinishWithWinResult(ctx, winResult)
 		go chore.Finish(secondClient, secondClientResult)
-
 	case firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals:
 		winResult := WinResult{
 			Client:     secondClient,
@@ -285,7 +283,6 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 		go chore.FinishWithWinResult(ctx, winResult)
 		go chore.Finish(firstClient, firstClientResult)
-
 	default:
 		var value = new(big.Int)
 		value.SetString(chore.config.DrawValue, 10)
