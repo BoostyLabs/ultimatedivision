@@ -334,7 +334,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 		return
 	}
 
-	winResult.GameResult.Question = "you allow us to take your address?"
+	winResult.GameResult.Question = "do you allow us to take your address?"
 	winResult.GameResult.Transaction.Value = cryptoutils.WeiToEthereum(winResult.Value).String()
 	winResult.GameResult.Transaction.UDTContract.Address = chore.config.UDTContract.Address
 	if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
