@@ -56,7 +56,7 @@ type Request struct {
 	Action        Action              `json:"action"`
 	SquadID       uuid.UUID           `json:"squadId"`
 	WalletAddress cryptoutils.Address `json:"walletAddress"`
-	Nonce         int64               `json:"nonce"`
+	Nonce         int                 `json:"nonce"`
 }
 
 // Action defines list of possible clients action.
