@@ -6,12 +6,10 @@
  * Exposes queue-related functionality.
  */
 export class QueueClient {
-    /** Describes current host protocol. */
-    private protocol: string = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}`;
     /** The WebSocket provides the API for creating and managing
     * a websocket connection to a server and for sending and
     * receiving data on the connection. */
-    public ws: WebSocket = new WebSocket(`${this.protocol}://${window.location.host}/api/v0/queue`);
+    public ws: WebSocket = new WebSocket(`${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/api/v0/queue`);
 
     /** Sends action to confirm and reject match, finish search */
     public sendAction(action: string, squadId: string) {
