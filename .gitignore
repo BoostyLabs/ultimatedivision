@@ -22,3 +22,4 @@ config_nft_signer.json
 config_currency_signer.json
 config.json.APP.DEV
 config.json.APP.PROD
+assets/avatars

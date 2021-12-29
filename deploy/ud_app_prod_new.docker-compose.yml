@@ -1,0 +1,77 @@
+version: "3"
+
+services:
+  app:
+    container_name: "UDAppProd"
+    image: docker.hicrystal.com/ud_app_prod:latest
+
+    ports:
+      - "8287:8287" # Forward the exposed port 5000 on the container to port 8088 on the host machine (8088:5000).
+      - "8288:8288"
+    restart: unless-stopped
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivisionProd/app:/app/data
+      - /home/valerii/storage/docker/ultimatedivisionAppProd/assets:/assets
+    depends_on:
+      - ultimatedivisiondb_prod # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+    environment:
+      - DB_HOST=ultimatedivisiondb_prod
+      - DB_DATABASE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
+
+  nft_signer:
+    container_name: "UDNFTSignerProd"
+    image: docker.hicrystal.com/ud_nft_signer_prod:latest
+
+    restart: unless-stopped
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivisionProd/signer:/app/data
+    depends_on:
+      - ultimatedivisiondb_prod # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+    environment:
+      - DB_HOST=ultimatedivisiondb_prod
+      - DB_DATABASE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
+
+  currency_signer:
+    container_name: "UDCurrencySignerProd"
+    image: docker.hicrystal.com/ud_currency_signer_prod:latest
+
+    restart: unless-stopped
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivisionProd/currency_signer:/app/data
+    depends_on:
+      - ultimatedivisiondb_prod # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+    environment:
+      - DB_HOST=ultimatedivisiondb_prod
+      - DB_DATABASE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
+
+  ultimatedivisiondb_prod:
+    restart: always
+    image: postgres:latest
+    container_name: ultimatedivisiondb_prod
+    ports:
+      - "5535:5432"
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivisionProd/db:/var/lib/postgresql/data
+    networks:
+      - fullstack
+    environment:
+      - POSTGRES_DB=ultimatedivisiondb_prod
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+
+# Networks to be created to facilitate communication between containers
+networks:
+  fullstack:
+    driver: bridge

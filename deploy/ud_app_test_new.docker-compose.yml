@@ -2,16 +2,16 @@ version: "3"
 
 services:
   app:
-    container_name: "ultimatedivisionApp"
-    image: docker.hicrystal.com/ultimatedivision_app:0.0.3
+    container_name: "UDAppTest"
+    image: docker.hicrystal.com/ud_app_test:latest
 
     ports:
-      - "8187:8187" # Forward the exposed port 5000 on the container to port 8088 on the host machine
+      - "8187:8187" # Forward the exposed port 5000 on the container to port 8088 on the host machine (8088:5000).
       - "8188:8188"
     restart: unless-stopped
     volumes:
       - /home/valerii/storage/docker/dockerlogs/ultimatedivision/app:/app/data
-      - /home/valerii/storage/docker/ultimatedivisionApp/assets:/app/assets
+      - /home/valerii/storage/docker/ultimatedivisionApp/assets:/assets
     depends_on:
       - ultimatedivisiondb_test # This service depends on postgres. Start that first.
     networks:
@@ -22,13 +22,13 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=123456
 
-  signer:
-    container_name: "ultimatedivisionSigner"
-    image: docker.hicrystal.com/ultimatedivision_signer:0.0.1
+  nft_signer:
+    container_name: "UDNFTSignerTest"
+    image: docker.hicrystal.com/ud_nft_signer_test:latest
 
     restart: unless-stopped
     volumes:
-      - /home/valerii/storage/docker/dockerlogs/ultimatedivision/signer:/signer/data
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivision/signer:/app/data
     depends_on:
       - ultimatedivisiondb_test # This service depends on postgres. Start that first.
     networks:
@@ -40,8 +40,8 @@ services:
       - DB_PASSWORD=123456
 
   currency_signer:
-    container_name: "ultimatedisionCurrencySigner"
-    image: docker.hicrystal.com/ultimatedivision_currency_signer:0.0.1
+    container_name: "UDCurrencySignerTest"
+    image: docker.hicrystal.com/ud_currency_signer_test:latest
 
     restart: unless-stopped
     volumes:
