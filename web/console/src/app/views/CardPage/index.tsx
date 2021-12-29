@@ -12,7 +12,6 @@ import { openUserCard } from '@/app/store/actions/cards';
 import { FootballerCardIllustrations } from '@/app/components/common/Card/CardIllustrations';
 import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
 import { FootballerCardStatsArea } from '@/app/components/common/Card/CardStatsArea';
-import { FootballerCardInformation } from '@/app/components/common/Card/CardInformation';
 import { ServicePlugin } from '@/app/plugins/service';
 
 import './index.scss';
@@ -28,8 +27,8 @@ const Card: React.FC = () => {
             await dispatch(openUserCard(id));
         } catch (error: any) {
             /** TODO: it will be reworked with notification system */
-        };
-    };
+        }
+    }
     useEffect(() => {
         openCard();
     }, []);
@@ -66,24 +65,50 @@ const Card: React.FC = () => {
 
     return (
         card &&
-        <div className="card">
-            <div className="card__border">
-                <div className="card__wrapper">
-                    <div className="card__name-wrapper">
-                        <h1 className="card__name">
-                            {card.playerName}
-                        </h1>
-                    </div>
-                    <FootballerCardIllustrations card={card} />
-                    <div className="card__stats-area">
-                        <FootballerCardPrice card={card} />
-                        <FootballerCardStatsArea card={card} />
-                        <FootballerCardInformation card={card} />
+            <div className="card">
+                <div className="card__border">
+                    <div className="card__wrapper">
+                        <FootballerCardIllustrations card={card} />
+                        <div className="card__stats-area">
+                            <div className="card__name-wrapper">
+                                <span className="card__name">
+                                    {card.playerName}
+                                </span>
+                            </div>
+                            <div className="divider"></div>
+                            <div className="card__mint-info">
+                                <div className="card__mint-info__nft">
+                                    <span className="card__mint-info__nft-title">
+                                        NFT:
+                                    </span>
+                                    <span className="card__mint-info__nft-value">
+                                        not minted
+                                    </span>
+                                    <div className="card__mint-info__nft__btn">
+                                        <button
+                                            className="card__mint"
+                                            onClick={mint}
+                                        >
+                                            Mint now
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="card__mint-info__club">
+                                    <span className="card__mint-info__club-title">
+                                        Club:
+                                    </span>
+                                    <span className="card__mint-info__club-name">
+                                        FC228
+                                    </span>
+                                </div>
+                            </div>
+                            <FootballerCardPrice card={card} />
+                            <FootballerCardStatsArea card={card} />
+                        </div>
                     </div>
                 </div>
-                <button className="card__mint" onClick={mint}>Mint</button>
             </div>
-        </div>
+
     );
 };
 
