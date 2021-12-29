@@ -21,7 +21,6 @@ RUN mkdir -p ${APP_DATA_DIR}
 COPY --from=builder /app/config.json .
 COPY --from=builder /app/main .
 COPY --from=builder /app/web ./web
-#COPY --from=builder /app/assets ./assets
 
 EXPOSE 8187 8188
 #EXPOSE 8287 8288

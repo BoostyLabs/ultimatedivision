@@ -48,19 +48,19 @@ push_app_test: ## Push Application docker image for Testing.
 	docker push docker.hicrystal.com/ud_app_test:$(VERSION)
 
 build_prod: ## Build all necessary docker images for Production.
-	make build_app_prod build_nft_signer_prod build_currency_signer_prod VERSION=$(VER)
+	make build_app_prod build_nft_signer_prod build_currency_signer_prod
 
 push_prod: ## Push all necessary docker images for Production.
-	make push_app_prod push_nft_signer_prod push_currency_signer_prod VERSION=$(VER)
+	make push_app_prod push_nft_signer_prod push_currency_signer_prod
 
 build_test: ## Build all necessary docker images for Testing.
-	make build_app_test build_nft_signer_test build_currency_signer_test VERSION=$(VER)
+	make build_app_test build_nft_signer_test build_currency_signer_test
 
 push_test: ## Push all necessary docker images for Testing.
-	make push_app_test push_nft_signer_test push_currency_signer_test VERSION=$(VER)
+	make push_app_test push_nft_signer_test push_currency_signer_test
 
 docker_prod: ## Build and push all necessary docker images for Production.
-	make build_prod push_prod VER=$(V)
+	make build_prod push_prod
 
 docker_test: ## Build and push all necessary docker images for Testing.
-	make build_test push_test VER=$(V)
+	make build_test push_test
