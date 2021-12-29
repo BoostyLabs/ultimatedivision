@@ -88,7 +88,7 @@ func cmdSetup(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
-	configFile, err := os.Create("config_currency_signer.json")
+	configFile, err := os.Create("./configs/config_currency_signer.json")
 	if err != nil {
 		log.Error("could not create config file", Error.Wrap(err))
 		return Error.Wrap(err)
@@ -153,7 +153,7 @@ func cmdDestroy(cmd *cobra.Command, args []string) (err error) {
 
 // readConfig reads config from default config dir.
 func readConfig() (config Config, err error) {
-	configBytes, err := ioutil.ReadFile("config_currency_signer.json")
+	configBytes, err := ioutil.ReadFile("./configs/config_currency_signer.json")
 	if err != nil {
 		return Config{}, err
 	}

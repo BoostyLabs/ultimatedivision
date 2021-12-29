@@ -11,6 +11,7 @@ services:
     restart: unless-stopped
     volumes:
       - /home/valerii/storage/docker/dockerlogs/ultimatedivisionProd/app:/app/data
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivisionProd/app/configs:/configs
       - /home/valerii/storage/docker/ultimatedivisionAppProd/assets:/assets
     depends_on:
       - ultimatedivisiondb_prod # This service depends on postgres. Start that first.
