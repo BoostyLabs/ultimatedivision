@@ -106,6 +106,23 @@ func (client *Client) ReadJSON() (Request, error) {
 	return request, nil
 }
 
+// ReadActionJSON reads action request sent by client.
+func (client *Client) ReadActionJSON() (matches.ActionRequest, error) {
+	err := client.Connection.SetReadDeadline(time.Now().Add(1*time.Second))
+	if err != nil {
+		return matches.ActionRequest{}, ErrRead.Wrap(ErrQueue.Wrap(err))
+	}
+
+	var request matches.ActionRequest
+	if err := client.Connection.ReadJSON(&request); err != nil {
+		if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
+			return request, ErrWrite.Wrap(ErrQueue.Wrap(err))
+		}
+		return request, ErrRead.Wrap(ErrQueue.Wrap(err))
+	}
+	return request, nil
+}
+
 // WriteJSON writes response to client.
 func (client *Client) WriteJSON(status int, message interface{}) error {
 	if err := client.Connection.WriteJSON(Response{Status: status, Message: message}); err != nil {

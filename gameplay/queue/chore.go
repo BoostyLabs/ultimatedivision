@@ -225,18 +225,19 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 
+	// reflect position for second client.
+	secondClientCardsWithPositions = chore.matches.ReflectPositions(ctx, secondClientCardsWithPositions)
+
 	secondPlayers := GetMatchPlayerResponse{
 		UserID:     secondClient.UserID,
 		SquadCards: secondClientCardsWithPositions,
 	}
 
-	// TODO: think about swapping first and second for different responses.
+	ballPosition := chore.matches.GenerateBallPosition()
+
+	// TODO: add to response possible actions with every card of users..
 	matchResponse.UserSquads = []GetMatchPlayerResponse{firstPlayer, secondPlayers}
-	matchResponse.BallPosition = matches.PositionInTheField{
-		// TODO: change coordinates of ball.
-		X: 0,
-		Y: 1,
-	}
+	matchResponse.BallPosition = ballPosition
 
 	// TODO: decide which squad will kick off.
 
@@ -259,10 +260,10 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	season, err := chore.seasons.GetSeasonByDivisionID(ctx, firstClientClub.DivisionID)
 	if err != nil {
-		if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
+		if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not get season id"); err != nil {
 			return ChoreError.Wrap(err)
 		}
-		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
+		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not get season id"); err != nil {
 			return ChoreError.Wrap(err)
 		}
 		return ChoreError.Wrap(err)
@@ -281,14 +282,46 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	for i := 1; i < chore.config.NumberOfRounds; i++ {
 		// TODO: change the compositions in the slice when half ends.
-		ticker := time.NewTicker(time.Millisecond * chore.config.MatchActionRenewalInterval)
+		ticker := time.NewTicker(time.Second * 1)
+		done := make(chan bool)
+		go func() {
+			time.Sleep(20 * time.Second)
+			done <- true
+		}()
 
-		select {
-		case <-time.After(time.Second * chore.config.RoundDuration):
-			// TODO: read match action here and check len of response.
-			continue
-		case <-ticker.C:
-			// TODO: read match action here.
+		var firstPlayerActions []matches.ActionRequest
+		var secondPlayerActions []matches.ActionRequest
+		Loop : for {
+			select {
+			case <-ticker.C:
+				firstClientAction, err := firstClient.ReadActionJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
+				}
+
+				secondClientAction, err := secondClient.ReadActionJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
+				}
+
+				firstPlayerActions = append(firstPlayerActions, firstClientAction)
+				secondPlayerActions = append(secondPlayerActions, secondClientAction)
+			case <-done:
+				firstClientAction, err := firstClient.ReadActionJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
+				}
+
+				secondClientAction, err := secondClient.ReadActionJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
+				}
+
+				firstPlayerActions = append(firstPlayerActions, firstClientAction)
+				secondPlayerActions = append(secondPlayerActions, secondClientAction)
+				break Loop
+			}
+			// TODO: handle actions.
 		}
 	}
 

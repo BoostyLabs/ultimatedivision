@@ -48,6 +48,11 @@ type PositionInTheField struct {
 	Y int `json:"y"`
 }
 
+// Compare compares two positions.
+func (position PositionInTheField) Compare(position1 PositionInTheField) bool {
+	return position.X == position1.X && position.Y == position1.Y
+}
+
 // Config defines configuration for matches.
 type Config struct {
 	SizeOfFieldByOX int `json:"sizeOfFieldByOX"`
@@ -135,32 +140,34 @@ type Config struct {
 	NumberOfPointsForLosing int `json:"numberOfPointsForLosing"`
 }
 
-// Actions defines list of possible player action in the field.
-type Actions string
+// Action defines list of possible player action in the field.
+type Action string
 
 const (
-	// ActionsMove defines move action by player.
-	ActionsMove Actions = "move"
-	// ActionsPass defines pass by player to another player.
-	ActionsPass Actions = "pass"
-	// ActionsCrossPass defines passing the ball by throwing it into the air in the direction of a player on his team.
-	ActionsCrossPass Actions = "crossPass"
-	// ActionsPassThrough defines pass in free zone on the move often between players of the other team.
-	ActionsPassThrough Actions = "passTrough"
-	// ActionsDirectShot defines direct shot.
-	ActionsDirectShot Actions = "directShot"
-	// ActionsCurlShot defines curl shot.
-	ActionsCurlShot Actions = "curlShot"
-	// ActionsTakeawayShot defines powerful shot from the box.
-	ActionsTakeawayShot Actions = "takeawayShot"
-	// ActionsTackle defines tackling the ball from an opponent.
-	ActionsTackle Actions = "tackle"
-	// ActionsSlidingTackle defines tackle by sliding on the field.
-	ActionsSlidingTackle Actions = "slidingTackle"
-	// ActionsDribbling defines action when player move with some feints ot tricks.
-	ActionsDribbling Actions = "dribbling"
-	// ActionsFeints defines action when player show feints.
-	ActionsFeints Actions = "dribbling"
+	// ActionMove defines move action by player.
+	ActionMove Action = "move"
+	// ActionMoveWithBall defines move action by player with ball.
+	ActionMoveWithBall Action = "moveWithBall"
+	// ActionPass defines pass by player to another player.
+	ActionPass Action = "pass"
+	// ActionCrossPass defines passing the ball by throwing it into the air in the direction of a player on his team.
+	ActionCrossPass Action = "crossPass"
+	// ActionPassThrough defines pass in free zone on the move often between players of the other team.
+	ActionPassThrough Action = "passTrough"
+	// ActionDirectShot defines direct shot.
+	ActionDirectShot Action = "directShot"
+	// ActionCurlShot defines curl shot.
+	ActionCurlShot Action = "curlShot"
+	// ActionTakeawayShot defines powerful shot from the box.
+	ActionTakeawayShot Action = "takeawayShot"
+	// ActionTackle defines tackling the ball from an opponent.
+	ActionTackle Action = "tackle"
+	// ActionSlidingTackle defines tackle by sliding on the field.
+	ActionSlidingTackle Action = "slidingTackle"
+	// ActionDribbling defines action when player move with some feints ot tricks.
+	ActionDribbling Action = "dribbling"
+	// ActionFeints defines action when player show feints.
+	ActionFeints Action = "feints"
 )
 
 // Match describes match entity.
@@ -233,4 +240,47 @@ type Statistic struct {
 	Draws          int        `json:"draws"`
 	GoalDifference int        `json:"goalDifference"`
 	Points         int        `json:"points"`
+}
+
+// ActionRequest defines request for every action.
+type ActionRequest struct {
+	PlayerID          uuid.UUID   `json:"playerId"`
+	Action            Action      `json:"action"`
+	Distance          int         `json:"distance"`
+	ReceiverPlayerID  uuid.UUID   `json:"receiverPlayerId"`
+	OpponentPlayerIDs []uuid.UUID `json:"opponentPlayerIds"`
+}
+
+// IsValid checks is action request valid.
+func (a ActionRequest) IsValid() bool {
+	switch {
+	case a.Action == ActionMove || a.Action == ActionMoveWithBall:
+		if a.ReceiverPlayerID != uuid.Nil {
+			return false
+		}
+	default:
+		if a.ReceiverPlayerID == uuid.Nil {
+			return false
+		}
+	}
+
+	if a.PlayerID == uuid.Nil {
+		return false
+	}
+
+	if a.Action == ActionMove || a.Action == ActionMoveWithBall || a.Action == ActionPass ||
+		a.Action == ActionCrossPass || a.Action == ActionPassThrough || a.Action == ActionDirectShot ||
+		a.Action == ActionCurlShot || a.Action == ActionTakeawayShot || a.Action == ActionTackle ||
+		a.Action == ActionSlidingTackle || a.Action == ActionDribbling {
+		return true
+	}
+
+	return false
+}
+
+// CardPossibleAction defines in which position card could be placed and which action it could do there.
+type CardPossibleAction struct {
+	CardID    uuid.UUID          `json:"cardId"`
+	Action    Action             `json:"action"`
+	Positions PositionInTheField `json:"positions"`
 }

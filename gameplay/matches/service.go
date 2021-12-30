@@ -5,7 +5,7 @@ package matches
 
 import (
 	"context"
-
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
@@ -113,13 +113,123 @@ func (service *Service) ConvertPositionsForGameplay(ctx context.Context, squadCa
 
 		cardWithPosition.Card, err = service.cards.Get(ctx, card.Card.ID)
 		if err != nil {
+			fmt.Println("could not convert positions", cardWithPosition, "\n",  err)
 			return cardsWithPositions, ErrMatches.Wrap(err)
 		}
 
 		cardWithPosition.Position = PositionToCoordinates[card.Position]
+
+		cardsWithPositions = append(cardsWithPositions, cardWithPosition)
 	}
 
 	return cardsWithPositions, nil
+}
+
+// ReflectPositions reflects card positions to another part of field.
+func (service *Service) ReflectPositions(ctx context.Context, cardsWithPositions []SquadCardWithPosition) []SquadCardWithPosition {
+	var newCardsWithPositions []SquadCardWithPosition
+
+	for _, cardWithPositions := range cardsWithPositions {
+		var newCardWithPositions SquadCardWithPosition
+
+		newCardWithPositions.Card = cardWithPositions.Card
+		newCardWithPositions.Position.X += service.config.SizeOfFieldByOX - cardWithPositions.Position.X
+		fmt.Println(service.config.SizeOfFieldByOX - cardWithPositions.Position.X)
+
+		newCardsWithPositions = append(newCardsWithPositions, newCardWithPositions)
+	}
+
+	return newCardsWithPositions
+}
+
+// GenerateBallPosition returns middle field position.
+func (service *Service) GenerateBallPosition() PositionInTheField {
+	return PositionInTheField{
+		X : service.config.SizeOfFieldByOX / 2,
+		Y : service.config.SizeOfFieldByOY / 2,
+	}
+}
+
+// GenerateActionsForCards generate possible actions for each card from squad.
+func (service *Service) GenerateActionsForCards(ctx context.Context, cardsWithPositions []SquadCardWithPosition, ballPosition PositionInTheField) {
+	var possibleActions []CardPossibleAction
+
+	for _, card := range cardsWithPositions {
+		if card.Position.Compare(ballPosition) {
+			// actions with ball.
+		}
+		// move action.
+		var minCoordinateOX int
+		var minCoordinateOY int
+		var maxCoordinateOX int
+		var maxCoordinateOY int
+
+		var numOfCells int
+
+		switch {
+		// TODO: put to config.
+		case card.Card.RunningSpeed > 0 && card.Card.RunningSpeed < 49 :
+			numOfCells = 2
+		case card.Card.RunningSpeed > 50 && card.Card.RunningSpeed < 69 :
+			numOfCells = 3
+		case card.Card.RunningSpeed > 70 && card.Card.RunningSpeed < 89 :
+			numOfCells = 4
+		case card.Card.RunningSpeed > 90 && card.Card.RunningSpeed < 100 :
+			numOfCells = 5
+		}
+
+		minCoordinateOX = card.Position.X - numOfCells
+		minCoordinateOY = card.Position.Y - numOfCells
+		maxCoordinateOX = card.Position.X + numOfCells
+		maxCoordinateOY = card.Position.X + numOfCells
+
+		for i := minCoordinateOX; i <= maxCoordinateOX; i++ {
+			for j := minCoordinateOY; j <= maxCoordinateOY; j++ {
+				if i == service.config.SizeOfFieldByOX || i == service.config.SizeOfFieldByOY || i < 0 || j < 0 {
+					continue
+				}
+
+				possibleActions = append(possibleActions, CardPossibleAction{
+					CardID: card.Card.ID,
+					Action: ActionMove,
+					Positions: 	PositionInTheField {
+						X : i,
+						Y : j,
+					},
+				})
+			}
+		}
+	}
+}
+
+// GenerateActionResult generates result of action.
+func (service *Service) GenerateActionResult(ctx context.Context, cards []SquadCardWithPosition, action Action) {
+	switch action {
+	case ActionMove:
+		// formula
+	case ActionMoveWithBall:
+		// formula
+	case ActionPass:
+		// formula
+	case ActionCrossPass:
+		// formula
+	case ActionPassThrough:
+		// formula
+	case ActionDirectShot:
+		// formula
+	case ActionCurlShot:
+		// formula
+	case ActionTakeawayShot:
+		// formula
+	case ActionTackle:
+		// formula
+	case ActionSlidingTackle:
+		// formula
+	case ActionDribbling:
+		// formula
+	case ActionFeints:
+		// formula
+	}
 }
 
 // Get returns match by id.
