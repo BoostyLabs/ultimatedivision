@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import MetaMaskOnboarding from '@metamask/onboarding';
@@ -17,6 +17,8 @@ import { ServicePlugin } from '@/app/plugins/service';
 import './index.scss';
 
 const Card: React.FC = () => {
+    const [isMinted, setIsMinted] = useState<boolean>(false);
+
     const dispatch = useDispatch();
     const { card } = useSelector((state: RootState) => state.cardsReducer);
 
@@ -82,8 +84,9 @@ const Card: React.FC = () => {
                                         NFT:
                                     </span>
                                     <span className="card__mint-info__nft-value">
-                                        not minted
+                                        {isMinted ? 'minted to Polygon' : 'not minted'}
                                     </span>
+                                    {!isMinted &&
                                     <div className="card__mint-info__nft__btn">
                                         <button
                                             className="card__mint"
@@ -91,7 +94,7 @@ const Card: React.FC = () => {
                                         >
                                             Mint now
                                         </button>
-                                    </div>
+                                    </div>}
                                 </div>
                                 <div className="card__mint-info__club">
                                     <span className="card__mint-info__club-title">
@@ -102,7 +105,7 @@ const Card: React.FC = () => {
                                     </span>
                                 </div>
                             </div>
-                            <FootballerCardPrice card={card} />
+                            <FootballerCardPrice card={card} isMinted={isMinted} />
                             <FootballerCardStatsArea card={card} />
                         </div>
                     </div>

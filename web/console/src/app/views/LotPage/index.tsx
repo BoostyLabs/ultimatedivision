@@ -43,7 +43,7 @@ const Lot: React.FC = () => {
                     </div>
                     <FootballerCardIllustrations card={card} />
                     <div className="lot__stats-area">
-                        <FootballerCardPrice card={card} />
+                        <FootballerCardPrice card={card} isMinted={false} />
                         <FootballerCardStatsArea card={card} />
                     </div>
                 </div>
