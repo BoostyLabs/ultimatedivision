@@ -203,7 +203,7 @@ const MatchFinder: React.FC = () => {
                 const updatedClient = getCurrentQueueClient();
                 setQueueClient(updatedClient);
             }, CANCEL_GAME_DELAY);
-        };
+        }
 
         return () => clearTimeout(autoCancelConfirmGame);
     }, [isMatchFound]);
