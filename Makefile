@@ -36,13 +36,13 @@ push_currency_signer_test: ## Push Currency Signer docker image for Testing.
 	docker push docker.hicrystal.com/ud_currency_signer_test:$(VERSION) && docker push docker.hicrystal.com/ud_currency_signer_test:latest
 
 build_app_prod: ## Build Application docker image for Production.
-	make build_dist && docker build -f ./deploy/AppProd.Dockerfile -t docker.hicrystal.com/ud_app_prod:$(VERSION) . && make build_dist && docker build -f ./deploy/AppProd.Dockerfile -t docker.hicrystal.com/ud_app_prod:latest .
+	make build_dist && docker build -f ./deploy/AppProd.Dockerfile -t docker.hicrystal.com/ud_app_prod:$(VERSION) . && docker build -f ./deploy/AppProd.Dockerfile -t docker.hicrystal.com/ud_app_prod:latest .
 
 push_app_prod: ## Push Application docker image for Production.
 	docker push docker.hicrystal.com/ud_app_prod:$(VERSION) && docker push docker.hicrystal.com/ud_app_prod:latest
 
 build_app_test: ## Build Application docker image for Testing.
-	make build_dist && docker build -f ./deploy/AppTest.Dockerfile -t docker.hicrystal.com/ud_app_test:$(VERSION) . && make build_dist && docker build -f ./deploy/AppTest.Dockerfile -t docker.hicrystal.com/ud_app_test:latest .
+	make build_dist && docker build -f ./deploy/AppTest.Dockerfile -t docker.hicrystal.com/ud_app_test:$(VERSION) . && docker build -f ./deploy/AppTest.Dockerfile -t docker.hicrystal.com/ud_app_test:latest .
 
 push_app_test: ## Push Application docker image for Testing.
 	docker push docker.hicrystal.com/ud_app_test:$(VERSION) && docker push docker.hicrystal.com/ud_app_test:latest
