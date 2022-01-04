@@ -9,7 +9,7 @@ import { FootballerCard } from '@components/Field/FootballerCard';
 
 import { CardEditIdentificators } from '@/api/club';
 import { RootState } from '@/app/store';
-import { Card } from '@/card';
+import { Card, DeleteCardVisability } from '@/card';
 import { SquadCard } from '@/club';
 import {
     cardSelectionVisibility,
@@ -31,7 +31,8 @@ export const FieldPlayingArea: React.FC = () => {
     const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
     const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
 
-    const [activeCardId, setActiveCardId] = useState<null | string>(null);
+    const [deleteCardVisability, setDeleteCardVisability] =
+        useState<DeleteCardVisability>(new DeleteCardVisability('', false));
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     /** This var created to not allow mouseUpEvent without Dragging before it */
@@ -89,15 +90,33 @@ export const FieldPlayingArea: React.FC = () => {
         e.stopPropagation();
         if (isDragging && dragStartIndex !== null) {
             const cards = club.squadCards;
-            isCardDefined(cards[index].card.id) ?
-                dispatch(swapCards(
-                    new CardEditIdentificators(squad.clubId, squad.id, cards[dragStartIndex].card.id, index),
-                    new CardEditIdentificators(squad.clubId, squad.id, cards[index].card.id, dragStartIndex)
-                ))
-                :
-                dispatch(changeCardPosition(
-                    new CardEditIdentificators(squad.clubId, squad.id, cards[dragStartIndex].card.id, index),
-                ));
+            isCardDefined(cards[index].card.id)
+                ? dispatch(
+                    swapCards(
+                        new CardEditIdentificators(
+                            squad.clubId,
+                            squad.id,
+                            cards[dragStartIndex].card.id,
+                            index
+                        ),
+                        new CardEditIdentificators(
+                            squad.clubId,
+                            squad.id,
+                            cards[index].card.id,
+                            dragStartIndex
+                        )
+                    )
+                )
+                : dispatch(
+                    changeCardPosition(
+                        new CardEditIdentificators(
+                            squad.clubId,
+                            squad.id,
+                            cards[dragStartIndex].card.id,
+                            index
+                        )
+                    )
+                );
         }
 
         dispatch(setDragStart());
@@ -113,8 +132,15 @@ export const FieldPlayingArea: React.FC = () => {
     /** deleting card when release beyond playing area */
     function removeFromArea() {
         if (isDragging && dragStartIndex) {
-            dispatch(deleteCard(
-                new CardEditIdentificators(squad.clubId, squad.id, club.squadCards[dragStartIndex].card.id, dragStartIndex))
+            dispatch(
+                deleteCard(
+                    new CardEditIdentificators(
+                        squad.clubId,
+                        squad.id,
+                        club.squadCards[dragStartIndex].card.id,
+                        dragStartIndex
+                    )
+                )
             );
         }
         dispatch(setDragStart());
@@ -171,13 +197,18 @@ export const FieldPlayingArea: React.FC = () => {
                                             card={fieldCard.card}
                                             index={index}
                                             place={'PlayingArea'}
-                                            setActiveCardId={setActiveCardId}
-                                            activeCardId={activeCardId}
+                                            setDeleteCardVisability={
+                                                setDeleteCardVisability
+                                            }
+                                            deleteCardVisability={
+                                                deleteCardVisability
+                                            }
                                         />
                                     }
                                 </div>
                             );
-                        })}
+                        }
+                    )}
                 </div>
                 <div className={`playing-area__${formation}-shadows`}>
                     {club.squadCards.map(

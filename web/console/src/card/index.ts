@@ -334,3 +334,8 @@ export class CardsPage {
         }
     ) { }
 }
+
+/** Visibility of the card delete button. */
+export class DeleteCardVisability {
+    public constructor(public id: string, public isVisible: boolean) {}
+}
