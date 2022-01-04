@@ -31,6 +31,7 @@ export const FieldPlayingArea: React.FC = () => {
     const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
     const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
 
+    const [activeCardId, setActiveCardId] = useState<null | string>(null);
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     /** This var created to not allow mouseUpEvent without Dragging before it */
@@ -141,17 +142,24 @@ export const FieldPlayingArea: React.FC = () => {
                             return (
                                 <div
                                     style={
-                                        isDragging ? {
-                                            left: mousePosition.x - playingAreaPosition.x,
-                                            top: mousePosition.y - playingAreaPosition.y,
-                                            transform: 'translate(-55%, -50%)',
-                                            zIndex: 5,
-                                            pointerEvents: 'none',
-                                        }
+                                        isDragging
+                                            ? {
+                                                left:
+                                                      mousePosition.x -
+                                                      playingAreaPosition.x,
+                                                top:
+                                                      mousePosition.y -
+                                                      playingAreaPosition.y,
+                                                transform:
+                                                      'translate(-55%, -50%)',
+                                                zIndex: 5,
+                                                pointerEvents: 'none',
+                                            }
                                             : undefined
                                     }
                                     key={index}
-                                    className={`playing-area__${formation}__${isDefined ? 'card' : 'empty-card'
+                                    className={`playing-area__${formation}__${
+                                        isDefined ? 'card' : 'empty-card'
                                     }`}
                                     onClick={() => handleClick(index)}
                                     onDragStart={(e) => dragStart(e, index)}
@@ -163,6 +171,8 @@ export const FieldPlayingArea: React.FC = () => {
                                             card={fieldCard.card}
                                             index={index}
                                             place={'PlayingArea'}
+                                            setActiveCardId={setActiveCardId}
+                                            activeCardId={activeCardId}
                                         />
                                     }
                                 </div>

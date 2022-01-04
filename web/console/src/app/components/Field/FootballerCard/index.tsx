@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { PlayerCard } from '@components/common/PlayerCard';
@@ -13,22 +13,35 @@ import { RootState } from '@/app/store';
 
 import './index.scss';
 
-export const FootballerCard: React.FC<{ card: Card; index?: number; place?: string }> = ({ card }) => {
+export const FootballerCard: React.FC<{
+    card: Card;
+    index?: number;
+    place?: string;
+    setActiveCardId: (index: null | string) => void;
+    activeCardId: null | string;
+}> = ({ card, setActiveCardId, activeCardId }) => {
     const dispatch = useDispatch();
-    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
-    const [isVisibile, setIsVisibile] = useState(false);
-    const visibilityBlock = isVisibile ? '-active' : '-inactive';
+    const squad = useSelector(
+        (state: RootState) => state.clubsReducer.activeClub.squad
+    );
 
-    /** show/hide delete block, preventing scroll to cardSelection */
-    function handleVisibility(e: React.MouseEvent<HTMLInputElement>) {
+    /** Changing the state of a card class. */
+    const visibilityBlock = card.id === activeCardId ? '-active' : '-inactive';
+
+    /** Show/hide delete block, preventing scroll to cardSelection. */
+    const handleVisibility = (e: React.MouseEvent<HTMLInputElement>) => {
         e.stopPropagation();
-        setIsVisibile((prevVisability) => !prevVisability);
-    }
-    /** remove player card implementation */
+        setActiveCardId(card.id);
+    };
+    /** Remove player card implementation. */
     function handleDeletion(e: React.MouseEvent<HTMLInputElement>) {
         e.stopPropagation();
         e.preventDefault();
-        dispatch(deleteCard(new CardEditIdentificators(squad.clubId, squad.id, card.id)));
+        dispatch(
+            deleteCard(
+                new CardEditIdentificators(squad.clubId, squad.id, card.id)
+            )
+        );
     }
 
     return (
