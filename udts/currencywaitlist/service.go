@@ -60,11 +60,11 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, value big.
 			return transaction, ErrCurrencyWaitlist.Wrap(err)
 		}
 
-		if err = service.Update(ctx, item); err != nil {
+		if err = service.currencyWaitList.Create(ctx, item); err != nil {
 			return transaction, ErrCurrencyWaitlist.Wrap(err)
 		}
 	} else {
-		err = service.currencyWaitList.Create(ctx, item)
+		err = service.Update(ctx, item)
 		if err != nil {
 			return transaction, ErrCurrencyWaitlist.Wrap(err)
 		}
