@@ -96,7 +96,11 @@ export const FootballerCardPrice: React.FC<{ card: Card; isMinted: boolean }> = 
                     </div>
                 </div>
                 :
-                <button className="card__sell-btn" onClick={handleOpenSellPopup}>
+                <button 
+                    className="card__sell-btn" 
+                    //TODO: Waiting for logic from backend.
+                    // onClick={handleOpenSellPopup}
+                >
                     <span className="card__sell-btn__text">SELL</span>
                 </button>
             }
