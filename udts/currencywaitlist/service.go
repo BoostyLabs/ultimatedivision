@@ -52,10 +52,22 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, value big.
 		WalletAddress: user.Wallet,
 		Value:         value,
 		Nonce:         nonce,
+		Signature:     "",
 	}
 
-	if err = service.currencyWaitList.Create(ctx, item); err != nil {
-		return transaction, ErrCurrencyWaitlist.Wrap(err)
+	if _, err = service.currencyWaitList.GetByWalletAddressAndNonce(ctx, item.WalletAddress, item.Nonce); err != nil {
+		if !ErrNoItem.Has(err) {
+			return transaction, ErrCurrencyWaitlist.Wrap(err)
+		}
+
+		if err = service.Update(ctx, item); err != nil {
+			return transaction, ErrCurrencyWaitlist.Wrap(err)
+		}
+	} else {
+		err = service.currencyWaitList.Create(ctx, item)
+		if err != nil {
+			return transaction, ErrCurrencyWaitlist.Wrap(err)
+		}
 	}
 
 	for range time.NewTicker(time.Millisecond * service.config.IntervalSignatureCheck).C {
@@ -93,6 +105,11 @@ func (service *Service) ListWithoutSignature(ctx context.Context) ([]Item, error
 // UpdateSignature updates signature of item by wallet address and nonce.
 func (service *Service) UpdateSignature(ctx context.Context, signature evmsignature.Signature, walletAddress evmsignature.Address, nonce int64) error {
 	return ErrCurrencyWaitlist.Wrap(service.currencyWaitList.UpdateSignature(ctx, signature, walletAddress, nonce))
+}
+
+// Update updates item by wallet address and nonce.
+func (service *Service) Update(ctx context.Context, item Item) error {
+	return ErrCurrencyWaitlist.Wrap(service.currencyWaitList.Update(ctx, item))
 }
 
 // Delete deletes item of currency wait list by wallet address and nonce.
