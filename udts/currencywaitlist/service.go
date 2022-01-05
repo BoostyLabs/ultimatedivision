@@ -55,19 +55,17 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, value big.
 		Signature:     "",
 	}
 
+	// TODO: catch dublicale error from db
 	if _, err = service.currencyWaitList.GetByWalletAddressAndNonce(ctx, item.WalletAddress, item.Nonce); err != nil {
 		if ErrNoItem.Has(err) {
-			return transaction, ErrCurrencyWaitlist.Wrap(err)
+			if err = service.currencyWaitList.Create(ctx, item); err != nil {
+				return transaction, ErrCurrencyWaitlist.Wrap(err)
+			}
 		}
+	}
 
-		if err = service.currencyWaitList.Create(ctx, item); err != nil {
-			return transaction, ErrCurrencyWaitlist.Wrap(err)
-		}
-	} else {
-		err = service.Update(ctx, item)
-		if err != nil {
-			return transaction, ErrCurrencyWaitlist.Wrap(err)
-		}
+	if err = service.Update(ctx, item); err != nil {
+		return transaction, ErrCurrencyWaitlist.Wrap(err)
 	}
 
 	for range time.NewTicker(time.Millisecond * service.config.IntervalSignatureCheck).C {
