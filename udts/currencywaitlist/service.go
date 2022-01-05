@@ -56,7 +56,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, value big.
 	}
 
 	if _, err = service.currencyWaitList.GetByWalletAddressAndNonce(ctx, item.WalletAddress, item.Nonce); err != nil {
-		if !ErrNoItem.Has(err) {
+		if ErrNoItem.Has(err) {
 			return transaction, ErrCurrencyWaitlist.Wrap(err)
 		}
 
