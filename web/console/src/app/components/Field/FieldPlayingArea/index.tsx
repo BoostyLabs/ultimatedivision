@@ -170,23 +170,16 @@ export const FieldPlayingArea: React.FC = () => {
                                     style={
                                         isDragging
                                             ? {
-                                                left:
-                                                      mousePosition.x -
-                                                      playingAreaPosition.x,
-                                                top:
-                                                      mousePosition.y -
-                                                      playingAreaPosition.y,
-                                                transform:
-                                                      'translate(-55%, -50%)',
+                                                left: mousePosition.x - playingAreaPosition.x,
+                                                top: mousePosition.y - playingAreaPosition.y,
+                                                transform: 'translate(-55%, -50%)',
                                                 zIndex: 5,
                                                 pointerEvents: 'none',
                                             }
                                             : undefined
                                     }
                                     key={index}
-                                    className={`playing-area__${formation}__${
-                                        isDefined ? 'card' : 'empty-card'
-                                    }`}
+                                    className={`playing-area__${formation}__${isDefined ? 'card' : 'empty-card'}`}
                                     onClick={() => handleClick(index)}
                                     onDragStart={(e) => dragStart(e, index)}
                                     onMouseUp={(e) => onMouseUp(e, index)}
