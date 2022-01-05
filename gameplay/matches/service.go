@@ -5,7 +5,7 @@ package matches
 
 import (
 	"context"
-	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
@@ -113,7 +113,6 @@ func (service *Service) ConvertPositionsForGameplay(ctx context.Context, squadCa
 
 		cardWithPosition.Card, err = service.cards.Get(ctx, card.Card.ID)
 		if err != nil {
-			fmt.Println("could not convert positions", cardWithPosition, "\n",  err)
 			return cardsWithPositions, ErrMatches.Wrap(err)
 		}
 
@@ -127,6 +126,7 @@ func (service *Service) ConvertPositionsForGameplay(ctx context.Context, squadCa
 
 // ReflectPositions reflects card positions to another part of field.
 func (service *Service) ReflectPositions(ctx context.Context, cardsWithPositions []SquadCardWithPosition) []SquadCardWithPosition {
+	// TODO: add reflection on two sides.
 	var newCardsWithPositions []SquadCardWithPosition
 
 	for _, cardWithPositions := range cardsWithPositions {
@@ -134,7 +134,6 @@ func (service *Service) ReflectPositions(ctx context.Context, cardsWithPositions
 
 		newCardWithPositions.Card = cardWithPositions.Card
 		newCardWithPositions.Position.X += service.config.SizeOfFieldByOX - cardWithPositions.Position.X
-		fmt.Println(service.config.SizeOfFieldByOX - cardWithPositions.Position.X)
 
 		newCardsWithPositions = append(newCardsWithPositions, newCardWithPositions)
 	}
@@ -151,14 +150,20 @@ func (service *Service) GenerateBallPosition() PositionInTheField {
 }
 
 // GenerateActionsForCards generate possible actions for each card from squad.
-func (service *Service) GenerateActionsForCards(ctx context.Context, cardsWithPositions []SquadCardWithPosition, ballPosition PositionInTheField) {
+func (service *Service) GenerateActionsForCards(ctx context.Context, cardsWithPositions []SquadCardWithPosition, ballPosition PositionInTheField) []CardPossibleAction {
 	var possibleActions []CardPossibleAction
 
 	for _, card := range cardsWithPositions {
 		if card.Position.Compare(ballPosition) {
 			// actions with ball.
 		}
+
 		// move action.
+		moveAction := CardPossibleAction{
+			CardID: card.Card.ID,
+			Action: ActionMove,
+		}
+
 		var minCoordinateOX int
 		var minCoordinateOY int
 		var maxCoordinateOX int
@@ -181,28 +186,47 @@ func (service *Service) GenerateActionsForCards(ctx context.Context, cardsWithPo
 		minCoordinateOX = card.Position.X - numOfCells
 		minCoordinateOY = card.Position.Y - numOfCells
 		maxCoordinateOX = card.Position.X + numOfCells
-		maxCoordinateOY = card.Position.X + numOfCells
+		maxCoordinateOY = card.Position.Y + numOfCells
+
+		switch {
+		case minCoordinateOX > service.config.SizeOfFieldByOX:
+			minCoordinateOX = service.config.SizeOfFieldByOX
+		case minCoordinateOX < 0:
+			minCoordinateOX = 0
+		case minCoordinateOY > service.config.SizeOfFieldByOY:
+			minCoordinateOY = service.config.SizeOfFieldByOY
+		case minCoordinateOY < 0:
+			minCoordinateOY = 0
+		case maxCoordinateOX > service.config.SizeOfFieldByOX:
+			maxCoordinateOX = service.config.SizeOfFieldByOX
+		case maxCoordinateOX < 0:
+			maxCoordinateOX = 0
+		case maxCoordinateOY > service.config.SizeOfFieldByOY:
+			maxCoordinateOY = service.config.SizeOfFieldByOY
+		case maxCoordinateOY < 0:
+			maxCoordinateOY = 0
+		}
 
 		for i := minCoordinateOX; i <= maxCoordinateOX; i++ {
 			for j := minCoordinateOY; j <= maxCoordinateOY; j++ {
-				if i == service.config.SizeOfFieldByOX || i == service.config.SizeOfFieldByOY || i < 0 || j < 0 {
+				if i == service.config.SizeOfFieldByOX || j == service.config.SizeOfFieldByOY || i < 0 || j < 0 {
 					continue
 				}
 
-				possibleActions = append(possibleActions, CardPossibleAction{
-					CardID: card.Card.ID,
-					Action: ActionMove,
-					Positions: 	PositionInTheField {
-						X : i,
-						Y : j,
-					},
+				moveAction.Positions = append(moveAction.Positions, PositionInTheField{
+					X : i,
+					Y : j,
 				})
 			}
 		}
+
+		possibleActions = append(possibleActions, moveAction)
 	}
+
+	return possibleActions
 }
 
-// GenerateActionResult generates result of action.
+// GenerateActionResult generates result of actions.
 func (service *Service) GenerateActionResult(ctx context.Context, cards []SquadCardWithPosition, action Action) {
 	switch action {
 	case ActionMove:

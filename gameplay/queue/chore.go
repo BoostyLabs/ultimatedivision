@@ -203,11 +203,16 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 
+	ballPosition := chore.matches.GenerateBallPosition()
+
 	var matchResponse GetMatchResponse
 
+	firstClientPossibleActions := chore.matches.GenerateActionsForCards(ctx, firstClientCardsWithPositions, ballPosition)
+
 	firstPlayer := GetMatchPlayerResponse{
-		UserID:     firstClient.UserID,
-		SquadCards: firstClientCardsWithPositions,
+		UserID:          firstClient.UserID,
+		SquadCards:      firstClientCardsWithPositions,
+		PossibleActions: firstClientPossibleActions,
 	}
 
 	squadCardsSecondClient, err := chore.service.clubs.ListSquadCards(ctx, secondClient.SquadID)
@@ -228,18 +233,18 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	// reflect position for second client.
 	secondClientCardsWithPositions = chore.matches.ReflectPositions(ctx, secondClientCardsWithPositions)
 
+	secondClientPossibleActions := chore.matches.GenerateActionsForCards(ctx, secondClientCardsWithPositions, ballPosition)
+
 	secondPlayers := GetMatchPlayerResponse{
-		UserID:     secondClient.UserID,
-		SquadCards: secondClientCardsWithPositions,
+		UserID:          secondClient.UserID,
+		SquadCards:      secondClientCardsWithPositions,
+		PossibleActions: secondClientPossibleActions,
 	}
 
-	ballPosition := chore.matches.GenerateBallPosition()
-
-	// TODO: add to response possible actions with every card of users..
 	matchResponse.UserSquads = []GetMatchPlayerResponse{firstPlayer, secondPlayers}
 	matchResponse.BallPosition = ballPosition
 
-	// TODO: decide which squad will kick off.
+	// TODO: add slice with positions that will be in the center with ball.
 
 	if err := firstClient.WriteJSON(http.StatusOK, matchResponse); err != nil {
 		return ChoreError.Wrap(err)
@@ -281,17 +286,21 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	}
 
 	for i := 1; i < chore.config.NumberOfRounds; i++ {
-		// TODO: change the compositions in the slice when half ends.
-		ticker := time.NewTicker(time.Second * 1)
+		if i == chore.config.NumberOfRounds/2+1 {
+			// TODO: change compositions here.
+		}
+
+		ticker := time.NewTicker(chore.config.MatchActionRenewalInterval)
 		done := make(chan bool)
 		go func() {
-			time.Sleep(20 * time.Second)
+			time.Sleep(chore.config.RoundDuration)
 			done <- true
 		}()
 
 		var firstPlayerActions []matches.ActionRequest
 		var secondPlayerActions []matches.ActionRequest
-		Loop : for {
+	Loop:
+		for {
 			select {
 			case <-ticker.C:
 				firstClientAction, err := firstClient.ReadActionJSON()
@@ -464,10 +473,11 @@ func (chore *Chore) Finish(client Client, gameResult matches.GameResult) {
 	}()
 }
 
-// GetMatchPlayerResponse contains user id and squad cards with current positions.
+// GetMatchPlayerResponse contains user id and squad cards with current positions and possible actions for each card.
 type GetMatchPlayerResponse struct {
-	UserID     uuid.UUID                       `json:"userId"`
-	SquadCards []matches.SquadCardWithPosition `json:"squadCards"`
+	UserID          uuid.UUID                       `json:"userId"`
+	SquadCards      []matches.SquadCardWithPosition `json:"squadCards"`
+	PossibleActions []matches.CardPossibleAction      `json:"possibleActions"`
 }
 
 // GetMatchResponse replies to request with user cards with positions and ball position.
@@ -476,7 +486,7 @@ type GetMatchResponse struct {
 	BallPosition matches.PositionInTheField `json:"ballPosition"`
 }
 
-// Close closes the chore chore for re-check the expiration time of the token.
+// Close closes the chore for re-check the expiration time of the token.
 func (chore *Chore) Close() {
 	chore.Loop.Close()
 }

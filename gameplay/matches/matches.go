@@ -48,7 +48,7 @@ type PositionInTheField struct {
 	Y int `json:"y"`
 }
 
-// Compare compares two positions.
+// Compare compares two positions in the field.
 func (position PositionInTheField) Compare(position1 PositionInTheField) bool {
 	return position.X == position1.X && position.Y == position1.Y
 }
@@ -57,6 +57,9 @@ func (position PositionInTheField) Compare(position1 PositionInTheField) bool {
 type Config struct {
 	SizeOfFieldByOX int `json:"sizeOfFieldByOX"`
 	SizeOfFieldByOY int `json:"sizeOfFieldByOY"`
+
+	RoundDuration  int `json:"roundDuration"`
+	NumberOfRounds int `json:"numberOfRounds"`
 
 	Positions struct {
 		GK struct {
@@ -280,7 +283,7 @@ func (a ActionRequest) IsValid() bool {
 
 // CardPossibleAction defines in which position card could be placed and which action it could do there.
 type CardPossibleAction struct {
-	CardID    uuid.UUID          `json:"cardId"`
-	Action    Action             `json:"action"`
-	Positions PositionInTheField `json:"positions"`
+	CardID    uuid.UUID            `json:"cardId"`
+	Action    Action               `json:"action"`
+	Positions []PositionInTheField `json:"positions"`
 }
