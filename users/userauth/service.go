@@ -487,3 +487,81 @@ func verifyLoginMetamaskFields(loginMetamaskFields users.LoginMetamaskFields) (b
 
 	return fromAddr == recoveredAddr, nil
 }
+
+// SendEmailForChangeEmail - send email for change users email address.
+func (service *Service) SendEmailForChangeEmail(ctx context.Context, newEmail string) error {
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	// check if the new user email address already exists.
+	_, err = service.users.GetByEmail(ctx, newEmail)
+	if err == nil {
+		return ErrAddressAlreadyInUse.New("Email address is already in use.")
+	}
+
+	user, err := service.users.GetByEmail(ctx, claims.Email)
+	if err != nil {
+		return users.ErrUsers.Wrap(err)
+	}
+
+	token, err := service.PreAuthTokenForChangeEmail(ctx, user.Email, newEmail)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	go func() {
+		err = service.emailService.SendVerificationEmailForChangeEmail(newEmail, token)
+		if err != nil {
+			service.log.Error("Unable to send verification email", Error.Wrap(err))
+		}
+	}()
+
+	return Error.Wrap(err)
+}
+
+// ChangeEmail - change users email address.
+func (service *Service) ChangeEmail(ctx context.Context, activationToken string) error {
+	token, err := auth.FromBase64URLString(activationToken)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	claims, err := service.authenticate(token)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	if !claims.ExpiresAt.IsZero() && claims.ExpiresAt.Before(time.Now()) {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	user, err := service.users.Get(ctx, claims.UserID)
+	if err != nil {
+		return ErrUnauthenticated.Wrap(err)
+	}
+
+	return Error.Wrap(service.users.UpdateEmail(ctx, user.ID, claims.Email))
+}
+
+// PreAuthTokenForChangeEmail authenticates User by credentials and returns pre auth token with new email address.
+func (service *Service) PreAuthTokenForChangeEmail(ctx context.Context, email, newEmail string) (token string, err error) {
+	user, err := service.users.GetByEmail(ctx, email)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	claims := auth.Claims{
+		UserID:    user.ID,
+		Email:     newEmail,
+		ExpiresAt: time.Now().Add(PreAuthTokenExpirationTime),
+	}
+
+	token, err = service.signer.CreateToken(ctx, &claims)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	return token, nil
+}
