@@ -74,7 +74,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 		return transaction, ErrWaitlist.Wrap(err)
 	}
 
-	client, err := storj.NewClient(service.config.Storj)
+	client, err := storj.NewClient(service.config.FileStorage)
 	if err != nil {
 		return transaction, ErrWaitlist.Wrap(err)
 	}

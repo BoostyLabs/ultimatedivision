@@ -71,7 +71,7 @@ type Config struct {
 	} `json:"nftContract"`
 	evmsignature.Contract `json:"contract"`
 	AddressNodeServer     string       `json:"addressNodeServer"`
-	Storj                 storj.Config `json:"storj"`
+	FileStorage           storj.Config `json:"fileStorage"`
 	Bucket                string       `json:"bucket"`
 	URLToAvatar           string       `json:"urlToAvatar"`
 }
