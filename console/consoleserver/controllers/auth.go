@@ -87,7 +87,7 @@ func (auth *Auth) ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	token := params["token"]
 	if token == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(errors.New("Unable to confirm address. Missing token")))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("unable to confirm address. Missing token"))
 		return
 	}
 	err := auth.userAuth.ConfirmUserEmail(ctx, token)
@@ -398,7 +398,7 @@ func (auth *Auth) MetamaskLogin(w http.ResponseWriter, r *http.Request) {
 	auth.cookie.SetTokenCookie(w, authToken)
 }
 
-// SendEmailForChangeEmail send email for change users email.
+// SendEmailForChangeEmail sends email for change users email.
 func (auth *Auth) SendEmailForChangeEmail(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
@@ -436,7 +436,7 @@ func (auth *Auth) SendEmailForChangeEmail(w http.ResponseWriter, r *http.Request
 	}
 }
 
-// ChangeEmail change users email.
+// ChangeEmail changes users email.
 func (auth *Auth) ChangeEmail(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
@@ -444,7 +444,7 @@ func (auth *Auth) ChangeEmail(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	token := params["token"]
 	if token == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(errors.New("Unable to confirm address. Missing token")))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("unable to confirm address. Missing token"))
 		return
 	}
 
