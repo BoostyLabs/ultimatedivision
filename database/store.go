@@ -17,7 +17,7 @@ import (
 var _ store.DB = (*storeDB)(nil)
 
 // ErrStore indicates that there was an error in the database.
-var ErrStore = errs.Class("ErrStore repository error")
+var ErrStore = errs.Class("store repository error")
 
 // storeDB provide access to store DB.
 //
