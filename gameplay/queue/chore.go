@@ -7,6 +7,7 @@ import (
 	"context"
 	"math/big"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -197,9 +198,16 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		}
 	}
 
+	firstClientCardsWithPositions, err := chore.matches.ConvertPositionsForGameplay(ctx, squadCardsFirstClient)
+	if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not convert positions"); err != nil {
+		return ChoreError.Wrap(err)
+	}
+
+	var matchResponse GetMatchResponse
+
 	firstPlayer := GetMatchPlayerResponse{
 		UserID:     firstClient.UserID,
-		SquadCards: squadCardsFirstClient,
+		SquadCards: firstClientCardsWithPositions,
 	}
 
 	squadCardsSecondClient, err := chore.service.clubs.ListSquadCards(ctx, secondClient.SquadID)
@@ -212,18 +220,30 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		}
 	}
 
+	secondClientCardsWithPositions, err := chore.matches.ConvertPositionsForGameplay(ctx, squadCardsSecondClient)
+	if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not convert positions"); err != nil {
+		return ChoreError.Wrap(err)
+	}
+
 	secondPlayers := GetMatchPlayerResponse{
 		UserID:     secondClient.UserID,
-		SquadCards: squadCardsSecondClient,
+		SquadCards: secondClientCardsWithPositions,
 	}
 
 	// TODO: think about swapping first and second for different responses.
-	matchPlayers := []GetMatchPlayerResponse{firstPlayer, secondPlayers}
+	matchResponse.UserSquads = []GetMatchPlayerResponse{firstPlayer, secondPlayers}
+	matchResponse.BallPosition = matches.PositionInTheField{
+		// TODO: change coordinates of ball.
+		X: 0,
+		Y: 1,
+	}
 
-	if err := firstClient.WriteJSON(http.StatusOK, matchPlayers); err != nil {
+	// TODO: decide which squad will kick off.
+
+	if err := firstClient.WriteJSON(http.StatusOK, matchResponse); err != nil {
 		return ChoreError.Wrap(err)
 	}
-	if err := secondClient.WriteJSON(http.StatusOK, matchPlayers); err != nil {
+	if err := secondClient.WriteJSON(http.StatusOK, matchResponse); err != nil {
 		return ChoreError.Wrap(err)
 	}
 
@@ -257,6 +277,19 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			return ChoreError.Wrap(err)
 		}
 		return ChoreError.Wrap(err)
+	}
+
+	for i := 1; i < chore.config.NumberOfRounds; i++ {
+		// TODO: change the compositions in the slice when half ends.
+		ticker := time.NewTicker(time.Millisecond * chore.config.MatchActionRenewalInterval)
+
+		select {
+		case <-time.After(time.Second * chore.config.RoundDuration):
+			// TODO: read match action here and check len of response.
+			continue
+		case <-ticker.C:
+			// TODO: read match action here.
+		}
 	}
 
 	gameResult, err := chore.matches.GetGameResult(ctx, matchesID)
@@ -398,10 +431,16 @@ func (chore *Chore) Finish(client Client, gameResult matches.GameResult) {
 	}()
 }
 
-// GetMatchPlayerResponse replies to request with id of user and squad cards.
+// GetMatchPlayerResponse contains user id and squad cards with current positions.
 type GetMatchPlayerResponse struct {
-	UserID     uuid.UUID            `json:"userId"`
-	SquadCards []clubs.GetSquadCard `json:"squadCards"`
+	UserID     uuid.UUID                       `json:"userId"`
+	SquadCards []matches.SquadCardWithPosition `json:"squadCards"`
+}
+
+// GetMatchResponse replies to request with user cards with positions and ball position.
+type GetMatchResponse struct {
+	UserSquads   []GetMatchPlayerResponse   `json:"userSquad"`
+	BallPosition matches.PositionInTheField `json:"ballPosition"`
 }
 
 // Close closes the chore chore for re-check the expiration time of the token.
