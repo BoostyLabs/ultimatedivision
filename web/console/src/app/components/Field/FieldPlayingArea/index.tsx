@@ -164,16 +164,18 @@ export const FieldPlayingArea: React.FC = () => {
     }
 
     /** Show/hide delete block, preventing scroll to cardSelection. */
-    const handleVisibility = (e: React.MouseEvent<HTMLInputElement>) => {
+    const handleVisibility = (e: React.MouseEvent<HTMLInputElement>): void => {
         e.stopPropagation();
 
         const target = e.target as Element;
 
-        if (target && target.id) {
-            if (targerCard && target.id === targerCard.id) {
-                setTargetCard(null);
-            } else { setTargetCard(target); }
-        } else { setTargetCard(null); }
+        if (target && target.id !== targerCard?.id) {
+            setTargetCard(target);
+
+            return;
+        }
+
+        setTargetCard(null);
     };
 
     return (

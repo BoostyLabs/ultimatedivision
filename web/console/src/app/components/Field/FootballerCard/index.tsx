@@ -46,7 +46,7 @@ export const FootballerCard: React.FC<FootballerCardProps> = ({
 
     /** Changing the state of a card class. */
     const visibilityBlock =
-        targerCard && Number(targerCard.id) === index ? '-active' : '-inactive';
+        targerCard && parseInt(targerCard.id) === index ? '-active' : '-inactive';
 
     return (
         <div className="footballer-card">
