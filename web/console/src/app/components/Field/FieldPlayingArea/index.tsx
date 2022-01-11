@@ -9,7 +9,7 @@ import { FootballerCard } from '@components/Field/FootballerCard';
 
 import { CardEditIdentificators } from '@/api/club';
 import { RootState } from '@/app/store';
-import { Card, DeleteCardVisability } from '@/card';
+import { Card } from '@/card';
 import { SquadCard } from '@/club';
 import {
     cardSelectionVisibility,
@@ -25,20 +25,32 @@ import './index.scss';
 export const FieldPlayingArea: React.FC = () => {
     const dispatch = useDispatch();
 
-    const cards = useSelector((state: RootState) => state.cardsReducer.cardsPage.cards);
-    const formation = useSelector((state: RootState) => state.clubsReducer.activeClub.squad.formation);
-    const dragStartIndex = useSelector((state: RootState) => state.clubsReducer.options.dragStart);
-    const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
-    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
+    const cards = useSelector(
+        (state: RootState) => state.cardsReducer.cardsPage.cards
+    );
+    const formation = useSelector(
+        (state: RootState) => state.clubsReducer.activeClub.squad.formation
+    );
+    const dragStartIndex = useSelector(
+        (state: RootState) => state.clubsReducer.options.dragStart
+    );
+    const club = useSelector(
+        (state: RootState) => state.clubsReducer.activeClub
+    );
+    const squad = useSelector(
+        (state: RootState) => state.clubsReducer.activeClub.squad
+    );
 
-    const [deleteCardVisability, setDeleteCardVisability] =
-        useState<DeleteCardVisability>(new DeleteCardVisability('', false));
+    const [targerCard, setTargetCard] = useState<Element | null>(null);
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     /** This var created to not allow mouseUpEvent without Dragging before it */
     const [isDragging, handleDrag] = useState(false);
     /** Playing area position */
-    const [playingAreaPosition, setplayingAreaPosition] = useState({ x: 0, y: 0 });
+    const [playingAreaPosition, setplayingAreaPosition] = useState({
+        x: 0,
+        y: 0,
+    });
 
     const DEFAULT_VALUE = 0;
     const X_SCROLL_POINT = 0;
@@ -66,12 +78,14 @@ export const FieldPlayingArea: React.FC = () => {
     }
 
     /** Add card position, and shows card selection */
-    function handleClick(index: number) {
-        dispatch(choosePosition(index));
-        dispatch(cardSelectionVisibility(true));
-        setTimeout(() => {
-            window.scroll(X_SCROLL_POINT, Y_SCROLL_POINT);
-        }, DELAY);
+    function handleClick(index: number, e: React.MouseEvent<HTMLDivElement>) {
+        if ((e.target as Element).className.includes('empty')) {
+            dispatch(choosePosition(index));
+            dispatch(cardSelectionVisibility(true));
+            setTimeout(() => {
+                window.scroll(X_SCROLL_POINT, Y_SCROLL_POINT);
+            }, DELAY);
+        }
     }
 
     /** getting dragged card index and changing state to allow mouseUp */
@@ -147,12 +161,26 @@ export const FieldPlayingArea: React.FC = () => {
         handleDrag(false);
     }
 
+    /** Show/hide delete block, preventing scroll to cardSelection. */
+    const handleVisibility = (e: React.MouseEvent<HTMLInputElement>) => {
+        e.stopPropagation();
+
+        const target = e.target as Element;
+
+        target && target.id
+            ? targerCard && target.id === targerCard.id
+                ? setTargetCard(null)
+                : setTargetCard(target)
+            : setTargetCard(null);
+    };
+
     return (
         <div
             className="playing-area__wrapper"
             onMouseMove={(ev) => useMousePosition(ev)}
             onMouseUp={removeFromArea}
             style={isDragging ? { cursor: 'not-allowed' } : {}}
+            onClick={handleVisibility}
         >
             <div className="playing-area" id="playingArea">
                 <div
@@ -187,22 +215,18 @@ export const FieldPlayingArea: React.FC = () => {
                                     className={`playing-area__${formation}__${
                                         isDefined ? 'card' : 'empty-card'
                                     }`}
-                                    onClick={() => handleClick(index)}
+                                    onClick={(e) => handleClick(index, e)}
                                     onDragStart={(e) => dragStart(e, index)}
                                     onMouseUp={(e) => onMouseUp(e, index)}
                                     draggable={true}
                                 >
-                                    {isDefined &&
+                                    {isDefined && 
                                         <FootballerCard
                                             card={fieldCard.card}
                                             index={index}
-                                            place={'PlayingArea'}
-                                            setDeleteCardVisability={
-                                                setDeleteCardVisability
-                                            }
-                                            deleteCardVisability={
-                                                deleteCardVisability
-                                            }
+                                            place={"PlayingArea"}
+                                            setTargetCard={setTargetCard}
+                                            targerCard={targerCard}
                                         />
                                     }
                                 </div>
@@ -220,7 +244,7 @@ export const FieldPlayingArea: React.FC = () => {
                                     className={`playing-area__${formation}-shadows__card`}
                                     key={index}
                                 >
-                                    {isDefined &&
+                                    {isDefined && 
                                         <img
                                             src={fieldCard.card.shadow}
                                             alt="card shadow"
