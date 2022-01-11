@@ -79,7 +79,9 @@ export const FieldPlayingArea: React.FC = () => {
 
     /** Add card position, and shows card selection */
     function handleClick(index: number, e: React.MouseEvent<HTMLDivElement>) {
-        if ((e.target as Element).className.includes('empty')) {
+        const target = e.target as Element;
+
+        if (target.className.includes('empty')) {
             dispatch(choosePosition(index));
             dispatch(cardSelectionVisibility(true));
             setTimeout(() => {
@@ -167,11 +169,11 @@ export const FieldPlayingArea: React.FC = () => {
 
         const target = e.target as Element;
 
-        target && target.id
-            ? targerCard && target.id === targerCard.id
-                ? setTargetCard(null)
-                : setTargetCard(target)
-            : setTargetCard(null);
+        if (target && target.id) {
+            if (targerCard && target.id === targerCard.id) {
+                setTargetCard(null);
+            } else { setTargetCard(target); }
+        } else { setTargetCard(null); }
     };
 
     return (
@@ -198,9 +200,14 @@ export const FieldPlayingArea: React.FC = () => {
                                     style={
                                         isDragging
                                             ? {
-                                                left: mousePosition.x - playingAreaPosition.x,
-                                                top: mousePosition.y - playingAreaPosition.y,
-                                                transform: 'translate(-55%, -50%)',
+                                                left:
+                                                      mousePosition.x -
+                                                      playingAreaPosition.x,
+                                                top:
+                                                      mousePosition.y -
+                                                      playingAreaPosition.y,
+                                                transform:
+                                                      'translate(-55%, -50%)',
                                                 zIndex: 5,
                                                 pointerEvents: 'none',
                                             }
@@ -215,11 +222,11 @@ export const FieldPlayingArea: React.FC = () => {
                                     onMouseUp={(e) => onMouseUp(e, index)}
                                     draggable={true}
                                 >
-                                    {isDefined && 
+                                    {isDefined &&
                                         <FootballerCard
                                             card={fieldCard.card}
                                             index={index}
-                                            place={"PlayingArea"}
+                                            place={'PlayingArea'}
                                             setTargetCard={setTargetCard}
                                             targerCard={targerCard}
                                         />
@@ -239,7 +246,7 @@ export const FieldPlayingArea: React.FC = () => {
                                     className={`playing-area__${formation}-shadows__card`}
                                     key={index}
                                 >
-                                    {isDefined && 
+                                    {isDefined &&
                                         <img
                                             src={fieldCard.card.shadow}
                                             alt="card shadow"
