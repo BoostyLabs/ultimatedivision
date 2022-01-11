@@ -36,6 +36,9 @@ export const FootballerCard: React.FC<FootballerCardProps> = ({
     function handleDeletion(e: React.MouseEvent<HTMLInputElement>) {
         e.stopPropagation();
         e.preventDefault();
+
+        setDeleteCardVisability(new DeleteCardVisability('', false));
+
         dispatch(
             deleteCard(
                 new CardEditIdentificators(squad.clubId, squad.id, card.id)

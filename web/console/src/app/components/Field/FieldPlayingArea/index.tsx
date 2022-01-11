@@ -198,14 +198,9 @@ export const FieldPlayingArea: React.FC = () => {
                                     style={
                                         isDragging
                                             ? {
-                                                left:
-                                                      mousePosition.x -
-                                                      playingAreaPosition.x,
-                                                top:
-                                                      mousePosition.y -
-                                                      playingAreaPosition.y,
-                                                transform:
-                                                      'translate(-55%, -50%)',
+                                                left: mousePosition.x - playingAreaPosition.x,
+                                                top: mousePosition.y - playingAreaPosition.y,
+                                                transform: 'translate(-55%, -50%)',
                                                 zIndex: 5,
                                                 pointerEvents: 'none',
                                             }
