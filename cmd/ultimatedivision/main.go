@@ -24,6 +24,9 @@ import (
 // Error is a default error type for ultimatedivision cli.
 var Error = errs.Class("ultimatedivision cli error")
 
+// divisions to create default divisions.
+var divisions = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
 // Config contains configurable values for ultimatedivision project.
 type Config struct {
 	Database                string `json:"database"`
@@ -155,6 +158,11 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 	peer, err := ultimatedivision.New(log, runCfg.Config, db)
 	if err != nil {
 		log.Error("Error starting ultimatedivision bank service", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
+	err = peer.Divisions.Service.CreateDivisions(ctx, divisions)
+	if err != nil {
 		return Error.Wrap(err)
 	}
 

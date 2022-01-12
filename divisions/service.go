@@ -30,6 +30,24 @@ func NewService(divisions DB, config Config) *Service {
 	}
 }
 
+// CreateDivisions creates a divisions.
+func (service *Service) CreateDivisions(ctx context.Context, name []int) error {
+	for _, divisionName := range name {
+		division := Division{
+			ID:             uuid.New(),
+			Name:           divisionName,
+			PassingPercent: service.config.PassingPercent,
+			CreatedAt:      time.Now().UTC(),
+		}
+
+		err := ErrDivisions.Wrap(service.divisions.Create(ctx, division))
+		if err != nil {
+			return ErrDivisions.Wrap(err)
+		}
+	}
+	return nil
+}
+
 // Create creates a division.
 func (service *Service) Create(ctx context.Context, name int) error {
 	division := Division{
