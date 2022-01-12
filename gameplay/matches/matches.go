@@ -5,6 +5,7 @@ package matches
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -136,6 +137,30 @@ type Config struct {
 		} `json:"rst"`
 	} `json:"positions"`
 
+	MoveAction struct {
+		NumOfCellsForFirstRange  int `json:"numOfCellsForFirstRange"`
+		NumOfCellsForSecondRange int `json:"numOfCellsForSecondRange"`
+		NumOfCellsForThirdRange  int `json:"numOfCellsForThirdRange"`
+		NumOfCellsForFourthRange int `json:"numOfCellsForFourthRange"`
+
+		FirstRange struct {
+			Min int `json:"min"`
+			Max int `json:"max"`
+		} `json:"firstRange"`
+		SecondRange struct {
+			Min int `json:"min"`
+			Max int `json:"max"`
+		} `json:"secondRange"`
+		ThirdRange struct {
+			Min int `json:"min"`
+			Max int `json:"max"`
+		} `json:"thirdRange"`
+		FourthRange struct {
+			Min int `json:"min"`
+			Max int `json:"max"`
+		} `json:"fourthRange"`
+	} `json:"moveAction"`
+
 	pagination.Cursor `json:"pagination"`
 
 	NumberOfPointsForWin    int `json:"numberOfPointsForWin"`
@@ -247,11 +272,14 @@ type Statistic struct {
 
 // ActionRequest defines request for every action.
 type ActionRequest struct {
-	PlayerID          uuid.UUID   `json:"playerId"`
-	Action            Action      `json:"action"`
-	Distance          int         `json:"distance"`
-	ReceiverPlayerID  uuid.UUID   `json:"receiverPlayerId"`
-	OpponentPlayerIDs []uuid.UUID `json:"opponentPlayerIds"`
+	CardsLayout       []SquadCardWithPosition `json:"cardsLayout"`
+	PlayerID          uuid.UUID               `json:"playerId"`
+	Action            Action                  `json:"action"`
+	StartCoordinate   PositionInTheField      `json:"startCoordinate"`
+	EndCoordinate     PositionInTheField      `json:"endCoordinate"`
+	ReceiverPlayerID  uuid.UUID               `json:"receiverPlayerId"`
+	OpponentPlayerIDs []uuid.UUID             `json:"opponentPlayerIds"`
+	ActionTime        time.Time               `json:"actionDate"`
 }
 
 // IsValid checks is action request valid.
@@ -279,6 +307,28 @@ func (a ActionRequest) IsValid() bool {
 	}
 
 	return false
+}
+
+// GetMatchPlayerResponse contains user id and squad cards with current positions and possible actions for each card.
+type GetMatchPlayerResponse struct {
+	UserID          uuid.UUID               `json:"userId"`
+	SquadCards      []SquadCardWithPosition `json:"squadCards"`
+	PossibleActions []CardPossibleAction    `json:"possibleActions"`
+	Movements       []Movement              `json:"movements"`
+}
+
+// Movement defines which card would be move to which coordinate and ball position at that time.
+type Movement struct {
+	CardID       uuid.UUID          `json:"cardId"`
+	Coordinate   PositionInTheField `json:"coordinate"`
+	BallPosition PositionInTheField `json:"ballPosition"`
+}
+
+// GetMatchResponse replies to request with user cards with positions and ball position.
+type GetMatchResponse struct {
+	UserSquads   []GetMatchPlayerResponse `json:"userSquad"`
+	BallPosition PositionInTheField       `json:"ballPosition"`
+	Movements    []Movement               `json:"movements"`
 }
 
 // CardPossibleAction defines in which position card could be placed and which action it could do there.

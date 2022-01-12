@@ -5,6 +5,7 @@ package matches
 
 import (
 	"context"
+	"sort"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -121,18 +122,23 @@ func (service *Service) ConvertPositionsForGameplay(ctx context.Context, squadCa
 		cardsWithPositions = append(cardsWithPositions, cardWithPosition)
 	}
 
-	return cardsWithPositions, nil
+	return cardsWithPositions, ErrMatches.Wrap(err)
 }
 
 // ReflectPositions reflects card positions to another part of field.
 func (service *Service) ReflectPositions(ctx context.Context, cardsWithPositions []SquadCardWithPosition) []SquadCardWithPosition {
-	// TODO: add reflection on two sides.
 	var newCardsWithPositions []SquadCardWithPosition
 
 	for _, cardWithPositions := range cardsWithPositions {
 		var newCardWithPositions SquadCardWithPosition
 
 		newCardWithPositions.Card = cardWithPositions.Card
+
+		if cardWithPositions.Position.X > service.config.SizeOfFieldByOX/2 {
+			newCardWithPositions.Position.X -= service.config.SizeOfFieldByOX / 2
+			continue
+		}
+
 		newCardWithPositions.Position.X += service.config.SizeOfFieldByOX - cardWithPositions.Position.X
 
 		newCardsWithPositions = append(newCardsWithPositions, newCardWithPositions)
@@ -141,12 +147,54 @@ func (service *Service) ReflectPositions(ctx context.Context, cardsWithPositions
 	return newCardsWithPositions
 }
 
-// GenerateBallPosition returns middle field position.
+// GenerateBallPosition returns ball position in the middle of field.
 func (service *Service) GenerateBallPosition() PositionInTheField {
 	return PositionInTheField{
-		X : service.config.SizeOfFieldByOX / 2,
-		Y : service.config.SizeOfFieldByOY / 2,
+		X: service.config.SizeOfFieldByOX / 2,
+		Y: service.config.SizeOfFieldByOY / 2,
 	}
+}
+
+// HandleActions handle all clients actions, validate it and returns new cards layout in the field with movements.
+func (service *Service) HandleActions(ctx context.Context, actions []ActionRequest, cardsLayout GetMatchResponse) (GetMatchResponse, error) {
+	// sort all actions by time.
+	sort.Slice(actions, func(i, j int) bool {
+		return actions[i].ActionTime.Before(actions[j].ActionTime)
+	})
+
+	var movements []Movement
+
+	for _, action := range actions {
+		if !action.IsValid() {
+			return GetMatchResponse{}, ErrMatches.New("action does not valid")
+		}
+		actionMovements, err := service.GenerateActionResult(ctx, action, cardsLayout)
+		if err != nil {
+			return GetMatchResponse{}, ErrMatches.Wrap(err)
+		}
+
+		// update position for squad card and ball position.
+		for _, movement := range actionMovements {
+			for _, squadInfo := range cardsLayout.UserSquads {
+				for _, squadCardsWithCoordinates := range squadInfo.SquadCards {
+					if squadCardsWithCoordinates.Card.ID == movement.CardID {
+						squadCardsWithCoordinates.Position = movement.Coordinate
+					}
+				}
+			}
+		}
+
+		// update ball position.
+		if len(movements) > 0 {
+			cardsLayout.BallPosition = movements[len(movements)-1].BallPosition
+		}
+
+		movements = append(movements, actionMovements...)
+	}
+
+	cardsLayout.Movements = movements
+
+	return cardsLayout, nil
 }
 
 // GenerateActionsForCards generate possible actions for each card from squad.
@@ -154,71 +202,21 @@ func (service *Service) GenerateActionsForCards(ctx context.Context, cardsWithPo
 	var possibleActions []CardPossibleAction
 
 	for _, card := range cardsWithPositions {
-		if card.Position.Compare(ballPosition) {
-			// actions with ball.
-		}
+		// TODO: put to if below move with ball.
+
+		// if card.Position.Compare(ballPosition) {
+		//
+		// }
 
 		// move action.
 		moveAction := CardPossibleAction{
 			CardID: card.Card.ID,
 			Action: ActionMove,
 		}
+		numOfCells := service.GetNumOfCells(card.Card, ActionMove)
+		cells := service.GenerateCellsInRange(card.Position, numOfCells)
 
-		var minCoordinateOX int
-		var minCoordinateOY int
-		var maxCoordinateOX int
-		var maxCoordinateOY int
-
-		var numOfCells int
-
-		switch {
-		// TODO: put to config.
-		case card.Card.RunningSpeed > 0 && card.Card.RunningSpeed < 49 :
-			numOfCells = 2
-		case card.Card.RunningSpeed > 50 && card.Card.RunningSpeed < 69 :
-			numOfCells = 3
-		case card.Card.RunningSpeed > 70 && card.Card.RunningSpeed < 89 :
-			numOfCells = 4
-		case card.Card.RunningSpeed > 90 && card.Card.RunningSpeed < 100 :
-			numOfCells = 5
-		}
-
-		minCoordinateOX = card.Position.X - numOfCells
-		minCoordinateOY = card.Position.Y - numOfCells
-		maxCoordinateOX = card.Position.X + numOfCells
-		maxCoordinateOY = card.Position.Y + numOfCells
-
-		switch {
-		case minCoordinateOX > service.config.SizeOfFieldByOX:
-			minCoordinateOX = service.config.SizeOfFieldByOX
-		case minCoordinateOX < 0:
-			minCoordinateOX = 0
-		case minCoordinateOY > service.config.SizeOfFieldByOY:
-			minCoordinateOY = service.config.SizeOfFieldByOY
-		case minCoordinateOY < 0:
-			minCoordinateOY = 0
-		case maxCoordinateOX > service.config.SizeOfFieldByOX:
-			maxCoordinateOX = service.config.SizeOfFieldByOX
-		case maxCoordinateOX < 0:
-			maxCoordinateOX = 0
-		case maxCoordinateOY > service.config.SizeOfFieldByOY:
-			maxCoordinateOY = service.config.SizeOfFieldByOY
-		case maxCoordinateOY < 0:
-			maxCoordinateOY = 0
-		}
-
-		for i := minCoordinateOX; i <= maxCoordinateOX; i++ {
-			for j := minCoordinateOY; j <= maxCoordinateOY; j++ {
-				if i == service.config.SizeOfFieldByOX || j == service.config.SizeOfFieldByOY || i < 0 || j < 0 {
-					continue
-				}
-
-				moveAction.Positions = append(moveAction.Positions, PositionInTheField{
-					X : i,
-					Y : j,
-				})
-			}
-		}
+		moveAction.Positions = append(moveAction.Positions, cells...)
 
 		possibleActions = append(possibleActions, moveAction)
 	}
@@ -227,10 +225,26 @@ func (service *Service) GenerateActionsForCards(ctx context.Context, cardsWithPo
 }
 
 // GenerateActionResult generates result of actions.
-func (service *Service) GenerateActionResult(ctx context.Context, cards []SquadCardWithPosition, action Action) {
-	switch action {
+func (service *Service) GenerateActionResult(ctx context.Context, action ActionRequest, cardsLayout GetMatchResponse) ([]Movement, error) {
+	var movements []Movement
+
+	switch action.Action {
 	case ActionMove:
-		// formula
+		for _, userSquad := range cardsLayout.UserSquads {
+			for _, squadPossibleAction := range userSquad.PossibleActions {
+				if squadPossibleAction.CardID == action.PlayerID && squadPossibleAction.Action == action.Action {
+					for _, position := range squadPossibleAction.Positions {
+						if action.EndCoordinate.Compare(position) {
+							movements = append(movements, Movement{
+								CardID:       action.PlayerID,
+								Coordinate:   action.EndCoordinate,
+								BallPosition: cardsLayout.BallPosition,
+							})
+						}
+					}
+				}
+			}
+		}
 	case ActionMoveWithBall:
 		// formula
 	case ActionPass:
@@ -254,6 +268,95 @@ func (service *Service) GenerateActionResult(ctx context.Context, cards []SquadC
 	case ActionFeints:
 		// formula
 	}
+
+	return movements, nil
+}
+
+// GetNumOfCells returns max number of cells during to card characteristic for specific action.
+func (service *Service) GetNumOfCells(card cards.Card, action Action) int {
+	var numOfCells int
+
+	switch action {
+	case ActionMove:
+		switch {
+		case card.RunningSpeed > service.config.MoveAction.FirstRange.Min && card.RunningSpeed < service.config.MoveAction.FirstRange.Max:
+			numOfCells = service.config.MoveAction.NumOfCellsForFirstRange
+		case card.RunningSpeed > service.config.MoveAction.SecondRange.Min && card.RunningSpeed < service.config.MoveAction.SecondRange.Max:
+			numOfCells = service.config.MoveAction.NumOfCellsForSecondRange
+		case card.RunningSpeed > service.config.MoveAction.ThirdRange.Min && card.RunningSpeed < service.config.MoveAction.ThirdRange.Max:
+			numOfCells = service.config.MoveAction.NumOfCellsForThirdRange
+		case card.RunningSpeed > service.config.MoveAction.FourthRange.Min && card.RunningSpeed < service.config.MoveAction.ThirdRange.Max:
+			numOfCells = service.config.MoveAction.NumOfCellsForFourthRange
+		}
+	case ActionMoveWithBall:
+		// formula
+	case ActionPass:
+		// formula
+	case ActionCrossPass:
+		// formula
+	case ActionPassThrough:
+		// formula
+	case ActionDirectShot:
+		// formula
+	case ActionCurlShot:
+		// formula
+	case ActionTakeawayShot:
+		// formula
+	case ActionTackle:
+		// formula
+	case ActionSlidingTackle:
+		// formula
+	case ActionDribbling:
+		// formula
+	case ActionFeints:
+		// formula
+	}
+
+	return numOfCells
+}
+
+// GenerateCellsInRange returns all cells in specific radius from start coordinate.
+func (service *Service) GenerateCellsInRange(startCoordinate PositionInTheField, numOfCells int) []PositionInTheField {
+	var cells []PositionInTheField
+
+	minCoordinateOX := startCoordinate.X - numOfCells
+	minCoordinateOY := startCoordinate.Y - numOfCells
+	maxCoordinateOX := startCoordinate.X + numOfCells
+	maxCoordinateOY := startCoordinate.Y + numOfCells
+
+	switch {
+	case minCoordinateOX > service.config.SizeOfFieldByOX:
+		minCoordinateOX = service.config.SizeOfFieldByOX
+	case minCoordinateOX < 0:
+		minCoordinateOX = 0
+	case minCoordinateOY > service.config.SizeOfFieldByOY:
+		minCoordinateOY = service.config.SizeOfFieldByOY
+	case minCoordinateOY < 0:
+		minCoordinateOY = 0
+	case maxCoordinateOX > service.config.SizeOfFieldByOX:
+		maxCoordinateOX = service.config.SizeOfFieldByOX
+	case maxCoordinateOX < 0:
+		maxCoordinateOX = 0
+	case maxCoordinateOY > service.config.SizeOfFieldByOY:
+		maxCoordinateOY = service.config.SizeOfFieldByOY
+	case maxCoordinateOY < 0:
+		maxCoordinateOY = 0
+	}
+
+	for i := minCoordinateOX; i <= maxCoordinateOX; i++ {
+		for j := minCoordinateOY; j <= maxCoordinateOY; j++ {
+			if i == service.config.SizeOfFieldByOX || j == service.config.SizeOfFieldByOY || i < 0 || j < 0 {
+				continue
+			}
+
+			cells = append(cells, PositionInTheField{
+				X: i,
+				Y: j,
+			})
+		}
+	}
+
+	return cells
 }
 
 // Get returns match by id.

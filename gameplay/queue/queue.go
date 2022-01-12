@@ -107,19 +107,21 @@ func (client *Client) ReadJSON() (Request, error) {
 }
 
 // ReadActionJSON reads action request sent by client.
-func (client *Client) ReadActionJSON() (matches.ActionRequest, error) {
+func (client *Client) ReadActionJSON() ([]matches.ActionRequest, error) {
 	err := client.Connection.SetReadDeadline(time.Now().Add(1 * time.Second))
 	if err != nil {
-		return matches.ActionRequest{}, ErrRead.Wrap(ErrQueue.Wrap(err))
+		return []matches.ActionRequest{}, ErrRead.Wrap(ErrQueue.Wrap(err))
 	}
 
-	var request matches.ActionRequest
+	var request []matches.ActionRequest
 	if err = client.Connection.ReadJSON(&request); err != nil {
-		if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
-			return request, ErrWrite.Wrap(ErrQueue.Wrap(err))
+		if websocket.IsCloseError(err) || websocket.IsUnexpectedCloseError(err) {
+			if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
+				return request, ErrWrite.Wrap(ErrQueue.Wrap(err))
+			}
 		}
-		return request, ErrRead.Wrap(ErrQueue.Wrap(err))
 	}
+
 	return request, nil
 }
 

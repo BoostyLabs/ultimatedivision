@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
@@ -199,17 +198,17 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	}
 
 	firstClientCardsWithPositions, err := chore.matches.ConvertPositionsForGameplay(ctx, squadCardsFirstClient)
-	if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not convert positions"); err != nil {
+	if err != nil {
 		return ChoreError.Wrap(err)
 	}
 
 	ballPosition := chore.matches.GenerateBallPosition()
 
-	var matchResponse GetMatchResponse
+	var matchResponse matches.GetMatchResponse
 
 	firstClientPossibleActions := chore.matches.GenerateActionsForCards(ctx, firstClientCardsWithPositions, ballPosition)
 
-	firstPlayer := GetMatchPlayerResponse{
+	firstPlayer := matches.GetMatchPlayerResponse{
 		UserID:          firstClient.UserID,
 		SquadCards:      firstClientCardsWithPositions,
 		PossibleActions: firstClientPossibleActions,
@@ -226,7 +225,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	}
 
 	secondClientCardsWithPositions, err := chore.matches.ConvertPositionsForGameplay(ctx, squadCardsSecondClient)
-	if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not convert positions"); err != nil {
+	if err != nil {
 		return ChoreError.Wrap(err)
 	}
 
@@ -235,13 +234,13 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	secondClientPossibleActions := chore.matches.GenerateActionsForCards(ctx, secondClientCardsWithPositions, ballPosition)
 
-	secondPlayers := GetMatchPlayerResponse{
+	secondPlayer := matches.GetMatchPlayerResponse{
 		UserID:          secondClient.UserID,
 		SquadCards:      secondClientCardsWithPositions,
 		PossibleActions: secondClientPossibleActions,
 	}
 
-	matchResponse.UserSquads = []GetMatchPlayerResponse{firstPlayer, secondPlayers}
+	matchResponse.UserSquads = []matches.GetMatchPlayerResponse{firstPlayer, secondPlayer}
 	matchResponse.BallPosition = ballPosition
 
 	// TODO: add slice with positions that will be in the center with ball.
@@ -287,7 +286,34 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 
 	for i := 1; i < chore.config.NumberOfRounds; i++ {
 		if i == chore.config.NumberOfRounds/2+1 {
-			// TODO: change compositions here.
+			ballPosition = chore.matches.GenerateBallPosition()
+
+			firstPlayer = matches.GetMatchPlayerResponse{
+				UserID:     firstClient.UserID,
+				SquadCards: chore.matches.ReflectPositions(ctx, firstPlayer.SquadCards),
+				Movements:  matchResponse.Movements,
+			}
+
+			firstPlayer.PossibleActions = chore.matches.GenerateActionsForCards(ctx, firstPlayer.SquadCards, ballPosition)
+
+			secondPlayer = matches.GetMatchPlayerResponse{
+				UserID:          secondClient.UserID,
+				SquadCards:      chore.matches.ReflectPositions(ctx, secondPlayer.SquadCards),
+				PossibleActions: secondClientPossibleActions,
+				Movements:       matchResponse.Movements,
+			}
+
+			secondPlayer.PossibleActions = chore.matches.GenerateActionsForCards(ctx, secondPlayer.SquadCards, ballPosition)
+
+			matchResponse.UserSquads = []matches.GetMatchPlayerResponse{firstPlayer, secondPlayer}
+			matchResponse.BallPosition = ballPosition
+
+			if err := firstClient.WriteJSON(http.StatusOK, matchResponse); err != nil {
+				return ChoreError.Wrap(err)
+			}
+			if err := secondClient.WriteJSON(http.StatusOK, matchResponse); err != nil {
+				return ChoreError.Wrap(err)
+			}
 		}
 
 		ticker := time.NewTicker(chore.config.MatchActionRenewalInterval)
@@ -303,34 +329,74 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		for {
 			select {
 			case <-ticker.C:
-				firstClientAction, err := firstClient.ReadActionJSON()
-				if err != nil {
-					chore.log.Error("could not read json", ChoreError.Wrap(err))
+				if len(firstPlayerActions) == 0 {
+					firstPlayerActions, err = firstClient.ReadActionJSON()
+					if err != nil {
+						chore.log.Error("could not read json", ChoreError.Wrap(err))
+					}
 				}
 
-				secondClientAction, err := secondClient.ReadActionJSON()
-				if err != nil {
-					chore.log.Error("could not read json", ChoreError.Wrap(err))
+				if len(secondPlayerActions) == 0 {
+					secondPlayerActions, err = secondClient.ReadActionJSON()
+					if err != nil {
+						chore.log.Error("could not read json", ChoreError.Wrap(err))
+					}
 				}
 
-				firstPlayerActions = append(firstPlayerActions, firstClientAction)
-				secondPlayerActions = append(secondPlayerActions, secondClientAction)
+				if len(firstPlayerActions) != 0 && len(secondPlayerActions) != 0 {
+					break Loop
+				}
 			case <-done:
-				firstClientAction, err := firstClient.ReadActionJSON()
+				firstPlayerActions, err = firstClient.ReadActionJSON()
 				if err != nil {
 					chore.log.Error("could not read json", ChoreError.Wrap(err))
 				}
 
-				secondClientAction, err := secondClient.ReadActionJSON()
+				if len(firstPlayerActions) == 0 {
+					if err := firstClient.WriteJSON(http.StatusBadRequest, "invalid numbers of actions"); err != nil {
+						return ChoreError.Wrap(err)
+					}
+				}
+
+				secondPlayerActions, err = secondClient.ReadActionJSON()
 				if err != nil {
 					chore.log.Error("could not read json", ChoreError.Wrap(err))
 				}
-
-				firstPlayerActions = append(firstPlayerActions, firstClientAction)
-				secondPlayerActions = append(secondPlayerActions, secondClientAction)
+				if len(secondPlayerActions) == 0 {
+					if err := secondClient.WriteJSON(http.StatusBadRequest, "invalid numbers of actions"); err != nil {
+						return ChoreError.Wrap(err)
+					}
+				}
 				break Loop
 			}
-			// TODO: handle actions.
+		}
+		if len(firstPlayerActions)+len(secondPlayerActions) > 0 {
+			var actions []matches.ActionRequest
+			_ = copy(actions, firstPlayerActions)
+			actions = append(actions, secondPlayerActions...)
+
+			matchResponse, err = chore.matches.HandleActions(ctx, actions, matchResponse)
+			if err != nil {
+				if err = firstClient.WriteJSON(http.StatusBadRequest, "could not handle actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				if err = secondClient.WriteJSON(http.StatusBadRequest, "could not handle actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+			}
+
+			for _, userSquad := range matchResponse.UserSquads {
+				userSquad.PossibleActions = chore.matches.GenerateActionsForCards(ctx, firstClientCardsWithPositions, ballPosition)
+			}
+
+			if i != chore.config.NumberOfRounds/2 {
+				if err = firstClient.WriteJSON(http.StatusOK, matchResponse); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				if err = secondClient.WriteJSON(http.StatusOK, matchResponse); err != nil {
+					return ChoreError.Wrap(err)
+				}
+			}
 		}
 	}
 
@@ -471,19 +537,6 @@ func (chore *Chore) Finish(client Client, gameResult matches.GameResult) {
 			chore.log.Error("could not close websocket", ChoreError.Wrap(err))
 		}
 	}()
-}
-
-// GetMatchPlayerResponse contains user id and squad cards with current positions and possible actions for each card.
-type GetMatchPlayerResponse struct {
-	UserID          uuid.UUID                       `json:"userId"`
-	SquadCards      []matches.SquadCardWithPosition `json:"squadCards"`
-	PossibleActions []matches.CardPossibleAction      `json:"possibleActions"`
-}
-
-// GetMatchResponse replies to request with user cards with positions and ball position.
-type GetMatchResponse struct {
-	UserSquads   []GetMatchPlayerResponse   `json:"userSquad"`
-	BallPosition matches.PositionInTheField `json:"ballPosition"`
 }
 
 // Close closes the chore for re-check the expiration time of the token.
