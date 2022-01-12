@@ -162,6 +162,10 @@ type Config struct {
 	CurrencyWaitList struct {
 		currencywaitlist.Config
 	} `json:"currencyWaitList"`
+
+	Store struct {
+		store.Config
+	} `json:"store"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -255,7 +259,8 @@ type Peer struct {
 
 	// exposes store related logic.
 	Store struct {
-		Service *store.Service
+		Service         *store.Service
+		RunStoreRenewal *store.Chore
 	}
 
 	// Admin web server server with web UI.
@@ -482,6 +487,12 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		peer.Store.Service = store.NewService(
 			peer.Database.Store(),
 		)
+
+		peer.Store.RunStoreRenewal = store.NewChore(
+			config.Store.Config,
+			peer.Store.Service,
+			peer.Cards.Service,
+		)
 	}
 
 	{ // admin setup
@@ -566,6 +577,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
 	// })
+	group.Go(func() error {
+		return ignoreCancel(peer.Store.RunStoreRenewal.Run(ctx))
+	})
 
 	return group.Wait()
 }
@@ -579,6 +593,7 @@ func (peer *Peer) Close() error {
 	peer.Marketplace.ExpirationLotChore.Close()
 	peer.Queue.PlaceChore.Close()
 	peer.Seasons.ExpirationSeasons.Close()
+	peer.Store.RunStoreRenewal.Close()
 
 	return errlist.Err()
 }

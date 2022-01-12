@@ -264,10 +264,10 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             nonce   INTEGER                                  NOT NULL
         );
         CREATE TABLE IF NOT EXISTS store(
-            id                   INTEGER   PRIMARY KEY    NOT NULL,
-            cards_amount         INTEGER                  NOT NULL,
-            is_renewal           BOOLEAN                  NOT NULL,
-            date_renewal         TIMESTAMP WITH TIME ZONE NOT NULL
+            id           INTEGER PRIMARY KEY NOT NULL,
+            cards_amount INTEGER             NOT NULL,
+            is_renewal   BOOLEAN             NOT NULL,
+            hour_renewal INTEGER             NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)

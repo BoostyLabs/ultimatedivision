@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/cards"
 )
 
 // ErrNoSetting indicated that setting does not exist.
@@ -29,8 +31,14 @@ type DB interface {
 
 // Setting entity describes the values required to configure the store.
 type Setting struct {
-	ID          int       `json:"id"`
-	CardsAmount int       `json:"cardsAmount"`
-	IsRenewal   bool      `json:"isRenewal"`
-	DateRenewal time.Time `json:"dateRenewal"`
+	ID          int  `json:"id"`
+	CardsAmount int  `json:"cardsAmount"`
+	IsRenewal   bool `json:"isRenewal"`
+	HourRenewal int  `json:"dateRenewal"`
+}
+
+// Config defines values needed by create cards.
+type Config struct {
+	StoreRenewalInterval time.Duration             `json:"storeRenewalInterval"`
+	PercentageQualities  cards.PercentageQualities `json:"percentageQualities"`
 }
