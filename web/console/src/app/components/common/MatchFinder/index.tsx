@@ -209,7 +209,8 @@ const MatchFinder: React.FC = () => {
         let autoCancelConfirmGame: ReturnType<typeof setTimeout>;
         if (isMatchFound) {
             autoCancelConfirmGame = setTimeout(() => {
-                cancelConfirmationGame();
+                queueSendAction('reject', squad.id);
+                setIsRejectedUser(true);
             }, getRandomTimeDelayForCancelGame(CANCEL_GAME_DELAY_MIN, CANCEL_GAME_DELAY_MAX));
         }
 
