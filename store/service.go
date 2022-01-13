@@ -45,6 +45,9 @@ func (service *Service) Buy(ctx context.Context, createNFT waitlist.CreateNFT) (
 	if err != nil {
 		return transaction, ErrStore.Wrap(err)
 	}
+	if len(cards) == 0 {
+		return transaction, ErrStore.New("all cards of store are minted")
+	}
 
 	randNumberCard := rand.Intn(len(cards)) - 1
 	createNFT.CardID = cards[randNumberCard].ID
