@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/BoostyLabs/evmsignature"
@@ -56,8 +57,10 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 		return transaction, ErrWaitlist.Wrap(err)
 	}
 
-	if card.UserID != createNFT.UserID {
-		return transaction, ErrWaitlist.New("it isn't user`s card")
+	if createNFT.Value.Cmp(big.NewInt(0)) <= 0 {
+		if card.UserID != createNFT.UserID {
+			return transaction, ErrWaitlist.New("it isn't user`s card")
+		}
 	}
 
 	if item, err := service.GetByCardID(ctx, createNFT.CardID); item.Password != "" && err == nil {
@@ -65,6 +68,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 			Password: item.Password,
 			Contract: service.config.Contract,
 			TokenID:  item.TokenID,
+			Value:    item.Value,
 		}
 		return transaction, nil
 	}
@@ -123,6 +127,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 				Password: item.Password,
 				Contract: service.config.Contract,
 				TokenID:  item.TokenID,
+				Value:    item.Value,
 			}
 			break
 		}
