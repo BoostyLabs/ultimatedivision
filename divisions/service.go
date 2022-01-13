@@ -5,6 +5,7 @@ package divisions
 
 import (
 	"context"
+	"reflect"
 	"time"
 
 	"github.com/google/uuid"
@@ -30,8 +31,19 @@ func NewService(divisions DB, config Config) *Service {
 	}
 }
 
-// CreateDivisions creates a divisions.
+// CreateDivisions creates a divisions when app started.
 func (service *Service) CreateDivisions(ctx context.Context, name []int) error {
+	divisions, err := service.List(ctx)
+	if err != nil {
+		return ErrDivisions.Wrap(err)
+	}
+	var divisionNames []int
+	for _, d := range divisions {
+		divisionNames = append(divisionNames, d.Name)
+	}
+	if reflect.DeepEqual(divisionNames, name) {
+		return nil
+	}
 	for _, divisionName := range name {
 		division := Division{
 			ID:             uuid.New(),

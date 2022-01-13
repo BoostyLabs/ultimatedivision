@@ -163,6 +163,14 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 
 	err = peer.Divisions.Service.CreateDivisions(ctx, divisions)
 	if err != nil {
+		log.Error("Error starting ultimatedivision create divisions", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
+	// TODO: remove after fixing bug with matches
+	err = peer.Seasons.Service.Create(ctx)
+	if err != nil {
+		log.Error("Error starting ultimatedivision create seasons", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
 
