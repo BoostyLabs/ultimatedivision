@@ -1,7 +1,6 @@
 # Variables
 LATEST_COMMIT := $$(git rev-parse HEAD)
 VERSION ?= latest
-VER ?= latest
 
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -12,37 +11,37 @@ build_dist: ## Build dist folder that needed for frontend.
 	cd web/console && npm i && npm run build
 
 build_nft_signer_prod: ## Build NFT Signer docker image for Production.
-	docker build -f ./deploy/NFTSigner.Dockerfile -t docker.hicrystal.com/ud_nft_signer_prod:$(VERSION) . && docker build -f ./deploy/NFTSigner.Dockerfile -t docker.hicrystal.com/ud_nft_signer_prod:latest .
+	docker build -f ./deploy/nft_signer.Dockerfile -t docker.hicrystal.com/ud_nft_signer_prod:$(VERSION) . && docker build -f ./deploy/nft_signer.Dockerfile -t docker.hicrystal.com/ud_nft_signer_prod:latest .
 
 push_nft_signer_prod: ## Push NFT Signer docker image for Production.
 	docker push docker.hicrystal.com/ud_nft_signer_prod:$(VERSION) && docker push docker.hicrystal.com/ud_nft_signer_prod:latest
 
 build_nft_signer_test: ## Build NFT Signer docker image for Testing.
-	docker build -f ./deploy/NFTSigner.Dockerfile -t docker.hicrystal.com/ud_nft_signer_test:$(VERSION) . && docker build -f ./deploy/NFTSigner.Dockerfile -t docker.hicrystal.com/ud_nft_signer_test:latest .
+	docker build -f ./deploy/nft_signer.Dockerfile -t docker.hicrystal.com/ud_nft_signer_test:$(VERSION) . && docker build -f ./deploy/nft_signer.Dockerfile -t docker.hicrystal.com/ud_nft_signer_test:latest .
 
 push_nft_signer_test: ## Push NFT Signer docker image for Testing.
 	docker push docker.hicrystal.com/ud_nft_signer_test:$(VERSION) && docker push docker.hicrystal.com/ud_nft_signer_test:latest
 
 build_currency_signer_prod: ## Build Currency Signer docker image for Production.
-	docker build -f ./deploy/CurrencySigner.Dockerfile -t docker.hicrystal.com/ud_currency_signer_prod:$(VERSION) . && docker build -f ./deploy/CurrencySigner.Dockerfile -t docker.hicrystal.com/ud_currency_signer_prod:latest .
+	docker build -f ./deploy/currency_signer.Dockerfile -t docker.hicrystal.com/ud_currency_signer_prod:$(VERSION) . && docker build -f ./deploy/currency_signer.Dockerfile -t docker.hicrystal.com/ud_currency_signer_prod:latest .
 
 push_currency_signer_prod: ## Push Currency Signer docker image for Production.
 	docker push docker.hicrystal.com/ud_currency_signer_prod:$(VERSION) && docker push docker.hicrystal.com/ud_currency_signer_prod:latest
 
 build_currency_signer_test: ## Build Currency Signer docker image for Testing.
-	docker build -f ./deploy/CurrencySigner.Dockerfile -t docker.hicrystal.com/ud_currency_signer_test:$(VERSION) . && docker build -f ./deploy/CurrencySigner.Dockerfile -t docker.hicrystal.com/ud_currency_signer_test:latest .
+	docker build -f ./deploy/currency_signer.Dockerfile -t docker.hicrystal.com/ud_currency_signer_test:$(VERSION) . && docker build -f ./deploy/currency_signer.Dockerfile -t docker.hicrystal.com/ud_currency_signer_test:latest .
 
 push_currency_signer_test: ## Push Currency Signer docker image for Testing.
 	docker push docker.hicrystal.com/ud_currency_signer_test:$(VERSION) && docker push docker.hicrystal.com/ud_currency_signer_test:latest
 
 build_app_prod: ## Build Application docker image for Production.
-	make build_dist && docker build -f ./deploy/AppProd.Dockerfile -t docker.hicrystal.com/ud_app_prod:$(VERSION) . && docker build -f ./deploy/AppProd.Dockerfile -t docker.hicrystal.com/ud_app_prod:latest .
+	make build_dist && docker build -f ./deploy/app_prod.Dockerfile -t docker.hicrystal.com/ud_app_prod:$(VERSION) . && docker build -f ./deploy/app_prod.Dockerfile -t docker.hicrystal.com/ud_app_prod:latest .
 
 push_app_prod: ## Push Application docker image for Production.
 	docker push docker.hicrystal.com/ud_app_prod:$(VERSION) && docker push docker.hicrystal.com/ud_app_prod:latest
 
 build_app_test: ## Build Application docker image for Testing.
-	make build_dist && docker build -f ./deploy/AppTest.Dockerfile -t docker.hicrystal.com/ud_app_test:$(VERSION) . && docker build -f ./deploy/AppTest.Dockerfile -t docker.hicrystal.com/ud_app_test:latest .
+	make build_dist && docker build -f ./deploy/app_test.Dockerfile -t docker.hicrystal.com/ud_app_test:$(VERSION) . && docker build -f ./deploy/app_test.Dockerfile -t docker.hicrystal.com/ud_app_test:latest .
 
 push_app_test: ## Push Application docker image for Testing.
 	docker push docker.hicrystal.com/ud_app_test:$(VERSION) && docker push docker.hicrystal.com/ud_app_test:latest
