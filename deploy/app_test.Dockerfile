@@ -18,12 +18,10 @@ ARG APP_DATA_DIR=/app/data
 
 RUN mkdir -p ${APP_DATA_DIR}
 
-COPY --from=builder /app/config.json .
 COPY --from=builder /app/main .
 COPY --from=builder /app/web ./web
 
 EXPOSE 8187 8188
-#EXPOSE 8287 8288
 
 VOLUME ["${APP_DATA_DIR}"]
 

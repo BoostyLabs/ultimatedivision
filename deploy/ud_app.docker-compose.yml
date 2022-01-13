@@ -18,9 +18,9 @@ services:
       - fullstack
     environment:
       - DB_HOST=ultimatedivisiondb_test
-      - DB_DATABASE=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=123456
+      - DB_DATABASE=
+      - DB_USER=
+      - DB_PASSWORD=
 
   signer:
     container_name: "ultimatedivisionSigner"
@@ -35,9 +35,9 @@ services:
       - fullstack
     environment:
       - DB_HOST=ultimatedivisiondb_test
-      - DB_DATABASE=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=123456
+      - DB_DATABASE=
+      - DB_USER=
+      - DB_PASSWORD=
 
   currency_signer:
     container_name: "ultimatedisionCurrencySigner"
@@ -52,9 +52,9 @@ services:
       - fullstack
     environment:
       - DB_HOST=ultimatedivisiondb_test
-      - DB_DATABASE=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=123456
+      - DB_DATABASE=
+      - DB_USER=
+      - DB_PASSWORD=
 
   ultimatedivisiondb_test:
     restart: always
@@ -68,8 +68,8 @@ services:
       - fullstack
     environment:
       - POSTGRES_DB=ultimatedivisiondb_test
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123456
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
 
 # Networks to be created to facilitate communication between containers
 networks:

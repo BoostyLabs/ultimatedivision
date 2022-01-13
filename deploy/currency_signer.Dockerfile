@@ -10,7 +10,6 @@ RUN go mod download
 COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/currencysigner/main.go
-RUN #CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/nftsigner/main.go
 
 # Result image
 FROM alpine:3.13
@@ -19,8 +18,6 @@ ARG APP_DATA_DIR=/app/data
 
 RUN mkdir -p ${APP_DATA_DIR}
 
-COPY --from=builder /app/config_currency_signer.json .
-#COPY --from=builder /app/config_nft_signer.json .
 COPY --from=builder /app/main .
 
 # NO NEEDED PORTS

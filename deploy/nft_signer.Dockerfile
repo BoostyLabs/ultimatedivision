@@ -18,7 +18,6 @@ ARG APP_DATA_DIR=/app/data
 
 RUN mkdir -p ${APP_DATA_DIR}
 
-COPY --from=builder /app/config_nft_signer.json .
 COPY --from=builder /app/main .
 
 # NO NEEDED PORTS
