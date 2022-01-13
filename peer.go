@@ -259,8 +259,8 @@ type Peer struct {
 
 	// exposes store related logic.
 	Store struct {
-		Service         *store.Service
-		RunStoreRenewal *store.Chore
+		Service      *store.Service
+		StoreRenewal *store.Chore
 	}
 
 	// Admin web server server with web UI.
@@ -488,7 +488,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Database.Store(),
 		)
 
-		peer.Store.RunStoreRenewal = store.NewChore(
+		peer.Store.StoreRenewal = store.NewChore(
 			config.Store.Config,
 			peer.Store.Service,
 			peer.Cards.Service,
@@ -578,7 +578,7 @@ func (peer *Peer) Run(ctx context.Context) error {
 	// 	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
 	// })
 	group.Go(func() error {
-		return ignoreCancel(peer.Store.RunStoreRenewal.Run(ctx))
+		return ignoreCancel(peer.Store.StoreRenewal.Run(ctx))
 	})
 
 	return group.Wait()
@@ -593,7 +593,7 @@ func (peer *Peer) Close() error {
 	peer.Marketplace.ExpirationLotChore.Close()
 	peer.Queue.PlaceChore.Close()
 	peer.Seasons.ExpirationSeasons.Close()
-	peer.Store.RunStoreRenewal.Close()
+	peer.Store.StoreRenewal.Close()
 
 	return errlist.Err()
 }
