@@ -19,13 +19,11 @@ import (
 	"ultimatedivision/database"
 	"ultimatedivision/internal/logger/zaplog"
 	"ultimatedivision/pkg/fileutils"
+	"ultimatedivision/seed"
 )
 
 // Error is a default error type for ultimatedivision cli.
 var Error = errs.Class("ultimatedivision cli error")
-
-// divisions to create default divisions.
-var divisions = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
 // Config contains configurable values for ultimatedivision project.
 type Config struct {
@@ -161,7 +159,7 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
-	err = peer.Divisions.Service.CreateDivisions(ctx, divisions)
+	err = peer.Divisions.Service.CreateDivisions(ctx, seed.Divisions)
 	if err != nil {
 		log.Error("Error starting ultimatedivision create divisions", Error.Wrap(err))
 		return Error.Wrap(err)
