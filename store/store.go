@@ -42,3 +42,6 @@ type Config struct {
 	StoreRenewalInterval time.Duration             `json:"storeRenewalInterval"`
 	PercentageQualities  cards.PercentageQualities `json:"percentageQualities"`
 }
+
+// ActiveSetting indicates that the number is active setting.
+const ActiveSetting int = 1
