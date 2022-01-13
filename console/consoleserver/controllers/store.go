@@ -63,12 +63,12 @@ func (controller *Store) Buy(w http.ResponseWriter, r *http.Request) {
 
 	transaction, err := controller.store.Buy(ctx, createNFT)
 	if err != nil {
-		controller.log.Error("could not buy card", ErrStore.Wrap(err))
 		switch {
 		case cards.ErrNoCard.Has(err):
 			controller.serveError(w, http.StatusNotFound, ErrStore.Wrap(err))
 		default:
 			controller.serveError(w, http.StatusInternalServerError, ErrStore.Wrap(err))
+			controller.log.Error("could not buy card", ErrStore.Wrap(err))
 		}
 		return
 	}
