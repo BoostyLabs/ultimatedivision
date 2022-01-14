@@ -4,10 +4,12 @@
 package controllers
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
 
+	"github.com/BoostyLabs/evmsignature"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
@@ -118,7 +120,13 @@ func (controller *Store) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if hourRenewal < store.HourOfDayMin || hourRenewal > store.HourOfDayMax {
-			http.Error(w, "hourRenewal should be in the range of 0 to 23", http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf("hourRenewal should be in the range of %d to %d", store.HourOfDayMin, store.HourOfDayMax), http.StatusBadRequest)
+			return
+		}
+
+		price, err := strconv.ParseFloat(r.FormValue("price"), 64)
+		if err != nil {
+			http.Error(w, "invalid price", http.StatusBadRequest)
 			return
 		}
 
@@ -127,6 +135,7 @@ func (controller *Store) Update(w http.ResponseWriter, r *http.Request) {
 			CardsAmount: cardsAmount,
 			IsRenewal:   isRenewal,
 			HourRenewal: hourRenewal,
+			Price:       *evmsignature.EthereumToWei(price),
 		}
 
 		if err = controller.store.Update(ctx, setting); err != nil {

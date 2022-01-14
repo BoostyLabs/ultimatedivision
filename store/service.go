@@ -5,7 +5,6 @@ package store
 
 import (
 	"context"
-	"math/big"
 	"math/rand"
 
 	"github.com/zeebo/errs"
@@ -51,8 +50,12 @@ func (service *Service) Buy(ctx context.Context, createNFT waitlist.CreateNFT) (
 
 	randNumberCard := rand.Intn(len(cards)) - 1
 	createNFT.CardID = cards[randNumberCard].ID
-	// TODO: add price in setting of store
-	createNFT.Value = *big.NewInt(100)
+
+	setting, err := service.Get(ctx, ActiveSetting)
+	if err != nil {
+		return transaction, ErrStore.Wrap(err)
+	}
+	createNFT.Value = setting.Price
 
 	// TODO: change selector of buy method
 	transaction, err = service.waitlist.Create(ctx, createNFT)
