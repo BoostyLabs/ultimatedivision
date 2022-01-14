@@ -59,7 +59,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 
 	if createNFT.Value.Cmp(big.NewInt(0)) <= 0 {
 		if card.UserID != createNFT.UserID {
-			return transaction, ErrWaitlist.New("it isn't user`s card")
+			return transaction, ErrWaitlist.New("this card does not belongs to user")
 		}
 	}
 
