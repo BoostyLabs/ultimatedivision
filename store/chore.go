@@ -11,6 +11,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/cards/avatars"
 	"ultimatedivision/pkg/sync"
 )
 
@@ -23,31 +24,33 @@ var (
 //
 // architecture: Chore
 type Chore struct {
-	config Config
-	Loop   *sync.Cycle
-	store  *Service
-	cards  *cards.Service
+	config  Config
+	Loop    *sync.Cycle
+	store   *Service
+	cards   *cards.Service
+	avatars *avatars.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(config Config, store *Service, cards *cards.Service) *Chore {
+func NewChore(config Config, store *Service, cards *cards.Service, avatars *avatars.Service) *Chore {
 	return &Chore{
-		config: config,
-		Loop:   sync.NewCycle(config.StoreRenewalInterval),
-		store:  store,
-		cards:  cards,
+		config:  config,
+		Loop:    sync.NewCycle(config.StoreRenewalInterval),
+		store:   store,
+		cards:   cards,
+		avatars: avatars,
 	}
 }
 
 // Run runs the renewal of cards in store.
 func (chore *Chore) Run(ctx context.Context) error {
-	if _, err := chore.store.Get(ctx, 1); err != nil {
+	if _, err := chore.store.Get(ctx, ActiveSetting); err != nil {
 		if !ErrNoSetting.Has(err) {
 			return ChoreError.Wrap(err)
 		}
 
 		setting := Setting{
-			ID:          1,
+			ID:          ActiveSetting,
 			CardsAmount: 10,
 			IsRenewal:   true,
 			HourRenewal: 0,
@@ -59,7 +62,7 @@ func (chore *Chore) Run(ctx context.Context) error {
 
 	t := time.Now().UTC()
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
-		setting, err := chore.store.Get(ctx, 1)
+		setting, err := chore.store.Get(ctx, ActiveSetting)
 		if err != nil {
 			return ChoreError.Wrap(err)
 		}
@@ -89,7 +92,13 @@ func (chore *Chore) Run(ctx context.Context) error {
 		}
 
 		for i := 0; i < cardsAmount; i++ {
-			if _, err := chore.cards.Create(ctx, uuid.Nil, percentageQualities, cards.TypeOrdered); err != nil {
+			card, err := chore.cards.Create(ctx, uuid.Nil, percentageQualities, cards.TypeOrdered)
+			if err != nil {
+				return ChoreError.Wrap(err)
+			}
+
+			_, err = chore.avatars.Generate(ctx, card, card.ID.String())
+			if err != nil {
 				return ChoreError.Wrap(err)
 			}
 		}

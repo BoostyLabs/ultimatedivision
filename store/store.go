@@ -43,6 +43,9 @@ type Config struct {
 	PercentageQualities  cards.PercentageQualities `json:"percentageQualities"`
 }
 
+// ActiveSetting indicates that the number is active setting.
+const ActiveSetting int = 1
+
 // HourOfDay defines hours of day.
 type HourOfDay int
 

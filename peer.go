@@ -485,13 +485,17 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 	{ // store setup
 		peer.Store.Service = store.NewService(
+			config.Store.Config,
 			peer.Database.Store(),
+			peer.Cards.Service,
+			peer.WaitList.Service,
 		)
 
 		peer.Store.StoreRenewal = store.NewChore(
 			config.Store.Config,
 			peer.Store.Service,
 			peer.Cards.Service,
+			peer.Avatars.Service,
 		)
 	}
 
@@ -544,6 +548,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Queue.Service,
 			peer.Seasons.Service,
 			peer.WaitList.Service,
+			peer.Store.Service,
 		)
 	}
 
