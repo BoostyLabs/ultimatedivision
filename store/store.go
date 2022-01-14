@@ -42,3 +42,13 @@ type Config struct {
 	StoreRenewalInterval time.Duration             `json:"storeRenewalInterval"`
 	PercentageQualities  cards.PercentageQualities `json:"percentageQualities"`
 }
+
+// HourOfDay defines hours of day.
+type HourOfDay int
+
+const (
+	// HourOfDayMin indicates that the minimum hour of the day is 0.
+	HourOfDayMin int = 0
+	// HourOfDayMax indicates that the maximum hour of the day is 23.
+	HourOfDayMax int = 23
+)

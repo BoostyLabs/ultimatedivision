@@ -117,7 +117,7 @@ func (controller *Store) Update(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "invalid hourRenewal", http.StatusBadRequest)
 			return
 		}
-		if hourRenewal < 0 || hourRenewal > 23 {
+		if hourRenewal < store.HourOfDayMin || hourRenewal > store.HourOfDayMax {
 			http.Error(w, "hourRenewal should be in the range of 0 to 23", http.StatusBadRequest)
 			return
 		}
