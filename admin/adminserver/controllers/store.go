@@ -6,7 +6,6 @@ package controllers
 import (
 	"fmt"
 	"html/template"
-	"math/big"
 	"net/http"
 	"strconv"
 
@@ -71,15 +70,19 @@ func (controller *Store) List(w http.ResponseWriter, r *http.Request) {
 
 	var settingResponses []SettingResponse
 	for _, setting := range settings {
-		price := new(big.Float).SetInt(evmsignature.WeiToEthereum(&setting.Price))
-		priceFloat, _ := price.Float64()
+		price, err := strconv.ParseFloat(setting.Price.String(), 64)
+		if err != nil {
+			controller.log.Error("could not convert price", ErrStore.Wrap(err))
+			http.Error(w, "could not convert price", http.StatusInternalServerError)
+			return
+		}
 
 		settingResponse := SettingResponse{
 			ID:          setting.ID,
 			CardsAmount: setting.CardsAmount,
 			IsRenewal:   setting.IsRenewal,
 			HourRenewal: setting.HourRenewal,
-			Price:       priceFloat,
+			Price:       price / float64(evmsignature.WeiInEthereum),
 		}
 
 		settingResponses = append(settingResponses, settingResponse)
@@ -117,15 +120,19 @@ func (controller *Store) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		price := new(big.Float).SetInt(evmsignature.WeiToEthereum(&setting.Price))
-		priceFloat, _ := price.Float64()
+		price, err := strconv.ParseFloat(setting.Price.String(), 64)
+		if err != nil {
+			controller.log.Error("could not convert price", ErrStore.Wrap(err))
+			http.Error(w, "could not convert price", http.StatusInternalServerError)
+			return
+		}
 
 		settingResponse := SettingResponse{
 			ID:          setting.ID,
 			CardsAmount: setting.CardsAmount,
 			IsRenewal:   setting.IsRenewal,
 			HourRenewal: setting.HourRenewal,
-			Price:       priceFloat,
+			Price:       price / float64(evmsignature.WeiInEthereum),
 		}
 
 		if err = controller.templates.Update.Execute(w, settingResponse); err != nil {

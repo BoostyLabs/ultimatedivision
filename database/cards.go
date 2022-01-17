@@ -219,11 +219,11 @@ func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID, cursor p
 	return userCardsPage, ErrCard.Wrap(err)
 }
 
-// ListByTypeOrdered returns cards where type is ordered from the database.
-func (cardsDB *cardsDB) ListByTypeOrdered(ctx context.Context) ([]cards.Card, error) {
+// ListByTypeNoOrdered returns cards where type isn't ordered from the database.
+func (cardsDB *cardsDB) ListByTypeNoOrdered(ctx context.Context) ([]cards.Card, error) {
 	query := `SELECT * FROM cards WHERE type = $1`
 
-	rows, err := cardsDB.conn.QueryContext(ctx, query, cards.TypeOrdered)
+	rows, err := cardsDB.conn.QueryContext(ctx, query, cards.TypeNoOrdered)
 	if err != nil {
 		return nil, ErrCard.Wrap(err)
 	}
@@ -585,6 +585,21 @@ func BuildWhereClauseDependsOnPlayerNameCards(filter cards.Filters) (string, []s
 // UpdateStatus updates status card in the database.
 func (cardsDB *cardsDB) UpdateStatus(ctx context.Context, id uuid.UUID, status cards.Status) error {
 	result, err := cardsDB.conn.ExecContext(ctx, "UPDATE cards SET status=$1 WHERE id=$2", status, id)
+	if err != nil {
+		return ErrCard.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return cards.ErrNoCard.New("card does not exist")
+	}
+
+	return ErrCard.Wrap(err)
+}
+
+// UpdateStatus updates type of card in the database.
+func (cardsDB *cardsDB) UpdateType(ctx context.Context, id uuid.UUID, typeCard cards.Type) error {
+	result, err := cardsDB.conn.ExecContext(ctx, "UPDATE cards SET type=$1 WHERE id=$2", typeCard, id)
 	if err != nil {
 		return ErrCard.Wrap(err)
 	}

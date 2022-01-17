@@ -40,16 +40,16 @@ func NewService(config Config, store DB, cards *cards.Service, waitlist *waitlis
 func (service *Service) Buy(ctx context.Context, createNFT waitlist.CreateNFT) (waitlist.Transaction, error) {
 	var transaction waitlist.Transaction
 
-	cards, err := service.cards.ListByTypeOrdered(ctx)
+	cardsList, err := service.cards.ListByTypeNoOrdered(ctx)
 	if err != nil {
 		return transaction, ErrStore.Wrap(err)
 	}
-	if len(cards) == 0 {
+	if len(cardsList) == 0 {
 		return transaction, ErrStore.New("all cards of store are minted")
 	}
 
-	randNumberCard := rand.Intn(len(cards)) - 1
-	createNFT.CardID = cards[randNumberCard].ID
+	randNumberCard := rand.Intn(len(cardsList)) - 1
+	createNFT.CardID = cardsList[randNumberCard].ID
 
 	setting, err := service.Get(ctx, ActiveSetting)
 	if err != nil {
@@ -59,8 +59,11 @@ func (service *Service) Buy(ctx context.Context, createNFT waitlist.CreateNFT) (
 
 	// TODO: change selector of buy method
 	transaction, err = service.waitlist.Create(ctx, createNFT)
+	if err != nil {
+		return transaction, ErrStore.Wrap(err)
+	}
 
-	return transaction, ErrStore.Wrap(err)
+	return transaction, ErrStore.Wrap(service.cards.UpdateType(ctx, createNFT.CardID, cards.TypeOrdered))
 }
 
 // Create creates setting of store in database.
