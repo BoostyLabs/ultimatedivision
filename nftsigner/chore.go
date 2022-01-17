@@ -5,15 +5,15 @@ package nftsigner
 
 import (
 	"context"
+	"math/big"
 	"time"
 
 	"github.com/BoostyLabs/evmsignature"
+	"github.com/BoostyLabs/thelooper"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards/waitlist"
-	"ultimatedivision/internal/logger"
-	"ultimatedivision/pkg/sync"
 )
 
 // ChoreError represents nft signer chore error type.
@@ -30,19 +30,17 @@ type ChoreConfig struct {
 //
 // architecture: Chore
 type Chore struct {
-	log    logger.Logger
-	nfts   *waitlist.Service
-	loop   *sync.Cycle
+	loop   *thelooper.Loop
 	config ChoreConfig
+	nfts   *waitlist.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(log logger.Logger, config ChoreConfig, db waitlist.DB) *Chore {
+func NewChore(config ChoreConfig, db waitlist.DB) *Chore {
 	return &Chore{
-		log:    log,
-		loop:   sync.NewCycle(config.RenewalInterval),
-		nfts:   waitlist.NewService(waitlist.Config{}, db, nil, nil, nil, nil),
+		loop:   thelooper.NewLoop(config.RenewalInterval),
 		config: config,
+		nfts:   waitlist.NewService(waitlist.Config{}, db, nil, nil, nil, nil),
 	}
 }
 
@@ -60,13 +58,20 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		}
 
 		for _, token := range unsignedNFTs {
-			signature, err := evmsignature.GenerateSignatureWithValue(token.Wallet, chore.config.SmartContractAddress, token.TokenID, privateKeyECDSA)
-			if err != nil {
-				return ChoreError.Wrap(err)
+			var signature evmsignature.Signature
+			if token.Value.Cmp(big.NewInt(0)) <= 0 {
+				signature, err = evmsignature.GenerateSignatureWithValue(token.Wallet, chore.config.SmartContractAddress, token.TokenID, privateKeyECDSA)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
+			} else {
+				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(token.Wallet, chore.config.SmartContractAddress, &token.Value, token.TokenID, privateKeyECDSA)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
 			}
 
-			err = chore.nfts.Update(ctx, token.TokenID, signature)
-			if err != nil {
+			if err = chore.nfts.Update(ctx, token.TokenID, signature); err != nil {
 				return ChoreError.Wrap(err)
 			}
 		}
