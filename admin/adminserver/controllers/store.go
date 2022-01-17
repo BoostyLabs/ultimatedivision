@@ -49,6 +49,7 @@ func NewStore(log logger.Logger, store *store.Service, templates StoreTemplates)
 	return storeController
 }
 
+// SettingResponse entity describes values required for returning to admin panel.
 type SettingResponse struct {
 	ID          int     `json:"id"`
 	CardsAmount int     `json:"cardsAmount"`
