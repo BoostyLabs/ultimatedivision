@@ -5,6 +5,7 @@ package store
 
 import (
 	"context"
+	"math/big"
 	"time"
 
 	"github.com/BoostyLabs/thelooper"
@@ -54,6 +55,7 @@ func (chore *Chore) Run(ctx context.Context) error {
 			CardsAmount: 10,
 			IsRenewal:   true,
 			HourRenewal: 0,
+			Price:       *big.NewInt(100),
 		}
 		if err = chore.store.Create(ctx, setting); err != nil {
 			return ChoreError.Wrap(err)

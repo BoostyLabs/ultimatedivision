@@ -6,6 +6,7 @@ package controllers
 import (
 	"fmt"
 	"html/template"
+	"math/big"
 	"net/http"
 	"strconv"
 
@@ -48,18 +49,42 @@ func NewStore(log logger.Logger, store *store.Service, templates StoreTemplates)
 	return storeController
 }
 
+type SettingResponse struct {
+	ID          int     `json:"id"`
+	CardsAmount int     `json:"cardsAmount"`
+	IsRenewal   bool    `json:"isRenewal"`
+	HourRenewal int     `json:"dateRenewal"`
+	Price       float64 `json:"price"`
+}
+
 // List is an endpoint that will provide a web page with all settings.
 func (controller *Store) List(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	store, err := controller.store.List(ctx)
+	settings, err := controller.store.List(ctx)
 	if err != nil {
 		controller.log.Error("could not get store list", ErrStore.Wrap(err))
 		http.Error(w, "could not get store list", http.StatusInternalServerError)
 		return
 	}
 
-	err = controller.templates.List.Execute(w, store)
+	var settingResponses []SettingResponse
+	for _, setting := range settings {
+		price := new(big.Float).SetInt(evmsignature.WeiToEthereum(&setting.Price))
+		priceFloat, _ := price.Float64()
+
+		settingResponse := SettingResponse{
+			ID:          setting.ID,
+			CardsAmount: setting.CardsAmount,
+			IsRenewal:   setting.IsRenewal,
+			HourRenewal: setting.HourRenewal,
+			Price:       priceFloat,
+		}
+
+		settingResponses = append(settingResponses, settingResponse)
+	}
+
+	err = controller.templates.List.Execute(w, settingResponses)
 	if err != nil {
 		controller.log.Error("can not execute list store template", ErrStore.Wrap(err))
 		http.Error(w, "can not execute list store template", http.StatusInternalServerError)
@@ -91,7 +116,18 @@ func (controller *Store) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err = controller.templates.Update.Execute(w, setting); err != nil {
+		price := new(big.Float).SetInt(evmsignature.WeiToEthereum(&setting.Price))
+		priceFloat, _ := price.Float64()
+
+		settingResponse := SettingResponse{
+			ID:          setting.ID,
+			CardsAmount: setting.CardsAmount,
+			IsRenewal:   setting.IsRenewal,
+			HourRenewal: setting.HourRenewal,
+			Price:       priceFloat,
+		}
+
+		if err = controller.templates.Update.Execute(w, settingResponse); err != nil {
 			controller.log.Error("could not execute update store template", ErrStore.Wrap(err))
 			http.Error(w, "could not execute update store template", http.StatusInternalServerError)
 			return
