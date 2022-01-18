@@ -96,7 +96,7 @@ func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 				controller.serveError(client.Connection, http.StatusInternalServerError, err.Error())
 			}
 
-			controller.serveError(client.Connection, http.StatusOK, "you leaved!")
+			controller.serveError(client.Connection, http.StatusOK, "you left!")
 			return
 		}
 		controller.serveError(client.Connection, http.StatusBadRequest, "you have not been added!")

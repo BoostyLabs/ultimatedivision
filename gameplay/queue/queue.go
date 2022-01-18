@@ -77,6 +77,11 @@ const (
 	ActionForbidAddress Action = "forbidAddress"
 )
 
+// isValid checks is action valid.
+func (a Action) isValid() bool {
+	return a == ActionConfirm || a == ActionReject
+}
+
 // Response entity describes values sent to user.
 type Response struct {
 	Status  int         `json:"status"`
@@ -95,8 +100,10 @@ type Config struct {
 func (client *Client) ReadJSON() (Request, error) {
 	var request Request
 	if err := client.Connection.ReadJSON(&request); err != nil {
-		if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
-			return request, ErrWrite.Wrap(ErrQueue.Wrap(err))
+		if websocket.IsCloseError(err) || websocket.IsUnexpectedCloseError(err) {
+			if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
+				return request, ErrWrite.Wrap(ErrQueue.Wrap(err))
+			}
 		}
 		return request, ErrRead.Wrap(ErrQueue.Wrap(err))
 	}
