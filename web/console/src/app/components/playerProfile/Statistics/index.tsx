@@ -62,7 +62,7 @@ const Statistics: React.FC = () =>
                 </div>
             </div>
             <div className="profile__statistics__info__divider"></div>
-                <div className="profile__statistics__info__section">
+            <div className="profile__statistics__info__section">
                 <img src={highestDivision} alt="Highest Division" />
                 <div className="info">
                     <span className="info__value">3</span>
