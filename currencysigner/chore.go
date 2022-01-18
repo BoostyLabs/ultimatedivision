@@ -7,12 +7,12 @@ import (
 	"context"
 	"time"
 
+	"github.com/BoostyLabs/evmsignature"
+	"github.com/BoostyLabs/thelooper"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/pkg/cryptoutils"
-	"ultimatedivision/pkg/sync"
 	"ultimatedivision/udts/currencywaitlist"
 )
 
@@ -21,9 +21,9 @@ var ChoreError = errs.Class("nft signer chore error")
 
 // ChoreConfig is the global configuration for currencysigner.
 type ChoreConfig struct {
-	RenewalInterval    time.Duration          `json:"renewalInterval"`
-	PrivateKey         cryptoutils.PrivateKey `json:"privateKey"`
-	UDTContractAddress cryptoutils.Address    `json:"udtContractAddress"`
+	RenewalInterval    time.Duration           `json:"renewalInterval"`
+	PrivateKey         evmsignature.PrivateKey `json:"privateKey"`
+	UDTContractAddress evmsignature.Address    `json:"udtContractAddress"`
 }
 
 // Chore requests for unsigned nft tokens and sign all of them .
@@ -32,7 +32,7 @@ type ChoreConfig struct {
 type Chore struct {
 	log              logger.Logger
 	currencywaitlist *currencywaitlist.Service
-	Loop             *sync.Cycle
+	Loop             *thelooper.Loop
 	config           ChoreConfig
 }
 
@@ -40,7 +40,7 @@ type Chore struct {
 func NewChore(log logger.Logger, config ChoreConfig, db currencywaitlist.DB) *Chore {
 	return &Chore{
 		log:              log,
-		Loop:             sync.NewCycle(config.RenewalInterval),
+		Loop:             thelooper.NewLoop(config.RenewalInterval),
 		currencywaitlist: currencywaitlist.NewService(currencywaitlist.Config{}, db, nil, nil),
 		config:           config,
 	}
@@ -60,7 +60,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		}
 
 		for _, item := range unsignedItems {
-			signature, err := cryptoutils.GenerateSignatureWithValueAndNonce(item.WalletAddress, chore.config.UDTContractAddress, &item.Value, item.Nonce, privateKeyECDSA)
+			signature, err := evmsignature.GenerateSignatureWithValueAndNonce(item.WalletAddress, chore.config.UDTContractAddress, &item.Value, item.Nonce, privateKeyECDSA)
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}

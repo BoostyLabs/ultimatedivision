@@ -37,8 +37,19 @@ const MatchFinder: React.FC = () => {
     /** Indicates if match is found. */
     const [isMatchFound, setIsMatchFound] = useState<boolean>(false);
 
-    /** CANCEL_GAME_DELAY is time delay for auto cancel game. */
-    const CANCEL_GAME_DELAY: number = 30000;
+    /** Indicates if match is confirmed. */
+    const [isMatchConfirmed, setIsMatchConfirmed] = useState<boolean>(false);
+
+    /** CANCEL_GAME_DELAY_MIN is min time delay for auto cancel game. */
+    const CANCEL_GAME_DELAY_MIN: number = 29000;
+    /** CANCEL_GAME_DELAY_MAX is max time delay for auto cancel game. */
+    const CANCEL_GAME_DELAY_MAX: number = 31000;
+
+    // TODO: it will be deleted after ./gameplage/queue/chore.go solution.
+    /** Returns random time delay from range for auto cancel game. */
+    function getRandomTimeDelayForCancelGame(minTimeDelay: number, maxTimeDelay: number) {
+        return Math.random() * (maxTimeDelay - minTimeDelay) + minTimeDelay;
+    };
 
     /** Delay is time delay for redirect user to match page. */
     const DELAY: number = 2000;
@@ -61,13 +72,14 @@ const MatchFinder: React.FC = () => {
 
     /** Sends confirm action. */
     const confirmMatch = () => {
+        setIsMatchConfirmed(true);
         queueSendAction('confirm', squad.id);
     };
 
     /** Canceles confirmation game. */
     const cancelConfirmationGame = () => {
-        queueSendAction('reject', squad.id);
-        setIsRejectedUser(true);
+        !isMatchConfirmed && queueSendAction('reject', squad.id);
+        !isMatchConfirmed && setIsRejectedUser(true);
     };
 
     // TODO: rework after ./queue/chore.go solution.
@@ -156,6 +168,7 @@ const MatchFinder: React.FC = () => {
                 return;
             case YOU_CONFIRM_PLAY_MESSAGE:
                 setIsMatchFound(true);
+                setIsMatchConfirmed(false);
 
                 return;
             case YOU_LEAVED_MESSAGE:
@@ -194,15 +207,11 @@ const MatchFinder: React.FC = () => {
     useEffect(() => {
         /** Canceles confirm game after CANCEL_GAME_DELAY delay. */
         let autoCancelConfirmGame: ReturnType<typeof setTimeout>;
-
         if (isMatchFound) {
             autoCancelConfirmGame = setTimeout(() => {
-                onOpenConnectionSendAction('startSearch', squad.id);
-
-                /** Updates current queue client. */
-                const updatedClient = getCurrentQueueClient();
-                setQueueClient(updatedClient);
-            }, CANCEL_GAME_DELAY);
+                queueSendAction('reject', squad.id);
+                setIsRejectedUser(true);
+            }, getRandomTimeDelayForCancelGame(CANCEL_GAME_DELAY_MIN, CANCEL_GAME_DELAY_MAX));
         }
 
         return () => clearTimeout(autoCancelConfirmGame);
@@ -226,7 +235,7 @@ const MatchFinder: React.FC = () => {
                     type="button"
                 />}
                 {isMatchFound ? <input
-                    className="match-finder__form__cancel"
+                    className={`match-finder__form__cancel${isMatchConfirmed ? '-not-allowed' : ''}`}
                     value="Cancel"
                     type="button"
                     onClick={cancelConfirmationGame}
