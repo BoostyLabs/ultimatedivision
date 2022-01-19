@@ -59,33 +59,35 @@ func NewChore(config Config, log logger.Logger, service *Service, matches *match
 func (chore *Chore) Run(ctx context.Context) (err error) {
 	firstRequestChan := make(chan Request)
 	secondRequestChan := make(chan Request)
+	defer func() {
+		close(firstRequestChan)
+		close(secondRequestChan)
+	}()
 
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
-		clients := chore.service.ListNotPlayingUsers()
-
-		if len(clients) >= 2 {
-			for k := range clients {
-				isEvenNumber := (k%2 != 1)
-				if isEvenNumber {
-					continue
-				}
-
-				go func(clients []Client, k int) {
-					firstClient := clients[k-1]
-					secondClient := clients[k]
-
+		notPlayingUsers := chore.service.ListNotPlayingUsers()
+		notPlayingUsers = isLenOdd(notPlayingUsers)
+		if len(notPlayingUsers) >= 2 {
+			pairsOfClients := divideClients(notPlayingUsers)
+			for _, pair := range pairsOfClients {
+				go func(pair []Client) {
+					firstClient := pair[0]
+					secondClient := pair[1]
 					if err = chore.service.UpdateIsPlaying(firstClient.UserID, true); err != nil {
 						chore.log.Error("could not update is play", ChoreError.Wrap(err))
+						return
 					}
 					if err = chore.service.UpdateIsPlaying(secondClient.UserID, true); err != nil {
 						chore.log.Error("could not update is play", ChoreError.Wrap(err))
+						return
 					}
-
-					if err := firstClient.WriteJSON(http.StatusOK, "you confirm play?"); err != nil {
+					if err := firstClient.WriteJSON(http.StatusOK, "do you confirm play?"); err != nil {
 						chore.log.Error("could not write json", ChoreError.Wrap(err))
+						return
 					}
-					if err := secondClient.WriteJSON(http.StatusOK, "you confirm play?"); err != nil {
+					if err := secondClient.WriteJSON(http.StatusOK, "do you confirm play?"); err != nil {
 						chore.log.Error("could not write json", ChoreError.Wrap(err))
+						return
 					}
 
 					go func() {
@@ -100,6 +102,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 						request, err := secondClient.ReadJSON()
 						if err != nil {
 							chore.log.Error("could not read json", ChoreError.Wrap(err))
+							return
 						}
 						secondRequestChan <- request
 					}()
@@ -108,56 +111,61 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 					for {
 						select {
 						case firstRequest = <-firstRequestChan:
-							if (firstRequest != Request{}) {
-								if firstRequest.Action != ActionConfirm && firstRequest.Action != ActionReject {
-									if err := firstClient.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
-										chore.log.Error("could not write json", ChoreError.Wrap(err))
-									}
-
-									if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
-										chore.log.Error("could not update is play", ChoreError.Wrap(err))
-									}
-									if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
-										chore.log.Error("could not update is play", ChoreError.Wrap(err))
-									}
+							if (firstRequest == Request{}) {
+								continue
+							}
+							if !firstRequest.Action.isValid() {
+								if err := firstClient.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
+									chore.log.Error("could not write json", ChoreError.Wrap(err))
 									return
 								}
+								if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
+									chore.log.Error("could not update is play", ChoreError.Wrap(err))
+									return
+								}
+								if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
+									chore.log.Error("could not update is play", ChoreError.Wrap(err))
+									return
+								}
+								return
 							}
 						case secondRequest = <-secondRequestChan:
-							if (secondRequest != Request{}) {
-								if secondRequest.Action != ActionConfirm && secondRequest.Action != ActionReject {
-									if err := secondClient.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
-										chore.log.Error("could not write json", ChoreError.Wrap(err))
-									}
-
-									if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
-										chore.log.Error("could not update is play", ChoreError.Wrap(err))
-									}
-									if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
-										chore.log.Error("could not update is play", ChoreError.Wrap(err))
-									}
+							if (secondRequest == Request{}) {
+								continue
+							}
+							if !secondRequest.Action.isValid() {
+								if err := secondClient.WriteJSON(http.StatusBadRequest, "wrong action"); err != nil {
+									chore.log.Error("could not write json", ChoreError.Wrap(err))
 									return
 								}
+								if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
+									chore.log.Error("could not update is play", ChoreError.Wrap(err))
+									return
+								}
+								if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
+									chore.log.Error("could not update is play", ChoreError.Wrap(err))
+									return
+								}
+								return
 							}
-						}
-
-						if (firstRequest == Request{} && secondRequest == Request{}) {
-							continue
 						}
 
 						if firstRequest.Action == ActionReject || secondRequest.Action == ActionReject {
+							if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
+								chore.log.Error("could not update is play", ChoreError.Wrap(err))
+								return
+							}
+							if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
+								chore.log.Error("could not update is play", ChoreError.Wrap(err))
+								return
+							}
 							if err := firstClient.WriteJSON(http.StatusOK, "you are still in search!"); err != nil {
 								chore.log.Error("could not write json", ChoreError.Wrap(err))
+								return
 							}
 							if err := secondClient.WriteJSON(http.StatusOK, "you are still in search!"); err != nil {
 								chore.log.Error("could not write json", ChoreError.Wrap(err))
-							}
-
-							if err = chore.service.Finish(firstClient.UserID); err != nil {
-								chore.log.Error("could not delete client from queue", ChoreError.Wrap(err))
-							}
-							if err = chore.service.Finish(secondClient.UserID); err != nil {
-								chore.log.Error("could not delete client from queue", ChoreError.Wrap(err))
+								return
 							}
 							return
 						}
@@ -166,22 +174,58 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 							continue
 						}
 
-						if err = chore.Play(ctx, firstClient, secondClient); err != nil {
-							if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
-								chore.log.Error("could not update is play", ChoreError.Wrap(err))
+						if firstRequest.Action == ActionConfirm && secondRequest.Action == ActionConfirm {
+							if err = chore.Play(ctx, firstClient, secondClient); err != nil {
+								if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
+									chore.log.Error("could not update is play", ChoreError.Wrap(err))
+									return
+								}
+								if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
+									chore.log.Error("could not update is play", ChoreError.Wrap(err))
+									return
+								}
+								if err = chore.service.Finish(firstClient.UserID); err != nil {
+									chore.log.Error("could not delete client from queue", ChoreError.Wrap(err))
+									return
+								}
+								if err = chore.service.Finish(secondClient.UserID); err != nil {
+									chore.log.Error("could not delete client from queue", ChoreError.Wrap(err))
+									return
+								}
+								chore.log.Error("could not play game", ChoreError.Wrap(err))
+								return
 							}
-							if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
-								chore.log.Error("could not update is play", ChoreError.Wrap(err))
-							}
-							chore.log.Error("could not play game", ChoreError.Wrap(err))
 						}
 						return
 					}
-				}(clients, k)
+				}(pair)
 			}
 		}
 		return ChoreError.Wrap(err)
 	})
+}
+
+// isLenOdd checks is length of not playing users odd.
+// if odd - delete last client from slice.
+func isLenOdd(notPlayingUsers []Client) []Client {
+	isOddNumber := len(notPlayingUsers)%2 == 1
+	if isOddNumber && len(notPlayingUsers) >= 2 {
+		notPlayingUsers = notPlayingUsers[:len(notPlayingUsers)-1]
+	}
+
+	return notPlayingUsers
+}
+
+// DivideClients divides all clients into couples.
+func divideClients(clients []Client) [][]Client {
+	var dividedClients [][]Client
+	for i := 0; i < len(clients); i += 2 {
+		element := make([]Client, 2, 2)
+		element[0] = clients[i]
+		element[1] = clients[i+1]
+		dividedClients = append(dividedClients, element)
+	}
+	return dividedClients
 }
 
 // Play method contains all the logic for playing matches.
