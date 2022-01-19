@@ -162,6 +162,10 @@ type Config struct {
 	CurrencyWaitList struct {
 		currencywaitlist.Config
 	} `json:"currencyWaitList"`
+
+	Store struct {
+		store.Config
+	} `json:"store"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -255,7 +259,8 @@ type Peer struct {
 
 	// exposes store related logic.
 	Store struct {
-		Service *store.Service
+		Service      *store.Service
+		StoreRenewal *store.Chore
 	}
 
 	// Admin web server server with web UI.
@@ -350,7 +355,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 		peer.NFTs.NFTChore = nfts.NewChore(
 			config.NFTs.Config,
-			peer.Log,
 			peer.NFTs.Service,
 			peer.Users.Service,
 			peer.Cards.Service,
@@ -369,7 +373,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 		peer.WaitList.WaitListChore = waitlist.NewChore(
 			config.WaitList.Config,
-			peer.Log,
 			peer.WaitList.Service,
 			peer.NFTs.Service,
 			peer.Users.Service,
@@ -405,11 +408,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 
 		peer.Marketplace.ExpirationLotChore = marketplace.NewChore(
-			peer.Log,
 			config.Marketplace.Config,
-			peer.Database.Marketplace(),
-			peer.Users.Service,
-			peer.Cards.Service,
+			peer.Marketplace.Service,
 		)
 	}
 
@@ -480,7 +480,17 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 	{ // store setup
 		peer.Store.Service = store.NewService(
+			config.Store.Config,
 			peer.Database.Store(),
+			peer.Cards.Service,
+			peer.WaitList.Service,
+		)
+
+		peer.Store.StoreRenewal = store.NewChore(
+			config.Store.Config,
+			peer.Store.Service,
+			peer.Cards.Service,
+			peer.Avatars.Service,
 		)
 	}
 
@@ -533,6 +543,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Queue.Service,
 			peer.Seasons.Service,
 			peer.WaitList.Service,
+			peer.Store.Service,
 		)
 	}
 
@@ -557,9 +568,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
 	})
 	// TODO: commented while fixing bug with matches
-	//group.Go(func() error {
-	//	return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
-	//})
+	// group.Go(func() error {
+	// 	return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
+	// })
 	// TODO: uncomment when the Ethereum node is running
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
@@ -567,6 +578,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
 	// })
+	group.Go(func() error {
+		return ignoreCancel(peer.Store.StoreRenewal.Run(ctx))
+	})
 
 	return group.Wait()
 }
@@ -580,6 +594,7 @@ func (peer *Peer) Close() error {
 	peer.Marketplace.ExpirationLotChore.Close()
 	peer.Queue.PlaceChore.Close()
 	peer.Seasons.ExpirationSeasons.Close()
+	peer.Store.StoreRenewal.Close()
 
 	return errlist.Err()
 }
