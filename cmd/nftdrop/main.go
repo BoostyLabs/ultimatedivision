@@ -59,13 +59,14 @@ var (
 	setupCfg Config
 	runCfg   Config
 
-	defaultConfigDir = fileutils.ApplicationDir(filepath.Join("ultimatedivision", "nftdrop"))
+	configPath = fileutils.ApplicationDir(filepath.Join("ultimatedivision", "nftdrop"))
 )
 
 func init() {
 	rootCmd.AddCommand(setupCmd)
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(destroyCmd)
+	rootCmd.PersistentFlags().StringVar(&configPath, "config", "", "Config file path")
 }
 
 func main() {
@@ -78,7 +79,7 @@ func main() {
 func cmdSetup(cmd *cobra.Command, args []string) (err error) {
 	log := zaplog.NewLog()
 
-	setupDir, err := filepath.Abs(defaultConfigDir)
+	setupDir, err := filepath.Abs(configPath)
 	if err != nil {
 		return Error.Wrap(err)
 	}
@@ -88,7 +89,7 @@ func cmdSetup(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
-	configFile, err := os.Create(path.Join(setupDir, "config.json"))
+	configFile, err := os.Create(path.Join(setupDir, "/config.json"))
 	if err != nil {
 		log.Error("could not create config file", Error.Wrap(err))
 		return Error.Wrap(err)
@@ -144,12 +145,12 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 }
 
 func cmdDestroy(cmd *cobra.Command, args []string) (err error) {
-	return os.RemoveAll(defaultConfigDir)
+	return os.RemoveAll(configPath)
 }
 
 // readConfig reads config from default config dir.
 func readConfig() (config Config, err error) {
-	configBytes, err := ioutil.ReadFile("./config.json")
+	configBytes, err := ioutil.ReadFile(path.Join(configPath, "/config.json"))
 	if err != nil {
 		return Config{}, err
 	}

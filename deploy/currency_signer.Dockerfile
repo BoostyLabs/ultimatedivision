@@ -25,5 +25,5 @@ COPY --from=builder /app/main .
 
 VOLUME ["${APP_DATA_DIR}"]
 
-ENTRYPOINT ["/main", "run"]
+ENTRYPOINT ["/main", "run", "--config=./configs"]
 

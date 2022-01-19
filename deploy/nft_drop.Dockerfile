@@ -26,4 +26,4 @@ EXPOSE 8085 8086
 
 VOLUME ["${APP_DATA_DIR}"]
 
-ENTRYPOINT ["/main", "run"]
+ENTRYPOINT ["/main", "run", "--config=./configs"]
