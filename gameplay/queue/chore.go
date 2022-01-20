@@ -159,11 +159,11 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 								chore.log.Error("could not update is play", ChoreError.Wrap(err))
 								return
 							}
-							if err := firstClient.WriteJSON(http.StatusOK, "you are still in search!"); err != nil {
+							if err := firstClient.WriteJSON(http.StatusOK, "you are still in search"); err != nil {
 								chore.log.Error("could not write json", ChoreError.Wrap(err))
 								return
 							}
-							if err := secondClient.WriteJSON(http.StatusOK, "you are still in search!"); err != nil {
+							if err := secondClient.WriteJSON(http.StatusOK, "you are still in search"); err != nil {
 								chore.log.Error("could not write json", ChoreError.Wrap(err))
 								return
 							}
