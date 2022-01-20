@@ -7,11 +7,10 @@ import (
 	"context"
 	"sort"
 	"time"
+	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
-
-	"ultimatedivision/cards"
 )
 
 // ErrNoClub indicated that club does not exist.
@@ -102,9 +101,9 @@ type Squad struct {
 
 // SquadCard defines all cards from squad.
 type SquadCard struct {
-	SquadID  uuid.UUID `json:"squadId"`
-	CardID   uuid.UUID `json:"cardId"`
-	Position Position  `json:"position"`
+	SquadID  uuid.UUID  `json:"squadId"`
+	Card     cards.Card `json:"card"`
+	Position Position   `json:"position"`
 }
 
 // SquadSize defines number of cards in the full squad.
@@ -254,11 +253,4 @@ func convertPositions(squadCards []SquadCard, formation Formation) []SquadCard {
 	}
 
 	return squadCards
-}
-
-// GetSquadCard describes entity to get squad cards.
-type GetSquadCard struct {
-	SquadID  uuid.UUID  `json:"squadId"`
-	Card     cards.Card `json:"card"`
-	Position Position   `json:"position"`
 }

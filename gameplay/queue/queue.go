@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"net/http"
 	"time"
+	"ultimatedivision/gameplay/gameengine"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
@@ -85,10 +86,15 @@ type Response struct {
 
 // Config defines configuration for queue.
 type Config struct {
-	PlaceRenewalInterval time.Duration         `json:"placeRenewalInterval"`
-	WinValue             string                `json:"winValue"`
-	DrawValue            string                `json:"drawValue"`
-	UDTContract          evmsignature.Contract `json:"udtContract"`
+	PlaceRenewalInterval       time.Duration                `json:"placeRenewalInterval"`
+	WinValue                   string                       `json:"winValue"`
+	DrawValue                  string                       `json:"drawValue"`
+	UDTContract                evmsignature.Contract        `json:"udtContract"`
+	GameConfig                 gameengine.GameConfig        `json:"gameConfig"`
+	CoordinateConfig           gameengine.CoordinatesConfig `json:"coordinateConfig"`
+	MatchActionRenewalInterval time.Duration                `json:"matchActionRenewalInterval"`
+	RoundDuration              time.Duration                `json:"roundDuration"`
+	NumberOfRounds             int                          `json:"numberOfRounds"`
 }
 
 // ReadJSON reads request sent by client.
@@ -100,6 +106,26 @@ func (client *Client) ReadJSON() (Request, error) {
 		}
 		return request, ErrRead.Wrap(ErrQueue.Wrap(err))
 	}
+	return request, nil
+}
+
+// ReadActionJSON reads action request sent by client.
+func (client *Client) ReadActionJSON() ([]gameengine.MakeAction, error) {
+	var request []gameengine.MakeAction
+
+	err := client.Connection.SetReadDeadline(time.Now().Add(1 * time.Second))
+	if err != nil {
+		return []gameengine.MakeAction{}, ErrRead.Wrap(ErrQueue.Wrap(err))
+	}
+
+	if err = client.Connection.ReadJSON(&request); err != nil {
+		if !websocket.IsCloseError(err) || !websocket.IsUnexpectedCloseError(err) {
+			if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
+				return request, ErrRead.Wrap(ErrQueue.Wrap(err))
+			}
+		}
+	}
+
 	return request, nil
 }
 

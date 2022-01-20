@@ -7,12 +7,14 @@ import (
 	"context"
 	"math/big"
 	"net/http"
+	"time"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
+	"ultimatedivision/gameplay/gameengine"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/seasons"
@@ -236,6 +238,193 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			return ChoreError.Wrap(err)
 		}
 		return ChoreError.Wrap(err)
+	}
+
+	firstClientCardsWithCoordinates := gameengine.ConvertPositionToCoordinate(chore.config.CoordinateConfig, squadCardsFirstClient)
+	ballCoordinate := gameengine.GetCenterOfField(chore.config.CoordinateConfig.SizeOfFieldByOX, chore.config.CoordinateConfig.SizeOfFieldByOY)
+	secondClientCardsWithCoordinates := gameengine.ConvertPositionToCoordinate(chore.config.CoordinateConfig, squadCardsSecondClient)
+	secondClientCardsWithCoordinates = gameengine.ReflectCoordinates(secondClientCardsWithCoordinates, chore.config.CoordinateConfig.SizeOfFieldByOX, chore.config.CoordinateConfig.SizeOfFieldByOY)
+	// generates available action for each squad
+	var cardsAvailableActions []gameengine.CardAvailableAction
+	firstSquadCardAvailableActions, err := gameengine.GenerateAvailableActions(firstClientCardsWithCoordinates, secondClientCardsWithCoordinates, ballCoordinate, chore.config.GameConfig, chore.config.CoordinateConfig)
+	if err != nil {
+		if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+			return ChoreError.Wrap(err)
+		}
+		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+			return ChoreError.Wrap(err)
+		}
+		return ChoreError.Wrap(err)
+	}
+	secondSquadCardAvailableActions, err := gameengine.GenerateAvailableActions(secondClientCardsWithCoordinates, firstClientCardsWithCoordinates, ballCoordinate,
+		chore.config.GameConfig, chore.config.CoordinateConfig)
+	if err != nil {
+		if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+			return ChoreError.Wrap(err)
+		}
+		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+			return ChoreError.Wrap(err)
+		}
+		return ChoreError.Wrap(err)
+	}
+
+	cardsAvailableActions = append(cardsAvailableActions, firstSquadCardAvailableActions...)
+	cardsAvailableActions = append(cardsAvailableActions, secondSquadCardAvailableActions...)
+
+	matchRepresentation := gameengine.MatchRepresentation{
+		User1CardsWithPosition: firstClientCardsWithCoordinates,
+		User2CardsWithPosition: secondClientCardsWithCoordinates,
+		BallCoordinate:         ballCoordinate,
+		CardAvailableAction:    cardsAvailableActions,
+	}
+
+	if err := firstClient.WriteJSON(http.StatusOK, matchRepresentation); err != nil {
+		return ChoreError.Wrap(err)
+	}
+	if err := secondClient.WriteJSON(http.StatusOK, matchRepresentation); err != nil {
+		return ChoreError.Wrap(err)
+	}
+
+	for i := 1; i < chore.config.NumberOfRounds; i++ {
+		if i == chore.config.NumberOfRounds/2+1 {
+			matchRepresentation.User1CardsWithPosition = gameengine.ReflectCoordinates(matchRepresentation.User1CardsWithPosition, chore.config.CoordinateConfig.SizeOfFieldByOX, chore.config.CoordinateConfig.SizeOfFieldByOY)
+			matchRepresentation.User2CardsWithPosition = gameengine.ReflectCoordinates(secondClientCardsWithCoordinates, chore.config.CoordinateConfig.SizeOfFieldByOX, chore.config.CoordinateConfig.SizeOfFieldByOY)
+			matchRepresentation.BallCoordinate = gameengine.GetCenterOfField(chore.config.CoordinateConfig.SizeOfFieldByOX, chore.config.CoordinateConfig.SizeOfFieldByOY)
+			firstSquadCardAvailableActions, err = gameengine.GenerateAvailableActions(firstClientCardsWithCoordinates, secondClientCardsWithCoordinates, ballCoordinate, chore.config.GameConfig, chore.config.CoordinateConfig)
+			if err != nil {
+				if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				return ChoreError.Wrap(err)
+			}
+			secondSquadCardAvailableActions, err = gameengine.GenerateAvailableActions(secondClientCardsWithCoordinates, firstClientCardsWithCoordinates, ballCoordinate, chore.config.GameConfig, chore.config.CoordinateConfig)
+			if err != nil {
+				if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				return ChoreError.Wrap(err)
+			}
+
+			cardsAvailableActions = append(cardsAvailableActions, firstSquadCardAvailableActions...)
+			cardsAvailableActions = append(cardsAvailableActions, secondSquadCardAvailableActions...)
+
+			matchRepresentation.CardAvailableAction = cardsAvailableActions
+		}
+
+		ticker := time.NewTicker(chore.config.MatchActionRenewalInterval)
+		done := make(chan bool)
+		go func() {
+			time.Sleep(chore.config.RoundDuration)
+			done <- true
+		}()
+
+		var firstPlayerActions []gameengine.MakeAction
+		var secondPlayerActions []gameengine.MakeAction
+
+	Loop:
+		for {
+			select {
+			case <-ticker.C:
+				if len(firstPlayerActions) == 0 {
+					firstPlayerActions, err = firstClient.ReadActionJSON()
+					if err != nil {
+						chore.log.Error("could not read json", ChoreError.Wrap(err))
+					}
+				}
+
+				if len(secondPlayerActions) == 0 {
+					secondPlayerActions, err = secondClient.ReadActionJSON()
+					if err != nil {
+						chore.log.Error("could not read json", ChoreError.Wrap(err))
+					}
+				}
+
+				if len(firstPlayerActions) != 0 && len(secondPlayerActions) != 0 {
+					break Loop
+				}
+			case <-done:
+				firstPlayerActions, err = firstClient.ReadActionJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
+				}
+
+				if len(firstPlayerActions) == 0 {
+					if err := firstClient.WriteJSON(http.StatusBadRequest, "invalid numbers of actions"); err != nil {
+						return ChoreError.Wrap(err)
+					}
+				}
+
+				secondPlayerActions, err = secondClient.ReadActionJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
+				}
+				if len(secondPlayerActions) == 0 {
+					if err := secondClient.WriteJSON(http.StatusBadRequest, "invalid numbers of actions"); err != nil {
+						return ChoreError.Wrap(err)
+					}
+				}
+				break Loop
+			}
+		}
+		if len(firstPlayerActions)+len(secondPlayerActions) > 0 {
+			var actions []gameengine.MakeAction
+			_ = copy(actions, firstPlayerActions)
+			actions = append(actions, secondPlayerActions...)
+
+			matchRepresentation.Actions, err = gameengine.HandleAction(matchRepresentation, actions, chore.config.GameConfig, chore.config.CoordinateConfig)
+			if err != nil {
+				if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not handle actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not handle actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				return ChoreError.Wrap(err)
+			}
+
+			firstSquadCardAvailableActions, err = gameengine.GenerateAvailableActions(firstClientCardsWithCoordinates, secondClientCardsWithCoordinates,
+				ballCoordinate, chore.config.GameConfig, chore.config.CoordinateConfig)
+			if err != nil {
+				if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				return ChoreError.Wrap(err)
+			}
+			secondSquadCardAvailableActions, err = gameengine.GenerateAvailableActions(secondClientCardsWithCoordinates, firstClientCardsWithCoordinates,
+				ballCoordinate, chore.config.GameConfig, chore.config.CoordinateConfig)
+			if err != nil {
+				if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not generate possible actions"); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				return ChoreError.Wrap(err)
+			}
+
+			cardsAvailableActions = append(cardsAvailableActions, firstSquadCardAvailableActions...)
+			cardsAvailableActions = append(cardsAvailableActions, secondSquadCardAvailableActions...)
+
+			matchRepresentation.CardAvailableAction = cardsAvailableActions
+
+			if i != chore.config.NumberOfRounds/2 {
+				if err = firstClient.WriteJSON(http.StatusOK, matchRepresentation); err != nil {
+					return ChoreError.Wrap(err)
+				}
+				if err = secondClient.WriteJSON(http.StatusOK, matchRepresentation); err != nil {
+					return ChoreError.Wrap(err)
+				}
+			}
+		}
 	}
 
 	gameResult, err := chore.matches.GetGameResult(ctx, matchesID)
