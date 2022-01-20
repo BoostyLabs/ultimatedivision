@@ -1,0 +1,80 @@
+version: "3"
+
+services:
+  app:
+    container_name: "UDAppDev"
+    image: docker.hicrystal.com/ud_app_dev:latest
+
+    ports:
+      - "8387:8387" # Forward the exposed port 5000 on the container to port 8088 on the host machine (8088:5000).
+      - "8388:8388"
+    restart: unless-stopped
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivisionDev/app:/app/data
+      - /home/valerii/storage/docker/ultimatedivisionAppDev/configs:/configs
+      - /home/valerii/storage/docker/ultimatedivisionAppDev/assets:/assets
+    depends_on:
+      - ultimatedivisiondb_dev # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+    environment:
+      - DB_HOST=ultimatedivisiondb_dev
+      - DB_DATABASE=
+      - DB_USER=
+      - DB_PASSWORD=
+
+  nft_signer:
+    container_name: "UDNFTSignerDev"
+    image: docker.hicrystal.com/ud_nft_signer_dev:latest
+
+    restart: unless-stopped
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivisionDev/signer:/app/data
+      - /home/valerii/storage/docker/ultimatedivisionAppDev/configs:/configs
+    depends_on:
+      - ultimatedivisiondb_dev # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+    environment:
+      - DB_HOST=ultimatedivisiondb_dev
+      - DB_DATABASE=
+      - DB_USER=
+      - DB_PASSWORD=
+
+  currency_signer:
+    container_name: "UDCurrencySignerDev"
+    image: docker.hicrystal.com/ud_currency_signer_dev:latest
+
+    restart: unless-stopped
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivisionDev/currency_signer:/app/data
+      - /home/valerii/storage/docker/ultimatedivisionAppDev/configs:/configs
+    depends_on:
+      - ultimatedivisiondb_dev # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+    environment:
+      - DB_HOST=ultimatedivisiondb_dev
+      - DB_DATABASE=
+      - DB_USER=
+      - DB_PASSWORD=
+
+  ultimatedivisiondb_dev:
+    restart: always
+    image: postgres:latest
+    container_name: ultimatedivisiondb_dev
+    ports:
+      - "5635:5432"
+    volumes:
+      - /home/valerii/storage/docker/dockerlogs/ultimatedivisionDev/db:/var/lib/postgresql/data
+    networks:
+      - fullstack
+    environment:
+      - POSTGRES_DB=ultimatedivisiondb_dev
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
+
+# Networks to be created to facilitate communication between containers
+networks:
+  fullstack:
+    driver: bridge

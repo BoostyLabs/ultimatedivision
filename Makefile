@@ -22,6 +22,12 @@ build_nft_signer_test: ## Build NFT Signer docker image for Testing.
 push_nft_signer_test: ## Push NFT Signer docker image for Testing.
 	docker push docker.hicrystal.com/ud_nft_signer_test:$(VERSION) && docker push docker.hicrystal.com/ud_nft_signer_test:latest
 
+build_nft_signer_dev: ## Build NFT Signer docker image for Dev.
+	docker build -f ./deploy/nft_signer.Dockerfile -t docker.hicrystal.com/ud_nft_signer_dev:$(VERSION) . && docker build -f ./deploy/nft_signer.Dockerfile -t docker.hicrystal.com/ud_nft_signer_dev:latest .
+
+push_nft_signer_dev: ## Push NFT Signer docker image for Dev.
+	docker push docker.hicrystal.com/ud_nft_signer_dev:$(VERSION) && docker push docker.hicrystal.com/ud_nft_signer_dev:latest
+
 build_currency_signer_prod: ## Build Currency Signer docker image for Production.
 	docker build -f ./deploy/currency_signer.Dockerfile -t docker.hicrystal.com/ud_currency_signer_prod:$(VERSION) . && docker build -f ./deploy/currency_signer.Dockerfile -t docker.hicrystal.com/ud_currency_signer_prod:latest .
 
@@ -33,6 +39,12 @@ build_currency_signer_test: ## Build Currency Signer docker image for Testing.
 
 push_currency_signer_test: ## Push Currency Signer docker image for Testing.
 	docker push docker.hicrystal.com/ud_currency_signer_test:$(VERSION) && docker push docker.hicrystal.com/ud_currency_signer_test:latest
+
+build_currency_signer_dev: ## Build Currency Signer docker image for Dev.
+	docker build -f ./deploy/currency_signer.Dockerfile -t docker.hicrystal.com/ud_currency_signer_dev:$(VERSION) . && docker build -f ./deploy/currency_signer.Dockerfile -t docker.hicrystal.com/ud_currency_signer_dev:latest .
+
+push_currency_signer_dev: ## Push Currency Signer docker image for Dev.
+	docker push docker.hicrystal.com/ud_currency_signer_dev:$(VERSION) && docker push docker.hicrystal.com/ud_currency_signer_dev:latest
 
 build_app_prod: ## Build Application docker image for Production.
 	make build_dist && docker build -f ./deploy/app_prod.Dockerfile -t docker.hicrystal.com/ud_app_prod:$(VERSION) . && docker build -f ./deploy/app_prod.Dockerfile -t docker.hicrystal.com/ud_app_prod:latest .
@@ -46,6 +58,12 @@ build_app_test: ## Build Application docker image for Testing.
 push_app_test: ## Push Application docker image for Testing.
 	docker push docker.hicrystal.com/ud_app_test:$(VERSION) && docker push docker.hicrystal.com/ud_app_test:latest
 
+build_app_dev: ## Build Application docker image for Dev.
+	make build_dist && docker build -f ./deploy/app_dev.Dockerfile -t docker.hicrystal.com/ud_app_dev:$(VERSION) . && docker build -f ./deploy/app_dev.Dockerfile -t docker.hicrystal.com/ud_app_dev:latest .
+
+push_app_dev: ## Push Application docker image for Dev.
+	docker push docker.hicrystal.com/ud_app_dev:$(VERSION) && docker push docker.hicrystal.com/ud_app_dev:latest
+
 build_prod: ## Build all necessary docker images for Production.
 	make build_app_prod build_nft_signer_prod build_currency_signer_prod
 
@@ -58,8 +76,17 @@ build_test: ## Build all necessary docker images for Testing.
 push_test: ## Push all necessary docker images for Testing.
 	make push_app_test push_nft_signer_test push_currency_signer_test
 
+build_dev: ## Build all necessary docker images for Dev.
+	make build_app_dev build_nft_signer_dev build_currency_signer_dev
+
+push_dev: ## Push all necessary docker images for Dev.
+	make push_app_dev push_nft_signer_dev push_currency_signer_dev
+
 docker_prod: ## Build and push all necessary docker images for Production.
 	make build_prod push_prod
 
 docker_test: ## Build and push all necessary docker images for Testing.
 	make build_test push_test
+
+docker_dev: ## Build and push all necessary docker images for Dev.
+	make build_dev push_dev
