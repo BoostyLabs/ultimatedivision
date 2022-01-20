@@ -143,11 +143,10 @@ func (seasonsDB *seasonsDB) Delete(ctx context.Context, id int) error {
 func (seasonsDB *seasonsDB) GetSeasonByDivisionID(ctx context.Context, divisionID uuid.UUID) (seasons.Season, error) {
 	query := `SELECT id, division_id, started_at, ended_at 
 	          FROM seasons 
-	          WHERE division_id=$1 AND started_at IN (SELECT MAX(started_at)
-	                                                  FROM seasons)`
+	          WHERE division_id=$1 AND ended_at=$2`
 	var season seasons.Season
 
-	row := seasonsDB.conn.QueryRowContext(ctx, query, divisionID)
+	row := seasonsDB.conn.QueryRowContext(ctx, query, divisionID, time.Time{})
 
 	err := row.Scan(&season.ID, &season.DivisionID, &season.StartedAt, &season.EndedAt)
 	if err != nil {
