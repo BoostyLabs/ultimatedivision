@@ -13,6 +13,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/cards/nfts"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/pkg/pagination"
@@ -29,13 +30,15 @@ type Cards struct {
 	log logger.Logger
 
 	cards *cards.Service
+	nfts  *nfts.Service
 }
 
 // NewCards is a constructor for cards controller.
-func NewCards(log logger.Logger, cards *cards.Service) *Cards {
+func NewCards(log logger.Logger, cards *cards.Service, nfts *nfts.Service) *Cards {
 	cardsController := &Cards{
 		log:   log,
 		cards: cards,
+		nfts:  nfts,
 	}
 
 	return cardsController
@@ -141,6 +144,36 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = json.NewEncoder(w).Encode(cardsListPage); err != nil {
+		controller.log.Error("failed to write json response", ErrCards.Wrap(err))
+		return
+	}
+}
+
+// Status is an endpoint that allows to view status of cards - was it minted on the blockchain.
+func (controller *Cards) Status(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	vars := mux.Vars(r)
+	w.Header().Set("Content-Type", "application/json")
+
+	id, err := uuid.Parse(vars["id"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrCards.Wrap(err))
+		return
+	}
+
+	card, err := controller.nfts.GetStatusByCardID(ctx, id)
+	if err != nil {
+		controller.log.Error("could not get status of card", ErrCards.Wrap(err))
+		switch {
+		case cards.ErrNoCard.Has(err):
+			controller.serveError(w, http.StatusNotFound, ErrCards.Wrap(err))
+		default:
+			controller.serveError(w, http.StatusInternalServerError, ErrCards.Wrap(err))
+		}
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(card); err != nil {
 		controller.log.Error("failed to write json response", ErrCards.Wrap(err))
 		return
 	}
