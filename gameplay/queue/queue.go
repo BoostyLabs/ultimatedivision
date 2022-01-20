@@ -7,13 +7,13 @@ import (
 	"math/big"
 	"net/http"
 	"time"
-	"ultimatedivision/gameplay/gameengine"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/gameplay/gameengine"
 	"ultimatedivision/gameplay/matches"
 )
 

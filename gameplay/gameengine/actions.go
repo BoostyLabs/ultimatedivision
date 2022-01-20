@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"sort"
 	"time"
-	"ultimatedivision/cards"
-	"ultimatedivision/pkg/rand"
 
 	"github.com/zeebo/errs"
 
 	"github.com/google/uuid"
+	"ultimatedivision/cards"
+	"ultimatedivision/pkg/rand"
 )
 
 // Action defines list of possible player action in the field.

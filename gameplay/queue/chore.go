@@ -327,26 +327,22 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		var firstPlayerActions []gameengine.MakeAction
 		var secondPlayerActions []gameengine.MakeAction
 
-	Loop:
+	loop:
 		for {
 			select {
 			case <-ticker.C:
-				if len(firstPlayerActions) == 0 {
-					firstPlayerActions, err = firstClient.ReadActionJSON()
-					if err != nil {
-						chore.log.Error("could not read json", ChoreError.Wrap(err))
-					}
+				firstPlayerActions, err = firstClient.ReadActionJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
 				}
 
-				if len(secondPlayerActions) == 0 {
-					secondPlayerActions, err = secondClient.ReadActionJSON()
-					if err != nil {
-						chore.log.Error("could not read json", ChoreError.Wrap(err))
-					}
+				secondPlayerActions, err = secondClient.ReadActionJSON()
+				if err != nil {
+					chore.log.Error("could not read json", ChoreError.Wrap(err))
 				}
 
 				if len(firstPlayerActions) != 0 && len(secondPlayerActions) != 0 {
-					break Loop
+					continue
 				}
 			case <-done:
 				firstPlayerActions, err = firstClient.ReadActionJSON()
@@ -369,7 +365,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 						return ChoreError.Wrap(err)
 					}
 				}
-				break Loop
+				break loop
 			}
 		}
 		if len(firstPlayerActions)+len(secondPlayerActions) > 0 {
