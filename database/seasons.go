@@ -100,9 +100,12 @@ func (seasonsDB *seasonsDB) Get(ctx context.Context, id int) (seasons.Season, er
 
 // GetCurrentSeasons returns all current seasons from the data base.
 func (seasonsDB *seasonsDB) GetCurrentSeasons(ctx context.Context) ([]seasons.Season, error) {
-	query := `SELECT id, division_id, started_at, ended_at FROM seasons WHERE ended_at=$1`
+	query := `SELECT id, division_id, started_at, ended_at FROM seasons WHERE ended_at IN (SELECT ended_at
+		FROM seasons
+		ORDER BY ended_at DESC
+		LIMIT 10)`
 
-	rows, err := seasonsDB.conn.QueryContext(ctx, query, time.Time{})
+	rows, err := seasonsDB.conn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, ErrSeasons.Wrap(err)
 	}
@@ -141,10 +144,7 @@ func (seasonsDB *seasonsDB) Delete(ctx context.Context, id int) error {
 
 // GetSeasonByDivisionID returns season by division id from the data base.
 func (seasonsDB *seasonsDB) GetSeasonByDivisionID(ctx context.Context, divisionID uuid.UUID) (seasons.Season, error) {
-	query := `SELECT id, division_id, started_at, ended_at 
-	          FROM seasons 
-	          WHERE division_id=$1 AND started_at IN (SELECT MAX(started_at)
-	                                                  FROM seasons)`
+	query := `SELECT id, division_id, started_at, ended_at FROM seasons WHERE division_id=$1 ORDER BY ended_at LIMIT 1`
 	var season seasons.Season
 
 	row := seasonsDB.conn.QueryRowContext(ctx, query, divisionID)

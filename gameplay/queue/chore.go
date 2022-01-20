@@ -260,7 +260,15 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 
-	season, err := chore.seasons.GetSeasonByDivisionID(ctx, firstClientClub.DivisionID)
+	var seasonID int
+	seasons, err := chore.seasons.GetCurrentSeasons(ctx)
+	for _, season := range seasons {
+		if season.DivisionID == firstClientClub.DivisionID {
+			seasonID = season.ID
+			break
+		}
+	}
+
 	if err != nil {
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
 			return ChoreError.Wrap(err)
@@ -271,7 +279,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 
-	matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, season.ID)
+	matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, seasonID)
 	if err != nil {
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
 			return ChoreError.Wrap(err)

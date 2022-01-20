@@ -140,7 +140,7 @@ const MatchFinder: React.FC = () => {
 
                 return;
             default:
-
+                setIsMatchFound(false);
                 toast.success(
                     'Successfully! You will be redirected to match page',
                     {

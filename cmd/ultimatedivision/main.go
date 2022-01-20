@@ -165,6 +165,12 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
+	err = peer.Seasons.Service.Create(ctx)
+	if err != nil {
+		log.Error("Error starting ultimatedivision create seasons", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
 	runError := peer.Run(ctx)
 	closeError := peer.Close()
 

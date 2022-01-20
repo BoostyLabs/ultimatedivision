@@ -5,6 +5,7 @@ package seasons
 
 import (
 	"context"
+	"time"
 
 	"github.com/BoostyLabs/thelooper"
 	"github.com/zeebo/errs"
@@ -34,7 +35,7 @@ func NewChore(config Config, service *Service) *Chore {
 // Run starts the chore for re-check the expiration time of the season.
 func (chore *Chore) Run(ctx context.Context) (err error) {
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
-		seasons, err := chore.seasons.List(ctx)
+		seasons, err := chore.seasons.GetCurrentSeasons(ctx)
 		if err != nil {
 			return ChoreError.Wrap(err)
 		}
@@ -45,19 +46,13 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		}
 
 		for _, season := range seasons {
-			if season.EndedAt.IsZero() {
-				err := chore.seasons.EndSeason(ctx, season.ID)
+			if season.EndedAt.Before(time.Now().UTC()) {
+				err := chore.seasons.Create(ctx)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			}
 		}
-
-		err = chore.seasons.Create(ctx)
-		if err != nil {
-			return ChoreError.Wrap(err)
-		}
-
 		return ChoreError.Wrap(err)
 	})
 }
