@@ -147,7 +147,7 @@ func (seasonsDB *seasonsDB) GetSeasonByDivisionID(ctx context.Context, divisionI
 	query := `SELECT id, division_id, started_at, ended_at FROM seasons WHERE division_id=$1 ORDER BY ended_at LIMIT 1`
 	var season seasons.Season
 
-	row := seasonsDB.conn.QueryRowContext(ctx, query, divisionID)
+	row := seasonsDB.conn.QueryRowContext(ctx, query, divisionID, time.Time{})
 
 	err := row.Scan(&season.ID, &season.DivisionID, &season.StartedAt, &season.EndedAt)
 	if err != nil {
