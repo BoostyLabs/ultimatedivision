@@ -77,12 +77,15 @@ func (controller *Store) List(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if price != 0 {
+			price /= float64(evmsignature.WeiInEthereum)
+		}
 		settingResponse := SettingResponse{
 			ID:          setting.ID,
 			CardsAmount: setting.CardsAmount,
 			IsRenewal:   setting.IsRenewal,
 			HourRenewal: setting.HourRenewal,
-			Price:       price / float64(evmsignature.WeiInEthereum),
+			Price:       price,
 		}
 
 		settingResponses = append(settingResponses, settingResponse)

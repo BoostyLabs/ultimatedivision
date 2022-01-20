@@ -591,7 +591,7 @@ func (cardsDB *cardsDB) UpdateStatus(ctx context.Context, id uuid.UUID, status c
 
 	rowNum, err := result.RowsAffected()
 	if rowNum == 0 {
-		return cards.ErrNoCard.New("card does not exist")
+		return cards.ErrNoCard.New("")
 	}
 
 	return ErrCard.Wrap(err)
@@ -606,7 +606,7 @@ func (cardsDB *cardsDB) UpdateType(ctx context.Context, id uuid.UUID, typeCard c
 
 	rowNum, err := result.RowsAffected()
 	if rowNum == 0 {
-		return cards.ErrNoCard.New("card does not exist")
+		return cards.ErrNoCard.New("")
 	}
 
 	return ErrCard.Wrap(err)
@@ -621,7 +621,7 @@ func (cardsDB *cardsDB) UpdateUserID(ctx context.Context, id, userID uuid.UUID) 
 
 	rowNum, err := result.RowsAffected()
 	if rowNum == 0 {
-		return cards.ErrNoCard.New("card does not exist")
+		return cards.ErrNoCard.New("")
 	}
 
 	return ErrCard.Wrap(err)
@@ -642,7 +642,7 @@ func (cardsDB *cardsDB) Delete(ctx context.Context, id uuid.UUID) error {
 
 	rowNum, err := result.RowsAffected()
 	if rowNum == 0 {
-		return cards.ErrNoCard.New("card does not exist")
+		return cards.ErrNoCard.New("")
 	}
 
 	return ErrCard.Wrap(err)
