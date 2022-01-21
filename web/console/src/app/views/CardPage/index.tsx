@@ -17,8 +17,6 @@ import { ServicePlugin } from '@/app/plugins/service';
 import './index.scss';
 
 const Card: React.FC = () => {
-    const [isMinted, setIsMinted] = useState<boolean>(false);
-
     const dispatch = useDispatch();
     const { card } = useSelector((state: RootState) => state.cardsReducer);
 
@@ -84,9 +82,9 @@ const Card: React.FC = () => {
                                         NFT:
                                     </span>
                                     <span className="card__mint-info__nft-value">
-                                        {isMinted ? 'minted to Polygon' : 'not minted'}
+                                        {card.nft ? `minted to ${card.nft.chain}` : 'not minted'}
                                     </span>
-                                    {!isMinted &&
+                                    {!card.nft &&
                                     <div className="card__mint-info__nft__btn">
                                         <button
                                             className="card__mint"
@@ -105,7 +103,7 @@ const Card: React.FC = () => {
                                     </span>
                                 </div>
                             </div>
-                            <FootballerCardPrice card={card} isMinted={isMinted} />
+                            <FootballerCardPrice card={card} />
                             <FootballerCardStatsArea card={card} />
                         </div>
                     </div>

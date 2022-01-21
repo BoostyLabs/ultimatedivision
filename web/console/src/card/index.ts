@@ -92,6 +92,14 @@ export class CardStats {
     }
 }
 
+/** Minted card`s entity. */
+export class MintedCard {
+    cardId: Card['id'] = '';
+    chain: string = '';
+    tokenId: string = '';
+    walletAddress: string = ''
+}
+
 /** Class defines with needed getters */
 export class Card {
     id: string = '00000000-0000-0000-0000-000000000000';
@@ -158,6 +166,7 @@ export class Card {
     handling: number = DEFAULT_VALUE;
     sweeping: number = DEFAULT_VALUE;
     throwing: number = DEFAULT_VALUE;
+    nft: MintedCard | boolean  = false;
 
     /** Card fields */
     constructor(card?: Card) {

@@ -18,7 +18,7 @@ const INITIAL_BID: number = 0;
 // TODO: Waiting for backend.
 const INITIAL_CURRENT_BID: number = 400;
 
-export const FootballerCardPrice: React.FC<{ card: Card; isMinted: boolean }> = ({ card, isMinted }) => {
+export const FootballerCardPrice: React.FC<{ card: Card }> = ({ card }) => {
     const [isOpenPlaceBidPopup, setIsOpenPlaceBidPopup] = useState<boolean>(false);
     const [isOpenSellPopup, setIsOpenSellPopup] = useState<boolean>(false);
     const [cardBid, setCardBid] = useState<number>(INITIAL_BID);
@@ -34,10 +34,13 @@ export const FootballerCardPrice: React.FC<{ card: Card; isMinted: boolean }> = 
         setIsOpenSellPopup(true);
     };
 
+    //TODO: Mock data (auction not yet completed).
+    const isCardSold: boolean = false;
+
     return (
         <>
             {isOpenSellPopup && <Sell setIsOpenSellPopup={setIsOpenSellPopup} />}
-            {isMinted
+            {isCardSold
                 ?
                 <div className="footballer-card-price">
                     {isOpenPlaceBidPopup &&
