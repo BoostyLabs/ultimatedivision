@@ -14,7 +14,6 @@ export class QueueClient {
 
     /** Sends action to confirm and reject match, finish search */
     public sendAction(action: string, squadId: string) {
-        console.log('send action ', action);
         this.ws.send(JSON.stringify({ action, squadId }));
     };
 

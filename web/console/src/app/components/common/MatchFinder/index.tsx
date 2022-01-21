@@ -102,7 +102,7 @@ const MatchFinder: React.FC = () => {
     if (queueClient) {
         queueClient.ws.onmessage = ({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
-            console.log('messageEvent: ', messageEvent);
+
             switch (messageEvent.message) {
             case ERROR_MESSAGE:
                 toast.error('error message', {
@@ -117,14 +117,6 @@ const MatchFinder: React.FC = () => {
                     position: toast.POSITION.TOP_RIGHT,
                     theme: 'colored',
                 });
-
-                return;
-            case WRONG_ACTION_MESSAGE:
-                toast.error('Something wrong, please, try later.', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
-
                 return;
             case YOU_ADDED_MESSAGE:
                 setIsMatchFound(false);
