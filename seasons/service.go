@@ -52,7 +52,7 @@ func (service *Service) Create(ctx context.Context) error {
 		season := Season{
 			DivisionID: division.ID,
 			StartedAt:  time.Now().UTC(),
-			EndedAt:    time.Now().UTC().Add(service.config.SeasonTime),
+			EndedAt:    time.Time{},
 		}
 
 		if err = service.seasons.Create(ctx, season); err != nil {
