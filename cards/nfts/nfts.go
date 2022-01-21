@@ -6,6 +6,7 @@ package nfts
 import (
 	"context"
 	"time"
+	"ultimatedivision/cards"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
@@ -51,4 +52,10 @@ type Config struct {
 	NFTRenewalInterval time.Duration         `json:"nftRenewalInterval"`
 	Contract           evmsignature.Contract `json:"contract"`
 	AddressNodeServer  string                `json:"addressNodeServer"`
+}
+
+// CardWithNftStatus entity describes values card with released nft token.
+type CardWithNftStatus struct {
+	cards.Card
+	Nft NFT `json:"nft"`
 }

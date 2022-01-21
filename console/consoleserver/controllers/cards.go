@@ -68,7 +68,27 @@ func (controller *Cards) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(card); err != nil {
+	nftStatusCard, err := controller.nfts.GetStatusByCardID(ctx, card.ID)
+	if err != nil {
+		switch {
+		case nfts.ErrNoNFT.Has(err):
+			if err = json.NewEncoder(w).Encode(card); err != nil {
+				controller.log.Error("failed to write json response", ErrCards.Wrap(err))
+				return
+			}
+		default:
+			controller.log.Error("could not get status of card", ErrCards.Wrap(err))
+			controller.serveError(w, http.StatusInternalServerError, ErrCards.Wrap(err))
+		}
+		return
+	}
+
+	cardWithNftStatus := nfts.CardWithNftStatus{
+		Card: card,
+		Nft:  nftStatusCard,
+	}
+
+	if err = json.NewEncoder(w).Encode(cardWithNftStatus); err != nil {
 		controller.log.Error("failed to write json response", ErrCards.Wrap(err))
 		return
 	}
@@ -144,36 +164,6 @@ func (controller *Cards) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = json.NewEncoder(w).Encode(cardsListPage); err != nil {
-		controller.log.Error("failed to write json response", ErrCards.Wrap(err))
-		return
-	}
-}
-
-// Status is an endpoint that allows to view status of cards - was it minted on the blockchain.
-func (controller *Cards) Status(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	vars := mux.Vars(r)
-	w.Header().Set("Content-Type", "application/json")
-
-	id, err := uuid.Parse(vars["id"])
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrCards.Wrap(err))
-		return
-	}
-
-	card, err := controller.nfts.GetStatusByCardID(ctx, id)
-	if err != nil {
-		controller.log.Error("could not get status of card", ErrCards.Wrap(err))
-		switch {
-		case cards.ErrNoCard.Has(err):
-			controller.serveError(w, http.StatusNotFound, ErrCards.Wrap(err))
-		default:
-			controller.serveError(w, http.StatusInternalServerError, ErrCards.Wrap(err))
-		}
-		return
-	}
-
-	if err = json.NewEncoder(w).Encode(card); err != nil {
 		controller.log.Error("failed to write json response", ErrCards.Wrap(err))
 		return
 	}
