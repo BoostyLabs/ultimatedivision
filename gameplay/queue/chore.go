@@ -61,17 +61,13 @@ func NewChore(config Config, log logger.Logger, service *Service, matches *match
 func (chore *Chore) Run(ctx context.Context) (err error) {
 	firstRequestChan := make(chan Request)
 	secondRequestChan := make(chan Request)
-	defer func() {
-		close(firstRequestChan)
-		close(secondRequestChan)
-	}()
 
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
 		notPlayingUsers := chore.service.ListNotPlayingUsers()
 		notPlayingUsers = isLenOdd(notPlayingUsers)
 
 		if len(notPlayingUsers) >= 2 {
-			pairsOfClients := divideClients(notPlayingUsers)
+			pairsOfClients := DivideClients(notPlayingUsers)
 			for _, pair := range pairsOfClients {
 				go func(pair []Client) {
 					firstClient := pair[0]
@@ -293,10 +289,11 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 	})
 }
 
+// isClientInSlice checks is element present in slice.
 func isClientInSlice(element Client, clients []Client) bool {
 	for _, client := range clients {
-		if client.Connection == client.Connection && client.IsPlaying == client.IsPlaying &&
-			client.UserID == client.UserID && client.SquadID == client.SquadID {
+		if element.Connection == client.Connection && element.IsPlaying == client.IsPlaying &&
+			element.UserID == client.UserID && element.SquadID == client.SquadID {
 			return true
 		}
 	}
@@ -314,7 +311,7 @@ func isLenOdd(notPlayingUsers []Client) []Client {
 }
 
 // DivideClients divides all clients into couples.
-func divideClients(clients []Client) [][]Client {
+func DivideClients(clients []Client) [][]Client {
 	var dividedClients [][]Client
 	for i := 0; i < len(clients); i += 2 {
 		element := make([]Client, 2, 2)
