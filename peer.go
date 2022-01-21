@@ -577,9 +577,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
 	// })
-	//group.Go(func() error {
-	//	return ignoreCancel(peer.Store.StoreRenewal.Run(ctx))
-	//})
+	group.Go(func() error {
+		return ignoreCancel(peer.Store.StoreRenewal.Run(ctx))
+	})
 
 	return group.Wait()
 }
