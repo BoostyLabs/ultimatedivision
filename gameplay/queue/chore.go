@@ -193,7 +193,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 	if len(squadCardsFirstClient) != clubs.SquadSize {
-		if err := firstClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
+		if err := firstClient.WriteJSON(http.StatusBadRequest, "squad is not full"); err != nil {
 			return ChoreError.Wrap(err)
 		}
 	}
@@ -203,7 +203,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		return ChoreError.Wrap(err)
 	}
 	if len(squadCardsSecondClient) != clubs.SquadSize {
-		if err := secondClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
+		if err := secondClient.WriteJSON(http.StatusBadRequest, "squad is not full"); err != nil {
 			return ChoreError.Wrap(err)
 		}
 	}
