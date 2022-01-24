@@ -9,14 +9,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/BoostyLabs/evmsignature"
+	"github.com/BoostyLabs/thelooper"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/pkg/cryptoutils"
-	"ultimatedivision/pkg/sync"
 	"ultimatedivision/seasons"
 	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
@@ -34,7 +33,7 @@ type Chore struct {
 	config           Config
 	log              logger.Logger
 	service          *Service
-	Loop             *sync.Cycle
+	Loop             *thelooper.Loop
 	matches          *matches.Service
 	seasons          *seasons.Service
 	clubs            *clubs.Service
@@ -48,7 +47,7 @@ func NewChore(config Config, log logger.Logger, service *Service, matches *match
 		config:           config,
 		log:              log,
 		service:          service,
-		Loop:             sync.NewCycle(config.PlaceRenewalInterval),
+		Loop:             thelooper.NewLoop(config.PlaceRenewalInterval),
 		matches:          matches,
 		seasons:          seasons,
 		clubs:            clubs,
@@ -368,7 +367,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	}
 
 	winResult.GameResult.Question = "do you allow us to take your address?"
-	winResult.GameResult.Transaction.Value = cryptoutils.WeiToEthereum(winResult.Value).String()
+	winResult.GameResult.Transaction.Value = evmsignature.WeiToEthereum(winResult.Value).String()
 	winResult.GameResult.Transaction.UDTContract.Address = chore.config.UDTContract.Address
 	if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 		chore.log.Error("could not write json", ChoreError.Wrap(err))
@@ -431,19 +430,7 @@ func (chore *Chore) Finish(client Client, gameResult matches.GameResult) {
 	}()
 }
 
-// GetMatchPlayerResponse contains user id and squad cards with current positions.
-type GetMatchPlayerResponse struct {
-	UserID     uuid.UUID                       `json:"userId"`
-	SquadCards []matches.SquadCardWithPosition `json:"squadCards"`
-}
-
-// GetMatchResponse replies to request with user cards with positions and ball position.
-type GetMatchResponse struct {
-	UserSquads   []GetMatchPlayerResponse   `json:"userSquad"`
-	BallPosition matches.PositionInTheField `json:"ballPosition"`
-}
-
-// Close closes the chore chore for re-check the expiration time of the token.
+// Close closes the chore for re-check the expiration time of the token.
 func (chore *Chore) Close() {
 	chore.Loop.Close()
 }

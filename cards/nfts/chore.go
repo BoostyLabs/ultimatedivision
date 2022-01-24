@@ -6,13 +6,12 @@ package nfts
 import (
 	"context"
 
+	"github.com/BoostyLabs/evmsignature"
+	"github.com/BoostyLabs/thelooper"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
-	"ultimatedivision/internal/logger"
-	"ultimatedivision/pkg/cryptoutils"
 	"ultimatedivision/pkg/jsonrpc"
-	"ultimatedivision/pkg/sync"
 	"ultimatedivision/users"
 )
 
@@ -26,19 +25,17 @@ var (
 // architecture: Chore
 type Chore struct {
 	config Config
-	log    logger.Logger
-	Loop   *sync.Cycle
+	Loop   *thelooper.Loop
 	nfts   *Service
 	users  *users.Service
 	cards  *cards.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(config Config, log logger.Logger, nfts *Service, users *users.Service, cards *cards.Service) *Chore {
+func NewChore(config Config, nfts *Service, users *users.Service, cards *cards.Service) *Chore {
 	return &Chore{
 		config: config,
-		log:    log,
-		Loop:   sync.NewCycle(config.NFTRenewalInterval),
+		Loop:   thelooper.NewLoop(config.NFTRenewalInterval),
 		nfts:   nfts,
 		users:  users,
 		cards:  cards,
@@ -54,18 +51,18 @@ func (chore *Chore) RunNFTSynchronization(ctx context.Context) (err error) {
 		}
 
 		for _, nft := range nfts {
-			data := cryptoutils.Data{
+			data := evmsignature.Data{
 				AddressContractMethod: chore.config.Contract.AddressMethod,
 				TokenID:               nft.TokenID,
 			}
 
-			dataHex := cryptoutils.NewDataHex(data)
+			dataHex := evmsignature.NewDataHex(data)
 			params := jsonrpc.Parameter{
 				To:   chore.config.Contract.Address,
 				Data: dataHex,
 			}
 
-			transaction := jsonrpc.NewTransaction(jsonrpc.MethodEthCall, []interface{}{&params, cryptoutils.BlockTagLatest}, cryptoutils.ChainIDRinkeby)
+			transaction := jsonrpc.NewTransaction(jsonrpc.MethodEthCall, []interface{}{&params, evmsignature.BlockTagLatest}, evmsignature.ChainIDRinkeby)
 			body, err := jsonrpc.Send(chore.config.AddressNodeServer, transaction)
 			if err != nil {
 				return ChoreError.Wrap(err)
@@ -81,7 +78,7 @@ func (chore *Chore) RunNFTSynchronization(ctx context.Context) (err error) {
 			}
 
 			nft := NFT{
-				Chain:         cryptoutils.ChainPolygon,
+				Chain:         evmsignature.ChainPolygon,
 				TokenID:       nft.TokenID,
 				WalletAddress: ownersWalletAddress,
 			}

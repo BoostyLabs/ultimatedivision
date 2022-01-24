@@ -26,11 +26,12 @@ import (
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
 	"ultimatedivision/seasons"
+	"ultimatedivision/store"
+	"ultimatedivision/store/lootboxes"
 	"ultimatedivision/udts"
 	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
@@ -85,6 +86,9 @@ type DB interface {
 
 	// UDTs provides access to udts db.
 	UDTs() udts.DB
+
+	// Store provides access to store db.
+	Store() store.DB
 
 	// Close closes underlying db connection.
 	Close() error
@@ -158,6 +162,10 @@ type Config struct {
 	CurrencyWaitList struct {
 		currencywaitlist.Config
 	} `json:"currencyWaitList"`
+
+	Store struct {
+		store.Config
+	} `json:"store"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -249,6 +257,12 @@ type Peer struct {
 		Service *udts.Service
 	}
 
+	// exposes store related logic.
+	Store struct {
+		Service      *store.Service
+		StoreRenewal *store.Chore
+	}
+
 	// Admin web server server with web UI.
 	Admin struct {
 		Listener net.Listener
@@ -270,27 +284,29 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		Database: db,
 	}
 
-	{ // email setup
-		from, err := mail.ParseAddress(config.Console.Emails.From)
-		if err != nil {
-			logger.Error("email address is not valid", err)
-			return nil, err
+	{ // emails setup
+		var sender mail2.Sender
+		if config.Console.Emails.Provider == "mock" {
+			sender = &mail2.MockSender{}
+		} else {
+			from, err := mail.ParseAddress(config.Console.Emails.From)
+			if err != nil {
+				logger.Error("invalid email address", errs.Wrap(err))
+				return nil, err
+			}
+
+			sender = &mail2.SMTPSender{
+				From: *from,
+				Auth: mail2.LoginAuth{
+					Password: config.Console.Emails.PlainPassword,
+					Username: config.Console.Emails.PlainLogin,
+				},
+				ServerAddress: config.Console.Emails.SMTPServerAddress,
+			}
 		}
 
-		sender := mail2.SMTPSender{
-			ServerAddress: config.Console.Emails.SMTPServerAddress,
-			From:          *from,
-			Auth: mail2.LoginAuth{
-				Username: config.Console.Emails.PlainLogin,
-				Password: config.Console.Emails.PlainPassword,
-			},
-		}
-
-		peer.Console.EmailService = emails.NewService(
-			logger,
-			&sender,
-			config.Console.Emails,
-		)
+		mailService := emails.NewService(peer.Log, sender, config.Console.Emails)
+		peer.Console.EmailService = mailService
 	}
 
 	{ // users setup
@@ -339,7 +355,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 		peer.NFTs.NFTChore = nfts.NewChore(
 			config.NFTs.Config,
-			peer.Log,
 			peer.NFTs.Service,
 			peer.Users.Service,
 			peer.Cards.Service,
@@ -358,7 +373,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 		peer.WaitList.WaitListChore = waitlist.NewChore(
 			config.WaitList.Config,
-			peer.Log,
 			peer.WaitList.Service,
 			peer.NFTs.Service,
 			peer.Users.Service,
@@ -394,11 +408,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 
 		peer.Marketplace.ExpirationLotChore = marketplace.NewChore(
-			peer.Log,
 			config.Marketplace.Config,
-			peer.Database.Marketplace(),
-			peer.Users.Service,
-			peer.Cards.Service,
+			peer.Marketplace.Service,
 		)
 	}
 
@@ -467,6 +478,22 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // store setup
+		peer.Store.Service = store.NewService(
+			config.Store.Config,
+			peer.Database.Store(),
+			peer.Cards.Service,
+			peer.WaitList.Service,
+		)
+
+		peer.Store.StoreRenewal = store.NewChore(
+			config.Store.Config,
+			peer.Store.Service,
+			peer.Cards.Service,
+			peer.Avatars.Service,
+		)
+	}
+
 	{ // admin setup
 		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
 		if err != nil {
@@ -490,6 +517,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Divisions.Service,
 			peer.Matches.Service,
 			peer.Seasons.Service,
+			peer.Store.Service,
 		)
 		if err != nil {
 			return nil, err
@@ -515,6 +543,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Queue.Service,
 			peer.Seasons.Service,
 			peer.WaitList.Service,
+			peer.Store.Service,
 		)
 	}
 
@@ -538,9 +567,10 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
 	})
-	group.Go(func() error {
-		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
-	})
+	// TODO: commented while fixing bug with matches
+	// group.Go(func() error {
+	// 	return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
+	// })
 	// TODO: uncomment when the Ethereum node is running
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
@@ -548,6 +578,9 @@ func (peer *Peer) Run(ctx context.Context) error {
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
 	// })
+	group.Go(func() error {
+		return ignoreCancel(peer.Store.StoreRenewal.Run(ctx))
+	})
 
 	return group.Wait()
 }
@@ -561,6 +594,7 @@ func (peer *Peer) Close() error {
 	peer.Marketplace.ExpirationLotChore.Close()
 	peer.Queue.PlaceChore.Close()
 	peer.Seasons.ExpirationSeasons.Close()
+	peer.Store.StoreRenewal.Close()
 
 	return errlist.Err()
 }

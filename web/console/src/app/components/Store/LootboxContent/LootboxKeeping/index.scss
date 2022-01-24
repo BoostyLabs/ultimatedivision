@@ -45,6 +45,7 @@
     &__card {
         width: 170px;
         transition: transform 0.3s;
+        margin: 20px 0;
 
         &:hover {
             transform: scale(1.1);
@@ -60,7 +61,11 @@
     &__button {
         padding: 10px 70px;
         z-index: 2;
-        background: radial-gradient(254.55% 254.55% at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 100%),
+        background: radial-gradient(
+            254.55% 254.55% at 50% 50%,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.8) 100%
+        ),
             linear-gradient(180deg, #5cff79 0%, #3ccf56 100%);
         border: none;
         cursor: pointer;
@@ -110,6 +115,15 @@
             min-height: 700px;
             grid-template-columns: repeat(2, 1fr);
             justify-content: space-between;
+
+            &__card {
+                margin: 5% 0;
+                transform: scale(0.7);
+            }
+
+            .slick-list {
+                height: 620px;
+            }
         }
     }
 }
@@ -132,9 +146,17 @@
             row-gap: 0;
         }
 
+        &__card:nth-child(2n+1) {
+            margin-right: -12px;
+        }
+
         &__card {
-            margin: -40px -10px;
+            margin: 0;
             transform: scale(0.7);
+
+            &:hover {
+                transform: scale(0.9);
+            }
         }
 
         &__box-body {
