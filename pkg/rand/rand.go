@@ -11,7 +11,6 @@ import (
 
 // RandomInRange randomizes numbers in the specified range.
 func RandomInRange(count int) (int, error) {
-	fmt.Println(count)
 	switch {
 	case count == 1 || count == 0:
 		return count, nil

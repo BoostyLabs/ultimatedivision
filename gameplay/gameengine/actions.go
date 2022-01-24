@@ -140,10 +140,6 @@ func (a MakeAction) IsValid() bool {
 	return false
 }
 
-// ActionResult contains result for actions.
-type ActionResult struct {
-}
-
 // HandleAction handles all match actions and generates result of actions.
 func HandleAction(matchRepresentation MatchRepresentation, makeAction []MakeAction, gameConfig GameConfig, coordinatesConfig CoordinatesConfig) ([]MakeAction, error) {
 	sort.Slice(makeAction, func(i, j int) bool {

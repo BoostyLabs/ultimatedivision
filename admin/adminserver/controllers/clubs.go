@@ -7,12 +7,12 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
-	"ultimatedivision/cards"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/internal/logger"
 )
