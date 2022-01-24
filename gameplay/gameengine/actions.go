@@ -8,9 +8,9 @@ import (
 	"sort"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
-	"github.com/google/uuid"
 	"ultimatedivision/cards"
 	"ultimatedivision/pkg/rand"
 )
