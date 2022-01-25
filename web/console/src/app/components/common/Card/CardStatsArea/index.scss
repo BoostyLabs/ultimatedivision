@@ -13,6 +13,7 @@
 }
 
 @media screen and (max-width: $desktopBreakPoint) {
+
     .footballer-card-stats {
         grid-template-columns: repeat(3, 29.5%);
         row-gap: 5%;
@@ -21,6 +22,7 @@
 }
 
 @media screen and (max-width: $tabletBreakPoint) {
+
     .footballer-card-stats {
         grid-template-columns: repeat(3, 29.5%);
         row-gap: 5%;
@@ -29,6 +31,7 @@
 }
 
 @media screen and (max-width: $tabletBreakPoint - 100px) {
+
     .footballer-card-stats {
         display: flex;
         flex-direction: column;

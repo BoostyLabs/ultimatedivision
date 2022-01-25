@@ -13,11 +13,11 @@ env:
 # Only trigger, when the build workflow succeeded
 on:
   workflow_run:
-    workflows: ["Main develop"]
+    workflows: ["Main"]
     types:
       - completed
     push:
-      branches: [ develop ]
+      branches: [ testing ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

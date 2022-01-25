@@ -1,4 +1,4 @@
-name: Main master
+name: Main
 on:
   push:
     branches: [ master ]

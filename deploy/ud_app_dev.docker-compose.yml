@@ -19,9 +19,9 @@ services:
       - fullstack
     environment:
       - DB_HOST=ultimatedivisiondb_dev
-      - DB_DATABASE=
-      - DB_USER=
-      - DB_PASSWORD=
+      - DB_DATABASE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
 
   nft_signer:
     container_name: "UDNFTSignerDev"
@@ -37,9 +37,9 @@ services:
       - fullstack
     environment:
       - DB_HOST=ultimatedivisiondb_dev
-      - DB_DATABASE=
-      - DB_USER=
-      - DB_PASSWORD=
+      - DB_DATABASE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
 
   currency_signer:
     container_name: "UDCurrencySignerDev"
@@ -55,9 +55,9 @@ services:
       - fullstack
     environment:
       - DB_HOST=ultimatedivisiondb_dev
-      - DB_DATABASE=
-      - DB_USER=
-      - DB_PASSWORD=
+      - DB_DATABASE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
 
   ultimatedivisiondb_dev:
     restart: always
@@ -71,8 +71,8 @@ services:
       - fullstack
     environment:
       - POSTGRES_DB=ultimatedivisiondb_dev
-      - POSTGRES_USER=
-      - POSTGRES_PASSWORD=
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
 
 # Networks to be created to facilitate communication between containers
 networks:
