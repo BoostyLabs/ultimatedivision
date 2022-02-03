@@ -43,23 +43,8 @@ const MinNumberOfMatches = 3
 // maxNumberOfMatches defines maximal number of matches in weekly competition.
 const maxNumberOfMatches = 30
 
-// Play initiates match between users, calls methods to generate result.
-func (service *Service) Play(ctx context.Context, match Match, squadCards1 []clubs.SquadCard, squadCards2 []clubs.SquadCard) error {
-	return nil
-}
-
 // Create creates new match.
 func (service *Service) Create(ctx context.Context, squad1ID uuid.UUID, squad2ID uuid.UUID, user1ID, user2ID uuid.UUID, seasonID int) (uuid.UUID, error) {
-	_, err := service.clubs.ListSquadCardIDs(ctx, squad1ID)
-	if err != nil {
-		return uuid.Nil, ErrMatches.Wrap(err)
-	}
-
-	_, err = service.clubs.ListSquadCardIDs(ctx, squad2ID)
-	if err != nil {
-		return uuid.Nil, ErrMatches.Wrap(err)
-	}
-
 	newMatch := Match{
 		ID:       uuid.New(),
 		User1ID:  user1ID,
@@ -69,57 +54,9 @@ func (service *Service) Create(ctx context.Context, squad1ID uuid.UUID, squad2ID
 		SeasonID: seasonID,
 	}
 
-	if err = service.matches.Create(ctx, newMatch); err != nil {
-		return uuid.Nil, ErrMatches.Wrap(err)
-	}
+	err := service.matches.Create(ctx, newMatch)
 
 	return newMatch.ID, ErrMatches.Wrap(err)
-}
-
-// ConvertPositionsForGameplay converts positions for cards from 0-10 view to coordinates.
-func (service *Service) ConvertPositionsForGameplay(ctx context.Context, squadCards []clubs.GetSquadCard) ([]SquadCardWithPosition, error) {
-	var PositionToCoordinates = map[clubs.Position]PositionInTheField{
-		clubs.GK:   service.config.Positions.GK.PositionInTheField,
-		clubs.LB:   service.config.Positions.LB.PositionInTheField,
-		clubs.LCD:  service.config.Positions.LCB.PositionInTheField,
-		clubs.CCD:  service.config.Positions.CCB.PositionInTheField,
-		clubs.RCD:  service.config.Positions.RCB.PositionInTheField,
-		clubs.RB:   service.config.Positions.RB.PositionInTheField,
-		clubs.LCDM: service.config.Positions.LCDM.PositionInTheField,
-		clubs.RCDM: service.config.Positions.RCDM.PositionInTheField,
-		clubs.CCDM: service.config.Positions.CCDM.PositionInTheField,
-		clubs.CCM:  service.config.Positions.CCM.PositionInTheField,
-		clubs.RCM:  service.config.Positions.RCM.PositionInTheField,
-		clubs.LCM:  service.config.Positions.LCM.PositionInTheField,
-		clubs.LM:   service.config.Positions.LM.PositionInTheField,
-		clubs.RM:   service.config.Positions.RM.PositionInTheField,
-		clubs.CCAM: service.config.Positions.CCAM.PositionInTheField,
-		clubs.RCAM: service.config.Positions.RCAM.PositionInTheField,
-		clubs.LCAM: service.config.Positions.LCAM.PositionInTheField,
-		clubs.LWB:  service.config.Positions.LWB.PositionInTheField,
-		clubs.RWB:  service.config.Positions.RWB.PositionInTheField,
-		clubs.LW:   service.config.Positions.LW.PositionInTheField,
-		clubs.RW:   service.config.Positions.RW.PositionInTheField,
-		clubs.RST:  service.config.Positions.RST.PositionInTheField,
-		clubs.CST:  service.config.Positions.CST.PositionInTheField,
-		clubs.LST:  service.config.Positions.LST.PositionInTheField,
-	}
-
-	var cardsWithPositions []SquadCardWithPosition
-	var err error
-
-	for _, card := range squadCards {
-		var cardWithPosition SquadCardWithPosition
-
-		cardWithPosition.Card, err = service.cards.Get(ctx, card.Card.ID)
-		if err != nil {
-			return cardsWithPositions, ErrMatches.Wrap(err)
-		}
-
-		cardWithPosition.Position = PositionToCoordinates[card.Position]
-	}
-
-	return cardsWithPositions, nil
 }
 
 // Get returns match by id.

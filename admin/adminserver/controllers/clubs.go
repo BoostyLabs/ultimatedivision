@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
 	"ultimatedivision/internal/logger"
 )
@@ -36,12 +37,13 @@ type Clubs struct {
 	log logger.Logger
 
 	clubs *clubs.Service
+	cards *cards.Service
 
 	templates ClubsTemplates
 }
 
 // NewClubs is a constructor for clubs controller.
-func NewClubs(log logger.Logger, clubs *clubs.Service, templates ClubsTemplates) *Clubs {
+func NewClubs(log logger.Logger, clubs *clubs.Service, cards *cards.Service, templates ClubsTemplates) *Clubs {
 	clubsController := &Clubs{
 		log:       log,
 		clubs:     clubs,
@@ -324,9 +326,15 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		card, err := controller.cards.Get(ctx, cardID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		squadCard := clubs.SquadCard{
 			Position: clubs.Position(position),
-			CardID:   cardID,
+			Card:     card,
 		}
 
 		if err = controller.clubs.AddSquadCard(ctx, club.OwnerID, squadID, squadCard); err != nil {

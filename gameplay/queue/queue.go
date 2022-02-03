@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/gameplay/gameengine"
 	"ultimatedivision/gameplay/matches"
 )
 
@@ -85,13 +86,15 @@ type Response struct {
 
 // Config defines configuration for queue.
 type Config struct {
-	PlaceRenewalInterval       time.Duration         `json:"placeRenewalInterval"`
-	WinValue                   string                `json:"winValue"`
-	DrawValue                  string                `json:"drawValue"`
-	UDTContract                evmsignature.Contract `json:"udtContract"`
-	MatchActionRenewalInterval time.Duration         `json:"matchActionRenewalInterval"`
-	RoundDuration              time.Duration         `json:"roundDuration"`
-	NumberOfRounds             int                   `json:"numberOfRounds"`
+	PlaceRenewalInterval       time.Duration                `json:"placeRenewalInterval"`
+	WinValue                   string                       `json:"winValue"`
+	DrawValue                  string                       `json:"drawValue"`
+	UDTContract                evmsignature.Contract        `json:"udtContract"`
+	GameConfig                 gameengine.GameConfig        `json:"gameConfig"`
+	CoordinateConfig           gameengine.CoordinatesConfig `json:"coordinateConfig"`
+	MatchActionRenewalInterval time.Duration                `json:"matchActionRenewalInterval"`
+	RoundDuration              time.Duration                `json:"roundDuration"`
+	NumberOfRounds             int                          `json:"numberOfRounds"`
 }
 
 // ReadJSON reads request sent by client.
@@ -103,6 +106,26 @@ func (client *Client) ReadJSON() (Request, error) {
 		}
 		return request, ErrRead.Wrap(ErrQueue.Wrap(err))
 	}
+	return request, nil
+}
+
+// ReadActionJSON reads action request sent by client.
+func (client *Client) ReadActionJSON() ([]gameengine.MakeAction, error) {
+	var request []gameengine.MakeAction
+
+	err := client.Connection.SetReadDeadline(time.Now().Add(1 * time.Second))
+	if err != nil {
+		return []gameengine.MakeAction{}, ErrRead.Wrap(ErrQueue.Wrap(err))
+	}
+
+	if err = client.Connection.ReadJSON(&request); err != nil {
+		if !websocket.IsCloseError(err) || !websocket.IsUnexpectedCloseError(err) {
+			if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
+				return request, ErrRead.Wrap(ErrQueue.Wrap(err))
+			}
+		}
+	}
+
 	return request, nil
 }
 
@@ -119,16 +142,4 @@ type WinResult struct {
 	Client     Client             `json:"client"`
 	GameResult matches.GameResult `json:"gameResult"`
 	Value      *big.Int           `json:"value"`
-}
-
-// GetMatchPlayerResponse contains user id and squad cards with current positions.
-type GetMatchPlayerResponse struct {
-	UserID     uuid.UUID                       `json:"userId"`
-	SquadCards []matches.SquadCardWithPosition `json:"squadCards"`
-}
-
-// GetMatchResponse replies to request with user cards with positions and ball position.
-type GetMatchResponse struct {
-	UserSquads   []GetMatchPlayerResponse   `json:"userSquad"`
-	BallPosition matches.PositionInTheField `json:"ballPosition"`
 }
