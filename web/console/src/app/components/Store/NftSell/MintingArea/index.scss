@@ -1,0 +1,51 @@
+.minting-area {
+  width: 100%;
+  margin-top: 38px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  &__button {
+    width: 270px;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    transition: box-shadow 0.3s;
+    line-height: 24px;
+    font-weight: bold;
+    font-size: 24px;
+    background: linear-gradient(180deg, #5cff79 0%, #3ccf56 100%), #4fe469;
+
+    &:hover {
+      box-shadow: 0 0 9px 17px rgba(79, 228, 105, 0.29);
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.2;
+      box-shadow: none;
+    }
+  }
+
+  &__timer {
+    &__text {
+      font-size: 18px;
+      text-align: right;
+    }
+
+    &__time {
+      font-size: 32px;
+    }
+  }
+
+  &__button-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 5px;
+  }
+}
