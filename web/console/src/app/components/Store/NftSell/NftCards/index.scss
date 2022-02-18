@@ -1,0 +1,30 @@
+@use "sass:math";
+.nft-card {
+  position: relative;
+  min-height: 400px;
+  width: 70%;
+
+  @for $i from 0 through 6 {
+    &__item-#{$i} {
+      $row: ceil(math.div($i, 2));
+      position: absolute;
+      top: calc(#{$row} * 25px);
+      img {
+        height: calc(452px - #{$row} * 60px);
+      }
+      z-index: calc(7 - #{$i});
+      &:nth-child(even) {
+        right: calc(50% - #{$row} * (32px - #{$row} * 1.5px));
+        transform: translateX(calc(50% + #{$row} * (32px - #{$row} * 1.5px)));
+      }
+      &:nth-child(odd) {
+        left: calc(50% - #{$row} * (32px - #{$row} * 1.5px));
+        transform: translateX(calc(-50% - #{$row} * (32px - #{$row} * 1.5px)));
+      }
+      &:nth-child(1) {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+  }
+}
