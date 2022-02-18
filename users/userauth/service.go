@@ -457,7 +457,7 @@ func (service *Service) LoginWithMetamask(ctx context.Context, nonce string, sig
 	}
 
 	if !bytes.Equal(decodeNonce, user.Nonce) {
-		return "", Error.New("Nonce is wrong")
+		return "", Error.New("nonce is invalid")
 	}
 
 	claims := auth.Claims{
