@@ -12,6 +12,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
+	"testing"
 
 	"github.com/fogleman/gg"
 	"github.com/zeebo/errs"
@@ -28,14 +30,14 @@ const (
 )
 
 // LayerComponentsCount searches count files in the specified path and by name of file.
-func LayerComponentsCount(pathToLayerComponents, nameFile string) (int, error) {
+func LayerComponentsCountOLD(pathToLayerComponents, nameFile string) (int, error) {
 	files, err := ioutil.ReadDir(pathToLayerComponents)
 	if err != nil {
 		return 0, fmt.Errorf(pathToLayerComponents + " - folder does not exist")
 	}
-
 	var count int
 	for _, file := range files {
+		fmt.Println("Name of the file === ", nameFile, "Bites ===  ", []byte(file.Name()))
 		isMatched, err := regexp.Match(fmt.Sprintf(nameFile, `\d`), []byte(file.Name()))
 		if err != nil {
 			return 0, err
@@ -44,7 +46,43 @@ func LayerComponentsCount(pathToLayerComponents, nameFile string) (int, error) {
 			count++
 		}
 	}
+	return count, nil
+}
 
+func LayerComponentsCount(pathToLayerComponents, nameFile string) (int, error) {
+	files, err := ioutil.ReadDir(pathToLayerComponents)
+	if err != nil {
+		return 0, fmt.Errorf(pathToLayerComponents + " - folder does not exist")
+	}
+	var length = len(files)
+	var count int
+
+	for i := 0; i < length; i++ {
+		isMatched, err := regexp.Match(fmt.Sprintf(nameFile, `\d`), []byte(files[i].Name())) //potential replace by regex.Match
+		if err != nil {
+			return 0, err
+		}
+		if isMatched {
+			count++
+		}
+	}
+	return count, nil
+}
+
+func LayerComponentsCountTEST(pathToLayerComponents, nameFile string) (int, error) {
+	files, err := ioutil.ReadDir(pathToLayerComponents)
+	if err != nil {
+		return 0, fmt.Errorf(pathToLayerComponents + " - folder does not exist")
+	}
+	var length = len(files)
+	var count int
+
+	for i := 0; i < length; i++ {
+		//count++
+		//if isMatched := strings.Contains(nameFile, files[i].Name()); isMatched == true {
+		count++
+		//}
+	}
 	return count, nil
 }
 
@@ -68,6 +106,7 @@ func CreateLayer(path, name string) (image.Image, error) {
 // Layering overlays image layers on the base image.
 func Layering(layers []image.Image, width, height int) *image.RGBA {
 	var generalImage *image.RGBA
+
 	for k, layer := range layers {
 		if k == 0 {
 			baseLayer := layer.Bounds()
@@ -82,6 +121,42 @@ func Layering(layers []image.Image, width, height int) *image.RGBA {
 		}
 	}
 	return generalImage
+}
+
+func Layering2(layers []image.Image, width, height int) *image.RGBA {
+	var generalImage *image.RGBA
+	count := len(layers)
+	for i := 0; i < count; i++ {
+		if i == 0 {
+			baseLayer := layers[i].Bounds()
+			generalImage = image.NewRGBA(baseLayer)
+			draw.Draw(generalImage, baseLayer, layers[i], image.Point{}, draw.Src)
+			continue
+		}
+
+		if layers[i] != nil {
+			offset := image.Pt(width, height)
+			draw.Draw(generalImage, layers[i].Bounds().Add(offset), layers[i], image.Point{}, draw.Over)
+		}
+	}
+	return generalImage
+}
+
+func BenchmarkSaveImage(b *testing.B) {
+	file, err := os.Open("/Users/ivanbalagus/go/src/ultimatedivision/assets/avatars/Man_1/Face_type_1/EyeBrows/EyeBrows_type_1/EyeBrows_color_1.png")
+	if err != nil {
+		b.Fatal(err)
+	}
+	img, err := png.Decode(file)
+	if err != nil {
+		b.Fatal(err)
+	}
+	for i := 0; i < b.N; i++ {
+		err := SaveImage("/Users/oleksii/WWW/work/ultimdivision2.0/ultimatedivision/pkg/imageprocessing/testdata", filepath.Join("/Users/oleksii/WWW/work/ultimdivision2.0/ultimatedivision/pkg/imageprocessing/testdata", strconv.Itoa(i)+"."+string(TypeFilePNG)), img)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
 }
 
 // SaveImage saves image by path.
