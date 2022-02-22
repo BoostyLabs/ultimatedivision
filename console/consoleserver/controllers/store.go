@@ -39,8 +39,8 @@ func NewStore(log logger.Logger, store *store.Service) *Store {
 	return storeController
 }
 
-// TransactionResponce entity describes values required to sent transaction.
-type TransactionResponce struct {
+// TransactionResponse entity describes values required to sent transaction.
+type TransactionResponse struct {
 	Password          evmsignature.Signature     `json:"password"`
 	NFTCreateContract waitlist.NFTCreateContract `json:"nftCreateContract"`
 	TokenID           int64                      `json:"tokenId"`
@@ -82,14 +82,14 @@ func (controller *Store) Buy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transactionResponce := TransactionResponce{
+	transactionResponse := TransactionResponse{
 		Password:          transaction.Password,
 		NFTCreateContract: transaction.NFTCreateContract,
 		TokenID:           transaction.TokenID,
 		Value:             transaction.Value.String(),
 	}
 
-	if err = json.NewEncoder(w).Encode(transactionResponce); err != nil {
+	if err = json.NewEncoder(w).Encode(transactionResponse); err != nil {
 		controller.log.Error("failed to write json response", ErrStore.Wrap(err))
 		return
 	}

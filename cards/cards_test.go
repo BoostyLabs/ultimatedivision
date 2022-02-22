@@ -372,8 +372,8 @@ func TestCards(t *testing.T) {
 			require.NoError(t, err)
 
 			allCards, err := repositoryCards.List(ctx, cursor1)
-			assert.NoError(t, err)
-			assert.Equal(t, len(allCards.Cards), 2)
+			require.NoError(t, err)
+			require.Equal(t, len(allCards.Cards), 2)
 			compareCards(t, card1, allCards.Cards[1])
 			compareCards(t, card2, allCards.Cards[0])
 		})
@@ -384,8 +384,8 @@ func TestCards(t *testing.T) {
 			require.NoError(t, err)
 
 			allCards, err := repositoryCards.List(ctx, cursor1)
-			assert.NoError(t, err)
-			assert.Equal(t, len(allCards.Cards), 2)
+			require.NoError(t, err)
+			require.Equal(t, len(allCards.Cards), 2)
 			compareCards(t, card1, allCards.Cards[1])
 			compareCards(t, card2, allCards.Cards[0])
 		})

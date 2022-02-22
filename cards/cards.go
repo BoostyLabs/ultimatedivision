@@ -167,11 +167,11 @@ type Type string
 const (
 	// TypeWon indicates that the card won in a lootbox.
 	TypeWon Type = "won"
-	// TypeBought indicates that the card bought on the marketplaced.
+	// TypeBought indicates that the card bought in the marketplace.
 	TypeBought Type = "bought"
-	// TypeNoOrdered indicates that the card isn't ordered on the store.
+	// TypeNoOrdered indicates that the card isn't ordered in the store.
 	TypeNoOrdered Type = "noOrdered"
-	// TypeOrdered indicates that the card ordered on the store.
+	// TypeOrdered indicates that the card ordered in the store.
 	TypeOrdered Type = "ordered"
 )
 
