@@ -2,6 +2,7 @@
 // See LICENSE for copying information.
 
 import coin from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
+
 import './index.scss';
 
 export const MintingArea: React.FC<{ isInactive: boolean; time: string }> = ({
@@ -17,10 +18,10 @@ export const MintingArea: React.FC<{ isInactive: boolean; time: string }> = ({
             </span>
         </button>
         {isInactive &&
-      <div className="minting-area__timer">
-          <p className="minting-area__timer__text">RESTOCK IN</p>
-          <span className="minting-area__timer__time">{time}</span>
-      </div>
+            <div className="minting-area__timer">
+                 <p className="minting-area__timer__text">RESTOCK IN</p>
+                <span className="minting-area__timer__time">{time}</span>
+            </div>
         }
     </div>;
 

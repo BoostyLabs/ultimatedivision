@@ -1,12 +1,15 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import './index.scss';
 import { useEffect, useState } from 'react';
+
+import './index.scss';
+
 
 export const NftCards: React.FC<{ card: string }> = ({ card }) => {
     const AMOUNT_OF_CARDS = 7;
 
+    /** Creates array with empty elements and then fill them */
     const [cards, setCards] = useState(new Array(AMOUNT_OF_CARDS).fill({}));
 
     const fillActiveCards = () => {

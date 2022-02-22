@@ -4,7 +4,9 @@
 import { NftCards } from './NftCards';
 import { MintingArea } from './MintingArea';
 import { CardMintingProgress } from './CardMintingProgress';
+
 import mockCard from '@static/img/StorePage/SellNft/mock-card.svg';
+
 import './index.scss';
 
 export const NftSell = () => {
