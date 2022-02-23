@@ -50,7 +50,7 @@ export class InternalError extends Error {
  * TooManyRequestError is a custom error type which indicates the user
  * has sent too many requests in a given amount of time.
  */
-export class TooManyRequestError extends Error {
+export class TooManyRequestsError extends Error {
     /** Error message while bad request */
     constructor(message = 'Too many requests') {
         super(message);
@@ -94,7 +94,7 @@ export class APIClient {
             case UNAUTORISED_ERROR:
                 throw new UnauthorizedError();
             case TOO_MANY_REQUESTS_ERROR:
-                throw new TooManyRequestError();
+                throw new TooManyRequestsError();
             case INTERNAL_ERROR:
             default:
                 throw new InternalError();
