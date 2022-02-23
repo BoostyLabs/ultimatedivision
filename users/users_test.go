@@ -97,13 +97,13 @@ func TestUsers(t *testing.T) {
 		})
 
 		t.Run("update sql no rows", func(t *testing.T) {
-			err := repository.Update(ctx, users.StatusSuspended, id)
+			err := repository.UpdateStatus(ctx, users.StatusSuspended, id)
 			require.Error(t, err)
 			require.Equal(t, users.ErrNoUser.Has(err), true)
 		})
 
 		t.Run("update", func(t *testing.T) {
-			err := repository.Update(ctx, users.StatusSuspended, user1.ID)
+			err := repository.UpdateStatus(ctx, users.StatusSuspended, user1.ID)
 			require.NoError(t, err)
 
 			userFromDB, err := repository.Get(ctx, user1.ID)
