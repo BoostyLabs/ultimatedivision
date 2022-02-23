@@ -289,7 +289,7 @@ func (service *Service) ConfirmUserEmail(ctx context.Context, activationToken st
 		return ErrPermission.Wrap(err)
 	}
 
-	return Error.Wrap(service.users.Update(ctx, users.StatusActive, user.ID))
+	return Error.Wrap(service.users.UpdateStatus(ctx, users.StatusActive, user.ID))
 }
 
 // ChangePassword - change users password.
