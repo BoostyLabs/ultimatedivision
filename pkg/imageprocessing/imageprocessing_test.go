@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-//BenchmarkCreateLayer testing CreateLayer
+//BenchmarkCreateLayer testing CreateLayer.
 func BenchmarkCreateLayer(t *testing.B) {
 	PathsNames1 := map[string]string{
 		"/Users/oleksii/WWW/work/ultimdivision2.0/ultimatedivision/assets/avatars/Man_1/Face_type_1":                               "Face_type_1.png",

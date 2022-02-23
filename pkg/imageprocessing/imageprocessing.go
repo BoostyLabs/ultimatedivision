@@ -29,7 +29,7 @@ const (
 	TypeFileJSON TypeFile = "json"
 )
 
-// LayerComponentsCount searches count files in the specified path and by name of file.
+// LayerComponentsCountOLD searches count files in the specified path and by name of file.
 func LayerComponentsCountOLD(pathToLayerComponents, nameFile string) (int, error) {
 	files, err := ioutil.ReadDir(pathToLayerComponents)
 	if err != nil {
@@ -49,6 +49,7 @@ func LayerComponentsCountOLD(pathToLayerComponents, nameFile string) (int, error
 	return count, nil
 }
 
+//LayerComponentsCount testing.
 func LayerComponentsCount(pathToLayerComponents, nameFile string) (int, error) {
 	files, err := ioutil.ReadDir(pathToLayerComponents)
 	if err != nil {
@@ -69,6 +70,7 @@ func LayerComponentsCount(pathToLayerComponents, nameFile string) (int, error) {
 	return count, nil
 }
 
+//LayerComponentsCountTEST testing.
 func LayerComponentsCountTEST(pathToLayerComponents, nameFile string) (int, error) {
 	files, err := ioutil.ReadDir(pathToLayerComponents)
 	if err != nil {
@@ -123,6 +125,7 @@ func Layering(layers []image.Image, width, height int) *image.RGBA {
 	return generalImage
 }
 
+// Layering2 testing overlays image layers on the base image.
 func Layering2(layers []image.Image, width, height int) *image.RGBA {
 	var generalImage *image.RGBA
 	count := len(layers)
@@ -142,6 +145,7 @@ func Layering2(layers []image.Image, width, height int) *image.RGBA {
 	return generalImage
 }
 
+//BenchmarkSaveImage testing.
 func BenchmarkSaveImage(b *testing.B) {
 	file, err := os.Open("/Users/ivanbalagus/go/src/ultimatedivision/assets/avatars/Man_1/Face_type_1/EyeBrows/EyeBrows_type_1/EyeBrows_color_1.png")
 	if err != nil {

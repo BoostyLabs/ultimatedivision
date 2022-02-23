@@ -12,7 +12,7 @@ import (
 	"ultimatedivision/pkg/imageprocessing"
 )
 
-//BenchmarkSaveImage testing
+//BenchmarkSaveImage testing.
 func BenchmarkSaveImage(b *testing.B) {
 	file, err := os.Open("/Users/oleksii/WWW/work/ultimdivision2.0/ultimatedivision/assets/avatars/Man_1/Face_type_1/EyeBrows/EyeBrows_type_1/EyeBrows_color_1.png")
 	if err != nil {
@@ -30,7 +30,7 @@ func BenchmarkSaveImage(b *testing.B) {
 	}
 }
 
-//BenchmarkLayering testing
+//BenchmarkLayering testing.
 func BenchmarkLayering(b *testing.B) {
 	for i := 0; i < 5; i++ {
 		pathToNoseType := "/Users/oleksii/WWW/work/ultimdivision2.0/ultimatedivision/assets/avatars/Man_1/Face_type_1/Noses/Nose_1/"
@@ -38,23 +38,23 @@ func BenchmarkLayering(b *testing.B) {
 
 		layer1, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 		layer2, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 		layer3, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 		layer4, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 		layer5, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 
 		layers := []image.Image{}
@@ -65,7 +65,7 @@ func BenchmarkLayering(b *testing.B) {
 	}
 }
 
-//BenchmarkLayering2 testing
+//BenchmarkLayering2 testing.
 func BenchmarkLayering2(b *testing.B) {
 	for i := 0; i < 5; i++ {
 		pathToNoseType := "/Users/oleksii/WWW/work/ultimdivision2.0/ultimatedivision/assets/avatars/Man_1/Face_type_1/Noses/Nose_1/"
@@ -73,19 +73,19 @@ func BenchmarkLayering2(b *testing.B) {
 
 		layer1, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 		layer2, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 		layer3, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 		layer4, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 		layer5, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
@@ -101,7 +101,7 @@ func BenchmarkLayering2(b *testing.B) {
 
 }
 
-//BenchmarkLayerComponentsCount testing speed
+//BenchmarkLayerComponentsCount testing speed.
 func BenchmarkLayerComponentsCount(b *testing.B) {
 	PathToAvararsComponents := "/oleksii/WWW/work/ultimdivision2.0/ultimatedivision/assets/avatars"
 	FaceColorFolder := "Man_1"
@@ -112,7 +112,7 @@ func BenchmarkLayerComponentsCount(b *testing.B) {
 
 }
 
-//BenchmarkLayerComponentsCount2 testing speed
+//BenchmarkLayerComponentsCount2 testing speed.
 func BenchmarkLayerComponentsCount2(b *testing.B) {
 	PathToAvararsComponents := "/oleksii/WWW/work/ultimdivision2.0/ultimatedivision/assets/avatars"
 	FaceColorFolder := "Man_1"
@@ -122,7 +122,7 @@ func BenchmarkLayerComponentsCount2(b *testing.B) {
 	}
 }
 
-//BenchmarkLayerComponentsCount3 testing speed
+//BenchmarkLayerComponentsCount3 testing speed.
 func BenchmarkLayerComponentsCount3(b *testing.B) {
 	PathToAvararsComponents := "/oleksii/WWW/work/ultimdivision2.0/ultimatedivision/assets/avatars"
 	FaceColorFolder := "Man_1"
