@@ -5,12 +5,13 @@ package imageprocessing_test
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"image/png"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 //BenchmarkCreateLayer testing CreateLayer.
