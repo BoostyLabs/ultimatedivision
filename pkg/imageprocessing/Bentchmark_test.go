@@ -89,7 +89,7 @@ func BenchmarkLayering2(b *testing.B) {
 		}
 		layer5, err := imageprocessing.CreateLayer(pathToNoseType, NoseFile)
 		if err != nil {
-
+			b.Fatal(err)
 		}
 
 		layers := []image.Image{}
