@@ -61,6 +61,16 @@ const (
 	StatusSuspended Status = 2
 )
 
+// Blockchain defines the list of possible blockchain.
+type Blockchain string
+
+const (
+	// BlockchainPolygon indicates that blockchain is polygon.
+	BlockchainPolygon Blockchain = "polygon"
+	// BlockchainVelas indicates that blockchain is velas.
+	BlockchainVelas Blockchain = "velas"
+)
+
 // DefaultMessageForRegistration use for registration user by metamask.
 const DefaultMessageForRegistration = "Register with metamask"
 
@@ -76,6 +86,7 @@ type User struct {
 	Nonce        []byte               `json:"nonce"`
 	LastLogin    time.Time            `json:"lastLogin"`
 	Status       Status               `json:"status"`
+	Blockchain   Blockchain           `json:"blockchain"`
 	CreatedAt    time.Time            `json:"createdAt"`
 }
 

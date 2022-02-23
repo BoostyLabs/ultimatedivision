@@ -71,6 +71,7 @@ func (service *Service) Create(ctx context.Context, email, password, nickName, f
 		LastName:     lastName,
 		LastLogin:    time.Time{},
 		Status:       StatusCreated,
+		Blockchain:   BlockchainPolygon,
 		CreatedAt:    time.Now().UTC(),
 	}
 	err := user.EncodePass()

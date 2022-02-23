@@ -36,6 +36,7 @@ func TestUsers(t *testing.T) {
 		Wallet:       "0xb2cdC7EB2F9d2E629ee97BB91700622A42e688b7",
 		LastLogin:    time.Now().UTC(),
 		Status:       0,
+		Blockchain:   users.BlockchainPolygon,
 		CreatedAt:    time.Now().UTC(),
 	}
 
@@ -49,6 +50,7 @@ func TestUsers(t *testing.T) {
 		Wallet:       "0xb2cdC7EB2F9d2E629ee97BB91700622A42e688b8",
 		LastLogin:    time.Now().UTC(),
 		Status:       1,
+		Blockchain:   users.BlockchainPolygon,
 		CreatedAt:    time.Now().UTC(),
 	}
 
@@ -234,6 +236,7 @@ func compareUsers(t *testing.T, user1, user2 users.User) {
 	assert.Equal(t, user1.FirstName, user2.FirstName)
 	assert.Equal(t, user1.LastName, user2.LastName)
 	assert.Equal(t, user1.Status, user2.Status)
+	assert.Equal(t, user1.Blockchain, user2.Blockchain)
 	assert.WithinDuration(t, user1.CreatedAt, user2.CreatedAt, 1*time.Second)
 	assert.WithinDuration(t, user1.LastLogin, user2.LastLogin, 1*time.Second)
 }
