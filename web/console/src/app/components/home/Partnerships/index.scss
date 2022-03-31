@@ -1,6 +1,6 @@
 @import "/src/index.scss";
 
-.projects {
+.partnerships {
     background-color: #162574;
     overflow: hidden;
 
@@ -20,64 +20,32 @@
     }
 
     &__area {
-        display: grid;
-        column-gap: 5px;
-        row-gap: 5px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
         justify-content: center;
-        grid-template-areas: "consensys nem storj near elixir"
-            " . affinidi trustana bloom . ";
 
         &__item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 198px;
-            height: 140px;
-            background-color: #1f44a0;
+            width: 25%;
+            height: 142px;
+            padding: 0 14px 14px 0;
+            &__wrapper {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #1f44a0;
+                height: 100%;
+            }
 
             &__logo {
                 height: 40px;
             }
         }
-
-        :nth-child(1) {
-            grid-area: consensys;
-        }
-
-        :nth-child(2) {
-            grid-area: nem;
-        }
-
-        :nth-child(3) {
-            grid-area: storj;
-        }
-
-        :nth-child(4) {
-            grid-area: near;
-        }
-
-        :nth-child(5) {
-            grid-area: elixir;
-        }
-
-        :nth-child(6) {
-            grid-area: affinidi;
-        }
-
-        :nth-child(7) {
-            grid-area: trustana;
-        }
-
-        :nth-child(8) {
-            grid-area: bloom;
-        }
     }
 }
 
 @media (max-width: $desktopBreakPoint + 100px) {
-
-    .projects {
-
+    .partnerships {
         &__wrapper {
             padding: 50px;
         }
@@ -89,10 +57,8 @@
         }
 
         &__area {
-
             &__item {
-                width: 150px;
-                height: 100px;
+                height: 120px;
 
                 &__logo {
                     height: 30px;
@@ -103,17 +69,19 @@
 }
 
 @media (max-width: $tabletBreakPoint) {
-
-    .projects {
-
+    .partnerships {
         &__area {
+            & :nth-child(1) {
+                .partnerships__area__item__logo {
+                    height: 20px;
+                }
+            }
 
             &__item {
-                width: 110px;
-                height: 60px;
+                height: 80px;
 
                 &__logo {
-                    height: 20px;
+                    height: 24px;
                 }
             }
         }
@@ -121,20 +89,26 @@
 }
 
 @media (max-width: $phoneBreakPoint) {
-
-    .projects {
-
+    .partnerships {
         &__wrapper {
             padding: 50px 20px;
         }
 
         &__area {
-            max-width: 400px;
+            max-width: 320px;
             margin: 5% auto;
             display: flex;
             flex-wrap: wrap;
             flex-direction: row;
             justify-content: center;
+
+            &__item {
+                width: 50%;
+                height: 80px;
+                &__logo {
+                    height: 18px;
+                }
+            }
         }
     }
 }

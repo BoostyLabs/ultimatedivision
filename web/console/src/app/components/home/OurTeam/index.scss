@@ -1,0 +1,109 @@
+@import "/src/index.scss";
+
+.team {
+    background-color: #1e308e;
+    overflow: hidden;
+
+    &__wrapper {
+        margin: 0 auto;
+        max-width: 1024px;
+    }
+
+    &__title {
+        max-width: 1200px;
+        font-family: "Russo One", sans-serif;
+        font-size: 48px;
+        line-height: 63px;
+        color: #fff;
+        letter-spacing: 0;
+        text-align: center;
+    }
+
+    &__members {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        justify-content: center;
+        row-gap: 20px;
+        column-gap: 20px;
+        margin-top: 52px;
+
+        &__item {
+            text-align: center;
+
+            &__photo {
+                width: 330px;
+                height: 425px;
+            }
+
+            &__name {
+                color: #ffffff;
+                font-size: 32px;
+                margin: 10px 0 5px;
+            }
+
+            &__position {
+                color: #00fca3;
+                font-size: 24px;
+            }
+
+            &__description {
+                color: #61b3ff;
+                margin-top: 5px;
+                font-size: 18px;
+            }
+        }
+    }
+}
+
+@media (max-width: $desktopBreakPoint) {
+    .team {
+        &__wrapper {
+            padding: 61px 60px;
+        }
+
+        &__members {
+            row-gap: 13px;
+            column-gap: 13px;
+
+            &__item {
+                &__photo {
+                    width: 100%;
+                    height: auto;
+                }
+                &__name {
+                    font-size: 21px;
+                }
+                &__position {
+                    font-size: 16px;
+                }
+                &__description {
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: $tabletBreakPoint) {
+    .team {
+        &__wrapper {
+            padding: 61px 40px 80px;
+        }
+    }
+}
+
+@media (max-width: $phoneBreakPoint) {
+    .team {
+        &__members {
+            grid-template-columns: repeat(1, 1fr);
+            row-gap: 74px;
+
+            &__item {
+                &__photo {
+                    height: 373px;
+                    width: 296px;
+                }
+            }
+        }
+    }
+}

@@ -3,11 +3,11 @@
 
 import { useLocation } from 'react-router-dom';
 
-import { Authors } from '@components/home/Authors';
 import { FootballGame } from '@components/home/FootballGame';
 import { Footer } from '@components/home/Footer';
-import { Projects } from '@components/home/Projects';
+import { Partnerships } from '@components/home/Partnerships';
 import { Roadmap } from '@components/home/Roadmap';
+import { OurTeam } from '@/app/components/home/OurTeam';
 import Navbar from '@components/home/HomeNavbar';
 
 import './index.scss';
@@ -22,8 +22,8 @@ const Home: React.FC = () => {
             {currentPath === '/' && <Navbar />}
             <FootballGame />
             <Roadmap />
-            <Projects />
-            <Authors />
+            <Partnerships />
+            <OurTeam />
             <Footer />
         </>
     );
