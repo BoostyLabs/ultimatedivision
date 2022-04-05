@@ -11,12 +11,7 @@ export class Team {
         public name: string = '',
         public position: string = '',
         public description: string = ''
-    ) {
-        this.photo = photo;
-        this.name = name;
-        this.position = position;
-        this.description = description;
-    }
+    ) {}
 }
 
 export const OurTeam: React.FC = () => {
