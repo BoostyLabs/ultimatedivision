@@ -1,11 +1,12 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import RuslanAzarov from '@static/img/gameLanding/ourTeam/teammember.png';
+import ruslanAzarov from '@static/img/gameLanding/ourTeam/teammember.png';
 
 import './index.scss';
 
-export class Team {
+/** Defines member of team  */
+export class Member {
     constructor(
         public photo: string = '',
         public name: string = '',
@@ -15,15 +16,16 @@ export class Team {
 }
 
 export const OurTeam: React.FC = () => {
-    const TEAM: Team[] = [
-        new Team(RuslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
-        new Team(RuslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
-        new Team(RuslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
-        new Team(RuslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
-        new Team(RuslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
-        new Team(RuslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
-        new Team(RuslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
-        new Team(RuslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
+    /**  TODO: Mock data, will be replaced */
+    const members: Member[] = [
+        new Member(ruslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
+        new Member(ruslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
+        new Member(ruslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
+        new Member(ruslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
+        new Member(ruslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
+        new Member(ruslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
+        new Member(ruslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
+        new Member(ruslanAzarov, 'Ruslan Azarov', 'CEO', '5 years in gamedev'),
     ];
 
     return (
@@ -31,14 +33,15 @@ export const OurTeam: React.FC = () => {
             <div className="team__wrapper">
                 <h2 className="team__title">Our Team</h2>
                 <div className="team__members">
-                    {TEAM.map((teammember, index) =>
-                        <div className="team__members__item" key={teammember.photo}>
-                            <img src={teammember.photo} alt={teammember.name} className="team__members__item__photo" />
-                            <p className="team__members__item__name">{teammember.name}</p>
-                            <p className="team__members__item__position">{teammember.position}</p>
-                            <p className="team__members__item__description">{teammember.description}</p>
-                        </div>
-                    )}
+                    {members &&
+                        members.map((member, index) =>
+                            <div className="team__members__item" key={member.photo}>
+                                <img src={member.photo} alt={member.name} className="team__members__item__photo" />
+                                <p className="team__members__item__name">{member.name}</p>
+                                <p className="team__members__item__position">{member.position}</p>
+                                <p className="team__members__item__description">{member.description}</p>
+                            </div>
+                        )}
                 </div>
             </div>
         </section>

@@ -1,8 +1,8 @@
 @import "/src/index.scss";
 
 .team {
-    background-color: #1e308e;
     overflow: hidden;
+    background-color: #1e308e;
 
     &__wrapper {
         margin: 0 auto;
@@ -37,20 +37,20 @@
             }
 
             &__name {
-                color: #ffffff;
-                font-size: 32px;
                 margin: 10px 0 5px;
+                font-size: 32px;
+                color: #ffffff;
             }
 
             &__position {
-                color: #00fca3;
                 font-size: 24px;
+                color: #00fca3;
             }
 
             &__description {
-                color: #61b3ff;
                 margin-top: 5px;
                 font-size: 18px;
+                color: #61b3ff;
             }
         }
     }

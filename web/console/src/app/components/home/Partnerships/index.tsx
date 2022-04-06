@@ -12,14 +12,14 @@ import velas from '@static/img/gameLanding/partnerships/velas.svg';
 import './index.scss';
 
 export const Partnerships: React.FC = () => {
-    const logos = [devdao, casper, storj, polygon, chickenfish, velas, boosty];
+    const logos: string[] = [devdao, casper, storj, polygon, chickenfish, velas, boosty];
 
     return (
         <section className="partnerships">
             <div className="partnerships__wrapper">
                 <h2 className="partnerships__title">Our Partnerships</h2>
                 <div className="partnerships__area">
-                    {logos.map((logo, index) =>
+                    {logos.map((logo: string, index: number) =>
                         <div key={index} className="partnerships__area__item">
                             <div className="partnerships__area__item__wrapper">
                                 <img className="partnerships__area__item__logo" key={index} src={logo} alt="logo" />
