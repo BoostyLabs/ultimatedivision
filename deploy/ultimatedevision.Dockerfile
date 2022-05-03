@@ -4,10 +4,10 @@ FROM golang:1.17.4-alpine3.15 as ultimatedevision_builder
 WORKDIR /app
 # Copy all files to root derictory
 COPY . .
-# Download dependances
-RUN go mod download
+# Collect and download dependances
+RUN go mod vendor
 # Building application
-RUN GOOS=linux go build -o main ./cmd/ultimatedevision/main.go
+RUN CGO_ENABLED=0 go build -o main ./cmd/currencysigner/main.go
 
 # Result image
 FROM alpine:3.15.4
