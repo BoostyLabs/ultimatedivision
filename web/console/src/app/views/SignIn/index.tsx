@@ -62,7 +62,7 @@ const SignIn: React.FC = () => {
     };
 
     /** user data that will send to server */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
@@ -107,7 +107,7 @@ const SignIn: React.FC = () => {
     ];
 
     /** Login with matamask. */
-    const login: () => Promise<void> = async () => {
+    const login: () => Promise<void> = async() => {
         if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
             onboarding.startOnboarding();
 
