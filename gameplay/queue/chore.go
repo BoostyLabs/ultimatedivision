@@ -5,8 +5,8 @@ package queue
 
 import (
 	"context"
-	"math/big"
 	"net/http"
+	"ultimatedivision/cards"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
@@ -36,12 +36,13 @@ type Chore struct {
 	matches          *matches.Service
 	seasons          *seasons.Service
 	clubs            *clubs.Service
+	cards            *cards.Service
 	currencywaitlist *currencywaitlist.Service
 	users            *users.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(config Config, log logger.Logger, service *Service, matches *matches.Service, seasons *seasons.Service, clubs *clubs.Service, currencywaitlist *currencywaitlist.Service, users *users.Service) *Chore {
+func NewChore(config Config, log logger.Logger, service *Service, matches *matches.Service, seasons *seasons.Service, clubs *clubs.Service, cards *cards.Service, currencywaitlist *currencywaitlist.Service, users *users.Service) *Chore {
 	return &Chore{
 		config:           config,
 		log:              log,
@@ -50,6 +51,7 @@ func NewChore(config Config, log logger.Logger, service *Service, matches *match
 		matches:          matches,
 		seasons:          seasons,
 		clubs:            clubs,
+		cards:            cards,
 		currencywaitlist: currencywaitlist,
 		users:            users,
 	}
@@ -166,7 +168,8 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 							continue
 						}
 
-						if err = chore.Play(ctx, firstClient, secondClient); err != nil {
+						response, err := chore.Play(ctx, firstClient, secondClient)
+						if err != nil {
 							if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
 								chore.log.Error("could not update is play", ChoreError.Wrap(err))
 							}
@@ -175,6 +178,14 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 							}
 							chore.log.Error("could not play game", ChoreError.Wrap(err))
 						}
+
+						if err := firstClient.WriteJSON(http.StatusOK, response); err != nil {
+							chore.log.Error("could not write json", ChoreError.Wrap(err))
+						}
+						if err := secondClient.WriteJSON(http.StatusOK, response); err != nil {
+							chore.log.Error("could not write json", ChoreError.Wrap(err))
+						}
+
 						return
 					}
 				}(clients, k)
@@ -185,124 +196,105 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 }
 
 // Play method contains all the logic for playing matches.
-func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) error {
+func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) (GameplayResponse, error) {
 	squadCardsFirstClient, err := chore.service.clubs.ListSquadCards(ctx, firstClient.SquadID)
 	if err != nil {
-		return ChoreError.Wrap(err)
+		return GameplayResponse{}, ChoreError.Wrap(err)
 	}
 	if len(squadCardsFirstClient) != clubs.SquadSize {
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
-			return ChoreError.Wrap(err)
+			return GameplayResponse{}, ChoreError.Wrap(err)
 		}
 	}
 
 	squadCardsSecondClient, err := chore.service.clubs.ListSquadCards(ctx, secondClient.SquadID)
 	if err != nil {
-		return ChoreError.Wrap(err)
+		return GameplayResponse{}, ChoreError.Wrap(err)
 	}
 	if len(squadCardsSecondClient) != clubs.SquadSize {
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "squad is not full"); err != nil {
-			return ChoreError.Wrap(err)
+			return GameplayResponse{}, ChoreError.Wrap(err)
 		}
 	}
 
 	firstClientSquad, err := chore.clubs.GetSquad(ctx, firstClient.SquadID)
 	if err != nil {
-		return ChoreError.Wrap(err)
+		return GameplayResponse{}, ChoreError.Wrap(err)
 	}
 
 	firstClientClub, err := chore.clubs.Get(ctx, firstClientSquad.ClubID)
 	if err != nil {
-		return ChoreError.Wrap(err)
+		return GameplayResponse{}, ChoreError.Wrap(err)
+	}
+
+	secondClientSquad, err := chore.clubs.GetSquad(ctx, firstClient.SquadID)
+	if err != nil {
+		return GameplayResponse{}, ChoreError.Wrap(err)
+	}
+
+	secondClientClub, err := chore.clubs.Get(ctx, firstClientSquad.ClubID)
+	if err != nil {
+		return GameplayResponse{}, ChoreError.Wrap(err)
 	}
 
 	season, err := chore.seasons.GetSeasonByDivisionID(ctx, firstClientClub.DivisionID)
 	if err != nil {
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
-			return ChoreError.Wrap(err)
+			return GameplayResponse{}, ChoreError.Wrap(err)
 		}
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not season id"); err != nil {
-			return ChoreError.Wrap(err)
+			return GameplayResponse{}, ChoreError.Wrap(err)
 		}
-		return ChoreError.Wrap(err)
+		return GameplayResponse{}, ChoreError.Wrap(err)
 	}
 
-	matchesID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, season.ID)
+	matchID, err := chore.matches.Create(ctx, firstClient.SquadID, secondClient.SquadID, firstClient.UserID, secondClient.UserID, season.ID)
 	if err != nil {
 		if err := firstClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
-			return ChoreError.Wrap(err)
+			return GameplayResponse{}, ChoreError.Wrap(err)
 		}
 		if err := secondClient.WriteJSON(http.StatusInternalServerError, "match error"); err != nil {
-			return ChoreError.Wrap(err)
+			return GameplayResponse{}, ChoreError.Wrap(err)
 		}
-		return ChoreError.Wrap(err)
+		return GameplayResponse{}, ChoreError.Wrap(err)
 	}
 
-	gameResult, err := chore.matches.GetGameResult(ctx, matchesID)
+	var response GameplayResponse
+
+	response.MatchID = matchID
+	response.FirstClub.Club = firstClientClub
+	response.FirstClub.Squad = firstClientSquad
+
+	firstClientSquadCards, err := chore.clubs.ListSquadCards(ctx, firstClientSquad.ID)
 	if err != nil {
-		if err := secondClient.WriteJSON(http.StatusInternalServerError, "could not get result of match"); err != nil {
-			return ChoreError.Wrap(err)
-		}
-		return ChoreError.Wrap(err)
+		return GameplayResponse{}, ChoreError.Wrap(err)
 	}
 
-	var firstClientResult matches.GameResult
-	var secondClientResult matches.GameResult
+	for i := 0; i < len(firstClientSquadCards); i++ {
+		firstClientSquadCards[i].Card, err = chore.cards.Get(ctx, firstClientSquadCards[i].Card.ID)
+		if err != nil {
+			return GameplayResponse{}, ChoreError.Wrap(err)
+		}
+	}
+	response.FirstClub.SquadCards = firstClientSquadCards
 
-	firstClientResult.MatchResults = make([]matches.MatchResult, len(gameResult.MatchResults))
-	_ = copy(firstClientResult.MatchResults, gameResult.MatchResults)
-	secondClientResult.MatchResults = make([]matches.MatchResult, len(gameResult.MatchResults))
-	_ = copy(secondClientResult.MatchResults, gameResult.MatchResults)
+	response.SecondClub.Club = secondClientClub
+	response.SecondClub.Squad = secondClientSquad
 
-	switch {
-	case firstClient.UserID == gameResult.MatchResults[0].UserID:
-		secondClientResult.MatchResults = matches.Swap(gameResult.MatchResults)
-	case secondClient.UserID == gameResult.MatchResults[0].UserID:
-		firstClientResult.MatchResults = matches.Swap(gameResult.MatchResults)
+	secondClientSquadCards, err := chore.clubs.ListSquadCards(ctx, firstClientSquad.ID)
+	if err != nil {
+		return GameplayResponse{}, ChoreError.Wrap(err)
 	}
 
-	var value = new(big.Int)
-	value.SetString(chore.config.WinValue, 10)
-
-	switch {
-	case firstClientResult.MatchResults[0].QuantityGoals > secondClientResult.MatchResults[0].QuantityGoals:
-		winResult := WinResult{
-			Client:     firstClient,
-			GameResult: firstClientResult,
-			Value:      value,
+	for i := 0; i < len(secondClientSquadCards); i++ {
+		secondClientSquadCards[i].Card, err = chore.cards.Get(ctx, secondClientSquadCards[i].Card.ID)
+		if err != nil {
+			return GameplayResponse{}, ChoreError.Wrap(err)
 		}
-
-		go chore.FinishWithWinResult(ctx, winResult)
-		go chore.Finish(secondClient, secondClientResult)
-	case firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals:
-		winResult := WinResult{
-			Client:     secondClient,
-			GameResult: secondClientResult,
-			Value:      value,
-		}
-
-		go chore.FinishWithWinResult(ctx, winResult)
-		go chore.Finish(firstClient, firstClientResult)
-	default:
-		var value = new(big.Int)
-		value.SetString(chore.config.DrawValue, 10)
-
-		winResult := WinResult{
-			Client:     firstClient,
-			GameResult: firstClientResult,
-			Value:      value,
-		}
-		go chore.FinishWithWinResult(ctx, winResult)
-
-		winResult = WinResult{
-			Client:     secondClient,
-			GameResult: secondClientResult,
-			Value:      value,
-		}
-		go chore.FinishWithWinResult(ctx, winResult)
 	}
+	response.FirstClub.SquadCards = secondClientSquadCards
 
-	return nil
+	return response, nil
 }
 
 // FinishWithWinResult sends win result and finishes the connection.

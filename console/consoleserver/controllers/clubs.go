@@ -57,8 +57,8 @@ type UpdateRequest struct {
 // ClubResponse is a struct for response clubs, squad and squadCards.
 type ClubResponse struct {
 	clubs.Club
-	Squad      clubs.Squad          `json:"squad"`
-	SquadCards []clubs.GetSquadCard `json:"squadCards"`
+	Squad      clubs.Squad       `json:"squad"`
+	SquadCards []clubs.SquadCard `json:"squadCards"`
 }
 
 // Create is an endpoint that creates new club.
@@ -328,13 +328,13 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	squadCard.CardID = cardID
+	squadCard.Card.ID = cardID
 
 	if err = json.NewDecoder(r.Body).Decode(&squadCard); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.Wrap(err))
 	}
 
-	squadCard.CardID = cardID
+	squadCard.Card.ID = cardID
 
 	if squadCard.Position < minimumPositionValue || squadCard.Position > maximumPositionValue {
 		controller.serveError(w, http.StatusBadRequest, ErrClubs.New("invalid value of position"))

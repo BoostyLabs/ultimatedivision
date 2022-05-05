@@ -144,7 +144,7 @@ func (clubsDB *clubsDB) AddSquadCard(ctx context.Context, squadCards clubs.Squad
               VALUES($1,$2,$3)`
 
 	_, err := clubsDB.conn.ExecContext(ctx, query,
-		squadCards.SquadID, squadCards.CardID, squadCards.Position)
+		squadCards.SquadID, squadCards.Card.ID, squadCards.Position)
 
 	return ErrClubs.Wrap(err)
 }
@@ -283,7 +283,7 @@ func (clubsDB *clubsDB) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 
 	for rows.Next() {
 		var player clubs.SquadCard
-		err = rows.Scan(&player.SquadID, &player.CardID, &player.Position)
+		err = rows.Scan(&player.SquadID, &player.Card.ID, &player.Position)
 		if err != nil {
 			return nil, clubs.ErrNoSquadCard.Wrap(err)
 		}
@@ -400,7 +400,7 @@ func (clubsDB *clubsDB) UpdatePositions(ctx context.Context, squadCards []clubs.
 	}()
 
 	for _, squadCard := range squadCards {
-		result, err := preparedQuery.ExecContext(ctx, squadCard.Position, squadCard.CardID, squadCard.SquadID)
+		result, err := preparedQuery.ExecContext(ctx, squadCard.Position, squadCard.Card.ID, squadCard.SquadID)
 		if err != nil {
 			return ErrClubs.Wrap(err)
 		}

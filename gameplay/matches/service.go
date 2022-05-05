@@ -129,7 +129,7 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 	case randNumber > 0 && randNumber <= goalByPosition[clubs.CST]:
 		for _, card := range squadCards {
 			if card.Position == clubs.CST || card.Position == clubs.LST || card.Position == clubs.RST {
-				cardsByPosition = append(cardsByPosition, card.CardID)
+				cardsByPosition = append(cardsByPosition, card.Card.ID)
 			}
 		}
 
@@ -145,7 +145,7 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 				card.Position == clubs.CCM || card.Position == clubs.CCAM ||
 				card.Position == clubs.LCM || card.Position == clubs.LCAM ||
 				card.Position == clubs.RCM || card.Position == clubs.RCAM {
-				cardsByPosition = append(cardsByPosition, card.CardID)
+				cardsByPosition = append(cardsByPosition, card.Card.ID)
 			}
 		}
 
@@ -161,7 +161,7 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 				card.Position == clubs.CCDM ||
 				card.Position == clubs.LCDM ||
 				card.Position == clubs.RCDM {
-				cardsByPosition = append(cardsByPosition, card.CardID)
+				cardsByPosition = append(cardsByPosition, card.Card.ID)
 			}
 		}
 
@@ -176,7 +176,7 @@ func chooseGoalscorer(squadCards []clubs.SquadCard, goalByPosition map[clubs.Pos
 				card.Position == clubs.LB || card.Position == clubs.RCD ||
 				card.Position == clubs.RB || card.Position == clubs.RWB ||
 				card.Position == clubs.LWB {
-				cardsByPosition = append(cardsByPosition, card.CardID)
+				cardsByPosition = append(cardsByPosition, card.Card.ID)
 			}
 		}
 	}

@@ -7,13 +7,13 @@ import (
 	"math/big"
 	"net/http"
 	"time"
+	"ultimatedivision/clubs"
+	"ultimatedivision/gameplay/matches"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
-
-	"ultimatedivision/gameplay/matches"
 )
 
 // ErrNoClient indicated that client does not exist.
@@ -57,6 +57,20 @@ type Request struct {
 	SquadID       uuid.UUID            `json:"squadId"`
 	WalletAddress evmsignature.Address `json:"walletAddress"`
 	Nonce         int64                `json:"nonce"`
+}
+
+// GameplayResponse defines field that needed to response to gameplay request.
+type GameplayResponse struct {
+	MatchID    uuid.UUID            `json:"matchId"`
+	FirstClub  GameplayClubResponse `json:"firstClub"`
+	SecondClub GameplayClubResponse `json:"secondClub"`
+}
+
+// GameplayClubResponse defines field that needed for club response.
+type GameplayClubResponse struct {
+	Club       clubs.Club        `json:"club"`
+	Squad      clubs.Squad       `json:"squad"`
+	SquadCards []clubs.SquadCard `json:"squadCard"`
 }
 
 // Action defines list of possible clients action.

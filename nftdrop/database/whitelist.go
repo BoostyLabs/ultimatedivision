@@ -9,7 +9,7 @@ import (
 	"errors"
 
 	"github.com/BoostyLabs/evmsignature"
-	_ "github.com/lib/pq" // using postgres driver
+	_ "github.com/lib/pq" // using postgres driver.
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/nftdrop/whitelist"
