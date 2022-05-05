@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import footballer from '@static/img/login/footballer.svg';
+import representLogo from '@static/img/login/represent-logo.gif';
 import metamask from '@static/img/login/metamask-icon.svg';
 import velas from '@static/img/login/velas-icon.svg';
 import casper from '@static/img/login/casper-icon.svg';
@@ -76,7 +76,7 @@ export const SignIn = () => {
         <div className="login">
             <div className="login__wrapper">
                 <div className="login__represent">
-                    <img src={footballer} alt="utlimate division logo" className="login__represent__ultimate" />
+                    <img src={representLogo} alt="utlimate division logo" className="login__represent__logo" />
                 </div>
                 <div className="login__content">
                     <h1 className="login__content__title">LOGIN</h1>
@@ -86,11 +86,11 @@ export const SignIn = () => {
                             <p className="login__content__log-in__item__text">Connect metamask</p>
                         </div>
                         <div className="login__content__log-in__item">
-                            <img src={velas} alt="Metamask logo" className="login__content__log-in__item__logo" />
+                            <img src={velas} alt="Velas logo" className="login__content__log-in__item__logo" />
                             <p className="login__content__log-in__item__text">Connect velas account</p>
                         </div>
                         <div className="login__content__log-in__item">
-                            <img src={casper} alt="Metamask logo" className="login__content__log-in__item__logo" />
+                            <img src={casper} alt="Casper logo" className="login__content__log-in__item__logo" />
                             <p className="login__content__log-in__item__text">Connect casper signer </p>
                         </div>
                     </div>
