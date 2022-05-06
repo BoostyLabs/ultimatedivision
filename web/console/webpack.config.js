@@ -153,13 +153,22 @@ module.exports = (env, argv) => {
                     },
                 },
                 {
-                    test: /\.(jpe|jpg|png|svg|webp|gif)(\?.*$|$)/,
+                    test: /\.(jpe|jpg|png|svg|webp)(\?.*$|$)/,
                     exclude: /(node_modules)/,
                     type: "asset/resource",
                     generator: {
                         filename: "images/[name][hash:5][ext]",
                     },
                     use: isProduction ? IMAGE_COMPRESSION : [],
+                },
+                {
+                    test: /\.(gif)(\?.*$|$)/,
+                    exclude: /(node_modules)/,
+                    type: "asset/resource",
+                    generator: {
+                        filename: "images/[name][hash:5][ext]",
+                    },
+                    use: [],
                 },
             ],
         },
