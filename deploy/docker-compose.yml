@@ -98,8 +98,7 @@ services:
     ports:
       - "6432:5432"
     volumes:
-      - /home/usr/storage/docker/dockerlogs/ultimate_division/db:/var/lib/postgresql/data
-      - /home/usr/storage/docker/ultimate_division/configs:/configs
+      - ${PROJECT_PATH}/data/db:/var/lib/postgresql/data
     networks:
       - ultimate_division_network
     environment:
