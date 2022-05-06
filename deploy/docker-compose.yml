@@ -1,0 +1,114 @@
+version: "3"
+
+services:
+  ultimate_division:
+    container_name: "ultimate_division"
+    image: dcloud.hicrystal.com/ultimate_division:latest
+
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_PATH}/data/ultimate_division:/app/data
+      - ${PROJECT_PATH}/configs/ultimate_division:/config
+    depends_on:
+      - ultimate_division_db
+    networks:
+      - ultimate_division_network
+    environment:
+      - DB_HOST=ultimate_division_db
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  nft_signer:
+    container_name: "ultimate_division_nft_signer"
+    image: dcloud.hicrystal.com/ultimate_division_nft_signer:latest
+
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_PATH}/data/nft_signer:/app/data
+      - ${PROJECT_PATH}/configs/nft_signer:/config
+    depends_on:
+      - ultimate_division_db
+    networks:
+      - ultimate_division_network
+    environment:
+      - DB_HOST=ultimate_division_db
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  currency_signer:
+    container_name: "ultimate_division_currency_signer"
+    image: dcloud.hicrystal.com/ultimate_division_currency_signer:latest
+
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_PATH}/data/currency_signer:/app/data
+      - ${PROJECT_PATH}/configs/currency_signer:/config
+    depends_on:
+      - ultimate_division_db
+    networks:
+      - ultimate_division_network
+    environment:
+      - DB_HOST=ultimate_division_db
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  nft_drop:
+    container_name: "ultimate_division_nft_drop"
+    image: dcloud.hicrystal.com/ultimate_division_nft_drop:latest
+
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_PATH}/data/nft_drop:/app/data
+      - ${PROJECT_PATH}/configs/nft_drop:/config
+    depends_on:
+      - ultimate_division_db
+    networks:
+      - ultimate_division_network
+    environment:
+      - DB_HOST=ultimate_division_db
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  card_generator:
+    container_name: "ultimate_division_card_generator"
+    image: dcloud.hicrystal.com/ultimate_division_card_generator:latest
+
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_PATH}/data/card_generator:/app/data
+      - ${PROJECT_PATH}/configs/card_generator:/config
+    depends_on:
+      - ultimate_division_db
+    networks:
+      - ultimate_division_network
+    environment:
+      - DB_HOST=ultimate_division_db
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  ultimate_division_db:
+    restart: always
+    image: postgres:latest
+    container_name: ultimate_division_db
+    ports:
+      - "6432:5432"
+    volumes:
+      - /home/usr/storage/docker/dockerlogs/ultimate_division/db:/var/lib/postgresql/data
+      - /home/usr/storage/docker/ultimate_division/configs:/configs
+    networks:
+      - ultimate_division_network
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+networks:
+  ultimate_division_network:
+    driver: bridge
+
+
