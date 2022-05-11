@@ -52,7 +52,7 @@ build: ## Build all necessary docker images.
 	make build_app build_nft_signer build_nft_drop build_currency_signer build_card_generator
 
 push: ## Push all necessary docker images.
-	make push_app push_nft_signer build_nft_drop push_currency_signer build_card_generator
+	make push_app push_nft_signer push_nft_drop push_currency_signer push_card_generator
 
 docker: ## Build and push all necessary docker images.
 	make build push

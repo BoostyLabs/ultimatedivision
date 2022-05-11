@@ -16,4 +16,7 @@ node_modules
 
 # Depependenci
 /vendor
-deploy/.env.test
+/deploy/.env
+
+# secrets
+config/
