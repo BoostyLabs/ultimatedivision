@@ -132,10 +132,10 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		err = errs.Combine(err, db.Close())
 	}()
 
-	err = db.CreateSchema(ctx)
-	if err != nil {
-		log.Error("Error creating schema", Error.Wrap(err))
-	}
+	//err = db.CreateSchema(ctx)
+	//if err != nil {
+	//	log.Error("Error creating schema", Error.Wrap(err))
+	//}
 
 	peer, err := nftsigner.New(log, runCfg.Config, db)
 	if err != nil {
