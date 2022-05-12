@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
       - "8081:8081"
-    image: dcloud.hicrystal.com/ultimate_division:latest
+    image: ${DOCKER_REGISTRY}/ultimate_division:latest
     restart: unless-stopped
     volumes:
       - ${PROJECT_PATH}/data/ultimate_division:/app/data
@@ -23,7 +23,7 @@ services:
 
   nft_signer:
     container_name: ultimate_division_nft_signer
-    image: dcloud.hicrystal.com/ultimate_division_nft_signer:latest
+    image: ${DOCKER_REGISTRY}/ultimate_division_nft_signer:latest
 
     restart: unless-stopped
     volumes:
@@ -41,7 +41,7 @@ services:
 
   currency_signer:
     container_name: ultimate_division_currency_signer
-    image: dcloud.hicrystal.com/ultimate_division_currency_signer:latest
+    image: ${DOCKER_REGISTRY}/ultimate_division_currency_signer:latest
 
     restart: unless-stopped
     volumes:
@@ -59,7 +59,7 @@ services:
 
   nft_drop:
     container_name: ultimate_division_nft_drop
-    image: dcloud.hicrystal.com/ultimate_division_nft_drop:latest
+    image: ${DOCKER_REGISTRY}/ultimate_division_nft_drop:latest
 
     restart: unless-stopped
     volumes:
@@ -77,7 +77,7 @@ services:
 
 #  card_generator:
 #    container_name: ultimate_division_card_generator
-#    image: dcloud.hicrystal.com/ultimate_division_card_generator:latest
+#    image: ${DOCKER_REGISTRY}/ultimate_division_card_generator:latest
 #
 #    restart: unless-stopped
 #    volumes:
