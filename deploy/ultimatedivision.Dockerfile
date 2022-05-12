@@ -23,7 +23,9 @@ VOLUME ["${APP_DATA_DIR}"]
 COPY --from=ultimatedivision_builder /app/main .
 COPY --from=ultimatedivision_builder /app/web/admin ./web/admin
 COPY --from=ultimatedivision_builder /app/web/console/dist ./web/console/dist
+
+# ports open
+EXPOSE 8087 8088
+
 # Builded application running with config directory as argument
 ENTRYPOINT ["/main", "run", "--config=./config"]
-# ports open
-EXPOSE 8080 8081

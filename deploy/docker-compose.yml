@@ -4,8 +4,8 @@ services:
   ultimate_division:
     container_name: ultimate_division
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "8087:8087"
+      - "8088:8088"
     image: ${DOCKER_REGISTRY}/ultimate_division:latest
     restart: unless-stopped
     volumes:
@@ -27,7 +27,7 @@ services:
 
     restart: unless-stopped
     volumes:
-      - ${PROJECT_PATH}data/nft_signer:/app/data
+      - ${PROJECT_PATH}/data/nft_signer:/app/data
       - ${PROJECT_PATH}/configs/nft_signer:/config
     depends_on:
       - ultimate_division_db
@@ -100,7 +100,7 @@ services:
     ports:
       - "5635:5432"
     volumes:
-      - ${PROJECT_PATH}data/db:/var/lib/postgresql/data
+      - ${PROJECT_PATH}/data/db:/var/lib/postgresql/data
     networks:
       - fullstack
     environment:
