@@ -22,5 +22,7 @@ VOLUME ["${APP_DATA_DIR}"]
 # Copy executable file (builded application) from builder to root directory
 COPY --from=nftsigner_builder /app/main .
 
+EXPOSE 8085 8086
+
 # Builded application running with config directory as argument
 ENTRYPOINT ["/main", "run", "--config=./config"]

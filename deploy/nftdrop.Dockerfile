@@ -23,5 +23,7 @@ VOLUME ["${APP_DATA_DIR}"]
 COPY --from=nftdrop_builder /app/main .
 COPY --from=nftdrop_builder /app/web/nftdrop ./web/nftdrop
 
+EXPOSE 8085 8086
+
 # Builded application running with config directory as argument
 ENTRYPOINT ["/main", "run", "--config=./config"]

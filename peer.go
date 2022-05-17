@@ -6,6 +6,7 @@ package ultimatedivision
 import (
 	"context"
 	"errors"
+	"log"
 	"net"
 	"net/mail"
 
@@ -279,6 +280,7 @@ type Peer struct {
 
 // New is a constructor for ultimatedivision.Peer.
 func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
+	log.Println("Initialization start")
 	peer = &Peer{
 		Log:      logger,
 		Database: db,
@@ -546,7 +548,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Store.Service,
 		)
 	}
-
+	log.Println("Initialization end")
 	return peer, nil
 }
 

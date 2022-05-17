@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"html/template"
+	"log"
 	"net"
 	"net/http"
 	"path/filepath"
@@ -180,7 +181,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
 	router.PathPrefix("/").HandlerFunc(server.appHandler)
-
+	log.Warn("Handlers initialized")
 	server.server = http.Server{
 		Handler: router,
 	}
@@ -190,6 +191,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 
 // Run starts the server that host webapp and api endpoint.
 func (server *Server) Run(ctx context.Context) (err error) {
+	log.Println("Console run")
 	err = server.initializeTemplates()
 	if err != nil {
 		return Error.Wrap(err)
@@ -236,6 +238,7 @@ func (server *Server) appHandler(w http.ResponseWriter, r *http.Request) {
 		server.log.Error("index template could not be executed", err)
 		return
 	}
+	log.Println("Temlates executed")
 }
 
 // withAuth performs initial authorization before every request.
@@ -263,6 +266,7 @@ func (server *Server) withAuth(handler http.Handler) http.Handler {
 
 // initializeTemplates is used to initialize all templates.
 func (server *Server) initializeTemplates() (err error) {
+	log.Println("DIst PATH: ", filepath.Join(server.config.StaticDir, "dist", "index.html"))
 	server.templates.index, err = template.ParseFiles(filepath.Join(server.config.StaticDir, "dist", "index.html"))
 	if err != nil {
 		server.log.Error("dist folder is not generated. use 'npm run build' command", err)

@@ -6,6 +6,8 @@ package database
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"log"
 
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
@@ -34,11 +36,16 @@ type database struct {
 
 // New returns nftdrop.DB postgresql implementation.
 func New(databaseURL string) (nftdrop.DB, error) {
+	log.Println("[INFO] DB connection: ", databaseURL)
+
 	conn, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		return nil, Error.Wrap(err)
 	}
 
+	if err := conn.Ping(); err != nil {
+		panic(fmt.Sprint("[PISOS] DB connection sasality: ", err))
+	}
 	return &database{conn: conn}, nil
 }
 
