@@ -25,6 +25,8 @@ import { EthersClient } from '@/api/ethers';
 import './index.scss';
 import { NotFoundError } from '@/api';
 
+import { vaclient } from '../../velas/service.js';
+
 const SignIn: React.FC = () => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const ethersService = useMemo(() => ServicePlugin.create(), []);
@@ -39,6 +41,7 @@ const SignIn: React.FC = () => {
     const [passwordError, setPasswordError] =
         useState<SetStateAction<null | string>>(null);
     const [isRemember, setIsRemember] = useState(false);
+
     /** TODO: rework remember me implementation  */
     const handleIsRemember = () => setIsRemember((prev) => !prev);
 
@@ -62,7 +65,7 @@ const SignIn: React.FC = () => {
     };
 
     /** user data that will send to server */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateForm()) {
@@ -107,7 +110,7 @@ const SignIn: React.FC = () => {
     ];
 
     /** Login with matamask. */
-    const login: () => Promise<void> = async () => {
+    const login: () => Promise<void> = async() => {
         if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
             onboarding.startOnboarding();
 

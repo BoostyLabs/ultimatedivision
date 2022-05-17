@@ -22,6 +22,7 @@ import { Validator } from '@/users/validation';
 import { EthersClient } from '@/api/ethers';
 import { NotFoundError } from '@/api';
 import { SignedMessage } from '@/app/ethers';
+import { vaclient } from '@/app/velas/service';
 
 // TODO: it will be reworked on wrapper with children props.
 export const SignIn: React.FC<{
@@ -37,11 +38,9 @@ export const SignIn: React.FC<{
 
     /** Controlled values for form inputs */
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError] =
-        useState<SetStateAction<null | string>>(null);
+    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
     const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] =
-        useState<SetStateAction<null | string>>(null);
+    const [passwordError, setPasswordError] = useState<SetStateAction<null | string>>(null);
 
     const [isRemember, setIsRemember] = useState(false);
 
@@ -65,6 +64,33 @@ export const SignIn: React.FC<{
         }
 
         return isFormValid;
+    };
+
+    const processAuthResult = (e: any, authResult: any) => {
+        if (authResult && authResult.access_token_payload) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else if (e) {
+            toast.error(`${e.description}`, {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    };
+
+    const loginVelas = () => {
+        vaclient.authorize(
+            {
+                csrfToken: async function() {
+                    const response = await fetch('http://localhost:3002/csrf');
+                    const result = await response.json();
+
+                    return result.token;
+                },
+                scope: 'authorization',
+                challenge: 'some_challenge_from_backend',
+            },
+            processAuthResult
+        );
     };
 
     /** Submits form values. */
@@ -114,7 +140,7 @@ export const SignIn: React.FC<{
     ];
 
     /** Login with matamask. */
-    const login: () => Promise<void> = async () => {
+    const login: () => Promise<void> = async() => {
         if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
             onboarding.startOnboarding();
 
@@ -160,18 +186,11 @@ export const SignIn: React.FC<{
     return (
         <div className="register">
             <div className="register__represent">
-                <img
-                    alt="utlimate division logo"
-                    src={ultimate}
-                    className="register__represent__ultimate"
-                />
+                <img alt="utlimate division logo" src={ultimate} className="register__represent__ultimate" />
             </div>
             <div className="register__sign-in">
                 <h1 className="register__sign-in__title">SIGN IN</h1>
-                <form
-                    className="register__sign-in__sign-form"
-                    onSubmit={handleSubmit}
-                >
+                <form className="register__sign-in__sign-form" onSubmit={handleSubmit}>
                     {formValues.map((formValue, index) =>
                         <UserDataArea
                             key={index}
@@ -205,14 +224,11 @@ export const SignIn: React.FC<{
                         </span>
                     </div>
                     <div className="register__sign-in__sign-form__auth-internal">
-                        <input
-                            className="register__sign-in__sign-form__confirm"
-                            value="SIGN IN"
-                            type="submit"
-                        />
+                        <input className="register__sign-in__sign-form__confirm" value="SIGN IN" type="submit" />
                         or
                         <div className="register__sign-in__sign-form__logos">
                             <img
+                                onClick={loginVelas}
                                 src={google}
                                 alt="Google logo"
                                 className="register__sign-in__sign-form__logos__google"
