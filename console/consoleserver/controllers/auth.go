@@ -8,6 +8,7 @@ import (
 	"errors"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
@@ -399,6 +400,72 @@ func (auth *Auth) MetamaskLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	authToken, err := auth.userAuth.LoginWithMetamask(ctx, request.Nonce, signature)
+	if err != nil {
+		switch {
+		case users.ErrNoUser.Has(err):
+			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
+			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
+		default:
+			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
+		}
+
+		return
+	}
+
+	auth.cookie.SetTokenCookie(w, authToken)
+}
+
+// VelasRegister is an endpoint to register user.
+func (auth *Auth) VelasRegister(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	var velasAPIResponse users.VelasAPISResponse
+	if err := json.NewDecoder(r.Body).Decode(&velasAPIResponse); err != nil {
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		return
+	}
+
+	if time.Now().Unix() > velasAPIResponse.ExpiresAt {
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("token expiration time has expired"))
+		return
+	}
+
+	err := auth.userAuth.RegisterWithVelas(ctx, velasAPIResponse.AccessTokenPayload.Sub)
+	if err != nil {
+		auth.log.Error("failed to write json response", AuthError.Wrap(err))
+		return
+	}
+}
+
+// VelasLogin is an endpoint to authorize user from velas and set auth cookie in browser.
+func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	type MetamaskFields struct {
+		Nonce string `json:"nonce"`
+		users.VelasAPISResponse
+	}
+
+	var request MetamaskFields
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
+		return
+	}
+
+	if request.Nonce == "" {
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("did not fill in all the fields"))
+		return
+	}
+
+	if time.Now().Unix() > request.ExpiresAt {
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("token expiration time has expired"))
+		return
+	}
+
+	authToken, err := auth.userAuth.LoginWithVelas(ctx, request.Nonce, request.AccessTokenPayload.Sub)
 	if err != nil {
 		switch {
 		case users.ErrNoUser.Has(err):

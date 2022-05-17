@@ -583,3 +583,77 @@ func (service *Service) PreAuthTokenToChangeEmail(ctx context.Context, email, ne
 
 	return token, nil
 }
+
+// RegisterWithVelas creates user by credentials.
+func (service *Service) RegisterWithVelas(ctx context.Context, velasAddress string) error {
+	_, err := service.users.GetByVelasWalletAddress(ctx, velasAddress)
+	if !users.ErrNoUser.Has(err) {
+		return Error.New("this user already exist")
+	}
+
+	nonce := make([]byte, 32)
+	_, err = rand.Read(nonce)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	user := users.User{
+		ID:          uuid.New(),
+		Nonce:       nonce,
+		LastLogin:   time.Time{},
+		Status:      users.StatusActive,
+		CreatedAt:   time.Now().UTC(),
+		VelasWallet: velasAddress,
+	}
+	err = service.users.Create(ctx, user)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	return nil
+}
+
+// LoginWithVelas authenticates user by credentials and returns login token.
+func (service *Service) LoginWithVelas(ctx context.Context, nonce string, velasWallet string) (string, error) {
+	user, err := service.users.GetByVelasWalletAddress(ctx, velasWallet)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	decodeNonce, err := hexutil.Decode(nonce)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	if !bytes.Equal(decodeNonce, user.Nonce) {
+		return "", Error.New("nonce is invalid")
+	}
+
+	claims := auth.Claims{
+		UserID:    user.ID,
+		ExpiresAt: time.Now().UTC().Add(TokenExpirationTime),
+	}
+
+	token, err := service.signer.CreateToken(ctx, &claims)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	newNonce := make([]byte, 32)
+	_, err = rand.Read(newNonce)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	err = service.users.UpdateNonce(ctx, user.ID, newNonce)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	err = service.users.UpdateLastLogin(ctx, user.ID)
+	if err != nil {
+		service.log.Error("could not update last login", Error.Wrap(err))
+	}
+
+	return token, nil
+}
