@@ -10,8 +10,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/BoostyLabs/evmsignature"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -349,12 +347,7 @@ func (auth *Auth) Nonce(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !common.IsHexAddress(address) {
-		auth.serveError(w, http.StatusBadRequest, AuthError.New("address is wrong"))
-		return
-	}
-
-	nonce, err := auth.userAuth.Nonce(ctx, evmsignature.Address(address))
+	nonce, err := auth.userAuth.VelasNonce(ctx, address)
 	if err != nil {
 		switch {
 		case users.ErrNoUser.Has(err):

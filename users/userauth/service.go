@@ -405,6 +405,18 @@ func (service *Service) Nonce(ctx context.Context, address evmsignature.Address)
 	return nonce, nil
 }
 
+// VelasNonce creates nonce and send to velas for login.
+func (service *Service) VelasNonce(ctx context.Context, address string) (string, error) {
+	user, err := service.users.GetByVelasWalletAddress(ctx, address)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	nonce := hexutil.Encode(user.Nonce)
+
+	return nonce, nil
+}
+
 // RegisterWithMetamask creates user by credentials.
 func (service *Service) RegisterWithMetamask(ctx context.Context, signature []byte) error {
 	walletAddress, err := recoverWalletAddress([]byte(users.DefaultMessageForRegistration), signature)

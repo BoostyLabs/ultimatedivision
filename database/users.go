@@ -111,7 +111,7 @@ func (usersDB *usersDB) GetByWalletAddress(ctx context.Context, walletAddress ev
 func (usersDB *usersDB) GetByVelasWalletAddress(ctx context.Context, walletAddress string) (users.User, error) {
 	var user users.User
 
-	row := usersDB.conn.QueryRowContext(ctx, "SELECT id, email, password_hash, nick_name, first_name, last_name, wallet_address, velas_wallet_address, nonce, last_login, status, created_at FROM users WHERE wallet_velas_address = $1", walletAddress)
+	row := usersDB.conn.QueryRowContext(ctx, "SELECT id, email, password_hash, nick_name, first_name, last_name, wallet_address, velas_wallet_address, nonce, last_login, status, created_at FROM users WHERE velas_wallet_address = $1", walletAddress)
 
 	err := row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.Wallet, &user.VelasWallet, &user.Nonce, &user.LastLogin, &user.Status, &user.CreatedAt)
 	if err != nil {
