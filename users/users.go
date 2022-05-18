@@ -29,6 +29,8 @@ type DB interface {
 	GetByEmail(ctx context.Context, email string) (User, error)
 	// GetByWalletAddress returns user by wallet address from the data base.
 	GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address) (User, error)
+	// GetByVelasWalletAddress returns user by wallet address from the data base.
+	GetByVelasWalletAddress(ctx context.Context, walletAddress string) (User, error)
 	// Create creates a user and writes to the database.
 	Create(ctx context.Context, user User) error
 	// Update updates a status in the database.
@@ -73,6 +75,7 @@ type User struct {
 	FirstName    string               `json:"firstName"`
 	LastName     string               `json:"lastName"`
 	Wallet       evmsignature.Address `json:"wallet"`
+	VelasWallet  string               `json:"velas_wallet"`
 	Nonce        []byte               `json:"nonce"`
 	LastLogin    time.Time            `json:"lastLogin"`
 	Status       Status               `json:"status"`
@@ -140,13 +143,32 @@ func (createUserFields *CreateUserFields) IsValid() bool {
 		return false
 	case createUserFields.Password == "":
 		return false
-	case createUserFields.FirstName == "":
-		return false
-	case createUserFields.LastName == "":
-		return false
 	case createUserFields.NickName == "":
 		return false
 	default:
 		return true
 	}
+}
+
+// VelasAPISResponse for velas response.
+type VelasAPISResponse struct {
+	State               string `json:"state"`
+	Stage               string `json:"stage"`
+	AccessToken         string `json:"access_token"`
+	ExpiresAt           int64  `json:"expires_at"`
+	TokenType           string `json:"token_type"`
+	AuthorizedChallenge string `json:"authorized_challenge"`
+	AccessTokenPayload  struct {
+		Iss                        string   `json:"iss"`
+		Aud                        string   `json:"aud"`
+		Sub                        string   `json:"sub"`
+		Ses                        string   `json:"ses"`
+		Scopes                     []string `json:"scopes"`
+		AuthTime                   int64    `json:"auth_time"`
+		TransactionsSponsorAPIHost string   `json:"transactions_sponsor_api_host"`
+		TransactionsSponsorPubKey  string   `json:"transactions_sponsor_pub_key"`
+		Exp                        int64    `json:"exp"`
+		Iat                        int64    `json:"iat"`
+		Type                       string   `json:"type"`
+	} `json:"access_token_payload"`
 }
