@@ -12,13 +12,11 @@ help: ## Show this help
 build_dist: ## Build dist folder that needed for frontend.
 	cd web/console && npm i --force && npm run build && cd .. && cd nftdrop/landing && npm i --force && npm run build
 
-
 build_nft_signer: ## Build NFT Signer docker image.
 	docker build -f ./deploy/nftsigner.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_nft_signer:$(VERSION) . && docker build -f ./deploy/nftsigner.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_nft_signer$(ENVIRONMENT):latest .
 
 push_nft_signer: ## Push NFT Signer docker image.
 	docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_nft_signer:$(VERSION) && docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_nft_signer$(ENVIRONMENT):latest
-
 
 build_nft_drop: ## Build NFT Drop docker image.
 	docker build -f ./deploy/nftdrop.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_nft_drop:$(VERSION) . && docker build -f ./deploy/nftdrop.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_nft_drop$(ENVIRONMENT):latest .
@@ -26,13 +24,11 @@ build_nft_drop: ## Build NFT Drop docker image.
 push_nft_drop: ## Push NFT Drop docker image.
 	docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_nft_drop:$(VERSION) && docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_nft_drop$(ENVIRONMENT):latest
 
-
 build_currency_signer: ## Build currency signer docker image.
 	docker build -f ./deploy/currencysigner.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_currency_signer:$(VERSION) . && docker build -f ./deploy/currencysigner.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_currency_signer$(ENVIRONMENT):latest .
 
 push_currency_signer: ## Push currency signer docker image.
 	docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_currency_signer:$(VERSION) && docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_currency_signer$(ENVIRONMENT):latest
-
 
 build_card_generator: ## Build Card Generator docker image.
 	docker build -f ./deploy/cardgenerator.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_card_generator:$(VERSION) . && docker build -f ./deploy/cardgenerator.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_card_generator$(ENVIRONMENT):latest .
@@ -40,13 +36,11 @@ build_card_generator: ## Build Card Generator docker image.
 push_card_generator: ## Push Card Generator docker image.
 	docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_card_generator:$(VERSION) && docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division_card_generator$(ENVIRONMENT):latest
 
-
 build_app: ## Build Application docker image.
 	make build_dist && docker build -f ./deploy/ultimatedivision.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division:$(VERSION) . && docker build -f ./deploy/ultimatedivision.Dockerfile -t $(HOST_FOR_DOCKER_IMAGE)/ultimate_division$(ENVIRONMENT):latest .
 
 push_app: ## Push Application docker image.
 	docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division:$(VERSION) && docker push $(HOST_FOR_DOCKER_IMAGE)/ultimate_division$(ENVIRONMENT):latest
-
 
 build: ## Build all necessary docker images.
 	make build_app build_nft_signer build_nft_drop build_currency_signer build_card_generator
