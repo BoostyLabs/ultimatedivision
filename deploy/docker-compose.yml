@@ -2,59 +2,59 @@ version: "3"
 
 services:
   app:
-    container_name: "UDAppDev"
-    image: dcloud.hicrystal.com/ultimate_division:latest
+    container_name: UDApp
+    image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division${ENVIRONMENT}:latest
     ports:
       - "8087:8087" # Forward the exposed port 5000 on the container to port 8088 on the host machine (8088:5000).
       - "8088:8088"
     restart: unless-stopped
     volumes:
-      - ${PROJECT_DIRECTORY}/data/ultimate_division:/app/data
-      - ${PROJECT_DIRECTORY}/configs/ultimate_division:/config
-      - ${PROJECT_DIRECTORY}/assets:/assets
+      - ${PROJECT_DATA_PATH}/ultimate_division:/app/data
+      - ${PROJECT_CONFIGS_PATH}/ultimate_division:/config
+      - ${PROJECT_ASSETS_PATH}:/assets
     depends_on:
-      - ultimatedivisiondb_dev # This service depends on postgres. Start that first.
+      - ultimatedivisiondb # This service depends on postgres. Start that first.
     networks:
       - fullstack
 
   nft_signer:
-    container_name: "UDNFTSignerDev"
-    image: dcloud.hicrystal.com/ultimate_division_nft_signer:latest
+    container_name: UDNFTSigner
+    image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_nft_signer${ENVIRONMENT}:latest
     restart: unless-stopped
     volumes:
-      - ${PROJECT_DIRECTORY}/data/signer:/app/data
-      - ${PROJECT_DIRECTORY}/configs/nft_signer:/config
+      - ${PROJECT_DATA_PATH}/signer:/app/data
+      - ${PROJECT_CONFIGS_PATH}/nft_signer:/config
     depends_on:
-      - ultimatedivisiondb_dev # This service depends on postgres. Start that first.
+      - ultimatedivisiondb # This service depends on postgres. Start that first.
     networks:
       - fullstack
 
   currency_signer:
-    container_name: "UDCurrencySignerDev"
-    image: dcloud.hicrystal.com/ultimate_division_currency_signer:latest
+    container_name: UDCurrencySigner
+    image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_currency_signer${ENVIRONMENT}:latest
     restart: unless-stopped
     volumes:
-      - ${PROJECT_DIRECTORY}/data/currency_signer:/app/data
-      - ${PROJECT_DIRECTORY}/configs/currency_signer:/config
+      - ${PROJECT_DATA_PATH}/currency_signer:/app/data
+      - ${PROJECT_CONFIGS_PATH}/currency_signer:/config
     depends_on:
-      - ultimatedivisiondb_dev # This service depends on postgres. Start that first.
+      - ultimatedivisiondb # This service depends on postgres. Start that first.
     networks:
       - fullstack
 
-  ultimatedivisiondb_dev:
+  ultimatedivision_db:
     restart: always
     image: postgres:latest
-    container_name: ultimatedivisiondb_dev
+    container_name: ultimatedivision_db
     ports:
       - "5635:5432"
     volumes:
-      - ${PROJECT_DIRECTORY}/data/db:/var/lib/postgresql/data
+      - ${PROJECT_DATA_PATH}/db:/var/lib/postgresql/data
     networks:
       - fullstack
     environment:
-      - POSTGRES_DB=ultimatedivisiondb_dev
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 # Networks to be created to facilitate communication between containers
 networks:
