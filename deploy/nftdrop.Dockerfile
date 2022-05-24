@@ -14,15 +14,15 @@ FROM alpine:3.15.4
 
 # Volume directorys
 ARG APP_DATA_DIR=/data
-
+# Criating volume directory
 RUN mkdir -p ${APP_DATA_DIR}
-# Criating volumes
+# Criating volume
 VOLUME ["${APP_DATA_DIR}"]
 
 # Copy executable file (builded application) from builder to root directory
 COPY --from=nftdrop_builder /app/main .
 COPY --from=nftdrop_builder /app/web/nftdrop ./web/nftdrop
-
+# Ports opening
 EXPOSE 8085 8086
 
 # Builded application running with config directory as argument
