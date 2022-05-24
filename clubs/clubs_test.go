@@ -94,25 +94,25 @@ func TestTeam(t *testing.T) {
 
 	testSquadCard1 := clubs.SquadCard{
 		SquadID:  testSquad.ID,
-		CardID:   testCard1.ID,
+		Card:     testCard1,
 		Position: clubs.CCAM,
 	}
 
 	testSquadCard2 := clubs.SquadCard{
 		SquadID:  testSquad.ID,
-		CardID:   testCard2.ID,
+		Card:     testCard2,
 		Position: clubs.RB,
 	}
 
 	updatedSquadCard1 := clubs.SquadCard{
 		SquadID:  testSquad.ID,
-		CardID:   testCard1.ID,
+		Card:     testCard1,
 		Position: clubs.CST,
 	}
 
 	updatedSquadCard2 := clubs.SquadCard{
 		SquadID:  testSquad.ID,
-		CardID:   testCard2.ID,
+		Card:     testCard2,
 		Position: clubs.CCD,
 	}
 
@@ -243,7 +243,9 @@ func TestTeam(t *testing.T) {
 		t.Run("Update card position in squad sql no rows", func(t *testing.T) {
 			err := repositoryClubs.UpdatePositions(ctx, []clubs.SquadCard{{
 				id,
-				id,
+				cards.Card{
+					ID: id,
+				},
 				clubs.Position(5),
 			}})
 			require.Error(t, err)
@@ -290,7 +292,7 @@ func comparePlayers(t *testing.T, playersDB []clubs.SquadCard, playersTest []clu
 
 	for i := 0; i < len(playersTest); i++ {
 		assert.Equal(t, playersDB[i].SquadID, playersTest[i].SquadID)
-		assert.Equal(t, playersDB[i].CardID, playersTest[i].CardID)
+		assert.Equal(t, playersDB[i].Card.ID, playersTest[i].Card.ID)
 		assert.Equal(t, playersDB[i].Position, playersTest[i].Position)
 	}
 }

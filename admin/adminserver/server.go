@@ -151,7 +151,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 
 	clubsRouter := router.PathPrefix("/clubs").Subrouter()
 	clubsRouter.Use(server.withAuth)
-	clubsController := controllers.NewClubs(log, clubs, server.templates.club)
+	clubsController := controllers.NewClubs(log, clubs, cards, server.templates.club)
 	clubsRouter.HandleFunc("/create/{userId}", clubsController.Create).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{userId}", clubsController.List).Methods(http.MethodGet)
 	clubsRouter.HandleFunc("/{userId}/{clubId}/update", clubsController.UpdateStatus).Methods(http.MethodGet)
