@@ -6,7 +6,6 @@ package database
 import (
 	"context"
 	"database/sql"
-	"log"
 
 	_ "github.com/lib/pq" // using postgres driver
 	"github.com/zeebo/errs"
@@ -48,8 +47,6 @@ type database struct {
 
 // New returns ultimatedivision.DB postgresql implementation.
 func New(databaseURL string) (ultimatedivision.DB, error) {
-	log.Println("[INFO] DB connection: ", databaseURL)
-
 	conn, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		return nil, Error.Wrap(err)
