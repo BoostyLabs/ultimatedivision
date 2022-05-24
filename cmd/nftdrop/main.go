@@ -132,7 +132,7 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		err = errs.Combine(err, db.Close())
 	}()
 
-	//TODO: remove for production.
+	// TODO: remove for production.
 	err = db.CreateSchema(ctx)
 	if err != nil {
 		log.Error("Error creating schema", Error.Wrap(err))
