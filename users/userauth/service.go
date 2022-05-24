@@ -20,6 +20,7 @@ import (
 	"ultimatedivision/console/emails"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/auth"
+	"ultimatedivision/pkg/velas"
 	"ultimatedivision/users"
 )
 
@@ -52,15 +53,17 @@ type Service struct {
 	signer       auth.TokenSigner
 	emailService *emails.Service
 	log          logger.Logger
+	velas        *velas.Service
 }
 
 // NewService is a constructor for user auth service.
-func NewService(users users.DB, signer auth.TokenSigner, emails *emails.Service, log logger.Logger) *Service {
+func NewService(users users.DB, signer auth.TokenSigner, emails *emails.Service, log logger.Logger, velas *velas.Service) *Service {
 	return &Service{
 		users:        users,
 		signer:       signer,
 		emailService: emails,
 		log:          log,
+		velas:        velas,
 	}
 }
 
@@ -668,4 +671,9 @@ func (service *Service) LoginWithVelas(ctx context.Context, nonce string, velasW
 	}
 
 	return token, nil
+}
+
+// VelasVAClientFields returns velas va client fields.
+func (service *Service) VelasVAClientFields() velas.VAClientFields {
+	return service.velas.Get()
 }

@@ -16,6 +16,7 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/auth"
+	"ultimatedivision/pkg/velas"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -414,7 +415,7 @@ func (auth *Auth) VelasRegister(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
-	var velasAPIResponse users.VelasAPISResponse
+	var velasAPIResponse velas.APISResponse
 	if err := json.NewDecoder(r.Body).Decode(&velasAPIResponse); err != nil {
 		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
 		return
@@ -439,7 +440,7 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 
 	type MetamaskFields struct {
 		Nonce string `json:"nonce"`
-		users.VelasAPISResponse
+		velas.APISResponse
 	}
 
 	var request MetamaskFields
@@ -473,6 +474,18 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	auth.cookie.SetTokenCookie(w, authToken)
+}
+
+// VelasVAClientFields is an endpoint to velas va client fields.
+func (auth *Auth) VelasVAClientFields(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	velasVAClientFields := auth.userAuth.VelasVAClientFields()
+
+	if err := json.NewEncoder(w).Encode(velasVAClientFields); err != nil {
+		auth.log.Error("failed to write json response", AuthError.Wrap(err))
+		return
+	}
 }
 
 // MetamaskRegister is an endpoint to register user.

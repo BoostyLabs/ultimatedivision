@@ -149,26 +149,3 @@ func (createUserFields *CreateUserFields) IsValid() bool {
 		return true
 	}
 }
-
-// VelasAPISResponse for velas response.
-type VelasAPISResponse struct {
-	State               string `json:"state"`
-	Stage               string `json:"stage"`
-	AccessToken         string `json:"access_token"`
-	ExpiresAt           int64  `json:"expires_at"`
-	TokenType           string `json:"token_type"`
-	AuthorizedChallenge string `json:"authorized_challenge"`
-	AccessTokenPayload  struct {
-		Iss                        string   `json:"iss"`
-		Aud                        string   `json:"aud"`
-		Sub                        string   `json:"sub"`
-		Ses                        string   `json:"ses"`
-		Scopes                     []string `json:"scopes"`
-		AuthTime                   int64    `json:"auth_time"`
-		TransactionsSponsorAPIHost string   `json:"transactions_sponsor_api_host"`
-		TransactionsSponsorPubKey  string   `json:"transactions_sponsor_pub_key"`
-		Exp                        int64    `json:"exp"`
-		Iat                        int64    `json:"iat"`
-		Type                       string   `json:"type"`
-	} `json:"access_token_payload"`
-}
