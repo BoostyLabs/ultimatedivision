@@ -21,10 +21,11 @@ import (
 	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
-	"ultimatedivision/lootboxes"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/seasons"
+	"ultimatedivision/store"
+	"ultimatedivision/store/lootboxes"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -68,7 +69,7 @@ type Server struct {
 // NewServer is a constructor for console web server.
 func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service,
 	marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
-	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service) *Server {
+	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -89,6 +90,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	queueController := controllers.NewQueue(log, queue)
 	seasonsController := controllers.NewSeasons(log, seasons)
 	waitListController := controllers.NewWaitList(log, waitList)
+	storeController := controllers.NewStore(log, store)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -99,7 +101,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/login", authController.Login).Methods(http.MethodPost)
 
 	metamaskRouter := authRouter.PathPrefix("/metamask").Subrouter()
-	metamaskRouter.HandleFunc("/token", authController.SendTokenMessageForMetamask).Methods(http.MethodGet)
+	metamaskRouter.HandleFunc("/register", authController.MetamaskRegister).Methods(http.MethodPost)
+	metamaskRouter.HandleFunc("/nonce", authController.Nonce).Methods(http.MethodGet)
 	metamaskRouter.HandleFunc("/login", authController.MetamaskLogin).Methods(http.MethodPost)
 
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
@@ -109,14 +112,15 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/reset-password/{token}", authController.CheckAuthToken).Methods(http.MethodGet)
 	authRouter.Handle("/reset-password", server.withAuth(http.HandlerFunc(authController.ResetPassword))).Methods(http.MethodPatch)
 	authRouter.Handle("/change-password", server.withAuth(http.HandlerFunc(authController.ChangePassword))).Methods(http.MethodPost)
+	authRouter.Handle("/change-email", server.withAuth(http.HandlerFunc(authController.SendEmailForChangeEmail))).Methods(http.MethodPost)
+	authRouter.Handle("/change-email/{token}", server.withAuth(http.HandlerFunc(authController.ChangeEmail))).Methods(http.MethodGet)
 
 	profileRouter := apiRouter.PathPrefix("/profile").Subrouter()
 	profileRouter.Use(server.withAuth)
 	profileRouter.HandleFunc("", userController.GetProfile).Methods(http.MethodGet)
-
-	metamaskRouterWithAuth := apiRouter.PathPrefix("/metamask").Subrouter()
-	metamaskRouterWithAuth.Use(server.withAuth)
+	metamaskRouterWithAuth := profileRouter.PathPrefix("/metamask").Subrouter()
 	metamaskRouterWithAuth.HandleFunc("/wallet", userController.CreateWalletFromMetamask).Methods(http.MethodPatch)
+	metamaskRouterWithAuth.HandleFunc("/wallet/change", userController.ChangeWalletFromMetamask).Methods(http.MethodPatch)
 
 	cardsRouter := apiRouter.PathPrefix("/cards").Subrouter()
 	cardsRouter.Use(server.withAuth)
@@ -165,6 +169,10 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	waitListRouter := apiRouter.PathPrefix("/nft-waitlist").Subrouter()
 	waitListRouter.Use(server.withAuth)
 	waitListRouter.HandleFunc("", waitListController.Create).Methods(http.MethodPost)
+
+	storeRouter := apiRouter.PathPrefix("/store").Subrouter()
+	storeRouter.Use(server.withAuth)
+	storeRouter.HandleFunc("/buy", storeController.Buy).Methods(http.MethodPost)
 
 	av := http.FileServer(http.Dir(server.config.AvatarsDir))
 	router.PathPrefix("/avatars/").Handler(http.StripPrefix("/avatars/", av))

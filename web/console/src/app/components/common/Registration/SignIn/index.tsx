@@ -1,7 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { SetStateAction, useState } from 'react';
+import MetaMaskOnboarding from '@metamask/onboarding';
+import { useMemo, SetStateAction, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,18 +11,27 @@ import { UserDataArea } from '@components/common/UserDataArea';
 
 import facebook from '@static/img/registerPage/facebook_logo.svg';
 import google from '@static/img/registerPage/google_logo.svg';
+import metamask from '@static/img/registerPage/metamask.svg';
 import ultimate from '@static/img/registerPage/ultimate.svg';
 
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RouteConfig } from '@/app/routes';
+import { ServicePlugin } from '@/app/plugins/service';
 import { loginUser } from '@/app/store/actions/users';
 import { Validator } from '@/users/validation';
+import { EthersClient } from '@/api/ethers';
+import { NotFoundError } from '@/api';
+import { SignedMessage } from '@/app/ethers';
 
 // TODO: it will be reworked on wrapper with children props.
 export const SignIn: React.FC<{
     showResetPasswordComponent: () => void;
     showSignUpComponent: () => void;
 }> = ({ showResetPasswordComponent, showSignUpComponent }) => {
+    const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
+    const ethersService = useMemo(() => ServicePlugin.create(), []);
+    const client = useMemo(() => new EthersClient(), []);
+
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -103,6 +113,50 @@ export const SignIn: React.FC<{
         },
     ];
 
+    /** Login with matamask. */
+    const login: () => Promise<void> = async () => {
+        if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
+            onboarding.startOnboarding();
+
+            return;
+        }
+        await window.ethereum.request({
+            method: 'eth_requestAccounts',
+        });
+        try {
+            const address = await ethersService.getWallet();
+            const message = await client.getNonce(address);
+            const signedMessage = await ethersService.signMessage(message);
+            await client.login(new SignedMessage(message, signedMessage));
+            history.push(RouteConfig.MarketPlace.path);
+            setLocalStorageItem('IS_LOGGED_IN', true);
+        } catch (error: any) {
+            if (!(error instanceof NotFoundError)) {
+                toast.error('Something went wrong', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored',
+                });
+
+                return;
+            }
+            try {
+                const signedMessage = await ethersService.signMessage('Register with metamask');
+                await client.register(signedMessage);
+                const address = await ethersService.getWallet();
+                const message = await client.getNonce(address);
+                const signedNonce = await ethersService.signMessage(message);
+                await client.login(new SignedMessage(message, signedNonce));
+                history.push(RouteConfig.MarketPlace.path);
+                setLocalStorageItem('IS_LOGGED_IN', true);
+            } catch (error: any) {
+                toast.error('Something went wrong', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored',
+                });
+            }
+        }
+    };
+
     return (
         <div className="register">
             <div className="register__represent">
@@ -167,6 +221,12 @@ export const SignIn: React.FC<{
                                 src={facebook}
                                 alt="Facebook logo"
                                 className="register__sign-in__sign-form__logos__facebook"
+                            />
+                            <img
+                                src={metamask}
+                                alt="Metamask logo"
+                                className="register__sign-in__sign-form__logos__metamask"
+                                onClick={login}
                             />
                         </div>
                     </div>
