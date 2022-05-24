@@ -13,7 +13,7 @@ services:
       - ${PROJECT_CONFIGS_PATH}/ultimate_division:/config
       - ${PROJECT_ASSETS_PATH}:/assets
     depends_on:
-      - ultimatedivisiondb # This service depends on postgres. Start that first.
+      - ultimatedivision_db # This service depends on postgres. Start that first.
     networks:
       - fullstack
 
@@ -25,7 +25,7 @@ services:
       - ${PROJECT_DATA_PATH}/signer:/app/data
       - ${PROJECT_CONFIGS_PATH}/nft_signer:/config
     depends_on:
-      - ultimatedivisiondb # This service depends on postgres. Start that first.
+      - ultimatedivision_db # This service depends on postgres. Start that first.
     networks:
       - fullstack
 
@@ -37,7 +37,7 @@ services:
       - ${PROJECT_DATA_PATH}/currency_signer:/app/data
       - ${PROJECT_CONFIGS_PATH}/currency_signer:/config
     depends_on:
-      - ultimatedivisiondb # This service depends on postgres. Start that first.
+      - ultimatedivision_db # This service depends on postgres. Start that first.
     networks:
       - fullstack
 
