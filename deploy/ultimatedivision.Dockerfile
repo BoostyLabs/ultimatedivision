@@ -13,9 +13,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/ultima
 FROM alpine:3.13
 # Volume directory
 ARG APP_DATA_DIR=/app/data
-# Criating volume
+# Creating volume
 RUN mkdir -p ${APP_DATA_DIR}
-# Criating volume
+# Creating volume
 VOLUME ["${APP_DATA_DIR}"]
 # Copy executable file (builded application) from builder to root directory
 COPY --from=builder /app/main .

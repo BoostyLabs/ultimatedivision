@@ -14,9 +14,9 @@ FROM alpine:3.15.4
 
 # Volume directorys
 ARG APP_DATA_DIR=/data
-# Criating volume directory
+# Creating volume directory
 RUN mkdir -p ${APP_DATA_DIR}
-# Criating volume
+# Creating volume
 VOLUME ["${APP_DATA_DIR}"]
 
 # Copy executable file (builded application) from builder to root directory
