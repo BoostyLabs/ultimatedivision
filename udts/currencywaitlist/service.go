@@ -55,7 +55,7 @@ func (service *Service) Create(ctx context.Context, userID uuid.UUID, value big.
 		Signature:     "",
 	}
 
-	// TODO: catch dublicale error from db
+	// TODO: catch dublicale error from db.
 	if _, err = service.currencyWaitList.GetByWalletAddressAndNonce(ctx, item.WalletAddress, item.Nonce); err != nil {
 		if ErrNoItem.Has(err) {
 			if err = service.currencyWaitList.Create(ctx, item); err != nil {
