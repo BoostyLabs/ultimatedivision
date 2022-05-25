@@ -1,6 +1,6 @@
 # BUILDER Image. Used to download all dependenices, etc
 FROM golang:1.17.4-alpine3.15 as nftdrop_builder
-
+# Changing root directory
 WORKDIR /app
 # Copy all files to root directory
 COPY . .
