@@ -21,7 +21,7 @@ var ErrCurrencyWaitlist = errs.Class("currency waitlist service error")
 
 // Service is handling currency wait list related logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	config           Config
 	currencyWaitList DB

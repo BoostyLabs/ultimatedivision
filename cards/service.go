@@ -26,7 +26,7 @@ var ErrCards = errs.Class("cards service error")
 
 // Service is handling cards related logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	cards  DB
 	config Config
