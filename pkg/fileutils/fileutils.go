@@ -5,6 +5,8 @@ package fileutils
 
 import (
 	"bufio"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"io"
 	"os"
 	"path/filepath"
@@ -48,9 +50,9 @@ func CountLines(r io.Reader) (int, error) {
 func ApplicationDir(subdir ...string) string {
 	for i := range subdir {
 		if runtime.GOOS == "windows" || runtime.GOOS == "darwin" {
-			subdir[i] = strings.Title(subdir[i])
+			subdir[i] = cases.Title(language.English).String(subdir[i])
 		} else {
-			subdir[i] = strings.ToLower(subdir[i])
+			subdir[i] = cases.Lower(language.English).String(subdir[i])
 		}
 	}
 
