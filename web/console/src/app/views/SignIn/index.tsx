@@ -25,8 +25,6 @@ import { EthersClient } from '@/api/ethers';
 import './index.scss';
 import { NotFoundError } from '@/api';
 
-import { vaclient } from '../../velas/service.js';
-
 const SignIn: React.FC = () => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const ethersService = useMemo(() => ServicePlugin.create(), []);
@@ -35,11 +33,9 @@ const SignIn: React.FC = () => {
     const history = useHistory();
     /** controlled values for form inputs */
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError] =
-        useState<SetStateAction<null | string>>(null);
+    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
     const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] =
-        useState<SetStateAction<null | string>>(null);
+    const [passwordError, setPasswordError] = useState<SetStateAction<null | string>>(null);
     const [isRemember, setIsRemember] = useState(false);
 
     /** TODO: rework remember me implementation  */
@@ -64,7 +60,7 @@ const SignIn: React.FC = () => {
         return isFormValid;
     };
 
-    /** user data that will send to server */
+    /** User data that will send to server. */
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -156,18 +152,11 @@ const SignIn: React.FC = () => {
     return (
         <div className="register">
             <div className="register__represent">
-                <img
-                    src={ultimate}
-                    alt="utlimate division logo"
-                    className="register__represent__ultimate"
-                />
+                <img src={ultimate} alt="utlimate division logo" className="register__represent__ultimate" />
             </div>
             <div className="register__sign-in">
                 <h1 className="register__sign-in__title">SIGN IN</h1>
-                <form
-                    className="register__sign-in__sign-form"
-                    onSubmit={handleSubmit}
-                >
+                <form className="register__sign-in__sign-form" onSubmit={handleSubmit}>
                     {signInDatas.map((data, index) =>
                         <UserDataArea
                             key={index}
@@ -201,11 +190,7 @@ const SignIn: React.FC = () => {
                         </Link>
                     </div>
                     <div className="register__sign-in__sign-form__auth-internal">
-                        <input
-                            className="register__sign-in__sign-form__confirm"
-                            value="SIGN IN"
-                            type="submit"
-                        />
+                        <input className="register__sign-in__sign-form__confirm" value="SIGN IN" type="submit" />
                         or
                         <div className="register__sign-in__sign-form__logos">
                             <img

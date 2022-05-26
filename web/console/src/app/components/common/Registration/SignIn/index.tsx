@@ -1,69 +1,73 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import MetaMaskOnboarding from '@metamask/onboarding';
-import { useMemo, SetStateAction, useState } from 'react';
+import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { UserDataArea } from '@components/common/UserDataArea';
-
-import facebook from '@static/img/registerPage/facebook_logo.svg';
-import google from '@static/img/registerPage/google_logo.svg';
-import metamask from '@static/img/registerPage/metamask.svg';
-import ultimate from '@static/img/registerPage/ultimate.svg';
+import MetaMaskOnboarding from '@metamask/onboarding';
 
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RouteConfig } from '@/app/routes';
 import { ServicePlugin } from '@/app/plugins/service';
-import { loginUser } from '@/app/store/actions/users';
-import { Validator } from '@/users/validation';
 import { EthersClient } from '@/api/ethers';
 import { NotFoundError } from '@/api';
 import { SignedMessage } from '@/app/ethers';
-import { vaclient } from '@/app/velas/service';
+import { UsersClient } from '@/api/users';
+import { UsersService } from '@/users/service';
 
-// TODO: it will be reworked on wrapper with children props.
-export const SignIn: React.FC<{
-    showResetPasswordComponent: () => void;
-    showSignUpComponent: () => void;
-}> = ({ showResetPasswordComponent, showSignUpComponent }) => {
+import representLogo from '@static/img/login/represent-logo.gif';
+import metamask from '@static/img/login/metamask-icon.svg';
+import velas from '@static/img/login/velas-icon.svg';
+import casper from '@static/img/login/casper-icon.svg';
+
+import './index.scss';
+
+// @ts-ignore
+import { VAClient } from '@velas/account-client';
+// @ts-ignore
+import StorageHandler from '../../../../velas/storageHandler';
+// @ts-ignore
+import KeyStorageHandler from '../../../../velas/keyStorageHandler';
+
+export const SignIn = () => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const ethersService = useMemo(() => ServicePlugin.create(), []);
     const client = useMemo(() => new EthersClient(), []);
 
-    const dispatch = useDispatch();
+    const usersClient = new UsersClient();
+    const usersService = new UsersService(usersClient);
     const history = useHistory();
-
-    /** Controlled values for form inputs */
-    const [email, setEmail] = useState('');
-    const [emailError, setEmailError] = useState<SetStateAction<null | string>>(null);
-    const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] = useState<SetStateAction<null | string>>(null);
-
-    const [isRemember, setIsRemember] = useState(false);
 
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
-    /** TODO: rework remember me implementation  */
-    const handleIsRemember = () => setIsRemember((prev) => !prev);
+    /** generates vaclient with the help of creds  */
+    const vaclientService = async() => {
+        try {
+            const creds = await usersService.velasVaclientCreds();
 
-    /** Checks if values does't valid. */
-    const validateForm: () => boolean = () => {
-        let isFormValid = true;
+            const vaclient = new VAClient({
+                mode: 'redirect',
+                clientID: creds.client_id,
+                redirectUri: creds.redirectUri,
+                StorageHandler,
+                KeyStorageHandler,
+                accountProviderHost: creds.accountProviderHost,
+                networkApiHost: creds.networkApiHost,
+                transactionsSponsorApiHost: creds.transactionsSponsorApiHost,
+                transactionsSponsorPubKey: creds.transactionsSponsorPubKey,
+            });
 
-        if (!Validator.isEmail(email)) {
-            setEmailError('Email is not valid');
-            isFormValid = false;
+            return vaclient;
+        } catch (e) {
+            toast.error(`${e}`, {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         }
 
-        if (!Validator.isPassword(password)) {
-            setPasswordError('Password is not valid');
-            isFormValid = false;
-        }
-
-        return isFormValid;
+        return null;
     };
 
     const processAuthResult = (e: any, authResult: any) => {
@@ -77,67 +81,26 @@ export const SignIn: React.FC<{
         }
     };
 
-    const loginVelas = () => {
-        vaclient.authorize(
-            {
-                csrfToken: async function() {
-                    const response = await fetch('http://localhost:3002/csrf');
-                    const result = await response.json();
-
-                    return result.token;
-                },
-                scope: 'authorization',
-                challenge: 'some_challenge_from_backend',
-            },
-            processAuthResult
-        );
-    };
-
-    /** Submits form values. */
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
+    const loginVelas = async() => {
         try {
-            await dispatch(loginUser(email, password));
+            const csrfToken = await usersService.velasCsrfToken();
 
-            setLocalStorageItem('IS_LOGGINED', true);
-
-            history.push(RouteConfig.MarketPlace.path);
+            const vaclient = await vaclientService();
+            vaclient.authorize(
+                {
+                    csrfToken: csrfToken,
+                    scope: 'authorization',
+                    challenge: 'some_challenge_from_backend',
+                },
+                processAuthResult
+            );
         } catch (error: any) {
-            toast.error('Incorrect email or password', {
+            toast.error(`${error}`, {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
         }
     };
-
-    /** Exposes form values. */
-    const formValues = [
-        {
-            value: email,
-            placeHolder: 'E-mail',
-            onChange: setEmail,
-            className: 'register__sign-in__sign-form__email',
-            type: 'email',
-            error: emailError,
-            clearError: setEmailError,
-            validate: Validator.isEmail,
-        },
-        {
-            value: password,
-            placeHolder: 'Password',
-            onChange: setPassword,
-            className: 'register__sign-in__sign-form__password',
-            type: 'password',
-            error: passwordError,
-            clearError: setPasswordError,
-            validate: Validator.isPassword,
-        },
-    ];
 
     /** Login with matamask. */
     const login: () => Promise<void> = async() => {
@@ -184,79 +147,27 @@ export const SignIn: React.FC<{
     };
 
     return (
-        <div className="register">
-            <div className="register__represent">
-                <img alt="utlimate division logo" src={ultimate} className="register__represent__ultimate" />
-            </div>
-            <div className="register__sign-in">
-                <h1 className="register__sign-in__title">SIGN IN</h1>
-                <form className="register__sign-in__sign-form" onSubmit={handleSubmit}>
-                    {formValues.map((formValue, index) =>
-                        <UserDataArea
-                            key={index}
-                            value={formValue.value}
-                            placeHolder={formValue.placeHolder}
-                            onChange={formValue.onChange}
-                            className={formValue.className}
-                            type={formValue.type}
-                            error={formValue.error}
-                            clearError={formValue.clearError}
-                            validate={formValue.validate}
-                        />
-                    )}
-                    <div className="register__sign-in__sign-form__checkbox-wrapper">
-                        <input
-                            id="register-sign-in-checkbox"
-                            className="register__sign-in__sign-form__remember-me"
-                            type="checkbox"
-                        />
-                        <label
-                            className="register__sign-in__sign-form__remember-me__text"
-                            htmlFor="register-sign-in-checkbox"
-                        >
-                            Remember me
-                        </label>
-                        <span
-                            onClick={showResetPasswordComponent}
-                            className="register__sign-in__sign-form__forgot-password"
-                        >
-                            Forgot Password?
-                        </span>
-                    </div>
-                    <div className="register__sign-in__sign-form__auth-internal">
-                        <input className="register__sign-in__sign-form__confirm" value="SIGN IN" type="submit" />
-                        or
-                        <div className="register__sign-in__sign-form__logos">
-                            <img
-                                onClick={loginVelas}
-                                src={google}
-                                alt="Google logo"
-                                className="register__sign-in__sign-form__logos__google"
-                            />
-                            <img
-                                src={facebook}
-                                alt="Facebook logo"
-                                className="register__sign-in__sign-form__logos__facebook"
-                            />
-                            <img
-                                src={metamask}
-                                alt="Metamask logo"
-                                className="register__sign-in__sign-form__logos__metamask"
-                                onClick={login}
-                            />
+        <div className="login">
+            <div className="login__wrapper">
+                <div className="login__represent">
+                    <img src={representLogo} alt="utlimate division logo" className="login__represent__logo" />
+                </div>
+                <div className="login__content">
+                    <h1 className="login__content__title">LOGIN</h1>
+                    <div className="login__content__log-in">
+                        <div onClick={login} className="login__content__log-in__item">
+                            <img src={metamask} alt="Metamask logo" className="login__content__log-in__item__logo" />
+                            <p className="login__content__log-in__item__text">Connect metamask</p>
+                        </div>
+                        <div onClick={loginVelas} className="login__content__log-in__item">
+                            <img src={velas} alt="Velas logo" className="login__content__log-in__item__logo" />
+                            <p className="login__content__log-in__item__text">Connect velas account</p>
+                        </div>
+                        <div className="login__content__log-in__item">
+                            <img src={casper} alt="Casper logo" className="login__content__log-in__item__logo" />
+                            <p className="login__content__log-in__item__text">Connect casper signer </p>
                         </div>
                     </div>
-                </form>
-                <div className="register__sign-in__description">
-                    <p className="register__sign-up__description__information">
-                        Don't have an account?
-                        <span
-                            className="register__sign-in__description__information__sign"
-                            onClick={showSignUpComponent}
-                        >
-                            Sign up
-                        </span>
-                    </p>
                 </div>
             </div>
         </div>

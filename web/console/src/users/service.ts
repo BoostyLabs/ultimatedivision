@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { UsersClient } from '@/api/users';
-import { User } from '.';
+import { UsersClient } from "@/api/users";
+import { User } from ".";
 
 /**
  * Exposes all users related logic.
@@ -52,5 +52,13 @@ export class UsersService {
     /** sends data to login user with velas wallet */
     public async velasLogin(nonce: string, authResult: any): Promise<void> {
         await this.users.velasLogin(nonce, authResult);
+    }
+    /** gets token to login user with velas wallet */
+    public async velasCsrfToken(): Promise<string> {
+        return await this.users.velasCsrfToken();
+    }
+    /** gets creds to fill velas vaclient */
+    public async velasVaclientCreds(): Promise<any> {
+        return await this.users.velasVaclientCreds();
     }
 }

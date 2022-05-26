@@ -1,20 +1,26 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-
-import { vaclient } from '@/app/velas/service';
 import { toast } from 'react-toastify';
 
 import { AuthRouteConfig, RouteConfig } from '@/app/routes';
 import { InternalError } from '@/api';
-
-import ulimatedivisionLogo from '@static/img/registerPage/ultimate.svg';
-
-import './index.scss';
 import { UsersClient } from '@/api/users';
 import { UsersService } from '@/users/service';
 
+import ulimatedivisionLogo from '@static/img/registerPage/ultimate.svg';
+
+// @ts-ignore
+import { VAClient } from '@velas/account-client';
+// @ts-ignore
+import StorageHandler from '../../../../velas/storageHandler';
+// @ts-ignore
+import KeyStorageHandler from '../../../../velas/keyStorageHandler';
+
+import './index.scss';
+
 const AuthWrapper = () => {
     const history = useHistory();
+
     const usersClient = new UsersClient();
     const usersService = new UsersService(usersClient);
 
@@ -52,10 +58,49 @@ const AuthWrapper = () => {
         }
     };
 
-    const authHandleRedirect = () => {
-        vaclient.handleRedirectCallback(processAuthResult);
+    /** generates vaclient with the help of creds  */
+    const vaclientService = async() => {
+        try {
+            const vaclientCreds = await usersService.velasVaclientCreds();
+
+            const vaclient = new VAClient({
+                mode: 'redirect',
+                clientID: vaclientCreds.client_id,
+                redirectUri: vaclientCreds.redirectUri,
+                StorageHandler,
+                KeyStorageHandler,
+                accountProviderHost: vaclientCreds.accountProviderHost,
+                networkApiHost: vaclientCreds.networkApiHost,
+                transactionsSponsorApiHost: vaclientCreds.transactionsSponsorApiHost,
+                transactionsSponsorPubKey: vaclientCreds.transactionsSponsorPubKey,
+            });
+
+            return vaclient;
+        } catch (e) {
+            toast.error(`${e}`, {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+
+        return null;
     };
-    useEffect(authHandleRedirect, []);
+
+    const authorization = async() => {
+        try {
+            const vaclient = await vaclientService();
+            vaclient.handleRedirectCallback(processAuthResult);
+        } catch (e) {
+            toast.error(`${e}`, {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    };
+
+    useEffect(() => {
+        authorization();
+    }, []);
 
     return (
         <div className="auth-wrapper">
