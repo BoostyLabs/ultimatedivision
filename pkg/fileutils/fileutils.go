@@ -5,13 +5,14 @@ package fileutils
 
 import (
 	"bufio"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"io"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // ReadLine reads certain line from the file.
