@@ -57,7 +57,7 @@ func ApplicationDir(subdir ...string) string {
 	var appdir string
 
 	home := os.Getenv("HOME")
-	//
+
 	switch runtime.GOOS {
 	case "windows":
 		// Windows standards: https://msdn.microsoft.com/en-us/library/windows/apps/hh465094.aspx?f=255&MSPPError=-2147217396
