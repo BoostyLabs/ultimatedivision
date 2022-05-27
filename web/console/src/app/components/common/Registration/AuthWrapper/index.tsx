@@ -1,22 +1,22 @@
-import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
 
-import { AuthRouteConfig, RouteConfig } from '@/app/routes';
-import { InternalError } from '@/api';
-import { UsersClient } from '@/api/users';
-import { UsersService } from '@/users/service';
+import { AuthRouteConfig, RouteConfig } from "@/app/routes";
+import { InternalError } from "@/api";
+import { UsersClient } from "@/api/users";
+import { UsersService } from "@/users/service";
 
-import ulimatedivisionLogo from '@static/img/registerPage/ultimate.svg';
+import ulimatedivisionLogo from "@static/img/registerPage/ultimate.svg";
 
 // @ts-ignore
-import { VAClient } from '@velas/account-client';
+import { VAClient } from "@velas/account-client";
 // @ts-ignore
-import StorageHandler from '../../../../velas/storageHandler';
+import StorageHandler from "../../../../velas/storageHandler";
 // @ts-ignore
-import KeyStorageHandler from '../../../../velas/keyStorageHandler';
+import KeyStorageHandler from "../../../../velas/keyStorageHandler";
 
-import './index.scss';
+import "./index.scss";
 
 const AuthWrapper = () => {
     const history = useHistory();
@@ -24,7 +24,7 @@ const AuthWrapper = () => {
     const usersClient = new UsersClient();
     const usersService = new UsersService(usersClient);
 
-    const sendAuthData = async(authResult: any) => {
+    const sendAuthData = async (authResult: any) => {
         try {
             await usersService.velasRegister(authResult);
             const nonce = await usersService.velasNonce(authResult.access_token_payload.sub);
@@ -38,7 +38,7 @@ const AuthWrapper = () => {
 
             toast.error(`${error}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
+                theme: "colored",
             });
         }
     };
@@ -53,19 +53,19 @@ const AuthWrapper = () => {
 
             toast.error(`${e.description}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
+                theme: "colored",
             });
         }
     };
 
     /** generates vaclient with the help of creds  */
-    const vaclientService = async() => {
+    const vaclientService = async () => {
         try {
             const vaclientCreds = await usersService.velasVaclientCreds();
 
             const vaclient = new VAClient({
-                mode: 'redirect',
-                clientID: vaclientCreds.client_id,
+                mode: "redirect",
+                clientID: vaclientCreds.clientId,
                 redirectUri: vaclientCreds.redirectUri,
                 StorageHandler,
                 KeyStorageHandler,
@@ -79,21 +79,21 @@ const AuthWrapper = () => {
         } catch (e) {
             toast.error(`${e}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
+                theme: "colored",
             });
         }
 
         return null;
     };
 
-    const authorization = async() => {
+    const authorization = async () => {
         try {
             const vaclient = await vaclientService();
             vaclient.handleRedirectCallback(processAuthResult);
         } catch (e) {
             toast.error(`${e}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
+                theme: "colored",
             });
         }
     };
