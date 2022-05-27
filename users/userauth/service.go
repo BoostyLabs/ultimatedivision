@@ -47,7 +47,7 @@ var (
 
 // Service is handling all user authentication logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	users        users.DB
 	signer       auth.TokenSigner

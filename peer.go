@@ -108,7 +108,7 @@ type Config struct {
 	} `json:"admins"`
 
 	Users struct {
-		// Server userserver.Config `json:"server"`
+		// Server userserver.Config `json:"server"`.
 		Auth struct {
 			TokenAuthSecret string `json:"tokenAuthSecret"`
 		} `json:"auth"`
@@ -579,17 +579,18 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
 	})
-	// TODO: commented while fixing bug with matches
+	// TODO: commented while fixing bug with matches.
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	// })
-	// TODO: uncomment when the Ethereum node is running
+	// TODO: uncomment when the Ethereum node is running.
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
 	// })
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
 	// })
+	// TODO: remove it.
 	group.Go(func() error {
 		return ignoreCancel(peer.Store.StoreRenewal.Run(ctx))
 	})
