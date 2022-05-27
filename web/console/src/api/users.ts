@@ -115,4 +115,30 @@ export class UsersClient extends APIClient {
             await this.handleError(response);
         }
     }
+
+    /** gets token to login user with velas wallet */
+    public async velasCsrfToken(): Promise<string> {
+        const path = 'http://localhost:3002/csrf';
+        const response = await this.http.get(path);
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+        const result = await response.json();
+
+        return result.token;
+    }
+
+    /** gets creds to fill velas vaclient */
+    public async velasVaclientCreds(): Promise<any> {
+        const path = `${this.ROOT_PATH}/velas/vaclient`;
+        const response = await this.http.get(path);
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+        const result = await response.json();
+
+        return result;
+    }
 }
