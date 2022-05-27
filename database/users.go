@@ -104,7 +104,7 @@ func (usersDB *usersDB) GetByWalletAddress(ctx context.Context, walletAddress ev
 		return user, ErrUsers.Wrap(err)
 	}
 
-	return user, ErrUsers.Wrap(err)
+	return user, nil
 }
 
 // GetByVelasWalletAddress returns user by wallet address from the data base.

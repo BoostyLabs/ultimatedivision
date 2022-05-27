@@ -17,7 +17,7 @@ func NewService(config Config) *Service {
 	}
 }
 
-// Get returns division from DB.
+// Get returns va client fields.
 func (service *Service) Get() VAClientFields {
 	return VAClientFields{
 		ClientID:                   service.config.ClientID,

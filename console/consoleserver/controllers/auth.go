@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -348,6 +349,37 @@ func (auth *Auth) Nonce(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	nonce, err := auth.userAuth.Nonce(ctx, evmsignature.Address(address))
+	if err != nil {
+		switch {
+		case users.ErrNoUser.Has(err):
+			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
+		case userauth.ErrUnauthenticated.Has(err):
+			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
+		default:
+			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
+		}
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(nonce); err != nil {
+		auth.log.Error("failed to write json response", AuthError.Wrap(err))
+		return
+	}
+}
+
+// VelasNonce is an endpoint to send nonce to velas for login.
+func (auth *Auth) VelasNonce(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+	query := r.URL.Query()
+
+	address := query.Get("address")
+	if address == "" {
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("address is empty"))
+		return
+	}
+
 	nonce, err := auth.userAuth.VelasNonce(ctx, address)
 	if err != nil {
 		switch {
@@ -450,7 +482,7 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if request.Nonce == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.New("did not fill in all the fields"))
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("invalid nonce"))
 		return
 	}
 
@@ -476,7 +508,7 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 	auth.cookie.SetTokenCookie(w, authToken)
 }
 
-// VelasVAClientFields is an endpoint to velas va client fields.
+// VelasVAClientFields is an endpoint that returns fields for velas client mb.
 func (auth *Auth) VelasVAClientFields(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

@@ -107,7 +107,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 
 	velasRouter := authRouter.PathPrefix("/velas").Subrouter()
 	velasRouter.HandleFunc("/register", authController.VelasRegister).Methods(http.MethodPost)
-	velasRouter.HandleFunc("/nonce", authController.Nonce).Methods(http.MethodGet)
+	velasRouter.HandleFunc("/nonce", authController.VelasNonce).Methods(http.MethodGet)
 	velasRouter.HandleFunc("/login", authController.VelasLogin).Methods(http.MethodPost)
 	velasRouter.HandleFunc("/vaclient", authController.VelasVAClientFields).Methods(http.MethodGet)
 

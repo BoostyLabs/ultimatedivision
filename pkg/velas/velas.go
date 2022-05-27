@@ -28,7 +28,7 @@ type APISResponse struct {
 
 // VAClientFields for velas va client fields from config.
 type VAClientFields struct {
-	ClientID                   string `json:"client_id"`
+	ClientID                   string `json:"clientId"`
 	RedirectURI                string `json:"redirectUri"`
 	AccountProviderHost        string `json:"accountProviderHost"`
 	NetworkAPIHost             string `json:"networkApiHost"`
