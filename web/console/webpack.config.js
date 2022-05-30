@@ -72,7 +72,7 @@ const IMAGE_COMPRESSION = [
 ];
 
 module.exports = (env, argv) => {
-    const isProduction = argv.mode === 'production';
+    const isProduction = argv.mode === "production";
 
     return {
         experiments: {
@@ -124,25 +124,12 @@ module.exports = (env, argv) => {
                     test: /\.(scss)$/,
                     exclude: /(node_modules)/,
                     use: isProduction
-                        ?
-                        [
-                            MiniCssExtractPlugin.loader,
-                            "css-loader",
-                            "sass-loader",
-                        ]
-                        :
-                        [
-                            "style-loader",
-                            "css-loader",
-                            "sass-loader",
-                        ]
+                        ? [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
+                        : ["style-loader", "css-loader", "sass-loader"],
                 },
                 {
                     test: /\.(css)$/,
-                    use: [
-                        "style-loader",
-                        "css-loader",
-                    ],
+                    use: ["style-loader", "css-loader"],
                 },
                 {
                     test: /\.(woff|woff2|eot|ttf|otf)$/i,
@@ -153,7 +140,7 @@ module.exports = (env, argv) => {
                     },
                 },
                 {
-                    test: /\.(jpe|jpg|png|svg|webp)(\?.*$|$)/,
+                    test: /\.(jpe|jpg|png|svg)(\?.*$|$)/,
                     exclude: /(node_modules)/,
                     type: "asset/resource",
                     generator: {
@@ -161,8 +148,17 @@ module.exports = (env, argv) => {
                     },
                     use: isProduction ? IMAGE_COMPRESSION : [],
                 },
+                {
+                    test: /\.(gif)(\?.*$|$)/,
+                    exclude: /(node_modules)/,
+                    type: "asset/resource",
+                    generator: {
+                        filename: "images/[name][hash:5][ext]",
+                    },
+                    use: [],
+                },
             ],
         },
         optimization: isProduction ? OPTIMISATION : {},
     };
-}
+};
