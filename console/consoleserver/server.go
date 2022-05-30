@@ -101,7 +101,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/login", authController.Login).Methods(http.MethodPost)
 
 	metamaskRouter := authRouter.PathPrefix("/metamask").Subrouter()
-	metamaskRouter.HandleFunc("/token", authController.SendTokenMessageForMetamask).Methods(http.MethodGet)
+	metamaskRouter.HandleFunc("/register", authController.MetamaskRegister).Methods(http.MethodPost)
+	metamaskRouter.HandleFunc("/nonce", authController.Nonce).Methods(http.MethodGet)
 	metamaskRouter.HandleFunc("/login", authController.MetamaskLogin).Methods(http.MethodPost)
 
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
@@ -223,7 +224,7 @@ func (server *Server) appHandler(w http.ResponseWriter, r *http.Request) {
 	header := w.Header()
 
 	header.Set("Content-Type", "text/html; charset=UTF-8")
-	// header.Set("X-Content-Type-Options", "nosniff")
+	// header.Set("X-Content-Type-Options", "nosniff").
 	header.Set("Referrer-Policy", "same-origin")
 
 	if server.templates.index == nil {

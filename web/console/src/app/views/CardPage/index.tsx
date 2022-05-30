@@ -42,7 +42,7 @@ const Card: React.FC = () => {
     const mint = async() => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
-                // @ts-ignore
+                // @ts-ignore .
                 await window.ethereum.request({
                     method: 'eth_requestAccounts',
                 });
