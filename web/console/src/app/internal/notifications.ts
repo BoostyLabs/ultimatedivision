@@ -9,10 +9,10 @@ const RPC_ERROR_CODE = -32002;
 const ALREADY_MINTED_ERROR_CODE = -32603;
 const DENIED_TRANSACTION_CODE = 4001;
 
-const notificationConfig:ToastOptions<{}> = {
+const notificationConfig: ToastOptions<{}> = {
     position: toast.POSITION.TOP_RIGHT,
     theme: 'colored',
-}
+};
 
 export function metamaskNotifications(error: any) {
     switch (error.code) {
@@ -23,13 +23,9 @@ export function metamaskNotifications(error: any) {
         toast.error('You denied transaction', notificationConfig);
         break;
     default:
-        if (error instanceof TooManyRequestsError) {
+        if (error instanceof TooManyRequestsError || error instanceof InternalError) {
             toast.error(error.message, notificationConfig);
-        }
-        else if (error instanceof InternalError) {
-            toast.error(error.message, notificationConfig);
-        }
-        else if (error.error.code === ALREADY_MINTED_ERROR_CODE) {
+        } else if (error.error.code === ALREADY_MINTED_ERROR_CODE) {
             toast.error('Token already minted', notificationConfig);
         }
     }
