@@ -48,7 +48,7 @@ func (service *Service) GetByEmail(ctx context.Context, email string) (User, err
 	return user, ErrUsers.Wrap(err)
 }
 
-// GetByWalletAddress returns user by wallet address from the data base.
+// GetByWalletAddress returns user by wallet address from the database.
 func (service *Service) GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address) (User, error) {
 	user, err := service.users.GetByWalletAddress(ctx, walletAddress)
 	return user, ErrUsers.Wrap(err)
@@ -71,6 +71,7 @@ func (service *Service) Create(ctx context.Context, email, password, nickName, f
 		LastName:     lastName,
 		LastLogin:    time.Time{},
 		Status:       StatusCreated,
+		Blockchain:   BlockchainPolygon,
 		CreatedAt:    time.Now().UTC(),
 	}
 	err := user.EncodePass()
@@ -86,9 +87,9 @@ func (service *Service) Delete(ctx context.Context, id uuid.UUID) error {
 	return ErrUsers.Wrap(service.users.Delete(ctx, id))
 }
 
-// Update updates a users status.
-func (service *Service) Update(ctx context.Context, status Status, id uuid.UUID) error {
-	return ErrUsers.Wrap(service.users.Update(ctx, status, id))
+// UpdateStatus updates a users status.
+func (service *Service) UpdateStatus(ctx context.Context, status Status, id uuid.UUID) error {
+	return ErrUsers.Wrap(service.users.UpdateStatus(ctx, status, id))
 }
 
 // GetProfile returns user profile.

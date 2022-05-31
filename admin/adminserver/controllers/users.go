@@ -160,7 +160,7 @@ func (controller *Users) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err = controller.users.Update(ctx, users.Status(status), userID); err != nil {
+		if err = controller.users.UpdateStatus(ctx, users.Status(status), userID); err != nil {
 			controller.log.Error("could not update users status", ErrUsers.Wrap(err))
 			http.Error(w, "could not update users status", http.StatusInternalServerError)
 			return

@@ -31,8 +31,8 @@ type DB interface {
 	GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address) (User, error)
 	// Create creates a user and writes to the database.
 	Create(ctx context.Context, user User) error
-	// Update updates a status in the database.
-	Update(ctx context.Context, status Status, id uuid.UUID) error
+	// UpdateStatus updates a status in the database.
+	UpdateStatus(ctx context.Context, status Status, id uuid.UUID) error
 	// UpdatePassword updates a password in the database.
 	UpdatePassword(ctx context.Context, passwordHash []byte, id uuid.UUID) error
 	// UpdateWalletAddress updates user's address of wallet in the database.
@@ -61,6 +61,16 @@ const (
 	StatusSuspended Status = 2
 )
 
+// Blockchain defines the list of possible blockchain.
+type Blockchain string
+
+const (
+	// BlockchainPolygon indicates that blockchain is polygon.
+	BlockchainPolygon Blockchain = "polygon"
+	// BlockchainVelas indicates that blockchain is velas.
+	BlockchainVelas Blockchain = "velas"
+)
+
 // DefaultMessageForRegistration use for registration user by metamask.
 const DefaultMessageForRegistration = "Register with metamask"
 
@@ -76,6 +86,7 @@ type User struct {
 	Nonce        []byte               `json:"nonce"`
 	LastLogin    time.Time            `json:"lastLogin"`
 	Status       Status               `json:"status"`
+	Blockchain   Blockchain           `json:"blockchain"`
 	CreatedAt    time.Time            `json:"createdAt"`
 }
 

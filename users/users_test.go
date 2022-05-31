@@ -36,6 +36,7 @@ func TestUsers(t *testing.T) {
 		Wallet:       "0xb2cdC7EB2F9d2E629ee97BB91700622A42e688b7",
 		LastLogin:    time.Now().UTC(),
 		Status:       0,
+		Blockchain:   users.BlockchainPolygon,
 		CreatedAt:    time.Now().UTC(),
 	}
 
@@ -49,6 +50,7 @@ func TestUsers(t *testing.T) {
 		Wallet:       "0xb2cdC7EB2F9d2E629ee97BB91700622A42e688b8",
 		LastLogin:    time.Now().UTC(),
 		Status:       1,
+		Blockchain:   users.BlockchainPolygon,
 		CreatedAt:    time.Now().UTC(),
 	}
 
@@ -95,13 +97,13 @@ func TestUsers(t *testing.T) {
 		})
 
 		t.Run("update sql no rows", func(t *testing.T) {
-			err := repository.Update(ctx, users.StatusSuspended, id)
+			err := repository.UpdateStatus(ctx, users.StatusSuspended, id)
 			require.Error(t, err)
 			require.Equal(t, users.ErrNoUser.Has(err), true)
 		})
 
 		t.Run("update", func(t *testing.T) {
-			err := repository.Update(ctx, users.StatusSuspended, user1.ID)
+			err := repository.UpdateStatus(ctx, users.StatusSuspended, user1.ID)
 			require.NoError(t, err)
 
 			userFromDB, err := repository.Get(ctx, user1.ID)
@@ -234,6 +236,7 @@ func compareUsers(t *testing.T, user1, user2 users.User) {
 	assert.Equal(t, user1.FirstName, user2.FirstName)
 	assert.Equal(t, user1.LastName, user2.LastName)
 	assert.Equal(t, user1.Status, user2.Status)
+	assert.Equal(t, user1.Blockchain, user2.Blockchain)
 	assert.WithinDuration(t, user1.CreatedAt, user2.CreatedAt, 1*time.Second)
 	assert.WithinDuration(t, user1.LastLogin, user2.LastLogin, 1*time.Second)
 }

@@ -82,6 +82,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             nonce            BYTEA,
             last_login       TIMESTAMP WITH TIME ZONE NOT NULL,
             status           INTEGER                  NOT NULL,
+            blockchain       VARCHAR                  NOT NULL,
             created_at       TIMESTAMP WITH TIME ZONE NOT NULL
         );
         CREATE TABLE IF NOT EXISTS cards (
