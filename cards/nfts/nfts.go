@@ -6,11 +6,12 @@ package nfts
 import (
 	"context"
 	"time"
-	"ultimatedivision/cards"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/cards"
 )
 
 // ErrNoNFT indicated that nft does not exist.
@@ -54,8 +55,8 @@ type Config struct {
 	AddressNodeServer  string                `json:"addressNodeServer"`
 }
 
-// CardWithNftStatus entity describes values card with released nft token.
-type CardWithNftStatus struct {
+// CardWithNFTStatus entity describes values card with released nft token.
+type CardWithNFTStatus struct {
 	cards.Card
 	Nft NFT `json:"nft"`
 }

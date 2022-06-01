@@ -74,7 +74,6 @@ func (controller *Cards) Get(w http.ResponseWriter, r *http.Request) {
 		case nfts.ErrNoNFT.Has(err):
 			if err = json.NewEncoder(w).Encode(card); err != nil {
 				controller.log.Error("failed to write json response", ErrCards.Wrap(err))
-				return
 			}
 		default:
 			controller.log.Error("could not get status of card", ErrCards.Wrap(err))
@@ -83,12 +82,12 @@ func (controller *Cards) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cardWithNftStatus := nfts.CardWithNftStatus{
+	CardWithNFTStatus := nfts.CardWithNFTStatus{
 		Card: card,
 		Nft:  nftStatusCard,
 	}
 
-	if err = json.NewEncoder(w).Encode(cardWithNftStatus); err != nil {
+	if err = json.NewEncoder(w).Encode(CardWithNFTStatus); err != nil {
 		controller.log.Error("failed to write json response", ErrCards.Wrap(err))
 		return
 	}
