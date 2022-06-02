@@ -1,8 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { UsersClient } from "@/api/users";
-import { User } from ".";
+import { UsersClient } from '@/api/users';
+import { User } from '.';
 
 /**
  * Exposes all users related logic.
@@ -42,8 +42,8 @@ export class UsersService {
         await this.users.sendEmailForPasswordReset(email);
     }
     /** sends data to register user with velas wallet */
-    public async velasRegister(eth_wallet_address: string, access_token: string, expires_at: any): Promise<void> {
-        await this.users.velasRegister(eth_wallet_address, access_token, expires_at);
+    public async velasRegister(ethWalletAddress: string, accessToken: string, expiresAt: any): Promise<void> {
+        await this.users.velasRegister(ethWalletAddress, accessToken, expiresAt);
     }
     /** sends address to get nonce to login user */
     public async velasNonce(address: string): Promise<string> {

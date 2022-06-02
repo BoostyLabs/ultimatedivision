@@ -1,15 +1,15 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { User } from "@/users";
-import { APIClient } from ".";
+import { User } from '@/users';
+import { APIClient } from '.';
 
 /**
  * UsersClient is a http implementation of users API.
  * Exposes all users-related functionality.
  */
 export class UsersClient extends APIClient {
-    private readonly ROOT_PATH: string = "/api/v0/auth";
+    private readonly ROOT_PATH: string = '/api/v0/auth';
     /** exposes user registration logic */
     public async register(user: User): Promise<void> {
         const path = `${this.ROOT_PATH}/register`;
@@ -86,9 +86,9 @@ export class UsersClient extends APIClient {
         }
     }
     /** sends data to register user with velas wallet */
-    public async velasRegister(eth_wallet_address: string, access_token: string, expires_at: any): Promise<void> {
+    public async velasRegister(ethWalletAddress: string, accessToken: string, expiresAt: any): Promise<void> {
         const path = `${this.ROOT_PATH}/velas/register`;
-        const response = await this.http.post(path, JSON.stringify({ eth_wallet_address, access_token, expires_at }));
+        const response = await this.http.post(path, JSON.stringify({ ethWalletAddress, accessToken, expiresAt }));
 
         if (!response.ok) {
             await this.handleError(response);
@@ -118,7 +118,7 @@ export class UsersClient extends APIClient {
 
     /** gets token to login user with velas wallet */
     public async velasCsrfToken(): Promise<string> {
-        const path = "http://localhost:3002/csrf";
+        const path = 'http://localhost:3002/csrf';
         const response = await this.http.get(path);
 
         if (!response.ok) {
