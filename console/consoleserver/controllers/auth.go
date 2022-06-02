@@ -345,13 +345,13 @@ func (auth *Auth) Nonce(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
 	address := query.Get("address")
-	if common.IsHexAddress(address) {
+	if !common.IsHexAddress(address) {
 		auth.serveError(w, http.StatusBadRequest, AuthError.New("address is invalid"))
 		return
 	}
 
 	walletType := users.WalletType(query.Get("walletType"))
-	if walletType.IsValid() {
+	if !walletType.IsValid() {
 		auth.serveError(w, http.StatusBadRequest, AuthError.New("wallet type is invalid"))
 		return
 	}
@@ -435,7 +435,7 @@ func (auth *Auth) VelasRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if common.IsHexAddress(velasAPIRequest.WalletAddress) {
+	if !common.IsHexAddress(velasAPIRequest.WalletAddress) {
 		auth.serveError(w, http.StatusBadRequest, AuthError.New("wallet address is invalid"))
 		return
 	}
@@ -473,7 +473,7 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if common.IsHexAddress(request.WalletAddress) {
+	if !common.IsHexAddress(request.WalletAddress) {
 		auth.serveError(w, http.StatusBadRequest, AuthError.New("wallet address is invalid"))
 		return
 	}
