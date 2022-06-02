@@ -397,20 +397,8 @@ func (service *Service) ResetPassword(ctx context.Context, newPassword string) e
 }
 
 // Nonce creates nonce and send to metamask for login.
-func (service *Service) Nonce(ctx context.Context, address evmsignature.Address) (string, error) {
-	user, err := service.users.GetByWalletAddress(ctx, address)
-	if err != nil {
-		return "", Error.Wrap(err)
-	}
-
-	nonce := hexutil.Encode(user.Nonce)
-
-	return nonce, nil
-}
-
-// VelasNonce creates nonce and send to velas for login.
-func (service *Service) VelasNonce(ctx context.Context, address string) (string, error) {
-	user, err := service.users.GetByVelasWalletAddress(ctx, address)
+func (service *Service) Nonce(ctx context.Context, address evmsignature.Address, walletType users.WalletType) (string, error) {
+	user, err := service.users.GetByWalletAddress(ctx, address, walletType)
 	if err != nil {
 		return "", Error.Wrap(err)
 	}
@@ -427,7 +415,7 @@ func (service *Service) RegisterWithMetamask(ctx context.Context, signature []by
 		return Error.Wrap(err)
 	}
 
-	_, err = service.users.GetByWalletAddress(ctx, walletAddress)
+	_, err = service.users.GetByWalletAddress(ctx, walletAddress, users.Wallet)
 	if !users.ErrNoUser.Has(err) {
 		return Error.New("this user already exist")
 	}
@@ -461,7 +449,7 @@ func (service *Service) LoginWithMetamask(ctx context.Context, nonce string, sig
 		return "", Error.Wrap(err)
 	}
 
-	user, err := service.users.GetByWalletAddress(ctx, walletAddress)
+	user, err := service.users.GetByWalletAddress(ctx, walletAddress, users.Wallet)
 	if err != nil {
 		return "", Error.Wrap(err)
 	}
@@ -600,8 +588,8 @@ func (service *Service) PreAuthTokenToChangeEmail(ctx context.Context, email, ne
 }
 
 // RegisterWithVelas creates user by credentials.
-func (service *Service) RegisterWithVelas(ctx context.Context, velasAddress string) error {
-	_, err := service.users.GetByVelasWalletAddress(ctx, velasAddress)
+func (service *Service) RegisterWithVelas(ctx context.Context, address string) error {
+	_, err := service.users.GetByWalletAddress(ctx, evmsignature.Address(address), users.Velas)
 	if !users.ErrNoUser.Has(err) {
 		return Error.New("this user already exist")
 	}
@@ -618,7 +606,7 @@ func (service *Service) RegisterWithVelas(ctx context.Context, velasAddress stri
 		LastLogin:   time.Time{},
 		Status:      users.StatusActive,
 		CreatedAt:   time.Now().UTC(),
-		VelasWallet: velasAddress,
+		VelasWallet: address,
 	}
 	err = service.users.Create(ctx, user)
 	if err != nil {
@@ -629,8 +617,8 @@ func (service *Service) RegisterWithVelas(ctx context.Context, velasAddress stri
 }
 
 // LoginWithVelas authenticates user by credentials and returns login token.
-func (service *Service) LoginWithVelas(ctx context.Context, nonce string, velasWallet string) (string, error) {
-	user, err := service.users.GetByVelasWalletAddress(ctx, velasWallet)
+func (service *Service) LoginWithVelas(ctx context.Context, nonce string, address string) (string, error) {
+	user, err := service.users.GetByWalletAddress(ctx, evmsignature.Address(address), users.Velas)
 	if err != nil {
 		return "", Error.Wrap(err)
 	}

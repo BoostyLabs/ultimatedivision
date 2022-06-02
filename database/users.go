@@ -91,10 +91,10 @@ func (usersDB *usersDB) GetByEmail(ctx context.Context, email string) (users.Use
 }
 
 // GetByWalletAddress returns user by wallet address from the data base.
-func (usersDB *usersDB) GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address) (users.User, error) {
+func (usersDB *usersDB) GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address, walletType users.WalletType) (users.User, error) {
 	var user users.User
 
-	row := usersDB.conn.QueryRowContext(ctx, "SELECT id, email, password_hash, nick_name, first_name, last_name, wallet_address, velas_wallet_address, nonce, last_login, status, created_at FROM users WHERE wallet_address = $1", walletAddress)
+	row := usersDB.conn.QueryRowContext(ctx, "SELECT id, email, password_hash, nick_name, first_name, last_name, wallet_address, velas_wallet_address, nonce, last_login, status, created_at FROM users WHERE "+walletType.ToString()+"=$1", walletAddress)
 
 	err := row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.Wallet, &user.VelasWallet, &user.Nonce, &user.LastLogin, &user.Status, &user.CreatedAt)
 	if err != nil {
@@ -105,23 +105,6 @@ func (usersDB *usersDB) GetByWalletAddress(ctx context.Context, walletAddress ev
 	}
 
 	return user, nil
-}
-
-// GetByVelasWalletAddress returns user by wallet address from the data base.
-func (usersDB *usersDB) GetByVelasWalletAddress(ctx context.Context, walletAddress string) (users.User, error) {
-	var user users.User
-
-	row := usersDB.conn.QueryRowContext(ctx, "SELECT id, email, password_hash, nick_name, first_name, last_name, wallet_address, velas_wallet_address, nonce, last_login, status, created_at FROM users WHERE velas_wallet_address = $1", walletAddress)
-
-	err := row.Scan(&user.ID, &user.Email, &user.PasswordHash, &user.NickName, &user.FirstName, &user.LastName, &user.Wallet, &user.VelasWallet, &user.Nonce, &user.LastLogin, &user.Status, &user.CreatedAt)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return user, users.ErrNoUser.Wrap(err)
-		}
-		return user, ErrUsers.Wrap(err)
-	}
-
-	return user, ErrUsers.Wrap(err)
 }
 
 // Create creates a user and writes to the database.

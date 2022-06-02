@@ -28,9 +28,7 @@ type DB interface {
 	// GetByEmail returns user by email from the data base.
 	GetByEmail(ctx context.Context, email string) (User, error)
 	// GetByWalletAddress returns user by wallet address from the data base.
-	GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address) (User, error)
-	// GetByVelasWalletAddress returns user by wallet address from the data base.
-	GetByVelasWalletAddress(ctx context.Context, walletAddress string) (User, error)
+	GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address, walletType WalletType) (User, error)
 	// Create creates a user and writes to the database.
 	Create(ctx context.Context, user User) error
 	// Update updates a status in the database.
@@ -148,4 +146,24 @@ func (createUserFields *CreateUserFields) IsValid() bool {
 	default:
 		return true
 	}
+}
+
+// WalletType defines the list of possible wallets types.
+type WalletType string
+
+const (
+	// Wallet indicates that wallet type is wallet_address.
+	Wallet WalletType = "wallet_address"
+	// Velas indicates that wallet type is velas_wallet_address.
+	Velas WalletType = "velas_wallet_address"
+)
+
+// IsValid checks if type of wallet valid.
+func (w WalletType) IsValid() bool {
+	return w == Wallet || w == Velas
+}
+
+// ToString returns wallet type in string.
+func (w WalletType) ToString() string {
+	return string(w)
 }

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/BoostyLabs/evmsignature"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -344,12 +345,18 @@ func (auth *Auth) Nonce(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
 	address := query.Get("address")
-	if address == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.New("address is empty"))
+	if common.IsHexAddress(address) {
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("address is invalid"))
 		return
 	}
 
-	nonce, err := auth.userAuth.Nonce(ctx, evmsignature.Address(address))
+	walletType := users.WalletType(query.Get("walletType"))
+	if walletType.IsValid() {
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("wallet type is invalid"))
+		return
+	}
+
+	nonce, err := auth.userAuth.Nonce(ctx, evmsignature.Address(address), walletType)
 	if err != nil {
 		switch {
 		case users.ErrNoUser.Has(err):
@@ -357,37 +364,7 @@ func (auth *Auth) Nonce(w http.ResponseWriter, r *http.Request) {
 		case userauth.ErrUnauthenticated.Has(err):
 			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
 		default:
-			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
-		}
-		return
-	}
-
-	if err = json.NewEncoder(w).Encode(nonce); err != nil {
-		auth.log.Error("failed to write json response", AuthError.Wrap(err))
-		return
-	}
-}
-
-// VelasNonce is an endpoint to send nonce to velas for login.
-func (auth *Auth) VelasNonce(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	ctx := r.Context()
-	query := r.URL.Query()
-
-	address := query.Get("address")
-	if address == "" {
-		auth.serveError(w, http.StatusBadRequest, AuthError.New("address is empty"))
-		return
-	}
-
-	nonce, err := auth.userAuth.VelasNonce(ctx, address)
-	if err != nil {
-		switch {
-		case users.ErrNoUser.Has(err):
-			auth.serveError(w, http.StatusNotFound, AuthError.Wrap(err))
-		case userauth.ErrUnauthenticated.Has(err):
-			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
-		default:
+			auth.log.Error("Unable to get nonce", AuthError.Wrap(err))
 			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		}
 		return
@@ -447,18 +424,23 @@ func (auth *Auth) VelasRegister(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
-	var velasAPIResponse velas.APISResponse
-	if err := json.NewDecoder(r.Body).Decode(&velasAPIResponse); err != nil {
+	var velasAPIRequest velas.APIRequest
+	if err := json.NewDecoder(r.Body).Decode(&velasAPIRequest); err != nil {
 		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
 		return
 	}
 
-	if time.Now().Unix() > velasAPIResponse.ExpiresAt {
+	if time.Now().Unix() > velasAPIRequest.ExpiresAt {
 		auth.serveError(w, http.StatusBadRequest, AuthError.New("token expiration time has expired"))
 		return
 	}
 
-	err := auth.userAuth.RegisterWithVelas(ctx, velasAPIResponse.AccessTokenPayload.Sub)
+	if common.IsHexAddress(velasAPIRequest.WalletAddress) {
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("wallet address is invalid"))
+		return
+	}
+
+	err := auth.userAuth.RegisterWithVelas(ctx, velasAPIRequest.WalletAddress)
 	if err != nil {
 		auth.log.Error("failed to write json response", AuthError.Wrap(err))
 		return
@@ -470,12 +452,12 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
-	type MetamaskFields struct {
+	type VelasFields struct {
 		Nonce string `json:"nonce"`
-		velas.APISResponse
+		velas.APIRequest
 	}
 
-	var request MetamaskFields
+	var request VelasFields
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		auth.serveError(w, http.StatusBadRequest, AuthError.Wrap(err))
 		return
@@ -491,7 +473,12 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authToken, err := auth.userAuth.LoginWithVelas(ctx, request.Nonce, request.AccessTokenPayload.Sub)
+	if common.IsHexAddress(request.WalletAddress) {
+		auth.serveError(w, http.StatusBadRequest, AuthError.New("wallet address is invalid"))
+		return
+	}
+
+	authToken, err := auth.userAuth.LoginWithVelas(ctx, request.Nonce, request.WalletAddress)
 	if err != nil {
 		switch {
 		case users.ErrNoUser.Has(err):
@@ -499,6 +486,7 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 		case userauth.ErrUnauthenticated.Has(err):
 			auth.serveError(w, http.StatusUnauthorized, AuthError.Wrap(err))
 		default:
+			auth.log.Error("Unable to login with velas", AuthError.Wrap(err))
 			auth.serveError(w, http.StatusInternalServerError, AuthError.Wrap(err))
 		}
 
