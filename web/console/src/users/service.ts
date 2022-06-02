@@ -42,16 +42,16 @@ export class UsersService {
         await this.users.sendEmailForPasswordReset(email);
     }
     /** sends data to register user with velas wallet */
-    public async velasRegister(ethWalletAddress: string, accessToken: string, expiresAt: any): Promise<void> {
-        await this.users.velasRegister(ethWalletAddress, accessToken, expiresAt);
+    public async velasRegister(walletAddress: string, accessToken: string, expiresAt: any): Promise<void> {
+        await this.users.velasRegister(walletAddress, accessToken, expiresAt);
     }
     /** sends address to get nonce to login user */
     public async velasNonce(address: string): Promise<string> {
         return await this.users.velasNonce(address);
     }
     /** sends data to login user with velas wallet */
-    public async velasLogin(nonce: string, authResult: any): Promise<void> {
-        await this.users.velasLogin(nonce, authResult);
+    public async velasLogin(nonce: string, walletAddress: string, accessToken: string, expiresAt: any): Promise<void> {
+        await this.users.velasLogin(nonce, walletAddress, accessToken, expiresAt);
     }
     /** gets token to login user with velas wallet */
     public async velasCsrfToken(): Promise<string> {

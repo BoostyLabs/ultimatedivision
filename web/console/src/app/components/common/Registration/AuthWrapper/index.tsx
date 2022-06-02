@@ -55,23 +55,28 @@ const AuthWrapper = () => {
     const sendAuthData = async(authResult: any) => {
         try {
             const vaclient = await vaclientService();
-            await vaclient.userinfo(authResult.access_token, (err: any, result: any) => {
+
+            await vaclient.userinfo(authResult.access_token, async(err: any, result: any) => {
                 if (err) {
                     toast.error(`${err}`, {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
                     });
                 } else {
-                    usersService.velasRegister(
+                    await usersService.velasRegister(
+                        result.userinfo.account_key_evm,
+                        authResult.access_token,
+                        authResult.expires_at
+                    );
+                    const nonce = await usersService.velasNonce(result.userinfo.account_key_evm);
+                    await usersService.velasLogin(
+                        nonce,
                         result.userinfo.account_key_evm,
                         authResult.access_token,
                         authResult.expires_at
                     );
                 }
             });
-
-            const nonce = await usersService.velasNonce(authResult.access_token_payload.sub);
-            await usersService.velasLogin(nonce, authResult);
 
             history.push(RouteConfig.MarketPlace.path);
             window.location.reload();

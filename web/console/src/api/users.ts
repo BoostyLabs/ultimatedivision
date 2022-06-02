@@ -86,9 +86,9 @@ export class UsersClient extends APIClient {
         }
     }
     /** sends data to register user with velas wallet */
-    public async velasRegister(ethWalletAddress: string, accessToken: string, expiresAt: any): Promise<void> {
+    public async velasRegister(walletAddress: string, accessToken: string, expiresAt: any): Promise<void> {
         const path = `${this.ROOT_PATH}/velas/register`;
-        const response = await this.http.post(path, JSON.stringify({ ethWalletAddress, accessToken, expiresAt }));
+        const response = await this.http.post(path, JSON.stringify({ walletAddress, accessToken, expiresAt }));
 
         if (!response.ok) {
             await this.handleError(response);
@@ -96,7 +96,9 @@ export class UsersClient extends APIClient {
     }
     /** sends address to get nonce to login user */
     public async velasNonce(address: string): Promise<string> {
-        const path = `${this.ROOT_PATH}/velas/nonce?address=${address}`;
+        const walletType = 'velas_wallet_address';
+
+        const path = `${this.ROOT_PATH}/velas/nonce?address=${address}&walletType=${walletType}`;
         const response = await this.http.get(path);
 
         if (!response.ok) {
@@ -107,9 +109,9 @@ export class UsersClient extends APIClient {
         return status;
     }
     /** sends data to login user with velas wallet */
-    public async velasLogin(nonce: string, authResult: any): Promise<void> {
+    public async velasLogin(nonce: string, walletAddress: string, accessToken: string, expiresAt: any): Promise<void> {
         const path = `${this.ROOT_PATH}/velas/login`;
-        const response = await this.http.post(path, JSON.stringify({ ...authResult, nonce }));
+        const response = await this.http.post(path, JSON.stringify({ walletAddress, accessToken, expiresAt, nonce }));
 
         if (!response.ok) {
             await this.handleError(response);
