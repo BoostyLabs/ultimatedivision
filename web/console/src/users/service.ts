@@ -42,8 +42,8 @@ export class UsersService {
         await this.users.sendEmailForPasswordReset(email);
     }
     /** sends data to register user with velas wallet */
-    public async velasRegister(authResult: any): Promise<void> {
-        await this.users.velasRegister(authResult);
+    public async velasRegister(eth_wallet_address: string, access_token: string, expires_at: any): Promise<void> {
+        await this.users.velasRegister(eth_wallet_address, access_token, expires_at);
     }
     /** sends address to get nonce to login user */
     public async velasNonce(address: string): Promise<string> {
