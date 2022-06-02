@@ -86,9 +86,9 @@ export class UsersClient extends APIClient {
         }
     }
     /** sends data to register user with velas wallet */
-    public async velasRegister(authResult: any): Promise<void> {
+    public async velasRegister(ethWalletAddress: string, accessToken: string, expiresAt: any): Promise<void> {
         const path = `${this.ROOT_PATH}/velas/register`;
-        const response = await this.http.post(path, JSON.stringify(authResult));
+        const response = await this.http.post(path, JSON.stringify({ ethWalletAddress, accessToken, expiresAt }));
 
         if (!response.ok) {
             await this.handleError(response);
