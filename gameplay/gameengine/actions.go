@@ -4,7 +4,6 @@
 package gameengine
 
 import (
-	"fmt"
 	"sort"
 	"time"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/clubs"
 	"ultimatedivision/pkg/rand"
 )
 
@@ -99,7 +99,7 @@ const (
 	ResultUnsuccessful Result = false
 )
 
-// MakeAction defines request for every action.
+// MakeAction defines fields that describes football action.
 type MakeAction struct {
 	CardsLayout       []CardWithCoordinate `json:"cardsLayout"`
 	BallPosition      Coordinate           `json:"ballPosition"`
@@ -109,11 +109,11 @@ type MakeAction struct {
 	EndCoordinate     Coordinate           `json:"endCoordinate"`
 	ReceiverPlayerID  uuid.UUID            `json:"receiverPlayerId"`
 	OpponentPlayerIDs []uuid.UUID          `json:"opponentPlayerIds"`
-	ActionTime        time.Time            `json:"actionDate"`
+	ActionTime        time.Time            `json:"actionTime"`
 	Result            Result               `json:"result"`
 }
 
-// IsValid checks is action request valid.
+// IsValid checks is action valid.
 func (a MakeAction) IsValid() bool {
 	switch {
 	case a.Action == ActionMove || a.Action == ActionMoveWithBall:
@@ -140,7 +140,39 @@ func (a MakeAction) IsValid() bool {
 	return false
 }
 
-// HandleAction handles all match actions and generates result of actions.
+// PrepareMatchRepresentation prepares data to send for both match participants which contains
+// cards with coordinates, ball position and available actions for all cards.
+func PrepareMatchRepresentation(coordinateConfig CoordinatesConfig, gameConfig GameConfig, firstSquad, secondSquad []clubs.SquadCard) (MatchRepresentation, error) {
+	firstClientCardsWithCoordinates := ConvertPositionToCoordinate(coordinateConfig, firstSquad)
+	ballCoordinate := GetCenterOfField(coordinateConfig.SizeOfFieldByOX, coordinateConfig.SizeOfFieldByOY)
+	secondClientCardsWithCoordinates := ConvertPositionToCoordinate(coordinateConfig, secondSquad)
+	secondClientCardsWithCoordinates = ReflectCoordinates(secondClientCardsWithCoordinates, coordinateConfig.SizeOfFieldByOX, coordinateConfig.SizeOfFieldByOY)
+	// generates available action for each squad.
+	var cardsAvailableActions []CardAvailableAction
+	firstSquadCardAvailableActions, err := GenerateAvailableActions(firstClientCardsWithCoordinates, secondClientCardsWithCoordinates, ballCoordinate, gameConfig, coordinateConfig)
+	if err != nil {
+		return MatchRepresentation{}, err
+	}
+	secondSquadCardAvailableActions, err := GenerateAvailableActions(secondClientCardsWithCoordinates, firstClientCardsWithCoordinates, ballCoordinate,
+		gameConfig, coordinateConfig)
+	if err != nil {
+		return MatchRepresentation{}, err
+	}
+
+	cardsAvailableActions = append(cardsAvailableActions, firstSquadCardAvailableActions...)
+	cardsAvailableActions = append(cardsAvailableActions, secondSquadCardAvailableActions...)
+
+	matchRepresentation := MatchRepresentation{
+		User1CardsWithPosition: firstClientCardsWithCoordinates,
+		User2CardsWithPosition: secondClientCardsWithCoordinates,
+		BallCoordinate:         ballCoordinate,
+		CardAvailableAction:    cardsAvailableActions,
+	}
+
+	return matchRepresentation, nil
+}
+
+// HandleAction handles all match actions and generates result of them.
 func HandleAction(matchRepresentation MatchRepresentation, makeAction []MakeAction, gameConfig GameConfig, coordinatesConfig CoordinatesConfig) ([]MakeAction, error) {
 	sort.Slice(makeAction, func(i, j int) bool {
 		return makeAction[i].ActionTime.Before(makeAction[j].ActionTime)
@@ -152,7 +184,7 @@ func HandleAction(matchRepresentation MatchRepresentation, makeAction []MakeActi
 			return actions, errs.New("invalid action")
 		}
 
-		actionWithResult, err := GenerateActionResult(action, matchRepresentation, gameConfig, coordinatesConfig)
+		actionWithResult, err := generateActionResult(action, matchRepresentation, gameConfig, coordinatesConfig)
 		if err != nil {
 			return actions, err
 		}
@@ -164,41 +196,17 @@ func HandleAction(matchRepresentation MatchRepresentation, makeAction []MakeActi
 }
 
 // GenerateActionResult generates result of action.
-func GenerateActionResult(makeAction MakeAction, representation MatchRepresentation, gameConfig GameConfig, coordinatesConfig CoordinatesConfig) (MakeAction, error) {
-	switch makeAction.Action {
-	case ActionMove:
-		availableActions, err := GenerateAvailableActions(representation.User1CardsWithPosition, representation.User2CardsWithPosition, representation.BallCoordinate, gameConfig, coordinatesConfig)
-		if err != nil {
-			return MakeAction{}, err
-		}
-		if makeAction.isActionInSlice(availableActions) {
-			makeAction.Result = ResultSuccessful
-		}
-	case ActionMoveWithBall:
-		// formula
-	case ActionPass:
-		// formula
-	case ActionCrossPass:
-		// formula
-	case ActionPassThrough:
-		// formula
-	case ActionDirectShot:
-		// formula
-	case ActionCurlShot:
-		// formula
-	case ActionTakeawayShot:
-		// formula
-	case ActionTackle:
-		// formula
-	case ActionSlidingTackle:
-		// formula
-	case ActionDribbling:
-		// formula
-	case ActionFeints:
-		// formula
+func generateActionResult(action MakeAction, representation MatchRepresentation, gameConfig GameConfig, coordinatesConfig CoordinatesConfig) (MakeAction, error) {
+	availableActions, err := GenerateAvailableActions(representation.User1CardsWithPosition, representation.User2CardsWithPosition, representation.BallCoordinate, gameConfig, coordinatesConfig)
+	if err != nil {
+		return action, err
 	}
 
-	return makeAction, nil
+	if action.isActionInSlice(availableActions) {
+		action.Result = ResultSuccessful
+	}
+
+	return action, nil
 }
 
 // isActionInSlice checks is available actions contains action.
@@ -212,6 +220,7 @@ func (a MakeAction) isActionInSlice(availableActions []CardAvailableAction) bool
 			}
 		}
 	}
+
 	return false
 }
 
@@ -222,15 +231,13 @@ func GenerateAvailableActions(alliesCardsWithCoordinates, opponentCardsWithCoord
 	coordinatesOfOpponentCards := getCoordinates(opponentCardsWithCoordinates)
 
 	for _, alliesCardWithCoordinates := range alliesCardsWithCoordinates {
-		// action move
+		// action move.
 		numOfCells, err := getNumOfMaximumCells(gameConfig, alliesCardWithCoordinates.Card, ActionMove)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("numOfCells", numOfCells)
 
 		cells := generateCellsInRange(alliesCardWithCoordinates.Coordinate, numOfCells, coordinatesConfig.SizeOfFieldByOX, coordinatesConfig.SizeOfFieldByOY, coordinatesOfOpponentCards)
-		fmt.Println(cells)
 		moveAction := CardAvailableAction{
 			CardID:    alliesCardWithCoordinates.Card.ID,
 			Action:    ActionMove,
@@ -243,22 +250,22 @@ func GenerateAvailableActions(alliesCardsWithCoordinates, opponentCardsWithCoord
 	return availableActions, nil
 }
 
-// GetCoordinates returns coordinates from slice with cards with coordinates.
+// getCoordinates returns coordinates of opponent cards.
 func getCoordinates(cardsWithCoordinate []CardWithCoordinate) []Coordinate {
 	var coordinates []Coordinate
 
-	for _, cardWithCoordinate := range cardsWithCoordinate {
+	for i := 0; i < len(cardsWithCoordinate); i++ {
 		coordinates = append(coordinates, Coordinate{
-			X: cardWithCoordinate.Coordinate.X,
-			Y: cardWithCoordinate.Coordinate.Y,
+			X: cardsWithCoordinate[i].Coordinate.X,
+			Y: cardsWithCoordinate[i].Coordinate.Y,
 		})
 	}
 
 	return coordinates
 }
 
-// GetNumOfMaximumCells generates the maximum number of cells
-// on which the action is distributed for a certain card.
+// getNumOfMaximumCells generates the maximum number of cells
+// on which the action could be distributed for a certain card.
 func getNumOfMaximumCells(config GameConfig, card cards.Card, action Action) (int, error) {
 	var numOfCells int
 	switch {
@@ -279,7 +286,7 @@ func getNumOfMaximumCells(config GameConfig, card cards.Card, action Action) (in
 			numOfCells = config.MoveAction.NumOfCellsForFourthRange
 		}
 	case action == ActionMoveWithBall:
-		// TODO: add others action here
+		// TODO: add others action here.
 	}
 
 	return numOfCells, nil

@@ -1,113 +1,75 @@
 version: "3"
 
 services:
-  ultimate_division:
-    container_name: "ultimate_division"
-    image: dcloud.hicrystal.com/ultimate_division:latest
-
+  app:
+    container_name: UDApp
+    image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division${ENVIRONMENT}:latest
+    ports:
+      - "8087:8087" # Forward the exposed port 5000 on the container to port 8088 on the host machine (8088:5000).
+      - "8088:8088"
     restart: unless-stopped
     volumes:
-      - ${PROJECT_PATH}/data/ultimate_division:/app/data
-      - ${PROJECT_PATH}/configs/ultimate_division:/config
+      - ${PROJECT_DATA_PATH}/ultimate_division:/app/data
+      - ${PROJECT_CONFIGS_PATH}/ultimate_division:/config
+      - ${PROJECT_ASSETS_PATH}:/assets
     depends_on:
-      - ultimate_division_db
+      - ultimatedivision_db # This service depends on postgres. Start that first.
     networks:
-      - ultimate_division_network
-    environment:
-      - DB_HOST=ultimate_division_db
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - fullstack
 
   nft_signer:
-    container_name: "ultimate_division_nft_signer"
-    image: dcloud.hicrystal.com/ultimate_division_nft_signer:latest
-
+    container_name: UDNFTSigner
+    image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_nft_signer${ENVIRONMENT}:latest
     restart: unless-stopped
     volumes:
-      - ${PROJECT_PATH}/data/nft_signer:/app/data
-      - ${PROJECT_PATH}/configs/nft_signer:/config
+      - ${PROJECT_DATA_PATH}/signer:/app/data
+      - ${PROJECT_CONFIGS_PATH}/nft_signer:/config
     depends_on:
-      - ultimate_division_db
+      - ultimatedivision_db # This service depends on postgres. Start that first.
     networks:
-      - ultimate_division_network
-    environment:
-      - DB_HOST=ultimate_division_db
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - fullstack
 
   currency_signer:
-    container_name: "ultimate_division_currency_signer"
-    image: dcloud.hicrystal.com/ultimate_division_currency_signer:latest
-
+    container_name: UDCurrencySigner
+    image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_currency_signer${ENVIRONMENT}:latest
     restart: unless-stopped
     volumes:
-      - ${PROJECT_PATH}/data/currency_signer:/app/data
-      - ${PROJECT_PATH}/configs/currency_signer:/config
+      - ${PROJECT_DATA_PATH}/currency_signer:/app/data
+      - ${PROJECT_CONFIGS_PATH}/currency_signer:/config
     depends_on:
-      - ultimate_division_db
+      - ultimatedivision_db # This service depends on postgres. Start that first.
     networks:
-      - ultimate_division_network
-    environment:
-      - DB_HOST=ultimate_division_db
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - fullstack
 
-  nft_drop:
-    container_name: "ultimate_division_nft_drop"
-    image: dcloud.hicrystal.com/ultimate_division_nft_drop:latest
-
+  velas:
+    container_name: velas
+    image: ${HOST_FOR_DOCKER_IMAGE}/velas:latest
+    ports:
+      - "3002:3002"
     restart: unless-stopped
-    volumes:
-      - ${PROJECT_PATH}/data/nft_drop:/app/data
-      - ${PROJECT_PATH}/configs/nft_drop:/config
-    depends_on:
-      - ultimate_division_db
     networks:
-      - ultimate_division_network
+      - fullstack
     environment:
-      - DB_HOST=ultimate_division_db
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - SPONSOR_PRIVATE=${SPONSOR_PRIVATE}
+      - NETWORK_HOST=${NETWORK_HOST}
+      - VELAS_ACCOUNT_PROGRAM_ADDRESS=${VELAS_ACCOUNT_PROGRAM_ADDRESS}
 
-  card_generator:
-    container_name: "ultimate_division_card_generator"
-    image: dcloud.hicrystal.com/ultimate_division_card_generator:latest
-
-    restart: unless-stopped
-    volumes:
-      - ${PROJECT_PATH}/data/card_generator:/app/data
-      - ${PROJECT_PATH}/configs/card_generator:/config
-    depends_on:
-      - ultimate_division_db
-    networks:
-      - ultimate_division_network
-    environment:
-      - DB_HOST=ultimate_division_db
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-
-  ultimate_division_db:
+  ultimatedivision_db:
     restart: always
     image: postgres:latest
-    container_name: ultimate_division_db
+    container_name: ultimatedivision_db
     ports:
-      - "6432:5432"
+      - "5635:5432"
     volumes:
-      - ${PROJECT_PATH}/data/db:/var/lib/postgresql/data
+      - ${PROJECT_DATA_PATH}/db:/var/lib/postgresql/data
     networks:
-      - ultimate_division_network
+      - fullstack
     environment:
-      - POSTGRES_DB=${DB_DATABASE}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
+# Networks to be created to facilitate communication between containers
 networks:
-  ultimate_division_network:
+  fullstack:
     driver: bridge
-
-

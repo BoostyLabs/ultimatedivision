@@ -17,24 +17,24 @@ import (
 	"ultimatedivision/gameplay/matches"
 )
 
-// ErrNoClient indicated that client does not exist.
-var ErrNoClient = errs.Class("client does not exist")
+var (
+	// ErrNoClient indicated that client does not exist.
+	ErrNoClient = errs.Class("client does not exist")
+	// ErrRead indicates a read error.
+	ErrRead = errs.Class("error read from websocket")
+	// ErrWrite indicates a write error.
+	ErrWrite = errs.Class("error write to websocket")
+)
 
-// ErrRead indicates a read error.
-var ErrRead = errs.Class("error read from websocket")
-
-// ErrWrite indicates a write error.
-var ErrWrite = errs.Class("error write to websocket")
-
-// DB is exposing access to clients database.
+// DB is exposing access to queue database.
 //
 // architecture: DB
 type DB interface {
-	// Create adds client in database.
+	// Create adds client to queue in the database.
 	Create(client Client)
-	// Get returns client from database.
+	// Get returns client from the database.
 	Get(userID uuid.UUID) (Client, error)
-	// List returns clients from database.
+	// List returns clients from the database.
 	List() []Client
 	// ListNotPlayingUsers returns clients who don't play game from database.
 	ListNotPlayingUsers() []Client
@@ -109,6 +109,8 @@ func (client *Client) ReadJSON() (Request, error) {
 	return request, nil
 }
 
+// TODO: move to api layer.
+
 // ReadActionJSON reads action request sent by client.
 func (client *Client) ReadActionJSON() ([]gameengine.MakeAction, error) {
 	var request []gameengine.MakeAction
@@ -131,10 +133,10 @@ func (client *Client) ReadActionJSON() ([]gameengine.MakeAction, error) {
 
 // WriteJSON writes response to client.
 func (client *Client) WriteJSON(status int, message interface{}) error {
-	if err := client.Connection.WriteJSON(Response{Status: status, Message: message}); err != nil {
-		return ErrWrite.Wrap(ErrQueue.Wrap(err))
-	}
-	return nil
+	return client.Connection.WriteJSON(Response{
+		Status:  status,
+		Message: message,
+	})
 }
 
 // WinResult entity describes values which send to user after win game.

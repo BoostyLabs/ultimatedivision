@@ -15,11 +15,11 @@ type Coordinate struct {
 }
 
 // Compare compares two coordinates.
-func (coordinate Coordinate) Compare(coordinateToCompare Coordinate) bool {
-	return coordinate.X == coordinateToCompare.X && coordinate.Y == coordinateToCompare.Y
+func (c Coordinate) Compare(coordinateToCompare Coordinate) bool {
+	return c.X == coordinateToCompare.X && c.Y == coordinateToCompare.Y
 }
 
-// CoordinatesConfig contains all config values related to field coordinates.
+// CoordinatesConfig contains all configurable values related to field coordinates.
 type CoordinatesConfig struct {
 	SizeOfFieldByOX int `json:"sizeOfFieldByOX"`
 	SizeOfFieldByOY int `json:"sizeOfFieldByOY"`
@@ -137,11 +137,12 @@ func ConvertPositionToCoordinate(config CoordinatesConfig, squadCards []clubs.Sq
 
 	var cardsWithCoordinate []CardWithCoordinate
 
-	for _, squadCard := range squadCards {
-		var cardWithCoordinate CardWithCoordinate
+	for i := 0; i < len(squadCards); i++ {
+		cardWithCoordinate := CardWithCoordinate{
+			Coordinate: PositionToCoordinates[squadCards[i].Position],
+			Card:       squadCards[i].Card,
+		}
 
-		cardWithCoordinate.Coordinate = PositionToCoordinates[squadCard.Position]
-		cardWithCoordinate.Card = squadCard.Card
 		cardsWithCoordinate = append(cardsWithCoordinate, cardWithCoordinate)
 	}
 
@@ -150,21 +151,15 @@ func ConvertPositionToCoordinate(config CoordinatesConfig, squadCards []clubs.Sq
 
 // ReflectCoordinates reflects coordinates relative to the center of the field.
 func ReflectCoordinates(cardsWithCoordinate []CardWithCoordinate, sizeOfFieldByOX, sizeOfFieldByOY int) []CardWithCoordinate {
-	var cardsWithNewCoordinates []CardWithCoordinate
-
-	for _, cardWithCoordinate := range cardsWithCoordinate {
-		var cardWithNewCoordinate CardWithCoordinate
-		cardWithNewCoordinate.Card = cardWithCoordinate.Card
-
-		if cardWithCoordinate.Coordinate.X > sizeOfFieldByOX/2 {
-			cardWithNewCoordinate.Coordinate.X -= sizeOfFieldByOY / 2
-			continue
+	for i := 0; i < len(cardsWithCoordinate); i++ {
+		if cardsWithCoordinate[i].Coordinate.X > sizeOfFieldByOX/2 {
+			cardsWithCoordinate[i].Coordinate.X -= sizeOfFieldByOY / 2
+		} else {
+			cardsWithCoordinate[i].Coordinate.X += sizeOfFieldByOX - cardsWithCoordinate[i].Coordinate.X
 		}
-		cardWithNewCoordinate.Coordinate.X += sizeOfFieldByOX - cardWithCoordinate.Coordinate.X
-
-		cardsWithNewCoordinates = append(cardsWithNewCoordinates, cardWithNewCoordinate)
 	}
-	return cardsWithNewCoordinates
+
+	return cardsWithCoordinate
 }
 
 // GetCenterOfField returns coordinate of the center of field.
@@ -216,9 +211,7 @@ func generateCellsInRange(startCoordinate Coordinate, numOfCells, sizeOfFieldByO
 		}
 	}
 
-	cells = deleteElementWhichExistsInArray(cells, opponentCardsWithPositions)
-
-	return cells
+	return deleteElementWhichExistsInArray(cells, opponentCardsWithPositions)
 }
 
 // DeleteElementWhichExistsInArray deletes element from allies slice of cards with coordinates
@@ -237,5 +230,6 @@ func deleteElementWhichExistsInArray(alliesCardsWithPositions, opponentCardsWith
 
 // removeElementFromSlice removes element from slice with certain index.
 func removeElementFromSlice(cardsWithPosition []Coordinate, index int) []Coordinate {
+	// TODO: add case index last element.
 	return append(cardsWithPosition[:index], cardsWithPosition[index+1:]...)
 }
