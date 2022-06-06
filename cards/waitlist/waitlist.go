@@ -7,13 +7,13 @@ import (
 	"context"
 	"math/big"
 	"time"
-	"ultimatedivision/users"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/remotefilestorage/storj"
+	"ultimatedivision/users"
 )
 
 // ErrNoItem indicates that item for wait list does not exist.
