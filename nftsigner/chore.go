@@ -5,6 +5,7 @@ package nftsigner
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"math/big"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards/waitlist"
+	"ultimatedivision/users"
 )
 
 // ChoreError represents nft signer chore error type.
@@ -21,9 +23,11 @@ var ChoreError = errs.Class("nft signer chore error")
 
 // ChoreConfig is the global configuration for nftsigner.
 type ChoreConfig struct {
-	RenewalInterval      time.Duration           `json:"renewalInterval"`
-	PrivateKey           evmsignature.PrivateKey `json:"privateKey"`
-	SmartContractAddress evmsignature.Address    `json:"smartContractAddress"`
+	RenewalInterval           time.Duration           `json:"renewalInterval"`
+	PrivateKey                evmsignature.PrivateKey `json:"privateKey"`
+	SmartContractAddress      evmsignature.Address    `json:"smartContractAddress"`
+	PrivateKeyVelas           evmsignature.PrivateKey `json:"privateKeyVelas"`
+	SmartContractAddressVelas evmsignature.Address    `json:"smartContractAddressVelas"`
 }
 
 // Chore requests for unsigned nft tokens and sign all of them .
@@ -57,15 +61,30 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			return ChoreError.Wrap(err)
 		}
 
+		privateKeyECDSAVelas, err := crypto.HexToECDSA(string(chore.config.PrivateKeyVelas))
+		if err != nil {
+			return ChoreError.Wrap(err)
+		}
+
 		for _, token := range unsignedNFTs {
 			var signature evmsignature.Signature
+			var smartContract evmsignature.Address
+			var privatKey *ecdsa.PrivateKey
+			switch token.WalletType {
+			case users.Wallet:
+				smartContract = chore.config.SmartContractAddress
+				privatKey = privateKeyECDSA
+			case users.Velas:
+				smartContract = chore.config.SmartContractAddressVelas
+				privatKey = privateKeyECDSAVelas
+			}
 			if token.Value.Cmp(big.NewInt(0)) <= 0 {
-				signature, err = evmsignature.GenerateSignatureWithValue(token.Wallet, chore.config.SmartContractAddress, token.TokenID, privateKeyECDSA)
+				signature, err = evmsignature.GenerateSignatureWithValue(token.Wallet, smartContract, token.TokenID, privatKey)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			} else {
-				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(token.Wallet, chore.config.SmartContractAddress, &token.Value, token.TokenID, privateKeyECDSA)
+				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(token.Wallet, smartContract, &token.Value, token.TokenID, privatKey)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}

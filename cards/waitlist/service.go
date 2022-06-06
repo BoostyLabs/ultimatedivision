@@ -65,10 +65,11 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 
 	if item, err := service.GetByCardID(ctx, createNFT.CardID); item.Password != "" && err == nil {
 		transaction = Transaction{
-			Password: item.Password,
-			Contract: service.config.Contract,
-			TokenID:  item.TokenID,
-			Value:    item.Value,
+			Password:   item.Password,
+			Contract:   service.config.Contract,
+			TokenID:    item.TokenID,
+			Value:      item.Value,
+			WalletType: item.WalletType,
 		}
 		return transaction, nil
 	}
@@ -107,15 +108,16 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 		return transaction, ErrWaitlist.Wrap(err)
 	}
 
-	if err = service.users.UpdateWalletAddress(ctx, createNFT.WalletAddress, createNFT.UserID); err != nil {
+	if err = service.users.UpdateWalletAddress(ctx, createNFT.WalletAddress, createNFT.UserID, createNFT.WalletType); err != nil {
 		if !users.ErrWalletAddressAlreadyInUse.Has(err) {
 			return transaction, ErrWaitlist.Wrap(err)
 		}
 	}
 
 	item := Item{
-		CardID: createNFT.CardID,
-		Wallet: createNFT.WalletAddress,
+		CardID:     createNFT.CardID,
+		Wallet:     createNFT.WalletAddress,
+		WalletType: createNFT.WalletType,
 	}
 	if err = service.waitList.Create(ctx, item); err != nil {
 		return transaction, ErrWaitlist.Wrap(err)
@@ -124,10 +126,11 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 	for range time.NewTicker(time.Millisecond * service.config.WaitListCheckSignature).C {
 		if item, err := service.GetByCardID(ctx, createNFT.CardID); item.Password != "" && err == nil {
 			transaction = Transaction{
-				Password: item.Password,
-				Contract: service.config.Contract,
-				TokenID:  item.TokenID,
-				Value:    item.Value,
+				Password:   item.Password,
+				Contract:   service.config.Contract,
+				TokenID:    item.TokenID,
+				Value:      item.Value,
+				WalletType: item.WalletType,
 			}
 			break
 		}

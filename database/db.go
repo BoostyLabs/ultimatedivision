@@ -247,7 +247,8 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
             wallet_address VARCHAR                                                    NOT NULL,
             value          BYTEA                                                      NOT NULL,
-            password       VARCHAR                                                    NOT NULL
+            password       VARCHAR                                                    NOT NULL,
+            wallet_type    VARCHAR                                                    NOT NULL
         );
         CREATE TABLE IF NOT EXISTS nfts(
             card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) NOT NULL,
