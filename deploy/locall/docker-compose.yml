@@ -1,0 +1,81 @@
+version: "3"
+
+services:
+  app:
+    container_name: UDApp
+    build:
+      context: ${PROJECT_PATH}
+      dockerfile: ${PROJECT_PATH}/deploy/ultimatedivision.Dockerfile
+    ports:
+      - "8087:8087" # Forward the exposed port 5000 on the container to port 8088 on the host machine (8088:5000).
+      - "8088:8088"
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_DATA_PATH}/ultimate_division:/app/data
+      - ${PROJECT_CONFIGS_PATH}/ultimate_division:/config
+      - ${PROJECT_PATH}/assets:/assets
+    depends_on:
+      - ultimatedivision_db # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+
+  nft_signer:
+    container_name: UDNFTSigner
+    build:
+      context: ${PROJECT_PATH}
+      dockerfile: ${PROJECT_PATH}/deploy/nftsigner.Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_DATA_PATH}/signer:/app/data
+      - ${PROJECT_CONFIGS_PATH}/nft_signer:/config
+    depends_on:
+      - ultimatedivision_db # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+
+  currency_signer:
+    container_name: UDCurrencySigner
+    build:
+      context: ${PROJECT_PATH}
+      dockerfile: ${PROJECT_PATH}/deploy/currencysigner.Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_DATA_PATH}/currency_signer:/app/data
+      - ${PROJECT_CONFIGS_PATH}/currency_signer:/config
+    depends_on:
+      - ultimatedivision_db # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+
+  velas:
+    container_name: velas
+    image: dcloud.hicrystal.com/velas:latest
+    ports:
+      - "3002:3002"
+    restart: unless-stopped
+    networks:
+      - fullstack
+    environment:
+      - SPONSOR_PRIVATE=${SPONSOR_PRIVATE}
+      - NETWORK_HOST=${NETWORK_HOST}
+      - VELAS_ACCOUNT_PROGRAM_ADDRESS=${VELAS_ACCOUNT_PROGRAM_ADDRESS}
+
+  ultimatedivision_db:
+    restart: always
+    image: postgres:latest
+    container_name: ultimatedivision_db
+    ports:
+      - "5635:5432"
+    volumes:
+      - ${PROJECT_DATA_PATH}/db:/var/lib/postgresql/data
+    networks:
+      - fullstack
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+# Networks to be created to facilitate communication between containers
+networks:
+  fullstack:
+    driver: bridge
