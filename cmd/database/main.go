@@ -89,7 +89,7 @@ func cmdCreateMigration(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
-	fExtExpr, _ := regexp.Compile(".sql$")
+	fExtExpr := regexp.MustCompile(".sql$")
 	curVer := 0
 
 	files, err := ioutil.ReadDir(runCfg.MigrationsPath)
