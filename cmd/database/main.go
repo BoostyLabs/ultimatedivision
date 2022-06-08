@@ -89,7 +89,7 @@ func cmdCreateMigration(cmd *cobra.Command, args []string) (err error) {
 		return Error.Wrap(err)
 	}
 
-	fExt := ".sql$"
+	fExtExpr, _ := regexp.Compile(".sql$")
 	curVer := 0
 
 	files, err := ioutil.ReadDir(runCfg.MigrationsPath)
@@ -102,11 +102,7 @@ func cmdCreateMigration(cmd *cobra.Command, args []string) (err error) {
 		}
 
 		fName := f.Name()
-		r, err := regexp.MatchString(fExt, fName)
-		if err != nil {
-			log.Error("Could not process existing transaction file names", Error.Wrap(err))
-			return Error.Wrap(err)
-		}
+		r := fExtExpr.MatchString(fName)
 		if r == false {
 			continue
 		}
@@ -114,7 +110,7 @@ func cmdCreateMigration(cmd *cobra.Command, args []string) (err error) {
 		parts := strings.Split(fName, "_")
 		ver, err := strconv.Atoi(parts[0])
 		if err != nil {
-			// Looks like that file name is without a numeric prefix
+			// Looks like that file name is without a numeric prefix.
 			continue
 		}
 		if ver > curVer {
@@ -207,7 +203,7 @@ func readConfig() (config Config, err error) {
 	return config, json.Unmarshal(configBytes, &config)
 }
 
-// isFileExist checks if file with given name exists in path
+// isFileExist checks if file with given name exists in path.
 func isFileExist(path, fName string) (bool, error) {
 	name := path
 	if name[len(name)-1:] != "/" {
@@ -225,7 +221,7 @@ func isFileExist(path, fName string) (bool, error) {
 	return false, err
 }
 
-// createFile creates a new file in path
+// createFile creates a new file in path.
 func createFile(path, fName string) error {
 	name := path
 	if name[len(name)-1:] != "/" {
