@@ -47,18 +47,17 @@ services:
     networks:
       - fullstack
 
-  velas:
-    container_name: velas
-    image: dcloud.hicrystal.com/velas:latest
+  docker-logs-to-web:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "3002:3002"
-    restart: unless-stopped
-    networks:
-      - fullstack
+      - "9999:8080"
+    depends_on:
+      - app
     environment:
-      - SPONSOR_PRIVATE=${SPONSOR_PRIVATE}
-      - NETWORK_HOST=${NETWORK_HOST}
-      - VELAS_ACCOUNT_PROGRAM_ADDRESS=${VELAS_ACCOUNT_PROGRAM_ADDRESS}
+      - DOZZLE_NO_ANALYTICS=true
 
   ultimatedivision_db:
     restart: always

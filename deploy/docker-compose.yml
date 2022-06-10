@@ -2,7 +2,7 @@ version: "3"
 
 services:
   app:
-    container_name: UDApp
+    container_name: ultimatedivision_app
     image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division${ENVIRONMENT}:latest
     ports:
       - "8087:8087" # Forward the exposed port 5000 on the container to port 8088 on the host machine (8088:5000).
@@ -18,7 +18,7 @@ services:
       - fullstack
 
   nft_signer:
-    container_name: UDNFTSigner
+    container_name: ultimatedivision_nft_signer
     image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_nft_signer${ENVIRONMENT}:latest
     restart: unless-stopped
     volumes:
@@ -30,7 +30,7 @@ services:
       - fullstack
 
   currency_signer:
-    container_name: UDCurrencySigner
+    container_name: ultimatedivision_currency_signer
     image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_currency_signer${ENVIRONMENT}:latest
     restart: unless-stopped
     volumes:
@@ -41,18 +41,17 @@ services:
     networks:
       - fullstack
 
-  velas:
-    container_name: velas
-    image: ${HOST_FOR_DOCKER_IMAGE}/velas:latest
+  docker-logs-to-web:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "3002:3002"
-    restart: unless-stopped
-    networks:
-      - fullstack
+      - "9999:8080"
+    depends_on:
+      - app
     environment:
-      - SPONSOR_PRIVATE=${SPONSOR_PRIVATE}
-      - NETWORK_HOST=${NETWORK_HOST}
-      - VELAS_ACCOUNT_PROGRAM_ADDRESS=${VELAS_ACCOUNT_PROGRAM_ADDRESS}
+      - DOZZLE_NO_ANALYTICS=true
 
   ultimatedivision_db:
     restart: always
