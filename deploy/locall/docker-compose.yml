@@ -2,7 +2,7 @@ version: "3"
 
 services:
   app:
-    container_name: UDApp
+    container_name: ultimatedivision_app
     build:
       context: ${PROJECT_PATH}
       dockerfile: ${PROJECT_PATH}/deploy/ultimatedivision.Dockerfile
@@ -20,7 +20,7 @@ services:
       - fullstack
 
   nft_signer:
-    container_name: UDNFTSigner
+    container_name: ultimatedivision_nft_signer
     build:
       context: ${PROJECT_PATH}
       dockerfile: ${PROJECT_PATH}/deploy/nftsigner.Dockerfile
@@ -34,7 +34,7 @@ services:
       - fullstack
 
   currency_signer:
-    container_name: UDCurrencySigner
+    container_name: ultimatedivision_currency_signer
     build:
       context: ${PROJECT_PATH}
       dockerfile: ${PROJECT_PATH}/deploy/currencysigner.Dockerfile
