@@ -206,6 +206,7 @@ func TestUserService(t *testing.T) {
 			user := users.User{
 				ID:           uuid.New(),
 				Wallet:       evmsignature.Address("0x2346b33F2E379dDA22b2563B009382a0Fc9aA926"),
+				WalletType:   users.Wallet,
 				Nonce:        userNonce,
 				Email:        "",
 				PasswordHash: nil,
