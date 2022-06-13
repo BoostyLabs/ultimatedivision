@@ -35,6 +35,7 @@ func TestUsers(t *testing.T) {
 		FirstName:    "Nikita",
 		LastName:     "Tarkovskyi",
 		Wallet:       "0xb2cdC7EB2F9d2E629ee97BB91700622A42e688b7",
+		WalletType:   users.Wallet,
 		LastLogin:    time.Now().UTC(),
 		Status:       0,
 		CreatedAt:    time.Now().UTC(),
@@ -48,6 +49,7 @@ func TestUsers(t *testing.T) {
 		FirstName:    "Stas",
 		LastName:     "Isakov",
 		Wallet:       "0xb2cdC7EB2F9d2E629ee97BB91700622A42e688b8",
+		WalletType:   users.Velas,
 		LastLogin:    time.Now().UTC(),
 		Status:       1,
 		CreatedAt:    time.Now().UTC(),
@@ -124,13 +126,13 @@ func TestUsers(t *testing.T) {
 		})
 
 		t.Run("update wallet address sql no rows", func(t *testing.T) {
-			err := repository.UpdateWalletAddress(ctx, evmsignature.Address("wallet_address"), uuid.New())
+			err := repository.UpdateWalletAddress(ctx, evmsignature.Address("wallet_address"), users.Wallet, uuid.New())
 			require.Error(t, err)
 			assert.Equal(t, true, users.ErrNoUser.Has(err))
 		})
 
 		t.Run("update wallet address", func(t *testing.T) {
-			err := repository.UpdateWalletAddress(ctx, "wallet_address", user1.ID)
+			err := repository.UpdateWalletAddress(ctx, "wallet_address", users.Wallet, user1.ID)
 			require.NoError(t, err)
 		})
 

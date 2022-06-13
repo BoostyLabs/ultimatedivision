@@ -36,7 +36,7 @@ type DB interface {
 	// UpdatePassword updates a password in the database.
 	UpdatePassword(ctx context.Context, passwordHash []byte, id uuid.UUID) error
 	// UpdateWalletAddress updates user's address of wallet in the database.
-	UpdateWalletAddress(ctx context.Context, wallet evmsignature.Address, id uuid.UUID) error
+	UpdateWalletAddress(ctx context.Context, wallet evmsignature.Address, walletType WalletType, id uuid.UUID) error
 	// UpdateNonce updates nonce by user.
 	UpdateNonce(ctx context.Context, id uuid.UUID, nonce []byte) error
 	// Delete deletes a user in the database.
@@ -73,7 +73,7 @@ type User struct {
 	FirstName    string               `json:"firstName"`
 	LastName     string               `json:"lastName"`
 	Wallet       evmsignature.Address `json:"wallet"`
-	VelasWallet  string               `json:"velas_wallet"`
+	WalletType   WalletType           `json:"velas_wallet"`
 	Nonce        []byte               `json:"nonce"`
 	LastLogin    time.Time            `json:"lastLogin"`
 	Status       Status               `json:"status"`

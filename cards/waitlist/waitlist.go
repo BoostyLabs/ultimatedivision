@@ -57,7 +57,6 @@ type CreateNFT struct {
 	WalletAddress evmsignature.Address `json:"walletAddress"`
 	UserID        uuid.UUID            `json:"userId"`
 	Value         big.Int              `json:"value"`
-	WalletType    users.WalletType     `json:"walletType"`
 }
 
 // Transaction entity describes password wallet, smart contracts address and token id.

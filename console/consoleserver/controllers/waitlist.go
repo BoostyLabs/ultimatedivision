@@ -52,9 +52,6 @@ func (controller *WaitList) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	createNFT.UserID = claims.UserID
-	// todo for test.
-	createNFT.WalletType = users.Wallet
-
 	transaction, err := controller.waitList.Create(ctx, createNFT)
 	if err != nil {
 		controller.log.Error("could not create nft token", ErrWaitList.Wrap(err))

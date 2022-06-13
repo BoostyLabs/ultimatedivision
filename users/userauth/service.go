@@ -238,7 +238,8 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 		Status:       users.StatusCreated,
 		CreatedAt:    time.Now().UTC(),
 		// @TODO at the time of testing login through metamask.
-		Wallet: wallet,
+		Wallet:     wallet,
+		WalletType: users.Wallet,
 	}
 
 	err = user.EncodePass()
@@ -427,12 +428,13 @@ func (service *Service) RegisterWithMetamask(ctx context.Context, signature []by
 	}
 
 	user := users.User{
-		ID:        uuid.New(),
-		Nonce:     nonce,
-		LastLogin: time.Time{},
-		Status:    users.StatusActive,
-		CreatedAt: time.Now().UTC(),
-		Wallet:    walletAddress,
+		ID:         uuid.New(),
+		Nonce:      nonce,
+		LastLogin:  time.Time{},
+		Status:     users.StatusActive,
+		CreatedAt:  time.Now().UTC(),
+		Wallet:     walletAddress,
+		WalletType: users.Wallet,
 	}
 	err = service.users.Create(ctx, user)
 	if err != nil {
@@ -601,12 +603,13 @@ func (service *Service) RegisterWithVelas(ctx context.Context, address string) e
 	}
 
 	user := users.User{
-		ID:          uuid.New(),
-		Nonce:       nonce,
-		LastLogin:   time.Time{},
-		Status:      users.StatusActive,
-		CreatedAt:   time.Now().UTC(),
-		VelasWallet: address,
+		ID:         uuid.New(),
+		Nonce:      nonce,
+		LastLogin:  time.Time{},
+		Status:     users.StatusActive,
+		CreatedAt:  time.Now().UTC(),
+		Wallet:     evmsignature.Address(address),
+		WalletType: users.Velas,
 	}
 	err = service.users.Create(ctx, user)
 	if err != nil {

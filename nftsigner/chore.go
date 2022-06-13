@@ -5,7 +5,6 @@ package nftsigner
 
 import (
 	"context"
-	"crypto/ecdsa"
 	"math/big"
 	"time"
 
@@ -26,7 +25,6 @@ type ChoreConfig struct {
 	RenewalInterval           time.Duration           `json:"renewalInterval"`
 	PrivateKey                evmsignature.PrivateKey `json:"privateKey"`
 	SmartContractAddress      evmsignature.Address    `json:"smartContractAddress"`
-	PrivateKeyVelas           evmsignature.PrivateKey `json:"privateKeyVelas"`
 	SmartContractAddressVelas evmsignature.Address    `json:"smartContractAddressVelas"`
 }
 
@@ -61,30 +59,22 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			return ChoreError.Wrap(err)
 		}
 
-		privateKeyECDSAVelas, err := crypto.HexToECDSA(string(chore.config.PrivateKeyVelas))
-		if err != nil {
-			return ChoreError.Wrap(err)
-		}
-
 		for _, token := range unsignedNFTs {
 			var signature evmsignature.Signature
 			var smartContract evmsignature.Address
-			var privatKey *ecdsa.PrivateKey
 			switch token.WalletType {
 			case users.Wallet:
 				smartContract = chore.config.SmartContractAddress
-				privatKey = privateKeyECDSA
 			case users.Velas:
 				smartContract = chore.config.SmartContractAddressVelas
-				privatKey = privateKeyECDSAVelas
 			}
 			if token.Value.Cmp(big.NewInt(0)) <= 0 {
-				signature, err = evmsignature.GenerateSignatureWithValue(token.Wallet, smartContract, token.TokenID, privatKey)
+				signature, err = evmsignature.GenerateSignatureWithValue(token.Wallet, smartContract, token.TokenID, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			} else {
-				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(token.Wallet, smartContract, &token.Value, token.TokenID, privatKey)
+				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(token.Wallet, smartContract, &token.Value, token.TokenID, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}

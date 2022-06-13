@@ -123,7 +123,7 @@ func (service *Service) UpdateWalletAddress(ctx context.Context, wallet evmsigna
 		return ErrWalletAddressAlreadyInUse.New("wallet address already in use")
 	}
 
-	return ErrUsers.Wrap(service.users.UpdateWalletAddress(ctx, wallet, id))
+	return ErrUsers.Wrap(service.users.UpdateWalletAddress(ctx, wallet, walletType, id))
 }
 
 // ChangeWalletAddress changes wallet address.
@@ -138,10 +138,10 @@ func (service *Service) ChangeWalletAddress(ctx context.Context, wallet evmsigna
 		return ErrUsers.New("this address is used by you")
 	}
 	emptyWallet := evmsignature.Address("")
-	err = service.users.UpdateWalletAddress(ctx, emptyWallet, user.ID)
+	err = service.users.UpdateWalletAddress(ctx, emptyWallet, Wallet, user.ID)
 	if err != nil {
 		return ErrUsers.Wrap(err)
 	}
 
-	return ErrUsers.Wrap(service.users.UpdateWalletAddress(ctx, wallet, id))
+	return ErrUsers.Wrap(service.users.UpdateWalletAddress(ctx, wallet, Wallet, id))
 }
