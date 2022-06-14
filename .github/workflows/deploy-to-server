@@ -50,7 +50,7 @@ jobs:
           key:        ${{ secrets.SSH_PRIVATE_KEY_UD }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd ${{ secrets.PROJECT_PATH_UD }}
+            cd ${{ secrets.PROJECT_PATH_UD_TEST }}
             ./deploy.sh 
             
       # Runs a single command using the runners shell
