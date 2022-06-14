@@ -6,7 +6,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -27,7 +26,7 @@ import (
 // Error is a default error type for database cli.
 var Error = errs.Class("database cli error")
 
-// Config contains configurable values for card generator project.
+// Config contains configurable values for the migration mechanism.
 type Config struct {
 	Database       string `json:"database"`
 	MigrationsPath string `json:"migrationsPath"`
@@ -38,7 +37,7 @@ var (
 	// database root cmd.
 	rootCmd = &cobra.Command{
 		Use:   "database",
-		Short: "cli for interacting with database project",
+		Short: "cli for interacting with project database",
 	}
 
 	// create database schema.
@@ -79,7 +78,7 @@ func cmdCreateMigration(cmd *cobra.Command, args []string) (err error) {
 	log := zaplog.NewLog()
 
 	if len(args) == 0 {
-		log.Error("migration name is required", Error.New("invalid arguments"))
+		log.Error("Migration name is required", Error.New("invalid arguments"))
 		return Error.New("invalid arguments")
 	}
 
@@ -95,6 +94,7 @@ func cmdCreateMigration(cmd *cobra.Command, args []string) (err error) {
 	files, err := ioutil.ReadDir(runCfg.MigrationsPath)
 	if err != nil {
 		log.Error("Could not read config dir", Error.Wrap(err))
+		return err
 	}
 	for _, f := range files {
 		if f.IsDir() {
@@ -124,7 +124,7 @@ func cmdCreateMigration(cmd *cobra.Command, args []string) (err error) {
 		migName + ".down.sql",
 	}
 	for _, fName := range fNames {
-		isExist, err := isFileExist(runCfg.MigrationsPath, fName)
+		isExist, err := fileutils.IsFileExist(runCfg.MigrationsPath, fName)
 		if err != nil {
 			log.Error("Could not check file existence ", Error.Wrap(err))
 			return Error.Wrap(err)
@@ -132,13 +132,13 @@ func cmdCreateMigration(cmd *cobra.Command, args []string) (err error) {
 		if isExist {
 			errMsg := fmt.Sprintf("File '%s' is already exists", fName)
 			log.Error(errMsg, Error.New("file exists"))
-			return Error.New("file exists")
+			return Error.New("File exists")
 		}
 	}
 
 	for _, fName := range fNames {
-		if err := createFile(runCfg.MigrationsPath, fName); err != nil {
-			errMsg := fmt.Sprintf("Could not crate file '%s'", fName)
+		if err := fileutils.CreateFile(runCfg.MigrationsPath, fName); err != nil {
+			errMsg := fmt.Sprintf("Could not create file '%s'", fName)
 			log.Error(errMsg, Error.Wrap(err))
 		} else {
 			fmt.Printf("New file: %s\n", fName)
@@ -155,8 +155,8 @@ func cmdMigrate(cmd *cobra.Command, args []string) (err error) {
 	log := zaplog.NewLog()
 
 	if len(args) == 0 {
-		log.Error("at least 1 argument is required", Error.New("invalid arguments"))
-		return Error.New("invalid arguments")
+		log.Error("At least 1 argument is required", Error.New("invalid arguments"))
+		return Error.New("Invalid arguments")
 	}
 
 	runCfg, err = readConfig()
@@ -201,39 +201,4 @@ func readConfig() (config Config, err error) {
 	}
 
 	return config, json.Unmarshal(configBytes, &config)
-}
-
-// isFileExist checks if file with given name exists in path.
-func isFileExist(path, fName string) (bool, error) {
-	name := path
-	if name[len(name)-1:] != "/" {
-		name += "/"
-	}
-
-	name += fName
-	_, err := os.Stat(name)
-	if err == nil {
-		return true, nil
-	}
-	if errors.Is(err, os.ErrNotExist) {
-		return false, nil
-	}
-	return false, err
-}
-
-// createFile creates a new file in path.
-func createFile(path, fName string) error {
-	name := path
-	if name[len(name)-1:] != "/" {
-		name += "/"
-	}
-
-	name += fName
-	f, err := os.Create(name)
-	if err != nil {
-		return err
-	}
-
-	_ = f.Close()
-	return nil
 }

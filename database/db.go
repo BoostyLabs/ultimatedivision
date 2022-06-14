@@ -285,7 +285,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
 }
 
 // ExecuteMigrations executes migrations by path in database.
-func (db *database) ExecuteMigrations(ctx context.Context, migrationsPath string, isUp bool) (err error) {
+func (db *database) ExecuteMigrations(ctx context.Context, migrationsPath string, isUp bool) error {
 	driver, err := postgres.WithInstance(db.conn, &postgres.Config{})
 	if err != nil {
 		return Error.Wrap(err)
