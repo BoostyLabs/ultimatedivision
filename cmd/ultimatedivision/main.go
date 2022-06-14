@@ -82,6 +82,7 @@ func init() {
 	rootCmd.AddCommand(seedCmd)
 	rootCmd.AddCommand(matchCmd)
 	rootCmd.AddCommand(destroyCmd)
+	rootCmd.PersistentFlags().StringVar(&defaultConfigDir, "config", defaultConfigDir, "Config file path")
 }
 
 func main() {
@@ -162,6 +163,13 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 	err = peer.Divisions.Service.CreateDivisions(ctx, seed.Divisions)
 	if err != nil {
 		log.Error("Error starting ultimatedivision create divisions", Error.Wrap(err))
+		return Error.Wrap(err)
+	}
+
+	// TODO: remove after fixing bug with matches.
+	err = peer.Seasons.Service.Create(ctx)
+	if err != nil {
+		log.Error("Error starting ultimatedivision create seasons", Error.Wrap(err))
 		return Error.Wrap(err)
 	}
 

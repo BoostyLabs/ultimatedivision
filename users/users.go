@@ -19,7 +19,7 @@ var ErrNoUser = errs.Class("user does not exist")
 
 // DB exposes access to users db.
 //
-// architecture: DB
+// architecture: DB.
 type DB interface {
 	// List returns all users from the data base.
 	List(ctx context.Context) ([]User, error)
@@ -28,7 +28,7 @@ type DB interface {
 	// GetByEmail returns user by email from the data base.
 	GetByEmail(ctx context.Context, email string) (User, error)
 	// GetByWalletAddress returns user by wallet address from the data base.
-	GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address) (User, error)
+	GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address, walletType WalletType) (User, error)
 	// Create creates a user and writes to the database.
 	Create(ctx context.Context, user User) error
 	// Update updates a status in the database.
@@ -37,6 +37,8 @@ type DB interface {
 	UpdatePassword(ctx context.Context, passwordHash []byte, id uuid.UUID) error
 	// UpdateWalletAddress updates user's address of wallet in the database.
 	UpdateWalletAddress(ctx context.Context, wallet evmsignature.Address, id uuid.UUID) error
+	// UpdateNonce updates nonce by user.
+	UpdateNonce(ctx context.Context, id uuid.UUID, nonce []byte) error
 	// Delete deletes a user in the database.
 	Delete(ctx context.Context, id uuid.UUID) error
 	// GetNickNameByID returns nickname by user id from the database.
@@ -59,6 +61,9 @@ const (
 	StatusSuspended Status = 2
 )
 
+// DefaultMessageForRegistration use for registration user by metamask.
+const DefaultMessageForRegistration = "Register with metamask"
+
 // User describes user entity.
 type User struct {
 	ID           uuid.UUID            `json:"id"`
@@ -68,6 +73,8 @@ type User struct {
 	FirstName    string               `json:"firstName"`
 	LastName     string               `json:"lastName"`
 	Wallet       evmsignature.Address `json:"wallet"`
+	VelasWallet  string               `json:"velas_wallet"`
+	Nonce        []byte               `json:"nonce"`
 	LastLogin    time.Time            `json:"lastLogin"`
 	Status       Status               `json:"status"`
 	CreatedAt    time.Time            `json:"createdAt"`
@@ -108,27 +115,6 @@ type Password struct {
 	NewPassword string `json:"newPassword"`
 }
 
-// LoginMetamaskFields for login user from metamask.
-type LoginMetamaskFields struct {
-	Message string               `json:"message"`
-	Hash    string               `json:"hash"`
-	Address evmsignature.Address `json:"address"`
-}
-
-// IsValid for check login user from metamask fields.
-func (lm LoginMetamaskFields) IsValid() bool {
-	switch {
-	case lm.Hash == "":
-		return false
-	case lm.Message == "":
-		return false
-	case lm.Address == "":
-		return false
-	default:
-		return true
-	}
-}
-
 // IsPasswordValid check the password for all conditions.
 func IsPasswordValid(s string) bool {
 	var number, upper, special bool
@@ -155,13 +141,29 @@ func (createUserFields *CreateUserFields) IsValid() bool {
 		return false
 	case createUserFields.Password == "":
 		return false
-	case createUserFields.FirstName == "":
-		return false
-	case createUserFields.LastName == "":
-		return false
 	case createUserFields.NickName == "":
 		return false
 	default:
 		return true
 	}
+}
+
+// WalletType defines the list of possible wallets types.
+type WalletType string
+
+const (
+	// Wallet indicates that wallet type is wallet_address.
+	Wallet WalletType = "wallet_address"
+	// Velas indicates that wallet type is velas_wallet_address.
+	Velas WalletType = "velas_wallet_address"
+)
+
+// IsValid checks if type of wallet valid.
+func (w WalletType) IsValid() bool {
+	return w == Wallet || w == Velas
+}
+
+// ToString returns wallet type in string.
+func (w WalletType) ToString() string {
+	return string(w)
 }

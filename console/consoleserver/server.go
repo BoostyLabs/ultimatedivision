@@ -101,8 +101,15 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	authRouter.HandleFunc("/login", authController.Login).Methods(http.MethodPost)
 
 	metamaskRouter := authRouter.PathPrefix("/metamask").Subrouter()
-	metamaskRouter.HandleFunc("/token", authController.SendTokenMessageForMetamask).Methods(http.MethodGet)
+	metamaskRouter.HandleFunc("/register", authController.MetamaskRegister).Methods(http.MethodPost)
+	metamaskRouter.HandleFunc("/nonce", authController.Nonce).Methods(http.MethodGet)
 	metamaskRouter.HandleFunc("/login", authController.MetamaskLogin).Methods(http.MethodPost)
+
+	velasRouter := authRouter.PathPrefix("/velas").Subrouter()
+	velasRouter.HandleFunc("/register", authController.VelasRegister).Methods(http.MethodPost)
+	velasRouter.HandleFunc("/nonce", authController.Nonce).Methods(http.MethodGet)
+	velasRouter.HandleFunc("/login", authController.VelasLogin).Methods(http.MethodPost)
+	velasRouter.HandleFunc("/vaclient", authController.VelasVAClientFields).Methods(http.MethodGet)
 
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
@@ -117,6 +124,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	profileRouter := apiRouter.PathPrefix("/profile").Subrouter()
 	profileRouter.Use(server.withAuth)
 	profileRouter.HandleFunc("", userController.GetProfile).Methods(http.MethodGet)
+
 	metamaskRouterWithAuth := profileRouter.PathPrefix("/metamask").Subrouter()
 	metamaskRouterWithAuth.HandleFunc("/wallet", userController.CreateWalletFromMetamask).Methods(http.MethodPatch)
 	metamaskRouterWithAuth.HandleFunc("/wallet/change", userController.ChangeWalletFromMetamask).Methods(http.MethodPatch)
@@ -223,7 +231,7 @@ func (server *Server) appHandler(w http.ResponseWriter, r *http.Request) {
 	header := w.Header()
 
 	header.Set("Content-Type", "text/html; charset=UTF-8")
-	// header.Set("X-Content-Type-Options", "nosniff")
+	// header.Set("X-Content-Type-Options", "nosniff").
 	header.Set("Referrer-Policy", "same-origin")
 
 	if server.templates.index == nil {
