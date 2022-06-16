@@ -48,7 +48,7 @@ jobs:
           port:       ${{ secrets.SSH_PORT_UD }}
           username:   ${{ secrets.SSH_USERNAME_UD }}
           key:        ${{ secrets.SSH_PRIVATE_KEY_UD }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE_UD }}
           script: |
             cd ${{ secrets.PROJECT_PATH_UD_DEVELOP }}
             ./deploy.sh 
@@ -66,7 +66,7 @@ jobs:
           port:       ${{ secrets.SSH_PORT_UD }}
           username:   ${{ secrets.SSH_USERNAME_UD }}
           key:        ${{ secrets.SSH_PRIVATE_KEY_UD }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE_UD }}
           script: |
-            cd ${{ secrets.PROJECT_PATH_STAGE_UD }}
+            cd ${{ secrets.PROJECT_PATH_UD_STAGE }}
             ./deploy.sh 
