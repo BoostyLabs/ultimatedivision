@@ -5,9 +5,9 @@ name: web
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop, stage ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, develop, stage ]
 
 jobs:
   build:
