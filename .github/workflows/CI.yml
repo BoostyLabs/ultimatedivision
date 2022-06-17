@@ -1,4 +1,4 @@
-name: Go
+name: "CI"
 on:
   push:
     branches: [ master, develop, stage ]
@@ -6,7 +6,7 @@ on:
     branches: [ master, develop, stage ]
 
 jobs:
-  build:
+  build_and_test_go:
     name: Build
     runs-on: ubuntu-latest
     services:
@@ -41,3 +41,25 @@ jobs:
           GOROOT: ""
       - name: Test
         run: go test ./... .
+
+  build_and_lint_web:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - name: Install
+        run: npm install
+        working-directory: ./web/console
+      - name: Lint
+        run: npm run lint
+        working-directory: ./web/console
+      - name: Build
+        run: npm run build
+        working-directory: ./web/console
