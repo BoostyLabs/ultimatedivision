@@ -7,7 +7,10 @@ import (
 	"context"
 	"database/sql"
 
-	_ "github.com/lib/pq" // using postgres driver.
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file" // using golang migrate source.
+	_ "github.com/lib/pq"                                // using postgres driver.
 	"github.com/zeebo/errs"
 
 	"ultimatedivision"
@@ -279,6 +282,27 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
 	}
 
 	return nil
+}
+
+// ExecuteMigrations executes migrations by path in database.
+func (db *database) ExecuteMigrations(ctx context.Context, migrationsPath string, isUp bool) error {
+	driver, err := postgres.WithInstance(db.conn, &postgres.Config{})
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	m, err := migrate.NewWithDatabaseInstance("file://"+migrationsPath, "postgres", driver)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	if isUp {
+		err = m.Up()
+	} else {
+		err = m.Down()
+	}
+
+	return Error.Wrap(err)
 }
 
 // Close closes underlying db connection.

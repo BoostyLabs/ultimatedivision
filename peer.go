@@ -96,6 +96,9 @@ type DB interface {
 
 	// CreateSchema create tables.
 	CreateSchema(ctx context.Context) error
+
+	// ExecuteMigrations executes migrations by path in database.
+	ExecuteMigrations(ctx context.Context, migrationsPath string, isUp bool) error
 }
 
 // Config is the global configuration for ultimatedivision.

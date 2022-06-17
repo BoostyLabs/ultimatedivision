@@ -5,6 +5,7 @@ package fileutils
 
 import (
 	"bufio"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -85,4 +86,39 @@ func ApplicationDir(subdir ...string) string {
 	}
 
 	return filepath.Join(append([]string{appdir}, subdir...)...)
+}
+
+// IsFileExist checks if file with given name exists in path.
+func IsFileExist(path, fName string) (bool, error) {
+	name := path
+	if name[len(name)-1:] != "/" {
+		name += "/"
+	}
+
+	name += fName
+	_, err := os.Stat(name)
+	if err == nil {
+		return true, nil
+	}
+	if errors.Is(err, os.ErrNotExist) {
+		return false, nil
+	}
+	return false, err
+}
+
+// CreateFile creates a new file in path.
+func CreateFile(path, fName string) error {
+	name := path
+	if name[len(name)-1:] != "/" {
+		name += "/"
+	}
+
+	name += fName
+	f, err := os.Create(name)
+	if err != nil {
+		return err
+	}
+
+	_ = f.Close()
+	return nil
 }
