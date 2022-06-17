@@ -5,7 +5,7 @@ env:
   CURRENT_BRANCH : ${{ github.ref_name }}
 on:
   workflow_run:
-    workflows: ["GO", "web"]
+    workflows: ["CI"]
     types:
       - completed
     branches:
