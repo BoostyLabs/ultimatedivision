@@ -38,7 +38,7 @@ jobs:
       # Runs a single command using the runners shell.
       - name: Build & push docker images to our server
         if: env.CURRENT_BRANCH == 'develop'
-        run:  npm install -g npm && make docker VERSION=${{ env.DOCKER_VERSION }} ENVIRONMENT=/develop
+        run: make docker VERSION=${{ env.DOCKER_VERSION }} ENVIRONMENT=/develop
 
       - name: Deploy DEVELOP environment images
         uses: appleboy/ssh-action@master
