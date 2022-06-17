@@ -44,13 +44,13 @@ jobs:
         uses: appleboy/ssh-action@master
         if: env.CURRENT_BRANCH == 'develop'
         with:
-          host:       ${{ secrets.SSH_HOST_UD_DEVELOP }}
-          port:       ${{ secrets.SSH_PORT_UD }}
-          username:   ${{ secrets.SSH_USERNAME_UD }}
-          key:        ${{ secrets.SSH_PRIVATE_KEY_UD }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE_UD }}
+          host:       ${{ secrets.SSH_HOST_DEVELOP }}
+          port:       ${{ secrets.SSH_PORT }}
+          username:   ${{ secrets.SSH_USERNAME }}
+          key:        ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd ${{ secrets.PROJECT_PATH_UD_DEVELOP }}
+            cd ${{ secrets.PROJECT_PATH_DEVELOP }}
             ./deploy.sh 
 
       # Runs a single command using the runners shell.
@@ -62,11 +62,11 @@ jobs:
         uses: appleboy/ssh-action@master
         if: env.CURRENT_BRANCH == 'stage'
         with:
-          host:       ${{ secrets.SSH_HOST_UD_STAGE }}
-          port:       ${{ secrets.SSH_PORT_UD }}
-          username:   ${{ secrets.SSH_USERNAME_UD }}
-          key:        ${{ secrets.SSH_PRIVATE_KEY_UD }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE_UD }}
+          host:       ${{ secrets.SSH_HOST_STAGE }}
+          port:       ${{ secrets.SSH_PORT }}
+          username:   ${{ secrets.SSH_USERNAME }}
+          key:        ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd ${{ secrets.PROJECT_PATH_UD_STAGE }}
+            cd ${{ secrets.PROJECT_PATH_STAGE }}
             ./deploy.sh 
