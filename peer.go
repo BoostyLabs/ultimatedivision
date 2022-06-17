@@ -461,9 +461,13 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // queue setup.
 		peer.Queue.Service = queue.NewService(
 			config.Queue.Config,
+			logger,
 			peer.Database.Queue(),
 			peer.Users.Service,
 			peer.Clubs.Service,
+			peer.Matches.Service,
+			peer.CurrencyWaitList.Service,
+			peer.Seasons.Service,
 		)
 
 		peer.Queue.PlaceChore = queue.NewChore(

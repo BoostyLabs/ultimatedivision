@@ -75,7 +75,7 @@ func TestQueue(t *testing.T) {
 			repositoryQueue.Create(queueClient2)
 
 			queueList := repositoryQueue.List()
-			assert.Equal(t, len(queueList), 2)
+			require.Len(t, queueList, 2)
 			compareQueues(t, queueClient1, queueList[0])
 			compareQueues(t, queueClient2, queueList[1])
 		})
@@ -85,7 +85,7 @@ func TestQueue(t *testing.T) {
 			require.NoError(t, err)
 
 			queueList := repositoryQueue.List()
-			assert.Equal(t, len(queueList), 1)
+			require.Len(t, queueList, 1)
 			compareQueues(t, queueClient2, queueList[0])
 		})
 	})
