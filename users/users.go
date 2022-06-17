@@ -73,7 +73,7 @@ type User struct {
 	FirstName    string               `json:"firstName"`
 	LastName     string               `json:"lastName"`
 	Wallet       evmsignature.Address `json:"wallet"`
-	WalletType   WalletType           `json:"velas_wallet"`
+	WalletType   WalletType           `json:"walletType"`
 	Nonce        []byte               `json:"nonce"`
 	LastLogin    time.Time            `json:"lastLogin"`
 	Status       Status               `json:"status"`
@@ -152,15 +152,15 @@ func (createUserFields *CreateUserFields) IsValid() bool {
 type WalletType string
 
 const (
-	// Wallet indicates that wallet type is wallet_address.
-	Wallet WalletType = "wallet_address"
-	// Velas indicates that wallet type is velas_wallet_address.
-	Velas WalletType = "velas_wallet_address"
+	// WalletTypeETH indicates that wallet type is wallet_address.
+	WalletTypeETH WalletType = "wallet_address"
+	// WalletTypeVelas indicates that wallet type is velas_wallet_address.
+	WalletTypeVelas WalletType = "velas_wallet_address"
 )
 
 // IsValid checks if type of wallet valid.
 func (w WalletType) IsValid() bool {
-	return w == Wallet || w == Velas
+	return w == WalletTypeETH || w == WalletTypeVelas
 }
 
 // ToString returns wallet type in string.

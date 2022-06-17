@@ -161,7 +161,7 @@ func TestWaitList(t *testing.T) {
 		CardID:     card1.ID,
 		Wallet:     "0x96216849c49358b10257cb55b28ea603c874b05e",
 		Value:      *big.NewInt(100),
-		WalletType: users.Wallet,
+		WalletType: users.WalletTypeETH,
 	}
 
 	item2 := waitlist.Item{
@@ -169,7 +169,7 @@ func TestWaitList(t *testing.T) {
 		CardID:     card2.ID,
 		Wallet:     "0x96216849c49358B10254cb55b28eA603c874b05E",
 		Value:      *big.NewInt(200),
-		WalletType: users.Wallet,
+		WalletType: users.WalletTypeETH,
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {

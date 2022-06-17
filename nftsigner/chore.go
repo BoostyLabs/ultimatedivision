@@ -25,7 +25,7 @@ type ChoreConfig struct {
 	RenewalInterval           time.Duration           `json:"renewalInterval"`
 	PrivateKey                evmsignature.PrivateKey `json:"privateKey"`
 	SmartContractAddress      evmsignature.Address    `json:"smartContractAddress"`
-	SmartContractAddressVelas evmsignature.Address    `json:"smartContractAddressVelas"`
+	VelasSmartContractAddress evmsignature.Address    `json:"velasSmartContractAddress"`
 }
 
 // Chore requests for unsigned nft tokens and sign all of them .
@@ -63,10 +63,10 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			var signature evmsignature.Signature
 			var smartContract evmsignature.Address
 			switch token.WalletType {
-			case users.Wallet:
+			case users.WalletTypeETH:
 				smartContract = chore.config.SmartContractAddress
-			case users.Velas:
-				smartContract = chore.config.SmartContractAddressVelas
+			case users.WalletTypeVelas:
+				smartContract = chore.config.VelasSmartContractAddress
 			}
 			if token.Value.Cmp(big.NewInt(0)) <= 0 {
 				signature, err = evmsignature.GenerateSignatureWithValue(token.Wallet, smartContract, token.TokenID, privateKeyECDSA)

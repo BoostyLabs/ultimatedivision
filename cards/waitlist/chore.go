@@ -111,7 +111,7 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 				return ChoreError.Wrap(err)
 			}
 
-			user, err := chore.users.GetByWalletAddress(ctx, toAddress, users.Wallet)
+			user, err := chore.users.GetByWalletAddress(ctx, toAddress, users.WalletTypeETH)
 			if err != nil {
 				if err = chore.nfts.Delete(ctx, nft.CardID); err != nil {
 					return ChoreError.Wrap(err)
