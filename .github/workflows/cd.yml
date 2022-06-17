@@ -1,16 +1,16 @@
 # This is workflow to automatically deploy on server.
 
-name: "CD"
+name: CD
 env:
   CURRENT_BRANCH : ${{ github.ref_name }}
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: [ CI ]
     types:
       - completed
     branches:
-      - 'stage'
-      - 'develop'
+      - stage
+      - develop
 
   # Allows you to run this workflow manually from the Actions tab.
   workflow_dispatch:
