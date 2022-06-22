@@ -5,6 +5,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
@@ -78,6 +79,7 @@ func (controller *Queue) Create(w http.ResponseWriter, r *http.Request) {
 		UserID:     claims.UserID,
 		Connection: conn,
 		SquadID:    request.SquadID,
+		CreatedAt:  time.Now().UTC(),
 	}
 
 	switch request.Action {

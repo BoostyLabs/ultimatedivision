@@ -106,6 +106,7 @@ func TestDivideClients(t *testing.T) {
 		Connection: nil,
 		SquadID:    uuid.New(),
 		IsPlaying:  true,
+		CreatedAt:  time.Now().UTC(),
 	}
 
 	client2 := queue.Client{
@@ -113,6 +114,7 @@ func TestDivideClients(t *testing.T) {
 		Connection: nil,
 		SquadID:    uuid.New(),
 		IsPlaying:  false,
+		CreatedAt:  time.Now().UTC(),
 	}
 
 	testCases := []testDividing{
@@ -128,6 +130,11 @@ func TestDivideClients(t *testing.T) {
 
 	for _, testCase := range testCases {
 		result := queue.DivideClients(testCase.incomeData)
+
+		if testCase.result == nil && result == nil {
+			continue
+		}
+
 		compareClients(t, result, testCase.result)
 	}
 }

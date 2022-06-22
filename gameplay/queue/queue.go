@@ -49,6 +49,7 @@ type Client struct {
 	Connection *websocket.Conn
 	SquadID    uuid.UUID
 	IsPlaying  bool
+	CreatedAt  time.Time
 }
 
 // Request entity describes values sent by client.
