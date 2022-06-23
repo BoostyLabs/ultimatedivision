@@ -29,8 +29,8 @@ type DB interface {
 	List(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// ListByUserID returns cards by user id from the database.
 	ListByUserID(ctx context.Context, id uuid.UUID, cursor pagination.Cursor) (Page, error)
-	// ListByTypeNoOrdered returns cards where type isn't ordered from the database.
-	ListByTypeNoOrdered(ctx context.Context) ([]Card, error)
+	// ListByTypeUnordered returns cards where type isn't ordered from the database.
+	ListByTypeUnordered(ctx context.Context) ([]Card, error)
 	// ListWithFilters returns cards with filters from the database.
 	ListWithFilters(ctx context.Context, filters []Filters, cursor pagination.Cursor) (Page, error)
 	// ListCardIDsWithFiltersWhereActiveLot returns card ids where active lots from DB, taking the necessary filters.
@@ -169,8 +169,8 @@ const (
 	TypeWon Type = "won"
 	// TypeBought indicates that the card bought in the marketplace.
 	TypeBought Type = "bought"
-	// TypeNoOrdered indicates that the card isn't ordered in the store.
-	TypeNoOrdered Type = "noOrdered"
+	// TypeUnordered indicates that the card isn't ordered in the store.
+	TypeUnordered Type = "unordered"
 	// TypeOrdered indicates that the card ordered in the store.
 	TypeOrdered Type = "ordered"
 )

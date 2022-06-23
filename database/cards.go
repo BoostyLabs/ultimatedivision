@@ -219,11 +219,11 @@ func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID, cursor p
 	return userCardsPage, ErrCard.Wrap(err)
 }
 
-// ListByTypeNoOrdered returns cards where type isn't ordered from the database.
-func (cardsDB *cardsDB) ListByTypeNoOrdered(ctx context.Context) ([]cards.Card, error) {
+// ListByTypeUnordered returns cards where type isn't ordered from the database.
+func (cardsDB *cardsDB) ListByTypeUnordered(ctx context.Context) ([]cards.Card, error) {
 	query := `SELECT * FROM cards WHERE type = $1`
 
-	rows, err := cardsDB.conn.QueryContext(ctx, query, cards.TypeNoOrdered)
+	rows, err := cardsDB.conn.QueryContext(ctx, query, cards.TypeUnordered)
 	if err != nil {
 		return nil, ErrCard.Wrap(err)
 	}

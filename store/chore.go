@@ -94,7 +94,7 @@ func (chore *Chore) Run(ctx context.Context) error {
 		}
 
 		for i := 0; i < cardsAmount; i++ {
-			card, err := chore.cards.Create(ctx, uuid.Nil, percentageQualities, cards.TypeNoOrdered)
+			card, err := chore.cards.Create(ctx, uuid.Nil, percentageQualities, cards.TypeUnordered)
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}

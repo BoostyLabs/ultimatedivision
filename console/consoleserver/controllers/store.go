@@ -64,7 +64,7 @@ func (controller *Store) Buy(w http.ResponseWriter, r *http.Request) {
 		controller.serveError(w, http.StatusBadRequest, ErrStore.Wrap(err))
 		return
 	}
-	if !createNFT.WalletAddress.IsValidAddress() {
+	if err := createNFT.WalletAddress.IsValidAddress(); err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrStore.New("wallet address is invalid"))
 		return
 	}

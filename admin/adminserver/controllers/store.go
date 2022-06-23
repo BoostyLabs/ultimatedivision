@@ -70,22 +70,12 @@ func (controller *Store) List(w http.ResponseWriter, r *http.Request) {
 
 	var settingResponses []SettingResponse
 	for _, setting := range settings {
-		price, err := strconv.ParseFloat(setting.Price.String(), 64)
-		if err != nil {
-			controller.log.Error("could not convert price", ErrStore.Wrap(err))
-			http.Error(w, "could not convert price", http.StatusInternalServerError)
-			return
-		}
-
-		if price != 0 {
-			price /= float64(evmsignature.WeiInEthereum)
-		}
 		settingResponse := SettingResponse{
 			ID:          setting.ID,
 			CardsAmount: setting.CardsAmount,
 			IsRenewal:   setting.IsRenewal,
 			HourRenewal: setting.HourRenewal,
-			Price:       price,
+			Price:       evmsignature.WeiBigToEthereumFloat(&setting.Price),
 		}
 
 		settingResponses = append(settingResponses, settingResponse)
@@ -177,12 +167,18 @@ func (controller *Store) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		bigIntPrice, err := evmsignature.EthereumFloatToWeiBig(price)
+		if err != nil {
+			http.Error(w, "invalid price", http.StatusBadRequest)
+			return
+		}
+
 		setting := store.Setting{
 			ID:          settingID,
 			CardsAmount: cardsAmount,
 			IsRenewal:   isRenewal,
 			HourRenewal: hourRenewal,
-			Price:       *evmsignature.EthereumToWei(price),
+			Price:       *bigIntPrice,
 		}
 
 		if err = controller.store.Update(ctx, setting); err != nil {

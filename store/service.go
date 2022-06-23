@@ -5,12 +5,12 @@ package store
 
 import (
 	"context"
-	"math/rand"
 
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/waitlist"
+	"ultimatedivision/pkg/rand"
 )
 
 // ErrStore indicated that there was an error in service.
@@ -48,8 +48,12 @@ func (service *Service) Buy(ctx context.Context, createNFT waitlist.CreateNFT) (
 		return transaction, ErrStore.New("all cards of store are minted")
 	}
 
-	randNumberCard := rand.Intn(len(cardsList)) - 1
-	createNFT.CardID = cardsList[randNumberCard].ID
+	randNumberCard, err := rand.RandomInRange(len(cardsList))
+	if err != nil {
+		return transaction, ErrStore.Wrap(err)
+	}
+
+	createNFT.CardID = cardsList[randNumberCard-1].ID
 
 	setting, err := service.Get(ctx, ActiveSetting)
 	if err != nil {
