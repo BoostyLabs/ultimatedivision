@@ -337,7 +337,7 @@ func (service *Service) List(ctx context.Context, cursor pagination.Cursor) (Pag
 	return cardsListPage, ErrCards.Wrap(err)
 }
 
-// ListByTypeNoOrdered returns cards where type isn't ordered from the database.
+// ListByTypeNoOrdered returns cards where type is unordered from the database.
 func (service *Service) ListByTypeNoOrdered(ctx context.Context) ([]Card, error) {
 	cardsList, err := service.cards.ListByTypeUnordered(ctx)
 	return cardsList, ErrCards.Wrap(err)
