@@ -13,6 +13,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/remotefilestorage/storj"
+	"ultimatedivision/users"
 )
 
 // ErrNoItem indicates that item for wait list does not exist.
@@ -42,11 +43,12 @@ type DB interface {
 
 // Item entity describes item fot wait list nfts.
 type Item struct {
-	TokenID  int64                  `json:"tokenId"`
-	CardID   uuid.UUID              `json:"cardId"`
-	Wallet   evmsignature.Address   `json:"wallet"`
-	Value    big.Int                `json:"value"`
-	Password evmsignature.Signature `json:"password"`
+	TokenID    int64                  `json:"tokenId"`
+	CardID     uuid.UUID              `json:"cardId"`
+	Wallet     evmsignature.Address   `json:"wallet"`
+	WalletType users.WalletType       `json:"walletType"`
+	Value      big.Int                `json:"value"`
+	Password   evmsignature.Signature `json:"password"`
 }
 
 // CreateNFT describes body of request for creating nft token.
@@ -63,6 +65,7 @@ type Transaction struct {
 	NFTCreateContract NFTCreateContract      `json:"nftCreateContract"`
 	TokenID           int64                  `json:"tokenId"`
 	Value             big.Int                `json:"value"`
+	WalletType        users.WalletType       `json:"walletType"`
 }
 
 // Config defines values needed by check mint nft in blockchain.

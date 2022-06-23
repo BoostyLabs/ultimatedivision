@@ -14,6 +14,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards/waitlist"
+	"ultimatedivision/users"
 )
 
 // ChoreError represents nft signer chore error type.
@@ -21,9 +22,10 @@ var ChoreError = errs.Class("nft signer chore error")
 
 // ChoreConfig is the global configuration for nftsigner.
 type ChoreConfig struct {
-	RenewalInterval          time.Duration           `json:"renewalInterval"`
-	PrivateKey               evmsignature.PrivateKey `json:"privateKey"`
-	NFTCreateContractAddress evmsignature.Address    `json:"nftCreateContractAddress"`
+	RenewalInterval           time.Duration           `json:"renewalInterval"`
+	PrivateKey                evmsignature.PrivateKey `json:"privateKey"`
+	NFTCreateContractAddress  evmsignature.Address    `json:"nftCreateContractAddress"`
+	VelasSmartContractAddress evmsignature.Address    `json:"velasSmartContractAddress"`
 }
 
 // Chore requests for unsigned nft tokens and sign all of them .
@@ -58,14 +60,25 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		}
 
 		for _, token := range unsignedNFTs {
-			var signature evmsignature.Signature
+			var (
+				signature     evmsignature.Signature
+				smartContract evmsignature.Address
+			)
+
+			switch token.WalletType {
+			case users.WalletTypeETH:
+				smartContract = chore.config.NFTCreateContractAddress
+			case users.WalletTypeVelas:
+				smartContract = chore.config.VelasSmartContractAddress
+			}
+
 			if token.Value.Cmp(big.NewInt(0)) <= 0 {
-				signature, err = evmsignature.GenerateSignatureWithValue(token.Wallet, chore.config.NFTCreateContractAddress, token.TokenID, privateKeyECDSA)
+				signature, err = evmsignature.GenerateSignatureWithValue(token.Wallet, smartContract, token.TokenID, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			} else {
-				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(token.Wallet, chore.config.NFTCreateContractAddress, &token.Value, token.TokenID, privateKeyECDSA)
+				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(token.Wallet, smartContract, &token.Value, token.TokenID, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}

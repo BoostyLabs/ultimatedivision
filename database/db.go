@@ -79,7 +79,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             first_name           VARCHAR                  NOT NULL,
             last_name            VARCHAR                  NOT NULL,
             wallet_address       VARCHAR,
-            velas_wallet_address VARCHAR,
+            wallet_type          VARCHAR,
             nonce                BYTEA,
             last_login           TIMESTAMP WITH TIME ZONE NOT NULL,
             status               INTEGER                  NOT NULL,
@@ -247,7 +247,8 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
             wallet_address VARCHAR                                                    NOT NULL,
             value          BYTEA                                                      NOT NULL,
-            password       VARCHAR                                                    NOT NULL
+            password       VARCHAR                                                    NOT NULL,
+            wallet_type    VARCHAR                                                    NOT NULL
         );
         CREATE TABLE IF NOT EXISTS nfts(
             card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) NOT NULL,
