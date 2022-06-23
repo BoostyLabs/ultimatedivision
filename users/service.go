@@ -24,7 +24,7 @@ var ErrWalletAddressAlreadyInUse = errs.Class("wallet address is already in use"
 
 // Service is handling users related logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	users DB
 }
@@ -50,7 +50,7 @@ func (service *Service) GetByEmail(ctx context.Context, email string) (User, err
 
 // GetByWalletAddress returns user by wallet address from the data base.
 func (service *Service) GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address) (User, error) {
-	user, err := service.users.GetByWalletAddress(ctx, walletAddress)
+	user, err := service.users.GetByWalletAddress(ctx, walletAddress, Wallet)
 	return user, ErrUsers.Wrap(err)
 }
 
