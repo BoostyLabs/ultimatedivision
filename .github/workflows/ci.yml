@@ -62,7 +62,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install
-        run: npm install
+        run: npm ci
         working-directory: ./web/console
       - name: Lint
         run: npm run lint
