@@ -10,6 +10,7 @@ import (
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/zeebo/errs"
 
@@ -24,8 +25,8 @@ var ChoreError = errs.Class("nft signer chore error")
 type ChoreConfig struct {
 	RenewalInterval           time.Duration           `json:"renewalInterval"`
 	PrivateKey                evmsignature.PrivateKey `json:"privateKey"`
-	NFTCreateContractAddress  evmsignature.Address    `json:"nftCreateContractAddress"`
-	VelasSmartContractAddress evmsignature.Address    `json:"velasSmartContractAddress"`
+	NFTCreateContractAddress  common.Address          `json:"nftCreateContractAddress"`
+	VelasSmartContractAddress common.Address          `json:"velasSmartContractAddress"`
 }
 
 // Chore requests for unsigned nft tokens and sign all of them .
@@ -62,7 +63,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		for _, token := range unsignedNFTs {
 			var (
 				signature     evmsignature.Signature
-				smartContract evmsignature.Address
+				smartContract common.Address
 			)
 
 			switch token.WalletType {
@@ -73,12 +74,14 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			}
 
 			if token.Value.Cmp(big.NewInt(0)) <= 0 {
-				signature, err = evmsignature.GenerateSignatureWithValue(token.Wallet, smartContract, token.TokenID, privateKeyECDSA)
+				signature, err = evmsignature.GenerateSignatureWithValue(evmsignature.Address(token.Wallet.String()),
+					evmsignature.Address(smartContract.String()), token.TokenID, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			} else {
-				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(token.Wallet, smartContract, &token.Value, token.TokenID, privateKeyECDSA)
+				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(token.Wallet.String()),
+					evmsignature.Address(smartContract.String()), &token.Value, token.TokenID, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
