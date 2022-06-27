@@ -6,7 +6,7 @@ import Unity, { UnityContent } from "react-unity-webgl";
 import "./index.scss";
 
 const FootballGame: React.FC = () => {
-    const unityContext = new UnityContent("/static/dist/webGl/footbal.json", "/static/dist/webGl/UnityLoader.js");
+    const unityContext = new UnityContent("/static/dist/webGl/football.json", "/static/dist/webGl/UnityLoader.js");
     return <Unity unityContent={unityContext} className="unity-container" />;
 };
 
