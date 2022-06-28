@@ -9,6 +9,7 @@ import (
 	"crypto/rand"
 	"crypto/subtle"
 	"time"
+	"ultimatedivision/internal/metrics"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -54,16 +55,18 @@ type Service struct {
 	emailService *emails.Service
 	log          logger.Logger
 	velas        *velas.Service
+	metric       *metrics.Metric
 }
 
 // NewService is a constructor for user auth service.
-func NewService(users users.DB, signer auth.TokenSigner, emails *emails.Service, log logger.Logger, velas *velas.Service) *Service {
+func NewService(users users.DB, signer auth.TokenSigner, emails *emails.Service, log logger.Logger, velas *velas.Service, metric *metrics.Metric) *Service {
 	return &Service{
 		users:        users,
 		signer:       signer,
 		emailService: emails,
 		log:          log,
 		velas:        velas,
+		metric:       metric,
 	}
 }
 
@@ -438,7 +441,7 @@ func (service *Service) RegisterWithMetamask(ctx context.Context, signature []by
 	if err != nil {
 		return Error.Wrap(err)
 	}
-
+	service.metric.NewUsers.Inc()
 	return nil
 }
 
@@ -488,7 +491,7 @@ func (service *Service) LoginWithMetamask(ctx context.Context, nonce string, sig
 	if err != nil {
 		service.log.Error("could not update last login", Error.Wrap(err))
 	}
-
+	service.metric.Logins.Inc()
 	return token, nil
 }
 
@@ -612,7 +615,7 @@ func (service *Service) RegisterWithVelas(ctx context.Context, address string) e
 	if err != nil {
 		return Error.Wrap(err)
 	}
-
+	service.metric.NewUsers.Inc()
 	return nil
 }
 
@@ -657,7 +660,7 @@ func (service *Service) LoginWithVelas(ctx context.Context, nonce string, addres
 	if err != nil {
 		service.log.Error("could not update last login", Error.Wrap(err))
 	}
-
+	service.metric.Logins.Inc()
 	return token, nil
 }
 

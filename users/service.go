@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"ultimatedivision/internal/metrics"
+
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -26,13 +28,15 @@ var ErrWalletAddressAlreadyInUse = errs.Class("wallet address is already in use"
 //
 // architecture: Service.
 type Service struct {
-	users DB
+	users  DB
+	metric *metrics.Metric
 }
 
 // NewService is a constructor for users service.
-func NewService(users DB) *Service {
+func NewService(users DB, metric *metrics.Metric) *Service {
 	return &Service{
-		users: users,
+		users:  users,
+		metric: metric,
 	}
 }
 
@@ -77,8 +81,12 @@ func (service *Service) Create(ctx context.Context, email, password, nickName, f
 	if err != nil {
 		return ErrUsers.Wrap(err)
 	}
-
-	return ErrUsers.Wrap(service.users.Create(ctx, user))
+	err = service.users.Create(ctx, user)
+	if err != nil {
+		return ErrUsers.Wrap(err)
+	}
+	service.metric.NewUsers.Inc()
+	return nil
 }
 
 // Delete deletes a user.

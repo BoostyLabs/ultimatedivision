@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net"
 	"net/mail"
+	"ultimatedivision/internal/metrics"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -273,6 +274,11 @@ type Peer struct {
 		Service *velas.Service
 	}
 
+	// exposes metric related logic.
+	Metric struct {
+		Service *metrics.Metric
+	}
+
 	// Admin web server server with web UI.
 	Admin struct {
 		Listener net.Listener
@@ -318,12 +324,13 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		mailService := emails.NewService(peer.Log, sender, config.Console.Emails)
 		peer.Console.EmailService = mailService
 	}
-
+	peer.Metric.Service = metrics.NewMetric()
 	peer.Velas.Service = velas.NewService(config.Velas.Config)
 
 	{ // users setup.
 		peer.Users.Service = users.NewService(
 			peer.Database.Users(),
+			peer.Metric.Service,
 		)
 		peer.Users.Auth = userauth.NewService(
 			peer.Database.Users(),
@@ -331,7 +338,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 				Secret: []byte(config.Users.Auth.TokenAuthSecret),
 			},
 			peer.Console.EmailService,
-			logger, peer.Velas.Service)
+			logger, peer.Velas.Service,
+			peer.Metric.Service)
 	}
 
 	{ // admins setup.

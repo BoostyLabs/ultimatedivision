@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"ultimatedivision/internal/metrics"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -69,7 +70,7 @@ type Server struct {
 // NewServer is a constructor for console web server.
 func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service,
 	marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
-	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service) *Server {
+	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service, metric *metrics.Metric) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -187,7 +188,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
 	router.PathPrefix("/").HandlerFunc(server.appHandler)
-
+	router.Handle("/metrics", metric.Handler)
 	server.server = http.Server{
 		Handler: router,
 	}
