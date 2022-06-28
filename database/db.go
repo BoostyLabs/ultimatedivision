@@ -71,19 +71,22 @@ func NewHub() *Hub {
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
 		`CREATE TABLE IF NOT EXISTS users (
-            id                   BYTEA     PRIMARY KEY    NOT NULL,
-            email                VARCHAR                  NOT NULL,
-            email_normalized     VARCHAR                  NOT NULL,
-            password_hash        BYTEA                    NOT NULL,
-            nick_name            VARCHAR                  NOT NULL,
-            first_name           VARCHAR                  NOT NULL,
-            last_name            VARCHAR                  NOT NULL,
-            wallet_address       BYTEA,
-            wallet_type          VARCHAR,
-            nonce                BYTEA,
-            last_login           TIMESTAMP WITH TIME ZONE NOT NULL,
-            status               INTEGER                  NOT NULL,
-            created_at           TIMESTAMP WITH TIME ZONE NOT NULL
+            id                    BYTEA     PRIMARY KEY    NOT NULL,
+            email                 VARCHAR                  NOT NULL,
+            email_normalized      VARCHAR                  NOT NULL,
+            password_hash         BYTEA                    NOT NULL,
+            nick_name             VARCHAR                  NOT NULL,
+            first_name            VARCHAR                  NOT NULL,
+            last_name             VARCHAR                  NOT NULL,
+            wallet_address        BYTEA,
+            casper_wallet_address VARCHAR,
+            wallet_type           VARCHAR,
+            nonce                 BYTEA,
+            public_key            VARCHAR,
+            private_key           VARCHAR,
+            last_login            TIMESTAMP WITH TIME ZONE NOT NULL,
+            status                INTEGER                  NOT NULL,
+            created_at            TIMESTAMP WITH TIME ZONE NOT NULL
         );
         CREATE TABLE IF NOT EXISTS cards (
             id                BYTEA         PRIMARY KEY NOT NULL,

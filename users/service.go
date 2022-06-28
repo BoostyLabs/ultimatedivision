@@ -49,7 +49,7 @@ func (service *Service) GetByEmail(ctx context.Context, email string) (User, err
 
 // GetByWalletAddress returns user by wallet address from the data base.
 func (service *Service) GetByWalletAddress(ctx context.Context, walletAddress common.Address, walletType WalletType) (User, error) {
-	user, err := service.users.GetByWalletAddress(ctx, walletAddress, walletType)
+	user, err := service.users.GetByWalletAddress(ctx, walletAddress.String(), walletType)
 	return user, ErrUsers.Wrap(err)
 }
 
