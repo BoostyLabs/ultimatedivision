@@ -711,7 +711,7 @@ func (service *Service) LoginWithCasper(ctx context.Context, publicKey string, s
 
 	walletAddress, err := publicprivatekey.DecryptCasperWalletAddress(signature, []byte(key.PrivateKey))
 	if err != nil {
-		return "", Error.New("Invalid signature or private key")
+		return "", Error.New("invalid signature")
 	}
 
 	user, err := service.users.GetByWalletAddress(ctx, string(walletAddress), users.WalletTypeCasper)
