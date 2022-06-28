@@ -1,48 +1,42 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useMemo } from "react";
-import { useHistory } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-import MetaMaskOnboarding from "@metamask/onboarding";
+import MetaMaskOnboarding from '@metamask/onboarding';
 
-import { useLocalStorage } from "@/app/hooks/useLocalStorage";
-import { RouteConfig } from "@/app/routes";
-import { ServicePlugin } from "@/app/plugins/service";
-import { EthersClient } from "@/api/ethers";
-import { NotFoundError } from "@/api";
-import { SignedMessage } from "@/app/ethers";
-import { UsersClient } from "@/api/users";
-import { UsersService } from "@/users/service";
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
+import { RouteConfig } from '@/app/routes';
+import { ServicePlugin } from '@/app/plugins/service';
+import { EthersClient } from '@/api/ethers';
+import { NotFoundError } from '@/api';
+import { SignedMessage } from '@/app/ethers';
+import { UsersClient } from '@/api/users';
+import { UsersService } from '@/users/service';
 
-import { CasperClient, CasperServiceByJsonRPC, CLPublicKey } from "casper-js-sdk";
-import { JSEncrypt } from "jsencrypt";
+import { CasperClient, CasperServiceByJsonRPC, CLPublicKey } from 'casper-js-sdk';
+import { JSEncrypt } from 'jsencrypt';
 
-import representLogo from "@static/img/login/represent-logo.gif";
-import metamask from "@static/img/login/metamask-icon.svg";
-import velas from "@static/img/login/velas-icon.svg";
-import casper from "@static/img/login/casper-icon.svg";
+import representLogo from '@static/img/login/represent-logo.gif';
+import metamask from '@static/img/login/metamask-icon.svg';
+import velas from '@static/img/login/velas-icon.svg';
+import casper from '@static/img/login/casper-icon.svg';
 
-import "./index.scss";
+import './index.scss';
 
 // @ts-ignore
-import { VAClient } from "@velas/account-client";
+import { VAClient } from '@velas/account-client';
 // @ts-ignore
-import StorageHandler from "../../../../velas/storageHandler";
+import StorageHandler from '../../../../velas/storageHandler';
 // @ts-ignore
-import KeyStorageHandler from "../../../../velas/keyStorageHandler";
+import KeyStorageHandler from '../../../../velas/keyStorageHandler';
 
 export const SignIn = () => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const ethersService = useMemo(() => ServicePlugin.create(), []);
     const client = useMemo(() => new EthersClient(), []);
-
-    // TODO: change from testnet api url to mainet
-    const apiUrl = "http://3.136.227.9:7777/rpc";
-
-    const casperService = new CasperServiceByJsonRPC(apiUrl);
-    const casperClient = new CasperClient(apiUrl);
 
     const usersClient = new UsersClient();
     const usersService = new UsersService(usersClient);
@@ -51,12 +45,12 @@ export const SignIn = () => {
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
     /** generates vaclient with the help of creds  */
-    const vaclientService = async () => {
+    const vaclientService = async() => {
         try {
             const creds = await usersService.velasVaclientCreds();
 
             const vaclient = new VAClient({
-                mode: "redirect",
+                mode: 'redirect',
                 clientID: creds.clientId,
                 redirectUri: creds.redirectUri,
                 StorageHandler,
@@ -71,7 +65,7 @@ export const SignIn = () => {
         } catch (e) {
             toast.error(`${e}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
 
@@ -84,12 +78,12 @@ export const SignIn = () => {
         } else if (e) {
             toast.error(`${e.description}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
     };
 
-    const loginVelas = async () => {
+    const loginVelas = async() => {
         try {
             const csrfToken = await usersService.velasCsrfToken();
 
@@ -97,38 +91,74 @@ export const SignIn = () => {
             vaclient.authorize(
                 {
                     csrfToken: csrfToken,
-                    scope: "authorization",
-                    challenge: "some_challenge_from_backend",
+                    scope: 'authorization',
+                    challenge: 'some_challenge_from_backend',
                 },
                 processAuthResult
             );
         } catch (error: any) {
             toast.error(`${error}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
     };
 
-    const accountInfo = async () => {
-        const isConnected = await window.casperlabsHelper.isConnected();
+    const accountInfo = async() => {
         const encrypt = new JSEncrypt();
 
-        if (isConnected) {
+        try {
             const publicKeyHex = await window.casperlabsHelper.getActivePublicKey();
-            await usersService.casperRegister(publicKeyHex);
             const message = await usersService.casperNonce(publicKeyHex);
+
             encrypt.setPublicKey(message);
             const encrypted = encrypt.encrypt(publicKeyHex);
+
             if (encrypted) {
-                await client.login(new SignedMessage(message, encrypted));
+                await usersService.casperLogin(message, encrypted);
+                history.push(RouteConfig.MarketPlace.path);
+                window.location.reload();
+            }
+        } catch (error) {
+            if (!(error instanceof NotFoundError)) {
+                toast.error('Something went wrong', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored',
+                });
+
+                return;
+            }
+
+            try {
+                const publicKeyHex = await window.casperlabsHelper.getActivePublicKey();
+                await usersService.casperRegister(publicKeyHex);
+
+                const message = await usersService.casperNonce(publicKeyHex);
+
+                encrypt.setPublicKey(message);
+                const encrypted = encrypt.encrypt(publicKeyHex);
+
+                /* eslint-disable */
+                if (encrypted) {
+                    await usersService.casperLogin(message, encrypted);
+                    history.push(RouteConfig.MarketPlace.path);
+                    window.location.reload();
+                }
+            } catch (e) {
+                toast.error("Something went wrong", {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: "colored",
+                });
             }
         }
     };
 
     const loginCasper = async () => {
         window.casperlabsHelper.requestConnection();
-        await accountInfo();
+        const isConnected = await window.casperlabsHelper.isConnected();
+        if (isConnected) {
+            await accountInfo();
+        }
     };
 
     /** Login with matamask. */

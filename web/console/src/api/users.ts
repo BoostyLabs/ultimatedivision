@@ -120,7 +120,7 @@ export class UsersClient extends APIClient {
 
     /** gets token to login user with velas wallet */
     public async velasCsrfToken(): Promise<string> {
-        const path = 'http://localhost:3002/csrf';
+        const path = 'https://velas.ultimatedivision.com/csrf';
         const response = await this.http.get(path);
 
         if (!response.ok) {
@@ -130,7 +130,6 @@ export class UsersClient extends APIClient {
 
         return result.token;
     }
-
     /** gets creds to fill velas vaclient */
     public async velasVaclientCreds(): Promise<any> {
         const path = `${this.ROOT_PATH}/velas/vaclient`;
@@ -146,7 +145,7 @@ export class UsersClient extends APIClient {
 
     /** Sends signed message and registers user */
     public async casperRegister(walletAddress: string): Promise<void> {
-        const response = await this.http.post(`${this.ROOT_PATH}/auth/casper/register`, JSON.stringify(walletAddress));
+        const response = await this.http.post(`${this.ROOT_PATH}/casper/register`, JSON.stringify(walletAddress));
 
         if (!response.ok) {
             await this.handleError(response);
@@ -155,7 +154,8 @@ export class UsersClient extends APIClient {
 
     /** Gets message from API for sign with casper */
     public async casperNonce(walletAddress: string): Promise<string> {
-        const response = await this.http.get(`${this.ROOT_PATH}/auth/casper/nonce?address=${walletAddress}`);
+        const path = `${this.ROOT_PATH}/casper/nonce?address=${walletAddress}`;
+        const response = await this.http.get(path);
 
         if (!response.ok) {
             await this.handleError(response);
@@ -165,11 +165,8 @@ export class UsersClient extends APIClient {
     }
 
     /** Sends signed message, and logs-in */
-    public async casperLogin(message: string, signature: string): Promise<void> {
-        const response = await this.http.post(
-            `${this.ROOT_PATH}/auth/casper/login`,
-            JSON.stringify({ message, signature })
-        );
+    public async casperLogin(nonce: string, signature: string): Promise<void> {
+        const response = await this.http.post(`${this.ROOT_PATH}/casper/login`, JSON.stringify({ nonce, signature }));
 
         if (!response.ok) {
             await this.handleError(response);

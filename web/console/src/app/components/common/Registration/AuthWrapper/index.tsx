@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { AuthRouteConfig, RouteConfig } from '@/app/routes';
-import { InternalError } from '@/api';
+import { InternalError, NotFoundError } from '@/api';
 import { UsersClient } from '@/api/users';
 import { UsersService } from '@/users/service';
 
@@ -58,16 +58,14 @@ const AuthWrapper = () => {
 
             await vaclient.userinfo(authResult.access_token, async(err: any, result: any) => {
                 if (err) {
-                    toast.error(`${err}`, {
+                    toast.error('Something went wrong', {
                         position: toast.POSITION.TOP_RIGHT,
                         theme: 'colored',
                     });
-                } else {
-                    await usersService.velasRegister(
-                        result.userinfo.account_key_evm,
-                        authResult.access_token,
-                        authResult.expires_at
-                    );
+
+                    return;
+                }
+                try {
                     const nonce = await usersService.velasNonce(result.userinfo.account_key_evm);
                     await usersService.velasLogin(
                         nonce,
@@ -75,6 +73,34 @@ const AuthWrapper = () => {
                         authResult.access_token,
                         authResult.expires_at
                     );
+                } catch (e) {
+                    if (!(e instanceof NotFoundError)) {
+                        toast.error('Something went wrong', {
+                            position: toast.POSITION.TOP_RIGHT,
+                            theme: 'colored',
+                        });
+
+                        return;
+                    }
+                    try {
+                        await usersService.velasRegister(
+                            result.userinfo.account_key_evm,
+                            authResult.access_token,
+                            authResult.expires_at
+                        );
+                        const nonce = await usersService.velasNonce(result.userinfo.account_key_evm);
+                        await usersService.velasLogin(
+                            nonce,
+                            result.userinfo.account_key_evm,
+                            authResult.access_token,
+                            authResult.expires_at
+                        );
+                    } catch (e) {
+                        toast.error('Something went wrong', {
+                            position: toast.POSITION.TOP_RIGHT,
+                            theme: 'colored',
+                        });
+                    }
                 }
             });
 
