@@ -5,12 +5,9 @@ package users
 
 import (
 	"context"
-	"strings"
 	"time"
 
-	"ultimatedivision/internal/metrics"
-
-	"github.com/BoostyLabs/evmsignature"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 )
@@ -28,15 +25,13 @@ var ErrWalletAddressAlreadyInUse = errs.Class("wallet address is already in use"
 //
 // architecture: Service.
 type Service struct {
-	users  DB
-	metric *metrics.Metric
+	users DB
 }
 
 // NewService is a constructor for users service.
-func NewService(users DB, metric *metrics.Metric) *Service {
+func NewService(users DB) *Service {
 	return &Service{
-		users:  users,
-		metric: metric,
+		users: users,
 	}
 }
 
@@ -53,7 +48,7 @@ func (service *Service) GetByEmail(ctx context.Context, email string) (User, err
 }
 
 // GetByWalletAddress returns user by wallet address from the data base.
-func (service *Service) GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address) (User, error) {
+func (service *Service) GetByWalletAddress(ctx context.Context, walletAddress common.Address) (User, error) {
 	user, err := service.users.GetByWalletAddress(ctx, walletAddress, Wallet)
 	return user, ErrUsers.Wrap(err)
 }
@@ -81,12 +76,8 @@ func (service *Service) Create(ctx context.Context, email, password, nickName, f
 	if err != nil {
 		return ErrUsers.Wrap(err)
 	}
-	err = service.users.Create(ctx, user)
-	if err != nil {
-		return ErrUsers.Wrap(err)
-	}
-	service.metric.NewUsers.Inc()
-	return nil
+
+	return ErrUsers.Wrap(service.users.Create(ctx, user))
 }
 
 // Delete deletes a user.
@@ -123,9 +114,7 @@ func (service *Service) GetNickNameByID(ctx context.Context, id uuid.UUID) (stri
 }
 
 // UpdateWalletAddress updates wallet address.
-func (service *Service) UpdateWalletAddress(ctx context.Context, wallet evmsignature.Address, id uuid.UUID) error {
-	wallet = evmsignature.Address(strings.ToLower(string(wallet)))
-
+func (service *Service) UpdateWalletAddress(ctx context.Context, wallet common.Address, id uuid.UUID) error {
 	_, err := service.GetByWalletAddress(ctx, wallet)
 	if err == nil {
 		return ErrWalletAddressAlreadyInUse.New("wallet address already in use")
@@ -135,9 +124,7 @@ func (service *Service) UpdateWalletAddress(ctx context.Context, wallet evmsigna
 }
 
 // ChangeWalletAddress changes wallet address.
-func (service *Service) ChangeWalletAddress(ctx context.Context, wallet evmsignature.Address, id uuid.UUID) error {
-	wallet = evmsignature.Address(strings.ToLower(string(wallet)))
-
+func (service *Service) ChangeWalletAddress(ctx context.Context, wallet common.Address, id uuid.UUID) error {
 	user, err := service.GetByWalletAddress(ctx, wallet)
 	if err != nil {
 		return ErrUsers.Wrap(err)
@@ -145,8 +132,8 @@ func (service *Service) ChangeWalletAddress(ctx context.Context, wallet evmsigna
 	if user.ID == id {
 		return ErrUsers.New("this address is used by you")
 	}
-	emptyWallet := evmsignature.Address("")
-	err = service.users.UpdateWalletAddress(ctx, emptyWallet, user.ID)
+
+	err = service.users.UpdateWalletAddress(ctx, common.Address{}, user.ID)
 	if err != nil {
 		return ErrUsers.Wrap(err)
 	}
