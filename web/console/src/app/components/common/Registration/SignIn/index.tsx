@@ -2,7 +2,6 @@
 // See LICENSE for copying information.
 
 import { useMemo } from "react";
-import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -16,6 +15,9 @@ import { NotFoundError } from "@/api";
 import { SignedMessage } from "@/app/ethers";
 import { UsersClient } from "@/api/users";
 import { UsersService } from "@/users/service";
+
+import { CasperClient, CasperServiceByJsonRPC, CLPublicKey } from "casper-js-sdk";
+import { JSEncrypt } from "jsencrypt";
 
 import representLogo from "@static/img/login/represent-logo.gif";
 import metamask from "@static/img/login/metamask-icon.svg";
@@ -35,6 +37,12 @@ export const SignIn = () => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const ethersService = useMemo(() => ServicePlugin.create(), []);
     const client = useMemo(() => new EthersClient(), []);
+
+    // TODO: change from testnet api url to mainet
+    const apiUrl = "http://3.136.227.9:7777/rpc";
+
+    const casperService = new CasperServiceByJsonRPC(apiUrl);
+    const casperClient = new CasperClient(apiUrl);
 
     const usersClient = new UsersClient();
     const usersService = new UsersService(usersClient);
@@ -102,6 +110,27 @@ export const SignIn = () => {
         }
     };
 
+    const accountInfo = async () => {
+        const isConnected = await window.casperlabsHelper.isConnected();
+        const encrypt = new JSEncrypt();
+
+        if (isConnected) {
+            const publicKeyHex = await window.casperlabsHelper.getActivePublicKey();
+            await usersService.casperRegister(publicKeyHex);
+            const message = await usersService.casperNonce(publicKeyHex);
+            encrypt.setPublicKey(message);
+            const encrypted = encrypt.encrypt(publicKeyHex);
+            if (encrypted) {
+                await client.login(new SignedMessage(message, encrypted));
+            }
+        }
+    };
+
+    const loginCasper = async () => {
+        window.casperlabsHelper.requestConnection();
+        await accountInfo();
+    };
+
     /** Login with matamask. */
     const login: () => Promise<void> = async () => {
         if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
@@ -163,7 +192,7 @@ export const SignIn = () => {
                             <img src={velas} alt="Velas logo" className="login__content__log-in__item__logo" />
                             <p className="login__content__log-in__item__text">Connect velas account</p>
                         </div>
-                        <div className="login__content__log-in__item">
+                        <div onClick={loginCasper} className="login__content__log-in__item">
                             <img src={casper} alt="Casper logo" className="login__content__log-in__item__logo" />
                             <p className="login__content__log-in__item__text">Connect casper signer </p>
                         </div>
