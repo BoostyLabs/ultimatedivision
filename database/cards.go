@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	_ "github.com/lib/pq" // using postgres driver.
@@ -34,14 +35,14 @@ type cardsDB struct {
 }
 
 const (
-	allFields = `id, player_name, quality, height, weight, dominant_foot, is_tattoo, status, type, user_id, tactics, positioning, composure, 
+	allFields = `id, player_name, end_time_block, quality, height, weight, dominant_foot, is_tattoo, status, type, user_id, tactics, positioning, composure, 
 		aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility, stamina, strength, jumping, 
 		balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing, forward_pass, 
 		offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, 
 		sliding, tackles, ball_focus, interceptions, vigilance, goalkeeping, reflexes, diving, handling, sweeping, throwing`
 )
 
-// Create adds card in the data base.
+// Create adds card in the database.
 func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 	query :=
 		`INSERT INTO
@@ -49,10 +50,10 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 		VALUES 
 			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25,
 			$26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49,
-			$50, $51, $52, $53, $54, $55, $56, $57, $58, $59)`
+			$50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60)`
 
 	_, err := cardsDB.conn.ExecContext(ctx, query,
-		card.ID, card.PlayerName, card.Quality, card.Height, card.Weight,
+		card.ID, card.PlayerName, card.EndTime, card.Quality, card.Height, card.Weight,
 		card.DominantFoot, card.IsTattoo, card.Status, card.Type, card.UserID, card.Tactics, card.Positioning, card.Composure, card.Aggression,
 		card.Vision, card.Awareness, card.Crosses, card.Physique, card.Acceleration, card.RunningSpeed, card.ReactionSpeed, card.Agility,
 		card.Stamina, card.Strength, card.Jumping, card.Balance, card.Technique, card.Dribbling, card.BallControl, card.WeakFoot, card.SkillMoves,
@@ -75,7 +76,7 @@ func (cardsDB *cardsDB) Get(ctx context.Context, id uuid.UUID) (cards.Card, erro
             id = $1`
 
 	err := cardsDB.conn.QueryRowContext(ctx, query, id).Scan(
-		&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
+		&card.ID, &card.PlayerName, &card.EndTime, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
 		&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed,
 		&card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling,
 		&card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing,
@@ -100,7 +101,7 @@ func (cardsDB *cardsDB) GetByPlayerName(ctx context.Context, playerName string) 
             player_name = $1`
 
 	err := cardsDB.conn.QueryRowContext(ctx, query, playerName).Scan(
-		&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
+		&card.ID, &card.PlayerName, &card.EndTime, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
 		&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed,
 		&card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling,
 		&card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing, &card.LongPassing,
@@ -139,7 +140,7 @@ func (cardsDB *cardsDB) List(ctx context.Context, cursor pagination.Cursor) (car
 	for rows.Next() {
 		card := cards.Card{}
 		if err = rows.Scan(
-			&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
+			&card.ID, &card.PlayerName, &card.EndTime, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
 			&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration,
 			&card.RunningSpeed, &card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique,
 			&card.Dribbling, &card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing,
@@ -192,7 +193,7 @@ func (cardsDB *cardsDB) ListByUserID(ctx context.Context, id uuid.UUID, cursor p
 	for rows.Next() {
 		var card cards.Card
 		if err = rows.Scan(
-			&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
+			&card.ID, &card.PlayerName, &card.EndTime, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
 			&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration,
 			&card.RunningSpeed, &card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique,
 			&card.Dribbling, &card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing,
@@ -235,7 +236,7 @@ func (cardsDB *cardsDB) ListByTypeUnordered(ctx context.Context) ([]cards.Card, 
 	for rows.Next() {
 		card := cards.Card{}
 		if err = rows.Scan(
-			&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
+			&card.ID, &card.PlayerName, &card.EndTime, &card.Quality, &card.Height, &card.Weight, &card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
 			&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration,
 			&card.RunningSpeed, &card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique,
 			&card.Dribbling, &card.BallControl, &card.WeakFoot, &card.SkillMoves, &card.Finesse, &card.Curve, &card.Volleys, &card.ShortPassing,
@@ -261,7 +262,7 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 	offset := (cursor.Page - 1) * cursor.Limit
 	query := fmt.Sprintf(`
         SELECT
-            cards.id, player_name, quality, height, weight, dominant_foot, is_tattoo, cards.status, cards.type,
+            cards.id, player_name, end_time_block, quality, height, weight, dominant_foot, is_tattoo, cards.status, cards.type,
             cards.user_id, tactics, positioning, composure, aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility,
             stamina, strength, jumping, balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing,
             forward_pass, offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, sliding,
@@ -287,7 +288,7 @@ func (cardsDB *cardsDB) ListWithFilters(ctx context.Context, filters []cards.Fil
 	for rows.Next() {
 		card := cards.Card{}
 		if err = rows.Scan(
-			&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight,
+			&card.ID, &card.PlayerName, &card.EndTime, &card.Quality, &card.Height, &card.Weight,
 			&card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
 			&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed,
 			&card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling,
@@ -373,7 +374,7 @@ func (cardsDB *cardsDB) ListByUserIDAndPlayerName(ctx context.Context, userID uu
 	for rows.Next() {
 		card := cards.Card{}
 		if err = rows.Scan(
-			&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight,
+			&card.ID, &card.PlayerName, &card.EndTime, &card.Quality, &card.Height, &card.Weight,
 			&card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
 			&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed,
 			&card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling,
@@ -669,7 +670,7 @@ func (cardsDB *cardsDB) GetSquadCards(ctx context.Context, id uuid.UUID) ([]card
 	for rows.Next() {
 		card := cards.Card{}
 		if err = rows.Scan(
-			&card.ID, &card.PlayerName, &card.Quality, &card.Height, &card.Weight,
+			&card.ID, &card.PlayerName, &card.EndTime, &card.Quality, &card.Height, &card.Weight,
 			&card.DominantFoot, &card.IsTattoo, &card.Status, &card.Type, &card.UserID, &card.Tactics, &card.Positioning,
 			&card.Composure, &card.Aggression, &card.Vision, &card.Awareness, &card.Crosses, &card.Physique, &card.Acceleration, &card.RunningSpeed,
 			&card.ReactionSpeed, &card.Agility, &card.Stamina, &card.Strength, &card.Jumping, &card.Balance, &card.Technique, &card.Dribbling,
@@ -691,4 +692,19 @@ func (cardsDB *cardsDB) GetSquadCards(ctx context.Context, id uuid.UUID) ([]card
 	}
 
 	return cardsFromSquad, nil
+}
+
+// UpdateClubEndTime updates cards club end time.
+func (cardsDB *cardsDB) UpdateClubEndTime(ctx context.Context, id uuid.UUID) error {
+	result, err := cardsDB.conn.ExecContext(ctx, "UPDATE cards SET end_time=$1 WHERE id=$2", time.Now().UTC().Add(168*time.Hour), id)
+	if err != nil {
+		return ErrCard.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return cards.ErrNoCard.New("")
+	}
+
+	return ErrCard.Wrap(err)
 }

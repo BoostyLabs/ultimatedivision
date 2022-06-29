@@ -30,15 +30,17 @@ type Service struct {
 	users     *users.Service
 	cards     *cards.Service
 	divisions divisions.DB
+	cardsDB   cards.DB
 }
 
 // NewService is a constructor for clubs service.
-func NewService(clubs DB, users *users.Service, cards *cards.Service, divisions divisions.DB) *Service {
+func NewService(clubs DB, users *users.Service, cards *cards.Service, divisions divisions.DB, cardsDB cards.DB) *Service {
 	return &Service{
 		clubs:     clubs,
 		users:     users,
 		cards:     cards,
 		divisions: divisions,
+		cardsDB:   cardsDB,
 	}
 }
 
@@ -111,6 +113,10 @@ func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.U
 		return ErrClubs.Wrap(err)
 	}
 
+	if card.EndTime.After(time.Now().UTC()) {
+		return ErrClubs.New("card is blocked until this time - %v", card.EndTime)
+	}
+
 	if userID != card.UserID {
 		return ErrInvalidOperation.New("card does not belong to user")
 	}
@@ -144,7 +150,12 @@ func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.U
 		break
 	}
 
-	return ErrClubs.Wrap(service.clubs.AddSquadCard(ctx, newSquadCard))
+	err = service.clubs.AddSquadCard(ctx, newSquadCard)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	return ErrClubs.Wrap(service.cardsDB.UpdateClubEndTime(ctx, newSquadCard.CardID))
 }
 
 // Delete deletes card from squad.

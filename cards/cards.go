@@ -5,6 +5,7 @@ package cards
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -47,7 +48,9 @@ type DB interface {
 	UpdateType(ctx context.Context, id uuid.UUID, typeCard Type) error
 	// UpdateUserID updates user id card in the database.
 	UpdateUserID(ctx context.Context, id, userID uuid.UUID) error
-	// Delete deletes card record in the data base.
+	// UpdateClubEndTime updates cards club end time.
+	UpdateClubEndTime(ctx context.Context, id uuid.UUID) error
+	// Delete deletes card record in the database.
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
@@ -55,6 +58,7 @@ type DB interface {
 type Card struct {
 	ID               uuid.UUID    `json:"id"`
 	PlayerName       string       `json:"playerName"`
+	EndTime          time.Time    `json:"endTime"`
 	Quality          Quality      `json:"quality"`
 	Height           float64      `json:"height"`
 	Weight           float64      `json:"weight"`
