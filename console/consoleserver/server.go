@@ -10,11 +10,6 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/internal/metrics"
-
-	"github.com/gorilla/mux"
-	"github.com/zeebo/errs"
-	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/waitlist"
@@ -22,6 +17,7 @@ import (
 	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/metrics"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/seasons"
@@ -29,6 +25,10 @@ import (
 	"ultimatedivision/store/lootboxes"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
+
+	"github.com/gorilla/mux"
+	"github.com/zeebo/errs"
+	"golang.org/x/sync/errgroup"
 )
 
 var (
