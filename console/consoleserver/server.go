@@ -82,7 +82,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 		}),
 	}
 
-	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
+	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth, metric)
 	userController := controllers.NewUsers(server.log, users)
 	cardsController := controllers.NewCards(log, cards)
 	clubsController := controllers.NewClubs(log, clubs)
@@ -188,7 +188,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	fs := http.FileServer(http.Dir(server.config.StaticDir))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
 	router.PathPrefix("/").HandlerFunc(server.appHandler)
-	router.Handle("/metrics", metric.Handler)
+
 	server.server = http.Server{
 		Handler: router,
 	}

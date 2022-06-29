@@ -191,6 +191,7 @@ type Peer struct {
 	Users struct {
 		Service *users.Service
 		Auth    *userauth.Service
+		Metric  *metrics.Metric
 	}
 
 	// exposes cards related logic.
@@ -330,7 +331,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	{ // users setup.
 		peer.Users.Service = users.NewService(
 			peer.Database.Users(),
-			peer.Metric.Service,
 		)
 		peer.Users.Auth = userauth.NewService(
 			peer.Database.Users(),
@@ -338,8 +338,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 				Secret: []byte(config.Users.Auth.TokenAuthSecret),
 			},
 			peer.Console.EmailService,
-			logger, peer.Velas.Service,
-			peer.Metric.Service)
+			logger, peer.Velas.Service)
 	}
 
 	{ // admins setup.
@@ -538,6 +537,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Matches.Service,
 			peer.Seasons.Service,
 			peer.Store.Service,
+			peer.Metric.Service,
 		)
 		if err != nil {
 			return nil, err
@@ -564,6 +564,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Seasons.Service,
 			peer.WaitList.Service,
 			peer.Store.Service,
+			peer.Metric.Service,
 		)
 	}
 
