@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -104,7 +104,7 @@ export const SignIn = () => {
         }
     };
 
-    const accountInfo = async() => {
+    const casperRegistration = async() => {
         const encrypt = new JSEncrypt();
 
         try {
@@ -155,10 +155,6 @@ export const SignIn = () => {
 
     const loginCasper = async () => {
         window.casperlabsHelper.requestConnection();
-        const isConnected = await window.casperlabsHelper.isConnected();
-        if (isConnected) {
-            await accountInfo();
-        }
     };
 
     /** Login with matamask. */
@@ -204,6 +200,12 @@ export const SignIn = () => {
             }
         }
     };
+
+    useEffect(() => {
+        window.addEventListener("signer:connected", casperRegistration);
+
+        return () => window.removeEventListener("signer:connected", casperRegistration);
+    }, []);
 
     return (
         <div className="login">
