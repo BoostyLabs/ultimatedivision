@@ -1,11 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { AuthRouteConfig, RouteConfig } from '@/app/routes';
+import { RouteConfig } from '@/app/routes';
 import { InternalError } from '@/api';
 import { UsersClient } from '@/api/users';
 import { UsersService } from '@/users/service';
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 
 import ulimatedivisionLogo from '@static/img/registerPage/ultimate.svg';
 
@@ -23,6 +24,7 @@ const AuthWrapper = () => {
 
     const usersClient = new UsersClient();
     const usersService = new UsersService(usersClient);
+    const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
     /** generates vaclient with the help of creds  */
     const vaclientService = async() => {
@@ -77,12 +79,16 @@ const AuthWrapper = () => {
                     );
                 }
             });
-
+            setLocalStorageItem('IS_LOGGINED', true);
             history.push(RouteConfig.MarketPlace.path);
             window.location.reload();
         } catch (error) {
             if (error instanceof InternalError) {
-                history.push(AuthRouteConfig.SignIn.path);
+                history.push(RouteConfig.Home.path);
+                toast.error('Registration failed', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored',
+                });
             }
 
             toast.error(`${error}`, {
