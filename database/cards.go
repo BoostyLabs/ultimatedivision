@@ -696,7 +696,7 @@ func (cardsDB *cardsDB) GetSquadCards(ctx context.Context, id uuid.UUID) ([]card
 
 // UpdateClubEndTime updates cards club end time.
 func (cardsDB *cardsDB) UpdateClubEndTime(ctx context.Context, id uuid.UUID) error {
-	result, err := cardsDB.conn.ExecContext(ctx, "UPDATE cards SET end_time=$1 WHERE id=$2", time.Now().UTC().Add(168*time.Hour), id)
+	result, err := cardsDB.conn.ExecContext(ctx, "UPDATE cards SET end_time_block=$1 WHERE id=$2", time.Now().UTC().Add(168*time.Hour), id)
 	if err != nil {
 		return ErrCard.Wrap(err)
 	}
