@@ -8,10 +8,6 @@ import (
 	"errors"
 	"net"
 	"net/mail"
-	"ultimatedivision/internal/metrics"
-
-	"github.com/zeebo/errs"
-	"golang.org/x/sync/errgroup"
 
 	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
@@ -27,6 +23,7 @@ import (
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/metrics"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
@@ -38,6 +35,9 @@ import (
 	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
+
+	"github.com/zeebo/errs"
+	"golang.org/x/sync/errgroup"
 )
 
 // DB provides access to all databases and database related functionality.

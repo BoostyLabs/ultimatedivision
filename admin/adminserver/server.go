@@ -190,7 +190,9 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, authServ
 	storeController := controllers.NewStore(log, store, server.templates.store)
 	storeRouter.HandleFunc("", storeController.List).Methods(http.MethodGet)
 	storeRouter.HandleFunc("/update/{id}", storeController.Update).Methods(http.MethodGet, http.MethodPost)
-	router.Handle("/metrics", metric.Handler)
+
+	router.Handle("/metrics", metric.GetHandler())
+
 	server.server = http.Server{
 		Handler: router,
 	}

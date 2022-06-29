@@ -9,7 +9,6 @@ import (
 	"html/template"
 	"net/http"
 	"time"
-	"ultimatedivision/internal/metrics"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -17,6 +16,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/metrics"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/pkg/velas"
 	"ultimatedivision/users"
@@ -39,7 +39,7 @@ type Auth struct {
 	userAuth  *userauth.Service
 	cookie    *auth.CookieAuth
 	templates *AuthTemplates
-	metric    *metrics.Metric
+	metrics   *metrics.Metric
 }
 
 // NewAuth returns new instance of Auth.
@@ -49,7 +49,7 @@ func NewAuth(log logger.Logger, userAuth *userauth.Service, authCookie *auth.Coo
 		userAuth:  userAuth,
 		cookie:    authCookie,
 		templates: templates,
-		metric:    metric,
+		metrics:   metric,
 	}
 }
 
@@ -84,7 +84,7 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	auth.metric.NewUsers.Inc()
+	auth.metrics.NewUsers.Inc()
 }
 
 // ConfirmEmail confirms the email of the user based on the received token.
@@ -145,7 +145,7 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 
 	auth.cookie.SetTokenCookie(w, authToken)
 
-	auth.metric.Logins.Inc()
+	auth.metrics.Logins.Inc()
 }
 
 // Logout is an endpoint to log out and remove auth cookie from browser.
@@ -154,7 +154,7 @@ func (auth *Auth) Logout(w http.ResponseWriter, r *http.Request) {
 
 	auth.cookie.RemoveTokenCookie(w)
 
-	auth.metric.Logouts.Inc()
+	auth.metrics.Logouts.Inc()
 }
 
 // RegisterTemplateHandler is web app http handler function.
@@ -426,7 +426,7 @@ func (auth *Auth) MetamaskLogin(w http.ResponseWriter, r *http.Request) {
 
 	auth.cookie.SetTokenCookie(w, authToken)
 
-	auth.metric.Logins.Inc()
+	auth.metrics.Logins.Inc()
 }
 
 // VelasRegister is an endpoint to register user.
@@ -467,7 +467,7 @@ func (auth *Auth) VelasRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.metric.NewUsers.Inc()
+	auth.metrics.NewUsers.Inc()
 }
 
 // VelasLogin is an endpoint to authorize user from velas and set auth cookie in browser.
@@ -518,7 +518,7 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 
 	auth.cookie.SetTokenCookie(w, authToken)
 
-	auth.metric.Logins.Inc()
+	auth.metrics.Logins.Inc()
 }
 
 // VelasVAClientFields is an endpoint that returns fields for velas client mb.
@@ -568,7 +568,7 @@ func (auth *Auth) MetamaskRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.metric.NewUsers.Inc()
+	auth.metrics.NewUsers.Inc()
 }
 
 // SendEmailForChangeEmail sends email for change users email.
