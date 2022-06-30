@@ -11,6 +11,10 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/gorilla/mux"
+	"github.com/zeebo/errs"
+	"golang.org/x/sync/errgroup"
+
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
@@ -25,10 +29,6 @@ import (
 	"ultimatedivision/store/lootboxes"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
-
-	"github.com/gorilla/mux"
-	"github.com/zeebo/errs"
-	"golang.org/x/sync/errgroup"
 )
 
 var (

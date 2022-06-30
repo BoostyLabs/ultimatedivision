@@ -10,7 +10,6 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/internal/metrics"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -26,6 +25,7 @@ import (
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/metrics"
 	"ultimatedivision/internal/templatefuncs"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"

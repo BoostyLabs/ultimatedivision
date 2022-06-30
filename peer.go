@@ -9,6 +9,9 @@ import (
 	"net"
 	"net/mail"
 
+	"github.com/zeebo/errs"
+	"golang.org/x/sync/errgroup"
+
 	"ultimatedivision/admin/adminauth"
 	"ultimatedivision/admin/admins"
 	"ultimatedivision/admin/adminserver"
@@ -35,9 +38,6 @@ import (
 	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
-
-	"github.com/zeebo/errs"
-	"golang.org/x/sync/errgroup"
 )
 
 // DB provides access to all databases and database related functionality.
