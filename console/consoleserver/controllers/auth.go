@@ -84,7 +84,7 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	auth.metrics.NewUsers.Inc()
+	auth.metrics.NewUsersInc()
 }
 
 // ConfirmEmail confirms the email of the user based on the received token.
@@ -145,7 +145,7 @@ func (auth *Auth) Login(w http.ResponseWriter, r *http.Request) {
 
 	auth.cookie.SetTokenCookie(w, authToken)
 
-	auth.metrics.Logins.Inc()
+	auth.metrics.LoginsInc()
 }
 
 // Logout is an endpoint to log out and remove auth cookie from browser.
@@ -154,7 +154,7 @@ func (auth *Auth) Logout(w http.ResponseWriter, r *http.Request) {
 
 	auth.cookie.RemoveTokenCookie(w)
 
-	auth.metrics.Logouts.Inc()
+	auth.metrics.LogoutsInc()
 }
 
 // RegisterTemplateHandler is web app http handler function.
@@ -426,7 +426,7 @@ func (auth *Auth) MetamaskLogin(w http.ResponseWriter, r *http.Request) {
 
 	auth.cookie.SetTokenCookie(w, authToken)
 
-	auth.metrics.Logins.Inc()
+	auth.metrics.LoginsInc()
 }
 
 // VelasRegister is an endpoint to register user.
@@ -467,7 +467,7 @@ func (auth *Auth) VelasRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.metrics.NewUsers.Inc()
+	auth.metrics.NewUsersInc()
 }
 
 // VelasLogin is an endpoint to authorize user from velas and set auth cookie in browser.
@@ -518,7 +518,7 @@ func (auth *Auth) VelasLogin(w http.ResponseWriter, r *http.Request) {
 
 	auth.cookie.SetTokenCookie(w, authToken)
 
-	auth.metrics.Logins.Inc()
+	auth.metrics.LoginsInc()
 }
 
 // VelasVAClientFields is an endpoint that returns fields for velas client mb.
@@ -568,7 +568,7 @@ func (auth *Auth) MetamaskRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.metrics.NewUsers.Inc()
+	auth.metrics.NewUsersInc()
 }
 
 // SendEmailForChangeEmail sends email for change users email.

@@ -20,15 +20,35 @@ type Counter interface {
 // Metric is an implementation of metrics using prometheus.
 type Metric struct {
 	handler  http.Handler
-	NewUsers Counter
-	Logins   Counter
-	Logouts  Counter
-	Purchase Counter
+	newUsers Counter
+	logins   Counter
+	logouts  Counter
+	purchase Counter
 }
 
 // GetHandler return http.Handler to access metrics.
-func (m *Metric) GetHandler() http.Handler {
-	return m.handler
+func (metric *Metric) GetHandler() http.Handler {
+	return metric.handler
+}
+
+// NewUsersInc increment Counter newUsers.
+func (metric *Metric) NewUsersInc() {
+	metric.newUsers.Inc()
+}
+
+// LoginsInc increment Counter logins.
+func (metric *Metric) LoginsInc() {
+	metric.logins.Inc()
+}
+
+// LogoutsInc increment Counter logouts.
+func (metric *Metric) LogoutsInc() {
+	metric.logouts.Inc()
+}
+
+// PurchaseInc increment Counter purchase.
+func (metric *Metric) PurchaseInc() {
+	metric.purchase.Inc()
 }
 
 // NewMetric is a constructor for a Metric.
@@ -69,9 +89,9 @@ func NewMetric() *Metric {
 	return &Metric{
 		// Expose metrics.
 		handler:  promhttp.HandlerFor(registry, promhttp.HandlerOpts{Registry: registry}),
-		NewUsers: newUsers,
-		Logins:   logins,
-		Logouts:  logouts,
-		Purchase: purchase,
+		newUsers: newUsers,
+		logins:   logins,
+		logouts:  logouts,
+		purchase: purchase,
 	}
 }
