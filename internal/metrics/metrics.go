@@ -55,11 +55,13 @@ func NewMetric() *Metric {
 
 	// Create a custom registry.
 	registry := prometheus.NewRegistry()
+
 	// Register using our custom registry gauge.
 	registry.MustRegister(newUsers)
 	registry.MustRegister(logins)
 	registry.MustRegister(logouts)
 	registry.MustRegister(purchase)
+
 	// Register system metrics.
 	registry.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
 	registry.MustRegister(collectors.NewGoCollector())
