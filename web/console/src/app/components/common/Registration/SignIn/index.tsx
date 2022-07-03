@@ -1,35 +1,35 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useMemo } from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useEffect, useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-import MetaMaskOnboarding from "@metamask/onboarding";
-
-import { useLocalStorage } from "@/app/hooks/useLocalStorage";
-import { RouteConfig } from "@/app/routes";
-import { ServicePlugin } from "@/app/plugins/service";
-import { EthersClient } from "@/api/ethers";
-import { NotFoundError } from "@/api";
-import { SignedMessage } from "@/app/ethers";
-import { UsersClient } from "@/api/users";
-import { UsersService } from "@/users/service";
-
-import representLogo from "@static/img/login/represent-logo.gif";
-import metamask from "@static/img/login/metamask-icon.svg";
-import velas from "@static/img/login/velas-icon.svg";
-import casper from "@static/img/login/casper-icon.svg";
-
-import "./index.scss";
-
+import { JSEncrypt } from 'jsencrypt';
+import { Signer } from 'casper-js-sdk';
+import MetaMaskOnboarding from '@metamask/onboarding';
 // @ts-ignore
-import { VAClient } from "@velas/account-client";
+import KeyStorageHandler from '../../../../velas/keyStorageHandler';
 // @ts-ignore
-import StorageHandler from "../../../../velas/storageHandler";
+import StorageHandler from '../../../../velas/storageHandler';
 // @ts-ignore
-import KeyStorageHandler from "../../../../velas/keyStorageHandler";
+import { VAClient } from '@velas/account-client';
+
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
+import { RouteConfig } from '@/app/routes';
+import { ServicePlugin } from '@/app/plugins/service';
+import { EthersClient } from '@/api/ethers';
+import { NotFoundError } from '@/api';
+import { SignedMessage } from '@/app/ethers';
+import { UsersClient } from '@/api/users';
+import { UsersService } from '@/users/service';
+
+import representLogo from '@static/img/login/represent-logo.gif';
+import metamask from '@static/img/login/metamask-icon.svg';
+import velas from '@static/img/login/velas-icon.svg';
+import casper from '@static/img/login/casper-icon.svg';
+
+import './index.scss';
 
 export const SignIn = () => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
@@ -43,12 +43,12 @@ export const SignIn = () => {
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
     /** generates vaclient with the help of creds  */
-    const vaclientService = async () => {
+    const vaclientService = async() => {
         try {
             const creds = await usersService.velasVaclientCreds();
 
             const vaclient = new VAClient({
-                mode: "redirect",
+                mode: 'redirect',
                 clientID: creds.clientId,
                 redirectUri: creds.redirectUri,
                 StorageHandler,
@@ -63,7 +63,7 @@ export const SignIn = () => {
         } catch (e) {
             toast.error(`${e}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
 
@@ -76,12 +76,60 @@ export const SignIn = () => {
         } else if (e) {
             toast.error(`${e.description}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
     };
 
-    const loginVelas = async () => {
+    const loginCasper = async(publicKey: string) => {
+        const encrypt = new JSEncrypt();
+        const message = await usersService.casperNonce(publicKey);
+
+        encrypt.setPublicKey(message);
+        const encrypted = encrypt.encrypt(publicKey);
+
+        if (encrypted) {
+            await usersService.casperLogin(message, encrypted);
+            history.push(RouteConfig.MarketPlace.path);
+            window.location.reload();
+        }
+    };
+
+    const casperRegistration = async() => {
+        try {
+            const publicKey = await window.casperlabsHelper.getActivePublicKey();
+
+            loginCasper(publicKey);
+        } catch (error) {
+            if (!(error instanceof NotFoundError)) {
+                toast.error('Something went wrong', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored',
+                });
+
+                return;
+            }
+
+            try {
+                const publicKey = await Signer.getActivePublicKey();
+
+                await usersService.casperRegister(publicKey);
+
+                loginCasper(publicKey);
+            } catch (e) {
+                toast.error('Something went wrong', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    theme: 'colored',
+                });
+            }
+        }
+    };
+
+    const sendConnectionRequestCasper = () => {
+        Signer.sendConnectionRequest();
+    };
+
+    const loginVelas = async() => {
         try {
             const csrfToken = await usersService.velasCsrfToken();
 
@@ -89,28 +137,28 @@ export const SignIn = () => {
             vaclient.authorize(
                 {
                     csrfToken: csrfToken,
-                    scope: "authorization",
-                    challenge: "some_challenge_from_backend",
+                    scope: 'authorization',
+                    challenge: 'some_challenge_from_backend',
                 },
                 processAuthResult
             );
         } catch (error: any) {
             toast.error(`${error}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
     };
 
     /** Login with matamask. */
-    const login: () => Promise<void> = async () => {
+    const login: () => Promise<void> = async() => {
         if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
             onboarding.startOnboarding();
 
             return;
         }
         await window.ethereum.request({
-            method: "eth_requestAccounts",
+            method: 'eth_requestAccounts',
         });
         try {
             const address = await ethersService.getWallet();
@@ -118,33 +166,39 @@ export const SignIn = () => {
             const signedMessage = await ethersService.signMessage(message);
             await client.login(new SignedMessage(message, signedMessage));
             history.push(RouteConfig.MarketPlace.path);
-            setLocalStorageItem("IS_LOGGED_IN", true);
+            setLocalStorageItem('IS_LOGGED_IN', true);
         } catch (error: any) {
             if (!(error instanceof NotFoundError)) {
-                toast.error("Something went wrong", {
+                toast.error('Something went wrong', {
                     position: toast.POSITION.TOP_RIGHT,
-                    theme: "colored",
+                    theme: 'colored',
                 });
 
                 return;
             }
             try {
-                const signedMessage = await ethersService.signMessage("Register with metamask");
+                const signedMessage = await ethersService.signMessage('Register with metamask');
                 await client.register(signedMessage);
                 const address = await ethersService.getWallet();
                 const message = await client.getNonce(address);
                 const signedNonce = await ethersService.signMessage(message);
                 await client.login(new SignedMessage(message, signedNonce));
                 history.push(RouteConfig.MarketPlace.path);
-                setLocalStorageItem("IS_LOGGED_IN", true);
+                setLocalStorageItem('IS_LOGGED_IN', true);
             } catch (error: any) {
-                toast.error("Something went wrong", {
+                toast.error('Something went wrong', {
                     position: toast.POSITION.TOP_RIGHT,
-                    theme: "colored",
+                    theme: 'colored',
                 });
             }
         }
     };
+
+    useEffect(() => {
+        window.addEventListener('signer:connected', casperRegistration);
+
+        return () => window.removeEventListener('signer:connected', casperRegistration);
+    }, []);
 
     return (
         <div className="login">
@@ -163,7 +217,7 @@ export const SignIn = () => {
                             <img src={velas} alt="Velas logo" className="login__content__log-in__item__logo" />
                             <p className="login__content__log-in__item__text">Connect velas account</p>
                         </div>
-                        <div className="login__content__log-in__item">
+                        <div onClick={sendConnectionRequestCasper} className="login__content__log-in__item">
                             <img src={casper} alt="Casper logo" className="login__content__log-in__item__logo" />
                             <p className="login__content__log-in__item__text">Connect casper signer </p>
                         </div>
