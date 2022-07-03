@@ -44,3 +44,9 @@ push: ## Push all necessary docker images.
 
 docker: ## Build and push all necessary docker images.
 	make build push
+
+run_local: ## Build and run app locally.
+	make build_dist && cd deploy/local && docker-compose up
+
+stop_local: ## Stop app locally.
+	cd deploy/local && docker-compose down

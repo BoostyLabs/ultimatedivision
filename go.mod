@@ -7,12 +7,14 @@ require (
 	github.com/BoostyLabs/thelooper v0.0.0-20220114103907-5df44f497033
 	github.com/ethereum/go-ethereum v1.10.14
 	github.com/fogleman/gg v1.3.0
-	github.com/google/uuid v1.2.0
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/lib/pq v1.9.0
 	github.com/minio/minio-go/v7 v7.0.16
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/prometheus/client_golang v1.12.2
+	github.com/rs/xid v1.4.0 // indirect
 	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.7.0
 	github.com/zeebo/errs v1.2.2
