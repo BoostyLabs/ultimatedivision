@@ -22,6 +22,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.29
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/prometheus/client_golang v1.12.2
 	github.com/rjeczalik/notify v0.9.2 // indirect
 	github.com/rs/xid v1.4.0 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
