@@ -1,5 +1,5 @@
 # BUILDER Image. Used to download all dependenices, etc
-FROM golang:1.17.11-alpine3.16 as builder
+FROM golang:1.17.4-alpine3.15 as builder
 # Changing root directory
 WORKDIR /app
 # Copy all files to root directory

@@ -18,6 +18,7 @@ import (
 // ErrCreateSignature indicates that an error occurred while creating a signature.
 var ErrCreateSignature = errs.Class("signature package error")
 
+// NFTStoreSignature describes values needed to generate signature for user's wallet to buy nft in store.
 type NFTStoreSignature struct {
 	EncodedMethod   string
 	WalletAddress   common.Address
@@ -36,13 +37,13 @@ func GenerateNFTStoreSignature(nftStoreSignature NFTStoreSignature) (evmsignatur
 	tokenIDStringWithZeros := evmsignature.CreateHexStringFixedLength(fmt.Sprintf("%x", nftStoreSignature.TokenID))
 	tokenIDByte, err := hex.DecodeString(string(tokenIDStringWithZeros))
 	if err != nil {
-		return "", errs.Wrap(err)
+		return "", ErrCreateSignature.Wrap(err)
 	}
 
 	valueStringWithZeros := evmsignature.CreateHexStringFixedLength(fmt.Sprintf("%x", nftStoreSignature.Value))
 	valueByte, err := hex.DecodeString(string(valueStringWithZeros))
 	if err != nil {
-		return "", errs.Wrap(err)
+		return "", ErrCreateSignature.Wrap(err)
 	}
 
 	values = append(values, encodedMethodSelector, nftStoreSignature.WalletAddress.Hash().Bytes(), nftStoreSignature.ContractAddress.Hash().Bytes(),
@@ -55,10 +56,10 @@ func GenerateNFTStoreSignature(nftStoreSignature NFTStoreSignature) (evmsignatur
 
 	signatureByte, err := evmsignature.MakeSignature(createSignature)
 	if err != nil {
-		return "", errs.Wrap(err)
+		return "", ErrCreateSignature.Wrap(err)
 	}
 
 	signature, err := evmsignature.ReformSignature(signatureByte)
 
-	return signature, errs.Wrap(err)
+	return signature, ErrCreateSignature.Wrap(err)
 }
