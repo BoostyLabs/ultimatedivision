@@ -23,7 +23,7 @@ func TestSignature(t *testing.T) {
 	require.NoError(t, err)
 
 	nftStoreSignature := signature.NFTStoreSignature{
-		EncodedMethod:   "Signature(address,address,uint256,uint256)",
+		MethodName:      "Signature(address,address,uint256,uint256)",
 		WalletAddress:   common.HexToAddress("0x56f088767D91badc379155290c4205c7b917a36E"),
 		ContractAddress: common.HexToAddress("0x510D43D563A792C5F13fF2C69fFcE1f0226056BD"),
 		TokenID:         5,

@@ -20,7 +20,7 @@ var ErrCreateSignature = errs.Class("signature package error")
 
 // NFTStoreSignature describes values needed to generate signature for user's wallet to buy nft in store.
 type NFTStoreSignature struct {
-	EncodedMethod   string
+	MethodName      string
 	WalletAddress   common.Address
 	ContractAddress common.Address
 	TokenID         int64
@@ -32,7 +32,7 @@ type NFTStoreSignature struct {
 func GenerateNFTStoreSignature(nftStoreSignature NFTStoreSignature) (evmsignature.Signature, error) {
 	var values [][]byte
 
-	encodedMethodSelector := crypto.Keccak256Hash([]byte(nftStoreSignature.EncodedMethod)).Bytes()[:4]
+	methodSelector := crypto.Keccak256Hash([]byte(nftStoreSignature.MethodName)).Bytes()[:4]
 
 	tokenIDStringWithZeros := evmsignature.CreateHexStringFixedLength(fmt.Sprintf("%x", nftStoreSignature.TokenID))
 	tokenIDByte, err := hex.DecodeString(string(tokenIDStringWithZeros))
@@ -46,7 +46,7 @@ func GenerateNFTStoreSignature(nftStoreSignature NFTStoreSignature) (evmsignatur
 		return "", ErrCreateSignature.Wrap(err)
 	}
 
-	values = append(values, encodedMethodSelector, nftStoreSignature.WalletAddress.Hash().Bytes(), nftStoreSignature.ContractAddress.Hash().Bytes(),
+	values = append(values, methodSelector, nftStoreSignature.WalletAddress.Hash().Bytes(), nftStoreSignature.ContractAddress.Hash().Bytes(),
 		tokenIDByte, valueByte)
 
 	createSignature := evmsignature.CreateSignature{
