@@ -9,6 +9,7 @@ require (
 	github.com/StackExchange/wmi v1.2.1 // indirect
 	github.com/ethereum/go-ethereum v1.10.19
 	github.com/fogleman/gg v1.3.0
+	github.com/go-critic/go-critic v0.6.3 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/google/uuid v1.3.0
