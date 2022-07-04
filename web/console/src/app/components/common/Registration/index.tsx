@@ -1,34 +1,34 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useMemo } from "react";
-import { useHistory } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-import MetaMaskOnboarding from "@metamask/onboarding";
+import MetaMaskOnboarding from '@metamask/onboarding';
 // @ts-ignore
-import KeyStorageHandler from "../../../velas/keyStorageHandler";
+import KeyStorageHandler from '../../../velas/keyStorageHandler';
 // @ts-ignore
-import StorageHandler from "../../../velas/storageHandler";
+import StorageHandler from '../../../velas/storageHandler';
 // @ts-ignore
-import { VAClient } from "@velas/account-client";
+import { VAClient } from '@velas/account-client';
 
-import { useLocalStorage } from "@/app/hooks/useLocalStorage";
-import { RouteConfig } from "@/app/routes";
-import { ServicePlugin } from "@/app/plugins/service";
-import { EthersClient } from "@/api/ethers";
-import { NotFoundError } from "@/api";
-import { SignedMessage } from "@/app/ethers";
-import { UsersClient } from "@/api/users";
-import { UsersService } from "@/users/service";
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
+import { RouteConfig } from '@/app/routes';
+import { ServicePlugin } from '@/app/plugins/service';
+import { EthersClient } from '@/api/ethers';
+import { NotFoundError } from '@/api';
+import { SignedMessage } from '@/app/ethers';
+import { UsersClient } from '@/api/users';
+import { UsersService } from '@/users/service';
 
-import representLogo from "@static/img/login/represent-logo.gif";
-import metamask from "@static/img/login/metamask-icon.svg";
-import velas from "@static/img/login/velas-icon.svg";
-import casper from "@static/img/login/casper-icon.svg";
-import closeButton from "@static/img/login/close-icon.svg";
+import representLogo from '@static/img/login/represent-logo.gif';
+import metamask from '@static/img/login/metamask-icon.svg';
+import velas from '@static/img/login/velas-icon.svg';
+import casper from '@static/img/login/casper-icon.svg';
+import closeButton from '@static/img/login/close-icon.svg';
 
-import "./index.scss";
+import './index.scss';
 
 export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }> = ({ closeRegistrationPopup }) => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
@@ -42,12 +42,12 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
     /** generates vaclient with the help of creds  */
-    const vaclientService = async () => {
+    const vaclientService = async() => {
         try {
             const creds = await usersService.velasVaclientCreds();
 
             const vaclient = new VAClient({
-                mode: "redirect",
+                mode: 'redirect',
                 clientID: creds.clientId,
                 redirectUri: creds.redirectUri,
                 StorageHandler,
@@ -60,9 +60,9 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
 
             return vaclient;
         } catch (e) {
-            toast.error(`Something went wrong`, {
+            toast.error('Something went wrong', {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
 
@@ -75,12 +75,12 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
         } else if (e) {
             toast.error(`${e.description}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
     };
 
-    const contentVelas = async () => {
+    const contentVelas = async() => {
         try {
             const csrfToken = await usersService.velasCsrfToken();
 
@@ -88,57 +88,57 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
             vaclient.authorize(
                 {
                     csrfToken: csrfToken,
-                    scope: "authorization",
-                    challenge: "some_challenge_from_backend",
+                    scope: 'authorization',
+                    challenge: 'some_challenge_from_backend',
                 },
                 processAuthResult
             );
         } catch (error: any) {
             toast.error(`${error}`, {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: "colored",
+                theme: 'colored',
             });
         }
     };
 
-    const loginMetamask = async () => {
+    const loginMetamask = async() => {
         const address = await ethersService.getWallet();
         const message = await client.getNonce(address);
         const signedMessage = await ethersService.signMessage(message);
         await client.login(new SignedMessage(message, signedMessage));
         history.push(RouteConfig.MarketPlace.path);
-        setLocalStorageItem("IS_LOGGINED", true);
+        setLocalStorageItem('IS_LOGGINED', true);
     };
 
     /** Login with matamask. */
-    const content: () => Promise<void> = async () => {
+    const content: () => Promise<void> = async() => {
         if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
             onboarding.startOnboarding();
 
             return;
         }
         await window.ethereum.request({
-            method: "eth_requestAccounts",
+            method: 'eth_requestAccounts',
         });
         try {
             await loginMetamask();
         } catch (error: any) {
             if (!(error instanceof NotFoundError)) {
-                toast.error("Something went wrong", {
+                toast.error('Something went wrong', {
                     position: toast.POSITION.TOP_RIGHT,
-                    theme: "colored",
+                    theme: 'colored',
                 });
 
                 return;
             }
             try {
-                const signedMessage = await ethersService.signMessage("Register with metamask");
+                const signedMessage = await ethersService.signMessage('Register with metamask');
                 await client.register(signedMessage);
                 await loginMetamask();
             } catch (error: any) {
-                toast.error("Something went wrong", {
+                toast.error('Something went wrong', {
                     position: toast.POSITION.TOP_RIGHT,
-                    theme: "colored",
+                    theme: 'colored',
                 });
             }
         }
