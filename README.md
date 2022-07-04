@@ -1,6 +1,6 @@
 ## Deployment architecture
 
-**Solution**.
+**Solution.**
 
 To make deployment independent of cloud providers, use containerization through docker images. That could be runnable on any server, as result we could switch between providers whenever we want without changing the deployment process.
 
@@ -21,7 +21,7 @@ For deployment use GitHub actions that trigger commands from Makefile. It will b
 
 **Rollback to particular version.**
 
-On deployment part,  create docker image with name that contains commit hash (docker-registry-address/service-name:commit-hash), as result we could rollback to particular version whenever we want.
+On deployment part, create docker image with name that contains commit hash (docker-registry-address/service-name:commit-hash), as result we could rollback to particular version whenever we want.
 
 **Installing.**
 
@@ -42,12 +42,14 @@ docker run --name=db -e POSTGRES_PASSWORD='$YOUR_PASSWORD' -p $YOUR_PORTS -d --r
 docker exec -it db createdb -U postgres ultimatedivision_test
 ```
 
-**Run the main server.**
+**Run the main server locally.**
 
-From the web/console directory at the root of the project use this commands to build front end part of project:
+From the root of the project use this commands to create .env file with necessary variables:
 ```
-npm i --force && npm run build
+cp deploy/local/.env.test deploy/local/.env
 ```
+
+Need to feel variables on the path deploy/local/.env .
 
 There is a makefile to run the project, you can run it with the command in root of the project:
 ```
