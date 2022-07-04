@@ -1,26 +1,26 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Dispatch, SetStateAction, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
+import { Dispatch, SetStateAction, useState } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
-import { LootboxCardQuality } from './LootboxCardQuality';
+import { LootboxCardQuality } from "./LootboxCardQuality";
 
-import { RegistrationPopup } from '@/app/components/common/Registration';
+import { RegistrationPopup } from "@/app/components/common/Registration";
 
-import coin from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
-import diamond from '@static/img/StorePage/BoxCard/diamond.svg';
-import gold from '@static/img/StorePage/BoxCard/gold.svg';
-import silver from '@static/img/StorePage/BoxCard/silver.svg';
-import wood from '@static/img/StorePage/BoxCard/wood.svg';
+import coin from "@static/img/MarketPlacePage/MyCard/goldPrice.svg";
+import diamond from "@static/img/StorePage/BoxCard/diamond.svg";
+import gold from "@static/img/StorePage/BoxCard/gold.svg";
+import silver from "@static/img/StorePage/BoxCard/silver.svg";
+import wood from "@static/img/StorePage/BoxCard/wood.svg";
 
-import { UnauthorizedError } from '@/api';
-import { useLocalStorage } from '@/app/hooks/useLocalStorage';
-import { openLootbox } from '@/app/store/actions/lootboxes';
-import { LootboxStats } from '@/app/types/lootbox';
+import { UnauthorizedError } from "@/api";
+import { useLocalStorage } from "@/app/hooks/useLocalStorage";
+import { openLootbox } from "@/app/store/actions/lootboxes";
+import { LootboxStats, LootboxTypes } from "@/app/types/lootbox";
 
-import './index.scss';
+import "./index.scss";
 
 export const LootboxCard: React.FC<{
     data: LootboxStats;
@@ -40,24 +40,25 @@ export const LootboxCard: React.FC<{
 
     const qualities = [
         {
-            name: 'Wood',
+            name: "Wood",
             icon: wood,
         },
         {
-            name: 'Silver',
+            name: "Silver",
             icon: silver,
         },
         {
-            name: 'Gold',
+            name: "Gold",
             icon: gold,
         },
         {
-            name: 'Diamond',
+            name: "Diamond",
             icon: diamond,
         },
     ];
+    const boxType = data.type === "Regular Box" ? "Regular Box" : "Cool box";
 
-    const handleAnimation = async() => {
+    const handleAnimation = async () => {
         // TODO: need add id lootbox from BD after be create endpoint fetch lootboxex.
         try {
             await dispatch(openLootbox({ id: data.id, type: data.type }));
@@ -67,14 +68,14 @@ export const LootboxCard: React.FC<{
             if (error instanceof UnauthorizedError) {
                 setIsRegistrationRequired(true);
 
-                setLocalStorageItem('IS_LOGGINED', false);
+                setLocalStorageItem("IS_LOGGINED", false);
 
                 return;
             }
 
-            toast.error('Failed to open lootbox', {
+            toast.error("Failed to open lootbox", {
                 position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
+                theme: "colored",
             });
         }
     };
@@ -83,21 +84,23 @@ export const LootboxCard: React.FC<{
         return <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />;
     }
 
+    console.log(data.type);
+
     return (
         <div className="box-card">
             <div className="box-card__wrapper">
                 <div className="box-card__description">
                     <img className="box-card__icon" src={data.icon} alt="box" />
-                    <h2 className="box-card__title">{data.type === 'Regular Box' ? 'Regular Box' : 'Cool box'}</h2>
+                    <h2 className="box-card__title">{boxType}</h2>
                     <div className="box-card__quantity">
                         <span className="box-card__quantity-label">Cards</span>
                         <span className="box-card__quantity-value">{data.quantity}</span>
                     </div>
                 </div>
                 <div className="box-card__qualities">
-                    {data.dropChance.map((item, index) =>
+                    {data.dropChance.map((item, index) => (
                         <LootboxCardQuality label={qualities[index]} chance={item} key={index} />
-                    )}
+                    ))}
                     <button className="box-card__button" onClick={handleAnimation}>
                         <span className="box-card__button-text">OPEN</span>
                         <span className="box-card__button-value">

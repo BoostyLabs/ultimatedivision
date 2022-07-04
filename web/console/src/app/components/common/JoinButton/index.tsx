@@ -1,14 +1,14 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Link, useHistory } from 'react-router-dom';
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
 
-import { AuthRouteConfig, RouteConfig } from '@/app/routes';
-import { useLocalStorage } from '@/app/hooks/useLocalStorage';
+import { RouteConfig } from "@/app/routes";
+import { useLocalStorage } from "@/app/hooks/useLocalStorage";
+import { RegistrationPopup } from "../Registration";
 
-import './index.scss';
-import { RegistrationPopup } from '../Registration';
-import { useState } from 'react';
+import "./index.scss";
 
 export const JoinButton: React.FC = () => {
     const history = useHistory();
@@ -17,7 +17,7 @@ export const JoinButton: React.FC = () => {
 
     /* Boolean value from localstorge that indicates whether the user is logged in or not. */
     // @ts-ignore .
-    const isLoggined = JSON.parse(getLocalStorageItem('IS_LOGGINED'));
+    const isLoggined = JSON.parse(getLocalStorageItem("IS_LOGGINED"));
 
     /** Closes Registration popup componnet. */
     const closeRegistrationPopup = () => {
