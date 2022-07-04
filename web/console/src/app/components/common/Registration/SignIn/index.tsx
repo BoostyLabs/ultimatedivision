@@ -99,7 +99,7 @@ export const SignIn = () => {
         try {
             const publicKey = await window.casperlabsHelper.getActivePublicKey();
 
-            loginCasper(publicKey);
+            await loginCasper(publicKey);
         } catch (error) {
             if (!(error instanceof NotFoundError)) {
                 toast.error('Something went wrong', {
@@ -115,7 +115,7 @@ export const SignIn = () => {
 
                 await usersService.casperRegister(publicKey);
 
-                loginCasper(publicKey);
+                await loginCasper(publicKey);
             } catch (e) {
                 toast.error('Something went wrong', {
                     position: toast.POSITION.TOP_RIGHT,
