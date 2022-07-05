@@ -15,6 +15,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards/waitlist"
+	"ultimatedivision/internal/signature"
 )
 
 // ChoreError represents nft signer chore error type.
@@ -25,9 +26,10 @@ type ChoreConfig struct {
 	RenewalInterval          time.Duration           `json:"renewalInterval"`
 	PrivateKey               evmsignature.PrivateKey `json:"privateKey"`
 	NFTCreateContractAddress common.Address          `json:"nftCreateContractAddress"`
+	BuyMethodName            string                  `json:"buyMethodName"`
 }
 
-// Chore requests for unsigned nft tokens and sign all of them .
+// Chore requests for unsigned nft tokens and sign all of them.
 //
 // architecture: Chore
 type Chore struct {
@@ -47,34 +49,42 @@ func NewChore(config ChoreConfig, db waitlist.DB) *Chore {
 
 // Run starts the chore for signing unsigned nft token from ultimatedivision.
 func (chore *Chore) Run(ctx context.Context) (err error) {
+	privateKeyECDSA, err := crypto.HexToECDSA(string(chore.config.PrivateKey))
+	if err != nil {
+		return ChoreError.Wrap(err)
+	}
+
 	return chore.loop.Run(ctx, func(ctx context.Context) error {
 		unsignedNFTs, err := chore.nfts.ListWithoutPassword(ctx)
 		if err != nil {
 			return ChoreError.Wrap(err)
 		}
 
-		privateKeyECDSA, err := crypto.HexToECDSA(string(chore.config.PrivateKey))
-		if err != nil {
-			return ChoreError.Wrap(err)
-		}
-
 		for _, token := range unsignedNFTs {
-			var signature evmsignature.Signature
+			var generatedSignature evmsignature.Signature
 			if token.Value.Cmp(big.NewInt(0)) <= 0 {
-				signature, err = evmsignature.GenerateSignatureWithValue(evmsignature.Address(token.Wallet.String()),
+				generatedSignature, err = evmsignature.GenerateSignatureWithValue(evmsignature.Address(token.Wallet.String()),
 					evmsignature.Address(chore.config.NFTCreateContractAddress.String()), token.TokenID, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			} else {
-				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(token.Wallet.String()),
-					evmsignature.Address(chore.config.NFTCreateContractAddress.String()), &token.Value, token.TokenID, privateKeyECDSA)
+				nftStoreSignature := signature.NFTStoreSignature{
+					MethodName:      chore.config.BuyMethodName,
+					WalletAddress:   token.Wallet,
+					ContractAddress: chore.config.NFTCreateContractAddress,
+					TokenID:         token.TokenID,
+					Value:           &token.Value,
+					PrivateKey:      privateKeyECDSA,
+				}
+
+				generatedSignature, err = signature.GenerateNFTStoreSignature(nftStoreSignature)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			}
 
-			if err = chore.nfts.Update(ctx, token.TokenID, signature); err != nil {
+			if err = chore.nfts.Update(ctx, token.TokenID, generatedSignature); err != nil {
 				return ChoreError.Wrap(err)
 			}
 		}
