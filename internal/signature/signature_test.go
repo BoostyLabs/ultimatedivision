@@ -39,4 +39,12 @@ func TestSignature(t *testing.T) {
 
 		assert.Equal(t, expectedSignature, signature)
 	})
+
+	t.Run("Negative GenerateNFTStoreSignature", func(t *testing.T) {
+		nftStoreSignature.TokenID = -5
+		_, err := signature.GenerateNFTStoreSignature(nftStoreSignature)
+		require.Error(t, err)
+
+		assert.True(t, signature.ErrCreateSignature.Has(err))
+	})
 }
