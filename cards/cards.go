@@ -59,6 +59,7 @@ type Card struct {
 	ID               uuid.UUID    `json:"id"`
 	PlayerName       string       `json:"playerName"`
 	EndTime          time.Time    `json:"endTime"`
+	LastClubID       uuid.UUID    `json:"lastClubId"`
 	Quality          Quality      `json:"quality"`
 	Height           float64      `json:"height"`
 	Weight           float64      `json:"weight"`

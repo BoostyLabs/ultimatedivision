@@ -702,8 +702,8 @@ func (cardsDB *cardsDB) UpdateClubEndTime(ctx context.Context, id uuid.UUID) err
 	}
 
 	rowNum, err := result.RowsAffected()
-	if rowNum == 0 {
-		return cards.ErrNoCard.New("")
+	if rowNum == 0 && err == nil {
+		return cards.ErrNoCard.New("card does not exist")
 	}
 
 	return ErrCard.Wrap(err)

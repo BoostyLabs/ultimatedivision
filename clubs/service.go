@@ -113,12 +113,17 @@ func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.U
 		return ErrClubs.Wrap(err)
 	}
 
-	if card.EndTime.After(time.Now().UTC()) {
-		return ErrClubs.New("card is blocked until this time - %v", card.EndTime)
-	}
-
 	if userID != card.UserID {
 		return ErrInvalidOperation.New("card does not belong to user")
+	}
+
+	club, err := service.clubs.GetSquad(ctx, squadID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	if club.ClubID != card.LastClubID && card.EndTime.After(time.Now().UTC()) {
+		return ErrClubs.New("card is blocked until this time - %v", card.EndTime)
 	}
 
 	squadCards, err := service.clubs.ListSquadCards(ctx, squadID)
