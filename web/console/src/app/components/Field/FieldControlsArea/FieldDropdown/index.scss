@@ -1,0 +1,134 @@
+@import "@/index.scss";
+
+.field-dropdown {
+    z-index: 4;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    column-width: 110px;
+    column-gap: normal;
+    list-style: none;
+    top: 50px;
+    margin: 10px 0;
+    padding: 18px;
+    height: 200px;
+    box-sizing: border-box;
+    border: 2px solid #f5ff63;
+    border-radius: 21px;
+    box-shadow: 0 10px 14px rgba(0, 23, 58, 0.14);
+
+    &__tactics {
+        left: 200px;
+    }
+
+    &__captain {
+        right: 0;
+    }
+
+    &__item {
+        cursor: pointer;
+        height: auto;
+        display: block;
+
+        &__label {
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 110px;
+            height: 100%;
+        }
+
+        &__text {
+            font-family: "Urbanist", sans-serif;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            letter-spacing: 0.12em;
+            color: #26373f;
+
+            &__add-new {
+                color: #736ffd;
+            }
+        }
+
+        &__input {
+            display: none;
+            height: 0;
+            width: 0;
+            opacity: 0;
+            cursor: pointer;
+
+            &:checked {
+
+                & ~ .field-dropdown__item__label {
+
+                    & .field-dropdown__item__radio {
+                        border: 1px solid #f5ff63;
+                        background: none;
+
+                        &:after {
+                            content: "";
+                            position: absolute;
+                            width: 8.3px;
+                            height: 8.3px;
+                            background: #f5ff63;
+                            border-radius: 50%;
+                            right: 4.2px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        }
+                    }
+
+                    & .field-dropdown__item__text {
+                        color: #f5ff63;
+                    }
+                }
+            }
+        }
+
+        &__radio {
+            content: "";
+            height: 17px;
+            width: 17px;
+            border: 1px solid #819aff;
+            border-radius: 50%;
+        }
+
+        &__button {
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            outline: none;
+            border: none;
+            font-family: "Urbanist", sans-serif;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            letter-spacing: 0.12em;
+            color: #736ffd;
+            background: none;
+
+            &__icon {
+                margin-right: 5px;
+
+                img {
+                    width: 18px;
+                    height: 18px;
+                }
+            }
+        }
+    }
+
+    @include fieldDropdownAmountsColumns;
+    @include fieldDropdownElementsColumn;
+}

@@ -7,3 +7,27 @@
     top: calc(#{$top} - 162px / 2);
     left: calc(#{$left} - 50px / 2);
 }
+
+@mixin fieldDropdownAmountsColumns {
+    @for $i from 1 to 3 {
+        &.field-dropdown__#{$i}--columns {
+            width: 155px * $i;
+            max-width: 155px * $i;
+
+            & .field-dropdown__item {
+                width: calc(100% / #{$i});
+            }
+        }
+    }
+}
+
+@mixin fieldDropdownElementsColumn {
+    @for $i from 1 to 6 {
+        .field-dropdown__item--#{$i}-elements {
+            height: calc(100% / #{$i});
+            &:nth-child(#{$i}) {
+                padding-bottom: 0;
+            }
+        }
+    }
+}
