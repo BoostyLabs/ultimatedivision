@@ -35,7 +35,7 @@ type cardsDB struct {
 }
 
 const (
-	allFields = `id, player_name, end_time_block, quality, height, weight, dominant_foot, is_tattoo, status, type, user_id, tactics, positioning, composure, 
+	allFields = `id, player_name, end_time_block, last_club_id, quality, height, weight, dominant_foot, is_tattoo, status, type, user_id, tactics, positioning, composure, 
 		aggression, vision, awareness, crosses, physique, acceleration, running_speed, reaction_speed, agility, stamina, strength, jumping, 
 		balance, technique, dribbling, ball_control, weak_foot, skill_moves, finesse, curve, volleys, short_passing, long_passing, forward_pass, 
 		offense, finishing_ability, shot_power, accuracy, distance, penalty, free_kicks, corners, heading_accuracy, defence, offside_trap, 
@@ -50,10 +50,10 @@ func (cardsDB *cardsDB) Create(ctx context.Context, card cards.Card) error {
 		VALUES 
 			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25,
 			$26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49,
-			$50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60)`
+			$50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61)`
 
 	_, err := cardsDB.conn.ExecContext(ctx, query,
-		card.ID, card.PlayerName, card.EndTime, card.Quality, card.Height, card.Weight,
+		card.ID, card.PlayerName, card.EndTime, card.LastClubID, card.Quality, card.Height, card.Weight,
 		card.DominantFoot, card.IsTattoo, card.Status, card.Type, card.UserID, card.Tactics, card.Positioning, card.Composure, card.Aggression,
 		card.Vision, card.Awareness, card.Crosses, card.Physique, card.Acceleration, card.RunningSpeed, card.ReactionSpeed, card.Agility,
 		card.Stamina, card.Strength, card.Jumping, card.Balance, card.Technique, card.Dribbling, card.BallControl, card.WeakFoot, card.SkillMoves,
