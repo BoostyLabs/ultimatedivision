@@ -37,7 +37,7 @@ For our project we use a relational database PostgreSQL, version 12.11 which you
 
 For isolated installation of databases and servers we need a Docker, version 20.10.16 or higher, you can download it at official [website](https://docs.docker.com/engine/install/)
 
-```
+```shell
 docker run --name=db -e POSTGRES_PASSWORD='$YOUR_PASSWORD' -p $YOUR_PORTS -d --rm postgres
 docker exec -it db createdb -U postgres ultimatedivision_test
 ```
@@ -45,14 +45,14 @@ docker exec -it db createdb -U postgres ultimatedivision_test
 **Run the main server locally.**
 
 From the root of the project use this commands to create .env file with necessary variables:
-```
+```shell
 cp deploy/local/.env.test deploy/local/.env
 ```
 
 Need to feel variables on the path deploy/local/.env .
 
 There is a makefile to run the project, you can run it with the command in root of the project:
-```
+```shell
 make run_local
 ```
 After this you can open console on localhost:8088 and admin panel on localhost:8087
@@ -71,7 +71,7 @@ To make graphs we use [Grafana](https://grafana.com/docs/grafana/latest/introduc
 
 **Metric examples.**
 >metrics/metrics.go
-```
+```go
 type Metric struct {
    handler  http.Handler
    newUsers Counter
@@ -102,7 +102,7 @@ func NewMetric() *Metric {
 }
 ```
 >console/consoleserver/controllers/auth.go
-```
+```go
 // Register creates a new user account.
 func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -136,4 +136,148 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	
 	auth.metric.LoginsInc()
 }
+```
+**Microservices.**
+
+* app - The main application ultimatedivision.
+* 
+* 
+* dozzle - Microservice witch collect logs and provide user interface to view them.
+* prometheus - Microservice for collecting metrics from other microservices and server.
+* grafana - Microservice witch provide user interface to view metrics.
+* node_exporter - Microservice for collecting system metrics from docker containers.
+* cadvisor - Microservice for collecting system metrics from server
+* ultimatedivision_db - [PostgreSQL](https://www.postgresql.org/) database 
+
+>deploy/docker-compose.yml
+```yaml
+version: "3"
+
+services:
+  app: 
+    container_name: ultimatedivision_app
+    image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division${ENVIRONMENT}:latest
+    ports:
+      - "8087:8087" # Forward the exposed port 5000 on the container to port 8088 on the host machine (8088:5000).
+      - "8088:8088"
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_DATA_PATH}/ultimate_division:/app/data
+      - ${PROJECT_CONFIGS_PATH}/ultimate_division:/config
+      - ${PROJECT_ASSETS_PATH}:/assets
+    depends_on:
+      - ultimatedivision_db # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+
+  nft_signer:
+    container_name: ultimatedivision_nft_signer
+    image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_nft_signer${ENVIRONMENT}:latest
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_DATA_PATH}/signer:/app/data
+      - ${PROJECT_CONFIGS_PATH}/nft_signer:/config
+    depends_on:
+      - ultimatedivision_db # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+
+  currency_signer:
+    container_name: ultimatedivision_currency_signer
+    image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_currency_signer${ENVIRONMENT}:latest
+    restart: unless-stopped
+    volumes:
+      - ${PROJECT_DATA_PATH}/currency_signer:/app/data
+      - ${PROJECT_CONFIGS_PATH}/currency_signer:/config
+    depends_on:
+      - ultimatedivision_db # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+
+  dozzle:
+    container_name: ultimatedivision_dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9999:8080"
+    networks:
+      - fullstack
+    depends_on:
+      - app
+    environment:
+      - DOZZLE_NO_ANALYTICS=true
+      - DOZZLE_USERNAME=${DOZZLE_USERNAME}
+      - DOZZLE_PASSWORD=${DOZZLE_PASSWORD}
+      - DOZZLE_KEY=true
+
+  prometheus:
+    image: prom/prometheus
+    container_name: ultimatedivision_prometheus
+    hostname: prometheus
+    restart: always
+    volumes:
+      - ${PROJECT_CONFIGS_PATH}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - fullstack
+
+  grafana:
+    image: grafana/grafana
+    container_name: ultimatedivision_grafana
+    hostname: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ${PROJECT_CONFIGS_PATH}/grafana/provisioning:/etc/grafana/provisioning
+      - ${PROJECT_DATA_PATH}/grafana:/var/lib/grafana
+    networks:
+      - fullstack
+
+  node_exporter:
+    image: prom/node-exporter
+    container_name: ultimatedivision_node_exporter
+    hostname: node-exporter
+    restart: always
+    ports:
+      - "9100:9100"
+    networks:
+      - fullstack
+
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: ultimatedivision_cadvisor
+    hostname: cadvisor
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - fullstack
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  ultimatedivision_db:
+    restart: always
+    image: postgres:latest
+    container_name: ultimatedivision_db
+    ports:
+      - "5635:5432"
+    volumes:
+      - ${PROJECT_DATA_PATH}/db:/var/lib/postgresql/data
+    networks:
+      - fullstack
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+# Networks to be created to facilitate communication between containers
+networks:
+  fullstack:
+    driver: bridge
 ```
