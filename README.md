@@ -137,18 +137,30 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	auth.metric.LoginsInc()
 }
 ```
-**Microservices.**
+**Mini servers.**
+In general, we use private mini-servers when we work with signing something with a private key to protect personal data from hackers.
+List of these servers:
+- Currency signer;
+- NFT signer;
 
-* app - The main application ultimatedivision.
-* 
-* 
-* dozzle - Microservice witch collect logs and provide user interface to view them.
-* prometheus - Microservice for collecting metrics from other microservices and server.
-* grafana - Microservice witch provide user interface to view metrics.
-* node_exporter - Microservice for collecting system metrics from docker containers.
-* cadvisor - Microservice for collecting system metrics from server
-* ultimatedivision_db - [PostgreSQL](https://www.postgresql.org/) database 
-
+  Brief information about them:
+- we don’t have any api in those servers;
+- we have docker files/docker-compose files where these servers are already started as closed;
+- we have private keys in config files, each server has its own file;
+- each server has an endless cycle with an interval of work and performs its specific logic;
+  You will find commands for local startup under the server description.
+  Deployment instructions on the remote server according to the docker files in the `deploy` directory.
+  
+**Currency signer**
+  The currency signer runs a infinite cycle with an interval of operation that monitors the records of currency waitlist in which there is no signature and if it finds them then generates a signature and sends a transaction to transfer money.
+```shell
+go run cmd/currencysigrer/main.go run --config=your_path
+```
+**NFT signer**
+The nft signer runs an infinite cycle with an interval of operation that monitors the records of waitlist in which there is no signature and if it finds them then generates a signature and sends a transaction to mint nft.
+```shell
+go run cmd/nftsigrer/main.go run --config=your_path
+```
 >deploy/docker-compose.yml
 ```yaml
 version: "3"
