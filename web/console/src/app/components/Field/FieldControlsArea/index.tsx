@@ -1,10 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-import Clubs from '@/app/components/Field/FieldControlsArea/Clubs';
 
 import { setCaptain, setFormation, setTactic, startSearchingMatch } from '@/app/store/actions/clubs';
 import { RootState } from '@/app/store';
@@ -20,12 +18,21 @@ import './index.scss';
 
 export const FieldControlsArea: React.FC = () => {
     const dispatch = useDispatch();
+
+    const [currentOption, setCurrentOption] = useState<null | Control>(null);
+    const [optionVisibility, changeVisibility] = useState(false);
+
     const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
     const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
     const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
 
-    const [currentOption, setCurrentOption] = useState<null | Control>(null);
-    const [optionVisibility, changeVisibility] = useState(false);
+    const isDropdownActive = useMemo(
+        () => currentOption !== null && optionVisibility,
+        [currentOption, optionVisibility]
+    );
+
+    const checkActiveElement = (item: Control) => item.title === currentOption?.title && optionVisibility;
+
     useEffect(() => {
         /** Function checks field cards and compare it with player cards array */
         function isPossibleToStart() {
@@ -59,6 +66,15 @@ export const FieldControlsArea: React.FC = () => {
         ),
     ];
 
+    const setCurrentControlsAreaOption = (item: Control) => {
+        setCurrentOption(item);
+
+        if (item.title !== currentOption?.title && optionVisibility) {
+            changeVisibility(false);
+        }
+        changeVisibility((prev) => !prev);
+    };
+
     /** shows matchFinder component */
     const showMatchFinder = () => {
         dispatch(startSearchingMatch(true));
@@ -71,46 +87,31 @@ export const FieldControlsArea: React.FC = () => {
     return (
         <div className="field-controls">
             <div className="field-controls__wrapper">
-                {/* <Clubs /> */}
-
                 <div className="field-controls__settings">
                     {CONTROLS_FIELDS.map((item, index) =>
                         <div className="field-controls__settings__item" key={item.title}>
                             <div
                                 className="field-controls__settings__item__heading"
-                                onClick={() => {
-                                    setCurrentOption(item);
-
-                                    if (item.title !== currentOption?.title && optionVisibility) {
-                                        changeVisibility(false);
-                                        changeVisibility((prev) => !prev);
-                                    } else {
-                                        changeVisibility((prev) => !prev);
-                                    }
-                                }}
+                                onClick={() => setCurrentControlsAreaOption(item)}
                             >
                                 <h4 className="field-controls__settings__item__title">{item.title}</h4>
-                                {item.title === currentOption?.title && optionVisibility ?
-                                    <img
-                                        className="field-controls__settings__item__image"
-                                        src={arrowActiveIcon}
-                                        alt="triangle img"
-                                        id={`triangle-${item.id}`}
-                                        style={{ transform: new DropdownStyle(true).triangleRotate }}
-                                    />
-                                    :
-                                    <img
-                                        className="field-controls__settings__item__image"
-                                        src={arrowIcon}
-                                        alt="triangle img"
-                                        id={`triangle-${item.id}`}
-                                    />
-                                }
+
+                                <img
+                                    className="field-controls__settings__item__image"
+                                    src={checkActiveElement(item) ? arrowActiveIcon : arrowIcon}
+                                    alt="triangle img"
+                                    id={`triangle-${item.id}`}
+                                    style={
+                                        checkActiveElement(item)
+                                            ? { transform: new DropdownStyle(true).triangleRotate }
+                                            : {}
+                                    }
+                                />
                             </div>
                         </div>
                     )}
                 </div>
-                {currentOption !== null && optionVisibility && <FieldDropdown option={currentOption} />}
+                {isDropdownActive && <FieldDropdown option={currentOption} />}
             </div>
             <input
                 type="button"

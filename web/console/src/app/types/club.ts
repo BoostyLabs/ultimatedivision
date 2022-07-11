@@ -1,14 +1,14 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-const defaultNumber = 0;
-const fourElementsColumn = 4;
-const fiveElementsColumn = 5;
+const DEFAULT_NUMBER = 0;
+const FOUR_ELEMENTS_COLUMN = 4;
+const FIVE_ELEMENTS_COLUMN = 5;
 
 export enum amountColumnsElements {
-    'default' = defaultNumber,
-    'four-elements' = fourElementsColumn,
-    'five-elements' = fiveElementsColumn,
+    'default' = DEFAULT_NUMBER,
+    'four-elements' = FOUR_ELEMENTS_COLUMN,
+    'five-elements' = FIVE_ELEMENTS_COLUMN,
 }
 
 /** class for each control in option selection on field */
@@ -19,6 +19,6 @@ export class Control {
         public title: string = '',
         public action: any = {},
         public options: string[] = [],
-        public columnElements: number = defaultNumber
+        public columnElements: number = DEFAULT_NUMBER
     ) {}
 }

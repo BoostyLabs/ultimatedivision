@@ -4,7 +4,7 @@
 /** class for changing dropdown visibility according to component state */
 export class DropdownStyle {
     /** property visibility  */
-    constructor(public vilibility: boolean) {
+    constructor(public vilibility: boolean = false) {
         this.vilibility = vilibility;
     }
 

@@ -1,4 +1,8 @@
+// Copyright (C) 2022 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 import { useDispatch, useSelector } from 'react-redux';
+import { useMemo } from 'react';
 
 import { RootState } from '@/app/store';
 
@@ -11,7 +15,14 @@ export const FieldDropdown: React.FC<{ option: any }> = ({ option }) => {
 
     const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
 
-    const columnsAmount = Math.ceil(option.options.length / option.columnElements);
+    const columnsAmount = useMemo(
+        () => Math.ceil(option.options.length / option.columnElements),
+        [option.options.length, option.columnElements]
+    );
+
+    const sendCheckedOption = (event: any) => {
+        dispatch(option.action(squad, event.target.value));
+    };
 
     /** TODO: add new field button */
     const addNewElement = () => {};
@@ -29,7 +40,7 @@ export const FieldDropdown: React.FC<{ option: any }> = ({ option }) => {
                         name={option.title}
                         id={item}
                         value={item}
-                        onChange={(event) => dispatch(option.action(squad, event.target.value))}
+                        onChange={sendCheckedOption}
                     />
                     <label htmlFor={item} className="field-dropdown__item__label">
                         <span className="field-dropdown__item__text"> {item}</span>
