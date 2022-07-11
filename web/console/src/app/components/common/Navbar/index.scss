@@ -1,7 +1,7 @@
 @import "@/index.scss";
 
 .ultimatedivision-navbar {
-    background-color: $mainBackground;
+    background-color: #9fc2fb;
     margin: auto 0;
     width: 100%;
     height: 100px;
@@ -10,30 +10,30 @@
     text-align: center;
     justify-content: space-between;
 
-    a {
-        z-index: 10;
-        margin-left: 5%;
-    }
-
     &__dropdown {
         display: none;
     }
 
     &__list {
-        width: 60%;
+        width: 100%;
         display: flex;
+        justify-content: center;
         align-items: center;
-        margin: 0 5%;
 
         &__item {
             list-style: none;
-            color: $navbarSecondaryColor;
             margin-right: 40px;
-            font-size: 24px;
             cursor: pointer;
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 18px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
 
             &__active {
-                color: white;
+                color: #000;
                 text-decoration: none;
 
                 &:hover {
@@ -42,7 +42,7 @@
             }
 
             .active {
-                color: $navbarHighlightColor;
+                color: #f5ff63;
                 text-decoration: none;
 
                 &:hover {
@@ -51,10 +51,6 @@
             }
         }
     }
-
-    &__logo {
-        margin-left: 0%;
-    }
 }
 
 @media screen and (max-width: $tabletBreakPoint) {
@@ -62,7 +58,6 @@
     .ultimatedivision-navbar {
 
         &__list {
-            width: 70%;
 
             &__item {
                 margin-right: 20px;
