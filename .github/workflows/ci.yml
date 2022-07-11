@@ -70,7 +70,7 @@ jobs:
         run: npm run build
         working-directory: ./web/console
 
-  Count-Lines-Of-Code:
+  count_lines_of_code:
     name: Count lines of code
     runs-on: ubuntu-latest
     steps:
@@ -101,7 +101,7 @@ jobs:
             ### Lines Of Code
             ${{ steps.loc.outputs.diff }}
 
-  Backend-check-PR-size:
+  backend_check_PR_size:
     name: Backend check PR size
     runs-on: ubuntu-latest
     steps:
@@ -127,7 +127,7 @@ jobs:
             **/*.jsx
   
 
-  Frontend-check-PR-size:
+  frontend_check_PR_size:
     name: Frontend check PR size
     runs-on: ubuntu-latest
     steps:
