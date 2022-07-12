@@ -125,7 +125,6 @@ jobs:
             **/*.css
             **/*.scss
             **/*.jsx
-  
 
   frontend_check_PR_size:
     name: Frontend check PR size
