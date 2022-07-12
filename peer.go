@@ -26,9 +26,11 @@ import (
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/metrics"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
+	"ultimatedivision/pkg/velas"
 	"ultimatedivision/seasons"
 	"ultimatedivision/store"
 	"ultimatedivision/store/lootboxes"
@@ -166,6 +168,10 @@ type Config struct {
 	Store struct {
 		store.Config
 	} `json:"store"`
+
+	Velas struct {
+		velas.Config
+	} `json:"velas"`
 }
 
 // Peer is the representation of a ultimatedivision.
@@ -185,6 +191,7 @@ type Peer struct {
 	Users struct {
 		Service *users.Service
 		Auth    *userauth.Service
+		Metric  *metrics.Metric
 	}
 
 	// exposes cards related logic.
@@ -263,6 +270,16 @@ type Peer struct {
 		StoreRenewal *store.Chore
 	}
 
+	// exposes velas related logic.
+	Velas struct {
+		Service *velas.Service
+	}
+
+	// exposes metric related logic.
+	Metric struct {
+		Service *metrics.Metric
+	}
+
 	// Admin web server server with web UI.
 	Admin struct {
 		Listener net.Listener
@@ -308,6 +325,8 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		mailService := emails.NewService(peer.Log, sender, config.Console.Emails)
 		peer.Console.EmailService = mailService
 	}
+	peer.Metric.Service = metrics.NewMetric()
+	peer.Velas.Service = velas.NewService(config.Velas.Config)
 
 	{ // users setup.
 		peer.Users.Service = users.NewService(
@@ -319,7 +338,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 				Secret: []byte(config.Users.Auth.TokenAuthSecret),
 			},
 			peer.Console.EmailService,
-			logger)
+			logger, peer.Velas.Service)
 	}
 
 	{ // admins setup.
@@ -522,6 +541,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Matches.Service,
 			peer.Seasons.Service,
 			peer.Store.Service,
+			peer.Metric.Service,
 		)
 		if err != nil {
 			return nil, err
@@ -548,6 +568,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Seasons.Service,
 			peer.WaitList.Service,
 			peer.Store.Service,
+			peer.Metric.Service,
 		)
 	}
 

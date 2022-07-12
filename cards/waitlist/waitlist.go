@@ -9,10 +9,12 @@ import (
 	"time"
 
 	"github.com/BoostyLabs/evmsignature"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/remotefilestorage/storj"
+	"ultimatedivision/users"
 )
 
 // ErrNoItem indicates that item for wait list does not exist.
@@ -42,27 +44,29 @@ type DB interface {
 
 // Item entity describes item fot wait list nfts.
 type Item struct {
-	TokenID  int64                  `json:"tokenId"`
-	CardID   uuid.UUID              `json:"cardId"`
-	Wallet   evmsignature.Address   `json:"wallet"`
-	Value    big.Int                `json:"value"`
-	Password evmsignature.Signature `json:"password"`
+	TokenID    int64                  `json:"tokenId"`
+	CardID     uuid.UUID              `json:"cardId"`
+	Wallet     common.Address         `json:"wallet"`
+	WalletType users.WalletType       `json:"walletType"`
+	Value      big.Int                `json:"value"`
+	Password   evmsignature.Signature `json:"password"`
 }
 
 // CreateNFT describes body of request for creating nft token.
 type CreateNFT struct {
-	CardID        uuid.UUID            `json:"cardId"`
-	WalletAddress evmsignature.Address `json:"walletAddress"`
-	UserID        uuid.UUID            `json:"userId"`
-	Value         big.Int              `json:"value"`
+	CardID        uuid.UUID      `json:"cardId"`
+	WalletAddress common.Address `json:"walletAddress"`
+	UserID        uuid.UUID      `json:"userId"`
+	Value         big.Int        `json:"value"`
 }
 
-// Transaction entity describes password wallet, smart contracts address and token id.
+// Transaction entity describes values required to sent transaction.
 type Transaction struct {
-	Password evmsignature.Signature `json:"password"`
-	Contract evmsignature.Contract  `json:"contract"`
-	TokenID  int64                  `json:"tokenId"`
-	Value    big.Int                `json:"value"`
+	Password          evmsignature.Signature `json:"password"`
+	NFTCreateContract NFTCreateContract      `json:"nftCreateContract"`
+	TokenID           int64                  `json:"tokenId"`
+	Value             big.Int                `json:"value"`
+	WalletType        users.WalletType       `json:"walletType"`
 }
 
 // Config defines values needed by check mint nft in blockchain.
@@ -70,15 +74,20 @@ type Config struct {
 	WaitListRenewalInterval time.Duration `json:"waitListRenewalInterval"`
 	WaitListCheckSignature  time.Duration `json:"waitListCheckSignature"`
 	NFTContract             struct {
-		Address      evmsignature.Address `json:"address"`
-		AddressEvent evmsignature.Hex     `json:"addressEvent"`
+		Address      common.Address   `json:"address"`
+		AddressEvent evmsignature.Hex `json:"addressEvent"`
 	} `json:"nftContract"`
-	Contract struct {
-		Address       evmsignature.Address `json:"address"`
-		AddressMethod evmsignature.Hex     `json:"addressMethod"`
-	} `json:"contract"`
-	AddressNodeServer string       `json:"addressNodeServer"`
-	FileStorage       storj.Config `json:"fileStorage"`
-	Bucket            string       `json:"bucket"`
-	URLToAvatar       string       `json:"urlToAvatar"`
+	NFTCreateContract NFTCreateContract `json:"nftCreateContract"`
+	AddressNodeServer string            `json:"addressNodeServer"`
+	FileStorage       storj.Config      `json:"fileStorage"`
+	Bucket            string            `json:"bucket"`
+	URLToAvatar       string            `json:"urlToAvatar"`
+}
+
+// NFTCreateContract describes the meaning of the contract.
+type NFTCreateContract struct {
+	Address                           common.Address   `json:"address"`
+	MintWithSignatureSelector         evmsignature.Hex `json:"mintWithSignatureSelector"`
+	MintWithSignatureAndValueSelector evmsignature.Hex `json:"mintWithSignatureAndValueSelector"`
+	ChainID                           int              `json:"chainId"`
 }
