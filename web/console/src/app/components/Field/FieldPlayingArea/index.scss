@@ -50,8 +50,8 @@
         &__empty-card {
             z-index: 3;
             position: absolute;
-            width: 100px;
-            height: 146px;
+            width: 160px;
+            height: 241.5px;
             cursor: crosshair;
 
             &:hover {
@@ -60,54 +60,55 @@
             }
 
             &:nth-child(1) {
-                @include footballFieldCardPosition(87%, 50%);
+                @include footballFieldCardPosition(77%, 48.5%);
             }
 
             &:nth-child(2) {
-                @include footballFieldCardPosition(75%, 10%);
+                @include footballFieldCardPosition(55%, 30%);
             }
 
             &:nth-child(3) {
-                @include footballFieldCardPosition(80%, 30%);
+                @include footballFieldCardPosition(73%, 35%);
             }
 
             &:nth-child(4) {
-                @include footballFieldCardPosition(80%, 70%);
+                @include footballFieldCardPosition(73%, 61%);
             }
 
             &:nth-child(5) {
-                @include footballFieldCardPosition(75%, 90%);
+                @include footballFieldCardPosition(55%, 67%);
             }
 
             &:nth-child(6) {
-                @include footballFieldCardPosition(54%, 20%);
+                @include footballFieldCardPosition(37.5%, 31%);
             }
 
             &:nth-child(7) {
-                @include footballFieldCardPosition(60%, 40%);
+                @include footballFieldCardPosition(52%, 42%);
             }
 
             &:nth-child(8) {
-                @include footballFieldCardPosition(60%, 60%);
+                @include footballFieldCardPosition(52%, 54%);
             }
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(54%, 80%);
+                @include footballFieldCardPosition(37.5%, 65%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(38%, 34.5%);
+                @include footballFieldCardPosition(20%, 34.5%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(38%, 67%);
+                @include footballFieldCardPosition(20%, 61.5%);
             }
         }
 
         &__empty-card {
             background-image: url("@static/img/FieldPage/emptyCard.svg");
             background-size: contain;
-            background-position: center;
+            background-position-y: center;
+            background-position-x: center;
             background-repeat: no-repeat;
 
             &:hover {
@@ -426,6 +427,80 @@
     }
 }
 
+@media screen and (max-width: 1450px) {
+
+    .playing-area {
+
+        &__0,
+        &__1,
+        &__2,
+        &__3,
+        &__4,
+        &__5,
+        &__6,
+        &__7,
+        &__8,
+        &__9,
+        &__10,
+        &__0-shadows,
+        &__1-shadows,
+        &__2-shadows,
+        &__3-shadows,
+        &__4-shadows,
+        &__5-shadows,
+        &__6-shadows,
+        &__7-shadows,
+        &__8-shadows,
+        &__9-shadows,
+        &__10-shadows {
+
+            &__card,
+            &__empty-card {
+                position: absolute;
+                width: 140px;
+                height: 200px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+
+    .playing-area {
+
+        &__0,
+        &__1,
+        &__2,
+        &__3,
+        &__4,
+        &__5,
+        &__6,
+        &__7,
+        &__8,
+        &__9,
+        &__10,
+        &__0-shadows,
+        &__1-shadows,
+        &__2-shadows,
+        &__3-shadows,
+        &__4-shadows,
+        &__5-shadows,
+        &__6-shadows,
+        &__7-shadows,
+        &__8-shadows,
+        &__9-shadows,
+        &__10-shadows {
+
+            &__card,
+            &__empty-card {
+                position: absolute;
+                width: 130px;
+                height: 190px;
+            }
+        }
+    }
+}
+
 @media screen and (max-width: $desktopBreakPoint) {
 
     .playing-area {
@@ -456,14 +531,8 @@
             &__card,
             &__empty-card {
                 position: absolute;
-
-                &:nth-child(10) {
-                    @include footballFieldCardPosition(36%, 36%);
-                }
-
-                &:nth-child(11) {
-                    @include footballFieldCardPosition(36%, 64%);
-                }
+                width: 105px;
+                height: 170px;
             }
         }
 
