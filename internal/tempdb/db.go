@@ -34,8 +34,8 @@ type TempDatabase struct {
 func OpenUnique(ctx context.Context, connstr string, schemaPrefix string) (*TempDatabase, error) {
 	// if !strings.HasPrefix(connstr, "postgres://") || !strings.HasPrefix(connstr, "postgresql://") {
 	//	return nil, Error.New("wrong schema")
-	// }.
-
+	//}
+	// TODO: remove it.
 	schemaName := schemaPrefix + "-" + CreateRandomTestingSchemaName(8)
 	connStrWithSchema := ConnstrWithSchema(connstr, schemaName)
 
@@ -58,7 +58,7 @@ func OpenUnique(ctx context.Context, connstr string, schemaPrefix string) (*Temp
 		return DropSchema(ctx, conn, schemaName)
 	}
 
-	// dbutil.Configure(db, "tmp_postgres", mon).
+	// dbutil.Configure(db, "tmp_postgres", mon) // TODO: remove it.
 	return &TempDatabase{
 		conn:    db,
 		ConnStr: connStrWithSchema,

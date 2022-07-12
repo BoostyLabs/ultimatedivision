@@ -21,6 +21,7 @@ import (
 	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/internal/metrics"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/seasons"
@@ -69,7 +70,7 @@ type Server struct {
 // NewServer is a constructor for console web server.
 func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service,
 	marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
-	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service) *Server {
+	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service, metric *metrics.Metric) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -81,7 +82,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 		}),
 	}
 
-	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth)
+	authController := controllers.NewAuth(server.log, server.authService, server.cookieAuth, server.templates.auth, metric)
 	userController := controllers.NewUsers(server.log, users)
 	cardsController := controllers.NewCards(log, cards)
 	clubsController := controllers.NewClubs(log, clubs)
@@ -105,6 +106,17 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	metamaskRouter.HandleFunc("/nonce", authController.Nonce).Methods(http.MethodGet)
 	metamaskRouter.HandleFunc("/login", authController.MetamaskLogin).Methods(http.MethodPost)
 
+	velasRouter := authRouter.PathPrefix("/velas").Subrouter()
+	velasRouter.HandleFunc("/register", authController.VelasRegister).Methods(http.MethodPost)
+	velasRouter.HandleFunc("/nonce", authController.Nonce).Methods(http.MethodGet)
+	velasRouter.HandleFunc("/login", authController.VelasLogin).Methods(http.MethodPost)
+	velasRouter.HandleFunc("/vaclient", authController.VelasVAClientFields).Methods(http.MethodGet)
+
+	casperRouter := authRouter.PathPrefix("/casper").Subrouter()
+	casperRouter.HandleFunc("/register", authController.CasperRegister).Methods(http.MethodPost)
+	casperRouter.HandleFunc("/nonce", authController.PublicKey).Methods(http.MethodGet)
+	casperRouter.HandleFunc("/login", authController.CasperLogin).Methods(http.MethodPost)
+
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
 	authRouter.HandleFunc("/email/confirm/{token}", authController.ConfirmEmail).Methods(http.MethodGet)
@@ -118,6 +130,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	profileRouter := apiRouter.PathPrefix("/profile").Subrouter()
 	profileRouter.Use(server.withAuth)
 	profileRouter.HandleFunc("", userController.GetProfile).Methods(http.MethodGet)
+
 	metamaskRouterWithAuth := profileRouter.PathPrefix("/metamask").Subrouter()
 	metamaskRouterWithAuth.HandleFunc("/wallet", userController.CreateWalletFromMetamask).Methods(http.MethodPatch)
 	metamaskRouterWithAuth.HandleFunc("/wallet/change", userController.ChangeWalletFromMetamask).Methods(http.MethodPatch)

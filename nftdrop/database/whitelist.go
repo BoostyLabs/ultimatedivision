@@ -24,7 +24,7 @@ var ErrWhitelist = errs.Class("whitelist repository error")
 
 // whitelistDB provides access to whitelist db.
 //
-// architecture: Database
+// architecture: Database.
 type whitelistDB struct {
 	conn *sql.DB
 }

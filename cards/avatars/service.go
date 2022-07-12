@@ -25,7 +25,7 @@ var ErrAvatar = errs.Class("avatar service error")
 
 // Service is handling avatars related logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	avatars DB
 	config  Config

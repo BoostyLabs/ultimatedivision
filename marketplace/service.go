@@ -23,7 +23,7 @@ var ErrMarketplace = errs.Class("marketplace service error")
 
 // Service is handling marketplace related logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	config      Config
 	marketplace DB

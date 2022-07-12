@@ -5,6 +5,7 @@ package store
 
 import (
 	"context"
+	"math/big"
 	"time"
 
 	"github.com/zeebo/errs"
@@ -17,7 +18,7 @@ var ErrNoSetting = errs.Class("setting does not exist")
 
 // DB is exposing access to store db.
 //
-// architecture: DB
+// architecture: DB.
 type DB interface {
 	// Create creates setting of store in the database.
 	Create(ctx context.Context, setting Setting) error
@@ -31,10 +32,11 @@ type DB interface {
 
 // Setting entity describes the values required to configure the store.
 type Setting struct {
-	ID          int  `json:"id"`
-	CardsAmount int  `json:"cardsAmount"`
-	IsRenewal   bool `json:"isRenewal"`
-	HourRenewal int  `json:"dateRenewal"`
+	ID          int     `json:"id"`
+	CardsAmount int     `json:"cardsAmount"`
+	IsRenewal   bool    `json:"isRenewal"`
+	HourRenewal int     `json:"dateRenewal"`
+	Price       big.Int `json:"price"`
 }
 
 // Config defines values needed by create cards.
