@@ -54,7 +54,7 @@
         "builtIn": 1,
         "datasource": {
           "type": "datasource",
-          "uid": "grafana"
+          "uid": ""
         },
         "enable": true,
         "hide": true,
@@ -2514,8 +2514,8 @@
     ]
   },
   "timezone": "",
-  "title": "Application Metrics node-exporter",
-  "uid": "e_XH7O6nz",
+  "title": "Application Metrics node",
+  "uid": "",
   "version": 1,
   "weekStart": ""
 }

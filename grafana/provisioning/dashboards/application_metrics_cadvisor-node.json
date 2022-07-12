@@ -54,7 +54,7 @@
         "builtIn": 1,
         "datasource": {
           "type": "datasource",
-          "uid": "grafana"
+          "uid": ""
         },
         "enable": true,
         "hide": true,
@@ -2703,8 +2703,8 @@
     ]
   },
   "timezone": "",
-  "title": "Application Metrics node/cadvisor",
-  "uid": "V06ZnSenz",
+  "title": "Application Metrics node-cadvisor",
+  "uid": "",
   "version": 1,
   "weekStart": ""
 }
