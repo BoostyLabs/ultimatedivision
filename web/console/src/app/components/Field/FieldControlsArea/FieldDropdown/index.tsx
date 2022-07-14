@@ -13,10 +13,13 @@ import './index.scss';
 export const FieldDropdown: React.FC<{ option: any }> = ({ option }) => {
     const dispatch = useDispatch();
 
+    const ADD_NEW_BUTTON = 1;
+    const NO_ADD_NEW_BUTTON = 0;
     const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
 
+    const AddNewElement = option.title !== 'formation' ? ADD_NEW_BUTTON : NO_ADD_NEW_BUTTON;
     const columnsAmount = useMemo(
-        () => Math.ceil(option.options.length / option.columnElements),
+        () => Math.ceil((option.options.length + AddNewElement) / option.columnElements),
         [option.options.length, option.columnElements]
     );
 

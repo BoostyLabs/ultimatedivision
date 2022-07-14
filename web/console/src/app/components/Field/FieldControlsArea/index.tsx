@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setCaptain, setFormation, setTactic, startSearchingMatch } from '@/app/store/actions/clubs';
+import { setFormation, startSearchingMatch } from '@/app/store/actions/clubs';
 import { RootState } from '@/app/store';
 import { amountColumnsElements, Control } from '@/app/types/club';
 import { SquadCard } from '@/club';
@@ -22,8 +22,12 @@ export const FieldControlsArea: React.FC = () => {
     const [currentOption, setCurrentOption] = useState<null | Control>(null);
     const [optionVisibility, changeVisibility] = useState(false);
 
+    const [activeClub, setActiveClub] = useState<string>('CLUB 1');
+    const [activeComposition, setActiveComposition] = useState<string>('Composition 1');
+
     const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
     const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
+    const formation = useSelector((state: RootState) => state.clubsReducer.activeClub.squad.formation);
     const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
 
     const isDropdownActive = useMemo(
@@ -44,25 +48,28 @@ export const FieldControlsArea: React.FC = () => {
 
     const CONTROLS_FIELDS = [
         new Control(
-            '0',
-            'formation',
-            setFormation,
-            ['4-4-2', '4-2-4', '4-2-2-2', '4-3-1-2', '4-3-3', '4-2-3-1', '4-3-2-1', '4-1-3-2', '5-3-2', '4-5-1'],
-            amountColumnsElements['five-elements']
-        ),
-        new Control(
             '1',
-            'tactics',
-            setTactic,
-            ['attack', 'defence', 'balanced'],
-            amountColumnsElements['four-elements']
+            'club',
+            setActiveClub,
+            ['CLUB 1', 'CLUB 2', 'CLUB 3', 'CLUB 4', 'CLUB 5', 'CLUB 6'],
+            amountColumnsElements['four-elements'],
+            activeClub
         ),
         new Control(
             '2',
-            'captain',
-            setCaptain,
-            ['Captain 1', 'Captain 2', 'Captain 3'],
-            amountColumnsElements['four-elements']
+            'squad',
+            setActiveComposition,
+            ['Composition 1', 'Composition 2', 'Composition 3', 'Composition 4'],
+            amountColumnsElements['four-elements'],
+            activeComposition
+        ),
+        new Control(
+            '3',
+            'formation',
+            setFormation,
+            ['4-4-2', '4-2-4', '4-2-2-2', '4-3-1-2', '4-3-3', '4-2-3-1', '4-3-2-1', '4-1-3-2', '5-3-2', '4-5-1'],
+            amountColumnsElements['five-elements'],
+            formation
         ),
     ];
 
