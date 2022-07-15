@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFormation, startSearchingMatch } from '@/app/store/actions/clubs';
 import { RootState } from '@/app/store';
 import { amountColumnsElements, Control } from '@/app/types/club';
-import { SquadCard } from '@/club';
+import { Formations, SquadCard } from '@/club';
 import { DropdownStyle } from '@/app/internal/dropdownStyle';
 import { FieldDropdown } from './FieldDropdown';
 
@@ -28,6 +28,7 @@ export const FieldControlsArea: React.FC = () => {
     const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
     const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
     const formation = useSelector((state: RootState) => state.clubsReducer.activeClub.squad.formation);
+    const clubs = useSelector((state: RootState) => state.clubsReducer.clubs);
     const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
 
     const isDropdownActive = useMemo(
@@ -59,8 +60,8 @@ export const FieldControlsArea: React.FC = () => {
             '2',
             'squad',
             setActiveComposition,
-            ['Composition 1', 'Composition 2', 'Composition 3', 'Composition 4'],
-            amountColumnsElements['four-elements'],
+            ['Composition 1', 'Composition 2', 'Composition 3', 'Composition 4', 'Composition 5'],
+            amountColumnsElements['five-elements'],
             activeComposition
         ),
         new Control(
@@ -69,7 +70,7 @@ export const FieldControlsArea: React.FC = () => {
             setFormation,
             ['4-4-2', '4-2-4', '4-2-2-2', '4-3-1-2', '4-3-3', '4-2-3-1', '4-3-2-1', '4-1-3-2', '5-3-2', '4-5-1'],
             amountColumnsElements['five-elements'],
-            formation
+            Formations[formation]
         ),
     ];
 

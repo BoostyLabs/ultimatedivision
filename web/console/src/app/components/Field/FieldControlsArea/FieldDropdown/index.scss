@@ -1,13 +1,11 @@
 @import "@/index.scss";
 
 .field-dropdown {
+    @include fieldDropdownAmountsColumns;
+
     z-index: 4;
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    list-style: none;
+    display: grid;
     top: 50px;
     margin: 10px 0;
     padding: 18px;
@@ -16,6 +14,7 @@
     border: 2px solid #f5ff63;
     border-radius: 21px;
     box-shadow: 0 10px 14px rgba(0, 23, 58, 0.14);
+    column-gap: 40px;
 
     &__squad {
         left: 50%;
@@ -28,8 +27,10 @@
 
     &__item {
         cursor: pointer;
-        height: auto;
         display: block;
+        width: 100%;
+        min-width: 120px;
+        max-width: 190px;
 
         &__label {
             cursor: pointer;
@@ -38,12 +39,7 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            width: 120px;
             height: 100%;
-
-            &:not(:last-child) {
-                margin-right: 40px;
-            }
         }
 
         &__text {
@@ -100,6 +96,7 @@
             width: 17px;
             border: 1px solid #819aff;
             border-radius: 50%;
+            margin-left: 43px;
         }
 
         &__button {
@@ -122,7 +119,6 @@
             background: none;
 
             &__icon {
-                margin-right: 5px;
 
                 img {
                     width: 18px;
@@ -131,7 +127,4 @@
             }
         }
     }
-
-    @include fieldDropdownAmountsColumns;
-    @include fieldDropdownElementsColumn;
 }
