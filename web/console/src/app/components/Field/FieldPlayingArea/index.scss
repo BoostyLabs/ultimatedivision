@@ -50,14 +50,10 @@
         &__empty-card {
             z-index: 3;
             position: absolute;
+            content: normal;
             width: 160px;
             height: 241.5px;
             cursor: crosshair;
-
-            &:hover {
-                transition: transform 0.3s;
-                transform: scale(1.1);
-            }
 
             &:nth-child(1) {
                 @include footballFieldCardPosition(77%, 48.5%);

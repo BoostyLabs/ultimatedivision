@@ -40,9 +40,7 @@ export const FootballerCard: React.FC<FootballerCardProps> = ({ card, index, set
         <div className="footballer-card">
             <div className={`football-field-card__wrapper${visibilityBlock}`}></div>
             <PlayerCard id={card.id} className="footballer-card" index={index} />
-            <div onClick={handleDeletion} className={`footballer-card__control${visibilityBlock}`}>
-                &#10006; delete a player
-            </div>
+            <div onClick={handleDeletion} className={`footballer-card__control${visibilityBlock}`}></div>
         </div>
     );
 };

@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setFormation, startSearchingMatch } from '@/app/store/actions/clubs';
+import { changeActiveClub, setFormation, startSearchingMatch } from '@/app/store/actions/clubs';
 import { RootState } from '@/app/store';
 import { amountColumnsElements, Control } from '@/app/types/club';
 import { Formations, SquadCard } from '@/club';
@@ -19,42 +19,31 @@ import './index.scss';
 export const FieldControlsArea: React.FC = () => {
     const dispatch = useDispatch();
 
+    const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
+
     const [currentOption, setCurrentOption] = useState<null | Control>(null);
     const [optionVisibility, changeVisibility] = useState(false);
-
-    const [activeClub, setActiveClub] = useState<string>('CLUB 1');
     const [activeComposition, setActiveComposition] = useState<string>('Composition 1');
-
     const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
+
     const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
     const formation = useSelector((state: RootState) => state.clubsReducer.activeClub.squad.formation);
     const clubs = useSelector((state: RootState) => state.clubsReducer.clubs);
-    const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
-
-    const isDropdownActive = useMemo(
-        () => currentOption !== null && optionVisibility,
-        [currentOption, optionVisibility]
-    );
+    const activeClubId = useSelector((state: RootState) => state.clubsReducer.activeClub.id);
 
     const checkActiveElement = (item: Control) => item.title === currentOption?.title && optionVisibility;
-
-    useEffect(() => {
-        /** Function checks field cards and compare it with player cards array */
-        function isPossibleToStart() {
-            const emptyCard = squadCards.find((squadCard: SquadCard) => squadCard.card.id === EMPTY_CARD_ID);
-            emptyCard ? setIsPossibleToStartMatch(false) : setIsPossibleToStartMatch(true);
-        }
-        isPossibleToStart();
-    });
 
     const CONTROLS_FIELDS = [
         new Control(
             '1',
             'club',
-            setActiveClub,
-            ['CLUB 1', 'CLUB 2', 'CLUB 3', 'CLUB 4', 'CLUB 5', 'CLUB 6'],
+            changeActiveClub,
+            clubs,
             amountColumnsElements['four-elements'],
-            activeClub
+            activeClubId,
+            'id',
+            'name',
+            'club'
         ),
         new Control(
             '2',
@@ -91,6 +80,20 @@ export const FieldControlsArea: React.FC = () => {
             behavior: 'smooth',
         });
     };
+
+    const isDropdownActive = useMemo(
+        () => currentOption !== null && optionVisibility,
+        [currentOption, optionVisibility]
+    );
+
+    useEffect(() => {
+        /** Function checks field cards and compare it with player cards array */
+        function isPossibleToStart() {
+            const emptyCard = squadCards.find((squadCard: SquadCard) => squadCard.card.id === EMPTY_CARD_ID);
+            emptyCard ? setIsPossibleToStartMatch(false) : setIsPossibleToStartMatch(true);
+        }
+        isPossibleToStart();
+    });
 
     return (
         <div className="field-controls">

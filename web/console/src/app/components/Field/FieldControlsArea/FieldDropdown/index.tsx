@@ -27,36 +27,61 @@ export const FieldDropdown: React.FC<{ option: any }> = ({ option }) => {
 
     const sendCheckedOption = (event?: any) => {
         if (event) {
-            dispatch(option.action(squad, event.target.value));
+            switch (option.title) {
+            case 'formation':
+                dispatch(option.action(squad, event.target.value));
+                break;
+            case 'club':
+                dispatch(option.action(event.target.value));
+                break;
+            case 'squad':
+                option.action(event.target.value);
+                break;
+            default:
+                break;
+            }
         } else {
-            event.target.value = null;
+            // @ts-ignore
+            document.querySelector(`input[name=${option.title}]:checked`).checked = false;
         }
     };
 
     /** TODO: add new field button */
-    const addNewElement = () => {};
+    const addNewElement = () => {
+        sendCheckedOption();
+    };
 
     return (
         <ul
             className={`field-dropdown field-dropdown__${columnsAmount}--columns__${option.columnElements}--rows field-dropdown__${option.title} `}
         >
-            {option.options.map((item: any, index: number) =>
-                <li key={`${option.title}-${index}`} className={'field-dropdown__item '}>
-                    <input
-                        type="radio"
-                        className="field-dropdown__item__input"
-                        name={option.title}
-                        id={item}
-                        value={item}
-                        defaultChecked={item === option.currentValue}
-                        onChange={sendCheckedOption}
-                    />
-                    <label htmlFor={item} className="field-dropdown__item__label">
-                        <span className="field-dropdown__item__text"> {item}</span>
-                        <span className="field-dropdown__item__radio"></span>
-                    </label>
-                </li>
-            )}
+            {option.options.map((item: any, index: number) => {
+                const fieldName = item.hasOwnProperty(option.fieldName) ? item[option.fieldName] : item;
+                const fieldId = item.hasOwnProperty(option.fieldId) ? item[option.fieldId] : item;
+                const defaultChecked = item[option.fieldId]
+                    ? item[option.fieldId] === option.currentValue
+                    : item === option.currentValue;
+
+                return (
+                    <li key={`${option.title}-${index}`} className={'field-dropdown__item'}>
+                        <input
+                            type="radio"
+                            className="field-dropdown__item__input"
+                            name={option.title}
+                            id={fieldId}
+                            value={fieldId}
+                            defaultChecked={defaultChecked}
+                            onChange={sendCheckedOption}
+                        />
+                        <label htmlFor={fieldId} className="field-dropdown__item__label">
+                            <span className="field-dropdown__item__text">
+                                {option.fieldText ? `${option.fieldText} ${fieldName}` : fieldName}
+                            </span>
+                            <span className="field-dropdown__item__radio"></span>
+                        </label>
+                    </li>
+                );
+            })}
             {option.title !== 'formation' &&
                 <li className={'field-dropdown__item'}>
                     <button className="field-dropdown__item__button" onClick={addNewElement}>

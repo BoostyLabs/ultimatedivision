@@ -20,6 +20,9 @@ export class Control {
         public action: any = {},
         public options: string[] = [],
         public columnElements: number = DEFAULT_NUMBER,
-        public currentValue: any = ''
+        public currentValue: any = '',
+        public fieldId: string = '',
+        public fieldName: string = '',
+        public fieldText: string = ''
     ) {}
 }
