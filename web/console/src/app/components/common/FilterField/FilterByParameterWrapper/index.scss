@@ -1,25 +1,29 @@
 @import "@/index.scss";
 
 .filter-item {
-    color: $fieldMainTextColor;
+    width: 154px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     list-style: none;
     cursor: pointer;
     position: relative;
 
-    &__title-inactive,
-    &__title-active {
-        font-family: "Montserrat", sans-serif;
-        font-size: 14px;
-        color: $fieldMainTextColor;
-    }
-
-    &__title-active {
-        color: $highlightColor;
+    &__title {
+        margin-right: 16.5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-transform: uppercase;
+        color: black;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 700;
+        font-size: 16px;
     }
 
     &__picture {
         margin-left: 5px;
         vertical-align: middle;
+        transition: transform 0.5s;
     }
 
     &__dropdown-active {
