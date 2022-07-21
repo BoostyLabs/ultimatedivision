@@ -42,12 +42,14 @@ export const FieldCardSelection = () => {
     const fieldCardsQueryParameters = getCurrentFieldCardsQueryParameters();
 
     /** Add card to field, and hide card selection component */
-    function addCardOnField(cardId: string) {
-        dispatch(addCard(new CardEditIdentificators(squad.clubId, squad.id, cardId, club.options.chosedCard)));
-        dispatch(cardSelectionVisibility(false));
-        setTimeout(() => {
-            window.scroll(X_SCROLL_POINT, Y_SCROLL_POINT);
-        }, DELAY);
+    function addCardOnField(cardId: string, isSelected: boolean) {
+        if (!isSelected) {
+            dispatch(addCard(new CardEditIdentificators(squad.clubId, squad.id, cardId, club.options.chosedCard)));
+            dispatch(cardSelectionVisibility(false));
+            setTimeout(() => {
+                window.scroll(X_SCROLL_POINT, Y_SCROLL_POINT);
+            }, DELAY);
+        }
     }
 
     /** Exposes default page number. */
@@ -72,8 +74,12 @@ export const FieldCardSelection = () => {
                     const isSelected = squadCardsIds.includes(card.id);
 
                     return (
-                        <div key={index} className={'card-selection__card '} onClick={() => addCardOnField(card.id)}>
-                            <div className={`${isSelected ? 'card-selection__card__selected' : ''}`}></div>
+                        <div
+                            key={index}
+                            className={isSelected ? 'card-selection__card__selected' : 'card-selection__card'}
+                            onClick={() => addCardOnField(card.id, isSelected)}
+                        >
+                            <div className={isSelected ? 'card-selection__card__selected__label' : ''}></div>
                             <PlayerCard id={card.id} className={'card-selection__card__picture'} />
                         </div>
                     );

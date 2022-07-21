@@ -11,13 +11,16 @@
 
     &__title {
         cursor: pointer;
-        margin-right: 16.5px;
+        margin-right: 14px;
         transition: background-color 0.3s;
         text-transform: uppercase;
         color: black;
         font-family: "Orbitron", sans-serif;
         font-weight: 700;
         font-size: 16px;
+        line-height: 20px;
+        text-align: center;
+        letter-spacing: 0.12em;
     }
 
     &__picture {
@@ -255,19 +258,5 @@
 
     &__dropdown-inactive {
         display: none;
-    }
-}
-
-@media (max-width: 1440px) {
-
-    .filter-item {
-
-        &__title {
-            font-size: 13px;
-        }
-
-        &__picture {
-            margin-left: 2px;
-        }
     }
 }

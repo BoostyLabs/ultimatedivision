@@ -44,7 +44,7 @@ export const FieldCardsFromation: React.FC<{
 
     const DEFAULT_VALUE: number = 0;
     const X_SCROLL_POINT: number = 0;
-    const Y_SCROLL_POINT: number = 1200;
+    const Y_SCROLL_POINT: number = 1800;
     const DELAY: number = 100;
 
     /** Add card position, and shows card selection */
