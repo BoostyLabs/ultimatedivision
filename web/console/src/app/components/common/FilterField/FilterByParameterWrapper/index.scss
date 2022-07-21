@@ -49,6 +49,7 @@
 
         &__price {
             width: 47%;
+            border: none;
             border-bottom: 2px solid #f5ff63;
             font-family: "Urbanist", sans-serif;
             font-style: normal;
@@ -220,6 +221,7 @@
             &__area {
                 width: 45%;
                 margin: 6px 0 0 5px;
+                border: none;
                 border-bottom: 2px solid #f5ff63;
                 font-family: "Urbanist", sans-serif;
                 font-style: normal;
