@@ -6,7 +6,6 @@ package nfts
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
@@ -21,7 +20,7 @@ var ErrNFTs = errs.Class("NFTs service error")
 
 // Service is handling NFTs related logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	config Config
 	nfts   DB
@@ -37,7 +36,6 @@ func NewService(config Config, nfts DB) *Service {
 
 // Create creates nft in the database.
 func (service *Service) Create(ctx context.Context, nft NFT) error {
-	nft.WalletAddress = evmsignature.Address(strings.ToLower(string(nft.WalletAddress)))
 	return ErrNFTs.Wrap(service.nfts.Create(ctx, nft))
 }
 
@@ -51,7 +49,7 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL
 	attributes = append(attributes, nft.Attribute{TraitType: "Weight", Value: fmt.Sprintf("%.2f", card.Weight)})
 	attributes = append(attributes, nft.Attribute{TraitType: "Dominant Foot", Value: card.DominantFoot})
 
-	// Game parameters
+	// Game parameters.
 	attributes = append(attributes, nft.Attribute{TraitType: "Tactics", Value: card.Tactics, MaxValue: MaxValueGameParameter})
 	attributes = append(attributes, nft.Attribute{TraitType: "Positioning", Value: card.Positioning, MaxValue: MaxValueGameParameter})
 	attributes = append(attributes, nft.Attribute{TraitType: "Composure", Value: card.Composure, MaxValue: MaxValueGameParameter})

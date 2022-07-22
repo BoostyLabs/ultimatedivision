@@ -52,13 +52,13 @@ func (chore *Chore) RunNFTSynchronization(ctx context.Context) (err error) {
 
 		for _, nft := range nfts {
 			data := evmsignature.Data{
-				AddressContractMethod: chore.config.Contract.AddressMethod,
+				AddressContractMethod: chore.config.NFTContract.OwnerOfSelector,
 				TokenID:               nft.TokenID,
 			}
 
 			dataHex := evmsignature.NewDataHex(data)
 			params := jsonrpc.Parameter{
-				To:   chore.config.Contract.Address,
+				To:   chore.config.NFTContract.Address,
 				Data: dataHex,
 			}
 
@@ -86,7 +86,7 @@ func (chore *Chore) RunNFTSynchronization(ctx context.Context) (err error) {
 				return ChoreError.Wrap(err)
 			}
 
-			user, err := chore.users.GetByWalletAddress(ctx, ownersWalletAddress)
+			user, err := chore.users.GetByWalletAddress(ctx, ownersWalletAddress, users.WalletTypeETH)
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}

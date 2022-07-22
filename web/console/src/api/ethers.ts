@@ -17,26 +17,39 @@ export class EthersClient extends APIClient {
         }
         const transaction = await response.json();
 
-        return new Transaction(transaction.password, transaction.tokenId, transaction.contract);
+        return new Transaction(transaction.password, transaction.tokenId, transaction.nftCreateContract);
     }
 
-    /** Gets message from API for sign */
-    public async getMessage(): Promise<string> {
-        const response = await this.http.get(`${this.ROOT_PATH}/auth/metamask/token`);
+    /** Gets message from API for sign with metamask */
+    public async getNonce(walletAddress: string): Promise<string> {
+        const walletType = 'wallet_address';
+
+        const response = await this.http.get(
+            `${this.ROOT_PATH}/auth/metamask/nonce?address=${walletAddress}&walletType=${walletType}`
+        );
 
         if (!response.ok) {
             await this.handleError(response);
-        };
+        }
 
         return await response.json();
     }
 
+    /** Sends signed message and registers user */
+    public async register(signature: string): Promise<void> {
+        const response = await this.http.post(`${this.ROOT_PATH}/auth/metamask/register`, JSON.stringify(signature));
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+    }
+
     /** Sends signed message, and logs-in */
-    public async signMessage(message: SignedMessage): Promise<void> {
+    public async login(message: SignedMessage): Promise<void> {
         const response = await this.http.post(`${this.ROOT_PATH}/auth/metamask/login`, JSON.stringify(message));
 
         if (!response.ok) {
             await this.handleError(response);
-        };
+        }
     }
 }
