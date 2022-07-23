@@ -3,9 +3,6 @@
 
 import { useEffect, useState } from 'react';
 
-import emptyNft from '@static/img/StorePage/SellNft/empty-nft.svg';
-import fillNft from '@static/img/StorePage/SellNft/fill-nft.svg';
-
 import './index.scss';
 
 export const CardMintingProgress: React.FC<{
@@ -30,9 +27,7 @@ export const CardMintingProgress: React.FC<{
     return (
         <div className="card">
             {cards.map((card, index) =>
-                <div key={index} className="card__item">
-                    <img src={card.active ? fillNft : emptyNft} alt="card nft" />
-                </div>
+                <div key={index} className={`card__item ${card.active ? 'card__active-item' : ''}`}></div>
             )}
         </div>
     );

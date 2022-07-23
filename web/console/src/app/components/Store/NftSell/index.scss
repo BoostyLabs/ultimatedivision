@@ -1,46 +1,55 @@
 .sell-nft {
-  &__wrapper {
-    width: 100%;
-    max-width: 1440px;
-    margin: 0 auto 200px;
-    padding: 0 100px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    flex-direction: row;
+    width: fit-content;
+    margin: 0 auto;
 
-  &__title {
-    font-size: 70px;
-    line-height: 96px;
-    font-weight: 400;
-  }
-
-  &__line {
-    width: 100%;
-    height: 2px;
-    margin: 14px 0;
-    background: rgb(41, 41, 72);
-    background: radial-gradient(
-      circle,
-      rgba(41, 41, 72, 1) 0%,
-      rgba(103, 94, 174, 1) 0%,
-      rgba(41, 41, 71, 1) 100%
-    );
-  }
-
-  &__remainder {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-
-    &__text,
-    &__amount {
-      font-size: 32px;
-      line-height: 32px;
+    &__info {
+        margin: 20px 0 0 54px;
     }
 
-    &__amount {
-      color: #3ccf5d;
+    &__title {
+        font-family: "Orbitron", sans-serif;
+        font-style: normal;
+        font-weight: 900;
+        margin-bottom: 20px;
+        font-size: 40px;
+        line-height: 50px;
+        text-align: center;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #26373f;
     }
-  }
+
+    &__remainder {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 14px;
+
+        &__text {
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 800;
+            font-size: 16px;
+            line-height: 20px;
+            text-align: center;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #26373f;
+            text-shadow: 0 4px 22px rgba(25, 54, 133, 0.25);
+        }
+
+        &__amount {
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 800;
+            font-size: 16px;
+            line-height: 20px;
+            text-align: center;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #704dff;
+        }
+    }
 }
