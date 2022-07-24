@@ -4,11 +4,13 @@
 
     &__wrapper {
         width: 100%;
-        max-width: 1440px;
         margin: 0 auto;
         padding: 0 50px;
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        justify-content: center;
+        grid-template-columns: repeat(2, 1fr);
+        margin-bottom: 193px;
+        gap: 20px;
     }
 }
 

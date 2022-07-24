@@ -20,7 +20,6 @@ export const LootboxSelection: React.FC<{
     const boxesData = [
         new LootboxStats(
             '1',
-            box,
             LootboxTypes['Regular Box'],
             REGULAR_BOX_CARDS_QUANTITY,
             // eslint-disable-next-line
@@ -29,7 +28,6 @@ export const LootboxSelection: React.FC<{
         ),
         new LootboxStats(
             '2',
-            coolBox,
             LootboxTypes['Cool box'],
             COOL_BOX_CARDS_QUANTITY,
             // eslint-disable-next-line
@@ -42,11 +40,7 @@ export const LootboxSelection: React.FC<{
         <div className="box-selection">
             <div className="box-selection__wrapper">
                 {boxesData.map((item, index) =>
-                    <LootboxCard
-                        data={item}
-                        key={index}
-                        handleOpening={handleOpening}
-                    />
+                    <LootboxCard data={item} key={index} handleOpening={handleOpening} />
                 )}
             </div>
         </div>
