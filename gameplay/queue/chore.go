@@ -76,6 +76,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 	})
 }
 
+// MatchPair match pair.
 func (chore *Chore) MatchPair(ctx context.Context, pair []Client) (err error) {
 	firstRequestChan := make(chan Request)
 	secondRequestChan := make(chan Request)
