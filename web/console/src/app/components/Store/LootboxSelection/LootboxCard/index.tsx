@@ -9,11 +9,11 @@ import { LootboxCardQuality } from './LootboxCardQuality';
 
 import { RegistrationPopup } from '@/app/components/common/Registration';
 
-import coin from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
 import diamond from '@static/img/StorePage/BoxCard/diamond.svg';
 import gold from '@static/img/StorePage/BoxCard/gold.svg';
 import silver from '@static/img/StorePage/BoxCard/silver.svg';
 import wood from '@static/img/StorePage/BoxCard/wood.svg';
+
 import lootBox from '@static/img/StorePage/BoxContent/lootBox.svg';
 
 import { UnauthorizedError } from '@/api';

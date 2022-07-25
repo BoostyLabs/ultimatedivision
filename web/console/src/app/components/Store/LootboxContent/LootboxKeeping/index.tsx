@@ -7,8 +7,7 @@ import Slider from 'react-slick';
 
 import { PlayerCard } from '@/app/components/common/PlayerCard';
 
-import boxLight from '@static/img/StorePage/BoxContent/boxLight.svg';
-import ribbons from '@static/img/StorePage/BoxContent/ribbons.svg';
+import boxBg from '@static/img/StorePage/BoxContent/boxLight.png';
 
 import { RootState } from '@/app/store';
 import { boxStyle } from '@/app/internal/lootboxStyle';
@@ -19,9 +18,7 @@ import './index.scss';
 export const LootboxKeeping: React.FC<{
     handleOpening: Dispatch<SetStateAction<boolean>>;
 }> = ({ handleOpening }) => {
-    const cards = useSelector(
-        (state: RootState) => state.lootboxReducer.lootbox
-    );
+    const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
     const box = boxStyle(cards.length);
     /** variables that describe indexes of first and last cards,
      *  that will be shown when lootbox is openned */
@@ -42,62 +39,38 @@ export const LootboxKeeping: React.FC<{
     return (
         <div className="box-keeping">
             <div className="box-keeping__wrapper">
-                <h1 className="box-keeping__title">Card</h1>
                 <Slider {...settings} className="slider">
                     <div>
                         <div className="box-keeping__card-wrapper">
-                            {cards
-                                .slice(FIRST_PAGE_START, FIRST_PAGE_END)
-                                .map((card: Card, index: number) =>
-                                    <PlayerCard key={index} className="box-keeping__card" id={card.id} />
-                                )}
+                            {cards.slice(FIRST_PAGE_START, FIRST_PAGE_END).map((card: Card, index: number) =>
+                                <PlayerCard key={index} className="box-keeping__card" id={card.id} />
+                            )}
                         </div>
                     </div>
                     <div>
                         <div className="box-keeping__card-wrapper">
-                            {cards
-                                .slice(FIRST_PAGE_END, SECOND_PAGE_END)
-                                .map((card: Card, index: number) =>
-                                    <PlayerCard key={index} className="box-keeping__card" id={card.id} />
-                                )}
+                            {cards.slice(FIRST_PAGE_END, SECOND_PAGE_END).map((card: Card, index: number) =>
+                                <PlayerCard key={index} className="box-keeping__card" id={card.id} />
+                            )}
                         </div>
                     </div>
                     {cards.length > REGULAR_CARDS_AMOUNT &&
                         <div>
                             <div className="box-keeping__card-wrapper">
-                                {cards
-                                    .slice(SECOND_PAGE_END)
-                                    .map((card: Card, index: number) =>
-                                        <PlayerCard key={index} className="box-keeping__card" id={card.id} />
-                                    )}
+                                {cards.slice(SECOND_PAGE_END).map((card: Card, index: number) =>
+                                    <PlayerCard key={index} className="box-keeping__card" id={card.id} />
+                                )}
                             </div>
                         </div>
                     }
                 </Slider>
                 <div className="box-keeping__button-wrapper">
-                    <button
-                        className="box-keeping__button"
-                        onClick={() => handleOpening(false)}
-                    >
+                    <button className="box-keeping__button" onClick={() => handleOpening(false)}>
                         Keep all
                     </button>
                 </div>
                 <div className="box-keeping__box-wrapper">
-                    <img
-                        src={boxLight}
-                        alt="box light"
-                        className="box-keeping__box-light"
-                    />
-                    <img
-                        src={ribbons}
-                        alt="ribbons"
-                        className="box-keeping__ribbons"
-                    />
-                    <img
-                        className="box-keeping__box-body"
-                        src={box.body}
-                        alt="box"
-                    />
+                    <img className="box-keeping__box-body" src={boxBg} alt="box" />
                 </div>
             </div>
         </div>

@@ -20,11 +20,7 @@ export const LootboxContent: React.FC<{
 
     return (
         <div className="box-content">
-            {isAnimated ?
-                <LootboxOpening />
-                :
-                <LootboxKeeping handleOpening={handleOpening} />
-            }
+            {isAnimated ? <LootboxOpening /> : <LootboxKeeping handleOpening={handleOpening} />}
         </div>
     );
 };

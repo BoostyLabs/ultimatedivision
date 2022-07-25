@@ -5,8 +5,7 @@ import { useSelector } from 'react-redux';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 
-import boxLight from '@static/img/StorePage/BoxContent/boxLight.svg';
-import ribbons from '@static/img/StorePage/BoxContent/ribbons.svg';
+import boxBg from '@static/img/StorePage/BoxContent/boxLight.png';
 
 import { RootState } from '@/app/store';
 import { boxStyle } from '@/app/internal/lootboxStyle';
@@ -17,9 +16,7 @@ import './index.scss';
 export const LootboxOpening = () => {
     const FIRST_CARD = 0;
     const REGULAR_CARDS_AMOUNT: number = 5;
-    const cards: Card[] = useSelector(
-        (state: RootState) => state.lootboxReducer.lootbox
-    );
+    const cards: Card[] = useSelector((state: RootState) => state.lootboxReducer.lootbox);
 
     const box = boxStyle(cards.length);
 
@@ -27,32 +24,17 @@ export const LootboxOpening = () => {
         <div className="box-animation">
             <div className="box-animation__box-container">
                 <img
-                    src={box.body}
+                    src={boxBg}
                     alt="box body"
                     className={`box-animation__box-body ${
-                        cards.length > REGULAR_CARDS_AMOUNT &&
-                        'box-animation__box-body__cool'
+                        cards.length > REGULAR_CARDS_AMOUNT && 'box-animation__box-body__cool'
                     }`}
                 />
-                <img
-                    src={box.cover}
-                    alt="box cover"
-                    className="box-animation__box-cover"
-                />
-                <img
-                    src={boxLight}
-                    alt="shadow image"
-                    className="box-animation__light"
-                />
-                <img
-                    src={ribbons}
-                    alt="ribbons"
-                    className="box-animation__ribbons"
-                />
+                <img src={box.cover} alt="box cover" className="box-animation__box-cover" />
             </div>
             <div className="box-animation__card-container">
                 <div className="box-animation__card-container-backlight">
-                    <PlayerCard className={'box-animation__card'} id={cards[FIRST_CARD].id}/>
+                    <PlayerCard className={'box-animation__card'} id={cards[FIRST_CARD].id} />
                 </div>
             </div>
         </div>
