@@ -12,7 +12,7 @@ import (
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
-	"github.com/gorilla/websocket"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
@@ -402,7 +402,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	}
 
 	winResult.GameResult.Question = "do you allow us to take your address?"
-	winResult.GameResult.Transaction.Value = evmsignature.WeiToEthereum(winResult.Value).String()
+	winResult.GameResult.Transaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
 	winResult.GameResult.Transaction.UDTContract.Address = chore.config.UDTContract.Address
 	if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 		chore.log.Error("could not write json", ChoreError.Wrap(err))
@@ -423,14 +423,14 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	}
 
 	if request.Action == ActionAllowAddress {
-		if !request.WalletAddress.IsValidAddress() {
+		if err := request.WalletAddress.IsValidAddress(); err != nil {
 			if err := winResult.Client.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
 				chore.log.Error("could not write json", ChoreError.Wrap(err))
 				return
 			}
 		}
 
-		if err = chore.users.UpdateWalletAddress(ctx, request.WalletAddress, winResult.Client.UserID); err != nil {
+		if err = chore.users.UpdateWalletAddress(ctx, common.HexToAddress(string(request.WalletAddress)), winResult.Client.UserID, users.WalletTypeETH); err != nil {
 			if !users.ErrWalletAddressAlreadyInUse.Has(err) {
 				chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
 				return
