@@ -13,6 +13,7 @@ import (
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
@@ -423,7 +424,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	}
 
 	if request.Action == ActionAllowAddress {
-		if err := request.WalletAddress.IsValidAddress(); err != nil {
+		if err = request.WalletAddress.IsValidAddress(); err == nil {
 			if err := winResult.Client.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
 				chore.log.Error("could not write json", ChoreError.Wrap(err))
 				return
