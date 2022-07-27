@@ -28,16 +28,6 @@
         font-size: 48px;
     }
 
-    &__card-wrapper {
-        margin: 0 auto;
-        width: 70%;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        justify-content: center;
-        justify-items: center;
-        align-items: flex-start;
-    }
-
     &__card {
         width: 170px;
         transition: transform 0.3s;
@@ -46,12 +36,16 @@
         &:hover {
             transform: scale(1.1);
         }
-    }
 
-    &__button-wrapper {
-        margin: 50px 0 40px;
-        display: flex;
-        justify-content: center;
+        &__wrapper {
+            margin: 0 auto;
+            width: 60%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            justify-content: center;
+            justify-items: center;
+            align-items: flex-start;
+        }
     }
 
     &__button {
@@ -72,58 +66,65 @@
         letter-spacing: 0.12em;
         text-transform: uppercase;
         color: #26373f;
+
+        &__wrapper {
+            margin: 50px 0 40px;
+            display: flex;
+            justify-content: center;
+        }
     }
 
-    &__box-wrapper {
-        position: relative;
-        width: 100%;
-        max-width: 540px;
-        display: flex;
-        justify-content: center;
-        margin: 0 auto;
-    }
-
-    &__box-body {
+    &__box {
         width: 540px;
+
+        &__wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 540px;
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+        }
     }
 
-    &__box-light,
-    &__ribbons {
-        width: 100%;
-        top: -40px;
-        position: absolute;
-        right: 0;
-        left: 0;
-        margin: 0 auto;
+    .slider {
+        margin-top: 80px;
     }
 
-    &__ribbons {
-        width: 80%;
-        top: -25%;
-    }
-
-    .slick-prev:before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        background: url("@static/img/StorePage/BoxContent/arrow-prev.svg");
-        background-size: 100%;
-        background-repeat: no-repeat;
+    .slick-prev {
+        margin-left: 120px;
         width: 60px;
         height: 60px;
+
+        &:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: url("@static/img/StorePage/BoxContent/arrow-prev.svg");
+            background-size: 100%;
+            background-repeat: no-repeat;
+            width: 60px;
+            height: 60px;
+        }
     }
 
-    .slick-next:before {
-        content: "";
-        position: absolute;
-        right: 0;
-        top: 0;
-        background: url("@static/img/StorePage/BoxContent/arrow-next.svg");
-        background-size: 100%;
-        background-repeat: no-repeat;
+    .slick-next {
+        margin-right: 120px;
         width: 60px;
         height: 60px;
+
+        &:before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: url("@static/img/StorePage/BoxContent/arrow-next.svg");
+            background-size: 100%;
+            background-repeat: no-repeat;
+            width: 60px;
+            height: 60px;
+        }
     }
 
     .slick-dots {

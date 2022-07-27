@@ -7,10 +7,9 @@ import Slider from 'react-slick';
 
 import { PlayerCard } from '@/app/components/common/PlayerCard';
 
-import boxBg from '@static/img/StorePage/BoxContent/boxLight.png';
+import box from '@static/img/StorePage/BoxContent/box.png';
 
 import { RootState } from '@/app/store';
-import { boxStyle } from '@/app/internal/lootboxStyle';
 import { Card } from '@/card';
 
 import './index.scss';
@@ -19,7 +18,7 @@ export const LootboxKeeping: React.FC<{
     handleOpening: Dispatch<SetStateAction<boolean>>;
 }> = ({ handleOpening }) => {
     const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
-    const box = boxStyle(cards.length);
+
     /** variables that describe indexes of first and last cards,
      *  that will be shown when lootbox is openned */
     const REGULAR_CARDS_AMOUNT: number = 5;
@@ -41,7 +40,7 @@ export const LootboxKeeping: React.FC<{
             <div className="box-keeping__wrapper">
                 <Slider {...settings} className="slider">
                     <div>
-                        <div className="box-keeping__card-wrapper">
+                        <div className="box-keeping__card__wrapper">
                             {cards.slice(FIRST_PAGE_START, FIRST_PAGE_END).map((card: Card, index: number) =>
                                 <PlayerCard key={index} className="box-keeping__card" id={card.id} />
                             )}
@@ -64,13 +63,13 @@ export const LootboxKeeping: React.FC<{
                         </div>
                     }
                 </Slider>
-                <div className="box-keeping__button-wrapper">
+                <div className="box-keeping__button__wrapper">
                     <button className="box-keeping__button" onClick={() => handleOpening(false)}>
                         Keep all
                     </button>
                 </div>
-                <div className="box-keeping__box-wrapper">
-                    <img className="box-keeping__box-body" src={boxBg} alt="box" />
+                <div className="box-keeping__box__wrapper">
+                    <img className="box-keeping__box" src={box} alt="box" />
                 </div>
             </div>
         </div>
