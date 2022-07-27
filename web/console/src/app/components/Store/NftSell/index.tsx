@@ -4,7 +4,7 @@
 import { MintingArea } from './MintingArea';
 import { CardMintingProgress } from './CardMintingProgress';
 
-import diamondCard from '@static/img/StorePage/SellNft/diamondCard.svg';
+import diamondCard from '@static/img/StorePage/SellNft/diamondCard.gif';
 
 import './index.scss';
 
@@ -18,8 +18,8 @@ export const NftSell = () => {
 
     return (
         <div className="sell-nft">
-            <div className="sell-nft__image">
-                <img src={diamondCard} alt="diamond-card" />
+            <div className="sell-nft__card">
+                <img src={diamondCard} alt="diamond-card" className="sell-nft__card__image" />
             </div>
             <div className="sell-nft__info">
                 <h1 className="sell-nft__title">{MOCK_TITLE}</h1>
@@ -28,7 +28,6 @@ export const NftSell = () => {
                     <span className="sell-nft__remainder__amount">{MOCK_NFT_AMOUNT} NFTS</span>
                 </div>
                 <CardMintingProgress max={MAX_NFT_AMOUNT} activeCardsCount={MOCK_NFT_AMOUNT} />
-
                 <MintingArea isInactive={!MOCK_NFT_AMOUNT} time={MOCK_TIME} />
             </div>
         </div>
