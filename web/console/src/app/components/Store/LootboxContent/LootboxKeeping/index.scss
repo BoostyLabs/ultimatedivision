@@ -5,7 +5,6 @@
 .box-keeping {
     animation: darken 1s 0 1 normal forwards;
     overflow: hidden;
-    height: calc(100vh - 100px);
 
     @keyframes darken {
 

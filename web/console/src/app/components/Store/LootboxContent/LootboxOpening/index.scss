@@ -5,13 +5,12 @@
     display: flex;
     justify-content: center;
     height: calc(100vh - 100px);
-    overflow-y: hidden;
 
     &__box-container {
+        z-index: 1;
+        position: relative;
         width: auto;
         margin: 0 auto;
-        position: relative;
-        z-index: 1;
 
         &--opened {
             position: relative;
@@ -21,16 +20,16 @@
 
     &__box {
         position: absolute;
-        bottom: -65px;
-        left: 50%;
-        transform: translateX(-50%);
         height: auto;
         width: 700px;
+        bottom: -180px;
+        left: 50%;
+        transform: translateX(-50%);
 
         &--opened {
             position: absolute;
-            bottom: -55px;
             width: 410px;
+            bottom: -155px;
         }
     }
 
@@ -39,7 +38,7 @@
         margin: 0 auto;
 
         &__container {
-            z-index: 13;
+            z-index: 2;
             max-width: 300px;
             position: absolute;
             left: 0;
@@ -64,7 +63,7 @@
                 }
 
                 100% {
-                    transform: scale(1.2) translateY(70px);
+                    transform: scale(1.2) translateY(150px);
                     opacity: 1;
                 }
             }
