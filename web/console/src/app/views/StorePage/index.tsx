@@ -13,7 +13,7 @@ const Store = () => {
         <section className="store">
             {!isOpening ?
                 <>
-                    <h1 className="store__title">Box</h1>
+                    <h1>Box</h1>
                     <LootboxSelection handleOpening={handleOpening} />
                 </>
                 :

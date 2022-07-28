@@ -9,7 +9,6 @@
         display: grid;
         justify-content: center;
         grid-template-columns: repeat(2, 1fr);
-        margin-bottom: 193px;
         gap: 20px;
     }
 }
@@ -22,7 +21,6 @@
             flex-direction: column;
             align-items: center;
             gap: 100px;
-            padding-bottom: 50px;
         }
     }
 }

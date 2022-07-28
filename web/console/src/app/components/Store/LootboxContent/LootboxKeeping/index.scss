@@ -4,6 +4,8 @@
 
 .box-keeping {
     animation: darken 1s 0 1 normal forwards;
+    overflow: hidden;
+    height: calc(100vh - 100px);
 
     @keyframes darken {
 
@@ -15,8 +17,6 @@
             opacity: 1;
         }
     }
-
-    min-height: 90vh;
 
     &__wrapper {
         max-width: 1440px;
@@ -68,14 +68,14 @@
         color: #26373f;
 
         &__wrapper {
-            margin: 50px 0 40px;
+            margin: 30px 0 35px;
             display: flex;
             justify-content: center;
         }
     }
 
     &__box {
-        width: 540px;
+        width: 410px;
 
         &__wrapper {
             position: relative;
@@ -87,12 +87,8 @@
         }
     }
 
-    .slider {
-        margin-top: 80px;
-    }
-
     .slick-prev {
-        margin-left: 120px;
+        margin-left: 5%;
         width: 60px;
         height: 60px;
 
@@ -110,7 +106,7 @@
     }
 
     .slick-next {
-        margin-right: 120px;
+        margin-right: 5%;
         width: 60px;
         height: 60px;
 

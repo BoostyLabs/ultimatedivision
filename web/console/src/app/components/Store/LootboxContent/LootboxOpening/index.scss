@@ -4,25 +4,33 @@
     position: relative;
     display: flex;
     justify-content: center;
+    height: calc(100vh - 100px);
+    overflow-y: hidden;
 
     &__box-container {
         width: auto;
         margin: 0 auto;
+        position: relative;
+        z-index: 1;
 
         &--opened {
             position: relative;
-            width: 540px;
-            height: 1210px;
+            width: 410px;
         }
     }
 
     &__box {
-        width: 870px;
+        position: absolute;
+        bottom: -65px;
+        left: 50%;
+        transform: translateX(-50%);
+        height: auto;
+        width: 700px;
 
         &--opened {
             position: absolute;
-            bottom: 0;
-            width: 540px;
+            bottom: -55px;
+            width: 410px;
         }
     }
 
@@ -31,6 +39,7 @@
         margin: 0 auto;
 
         &__container {
+            z-index: 13;
             max-width: 300px;
             position: absolute;
             left: 0;

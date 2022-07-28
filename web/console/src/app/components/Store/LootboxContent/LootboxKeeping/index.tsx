@@ -47,7 +47,7 @@ export const LootboxKeeping: React.FC<{
                         </div>
                     </div>
                     <div>
-                        <div className="box-keeping__card-wrapper">
+                        <div className="box-keeping__card__wrapper">
                             {cards.slice(FIRST_PAGE_END, SECOND_PAGE_END).map((card: Card, index: number) =>
                                 <PlayerCard key={index} className="box-keeping__card" id={card.id} />
                             )}
@@ -55,7 +55,7 @@ export const LootboxKeeping: React.FC<{
                     </div>
                     {cards.length > REGULAR_CARDS_AMOUNT &&
                         <div>
-                            <div className="box-keeping__card-wrapper">
+                            <div className="box-keeping__card__wrapper">
                                 {cards.slice(SECOND_PAGE_END).map((card: Card, index: number) =>
                                     <PlayerCard key={index} className="box-keeping__card" id={card.id} />
                                 )}
