@@ -18,13 +18,13 @@
     &__settings {
         height: 44px;
         padding: 11.5px 31px;
-        background: none;
         font-family: "Montserrat", sans-serif;
         display: flex;
         flex-direction: row;
         box-shadow: 0 10px 14px rgba(0, 0, 0, 0.14);
         border-radius: 24px;
         border: 3px solid #f5ff63;
+        background: rgba(255, 255, 255, 0.12);
 
         &__item {
             overflow: hidden;
