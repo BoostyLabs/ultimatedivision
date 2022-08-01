@@ -4,6 +4,19 @@
 @import "./app/static/styles/mixins";
 @import "react-toastify/dist/ReactToastify.min.css";
 
+.page {
+    background: $pageBackground;
+
+    &__store {
+        background: url("@static/img/StorePage/background.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+        overflow: hidden;
+    }
+}
+
 @font-face {
     font-family: "Montserrat";
     src: url("@static/fonts/Montserrat-Regular.ttf") format("truetype");
@@ -60,9 +73,8 @@
 
 @font-face {
     font-family: "Orbitron";
-    src: url("@static/fonts/Orbitron-Black.ttf") format("truetype");
     src: url("@static/fonts/Orbitron-Bold.ttf") format("truetype");
-    font-display: swap;
+    font-style: normal;
     font-weight: bold;
 }
 
@@ -99,7 +111,41 @@
     src: url("@static/fonts/Urbanist-Black.ttf") format("truetype");
     font-style: normal;
     font-weight: lighter;
-    font-display: swap;
+}
+
+@font-face {
+    font-family: "Urbanist";
+    src: url("@static/fonts/Urbanist-Bold.ttf") format("truetype");
+    font-style: normal;
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "Urbanist";
+    src: url("@static/fonts/Urbanist-ExtraBold.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: "Urbanist";
+    src: url("@static/fonts/Urbanist-Medium.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: "Urbanist";
+    src: url("@static/fonts/Urbanist-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "Urbanist";
+    src: url("@static/fonts/Urbanist-SemiBold.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 600;
 }
 
 @font-face {
