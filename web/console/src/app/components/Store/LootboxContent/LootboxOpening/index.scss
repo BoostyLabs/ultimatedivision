@@ -20,16 +20,15 @@
 
     &__box {
         position: absolute;
-        height: auto;
         width: 700px;
-        bottom: -180px;
+        bottom: -20px;
         left: 50%;
         transform: translateX(-50%);
 
         &--opened {
             position: absolute;
             width: 410px;
-            bottom: -155px;
+            bottom: 0;
         }
     }
 
@@ -72,6 +71,20 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+            }
+        }
+    }
+}
+
+@media (max-width: 1300px) {
+
+    .box-animation {
+
+        &__box {
+            bottom: -180px;
+
+            &--opened {
+                bottom: -155px;
             }
         }
     }
