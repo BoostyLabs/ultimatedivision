@@ -1,16 +1,16 @@
-# This is workflow to automatically deploy on server.
-
 name: "CD"
 env:
   CURRENT_BRANCH : ${{ github.ref_name }}
+  DOCKER_VERSION : ${{ github.event.workflow_run.head_sha }}
+
 on:
   workflow_run:
     workflows: [ "CI" ]
-    types: [ completed ]
+    types:
+      - completed
     branches:
       - 'develop'
       - 'stage'
-      - 'master'
   # Allows you to run this workflow manually from the Actions tab.
   workflow_dispatch:
 
@@ -36,7 +36,7 @@ jobs:
       # Runs a single command using the runners shell.
       - name: Build & push docker images to our server
         if: env.CURRENT_BRANCH == 'develop'
-        run: make docker ENVIRONMENT=/develop
+        run: make docker VERSION=${{ env.DOCKER_VERSION }} ENVIRONMENT=/develop
 
       - name: Deploy DEVELOP environment images
         uses: appleboy/ssh-action@master
@@ -54,7 +54,7 @@ jobs:
       # Runs a single command using the runners shell.
       - name: Build & push docker images to our server
         if: env.CURRENT_BRANCH == 'stage'
-        run:  make docker ENVIRONMENT=/stage
+        run:  make docker VERSION=${{ env.DOCKER_VERSION }} ENVIRONMENT=/stage
 
       - name: Deploy STAGE environment images
         uses: appleboy/ssh-action@master
