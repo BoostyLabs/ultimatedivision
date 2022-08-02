@@ -14,8 +14,8 @@ export const LootboxContent: React.FC<{
     const [isAnimated, handleAnimation] = useState(true);
 
     useEffect(() => {
-        const TIMEOUT = 13000;
-        setTimeout(() => handleAnimation(false), TIMEOUT);
+        const ANIMATION_DELAY = 13000;
+        setTimeout(() => handleAnimation(false), ANIMATION_DELAY);
     });
 
     return (

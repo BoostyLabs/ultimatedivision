@@ -1,29 +1,28 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { PlayerCard } from '@components/common/PlayerCard';
+import { RootState } from '@/app/store';
+import { Card } from '@/card';
 
 import boxOpening from '@static/img/StorePage/BoxContent/boxOpening.gif';
 import box from '@static/img/StorePage/BoxContent/box.png';
 
-import { RootState } from '@/app/store';
-import { Card } from '@/card';
-
 import './index.scss';
-import { useEffect, useState } from 'react';
 
 export const LootboxOpening = () => {
     const [isOpenedLootBox, handleOpenedLootbox] = useState(false);
 
     const FIRST_CARD = 0;
+    const ANIMATION_LOOTBOX_OPENING_DELAY = 10000;
 
     const cards: Card[] = useSelector((state: RootState) => state.lootboxReducer.lootbox);
 
     useEffect(() => {
-        const OPENED_LOOTBOX = 10000;
-        setTimeout(() => handleOpenedLootbox(true), OPENED_LOOTBOX);
+        setTimeout(() => handleOpenedLootbox(true), ANIMATION_LOOTBOX_OPENING_DELAY);
     });
 
     return (
