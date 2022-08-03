@@ -440,7 +440,7 @@ func (service *Service) FinishWithWinResult(ctx context.Context, winResult WinRe
 	}
 
 	winResult.GameResult.Question = "do you allow us to take your address?"
-	winResult.GameResult.Transaction.Value = evmsignature.WeiToEthereum(winResult.Value).String()
+	winResult.GameResult.Transaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
 	winResult.GameResult.Transaction.UDTContract.Address = service.config.UDTContract.Address
 	if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 		return ErrQueue.Wrap(err)
@@ -458,13 +458,13 @@ func (service *Service) FinishWithWinResult(ctx context.Context, winResult WinRe
 	}
 
 	if request.Action == ActionAllowAddress {
-		if !request.WalletAddress.IsValidAddress() {
+		if err = request.WalletAddress.IsValidAddress(); err != nil {
 			if err := winResult.Client.WriteJSON(http.StatusBadRequest, "invalid address of user's wallet"); err != nil {
 				return ErrQueue.Wrap(err)
 			}
 		}
 
-		if err = service.users.UpdateWalletAddress(ctx, request.WalletAddress, winResult.Client.UserID); err != nil {
+		if err = service.users.UpdateWalletAddress(ctx, user.Wallet, winResult.Client.UserID, user.WalletType); err != nil {
 			if !users.ErrWalletAddressAlreadyInUse.Has(err) {
 				return ErrQueue.Wrap(err)
 			}
