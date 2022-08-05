@@ -10,7 +10,7 @@ import fallingBox from '@static/img/StorePage/BoxContent/fallingBox.gif';
 export const LootboxWaitingData = () => {
     const [isFallenBox, handleFallenBox] = useState(true);
 
-    const ANIMATION_LOOTBOX_FALLING_DELAY = 800;
+    const ANIMATION_LOOTBOX_FALLING_DELAY = 780;
 
     useEffect(() => {
         setTimeout(() => handleFallenBox(false), ANIMATION_LOOTBOX_FALLING_DELAY);

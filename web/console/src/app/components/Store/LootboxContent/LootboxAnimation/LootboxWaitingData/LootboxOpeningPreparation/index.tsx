@@ -9,10 +9,10 @@ import middleOpening from '@static/img/StorePage/BoxContent/MiddleOpening.gif';
 export const LootboxOpeningPreparation = () => {
     const [isStartOpening, handleStartOpening] = useState(true);
 
-    const ANIMATION_LOOTBOX_MIDDLE_OPENING_DELAY = 1370;
+    const ANIMATION_LOOTBOX_START_OPENING_DELAY = 650;
 
     useEffect(() => {
-        setTimeout(() => handleStartOpening(false), ANIMATION_LOOTBOX_MIDDLE_OPENING_DELAY);
+        setTimeout(() => handleStartOpening(false), ANIMATION_LOOTBOX_START_OPENING_DELAY);
     });
 
     return (

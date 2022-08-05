@@ -8,6 +8,11 @@
     backdrop-filter: blur(88px);
     box-shadow: 0 12px 34px rgba(0, 23, 58, 0.34);
 
+    &__icon {
+        width: 106px;
+        height: 93px;
+    }
+
     &--regular {
         justify-self: flex-end;
         border: 4px solid #736ffd;
@@ -41,19 +46,19 @@
         position: relative;
         display: flex;
         gap: 20px;
-        padding: 36px;
+        padding: 30px 30px 28px;
     }
 
     &__description {
-        width: 180px;
+        width: 154px;
     }
 
     &__title {
         font-family: "Orbitron", sans-serif;
         font-style: normal;
         font-weight: 900;
-        font-size: 28px;
-        line-height: 122%;
+        font-size: 24px;
+        line-height: 110%;
         letter-spacing: 0.12em;
         text-transform: uppercase;
         color: #704dff;
@@ -61,14 +66,14 @@
     }
 
     &__quantity {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
 
         &-value,
         &-label {
             font-family: "Orbitron", sans-serif;
             font-style: normal;
             font-weight: 500;
-            font-size: 24px;
+            font-size: 20px;
             line-height: 30px;
             text-align: center;
             letter-spacing: 0.12em;
@@ -91,12 +96,11 @@
             font-family: "Orbitron", sans-serif;
             font-style: normal;
             font-weight: 800;
-            font-size: 20px;
-            line-height: 25px;
+            font-size: 16px;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: #26373f;
-            margin-bottom: 16px;
+            margin-bottom: 13px;
         }
     }
 
@@ -108,20 +112,19 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 14px 18px;
+        padding: 8px 15px;
         gap: 10px;
         width: 100%;
-        height: 40px;
+        height: 33px;
         background: #f5ff63;
         box-shadow: 0 12px 22px rgba(0, 23, 58, 0.22);
-        border-radius: 8px;
+        border-radius: 6.7px;
 
         &-text {
             font-family: "Orbitron", sans-serif;
             font-style: normal;
             font-weight: 900;
             font-size: 14px;
-            line-height: 18px;
             text-align: center;
             letter-spacing: 0.12em;
             text-transform: uppercase;

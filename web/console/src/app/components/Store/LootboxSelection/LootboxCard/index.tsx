@@ -106,6 +106,7 @@ export const LootboxCard: React.FC<{
                     {data.dropChance.map((item, index) =>
                         <LootboxCardQuality label={qualities[index]} chance={item} key={index} />
                     )}
+
                     <button className="box-card__button" onClick={handleAnimation}>
                         <span className="box-card__button-text">OPEN</span>
                         <span className="box-card__button-value">{data.price} coin</span>

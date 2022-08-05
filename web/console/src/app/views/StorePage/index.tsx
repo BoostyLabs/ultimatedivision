@@ -1,32 +1,32 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { LootboxContent } from "@/app/components/Store/LootboxContent";
-import { LootboxSelection } from "@/app/components/Store/LootboxSelection";
-import { NftSell } from "@/app/components/Store/NftSell";
+import { LootboxContent } from '@/app/components/Store/LootboxContent';
+import { LootboxSelection } from '@/app/components/Store/LootboxSelection';
+import { NftSell } from '@/app/components/Store/NftSell';
 
-import "./index.scss";
+import './index.scss';
 
 const Store = () => {
     const [isOpenedLootbox, handleOpenedLootbox] = useState(false);
     const [isLootboxSelection, handleLootboxSelection] = useState(true);
     const [isLootboxKeeping, handleLootboxKeeping] = useState(false);
 
-    const header = document.querySelector(".ultimatedivision-navbar");
+    const header = document.querySelector('.ultimatedivision-navbar');
 
     useEffect(
         () =>
             !isLootboxSelection
-                ? header?.classList.add("ultimatedivision-navbar__store-opening")
-                : header?.classList.remove("ultimatedivision-navbar__store-opening"),
+                ? header?.classList.add('ultimatedivision-navbar__store-opening')
+                : header?.classList.remove('ultimatedivision-navbar__store-opening'),
         [isLootboxSelection]
     );
 
     return (
         <section className="store">
-            {isLootboxSelection ? (
+            {isLootboxSelection ?
                 <>
                     <NftSell />
                     <LootboxSelection
@@ -35,7 +35,7 @@ const Store = () => {
                         handleLootboxKeeping={handleLootboxKeeping}
                     />
                 </>
-            ) : (
+                :
                 <LootboxContent
                     handleOpenedLootbox={handleOpenedLootbox}
                     isOpenedLootbox={isOpenedLootbox}
@@ -43,7 +43,7 @@ const Store = () => {
                     isLootboxKeeping={isLootboxKeeping}
                     handleLootboxKeeping={handleLootboxKeeping}
                 />
-            )}
+            }
         </section>
     );
 };
