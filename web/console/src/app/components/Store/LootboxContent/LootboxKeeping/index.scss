@@ -5,6 +5,7 @@
 .box-keeping {
     animation: darken 1s 0 1 normal forwards;
     overflow: hidden;
+    height: calc(100vh - 100px);
 
     @keyframes darken {
 
@@ -79,7 +80,7 @@
         &__wrapper {
             position: relative;
             width: 100%;
-            max-width: 540px;
+            max-width: 410px;
             display: flex;
             justify-content: center;
             margin: 0 auto;

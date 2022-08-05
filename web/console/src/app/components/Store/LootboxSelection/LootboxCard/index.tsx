@@ -25,8 +25,10 @@ import './index.scss';
 
 export const LootboxCard: React.FC<{
     data: LootboxStats;
-    handleOpening: Dispatch<SetStateAction<boolean>>;
-}> = ({ data, handleOpening }) => {
+    handleOpenedLootbox: Dispatch<SetStateAction<boolean>>;
+    handleLootboxSelection: Dispatch<SetStateAction<boolean>>;
+    handleLootboxKeeping: Dispatch<SetStateAction<boolean>>;
+}> = ({ data, handleOpenedLootbox, handleLootboxSelection, handleLootboxKeeping }) => {
     /** Indicates if registration required. */
     const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
 
@@ -62,9 +64,12 @@ export const LootboxCard: React.FC<{
     const handleAnimation = async() => {
         // TODO: need add id lootbox from BD after be create endpoint fetch lootboxex.
         try {
+            handleLootboxSelection(false);
+            handleLootboxKeeping(false);
+
             await dispatch(openLootbox({ id: data.id, type: data.type }));
 
-            handleOpening(true);
+            handleOpenedLootbox(true);
         } catch (error: any) {
             if (error instanceof UnauthorizedError) {
                 setIsRegistrationRequired(true);

@@ -4,7 +4,7 @@
     position: relative;
     display: flex;
     justify-content: center;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 94px);
 
     &__box-container {
         z-index: 1;
@@ -25,10 +25,44 @@
         left: 50%;
         transform: translateX(-50%);
 
+        &--opening {
+            position: absolute;
+            width: 740px;
+            bottom: 0;
+            left: calc(50% + 3px);
+            transform: translateX(-50%);
+        }
+
+        &--falling {
+            position: absolute;
+            width: 620px;
+            bottom: 0;
+            left: calc(50% + 5px);
+            transform: translateX(-50%);
+        }
+
+        &--start-opening {
+            position: absolute;
+            width: 540px;
+            bottom: 0;
+            left: calc(50% + 5px);
+            transform: translateX(-50%);
+        }
+
+        &--middle-opening {
+            position: absolute;
+            width: 540px;
+            bottom: 0;
+            left: calc(50% + 9px);
+            transform: translateX(-50%);
+        }
+
         &--opened {
             position: absolute;
             width: 410px;
-            bottom: 0;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
         }
     }
 
@@ -37,7 +71,7 @@
         margin: 0 auto;
 
         &__container {
-            z-index: 2;
+            z-index: 5;
             max-width: 300px;
             position: absolute;
             left: 0;
@@ -45,7 +79,7 @@
             margin: 0 auto;
             opacity: 0;
             transform: scale(0);
-            animation: cardShowing 9s 2s 1 normal forwards ease-in-out;
+            animation: cardShowing 2s 1s 1 normal forwards ease-in-out;
 
             @keyframes cardShowing {
 
@@ -53,11 +87,7 @@
                     opacity: 0;
                 }
 
-                75% {
-                    opacity: 0;
-                }
-
-                80% {
+                30% {
                     transform: translateY(250px);
                 }
 
@@ -84,6 +114,22 @@
             bottom: -180px;
 
             &--opened {
+                bottom: -150px;
+            }
+
+            &--opening {
+                bottom: -200px;
+            }
+
+            &--falling {
+                bottom: -150px;
+            }
+
+            &--start-opening {
+                bottom: -155px;
+            }
+
+            &--middle-opening {
                 bottom: -155px;
             }
         }

@@ -4,16 +4,16 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import { LootboxCard } from './LootboxCard';
-import box from '@static/img/StorePage/BoxCard/box.svg';
-import coolBox from '@static/img/StorePage/BoxCard/coolBox.svg';
 
 import { LootboxStats, LootboxTypes } from '@/app/types/lootbox';
 
 import './index.scss';
 
 export const LootboxSelection: React.FC<{
-    handleOpening: Dispatch<SetStateAction<boolean>>;
-}> = ({ handleOpening }) => {
+    handleOpenedLootbox: Dispatch<SetStateAction<boolean>>;
+    handleLootboxSelection: Dispatch<SetStateAction<boolean>>;
+    handleLootboxKeeping: Dispatch<SetStateAction<boolean>>;
+}> = ({ handleOpenedLootbox, handleLootboxSelection, handleLootboxKeeping }) => {
     const REGULAR_BOX_CARDS_QUANTITY = 5;
     const COOL_BOX_CARDS_QUANTITY = 10;
     /** TODO: remove test code */
@@ -40,7 +40,13 @@ export const LootboxSelection: React.FC<{
         <div className="box-selection">
             <div className="box-selection__wrapper">
                 {boxesData.map((item, index) =>
-                    <LootboxCard data={item} key={index} handleOpening={handleOpening} />
+                    <LootboxCard
+                        data={item}
+                        key={index}
+                        handleOpenedLootbox={handleOpenedLootbox}
+                        handleLootboxKeeping={handleLootboxKeeping}
+                        handleLootboxSelection={handleLootboxSelection}
+                    />
                 )}
             </div>
         </div>

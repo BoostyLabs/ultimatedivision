@@ -3,20 +3,20 @@
 
 import { Dispatch, SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
+
 import Slider from 'react-slick';
 
 import { PlayerCard } from '@/app/components/common/PlayerCard';
-
-import box from '@static/img/StorePage/BoxContent/box.png';
-
 import { RootState } from '@/app/store';
 import { Card } from '@/card';
+
+import box from '@static/img/StorePage/BoxContent/box.png';
 
 import './index.scss';
 
 export const LootboxKeeping: React.FC<{
-    handleOpening: Dispatch<SetStateAction<boolean>>;
-}> = ({ handleOpening }) => {
+    handleLootboxSelection: Dispatch<SetStateAction<boolean>>;
+}> = ({ handleLootboxSelection }) => {
     const cards = useSelector((state: RootState) => state.lootboxReducer.lootbox);
 
     /** variables that describe indexes of first and last cards,
@@ -64,7 +64,7 @@ export const LootboxKeeping: React.FC<{
                     }
                 </Slider>
                 <div className="box-keeping__button__wrapper">
-                    <button className="box-keeping__button" onClick={() => handleOpening(false)}>
+                    <button className="box-keeping__button" onClick={() => handleLootboxSelection(true)}>
                         Keep all
                     </button>
                 </div>

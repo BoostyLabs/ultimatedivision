@@ -9,26 +9,39 @@ import { LootboxSelection } from '@/app/components/Store/LootboxSelection';
 import './index.scss';
 
 const Store = () => {
-    const [isOpening, handleOpening] = useState(false);
+    const [isOpenedLootbox, handleOpenedLootbox] = useState(false);
+    const [isLootboxSelection, handleLootboxSelection] = useState(true);
+    const [isLootboxKeeping, handleLootboxKeeping] = useState(false);
 
     const header = document.querySelector('.ultimatedivision-navbar');
+
     useEffect(
         () =>
-            isOpening
+            !isLootboxSelection
                 ? header?.classList.add('ultimatedivision-navbar__store-opening')
                 : header?.classList.remove('ultimatedivision-navbar__store-opening'),
-        [isOpening]
+        [isLootboxSelection]
     );
 
     return (
         <section className="store">
-            {!isOpening ?
+            {isLootboxSelection ?
                 <div className="store__content">
                     <h1>Box</h1>
-                    <LootboxSelection handleOpening={handleOpening} />
+                    <LootboxSelection
+                        handleOpenedLootbox={handleOpenedLootbox}
+                        handleLootboxSelection={handleLootboxSelection}
+                        handleLootboxKeeping={handleLootboxKeeping}
+                    />
                 </div>
                 :
-                <LootboxContent handleOpening={handleOpening} />
+                <LootboxContent
+                    handleOpenedLootbox={handleOpenedLootbox}
+                    isOpenedLootbox={isOpenedLootbox}
+                    handleLootboxSelection={handleLootboxSelection}
+                    isLootboxKeeping={isLootboxKeeping}
+                    handleLootboxKeeping={handleLootboxKeeping}
+                />
             }
         </section>
     );
