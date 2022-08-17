@@ -6,6 +6,7 @@ package gameengine
 import (
 	"sort"
 	"time"
+	"ultimatedivision/cards/avatars"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -20,15 +21,15 @@ type Action string
 
 const (
 	// ActionMove defines move action by player.
-	ActionMove Action = "move"
+	ActionMove Action = "MOVE"
 	// ActionMoveWithBall defines move action by player with ball.
 	ActionMoveWithBall Action = "moveWithBall"
 	// ActionPass defines pass by player to another player.
-	ActionPass Action = "pass"
+	ActionPass Action = "PASSDN"
 	// ActionCrossPass defines passing the ball by throwing it into the air in the direction of a player on his team.
 	ActionCrossPass Action = "crossPass"
 	// ActionPassThrough defines pass in free zone on the move often between players of the other team.
-	ActionPassThrough Action = "passTrough"
+	ActionPassThrough Action = "PASSUP"
 	// ActionDirectShot defines direct shot.
 	ActionDirectShot Action = "directShot"
 	// ActionCurlShot defines curl shot.
@@ -72,6 +73,13 @@ type GameConfig struct {
 	} `json:"moveAction"`
 }
 
+// UserChosenAction action witch user chosen.
+type UserChosenAction struct {
+	CardId    uuid.UUID  `json:"cardId"`
+	Action    Action     `json:"action"`
+	Positions Coordinate `json:"positions"`
+}
+
 // CardAvailableAction defines in which position card could be placed and which action it could do there.
 type CardAvailableAction struct {
 	CardID    uuid.UUID    `json:"cardId"`
@@ -79,14 +87,35 @@ type CardAvailableAction struct {
 	Positions []Coordinate `json:"positions"`
 }
 
+// CardLayout defines Layout of card.
+type CardLayout struct {
+	Card       cards.Card     `json:"card"`
+	Avatar     avatars.Avatar `json:"avatar"`
+	Coordinate Coordinate     `json:"coordinate"`
+}
+
+// MakeAction defines fields that describes football action.
+type MakeAction struct {
+	CardsLayout      []CardLayout `json:"cardsLayout"`
+	BallPosition     Coordinate   `json:"ballPosition"`
+	PlayerID         uuid.UUID    `json:"playerId"`
+	Action           Action       `json:"action"`
+	StartCoordinate  Coordinate   `json:"startCoordinate"`
+	EndCoordinate    Coordinate   `json:"endCoordinate"`
+	ReceiverPlayerID uuid.UUID    `json:"receiverPlayerId"`
+	ActionTime       time.Time    `json:"actionTime"`
+	Result           Result       `json:"result"`
+}
+
 // MatchRepresentation defines user1 and user2 cards with positions,
-// ball position an the moment and available actions for user cards.
+// ball position the moment and available actions for user cards.
 type MatchRepresentation struct {
-	User1CardsWithPosition []CardWithCoordinate  `json:"user1CardsWithPosition"`
-	User2CardsWithPosition []CardWithCoordinate  `json:"user2CardsWithPosition"`
+	User1CardsWithPosition []CardLayout          `json:"user1CardsWithPosition"`
+	User2CardsWithPosition []CardLayout          `json:"user2CardsWithPosition"`
 	BallCoordinate         Coordinate            `json:"ballPosition"`
 	Actions                []MakeAction          `json:"actions"`
 	CardAvailableAction    []CardAvailableAction `json:"cardAvailableAction"`
+	ActionsLeft            int                   `json:"actionsLeft"`
 }
 
 // Result defines a list of possible action results.
@@ -99,18 +128,22 @@ const (
 	ResultUnsuccessful Result = false
 )
 
-// MakeAction defines fields that describes football action.
-type MakeAction struct {
-	CardsLayout       []CardWithCoordinate `json:"cardsLayout"`
-	BallPosition      Coordinate           `json:"ballPosition"`
-	PlayerID          uuid.UUID            `json:"playerId"`
-	Action            Action               `json:"action"`
-	StartCoordinate   Coordinate           `json:"startCoordinate"`
-	EndCoordinate     Coordinate           `json:"endCoordinate"`
-	ReceiverPlayerID  uuid.UUID            `json:"receiverPlayerId"`
-	OpponentPlayerIDs []uuid.UUID          `json:"opponentPlayerIds"`
-	ActionTime        time.Time            `json:"actionTime"`
-	Result            Result               `json:"result"`
+type SingleStep struct {
+	Action           Action     `json:"action"`
+	BasecardId       uuid.UUID  `json:"basecardId"`
+	TargetCardId     uuid.UUID  `json:"targetCardId"`
+	StartCoordinate  Coordinate `json:"startCoordinate"`
+	FinishCoordinate Coordinate `json:"finishCoordinate"`
+	Result           Result     `json:"result"`
+}
+
+// TurnResult defines fields that describes turn result.
+type TurnResult struct {
+	Actions []struct {
+		Step []SingleStep `json:"step"`
+	} `json:"actions"`
+	CardAvailableAction CardAvailableAction `json:"cardAvailableAction"`
+	ActionsLeft         int                 `json:"actionsLeft"`
 }
 
 // IsValid checks is action valid.
