@@ -43,10 +43,28 @@ const Navbar: React.FC = () => {
                 :
                 <div className="ultimatedivision-navbar">
                     <div
-                        className="ultimatedivision-navbar__dropdown"
-                        onClick={() => setIsDropdownActive(!isDropdownActive)}
+                        className={`ultimatedivision-navbar__dropdown 
+                        ${isDropdownActive ? 'ultimatedivision-navbar__dropdown--active' : ''} `}
                     >
-                        {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
+                        {isDropdownActive ?
+                            <>
+                                <p className='ultimatedivision-navbar__dropdown__menu'>Menu</p>
+                                <button onClick={() => setIsDropdownActive(!isDropdownActive)}
+                                    className='ultimatedivision-navbar__dropdown__button'>
+                                    <CloseDropdownIcon />
+                                </button>
+                            </> :
+                            <>
+                                <p className='ultimatedivision-navbar__dropdown__logo'>
+                                    <span className='ultimatedivision-navbar__dropdown__logo__first-part'>Ultimate </span>
+                                    division
+                                </p>
+                                <button onClick={() => setIsDropdownActive(!isDropdownActive)}
+                                    className='ultimatedivision-navbar__dropdown__button'>
+                                    <DropdownIcon />
+                                </button>
+                                
+                            </>}
                     </div>
                     <ul className={`ultimatedivision-navbar__list${visibleClassName}`}>
                         {navbarItems.map((item, index) =>
