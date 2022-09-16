@@ -4,7 +4,7 @@
     padding: 40px 0 0;
 
     &__list {
-        width: 80%;
+        width: 100%;
         max-width: 1380px;
         margin: 0 auto;
         padding: 40px 0;
@@ -20,25 +20,24 @@
     }
 
     &__card {
-        text-decoration: none;
-        width: 178px;
         position: relative;
-        background: none;
+        cursor: pointer;
+        width: 178px;
         border-radius: 10px;
         box-shadow: white;
-        margin: 20px;
-        cursor: pointer;
+        text-decoration: none;
+        background: none;
 
         &__picture {
-            text-decoration: none;
             width: 178px;
+            text-decoration: none;
             background: none;
             border-radius: 10px;
             box-shadow: white;
         }
 
         &__selected {
-            cursor: not-allowed;
+            cursor: pointer;
             position: relative;
 
             &__label {
@@ -167,7 +166,6 @@
 @media (max-width: 1440px) {
 
     .card-selection {
-
         &__list {
             grid-template-columns: repeat(5, 1fr);
             column-gap: 5px;
@@ -179,10 +177,13 @@
 @media (max-width: $desktopBreakPoint) {
 
     .card-selection {
-
         &__list {
             grid-template-columns: repeat(4, 1fr);
             column-gap: 0;
+        }
+
+        &__card {
+            width: auto;
         }
     }
 }
@@ -190,19 +191,33 @@
 @media (max-width: $tabletBreakPoint) {
 
     .card-selection {
+        width: 100%;
+        max-width: 100%;
 
         &__list {
+            width: 100%;
+            max-width: 100%;
             grid-template-columns: repeat(3, 1fr);
         }
+
     }
 }
 
 @media (max-width: $phoneBreakPoint) {
 
     .card-selection {
-
         &__list {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        &__card {
+            margin: 0;
+
+            &__picture {
+                width: 106px;
+                height: 159.67px;
+            }
         }
     }
+
 }

@@ -3,27 +3,32 @@
 .football-field {
     padding-top: 30px;
 
-    &__title {
-        font-family: "BebasNeue", sans-serif;
-        font-size: 48px;
-        line-height: 58px;
-        padding: 5px;
-        font-weight: lighter;
-    }
-
     &__wrapper {
-        padding: 0 143px 143px;
+        padding: 0 143px 30px;
         overflow: hidden;
     }
 }
 
-@media screen and (max-width: $tabletBreakPoint) {
-
+@media screen and (max-width: 1450px) {
     .football-field {
+        &__wrapper {
+            padding: 0 70px 60px;
+        }
+    }
+}
 
-        &__title {
-            font-size: 44px;
-            font-weight: lighter;
+@media screen and (max-width: $tabletBreakPoint) {
+    .football-field {
+        &__wrapper {
+            padding: 0 32px 60px;
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint) {
+    .football-field {
+        &__wrapper {
+            padding: 0 16px 30px;
         }
     }
 }

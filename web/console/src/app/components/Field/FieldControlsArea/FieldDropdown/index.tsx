@@ -10,7 +10,7 @@ import addNewIcon from '@static/img/FieldPage/add-new.png';
 
 import './index.scss';
 
-export const FieldDropdown: React.FC<{ option: any }> = ({ option }) => {
+export const FieldDropdown: React.FC<{ option: any,isMobile?:boolean }> = ({ option, isMobile }) => {
     const dispatch = useDispatch();
 
     const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
@@ -25,7 +25,7 @@ export const FieldDropdown: React.FC<{ option: any }> = ({ option }) => {
         [option.options.length, option.columnElements]
     );
 
-    const sendCheckedOption = (event?: any) => {
+    const sendDesktopOptions = (event?: any) => {
         if (event) {
             switch (option.title) {
             case 'formation':
@@ -44,6 +44,14 @@ export const FieldDropdown: React.FC<{ option: any }> = ({ option }) => {
             // @ts-ignore
             document.querySelector(`input[name=${option.title}]:checked`).checked = false;
         }
+    }
+    const sendCheckedOption = (event?: any) => {
+        if (isMobile) {
+            option.action(event.target.value)
+        }
+        else {
+            sendDesktopOptions(event)
+        }
     };
 
     /** TODO: add new field button */
@@ -56,12 +64,12 @@ export const FieldDropdown: React.FC<{ option: any }> = ({ option }) => {
             className={`field-dropdown field-dropdown__${columnsAmount}--columns__${option.columnElements}--rows field-dropdown__${option.title} `}
         >
             {option.options.map((item: any, index: number) => {
+              
                 const fieldName = item.hasOwnProperty(option.fieldName) ? item[option.fieldName] : item;
                 const fieldId = item.hasOwnProperty(option.fieldId) ? item[option.fieldId] : item;
                 const defaultChecked = item[option.fieldId]
                     ? item[option.fieldId] === option.currentValue
                     : item === option.currentValue;
-
                 return (
                     <li key={`${option.title}-${index}`} className={'field-dropdown__item'}>
                         <input

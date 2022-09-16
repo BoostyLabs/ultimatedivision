@@ -1,7 +1,8 @@
 @import "@/index.scss";
 
 .playing-area {
-    width: 100%;
+    width: 80%;
+    margin: 0 auto;
     height: auto;
     border-radius: 10px;
     background-size: cover;
@@ -15,8 +16,13 @@
     }
 
     &__field {
+        margin: 0 auto;
         width: 100%;
         height: 100%;
+    }
+
+    &__play {
+        display: none;
     }
 
     &__0,
@@ -876,6 +882,30 @@
     .playing-area {
         width: 100%;
 
+        &__play {
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            height: 44px;
+            margin: 50px 32px 64px;
+            width: calc(100% - 64px);
+            border-radius: 10px;
+            border: none;
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 900;
+            font-size: 18px;
+            letter-spacing: 0.12em;
+            box-shadow: 0 12px 14px rgba(9, 51, 82, 0.22);
+            text-transform: uppercase;
+            background: #f5ff63;
+
+            &:disabled {
+                opacity: 0.3;
+                cursor: auto;
+            }
+        }
+
         &__3,
         &__3-shadows {
 
@@ -1014,7 +1044,19 @@
 
     .playing-area {
         width: 100%;
-        height: 500px;
+        height: auto;
+        display: flex;
+        justify-content: center;
+
+        &__field {
+            width: 150%;
+            height: auto;
+        }
+
+        &__play {
+            margin: 20px 16px 64px;
+            width: calc(100% - 32px);
+        }
 
         &__0,
         &__1,

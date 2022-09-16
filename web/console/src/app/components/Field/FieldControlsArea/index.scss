@@ -2,11 +2,15 @@
 
 .field-controls {
     position: relative;
-    height: 300px;
+    height: 60px;
     width: min-content;
     margin: 0 auto;
     display: flex;
     flex-direction: row;
+
+    &__filter {
+        display: none;
+    }
 
     &__wrapper {
         display: flex;
@@ -99,28 +103,42 @@
 
 @media screen and (max-width: $tabletBreakPoint) {
 
-    .field-controls-area {
-        width: 100%;
-        margin: 1% 0;
+    .field-controls {
+        margin: 0 auto;
         max-width: none;
+        height: 100px;
 
-        &__wrapper {
-            width: 100%;
-            max-width: unset;
-        }
-
-        &__title {
-            font-size: 24px;
+        &__play {
+            display: none;
         }
     }
 }
 
 @media screen and (max-width: $phoneBreakPoint) {
 
-    .field-controls-area {
+    .field-controls {
+        margin-left: 22px;
 
-        &__title {
-            font-size: 24px;
+        &__settings {
+            display: none;
+        }
+
+        &__filter {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-family: 'Orbitron';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 23px;
+            /* identical to box height */
+
+            letter-spacing: 0.06em;
+
+            /* Body 2 */
+
+            color: #131415;
         }
     }
 }

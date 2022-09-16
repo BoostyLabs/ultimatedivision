@@ -6,32 +6,35 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { changeActiveClub, setFormation, startSearchingMatch } from '@/app/store/actions/clubs';
 import { RootState } from '@/app/store';
-import { amountColumnsElements, Control } from '@/app/types/club';
+import { amountColumnsElements, Control, MobileControl } from '@/app/types/club';
 import { Formations, SquadCard } from '@/club';
 import { DropdownStyle } from '@/app/internal/dropdownStyle';
 import { FieldDropdown } from './FieldDropdown';
 
 import arrowIcon from '@static/img/FieldPage/arrow.svg';
 import arrowActiveIcon from '@static/img/FieldPage/arrow-active.svg';
+import filterIcon from '@static/img/FieldPage/filter-icon.svg';
 
 import './index.scss';
+import { FieldFilterMobile } from './FieldFilterMobile';
 
 export const FieldControlsArea: React.FC = () => {
     const dispatch = useDispatch();
 
     const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
 
-    const [currentOption, setCurrentOption] = useState<null | Control>(null);
+    const [currentOption, setCurrentOption] = useState<null | Control|MobileControl>(null);
     const [optionVisibility, changeVisibility] = useState(false);
     const [activeComposition, setActiveComposition] = useState<string>('Composition 1');
     const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
+    const [isMobileFilterActive, setIsMobileFilterActive] = useState(false)
 
     const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
     const formation = useSelector((state: RootState) => state.clubsReducer.activeClub.squad.formation);
     const clubs = useSelector((state: RootState) => state.clubsReducer.clubs);
     const activeClubId = useSelector((state: RootState) => state.clubsReducer.activeClub.id);
 
-    const checkActiveElement = (item: Control) => item.title === currentOption?.title && optionVisibility;
+    const checkActiveElement = (item: Control|MobileControl) => item.title === currentOption?.title && optionVisibility;
 
     const CONTROLS_FIELDS = [
         new Control(
@@ -63,7 +66,7 @@ export const FieldControlsArea: React.FC = () => {
         ),
     ];
 
-    const setCurrentControlsAreaOption = (item: Control) => {
+    const setCurrentControlsAreaOption = (item: Control | MobileControl) => {
         setCurrentOption(item);
 
         if (item.title !== currentOption?.title && optionVisibility) {
@@ -86,6 +89,11 @@ export const FieldControlsArea: React.FC = () => {
         [currentOption, optionVisibility]
     );
 
+    const returnToFilter = () => {
+        setIsMobileFilterActive(false);
+        changeVisibility(false)
+    }
+
     useEffect(() => {
         /** Function checks field cards and compare it with player cards array */
         function isPossibleToStart() {
@@ -98,6 +106,24 @@ export const FieldControlsArea: React.FC = () => {
     return (
         <div className="field-controls">
             <div className="field-controls__wrapper">
+                {isMobileFilterActive ?
+                    <FieldFilterMobile
+                     isDropdownActive={isDropdownActive}
+                        returnToFilter={returnToFilter}
+                        checkActiveElement={checkActiveElement}
+                        activeComposition={activeComposition}
+                        setActiveComposition={setActiveComposition}
+                        currentOption={currentOption}
+                        isDropdownActiveMobile={isMobileFilterActive}
+                        setCurrentControlsAreaOption={setCurrentControlsAreaOption}
+
+                    />
+                    :
+                    <div className='field-controls__filter' onClick={()=>setIsMobileFilterActive(true)} >
+                        <img src={filterIcon} alt='filter-icon'/>
+                        Filter
+                    </div>
+                }
                 <div className="field-controls__settings">
                     {CONTROLS_FIELDS.map((item, index) =>
                         <div className="field-controls__settings__item" key={item.title}>

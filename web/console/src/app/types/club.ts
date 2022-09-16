@@ -26,3 +26,18 @@ export class Control {
         public fieldText: string = ''
     ) {}
 }
+
+/** class for each control in option selection on field */
+export class MobileControl {
+    /** includes id, title and options parameters */
+    constructor(
+        public id: string = '',
+        public title: string = '',
+        public action: any = {},
+        public options: string[] = [],
+        public currentValue: any = '',
+        public fieldId: string = '',
+        public fieldName: string = '',
+        public fieldText: string = ''
+    ) {}
+}

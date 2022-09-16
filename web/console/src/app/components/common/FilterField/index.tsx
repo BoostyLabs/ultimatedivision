@@ -3,10 +3,10 @@
 
 import { useState, createContext } from 'react';
 
-import search from '@static/img/FilterField/search.svg';
-import filters from '@static/img/MarketPlacePage/filter_icon.svg';
-
 import { Context } from '@/app/types/filters';
+
+import search from '@static/img/FilterField/search.svg';
+import filterIcon from '@static/img/FieldPage/filter-icon.svg';
 
 import './index.scss';
 
@@ -21,8 +21,8 @@ export const FilterField: React.FC = ({ children }) => {
         <FilterContext.Provider value={new Context(activeFilterIndex, setActiveFilterIndex)}>
             <section className="filter-field">
                 <div className="filter-field__use-filters">
-                    <img className="filter-field__use-filters__picture" src={filters} alt="use fitlers" />
-                    <span className="filter-field__use-filters__title">Use filters</span>
+                    <img className="filter-field__use-filters__picture" src={filterIcon} alt="use fitlers" />
+                    <span className="filter-field__use-filters__title">Card filter</span>
                 </div>
                 <ul className="filter-field__list">
                     <li className="filter-field__list__item filter-field__list__item__search">

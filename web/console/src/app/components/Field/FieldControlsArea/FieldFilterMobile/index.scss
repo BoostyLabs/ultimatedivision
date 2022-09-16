@@ -1,0 +1,130 @@
+@import '@/index.scss';
+
+.field-filter {
+    z-index: 13;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: block;
+    height: 100vh;
+    overflow-y: hidden;
+    width: 100vw;
+    background: $pageBackground;
+
+    &__content {
+        max-height: 100vh;
+        min-height: 100vh;
+        overflow: scroll;
+        padding: 20px 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    &__top-side {
+        position: relative;
+        margin-bottom: 42px;
+
+        &__arrow-left {
+            z-index: 20;
+            position: absolute;
+            left: 5px;
+            top: 0px
+        }
+
+        &__title {
+            font-family: 'Orbitron', sans-serif;
+            font-style: normal;
+            font-weight: 900;
+            font-size: 20px;
+            line-height: 25px;
+            text-align: center;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #26373F;
+        }
+    }
+
+    &__settings__item {
+        cursor: pointer;
+        overflow: hidden;
+        user-select: none;
+        width: 100%;
+        padding: 20px 18px;
+        background: rgba(255, 255, 255, 0.12);
+        margin-bottom: 16px;
+        font-family: 'Orbitron';
+        font-style: normal;
+        font-weight: 800;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #26373F;
+        border: 2px solid #F5FF63;
+        box-shadow: 0px 6px 14px rgba(0, 23, 58, 0.14);
+        backdrop-filter: blur(22px);
+        border-radius: 12px;
+
+        &--active {
+            margin-bottom: 10px;
+        }
+
+        &:not(:last-child) {
+            margin-right: 50px;
+        }
+
+        &__heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-transform: uppercase;
+            color: black;
+            font-family: "Orbitron", sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.12em;
+        }
+
+        &__title {
+            margin-right: 17px;
+        }
+
+        &__image {
+            transform: rotate(0deg);
+            transition: transform 0.5s;
+        }
+    }
+
+    &__save-button {
+        cursor: pointer;
+        width: 100%;
+        border: none;
+        outline: none;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 14px 22px;
+        background: #1F2D34;
+        border-radius: 6px;
+        font-family: 'Orbitron';
+        font-style: normal;
+        font-weight: 900;
+        font-size: 18px;
+        line-height: 23px;
+        text-align: center;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #FFFFFF;
+    }
+}
+
+@media screen and (min-width: $phoneBreakPoint) {
+    .field-filter {
+        display: none;
+    }
+}
