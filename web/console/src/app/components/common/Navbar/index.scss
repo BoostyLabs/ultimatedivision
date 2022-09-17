@@ -60,7 +60,7 @@
     }
 }
 
-@media screen and (max-width: $phoneBreakPoint) {
+@media screen and (max-width: $tabletBreakPoint) {
 
     .ultimatedivision-navbar {
         position: relative;
@@ -74,23 +74,24 @@
             justify-content: space-between;
             align-items: center;
 
-            &__logo{
+            &__logo {
                 width: 130px;
                 font-weight: 800;
                 font-size: 22px;
-                line-height: 114%;  
+                line-height: 114%;
                 letter-spacing: 0.12em;
                 text-transform: uppercase;
-                font-family: 'Wix Madefor Display',sans-serif;
+                font-family: 'Wix Madefor Display', sans-serif;
                 text-shadow: 0px 1.16348px 2.9087px rgba(8, 36, 80, 0.36);
                 color: white;
 
-                &__first-part{
-                    color:  #F5FF63;;
+                &__first-part {
+                    color: #F5FF63;
+                    ;
                 }
             }
 
-            &__button{
+            &__button {
                 cursor: pointer;
                 padding: 0;
                 background: none;
@@ -98,16 +99,16 @@
                 outline: none;
             }
 
-            &__menu{
+            &__menu {
                 font-style: normal;
                 font-weight: 900;
                 font-size: 18px;
-                line-height: 23px;  
+                line-height: 23px;
                 letter-spacing: 0.06em;
                 text-transform: uppercase;
             }
 
-            &--active{
+            &--active {
                 background: $pageBackground;
             }
         }
@@ -134,7 +135,7 @@
                     text-transform: uppercase;
                     font-style: normal;
                     font-weight: 700;
-                    line-height: 20px;  
+                    line-height: 20px;
                     letter-spacing: 0.06em;
 
                     &__active {
