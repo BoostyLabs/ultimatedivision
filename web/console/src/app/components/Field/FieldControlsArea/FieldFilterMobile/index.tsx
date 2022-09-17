@@ -20,7 +20,7 @@ import arrowActiveIcon from '@static/img/FieldPage/arrow-active.svg';
 import './index.scss'
 
 export const FieldFilterMobile: React.FC<{
-    isDropdownActiveMobile: boolean,
+    isMobileFilterActive: boolean,
     returnToFilter: () => void,
     currentOption: null | Control | MobileControl,
     checkActiveElement: (item: Control | MobileControl) => boolean,
@@ -29,7 +29,7 @@ export const FieldFilterMobile: React.FC<{
     setActiveComposition: React.Dispatch<React.SetStateAction<string>>
     activeComposition: string
 }> = ({
-    isDropdownActiveMobile,
+    isMobileFilterActive,
     returnToFilter,
     currentOption,
     checkActiveElement,
@@ -74,7 +74,7 @@ export const FieldFilterMobile: React.FC<{
 
 
         const isDropdownFieldActive = (item: MobileControl) => {
-            return isDropdownActiveMobile && isDropdownActive && currentOption?.title === item.title
+            return  isDropdownActive && currentOption?.title === item.title
         }
 
         const CONTROLS_FIELDS = [
@@ -108,7 +108,6 @@ export const FieldFilterMobile: React.FC<{
             <div className="field-filter">
                 <div className="field-filter__content">
                     <div>
-                        {isDropdownActiveMobile &&
                             <div className='field-filter__top-side'>
                                 <span onClick={() => returnToFilter()}
                                     className='field-filter__top-side__arrow-left'>
@@ -118,7 +117,7 @@ export const FieldFilterMobile: React.FC<{
                                     Filter
                                 </h2>
                             </div>
-                        }
+                        
                         {CONTROLS_FIELDS.map((item, _) => {
                             const currentName = item.title === 'club' ? getClubName(item) : item.currentValue
 
@@ -145,12 +144,12 @@ export const FieldFilterMobile: React.FC<{
                                             />
                                         </div>
                                     </div>
-                                    {isDropdownFieldActive(item) && <FieldDropdown option={currentOption} isMobile={true} />}
+                                    {isMobileFilterActive &&isDropdownFieldActive(item) && <FieldDropdown option={currentOption} isMobile={true} />}
                                 </div>
                             )
                         })}
                     </div>
-                    {isDropdownActiveMobile && <button className='field-filter__save-button' onClick={() => saveChanges()}>Save Changes</button>}
+                     <button className='field-filter__save-button' onClick={() => saveChanges()}>Save Changes</button>
                 </div>
             </div>
         )

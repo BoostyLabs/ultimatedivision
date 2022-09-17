@@ -74,6 +74,7 @@
                     z-index: 4;
                     position: absolute;
                     background: url("@static/img/FieldPage/checked-icon.svg");
+                    background-size: cover;
                     left: 50%;
                     top: 80%;
                     width: 18px;
@@ -166,6 +167,7 @@
 @media (max-width: 1440px) {
 
     .card-selection {
+
         &__list {
             grid-template-columns: repeat(5, 1fr);
             column-gap: 5px;
@@ -177,9 +179,11 @@
 @media (max-width: $desktopBreakPoint) {
 
     .card-selection {
+
         &__list {
             grid-template-columns: repeat(4, 1fr);
             column-gap: 0;
+            padding: 0 70px 60px;
         }
 
         &__card {
@@ -198,14 +202,15 @@
             width: 100%;
             max-width: 100%;
             grid-template-columns: repeat(3, 1fr);
+            padding: 0;
         }
-
     }
 }
 
 @media (max-width: $phoneBreakPoint) {
 
     .card-selection {
+
         &__list {
             grid-template-columns: repeat(3, 1fr);
         }
@@ -219,5 +224,33 @@
             }
         }
     }
+}
 
+@media screen and (max-width: $phoneBreakPoint) {
+    .card-selection {
+        &__card {
+            &__selected {
+                cursor: pointer;
+                position: relative;
+
+                &__label {
+                    position: absolute;
+                    right: 10px;
+                    top: 3px;
+                    width: 20px;
+                    height: 22px;
+
+                    &:before {
+                        top: 20px;
+                        border-width: 9px 10px 0 10px;
+                    }
+
+                    &::after {
+                        width: 17px;
+                        height: 17px;
+                    }
+                }
+            }
+        }
+    }
 }

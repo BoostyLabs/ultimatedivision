@@ -66,6 +66,7 @@ export const FilterByStatus: React.FC = () => {
 
     return (
         <FilterByParameterWrapper showComponent={showFilterByStatus} isVisible={isVisible} title="Status">
+            <div className="filter-item__dropdown-active__wrapper">
             <div className="filter-item__dropdown-active__switcher">
                 <input
                     id="checkbox-locked"
@@ -87,7 +88,8 @@ export const FilterByStatus: React.FC = () => {
 
                 <label className="filter-item__dropdown-active__slider" htmlFor="checkbox-unlocked"></label>
                 <p className="filter-item__dropdown-active__text"> Unlocked</p>
-            </div>
+                </div>
+                </div>
             <input value="APPLY" type="submit" className="filter-item__dropdown-active__apply" onClick={handleSubmit} />
         </FilterByParameterWrapper>
     );

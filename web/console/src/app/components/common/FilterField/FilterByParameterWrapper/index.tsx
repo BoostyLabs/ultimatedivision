@@ -13,18 +13,20 @@ export const FilterByParameterWrapper: React.FC<{
     isVisible: boolean;
     title: string;
 }> = ({ showComponent, children, isVisible, title }) =>
-    <li className="filter-field__list__item">
-        <div className="filter-item">
-            <span className={'filter-item__title'} onClick={showComponent}>
-                {title}
-            </span>
-            <img
-                className="filter-item__picture"
-                src={isVisible ? arrowActiveIcon : arrowIcon}
-                alt="filter icon"
-                style={isVisible ? { transform: new DropdownStyle(true).triangleRotate } : {}}
-            />
-            <div className={`filter-item__dropdown${isVisible ? '-active' : '-inactive'}`}>{children}</div>
-        </div>
-    </li>;
+        <li className="filter-field__list__item">
+            <div className="filter-item">
+                <div className="filter-item__content">
+                    <span className={'filter-item__title'} onClick={showComponent}>
+                        {title}
+                    </span>
+                    <img
+                        className="filter-item__picture"
+                        src={isVisible ? arrowActiveIcon : arrowIcon}
+                        alt="filter icon"
+                        style={isVisible ? { transform: new DropdownStyle(true).triangleRotate } : {}}
+                    />
+                </div>
+                <div className={`filter-item__dropdown${isVisible ? '-active' : '-inactive'}`}>{children}</div>
+            </div>
+        </li>;
 

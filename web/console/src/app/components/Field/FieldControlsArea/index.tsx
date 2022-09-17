@@ -114,7 +114,7 @@ export const FieldControlsArea: React.FC = () => {
                         activeComposition={activeComposition}
                         setActiveComposition={setActiveComposition}
                         currentOption={currentOption}
-                        isDropdownActiveMobile={isMobileFilterActive}
+                        isMobileFilterActive={isMobileFilterActive}
                         setCurrentControlsAreaOption={setCurrentControlsAreaOption}
 
                     />
@@ -124,6 +124,7 @@ export const FieldControlsArea: React.FC = () => {
                         Filter
                     </div>
                 }
+                
                 <div className="field-controls__settings">
                     {CONTROLS_FIELDS.map((item, index) =>
                         <div className="field-controls__settings__item" key={item.title}>
@@ -148,7 +149,7 @@ export const FieldControlsArea: React.FC = () => {
                         </div>
                     )}
                 </div>
-                {isDropdownActive && <FieldDropdown option={currentOption} />}
+                {!isMobileFilterActive&& isDropdownActive && <FieldDropdown option={currentOption} />}
             </div>
             <input
                 type="button"

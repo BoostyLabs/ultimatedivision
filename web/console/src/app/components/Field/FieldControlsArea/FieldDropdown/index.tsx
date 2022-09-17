@@ -26,7 +26,6 @@ export const FieldDropdown: React.FC<{ option: any,isMobile?:boolean }> = ({ opt
     );
 
     const sendDesktopOptions = (event?: any) => {
-        if (event) {
             switch (option.title) {
             case 'formation':
                 dispatch(option.action(squad, event.target.value));
@@ -40,17 +39,15 @@ export const FieldDropdown: React.FC<{ option: any,isMobile?:boolean }> = ({ opt
             default:
                 break;
             }
-        } else {
-            // @ts-ignore
-            document.querySelector(`input[name=${option.title}]:checked`).checked = false;
-        }
     }
+
     const sendCheckedOption = (event?: any) => {
-        if (isMobile) {
-            option.action(event.target.value)
+        if (event) {
+            isMobile? option.action(event.target.value) : sendDesktopOptions(event)
         }
         else {
-            sendDesktopOptions(event)
+            // @ts-ignore
+            document.querySelector(`input[name=${option.title}]:checked`).checked = false;
         }
     };
 
@@ -61,7 +58,7 @@ export const FieldDropdown: React.FC<{ option: any,isMobile?:boolean }> = ({ opt
 
     return (
         <ul
-            className={`field-dropdown field-dropdown__${columnsAmount}--columns__${option.columnElements}--rows field-dropdown__${option.title} `}
+            className={`field-dropdown ${isMobile ? '' : `field-dropdown__${columnsAmount}--columns__${option.columnElements}--rows field-dropdown__${option.title}`} `}
         >
             {option.options.map((item: any, index: number) => {
               

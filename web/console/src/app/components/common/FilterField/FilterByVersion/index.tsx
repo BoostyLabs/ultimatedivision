@@ -63,6 +63,8 @@ export const FilterByVersion: React.FC<{
 
     /** Chooses wood quality of cards. */
     const chooseWoodQuality = () => {
+        /* eslint-disable */
+        console.log(isWoodQuality)
         setIsWoodQuality((isWoodQuality) => !isWoodQuality);
     };
 
@@ -113,6 +115,7 @@ export const FilterByVersion: React.FC<{
 
     return (
         <FilterByParameterWrapper showComponent={showFilterByVersion} isVisible={isVisible} title="Version">
+            <div className="filter-item__dropdown-active__wrapper">
             <div className="filter-item__dropdown-active__switcher">
                 <input
                     id="division-checkbox-wood"
@@ -158,7 +161,8 @@ export const FilterByVersion: React.FC<{
                 />
                 <label className="filter-item__dropdown-active__slider" htmlFor="checkbox-diamond"></label>
                 <p className="filter-item__dropdown-active__text">diamond</p>
-            </div>
+                </div>
+                </div>
             <input value="APPLY" type="submit" className="filter-item__dropdown-active__apply" onClick={handleSubmit} />
         </FilterByParameterWrapper>
     );

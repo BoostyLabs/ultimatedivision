@@ -1,20 +1,20 @@
-@import '@/index.scss';
+@import "@/index.scss";
 
 .field-filter {
     z-index: 13;
     position: fixed;
+    overflow-y: hidden;
     top: 0;
     left: 0;
-    display: block;
     height: 100vh;
-    overflow-y: hidden;
     width: 100vw;
+    display: block;
     background: $pageBackground;
 
     &__content {
+        overflow: scroll;
         max-height: 100vh;
         min-height: 100vh;
-        overflow: scroll;
         padding: 20px 16px;
         display: flex;
         flex-direction: column;
@@ -29,19 +29,19 @@
             z-index: 20;
             position: absolute;
             left: 5px;
-            top: 0px
+            top: 0;
         }
 
         &__title {
-            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            text-transform: uppercase;
             font-style: normal;
+            font-family: "Orbitron", sans-serif;
             font-weight: 900;
             font-size: 20px;
             line-height: 25px;
-            text-align: center;
             letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: #26373F;
+            color: #26373f;
         }
     }
 
@@ -51,20 +51,20 @@
         user-select: none;
         width: 100%;
         padding: 20px 18px;
-        background: rgba(255, 255, 255, 0.12);
         margin-bottom: 16px;
-        font-family: 'Orbitron';
+        border: 2px solid #f5ff63;
+        border-radius: 12px;
+        text-transform: uppercase;
         font-style: normal;
+        font-family: "Orbitron", sans-serif;
         font-weight: 800;
         font-size: 16px;
         line-height: 20px;
         letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: #26373F;
-        border: 2px solid #F5FF63;
-        box-shadow: 0px 6px 14px rgba(0, 23, 58, 0.14);
+        color: #26373f;
+        box-shadow: 0 6px 14px rgba(0, 23, 58, 0.14);
         backdrop-filter: blur(22px);
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.12);
 
         &--active {
             margin-bottom: 10px;
@@ -75,11 +75,11 @@
         }
 
         &__heading {
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            cursor: pointer;
             transition: background-color 0.3s;
             text-transform: uppercase;
             color: black;
@@ -109,21 +109,22 @@
         justify-content: center;
         align-items: center;
         padding: 14px 22px;
-        background: #1F2D34;
         border-radius: 6px;
-        font-family: 'Orbitron';
+        text-align: center;
+        text-transform: uppercase;
         font-style: normal;
+        font-family: "Orbitron", sans-serif;
         font-weight: 900;
         font-size: 18px;
         line-height: 23px;
-        text-align: center;
         letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: #FFFFFF;
+        background: #1f2d34;
+        color: #fff;
     }
 }
 
 @media screen and (min-width: $phoneBreakPoint) {
+
     .field-filter {
         display: none;
     }

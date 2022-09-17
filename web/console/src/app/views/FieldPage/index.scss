@@ -10,15 +10,20 @@
 }
 
 @media screen and (max-width: 1450px) {
+
     .football-field {
+
         &__wrapper {
-            padding: 0 70px 60px;
+            padding: 0;
+            padding-bottom: 60px;
         }
     }
 }
 
 @media screen and (max-width: $tabletBreakPoint) {
+
     .football-field {
+
         &__wrapper {
             padding: 0 32px 60px;
         }
@@ -26,7 +31,9 @@
 }
 
 @media screen and (max-width: $phoneBreakPoint) {
+
     .football-field {
+
         &__wrapper {
             padding: 0 16px 30px;
         }
