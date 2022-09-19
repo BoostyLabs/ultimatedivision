@@ -27,7 +27,7 @@ export const FieldControlsArea: React.FC = () => {
     const [optionVisibility, changeVisibility] = useState(false);
     const [activeComposition, setActiveComposition] = useState<string>('Composition 1');
     const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
-    const [isMobileFilterActive, setIsMobileFilterActive] = useState(false)
+    const [isMobileFilterActive, setIsMobileFilterActive] = useState(false);
 
     const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
     const formation = useSelector((state: RootState) => state.clubsReducer.activeClub.squad.formation);
@@ -91,8 +91,8 @@ export const FieldControlsArea: React.FC = () => {
 
     const returnToFilter = () => {
         setIsMobileFilterActive(false);
-        changeVisibility(false)
-    }
+        changeVisibility(false);
+    };
 
     useEffect(() => {
         /** Function checks field cards and compare it with player cards array */
@@ -108,7 +108,7 @@ export const FieldControlsArea: React.FC = () => {
             <div className="field-controls__wrapper">
                 {isMobileFilterActive ?
                     <FieldFilterMobile
-                     isDropdownActive={isDropdownActive}
+                        isDropdownActive={isDropdownActive}
                         returnToFilter={returnToFilter}
                         checkActiveElement={checkActiveElement}
                         activeComposition={activeComposition}
@@ -119,12 +119,12 @@ export const FieldControlsArea: React.FC = () => {
 
                     />
                     :
-                    <div className='field-controls__filter' onClick={()=>setIsMobileFilterActive(true)} >
-                        <img src={filterIcon} alt='filter-icon'/>
+                    <div className="field-controls__filter" onClick={() => setIsMobileFilterActive(true)} >
+                        <img src={filterIcon} alt="filter-icon"/>
                         Filter
                     </div>
                 }
-                
+
                 <div className="field-controls__settings">
                     {CONTROLS_FIELDS.map((item, index) =>
                         <div className="field-controls__settings__item" key={item.title}>

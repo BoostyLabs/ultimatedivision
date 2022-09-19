@@ -10,7 +10,7 @@ import addNewIcon from '@static/img/FieldPage/add-new.png';
 
 import './index.scss';
 
-export const FieldDropdown: React.FC<{ option: any,isMobile?:boolean }> = ({ option, isMobile }) => {
+export const FieldDropdown: React.FC<{ option: any;isMobile?:boolean }> = ({ option, isMobile }) => {
     const dispatch = useDispatch();
 
     const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
@@ -26,24 +26,24 @@ export const FieldDropdown: React.FC<{ option: any,isMobile?:boolean }> = ({ opt
     );
 
     const sendDesktopOptions = (event?: any) => {
-            switch (option.title) {
-            case 'formation':
-                dispatch(option.action(squad, event.target.value));
-                break;
-            case 'club':
-                dispatch(option.action(event.target.value));
-                break;
-            case 'squad':
-                option.action(event.target.value);
-                break;
-            default:
-                break;
-            }
-    }
+        switch (option.title) {
+        case 'formation':
+            dispatch(option.action(squad, event.target.value));
+            break;
+        case 'club':
+            dispatch(option.action(event.target.value));
+            break;
+        case 'squad':
+            option.action(event.target.value);
+            break;
+        default:
+            break;
+        }
+    };
 
     const sendCheckedOption = (event?: any) => {
         if (event) {
-            isMobile? option.action(event.target.value) : sendDesktopOptions(event)
+            isMobile? option.action(event.target.value) : sendDesktopOptions(event);
         }
         else {
             // @ts-ignore
@@ -58,15 +58,15 @@ export const FieldDropdown: React.FC<{ option: any,isMobile?:boolean }> = ({ opt
 
     return (
         <ul
-            className={`field-dropdown ${isMobile ? '' : `field-dropdown__${columnsAmount}--columns__${option.columnElements}--rows field-dropdown__${option.title}`} `}
+            className={`field-dropdown ${isMobile ? '' : `field-dropdown__${columnsAmount}--columns__${option.columnElements}--rows field-dropdown__${option.title} field-dropdown__desktop`} `}
         >
             {option.options.map((item: any, index: number) => {
-              
                 const fieldName = item.hasOwnProperty(option.fieldName) ? item[option.fieldName] : item;
                 const fieldId = item.hasOwnProperty(option.fieldId) ? item[option.fieldId] : item;
                 const defaultChecked = item[option.fieldId]
                     ? item[option.fieldId] === option.currentValue
                     : item === option.currentValue;
+
                 return (
                     <li key={`${option.title}-${index}`} className={'field-dropdown__item'}>
                         <input

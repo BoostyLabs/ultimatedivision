@@ -227,8 +227,11 @@
 }
 
 @media screen and (max-width: $phoneBreakPoint) {
+
     .card-selection {
+
         &__card {
+
             &__selected {
                 cursor: pointer;
                 position: relative;
@@ -245,7 +248,7 @@
                         border-width: 9px 10px 0 10px;
                     }
 
-                    &::after {
+                    &:after {
                         width: 17px;
                         height: 17px;
                     }

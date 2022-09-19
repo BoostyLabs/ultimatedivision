@@ -62,7 +62,7 @@ export const FieldPlayingArea: React.FC = () => {
         return id !== defaultId;
     }
 
-     /** shows matchFinder component */
+    /** shows matchFinder component */
     const showMatchFinder = () => {
         dispatch(startSearchingMatch(true));
         window.scrollTo({
@@ -103,7 +103,7 @@ export const FieldPlayingArea: React.FC = () => {
 
         setCurrentCard(null);
     };
-     useEffect(() => {
+    useEffect(() => {
         /** Function checks field cards and compare it with player cards array */
         function isPossibleToStart() {
             const emptyCard = squadCards.find((squadCard: SquadCard) => squadCard.card.id === EMPTY_CARD_ID);
@@ -138,7 +138,7 @@ export const FieldPlayingArea: React.FC = () => {
                 </div>
                 <img src={footballField} className="playing-area__field" />
             </div>
-             <input
+            <input
                 type="button"
                 value="Play"
                 className="playing-area__play"

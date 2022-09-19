@@ -6,8 +6,8 @@ import { useState, createContext } from 'react';
 import { Context } from '@/app/types/filters';
 
 import search from '@static/img/FilterField/search.svg';
-import filterIcon from '@static/img/FieldPage/filter-icon.svg'
-import arrowLeftIcon from '@static/img/FilterField/arrow-left.svg';;
+import filterIcon from '@static/img/FieldPage/filter-icon.svg';
+import arrowLeftIcon from '@static/img/FilterField/arrow-left.svg'; ;
 
 import './index.scss';
 
@@ -17,7 +17,7 @@ export const FilterField: React.FC = ({ children }) => {
     /** Exposes default index which does not exist in array. */
     const DEFAULT_FILTER_ITEM_INDEX = -1;
     const [activeFilterIndex, setActiveFilterIndex] = useState(DEFAULT_FILTER_ITEM_INDEX);
-    const [isActiveMobileCardsFilter, setIsActiveMobileCardsFilter] = useState(false)
+    const [isActiveMobileCardsFilter, setIsActiveMobileCardsFilter] = useState(false);
 
     return (
         <FilterContext.Provider value={new Context(activeFilterIndex, setActiveFilterIndex)}>
@@ -28,17 +28,17 @@ export const FilterField: React.FC = ({ children }) => {
                 </div>
                 {isActiveMobileCardsFilter ?
                     <div className={`filter-field__mobile ${isActiveMobileCardsFilter ? 'filter-field__mobile--active' : ''} `}>
-                        <div className='filter-field__mobile__content'>
-                            <div className='filter-field__mobile__top-side'>
+                        <div className="filter-field__mobile__content">
+                            <div className="filter-field__mobile__top-side">
                                 <span onClick={() => setIsActiveMobileCardsFilter(false)}
-                                    className='filter-field__mobile__top-side__arrow-left'>
-                                    <img src={arrowLeftIcon} alt='arrow-left' />
+                                    className="filter-field__mobile__top-side__arrow-left">
+                                    <img src={arrowLeftIcon} alt="arrow-left" />
                                 </span>
-                                <h2 className='filter-field__mobile__top-side__title'>
+                                <h2 className="filter-field__mobile__top-side__title">
                                     Filter
                                 </h2>
                             </div>
-                            <ul className='filter-field__mobile__list'>
+                            <ul className="filter-field__mobile__list">
                                 {children}
                             </ul>
                         </div>
