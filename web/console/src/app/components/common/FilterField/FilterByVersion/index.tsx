@@ -63,8 +63,6 @@ export const FilterByVersion: React.FC<{
 
     /** Chooses wood quality of cards. */
     const chooseWoodQuality = () => {
-        /* eslint-disable */
-        console.log(isWoodQuality)
         setIsWoodQuality((isWoodQuality) => !isWoodQuality);
     };
 

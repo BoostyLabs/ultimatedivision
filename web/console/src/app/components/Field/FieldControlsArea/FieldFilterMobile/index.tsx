@@ -11,7 +11,7 @@ import { Control, MobileControl } from '@/app/types/club';
 import { changeActiveClub, setFormation } from '@/app/store/actions/clubs';
 import { RootState } from '@/app/store';
 
-import { Formations } from '@/club';
+import { Formations, FormationsType } from '@/club';
 
 import arrowLeftIcon from '@static/img/FilterField/arrow-left.svg';
 import arrowIcon from '@static/img/FieldPage/arrow.svg';
@@ -51,15 +51,15 @@ export const FieldFilterMobile: React.FC<{
         if (typeof currentFormation === 'string' && currentFormation.indexOf('-') > NEGATIVE_INDEX) {
             return currentFormation;
         }
-
         /* @ts-ignore */
         return Formations[currentFormation];
     };
 
-    const [activeClub, setActiveClub] = useState(activeClubId);
-    const [mobileComposition, setMobileComposition] = useState(activeComposition);
-    const [activeFormation, setActiveFormation] = useState(getCurrentFormationName(formation));
+    const [activeClub, setActiveClub] = useState<string>(activeClubId);
+    const [mobileComposition, setMobileComposition] = useState<string>(activeComposition);
+    const [activeFormation, setActiveFormation] = useState<FormationsType>(getCurrentFormationName(formation));
 
+    /** Save changes in field filters and send it to API */
     const saveChanges = () => {
         dispatch(changeActiveClub(activeClub));
         dispatch(setFormation(squad, activeFormation));
@@ -73,7 +73,6 @@ export const FieldFilterMobile: React.FC<{
 
         return clubName;
     };
-
 
     const isDropdownFieldActive = (item: MobileControl) => isDropdownActive && currentOption?.title === item.title;
 

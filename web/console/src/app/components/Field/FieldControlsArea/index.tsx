@@ -10,24 +10,24 @@ import { amountColumnsElements, Control, MobileControl } from '@/app/types/club'
 import { Formations, SquadCard } from '@/club';
 import { DropdownStyle } from '@/app/internal/dropdownStyle';
 import { FieldDropdown } from './FieldDropdown';
+import { FieldFilterMobile } from './FieldFilterMobile';
 
 import arrowIcon from '@static/img/FieldPage/arrow.svg';
 import arrowActiveIcon from '@static/img/FieldPage/arrow-active.svg';
 import filterIcon from '@static/img/FieldPage/filter-icon.svg';
 
 import './index.scss';
-import { FieldFilterMobile } from './FieldFilterMobile';
 
 export const FieldControlsArea: React.FC = () => {
     const dispatch = useDispatch();
 
     const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
 
-    const [currentOption, setCurrentOption] = useState<null | Control|MobileControl>(null);
+    const [currentOption, setCurrentOption] = useState<null | Control| MobileControl>(null);
     const [optionVisibility, changeVisibility] = useState(false);
     const [activeComposition, setActiveComposition] = useState<string>('Composition 1');
     const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
-    const [isMobileFilterActive, setIsMobileFilterActive] = useState(false);
+    const [isMobileFilterActive, setIsMobileFilterActive] = useState<boolean>(false);
 
     const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
     const formation = useSelector((state: RootState) => state.clubsReducer.activeClub.squad.formation);
@@ -149,7 +149,7 @@ export const FieldControlsArea: React.FC = () => {
                         </div>
                     )}
                 </div>
-                {!isMobileFilterActive&& isDropdownActive && <FieldDropdown option={currentOption} />}
+                {!isMobileFilterActive && isDropdownActive && <FieldDropdown option={currentOption} />}
             </div>
             <input
                 type="button"

@@ -10,7 +10,7 @@ import addNewIcon from '@static/img/FieldPage/add-new.png';
 
 import './index.scss';
 
-export const FieldDropdown: React.FC<{ option: any;isMobile?:boolean }> = ({ option, isMobile }) => {
+export const FieldDropdown: React.FC<{ option: any; isMobile?: boolean }> = ({ option, isMobile }) => {
     const dispatch = useDispatch();
 
     const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
@@ -43,7 +43,7 @@ export const FieldDropdown: React.FC<{ option: any;isMobile?:boolean }> = ({ opt
 
     const sendCheckedOption = (event?: any) => {
         if (event) {
-            isMobile? option.action(event.target.value) : sendDesktopOptions(event);
+            isMobile ? option.action(event.target.value) : sendDesktopOptions(event);
         }
         else {
             // @ts-ignore

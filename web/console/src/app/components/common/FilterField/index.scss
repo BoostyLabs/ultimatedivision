@@ -10,6 +10,10 @@
         display: none;
     }
 
+    &__mobile {
+        display: none;
+    }
+
     &__list {
         display: flex;
         align-items: center;
@@ -85,6 +89,7 @@
         }
 
         &__mobile {
+            overscroll-behavior: none;
             display: none;
             position: fixed;
             width: 100vw;

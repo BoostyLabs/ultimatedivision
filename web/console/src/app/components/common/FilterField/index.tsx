@@ -22,7 +22,7 @@ export const FilterField: React.FC = ({ children }) => {
     return (
         <FilterContext.Provider value={new Context(activeFilterIndex, setActiveFilterIndex)}>
             <section className="filter-field">
-                <div className="filter-field__use-filters " onClick={() => setIsActiveMobileCardsFilter(true)}>
+                <div className="filter-field__use-filters" onClick={() => setIsActiveMobileCardsFilter(true)}>
                     <img className="filter-field__use-filters__picture" src={filterIcon} alt="use fitlers" />
                     <span className="filter-field__use-filters__title">Card filter</span>
                 </div>
