@@ -1,11 +1,11 @@
 /** Dropdown Icon for mobile */
 export function DropdownIcon() {
     return (
-    <svg width="44" height="32" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="44" height="6" rx="3" fill="#F5FF63"/>
-        <rect y="13" width="44" height="6" rx="3" fill="#F5FF63"/>
-        <rect y="26" width="44" height="6" rx="3" fill="#F5FF63"/>
-    </svg>
+        <svg width="44" height="32" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="44" height="6" rx="3" fill="#F5FF63"/>
+            <rect y="13" width="44" height="6" rx="3" fill="#F5FF63"/>
+            <rect y="26" width="44" height="6" rx="3" fill="#F5FF63"/>
+        </svg>
     );
 };
 
