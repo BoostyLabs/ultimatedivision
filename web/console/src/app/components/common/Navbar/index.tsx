@@ -45,24 +45,17 @@ const Navbar: React.FC = () => {
                         ${isDropdownActive ? 'ultimatedivision-navbar__dropdown--active' : ''} `}
                     >
                         {isDropdownActive ?
-                            <>
-                                <p className="ultimatedivision-navbar__dropdown__menu">Menu</p>
-                                <button onClick={() => setIsDropdownActive(!isDropdownActive)}
-                                    className="ultimatedivision-navbar__dropdown__button">
-                                    <CloseDropdownIcon />
-                                </button>
-                            </> :
-                            <>
-                                <p className="ultimatedivision-navbar__dropdown__logo">
-                                    <span className="ultimatedivision-navbar__dropdown__logo__first-part">Ultimate </span>
-                                    division
-                                </p>
-                                <button onClick={() => setIsDropdownActive(!isDropdownActive)}
-                                    className="ultimatedivision-navbar__dropdown__button">
-                                    <DropdownIcon />
-                                </button>
-
-                            </>}
+                            <p className="ultimatedivision-navbar__dropdown__menu">Menu</p>
+                            :
+                            <p className="ultimatedivision-navbar__dropdown__logo">
+                                <span className="ultimatedivision-navbar__dropdown__logo__first-part">Ultimate </span>
+                                division
+                            </p>
+                        }
+                        <button onClick={() => setIsDropdownActive(!isDropdownActive)}
+                            className="ultimatedivision-navbar__dropdown__button">
+                            {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
+                        </button>
                     </div>
                     <ul className={`ultimatedivision-navbar__list${visibleClassName}`}>
                         {navbarItems.map((item, index) =>
