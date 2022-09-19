@@ -1,3 +1,4 @@
+/** svg image of owner */
 export function Owner() {
     return (
         <svg
@@ -14,7 +15,7 @@ export function Owner() {
         </svg>
     );
 }
-
+/** svg image of manager */
 export function Manager() {
     return (
         <svg
