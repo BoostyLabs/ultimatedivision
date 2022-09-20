@@ -46,7 +46,7 @@ type DB interface {
 	// GetNickNameByID returns nickname by user id from the database.
 	GetNickNameByID(ctx context.Context, id uuid.UUID) (string, error)
 	// GetVelasData get json string by user id from the database.
-	GetVelasData(ctx context.Context, userId uuid.UUID) (VelasData, error)
+	GetVelasData(ctx context.Context, userID uuid.UUID) (VelasData, error)
 	// UpdateLastLogin updates last login time.
 	UpdateLastLogin(ctx context.Context, id uuid.UUID) error
 	// UpdateEmail updates an email address in the database.

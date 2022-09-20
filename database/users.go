@@ -28,10 +28,10 @@ type usersDB struct {
 }
 
 // GetVelasData get json string by user id from the database.
-func (usersDB usersDB) GetVelasData(ctx context.Context, userId uuid.UUID) (users.VelasData, error) {
+func (usersDB usersDB) GetVelasData(ctx context.Context, userID uuid.UUID) (users.VelasData, error) {
 	var user users.VelasData
 
-	row := usersDB.conn.QueryRowContext(ctx, "SELECT user_id, response FROM velas_data WHERE user_id=$1", userId)
+	row := usersDB.conn.QueryRowContext(ctx, "SELECT user_id, response FROM velas_data WHERE user_id=$1", userID)
 
 	err := row.Scan(&user.ID, &user.Response)
 	if err != nil {

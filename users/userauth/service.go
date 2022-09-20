@@ -643,8 +643,8 @@ func (service *Service) SaveVelasData(ctx context.Context, walletAddress common.
 }
 
 // GetVelasData returns velas data by userId.
-func (service *Service) GetVelasData(ctx context.Context, userId uuid.UUID) (users.VelasData, error) {
-	velasData, err := service.users.GetVelasData(ctx, userId)
+func (service *Service) GetVelasData(ctx context.Context, userID uuid.UUID) (users.VelasData, error) {
+	velasData, err := service.users.GetVelasData(ctx, userID)
 	return velasData, Error.Wrap(err)
 }
 
