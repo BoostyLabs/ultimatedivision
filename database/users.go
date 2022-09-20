@@ -31,7 +31,7 @@ type usersDB struct {
 func (usersDB usersDB) GetVelasData(ctx context.Context, userID uuid.UUID) (users.VelasData, error) {
 	var user users.VelasData
 
-	row := usersDB.conn.QueryRowContext(ctx, "SELECT user_id, response FROM velas_data WHERE user_id=$1", userID)
+	row := usersDB.conn.QueryRowContext(ctx, "SELECT user_id, response FROM velas_register_data WHERE user_id=$1", userID)
 
 	err := row.Scan(&user.ID, &user.Response)
 	if err != nil {
