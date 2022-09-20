@@ -24,7 +24,7 @@ export const FieldControlsArea: React.FC = () => {
     const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
 
     const [currentOption, setCurrentOption] = useState<null | Control| MobileControl>(null);
-    const [optionVisibility, changeVisibility] = useState(false);
+    const [optionVisibility, changeVisibility] = useState<boolean>(false);
     const [activeComposition, setActiveComposition] = useState<string>('Composition 1');
     const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
     const [isMobileFilterActive, setIsMobileFilterActive] = useState<boolean>(false);
@@ -161,3 +161,5 @@ export const FieldControlsArea: React.FC = () => {
         </div>
     );
 };
+
+
