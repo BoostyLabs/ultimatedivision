@@ -2,10 +2,10 @@
 
 .card {
     z-index: 2;
+    position: relative;
     width: 100%;
     padding: 40px 100px 80px;
     color: #26373f;
-    position: relative;
 
     &__player {
         width: 268px;
@@ -28,59 +28,59 @@
         &__nft {
             display: flex;
             align-items: center;
-            font-family: "Orbitron", sans-serif;
+            margin-bottom: 22px;
+            text-transform: uppercase;
             font-style: normal;
+            font-family: "Orbitron", sans-serif;
             font-weight: 900;
             font-size: 22px;
             line-height: 28px;
             letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: 22px;
 
             &-title {
-                color: #26373f;
                 width: 100px;
+                color: #26373f;
             }
 
             &-value {
-                font-family: "Urbanist", sans-serif;
+                margin-left: 31px;
+                text-align: center;
+                text-transform: capitalize;
                 font-style: normal;
+                font-family: "Urbanist", sans-serif;
                 font-weight: 500;
                 font-size: 22px;
                 line-height: 26px;
-                text-align: center;
                 letter-spacing: 0.12em;
-                margin-left: 31px;
-                text-transform: capitalize;
             }
         }
 
         &__club {
             display: flex;
             align-items: center;
-            font-family: "Orbitron", sans-serif;
+            text-transform: uppercase;
             font-style: normal;
+            font-family: "Orbitron", sans-serif;
             font-weight: 900;
             font-size: 22px;
             line-height: 28px;
             letter-spacing: 0.12em;
-            text-transform: uppercase;
 
             &-title {
-                color: #26373f;
                 width: 100px;
+                color: #26373f;
             }
 
             &-name {
-                font-family: "Urbanist", sans-serif;
+                margin-left: 31px;
+                text-transform: uppercase;
                 font-style: normal;
+                text-align: center;
+                font-family: "Urbanist", sans-serif;
                 font-weight: 500;
                 font-size: 22px;
                 line-height: 26px;
-                text-align: center;
                 letter-spacing: 0.12em;
-                text-transform: uppercase;
-                margin-left: 31px;
             }
         }
     }
@@ -97,14 +97,14 @@
         border: 2px solid #f5ff63;
         box-shadow: 0 12px 22px rgba(0, 23, 58, 0.22);
         border-radius: 10px;
-        font-family: "Orbitron", sans-serif;
+        text-transform: uppercase;
         font-style: normal;
+        text-align: center;
+        font-family: "Orbitron", sans-serif;
         font-weight: 900;
         font-size: 14px;
         line-height: 18px;
-        text-align: center;
         letter-spacing: 0.12em;
-        text-transform: uppercase;
         color: #f5ff63;
         background: none;
     }
@@ -120,13 +120,13 @@
 
         &__title {
             text-align: center;
-            font-family: "Orbitron", sans-serif;
+            text-transform: uppercase;
             font-style: normal;
+            font-family: "Orbitron", sans-serif;
             font-weight: 600;
             font-size: 36px;
             line-height: 45px;
             letter-spacing: 0.12em;
-            text-transform: uppercase;
             color: #26373f;
         }
     }
@@ -145,15 +145,15 @@
     }
 
     &__name {
-        font-family: "Orbitron", sans-serif;
+        margin-bottom: 26px;
+        text-transform: uppercase;
         font-style: normal;
+        font-family: "Orbitron", sans-serif;
         font-weight: 900;
         font-size: 40px;
         line-height: 50px;
         letter-spacing: 0.12em;
-        text-transform: uppercase;
         color: #26373f;
-        margin-bottom: 26px;
     }
 
     &__stats-area {
@@ -198,9 +198,9 @@
         }
 
         &__mint {
-            font-size: 12px;
             margin-left: 20px;
             padding: 5px 16px;
+            font-size: 12px;
         }
 
         &__mint-info {
@@ -279,10 +279,10 @@
             margin-bottom: 26px;
 
             &__nft {
+                margin-bottom: 19.5px;
                 line-height: 23px;
                 font-size: 18px;
                 font-weight: 900;
-                margin-bottom: 19.5px;
 
                 &-value {
                     font-weight: 500;
@@ -292,8 +292,8 @@
             }
 
             &__club {
-                font-size: 18px;
                 margin-left: 0;
+                font-size: 18px;
                 font-weight: 900;
 
                 &-name {

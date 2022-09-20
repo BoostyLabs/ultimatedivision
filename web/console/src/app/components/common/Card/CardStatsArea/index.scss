@@ -4,9 +4,9 @@
     width: 100%;
     position: relative;
     display: grid;
+    justify-content: flex-start;
     grid-template-columns: repeat(3, 26.5%);
     column-gap: 10%;
-    justify-content: flex-start;
 }
 
 @media screen and (max-width: $desktopBreakPoint) {
