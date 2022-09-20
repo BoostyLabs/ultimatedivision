@@ -163,7 +163,7 @@ func (usersDB *usersDB) Create(ctx context.Context, user users.User) error {
 
 // SetVelasData save json to db while register velas user.
 func (usersDB *usersDB) SetVelasData(ctx context.Context, velasData users.VelasData) error {
-	query := `INSERT INTO velas_data(
+	query := `INSERT INTO velas_register_data(
                  user_id,
                  response
                 )
