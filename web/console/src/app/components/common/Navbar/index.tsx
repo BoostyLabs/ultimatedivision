@@ -26,10 +26,8 @@ const Navbar: React.FC = () => {
     const navbarItems: Array<{ name: string; path: string }> = [
         { name: 'HOME', path: RouteConfig.Home.path },
         { name: 'STORE', path: RouteConfig.Store.path },
-        { name: 'Marketplace', path: RouteConfig.MarketPlace.path },
         { name: 'CARDS', path: RouteConfig.Cards.path },
         { name: 'FIELD', path: RouteConfig.Field.path },
-        { name: 'DIVISIONS', path: RouteConfig.Division.path },
     ];
 
     useEffect(() => {
@@ -43,10 +41,21 @@ const Navbar: React.FC = () => {
                 :
                 <div className="ultimatedivision-navbar">
                     <div
-                        className="ultimatedivision-navbar__dropdown"
-                        onClick={() => setIsDropdownActive(!isDropdownActive)}
+                        className={`ultimatedivision-navbar__dropdown 
+                        ${isDropdownActive ? 'ultimatedivision-navbar__dropdown--active' : ''} `}
                     >
-                        {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
+                        {isDropdownActive ?
+                            <p className="ultimatedivision-navbar__dropdown__menu">Menu</p>
+                            :
+                            <p className="ultimatedivision-navbar__dropdown__logo">
+                                <span className="ultimatedivision-navbar__dropdown__logo__first-part">Ultimate </span>
+                                division
+                            </p>
+                        }
+                        <button onClick={() => setIsDropdownActive(!isDropdownActive)}
+                            className="ultimatedivision-navbar__dropdown__button">
+                            {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
+                        </button>
                     </div>
                     <ul className={`ultimatedivision-navbar__list${visibleClassName}`}>
                         {navbarItems.map((item, index) =>
