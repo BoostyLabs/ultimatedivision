@@ -55,7 +55,8 @@
     .cards-area {
 
         &__wrapper {
-            grid-template-columns: repeat((2, 1fr));
+            width: 100%;
+            grid-template-columns: repeat((3, 1fr));
         }
     }
 }

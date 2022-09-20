@@ -12,26 +12,19 @@
 @media screen and (max-width: $desktopBreakPoint) {
 
     .footballer-card-stats {
+        display: grid;
         grid-template-columns: repeat(3, 29.5%);
         row-gap: 5%;
-        column-gap: 5%;
+        column-gap: 2%;
     }
 }
 
 @media screen and (max-width: $tabletBreakPoint) {
 
     .footballer-card-stats {
-        grid-template-columns: repeat(3, 29.5%);
-        row-gap: 5%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 47px;
         column-gap: 5%;
-    }
-}
-
-@media screen and (max-width: $tabletBreakPoint - 100px) {
-
-    .footballer-card-stats {
-        display: flex;
-        flex-direction: column;
-        height: auto;
     }
 }

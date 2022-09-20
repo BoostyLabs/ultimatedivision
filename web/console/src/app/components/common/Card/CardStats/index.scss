@@ -94,36 +94,94 @@
     }
 }
 
-@media screen and (max-width: $tabletBreakPoint) {
+@media screen and (max-width: $desktopBreakPoint) {
 
     .footballer-card-stats-item {
+        padding-bottom: 0;
 
         &__heading {
             display: flex;
             justify-content: space-between;
-            font-size: 22px;
             margin-bottom: 40px;
-        }
+            font-weight: 900;
+            font-size: 16px;
+            line-height: 18px;
 
-        &__row-name {
-            font-size: 10px;
-        }
-    }
-}
-
-@media screen and (max-width: $phoneBreakPoint) {
-
-    .footballer-card-stats-item {
-        margin: 5% 0;
-
-        &__heading {
-            font-size: 24px;
-            line-height: 29px;
+            &__mobile-value {
+                display: none;
+            }
         }
 
         &__row-name {
             font-size: 14px;
             line-height: 17px;
+        }
+
+        &__row-value {
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 18px;
+        }
+    }
+}
+
+@media screen and (max-width: $tabletBreakPoint) {
+
+    .footballer-card-stats-item {
+        padding-bottom: 0;
+
+        &__heading {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 18px;
+        }
+
+        &__row-name {
+            font-size: 14px;
+            line-height: 17px;
+        }
+
+        &__row-value {
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 18px;
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint) {
+    .footballer-card-stats-item {
+        gap: 0;
+
+        &__heading {
+            margin-bottom: 20px;
+
+            &-value {
+                display: none;
+            }
+
+            &__mobile-value {
+                display: block;
+                margin: 0 auto 22px;
+                font-family: 'Orbitron';
+                font-style: normal;
+                font-weight: 800;
+                font-size: 12px;
+                line-height: 15px;
+                text-align: center;
+                letter-spacing: 0.12em;
+                color: #F5FF63;
+
+            }
+
+
+        }
+
+        &__diagram {
+            bottom: 10px;
         }
     }
 }

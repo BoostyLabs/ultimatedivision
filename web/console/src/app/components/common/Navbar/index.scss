@@ -66,6 +66,18 @@
         position: relative;
         padding: 0;
 
+        &--active {
+            top: 0;
+            left: 0;
+            z-index: 22;
+            flex-direction: column;
+            position: sticky;
+            overflow: hidden;
+            max-height: 100vh;
+            min-height: 100vh;
+            background: $pageBackground;
+        }
+
         &__dropdown {
             z-index: 10;
             padding: 43px 16px 39px;
@@ -116,7 +128,6 @@
             display: none;
 
             &-active {
-                position: absolute;
                 z-index: 5;
                 display: block;
                 width: 100%;

@@ -82,12 +82,15 @@
     }
 }
 
-@media (max-width: $phoneBreakPoint - 150px) {
+@media (max-width: $phoneBreakPoint) {
 
     .user-card {
-        width: 150px;
-        border-radius: 10px;
-        padding-bottom: 20px;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         &__price-gold {
             bottom: 120px;

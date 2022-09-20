@@ -11,3 +11,9 @@
         margin: 30px auto 74px;
     }
 }
+
+@media (max-width: $phoneBreakPoint) {
+    .user-cards {
+        padding: 0 16px;
+    }
+}

@@ -168,12 +168,64 @@
     .card {
         width: 100%;
 
+        &__name {
+            font-size: 30px;
+            line-height: 34px;
+        }
+
+
+        &__player {
+            max-width: 50%;
+
+            &__info {
+                width: 50%;
+                padding-top: 20px;
+            }
+        }
+
+        &__info {
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        &__illustrator-radar {
+            margin: 30px auto 0;
+            width: 70%;
+        }
+
         &__stats-area {
-            width: 75%;
+            width: 100%;
+        }
+
+        &__mint {
+            font-size: 12px;
+            margin-left: 20px;
+            padding: 5px 16px;
         }
 
         &__mint-info {
-            width: 542px;
+            width: 100%;
+
+            &__club {
+                font-size: 20px;
+            }
+
+            &__nft {
+                margin-bottom: 14px;
+                font-size: 20px;
+
+                &-value {
+                    margin-left: 10px;
+                    font-size: 16px;
+                }
+            }
+
+            &__club {
+                &-name {
+                    font-size: 16px;
+                    margin-left: 12px;
+                }
+            }
         }
     }
 }
@@ -182,22 +234,73 @@
 
     .card {
         width: 100%;
-        padding: 60px 5%;
+        padding: 21px 48px 0;
 
         &__border {
-            width: 90%;
-            border-radius: 10px;
+            width: 100%;
+            border-radius: 0;
+        }
+
+        &__info {
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            width: 100%;
+        }
+
+        &__player {
+            width: 242px;
+            height: 365.52px;
+            margin-bottom: 33px;
+
+            &__info {
+                width: 100%;
+            }
+        }
+
+
+        &__name {
+            font-size: 26px;
+            line-height: 33px;
+            text-align: center;
+        }
+
+        &__illustrator-radar {
+            margin-bottom: 74px;
+
+            &__title {
+                font-weight: 500;
+                font-size: 24px;
+            }
         }
 
         &__mint-info {
-            width: 362px;
+            width: 100%;
+            margin-bottom: 26px;
 
             &__nft {
+                line-height: 23px;
                 font-size: 18px;
+                font-weight: 900;
+                margin-bottom: 19.5px;
+
+                &-value {
+                    font-weight: 500;
+                    font-size: 16px;
+                    line-height: 19px;
+                }
             }
 
             &__club {
                 font-size: 18px;
+                margin-left: 0;
+                font-weight: 900;
+
+                &-name {
+                    font-weight: 500;
+                    font-size: 16px;
+                    line-height: 19px;
+                }
             }
         }
 
@@ -207,17 +310,8 @@
             border: 1.14946px solid #675eae;
         }
 
-        &__name-wrapper {
-            width: 100%;
-            height: 50px;
-        }
-
-        &__name {
-            font-size: 47px;
-        }
-
         &__stats-area {
-            width: 65%;
+            width: 100%;
         }
     }
 }
@@ -225,7 +319,11 @@
 @media screen and (max-width: $phoneBreakPoint) {
 
     .card {
-        padding: 10px 5%;
+        padding: 21px 16px 0;
+
+        &__player {
+            max-width: 100%;
+        }
 
         &__wrapper {
             position: relative;
@@ -238,25 +336,13 @@
             width: 90%;
         }
 
-        &__mint-info {
-            width: 90%;
+        &__mint {
+            padding: 6px 19px;
+        }
 
-            &__nft {
-                font-size: 15px;
-
-                &-value {
-                    padding: 0 8px;
-                }
-            }
-
-            &__club {
-                margin-left: auto;
-                font-size: 15px;
-
-                &-name {
-                    padding: 0 8px;
-                }
-            }
+        &__illustrator-radar {
+            width: 100%;
+            margin-bottom: 51px;
         }
 
         .footballer-card-illustrations {
@@ -267,8 +353,6 @@
         &__stats-area {
             width: 100%;
             margin: 5% auto;
-            display: flex;
-            flex-direction: column;
         }
     }
 }

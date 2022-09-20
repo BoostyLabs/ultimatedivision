@@ -39,10 +39,10 @@ const Navbar: React.FC = () => {
             {isHomePath ?
                 <HomeNavbar />
                 :
-                <div className="ultimatedivision-navbar">
+                <div className={`ultimatedivision-navbar 
+                        ${isDropdownActive ? 'ultimatedivision-navbar--active' : ''} `}>
                     <div
-                        className={`ultimatedivision-navbar__dropdown 
-                        ${isDropdownActive ? 'ultimatedivision-navbar__dropdown--active' : ''} `}
+                        className={`ultimatedivision-navbar__dropdown `}
                     >
                         {isDropdownActive ?
                             <p className="ultimatedivision-navbar__dropdown__menu">Menu</p>

@@ -65,7 +65,7 @@ const Card: React.FC = () => {
                     <div className="card__wrapper">
                         <div className="card__info">
                             <PlayerCard className="card__player" id={card.id} />
-                            <div>
+                            <div className='card__player__info'>
                                 <h2 className="card__name">{card.playerName}</h2>
                                 <div className="card__mint-info">
                                     <div className="card__mint-info__nft">
