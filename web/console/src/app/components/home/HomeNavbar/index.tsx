@@ -7,7 +7,6 @@ import { NavLink } from 'react-router-dom';
 import { JoinButton } from '@components/common/JoinButton';
 
 import { CloseDropdownIcon, DropdownIcon } from '@/app/static/img/Navbar';
-import ultimate from '@static/img/Navbar/ultimate.svg';
 
 import { RouteConfig } from '@/app/routes';
 
@@ -21,6 +20,7 @@ const HomeNavbar: React.FC = () => {
 
     /** TODO: DIVISIONS will be replaced with id parameter */
     const navbarItems: Array<{ name: string; path: string }> = [
+        { name: 'Home', path: RouteConfig.Home.path },
         { name: 'My Club', path: RouteConfig.Field.path },
         { name: 'Store', path: RouteConfig.Store.path },
         { name: 'FAQ', path: RouteConfig.Summary.path },
@@ -28,24 +28,23 @@ const HomeNavbar: React.FC = () => {
 
     return (
         <nav className="ultimatedivision-home-navbar">
-            <div className="wrapper">
-                <a href={RouteConfig.Home.path}>
-                    <img
-                        className="ultimatedivision-home-navbar__logo"
-                        src={ultimate}
-                        alt="UltimateDivision logo"
-                    />
-                </a>
-                <div
-                    className="ultimatedivision-home-navbar__dropdown"
-                    onClick={() => setIsDropdownActive(!isDropdownActive)}
-                >
-                    {isDropdownActive ?
-                        <CloseDropdownIcon />
-                        :
-                        <DropdownIcon />
-                    }
+            <div className={`wrapper ${isDropdownActive?'wrapper--active':''}`}>
+                <div className="ultimatedivision-home-navbar__wrapper">
+                    {isDropdownActive && <p className="ultimatedivision-home-navbar__text">Menu</p>}
+                    <div
+                        className="ultimatedivision-home-navbar__dropdown"
+                        onClick={() => setIsDropdownActive(!isDropdownActive)}
+                    >
+                        {isDropdownActive ?
+                            <>
+                                <CloseDropdownIcon />
+                            </>
+                            :
+                            <DropdownIcon />
+                        }
+                    </div>
                 </div>
+
                 <ul
                     className={`ultimatedivision-home-navbar__list${visibleClassName}`}
                 >
@@ -64,7 +63,6 @@ const HomeNavbar: React.FC = () => {
                             </NavLink>
                         </li>
                     )}
-                    <JoinButton />
                 </ul>
             </div>
         </nav>
