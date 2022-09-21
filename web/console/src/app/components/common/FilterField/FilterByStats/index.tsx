@@ -163,7 +163,7 @@ export const FilterByStats: React.FC<{
     ];
 
     /** Submits query parameters by stats. */
-    const handleSubmit = async () => {
+    const handleSubmit = async() => {
         await submitSearch([
             { 'defence_gte': defenceMin },
             { 'defence_lte': defenceMax },
@@ -217,7 +217,7 @@ export const FilterByStats: React.FC<{
                     changeMinValue={stat.changeMinValue}
                     changeMaxValue={stat.changeMaxValue}
                 />)}
-                <div className='filter-item__dropdown-active__stats__buttons'>
+                <div className="filter-item__dropdown-active__stats__buttons">
                     <input
                         value="APPLY"
                         type="submit"

@@ -4,16 +4,15 @@
     position: relative;
 
     &__content {
-        cursor: pointer;
         width: 154px;
         display: flex;
         flex-direction: row;
         justify-content: center;
         list-style: none;
+        cursor: pointer;
     }
 
     &__title {
-        cursor: pointer;
         margin-right: 14px;
         transition: background-color 0.3s;
         text-transform: uppercase;
@@ -24,6 +23,7 @@
         font-size: 16px;
         line-height: 20px;
         letter-spacing: 0.12em;
+        cursor: pointer;
     }
 
     &__picture {
@@ -112,13 +112,13 @@
             width: 40px;
             height: 24px;
             position: absolute;
-            cursor: pointer;
             top: 4px;
             right: 0;
-            background-color: #5c80ea;
             -webkit-transition: 0.4s;
             transition: 0.4s;
+            background-color: #5c80ea;
             border-radius: 24px;
+            cursor: pointer;
 
             &:before {
                 z-index: 26;
@@ -204,7 +204,6 @@
             }
 
             &__clear {
-                cursor: pointer;
                 margin: 18px 0 7px 24px;
                 height: 24px;
                 padding-left: 30px;
@@ -222,6 +221,7 @@
                 background-image: url("@static/img/FilterField/clear.svg");
                 background-repeat: no-repeat;
                 background-size: contain;
+                cursor: pointer;
             }
 
             &__wrapper {

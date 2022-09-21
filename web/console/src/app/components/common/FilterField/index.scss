@@ -34,7 +34,6 @@
             }
 
             &__search {
-                cursor: pointer;
                 display: flex;
                 flex-direction: row;
                 align-items: center;
@@ -49,6 +48,7 @@
                 line-height: 20px;
                 letter-spacing: 0.12em;
                 color: #f5ff63;
+                cursor: pointer;
 
                 .filter-field__list__item__picture {
                     margin-right: 7px;
@@ -116,11 +116,11 @@
                 margin-bottom: 42px;
 
                 &__arrow-left {
-                    cursor: pointer;
                     z-index: 20;
                     position: absolute;
                     left: 5px;
                     top: 0;
+                    cursor: pointer;
                 }
 
                 &__title {
@@ -138,9 +138,9 @@
         }
 
         &__use-filters {
-            cursor: pointer;
             display: flex;
             align-items: center;
+            cursor: pointer;
 
             &__title {
                 font-style: normal;

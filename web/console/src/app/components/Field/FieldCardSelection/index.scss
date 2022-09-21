@@ -21,12 +21,12 @@
 
     &__card {
         position: relative;
-        cursor: pointer;
         width: 178px;
         border-radius: 10px;
         box-shadow: white;
         text-decoration: none;
         background: none;
+        cursor: pointer;
 
         &__picture {
             width: 178px;
@@ -233,8 +233,8 @@
         &__card {
 
             &__selected {
-                cursor: pointer;
                 position: relative;
+                cursor: pointer;
 
                 &__label {
                     position: absolute;

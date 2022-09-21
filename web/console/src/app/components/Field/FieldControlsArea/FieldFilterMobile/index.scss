@@ -46,7 +46,6 @@
     }
 
     &__settings__item {
-        cursor: pointer;
         overflow: hidden;
         user-select: none;
         width: 100%;
@@ -65,6 +64,7 @@
         box-shadow: 0 6px 14px rgba(0, 23, 58, 0.14);
         backdrop-filter: blur(22px);
         background: rgba(255, 255, 255, 0.12);
+        cursor: pointer;
 
         &--active {
             margin-bottom: 10px;
@@ -75,7 +75,6 @@
         }
 
         &__heading {
-            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -87,6 +86,7 @@
             font-weight: 700;
             font-size: 16px;
             letter-spacing: 0.12em;
+            cursor: pointer;
         }
 
         &__title {
@@ -100,7 +100,6 @@
     }
 
     &__save-button {
-        cursor: pointer;
         width: 100%;
         border: none;
         outline: none;
@@ -120,6 +119,7 @@
         letter-spacing: 0.12em;
         background: #1f2d34;
         color: #fff;
+        cursor: pointer;
     }
 }
 

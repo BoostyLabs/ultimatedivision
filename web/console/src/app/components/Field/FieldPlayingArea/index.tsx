@@ -62,7 +62,7 @@ export const FieldPlayingArea: React.FC = () => {
         return id !== defaultId;
     }
 
-    /** shows matchFinder component */
+    /** Shows matchFinder component */
     const showMatchFinder = () => {
         dispatch(startSearchingMatch(true));
         window.scrollTo({

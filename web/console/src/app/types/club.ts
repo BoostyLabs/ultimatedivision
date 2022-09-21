@@ -11,7 +11,7 @@ export enum amountColumnsElements {
     'five-elements' = FIVE_ELEMENTS_COLUMN,
 }
 
-/** class for each control in option selection on field */
+/** Class for each control in option selection on field */
 export class Control {
     /** includes id, title and options parameters */
     constructor(
@@ -27,7 +27,7 @@ export class Control {
     ) {}
 }
 
-/** class for each control in option selection on field */
+/** Class for each control in option selection on field */
 export class MobileControl {
     /** includes id, title and options parameters */
     constructor(
@@ -41,3 +41,4 @@ export class MobileControl {
         public fieldText: string = ''
     ) {}
 }
+
