@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
         { name: 'FIELD', path: RouteConfig.Field.path },
     ];
 
-    const setDrodownNavbarActivity = () => {
+    const setDropdownNavbarActivity = () => {
         setScrollAble();
         setIsDropdownActive(!isDropdownActive);
     };
@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
                                 division
                             </p>
                         }
-                        <button onClick={() => setDrodownNavbarActivity() }
+                        <button onClick={() => setDropdownNavbarActivity() }
                             className="ultimatedivision-navbar__dropdown__button">
                             {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
                         </button>
@@ -70,7 +70,7 @@ const Navbar: React.FC = () => {
                                     key={index}
                                     to={item.path}
                                     className={`ultimatedivision-navbar__list${visibleClassName}__item__active`}
-                                    onClick={() => setDrodownNavbarActivity()}
+                                    onClick={() => setDropdownNavbarActivity()}
                                 >
                                     {item.name}
                                 </NavLink>
