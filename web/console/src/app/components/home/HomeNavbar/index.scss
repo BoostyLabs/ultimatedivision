@@ -116,7 +116,7 @@
                 top: 0;
 
                 .ultimatedivision-home-navbar__wrapper {
-                    padding: 42px 16px 20px;
+                    padding: 42px 32px 20px;
                     justify-content: space-between;
                     align-items: center;
                 }
@@ -125,7 +125,7 @@
 
         &__wrapper {
             width: 100%;
-            padding: 42px 16px 22px;
+            padding: 42px 32px 22px;
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
@@ -148,7 +148,7 @@
 
             &-active {
                 z-index: 5;
-                padding: 0 16px;
+                padding: 0 32px;
                 flex-direction: column;
                 display: block;
                 width: 100vw;
@@ -189,6 +189,42 @@
 
         .ultimatedivision-join-btn {
             display: none;
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint) {
+
+    .ultimatedivision-home-navbar {
+        position: relative;
+
+        &__dropdown {
+            z-index: 10;
+            display: block;
+            cursor: pointer;
+        }
+
+        .wrapper {
+
+            &--active {
+
+                .ultimatedivision-home-navbar__wrapper {
+                    padding: 42px 16px 20px;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+            }
+        }
+
+        &__list {
+
+            &-active {
+                padding: 0 16px;
+            }
+        }
+
+        &__wrapper {
+            padding: 42px 16px 22px;
         }
     }
 }

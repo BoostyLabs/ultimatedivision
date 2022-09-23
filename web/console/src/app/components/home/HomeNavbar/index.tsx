@@ -11,12 +11,18 @@ import { CloseDropdownIcon, DropdownIcon } from '@/app/static/img/Navbar';
 import { RouteConfig } from '@/app/routes';
 
 import './index.scss';
+import { setScrollAble } from '@/app/internal/setScrollAble';
 
 const HomeNavbar: React.FC = () => {
     const [isDropdownActive, setIsDropdownActive] = useState<boolean>(false);
 
     /** Сlass visibility for navbar items. */
     const visibleClassName = isDropdownActive ? '-active' : '';
+
+    const changeNavbarDropdownActivity = () => {
+        setIsDropdownActive(!isDropdownActive);
+        setScrollAble();
+    };
 
     /** TODO: DIVISIONS will be replaced with id parameter */
     const navbarItems: Array<{ name: string; path: string }> = [
@@ -33,7 +39,7 @@ const HomeNavbar: React.FC = () => {
                     {isDropdownActive && <p className="ultimatedivision-home-navbar__text">Menu</p>}
                     <div
                         className="ultimatedivision-home-navbar__dropdown"
-                        onClick={() => setIsDropdownActive(!isDropdownActive)}
+                        onClick={() => changeNavbarDropdownActivity()}
                     >
                         {isDropdownActive ?
                             <>
@@ -57,7 +63,7 @@ const HomeNavbar: React.FC = () => {
                                 key={index}
                                 to={item.path}
                                 className={`ultimatedivision-home-navbar__list${visibleClassName}__item__active`}
-                                onClick={() => setIsDropdownActive(false)}
+                                onClick={() => changeNavbarDropdownActivity()}
                             >
                                 {item.name}
                             </NavLink>
