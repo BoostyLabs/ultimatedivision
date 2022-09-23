@@ -14,7 +14,6 @@
 
     a {
         z-index: 10;
-        margin-left: 5%;
     }
 
     &__dropdown {
@@ -29,7 +28,7 @@
         align-items: center;
 
         &__item {
-            cursor: pointer;
+            margin-right: 40px;
             list-style: none;
             font-family: "Orbitron", sans-serif;
             font-style: normal;
@@ -38,11 +37,11 @@
             line-height: 18px;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            margin-right: 40px;
+            cursor: pointer;
 
             &__active {
-                color: #000;
                 text-decoration: none;
+                color: #000;
 
                 &:hover {
                     text-decoration: none;
@@ -50,8 +49,8 @@
             }
 
             .active {
-                color: #f5ff63;
                 text-decoration: none;
+                color: #f5ff63;
 
                 &:hover {
                     text-decoration: none;
@@ -61,35 +60,93 @@
     }
 }
 
-@media screen and (max-width: $phoneBreakPoint) {
+@media screen and (max-width: $tabletBreakPoint) {
 
     .ultimatedivision-navbar {
         position: relative;
+        padding: 0;
+
+        &--active {
+            top: 0;
+            left: 0;
+            z-index: 22;
+            flex-direction: column;
+            position: sticky;
+            overflow: hidden;
+            max-height: 100vh;
+            min-height: 100vh;
+            background: $pageBackground;
+        }
 
         &__dropdown {
             z-index: 10;
-            display: block;
-            margin: 0 5%;
+            width: 100%;
+            padding: 43px 32px 39px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            &__logo {
+                width: 130px;
+                font-weight: 800;
+                font-size: 22px;
+                line-height: 114%;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                font-family: "Wix Madefor Display", sans-serif;
+                text-shadow: 0 1.16348px 2.9087px rgba(8, 36, 80, 0.36);
+                color: white;
+
+                &__first-part {
+                    color: #f5ff63;
+                }
+            }
+
+            &__button {
+                padding: 0;
+                border: none;
+                outline: none;
+                background: none;
+                cursor: pointer;
+            }
+
+            &__menu {
+                font-style: normal;
+                font-weight: 900;
+                font-size: 18px;
+                line-height: 23px;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+            }
+
+            &--active {
+                background: $pageBackground;
+            }
         }
 
         &__list {
             display: none;
 
             &-active {
-                top: 100px;
-                flex-direction: column;
-                position: absolute;
                 z-index: 5;
                 display: block;
                 width: 100%;
                 height: 100vh;
-                background: $navbarHighlightBackgroundColor;
+                top: 100px;
+                list-style: none;
+                background: $pageBackground;
 
                 &__item {
-                    border-top: 1px solid rgba($navbarSecondaryColor, 0.2);
-                    margin: auto;
-                    padding: 25px;
-                    font-size: 32px;
+                    margin: 0 32px;
+                    padding: 22px 0;
+                    text-align: left;
+                    border-bottom: 1.4px solid rgba(black, 0.2);
+                    font-size: 16px;
+                    text-transform: uppercase;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 20px;
+                    letter-spacing: 0.06em;
 
                     &__active {
                         text-decoration: none;
@@ -100,6 +157,26 @@
                         text-decoration: none;
                         color: $navbarHighlightColor;
                     }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint) {
+
+    .ultimatedivision-navbar {
+
+        &__dropdown {
+            padding: 43px 16px 39px;
+        }
+
+        &__list {
+
+            &-active {
+
+                &__item {
+                    margin: 0 16px;
                 }
             }
         }

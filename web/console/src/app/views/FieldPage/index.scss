@@ -1,14 +1,8 @@
 @import "@/index.scss";
 
 .football-field {
+    min-height: calc(100vh - 98px);
     padding-top: 30px;
-
-    &__title {
-        font-size: 48px;
-        line-height: 58px;
-        padding: 5px;
-        font-weight: lighter;
-    }
 
     &__wrapper {
         padding: 0 143px 143px;
@@ -16,13 +10,34 @@
     }
 }
 
+@media screen and (max-width: 1450px) {
+
+    .football-field {
+
+        &__wrapper {
+            padding: 0;
+            padding-bottom: 60px;
+        }
+    }
+}
+
 @media screen and (max-width: $tabletBreakPoint) {
 
     .football-field {
 
-        &__title {
-            font-size: 44px;
-            font-weight: lighter;
+        &__wrapper {
+            padding: 0 32px 60px;
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint) {
+
+    .football-field {
+        padding-top: 10px;
+
+        &__wrapper {
+            padding: 0 16px 30px;
         }
     }
 }

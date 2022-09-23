@@ -7,6 +7,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import HomeNavbar from '@components/home/HomeNavbar';
 
 import { CloseDropdownIcon, DropdownIcon } from '@/app/static/img/Navbar';
+import { setScrollAble } from '@/app/internal/setScrollAble';
 
 import { RouteConfig } from '@/app/routes';
 
@@ -26,11 +27,14 @@ const Navbar: React.FC = () => {
     const navbarItems: Array<{ name: string; path: string }> = [
         { name: 'HOME', path: RouteConfig.Home.path },
         { name: 'STORE', path: RouteConfig.Store.path },
-        { name: 'Marketplace', path: RouteConfig.MarketPlace.path },
         { name: 'CARDS', path: RouteConfig.Cards.path },
         { name: 'FIELD', path: RouteConfig.Field.path },
-        { name: 'DIVISIONS', path: RouteConfig.Division.path },
     ];
+
+    const setDropdownNavbarActivity = () => {
+        setScrollAble();
+        setIsDropdownActive(!isDropdownActive);
+    };
 
     useEffect(() => {
         location.pathname === '/home' ? setIsHomePath(true) : setIsHomePath(false);
@@ -41,12 +45,23 @@ const Navbar: React.FC = () => {
             {isHomePath ?
                 <HomeNavbar />
                 :
-                <div className="ultimatedivision-navbar">
+                <div className={`ultimatedivision-navbar 
+                        ${isDropdownActive ? 'ultimatedivision-navbar--active' : ''} `}>
                     <div
-                        className="ultimatedivision-navbar__dropdown"
-                        onClick={() => setIsDropdownActive(!isDropdownActive)}
+                        className={'ultimatedivision-navbar__dropdown '}
                     >
-                        {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
+                        {isDropdownActive ?
+                            <p className="ultimatedivision-navbar__dropdown__menu">Menu</p>
+                            :
+                            <p className="ultimatedivision-navbar__dropdown__logo">
+                                <span className="ultimatedivision-navbar__dropdown__logo__first-part">Ultimate </span>
+                                division
+                            </p>
+                        }
+                        <button onClick={() => setDropdownNavbarActivity() }
+                            className="ultimatedivision-navbar__dropdown__button">
+                            {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
+                        </button>
                     </div>
                     <ul className={`ultimatedivision-navbar__list${visibleClassName}`}>
                         {navbarItems.map((item, index) =>
@@ -55,7 +70,7 @@ const Navbar: React.FC = () => {
                                     key={index}
                                     to={item.path}
                                     className={`ultimatedivision-navbar__list${visibleClassName}__item__active`}
-                                    onClick={() => setIsDropdownActive(false)}
+                                    onClick={() => setDropdownNavbarActivity()}
                                 >
                                     {item.name}
                                 </NavLink>
