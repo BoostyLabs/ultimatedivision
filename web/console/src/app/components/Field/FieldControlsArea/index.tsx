@@ -17,6 +17,7 @@ import arrowActiveIcon from '@static/img/FieldPage/arrow-active.svg';
 import filterIcon from '@static/img/FieldPage/filter-icon.svg';
 
 import './index.scss';
+import { setScrollAble } from '@/app/internal/setScrollAble';
 
 export const FieldControlsArea: React.FC = () => {
     const dispatch = useDispatch();
@@ -84,6 +85,10 @@ export const FieldControlsArea: React.FC = () => {
         });
     };
 
+    const openMobileFilter = () => {
+        setScrollAble();
+        setIsMobileFilterActive(true);
+    };
     const isDropdownActive = useMemo(
         () => currentOption !== null && optionVisibility,
         [currentOption, optionVisibility]
@@ -92,6 +97,7 @@ export const FieldControlsArea: React.FC = () => {
     const returnToFilter = () => {
         setIsMobileFilterActive(false);
         changeVisibility(false);
+        setScrollAble();
     };
 
     useEffect(() => {
@@ -119,7 +125,7 @@ export const FieldControlsArea: React.FC = () => {
 
                     />
                     :
-                    <div className="field-controls__filter" onClick={() => setIsMobileFilterActive(true)} >
+                    <div className="field-controls__filter" onClick={() => openMobileFilter()} >
                         <img src={filterIcon} alt="filter-icon"/>
                         Filter
                     </div>

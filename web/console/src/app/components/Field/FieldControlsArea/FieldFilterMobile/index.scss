@@ -10,6 +10,7 @@
     width: 100vw;
     display: block;
     background: $pageBackground;
+    background-attachment: fixed;
 
     &__content {
         overflow: scroll;
@@ -30,6 +31,7 @@
             position: absolute;
             left: 5px;
             top: 0;
+            cursor: pointer;
         }
 
         &__title {
