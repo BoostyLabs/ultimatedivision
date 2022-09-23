@@ -4,6 +4,7 @@
 import { JoinButton } from '@components/common/JoinButton';
 
 import field from '@static/img/gameLanding/main/field.png';
+import fieldAnimation from '@static/img/gameLanding/main/field-animation.gif';
 
 import './index.scss';
 
@@ -14,8 +15,9 @@ export const FootballGame: React.FC = () =>
             <h2 className="football-game__subtitle">Football P2E Game</h2>
             <div className="football-game__button-desktop"><JoinButton /></div>
         </div>
-        <picture>
-            <img className="football-game__field" src={field} alt="Football field" />
+        <picture className="football-game__field">
+            <img className="football-game__field__bg" src={field} alt="Football field" />
+            <img className="football-game__field__animation" src={fieldAnimation} alt="Football field" />
         </picture>
         <div className="football-game__button-mobile"><JoinButton /></div>
     </section>;
