@@ -4,20 +4,20 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { JoinButton } from '@components/common/JoinButton';
+import { RouteConfig } from '@/app/routes';
+
+import { setScrollAble } from '@/app/internal/setScrollAble';
 
 import { CloseDropdownIcon, DropdownIcon } from '@/app/static/img/Navbar';
 
-import { RouteConfig } from '@/app/routes';
-
 import './index.scss';
-import { setScrollAble } from '@/app/internal/setScrollAble';
 
 const HomeNavbar: React.FC = () => {
     const [isDropdownActive, setIsDropdownActive] = useState<boolean>(false);
 
     /** Сlass visibility for navbar items. */
-    const visibleClassName = isDropdownActive ? '-active' : '';
+    const navbarClassName = isDropdownActive ? '-active' : '';
+    const navbarWrapperClassName = isDropdownActive ? 'wrapper--active' : '';
 
     const changeNavbarDropdownActivity = () => {
         setIsDropdownActive(!isDropdownActive);
@@ -25,47 +25,41 @@ const HomeNavbar: React.FC = () => {
     };
 
     /** TODO: DIVISIONS will be replaced with id parameter */
-    const navbarItems: Array<{ name: string; path: string }> = [
-        { name: 'Home', path: RouteConfig.Home.path },
-        { name: 'My Club', path: RouteConfig.Field.path },
-        { name: 'Store', path: RouteConfig.Store.path },
-        { name: 'FAQ', path: RouteConfig.Summary.path },
+    const navbarItems: Array<{ pageName: string; path: string }> = [
+        { pageName: 'Home', path: RouteConfig.Home.path },
+        { pageName: 'My Club', path: RouteConfig.Field.path },
+        { pageName: 'Store', path: RouteConfig.Store.path },
+        { pageName: 'FAQ', path: RouteConfig.Summary.path },
     ];
 
     return (
         <nav className="ultimatedivision-home-navbar">
-            <div className={`wrapper ${isDropdownActive?'wrapper--active':''}`}>
+            <div className={`wrapper ${navbarWrapperClassName}`}>
                 <div className="ultimatedivision-home-navbar__wrapper">
                     {isDropdownActive && <p className="ultimatedivision-home-navbar__text">Menu</p>}
                     <div
                         className="ultimatedivision-home-navbar__dropdown"
                         onClick={() => changeNavbarDropdownActivity()}
                     >
-                        {isDropdownActive ?
-                            <>
-                                <CloseDropdownIcon />
-                            </>
-                            :
-                            <DropdownIcon />
-                        }
+                        {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
                     </div>
                 </div>
 
                 <ul
-                    className={`ultimatedivision-home-navbar__list${visibleClassName}`}
+                    className={`ultimatedivision-home-navbar__list${navbarClassName}`}
                 >
                     {navbarItems.map((item, index) =>
                         <li
                             key={index}
-                            className={`ultimatedivision-home-navbar__list${visibleClassName}__item`}
+                            className={`ultimatedivision-home-navbar__list${navbarClassName}__item`}
                         >
                             <NavLink
                                 key={index}
                                 to={item.path}
-                                className={`ultimatedivision-home-navbar__list${visibleClassName}__item__active`}
+                                className={`ultimatedivision-home-navbar__list${navbarClassName}__item__active`}
                                 onClick={() => changeNavbarDropdownActivity()}
                             >
-                                {item.name}
+                                {item.pageName}
                             </NavLink>
                         </li>
                     )}
