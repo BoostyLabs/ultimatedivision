@@ -13,7 +13,7 @@
 
     .footballer-card-stats {
         display: grid;
-        grid-template-columns: repeat(3, 29.5%);
+        grid-template-columns: repeat(3, 1fr);
         row-gap: 5%;
         column-gap: 2%;
     }
