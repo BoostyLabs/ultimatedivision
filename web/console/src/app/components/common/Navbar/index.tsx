@@ -45,11 +45,8 @@ const Navbar: React.FC = () => {
             {isHomePath ?
                 <HomeNavbar />
                 :
-                <div className={`ultimatedivision-navbar 
-                        ${isDropdownActive ? 'ultimatedivision-navbar--active' : ''} `}>
-                    <div
-                        className={'ultimatedivision-navbar__dropdown '}
-                    >
+                <div className={`ultimatedivision-navbar ${isDropdownActive ? 'ultimatedivision-navbar--active' : ''}`}>
+                    <div className="ultimatedivision-navbar__dropdown" >
                         {isDropdownActive ?
                             <p className="ultimatedivision-navbar__dropdown__menu">Menu</p>
                             :
