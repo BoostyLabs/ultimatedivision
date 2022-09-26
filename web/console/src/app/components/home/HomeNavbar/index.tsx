@@ -21,13 +21,7 @@ const HomeNavbar: React.FC = () => {
     const navbarListClassName = isDropdownActive ? 'ultimatedivision-home-navbar__list-active' : '';
     const navbarWrapperClassName = isDropdownActive ? 'wrapper--active' : '';
 
-    const isHomePage = (path: string) => {
-        if (path ==='/home' && location.pathname === '/') {
-            return 'active';
-        }
-
-        return '';
-    };
+    const checkIsHomePage = (path: string) => path ==='/home' && location.pathname === '/' ? 'active' : '';
 
     const changeNavbarDropdownActivity = () => {
         setIsDropdownActive(!isDropdownActive);
@@ -66,7 +60,7 @@ const HomeNavbar: React.FC = () => {
                             <NavLink
                                 key={index}
                                 to={item.path}
-                                className={`ultimatedivision-home-navbar__list__item__active ${isHomePage(item.path)}`}
+                                className={`ultimatedivision-home-navbar__list__item__active ${checkIsHomePage(item.path)}`}
                                 onClick={() => changeNavbarDropdownActivity()}
                             >
                                 {item.pageName}
