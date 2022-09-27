@@ -6,7 +6,7 @@ import fieldPlayerLeft from '@static/img/gameLanding/gameInfo/player-left.svg';
 
 import './index.scss';
 
-const GameInfo: React.FC = () =>
+export const GameInfo: React.FC = () =>
     <div className="game-info">
         <div className="game-info__content" >
             <div className="game-info__content__text game-info__content__text__left" >
@@ -44,5 +44,3 @@ const GameInfo: React.FC = () =>
         </div>
 
     </div>;
-
-export default GameInfo;

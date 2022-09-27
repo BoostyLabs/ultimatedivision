@@ -3,15 +3,15 @@
 
 import { useLocation } from 'react-router-dom';
 
-import { Authors } from '@components/home/Authors';
 import { FootballGame } from '@components/home/FootballGame';
-import { Footer } from '@components/home/Footer';
-import { Projects } from '@components/home/Projects';
 import { Roadmap } from '@components/home/Roadmap';
+import { GameInfo } from '@/app/components/home/GameInfo';
+import { Partnerships } from '@/app/components/home/Partnerships';
 import Navbar from '@components/home/HomeNavbar';
 
+import banner from '@static/img/gameLanding/banner.png';
+
 import './index.scss';
-import GameInfo from '@/app/components/home/GameInfo';
 
 const Home: React.FC = () => {
     /** Current path from hook */
@@ -24,9 +24,10 @@ const Home: React.FC = () => {
             <FootballGame />
             <GameInfo/>
             <Roadmap />
-            <Projects />
-            <Authors />
-            <Footer />
+            <Partnerships />
+            <div className="home__banner">
+                <img src={banner} className="home__banner__image" alt="banner" />
+            </div>
         </>
     );
 };
