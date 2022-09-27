@@ -128,6 +128,7 @@ type Profile struct {
 
 // ProfileWithWallet for user profile with wallet info.
 type ProfileWithWallet struct {
+	ID           uuid.UUID      `json:"id"`
 	Email        string         `json:"email"`
 	NickName     string         `json:"nickName"`
 	CreatedAt    time.Time      `json:"registerDate"`
