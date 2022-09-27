@@ -5,7 +5,7 @@ import { useState, createContext } from 'react';
 
 import { Context } from '@/app/types/filters';
 
-import { setScrollAble } from '@/app/internal/setScrollAble';
+import { setScrollAble, unsetScrollAble } from '@/app/internal/setScrollAble';
 
 import search from '@static/img/FilterField/search.svg';
 import filterIcon from '@static/img/FieldPage/filter-icon.svg';
@@ -28,7 +28,7 @@ export const FilterField: React.FC = ({ children }) => {
 
     const closeCardsFilter = () => {
         setIsActiveMobileCardsFilter(false);
-        setScrollAble();
+        unsetScrollAble();
     };
 
     return (

@@ -12,7 +12,7 @@ import { FieldDropdown } from './FieldDropdown';
 import { FieldFilterMobile } from './FieldFilterMobile';
 
 import { DropdownStyle } from '@/app/internal/dropdownStyle';
-import { setScrollAble } from '@/app/internal/setScrollAble';
+import { setScrollAble, unsetScrollAble } from '@/app/internal/setScrollAble';
 
 import arrowIcon from '@static/img/FieldPage/arrow.svg';
 import arrowActiveIcon from '@static/img/FieldPage/arrow-active.svg';
@@ -98,7 +98,7 @@ export const FieldControlsArea: React.FC = () => {
     const returnToFilter = () => {
         setIsMobileFilterActive(false);
         changeVisibility(false);
-        setScrollAble();
+        unsetScrollAble();
     };
 
     useEffect(() => {

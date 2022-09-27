@@ -6,7 +6,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 import { RouteConfig } from '@/app/routes';
 
-import { setScrollAble } from '@/app/internal/setScrollAble';
+import { setScrollAble, unsetScrollAble } from '@/app/internal/setScrollAble';
 
 import { CloseDropdownIcon, DropdownIcon } from '@/app/static/img/Navbar';
 
@@ -21,11 +21,20 @@ const HomeNavbar: React.FC = () => {
     const navbarListClassName = isDropdownActive ? 'ultimatedivision-home-navbar__list-active' : '';
     const navbarWrapperClassName = isDropdownActive ? 'wrapper--active' : '';
 
-    const checkIsHomePage = (path: string) => path ==='/home' && location.pathname === '/' ? 'active' : '';
+    const checkIsHomePage = (path: string) => path === '/home' && location.pathname === '/' ? 'active' : '';
 
-    const changeNavbarDropdownActivity = () => {
+    const setNavbarDropdownActivity = () => {
         setIsDropdownActive(!isDropdownActive);
         setScrollAble();
+    };
+
+    const unsetNavbarDropdownActivity = () => {
+        setIsDropdownActive(!isDropdownActive);
+        unsetScrollAble();
+    };
+
+    const changeNavbarDropdownActivity = () => {
+        isDropdownActive? unsetNavbarDropdownActivity() : setNavbarDropdownActivity();
     };
 
     /** TODO: DIVISIONS will be replaced with id parameter */
@@ -61,7 +70,7 @@ const HomeNavbar: React.FC = () => {
                                 key={index}
                                 to={item.path}
                                 className={`ultimatedivision-home-navbar__list__item__active ${checkIsHomePage(item.path)}`}
-                                onClick={() => changeNavbarDropdownActivity()}
+                                onClick={() => unsetNavbarDropdownActivity}
                             >
                                 {item.pageName}
                             </NavLink>
