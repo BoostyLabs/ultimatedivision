@@ -11,7 +11,6 @@ import { Roadmap } from '@components/home/Roadmap';
 import Navbar from '@components/home/HomeNavbar';
 
 import './index.scss';
-import GameInfo from '@/app/components/home/GameInfo';
 
 const Home: React.FC = () => {
     /** Current path from hook */
@@ -22,7 +21,6 @@ const Home: React.FC = () => {
         <>
             {currentPath === '/' && <Navbar />}
             <FootballGame />
-            <GameInfo/>
             <Roadmap />
             <Projects />
             <Authors />
