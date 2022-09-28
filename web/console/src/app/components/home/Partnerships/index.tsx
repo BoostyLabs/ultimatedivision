@@ -11,22 +11,22 @@ import velas from '@static/img/gameLanding/partnerships/velas.svg';
 
 import './index.scss';
 
-/** Domain entity Partnership implementation */
-class Partnership {
-    /** default partnership implementation */
+/** Domain entity Partner implementation */
+class Partner {
+    /** default partner implementation */
     constructor(public name: string = '', public logo: string = '') {}
 }
 
 export const Partnerships: React.FC = () => {
-    /** Defines logos of partner companies */
-    const logos = [
-        new Partnership('polygon', polygon),
-        new Partnership('velas', velas),
-        new Partnership('casper', casper),
-        new Partnership('devdao', devdao),
-        new Partnership('storj', storj),
-        new Partnership('boosty', boosty),
-        new Partnership('chickenfish', chickenfish),
+    /** Defines partners companies */
+    const partners = [
+        new Partner('polygon', polygon),
+        new Partner('velas', velas),
+        new Partner('casper', casper),
+        new Partner('devdao', devdao),
+        new Partner('storj', storj),
+        new Partner('boosty', boosty),
+        new Partner('chickenfish', chickenfish),
     ];
 
     return (
@@ -34,8 +34,8 @@ export const Partnerships: React.FC = () => {
             <div className="partnerships__wrapper">
                 <h2 className="partnerships__title">Our <span className="partnerships__title__second-part">Partners</span></h2>
                 <div className="partnerships__area">
-                    {logos.map((logo, index: number) =>
-                        <div key={index} className="partnerships__area__item">
+                    {partners.map((partner: Partner, _) =>
+                        <div key={partner.logo} className="partnerships__area__item">
                             <div className="partnerships__area__item__wrapper">
                                 <img className={`partnerships__area__item__logo partnerships__area__item__logo__${logo.name}`} key={index} src={logo.logo} alt="logo" />
                             </div>
