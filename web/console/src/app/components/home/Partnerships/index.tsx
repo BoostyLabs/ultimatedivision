@@ -37,7 +37,7 @@ export const Partnerships: React.FC = () => {
                     {partners.map((partner: Partner, _) =>
                         <div key={partner.logo} className="partnerships__area__item">
                             <div className="partnerships__area__item__wrapper">
-                                <img className={`partnerships__area__item__logo partnerships__area__item__logo__${logo.name}`} key={index} src={logo.logo} alt="logo" />
+                                <img className={`partnerships__area__item__logo partnerships__area__item__logo__${partner.name}`} src={partner.logo} alt="logo" />
                             </div>
                         </div>
                     )}
