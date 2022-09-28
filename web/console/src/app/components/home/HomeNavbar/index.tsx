@@ -6,7 +6,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 import { RouteConfig } from '@/app/routes';
 
-import { setScrollAble, unsetScrollAble } from '@/app/internal/setScrollAble';
+import { setScrollAble } from '@/app/internal/setScrollAble';
 
 import { CloseDropdownIcon, DropdownIcon } from '@/app/static/img/Navbar';
 
@@ -25,12 +25,12 @@ const HomeNavbar: React.FC = () => {
 
     const setNavbarDropdownActivity = () => {
         setIsDropdownActive(!isDropdownActive);
-        setScrollAble();
+        setScrollAble(false);
     };
 
     const unsetNavbarDropdownActivity = () => {
         setIsDropdownActive(!isDropdownActive);
-        unsetScrollAble();
+        setScrollAble(true);
     };
 
     const changeNavbarDropdownActivity = () => {
