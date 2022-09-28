@@ -19,7 +19,7 @@ class Partner {
 
 export const Partnerships: React.FC = () => {
     /** Defines partners companies */
-    const partners = [
+    const partners: Partner[] = [
         new Partner('polygon', polygon),
         new Partner('velas', velas),
         new Partner('casper', casper),
