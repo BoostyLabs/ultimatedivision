@@ -1,7 +1,7 @@
 // Copyright (C) 2022 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { JoinButton } from '../../common/JoinButton';
+import { JoinButton } from '@components/common/JoinButton';
 
 import videoPreview from '@static/img/gameLanding/video/video-preview.png';
 import playButton from '@static/img/gameLanding/video/play-button.svg';
