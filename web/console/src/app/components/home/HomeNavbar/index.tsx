@@ -34,7 +34,7 @@ const HomeNavbar: React.FC = () => {
     };
 
     const changeNavbarDropdownActivity = () => {
-        isDropdownActive? unsetNavbarDropdownActivity() : setNavbarDropdownActivity();
+        isDropdownActive ? unsetNavbarDropdownActivity() : setNavbarDropdownActivity();
     };
 
     /** TODO: DIVISIONS will be replaced with id parameter */

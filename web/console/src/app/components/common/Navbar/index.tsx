@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
     };
 
     const changeNavbarDropdownActivity = () => {
-        isDropdownActive? unsetNavbarDropdownActivity() : setNavbarDropdownActivity();
+        isDropdownActive ? unsetNavbarDropdownActivity() : setNavbarDropdownActivity();
     };
 
     useEffect(() => {

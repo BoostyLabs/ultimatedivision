@@ -5,5 +5,5 @@ const content = document.querySelector('.page');
 
 /** Sets or unsets scrolling page. */
 export const setScrollAble = (isSettingScroll: boolean) => {
-    isSettingScroll? content?.classList.remove('scroll-unset') : content?.classList.add('scroll-unset');
+    isSettingScroll ? content?.classList.remove('scroll-unset') : content?.classList.add('scroll-unset');
 };
