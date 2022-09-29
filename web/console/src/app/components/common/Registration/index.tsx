@@ -23,7 +23,7 @@ import { NotFoundError } from '@/api';
 import { SignedMessage } from '@/app/ethers';
 
 import { VelasClient } from '@/api/velas';
-import { VelasService } from '@/velas/service';
+import { VelasService } from '@/app/velas/service';
 import { CasperClient } from '@/api/casper';
 import { CasperService } from '@/casper/service';
 
@@ -97,7 +97,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
             vaclient.authorize(
                 {
                     csrfToken: csrfToken,
-                    scope: 'authorization',
+                    scope: 'authorization VelasAccountProgram:Execute EVM:Execute',
                     challenge: 'some_challenge_from_backend',
                 },
                 processAuthResult
@@ -115,7 +115,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
         const message = await client.getNonce(address);
         const signedMessage = await ethersService.signMessage(message);
         await client.login(new SignedMessage(message, signedMessage));
-        history.push(RouteConfig.MarketPlace.path);
+        history.push(RouteConfig.Store.path);
         setLocalStorageItem('IS_LOGGINED', true);
     };
 
@@ -128,7 +128,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
 
         if (encrypted) {
             await casperService.login(message, encrypted);
-            history.push(RouteConfig.Cards.path);
+            history.push(RouteConfig.Store.path);
             window.location.reload();
         }
     };
@@ -166,7 +166,6 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
     const sendConnectionRequestCasper = () => {
         Signer.sendConnectionRequest();
     };
-
     /** Login with matamask. */
     const content: () => Promise<void> = async() => {
         if (!MetaMaskOnboarding.isMetaMaskInstalled()) {

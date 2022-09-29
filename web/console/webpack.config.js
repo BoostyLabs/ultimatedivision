@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -13,6 +14,9 @@ const PRODUCTION_PLUGINS = [
         title: "Ultimate Division",
         template: "./public/index.html",
         favicon: "./src/app/static/img/favicon.ico",
+    }),
+    new webpack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
@@ -33,6 +37,9 @@ const PRODUCTION_PLUGINS = [
 ];
 
 const DEVELOPMENT_PLUGINS = [
+    new webpack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
+    }),
     new HtmlWebpackPlugin({
         title: "Ultimate Division",
         template: "./public/index.html",

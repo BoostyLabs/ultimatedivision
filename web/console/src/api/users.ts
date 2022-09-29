@@ -34,4 +34,17 @@ export class UsersClient extends APIClient {
             await this.handleError(response);
         }
     }
+
+    /** Gets creds to fill velas vaclient */
+    public async getUser(): Promise<User> {
+        const path = '/api/v0/profile';
+        const response = await this.http.get(path);
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+        const result = await response.json();
+
+        return result;
+    }
 }

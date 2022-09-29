@@ -1,3 +1,6 @@
+// Copyright (C) 2022 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -12,7 +15,7 @@ import { VAClient } from '@velas/account-client';
 import { RouteConfig } from '@/app/routes';
 import { InternalError, NotFoundError } from '@/api';
 import { VelasClient } from '@/api/velas';
-import { VelasService } from '@/velas/service';
+import { VelasService } from '@/app/velas/service';
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 
 import ulimatedivisionLogo from '@static/img/registerPage/ultimate.svg';
@@ -61,7 +64,7 @@ const AuthWrapper = () => {
         await velasService.login(nonce, accountKeyEvm, accessToken, expiresAt);
 
         setLocalStorageItem('IS_LOGGINED', true);
-        history.push(RouteConfig.Cards.path);
+        history.push(RouteConfig.Store.path);
         window.location.reload();
     };
 
@@ -82,8 +85,10 @@ const AuthWrapper = () => {
                 await velasService.register(
                     result.userinfo.account_key_evm,
                     authResult.access_token,
-                    authResult.expires_at
+                    authResult.expires_at,
+                    JSON.stringify(authResult)
                 );
+
                 await velasLogin(result.userinfo.account_key_evm, authResult.access_token, authResult.expires_at);
             } catch (e) {
                 toast.error('Something went wrong', {
@@ -105,6 +110,9 @@ const AuthWrapper = () => {
                         theme: 'colored',
                     });
                 } else {
+                    await vaclient.defaultAccount(authResult);
+                    await setLocalStorageItem('vaclient', authResult);
+                    await setLocalStorageItem('wallet', result.userinfo.account_key_evm);
                     await velasRegister(result, authResult);
                 }
             });

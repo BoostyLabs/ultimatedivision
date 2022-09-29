@@ -4,44 +4,94 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import MetaMaskOnboarding from '@metamask/onboarding';
+import { toast } from 'react-toastify';
 
 import { FootballerCardIllustrationsRadar } from '@/app/components/common/Card/CardIllustrationsRadar';
 import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
 import { FootballerCardStatsArea } from '@/app/components/common/Card/CardStatsArea';
 import { PlayerCard } from '@/app/components/common/PlayerCard';
 
+import MetaMaskOnboarding from '@metamask/onboarding';
+
+import { UsersService } from '@/users/service';
+import { UsersClient } from '@/api/users';
+import { VelasClient } from '@/api/velas';
+import { VelasService } from '@/app/velas/service';
+
 import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
+import { setCurrentUser } from '@/app/store/actions/users';
+
+import VelasTransactionService from '@/app/velas';
+
 import { ServicePlugin } from '@/app/plugins/service';
-import { metamaskNotifications } from '../../internal/notifications';
+import { metamaskNotifications } from '@/app/internal/notifications';
 
 import CardPageBg from '@static/img/FootballerCardPage/background.png';
 
 import './index.scss';
+
 
 const Card: React.FC = () => {
     const dispatch = useDispatch();
 
     const [isMinted, setIsMinted] = useState<boolean>(false);
 
+    const user = useSelector((state: RootState) => state.usersReducer.user);
     const { card } = useSelector((state: RootState) => state.cardsReducer);
     const { id }: { id: string } = useParams();
 
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
+
     const service = ServicePlugin.create();
+
+    const usersClient = new UsersClient();
+    const usersService = new UsersService(usersClient);
+
+    const velasClient = new VelasClient();
+    const velasService = new VelasService(velasClient);
 
     /** implements opening new card */
     async function openCard() {
         try {
             await dispatch(openUserCard(id));
         } catch (error: any) {
-            /** TODO: it will be reworked with notification system */
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    }
+    /** implements opening new card */
+    async function setUser() {
+        try {
+            await dispatch(setCurrentUser());
+        } catch (error: any) {
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         }
     }
 
-    /** Mints chosed card */
-    const mint = async() => {
+    /** Mints chosed card with velas */
+    const velasMint = async() => {
+        try {
+            const velasData = await velasService.vaclientData(user.id);
+
+            const velasTransactionService = new VelasTransactionService(user.wallet, velasData.response);
+
+            await velasTransactionService.sendTansaction(id);
+        } catch (error: any) {
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    };
+
+    /** Mints chosed card with metamask */
+    const mintMetamask = async() => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 // @ts-ignore .
@@ -57,7 +107,40 @@ const Card: React.FC = () => {
         }
     };
 
+    /** Mints chosed card with casper */
+    const casperMint = async() => {
+        /** TODO: make casper minting */
+    };
+
+    const mint = async() => {
+        try {
+            const user = await usersService.getUser();
+
+            switch (user.walletType) {
+            case 'velas_wallet_address':
+                velasMint();
+                break;
+            case 'wallet_address':
+                mintMetamask();
+                break;
+            case 'casper_wallet_address':
+                casperMint();
+                break;
+            default:
+                break;
+            }
+
+            setIsMinted(true);
+        } catch (e) {
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    };
+
     useEffect(() => {
+        setUser();
         openCard();
     }, []);
 
@@ -66,6 +149,7 @@ const Card: React.FC = () => {
             <div className="card">
                 <div className="card__border">
                     <div className="card__wrapper">
+
                         <div className="card__info">
                             <PlayerCard className="card__player" id={card.id} />
                             <div className="card__player__info">
@@ -93,7 +177,6 @@ const Card: React.FC = () => {
                                 <FootballerCardIllustrationsRadar card={card} />
                             </div>
                         </div>
-
                         <div className="card__stats-area">
                             <FootballerCardPrice card={card} isMinted={isMinted} />
                             <FootballerCardStatsArea card={card} />
