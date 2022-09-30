@@ -41,7 +41,7 @@ export const LootboxSelection: React.FC<{
             <div className="box-selection__wrapper">
                 {boxesData.map((item, index) =>
                     <LootboxCard
-                        data={item}
+                        lootBoxStats={item}
                         key={index}
                         handleOpenedLootbox={handleOpenedLootbox}
                         handleLootboxKeeping={handleLootboxKeeping}

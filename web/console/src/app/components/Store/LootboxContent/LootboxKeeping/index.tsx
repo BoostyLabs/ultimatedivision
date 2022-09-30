@@ -3,11 +3,12 @@
 
 import { Dispatch, SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
-
 import Slider from 'react-slick';
 
 import { PlayerCard } from '@/app/components/common/PlayerCard';
+
 import { RootState } from '@/app/store';
+
 import { Card } from '@/card';
 
 import box from '@static/img/StorePage/BoxContent/box.png';

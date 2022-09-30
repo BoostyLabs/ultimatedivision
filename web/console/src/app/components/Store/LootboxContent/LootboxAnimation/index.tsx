@@ -13,7 +13,7 @@ export const LootboxAnimation: React.FC<{
     handleOpenedLootbox: Dispatch<SetStateAction<boolean>>;
     handleLootboxKeeping: Dispatch<SetStateAction<boolean>>;
 }> = ({ isOpenedLootbox, handleOpenedLootbox, handleLootboxKeeping }) => {
-    const [isOpeningLootbox, handleOpeningLootbox] = useState(true);
+    const [isOpeningLootbox, handleOpeningLootbox] = useState<boolean>(true);
 
     return (
         <div className="box-animation">

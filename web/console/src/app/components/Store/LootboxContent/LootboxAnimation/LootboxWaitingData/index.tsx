@@ -8,12 +8,16 @@ import { LootboxOpeningPreparation } from './LootboxOpeningPreparation';
 import fallingBox from '@static/img/StorePage/BoxContent/fallingBox.gif';
 
 export const LootboxWaitingData = () => {
-    const [isFallenBox, handleFallenBox] = useState(true);
+    const [isFallenBox, handleFallenBox] = useState<boolean>(true);
 
     const ANIMATION_LOOTBOX_FALLING_DELAY = 780;
 
     useEffect(() => {
-        setTimeout(() => handleFallenBox(false), ANIMATION_LOOTBOX_FALLING_DELAY);
+        const falletLootbox = setTimeout(() => handleFallenBox(false), ANIMATION_LOOTBOX_FALLING_DELAY);
+
+        return () => {
+            clearTimeout(falletLootbox);
+        };
     });
 
     return (

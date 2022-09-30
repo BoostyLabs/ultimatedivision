@@ -29,8 +29,13 @@ export const LootboxOpening: React.FC<{
     };
 
     useEffect(() => {
-        setTimeout(() => handleOpeningLootbox(false), ANIMATION_LOOTBOX_OPENING_DELAY);
-        setTimeout(handleEndOfOpening, ANIMATION_LOOTBOX_CARD_APPEARNCE_DELAY);
+        const openingLootBox = setTimeout(() => handleOpeningLootbox(false), ANIMATION_LOOTBOX_OPENING_DELAY);
+        const endOfOpeningLootbox = setTimeout(handleEndOfOpening, ANIMATION_LOOTBOX_CARD_APPEARNCE_DELAY);
+
+        return () => {
+            clearTimeout(openingLootBox);
+            clearTimeout(endOfOpeningLootbox);
+        };
     });
 
     return (

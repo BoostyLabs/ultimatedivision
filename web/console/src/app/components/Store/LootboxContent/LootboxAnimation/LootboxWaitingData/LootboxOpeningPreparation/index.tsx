@@ -7,21 +7,25 @@ import startOpening from '@static/img/StorePage/BoxContent/StartOpening.gif';
 import middleOpening from '@static/img/StorePage/BoxContent/MiddleOpening.gif';
 
 export const LootboxOpeningPreparation = () => {
-    const [isStartOpening, handleStartOpening] = useState(true);
-
     const ANIMATION_LOOTBOX_START_OPENING_DELAY = 650;
 
+    const [isStartOpening, handleStartOpening] = useState<boolean>(true);
+
     useEffect(() => {
-        setTimeout(() => handleStartOpening(false), ANIMATION_LOOTBOX_START_OPENING_DELAY);
+        const startOpening = setTimeout(() => handleStartOpening(false), ANIMATION_LOOTBOX_START_OPENING_DELAY);
+
+        return () => {
+            clearTimeout(startOpening);
+        };
     });
 
     return (
-        <div>
+        <>
             {isStartOpening ?
                 <img src={startOpening} alt="start opening box" className={'box-animation__box--start-opening'} />
                 :
                 <img src={middleOpening} alt="middle opening box" className={'box-animation__box--middle-opening'} />
             }
-        </div>
+        </>
     );
 };

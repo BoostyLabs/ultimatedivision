@@ -24,13 +24,13 @@ import { LootboxStats } from '@/app/types/lootbox';
 import './index.scss';
 
 export const LootboxCard: React.FC<{
-    data: LootboxStats;
+    lootBoxStats: LootboxStats;
     handleOpenedLootbox: Dispatch<SetStateAction<boolean>>;
     handleLootboxSelection: Dispatch<SetStateAction<boolean>>;
     handleLootboxKeeping: Dispatch<SetStateAction<boolean>>;
-}> = ({ data, handleOpenedLootbox, handleLootboxSelection, handleLootboxKeeping }) => {
+}> = ({ lootBoxStats, handleOpenedLootbox, handleLootboxSelection, handleLootboxKeeping }) => {
     /** Indicates if registration required. */
-    const [isRegistrationRequired, setIsRegistrationRequired] = useState(false);
+    const [isRegistrationRequired, setIsRegistrationRequired] = useState<boolean>(false);
 
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
@@ -59,7 +59,7 @@ export const LootboxCard: React.FC<{
             icon: diamond,
         },
     ];
-    const boxType = data.type === 'Regular Box' ? 'Regular Box' : 'Cool box';
+    const boxType = lootBoxStats.type === 'Regular Box' ? 'Regular Box' : 'Cool box';
 
     const handleAnimation = async() => {
         // TODO: need add id lootbox from BD after be create endpoint fetch lootboxex.
@@ -67,7 +67,7 @@ export const LootboxCard: React.FC<{
             handleLootboxSelection(false);
             handleLootboxKeeping(false);
 
-            await dispatch(openLootbox({ id: data.id, type: data.type }));
+            await dispatch(openLootbox({ id: lootBoxStats.id, type: lootBoxStats.type }));
 
             handleOpenedLootbox(true);
         } catch (error: any) {
@@ -97,19 +97,19 @@ export const LootboxCard: React.FC<{
                     <h2 className="box-card__title">{boxType}</h2>
                     <div className="box-card__quantity">
                         <span className="box-card__quantity-label">Cards</span>
-                        <span className="box-card__quantity-value">{data.quantity}</span>
+                        <span className="box-card__quantity-value">{lootBoxStats.quantity}</span>
                     </div>
                     <img className="box-card__icon" src={lootBox} alt="box" />
                 </div>
                 <div className="box-card__qualities">
                     <h3 className="box-card__qualities__title">probability</h3>
-                    {data.dropChance.map((item, index) =>
+                    {lootBoxStats.dropChance.map((item, index) =>
                         <LootboxCardQuality label={qualities[index]} chance={item} key={index} />
                     )}
 
                     <button className="box-card__button" onClick={handleAnimation}>
                         <span className="box-card__button-text">OPEN</span>
-                        <span className="box-card__button-value">{data.price} coin</span>
+                        <span className="box-card__button-value">{lootBoxStats.price} coin</span>
                     </button>
                 </div>
             </div>
