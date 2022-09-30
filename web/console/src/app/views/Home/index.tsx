@@ -3,12 +3,14 @@
 
 import { useLocation } from 'react-router-dom';
 
-import { Authors } from '@components/home/Authors';
 import { FootballGame } from '@components/home/FootballGame';
-import { Footer } from '@components/home/Footer';
-import { Projects } from '@components/home/Projects';
 import { Roadmap } from '@components/home/Roadmap';
+import { Partnerships } from '@/app/components/home/Partnerships';
+import { VideoGame } from '@components/home/VideoGame';
+import { GameInfo } from '@components/home/GameInfo';
 import Navbar from '@components/home/HomeNavbar';
+
+import banner from '@static/img/gameLanding/banner.png';
 
 import './index.scss';
 
@@ -21,10 +23,13 @@ const Home: React.FC = () => {
         <>
             {currentPath === '/' && <Navbar />}
             <FootballGame />
+            <GameInfo />
+            <VideoGame/>
             <Roadmap />
-            <Projects />
-            <Authors />
-            <Footer />
+            <Partnerships />
+            <div className="home__banner">
+                <img src={banner} className="home__banner__image" alt="banner" />
+            </div>
         </>
     );
 };
