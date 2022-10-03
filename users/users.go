@@ -119,11 +119,24 @@ type CreateUserFields struct {
 
 // Profile for user profile.
 type Profile struct {
+	ID        uuid.UUID      `json:"id"`
 	Email     string         `json:"email"`
 	NickName  string         `json:"nickName"`
 	CreatedAt time.Time      `json:"registerDate"`
 	LastLogin time.Time      `json:"lastLogin"`
 	Wallet    common.Address `json:"wallet"`
+}
+
+// ProfileWithWallet for user profile with wallet info.
+type ProfileWithWallet struct {
+	ID           uuid.UUID      `json:"id"`
+	Email        string         `json:"email"`
+	NickName     string         `json:"nickName"`
+	CreatedAt    time.Time      `json:"registerDate"`
+	LastLogin    time.Time      `json:"lastLogin"`
+	Wallet       common.Address `json:"wallet"`
+	CasperWallet string         `json:"casperWallet"`
+	WalletType   WalletType     `json:"walletType"`
 }
 
 // Password for old/new passwords.
