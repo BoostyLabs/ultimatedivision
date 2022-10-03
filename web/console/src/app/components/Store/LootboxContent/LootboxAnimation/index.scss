@@ -136,9 +136,10 @@
     }
 }
 
-@media (max-width: $phoneBreakPoint + 100px) {
+@media (max-width: $tabletBreakPoint) {
 
     .box-animation {
+        height: calc(100vh - 132px);
         width: 100%;
 
         &__box-container {
@@ -152,26 +153,85 @@
                 }
             }
         }
+    }
+}
 
-        &__card-container {
-            width: 60%;
+@media (max-width: $phoneBreakPoint) {
+
+    .box-animation {
+
+        &__box {
+            bottom: -156px;
+
+            &--opening {
+                width: 633px;
+                bottom: -171px;
+            }
+
+            &--falling {
+                width: 530px;
+                bottom: -128px;
+            }
+
+            &--start-opening {
+                width: 462px;
+                bottom: -132px;
+            }
+
+            &--middle-opening {
+                width: 462px;
+                bottom: -132px;
+            }
+
+            &--opened {
+                width: 350px;
+                bottom: -128px;
+            }
         }
 
-        &__ribbons {
-            width: 70%;
-            top: -50px;
-        }
+        &__box-container {
+            @keyframes boxHiding {
 
-        &__light {
-            left: -10%;
-            width: 120%;
+                to {
+                    transform: translateY(120px);
+                }
+            }
         }
     }
 }
 
-@media (max-width: $phoneBreakPoint - 200px) {
+@media (max-width: 440px) {
 
     .box-animation {
+
+        &__box {
+            bottom: -124px;
+
+            &--opening {
+                width: 506px;
+                bottom: -136px;
+            }
+
+            &--falling {
+                width: 424px;
+                bottom: -102px;
+            }
+
+            &--start-opening {
+                width: 369px;
+                bottom: -105px;
+            }
+
+            &--middle-opening {
+                width: 369px;
+                bottom: -105px;
+            }
+
+            &--opened {
+                width: 280px;
+                bottom: -132px;
+            }
+        }
 
         &__box-container {
             @keyframes boxHiding {

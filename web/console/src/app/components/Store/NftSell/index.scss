@@ -1,3 +1,5 @@
+@import "@/index.scss";
+
 .sell-nft {
     display: flex;
     flex-direction: row;
@@ -66,6 +68,63 @@
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: #704dff;
+        }
+    }
+}
+
+@media (max-width: $tabletBreakPoint) {
+
+    .sell-nft {
+        flex-direction: column;
+        align-items: center;
+        margin: 0 auto 79px;
+
+        &__card {
+            margin-bottom: 21px;
+            width: 258px;
+            height: 395.06px;
+        }
+
+        &__info {
+            margin: 0;
+        }
+
+        &__title {
+            font-size: 30px;
+        }
+
+        &__remainder {
+
+            &__text {
+                font-size: 14px;
+            }
+
+            &__amount {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+@media (max-width: $phoneBreakPoint) {
+
+    .sell-nft {
+        width: 100%;
+        padding: 0 32px;
+
+        &__info {
+            width: 100%;
+            padding: 0 40px;
+        }
+    }
+}
+
+@media (max-width: 520px) {
+
+    .sell-nft {
+
+        &__info {
+            padding: 0;
         }
     }
 }
