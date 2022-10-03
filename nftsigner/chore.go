@@ -5,6 +5,9 @@ package nftsigner
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"encoding/hex"
+	"fmt"
 	"math/big"
 	"time"
 
@@ -21,13 +24,16 @@ import (
 // ChoreError represents nft signer chore error type.
 var ChoreError = errs.Class("nft signer chore error")
 
+// Address defines address type.
+type Address string
+
 // ChoreConfig is the global configuration for nftsigner.
 type ChoreConfig struct {
 	RenewalInterval            time.Duration           `json:"renewalInterval"`
 	PrivateKey                 evmsignature.PrivateKey `json:"privateKey"`
 	NFTCreateContractAddress   common.Address          `json:"nftCreateContractAddress"`
 	VelasSmartContractAddress  common.Address          `json:"velasSmartContractAddress"`
-	CasperSmartContractAddress common.Address          `json:"casperSmartContractAddress"`
+	CasperSmartContractAddress string                  `json:"casperSmartContractAddress"`
 	PrivateKeyCasper           evmsignature.PrivateKey `json:"privateKeyCasper"`
 }
 
@@ -64,8 +70,9 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 
 		for _, token := range unsignedNFTs {
 			var (
-				signature     evmsignature.Signature
-				smartContract common.Address
+				signature      evmsignature.Signature
+				smartContract  common.Address
+				casperContract string
 			)
 
 			switch token.WalletType {
@@ -78,14 +85,22 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
-				smartContract = chore.config.CasperSmartContractAddress
+				casperContract = chore.config.CasperSmartContractAddress
 			}
 
 			if token.Value.Cmp(big.NewInt(0)) <= 0 {
-				signature, err = evmsignature.GenerateSignatureWithValue(evmsignature.Address(token.Wallet.String()),
-					evmsignature.Address(smartContract.String()), token.TokenID, privateKeyECDSA)
-				if err != nil {
-					return ChoreError.Wrap(err)
+				if casperContract != "" {
+					signature, err = GenerateCasperSignature(Address(token.Wallet.String()),
+						smartContract.String(), token.TokenID, privateKeyECDSA)
+					if err != nil {
+						return ChoreError.Wrap(err)
+					}
+				} else {
+					signature, err = evmsignature.GenerateSignatureWithValue(evmsignature.Address(token.Wallet.String()),
+						evmsignature.Address(smartContract.String()), token.TokenID, privateKeyECDSA)
+					if err != nil {
+						return ChoreError.Wrap(err)
+					}
 				}
 			} else {
 				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(token.Wallet.String()),
@@ -102,4 +117,51 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 
 		return ChoreError.Wrap(err)
 	})
+}
+
+// GenerateCasperSignature generates casper signature for user's wallet with value.
+func GenerateCasperSignature(addressWallet Address, addressContract string, value int64, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
+	var values [][]byte
+	if err := addressWallet.IsValidAddress(); err != nil {
+		return "", ChoreError.Wrap(err)
+	}
+
+	addressWalletByte, err := hex.DecodeString(string(addressWallet)[evmsignature.LengthHexPrefix:])
+	if err != nil {
+		return "", ChoreError.Wrap(err)
+	}
+
+	addressContractByte, err := hex.DecodeString(string(addressContract)[evmsignature.LengthHexPrefix:])
+	if err != nil {
+		return "", ChoreError.Wrap(err)
+	}
+
+	valueStringWithZeros := evmsignature.CreateHexStringFixedLength(fmt.Sprintf("%x", value))
+	valueByte, err := hex.DecodeString(string(valueStringWithZeros))
+	if err != nil {
+		return "", ChoreError.Wrap(err)
+	}
+
+	values = append(values, addressWalletByte, addressContractByte, valueByte)
+	createSignature := evmsignature.CreateSignature{
+		Values:     values,
+		PrivateKey: privateKey,
+	}
+
+	signatureByte, err := evmsignature.MakeSignature(createSignature)
+	if err != nil {
+		return "", ChoreError.Wrap(err)
+	}
+
+	signature, err := evmsignature.ReformSignature(signatureByte)
+
+	return signature, ChoreError.Wrap(err)
+}
+
+// IsValidAddress checks if the address is valid.
+func (address Address) IsValidAddress() error {
+	if !common.IsHexAddress(string(address)) {
+		return ChoreError.New("")
+	}
+	return nil
 }
