@@ -74,6 +74,10 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			case users.WalletTypeVelas:
 				smartContract = chore.config.VelasSmartContractAddress
 			case users.WalletTypeCasper:
+				privateKeyECDSA, err = crypto.HexToECDSA(string(chore.config.PrivateKeyCasper))
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
 				smartContract = chore.config.CasperSmartContractAddress
 			}
 
