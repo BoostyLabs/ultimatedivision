@@ -46,7 +46,7 @@ func (waitlistDB *waitlistDB) GetByTokenID(ctx context.Context, tokenID int64) (
 
 	var item waitlist.Item
 
-	err := waitlistDB.conn.QueryRowContext(ctx, query, tokenID).Scan(&item.TokenID, &item.CardID, &item.Wallet, &value, &item.Password, &item.WalletType)
+	err := waitlistDB.conn.QueryRowContext(ctx, query, tokenID).Scan(&item.TokenID, &item.CardID, &item.Wallet, &item.CasperWallet, &value, &item.Password, &item.WalletType)
 	if errors.Is(err, sql.ErrNoRows) {
 		return item, waitlist.ErrNoItem.Wrap(err)
 	}
@@ -64,7 +64,7 @@ func (waitlistDB *waitlistDB) GetByCardID(ctx context.Context, cardID uuid.UUID)
 
 	var item waitlist.Item
 
-	err := waitlistDB.conn.QueryRowContext(ctx, query, cardID).Scan(&item.TokenID, &item.CardID, &item.Wallet, &value, &item.Password, &item.WalletType)
+	err := waitlistDB.conn.QueryRowContext(ctx, query, cardID).Scan(&item.TokenID, &item.CardID, &item.Wallet, &item.CasperWallet, &value, &item.Password, &item.WalletType)
 	if errors.Is(err, sql.ErrNoRows) {
 		return item, waitlist.ErrNoItem.Wrap(err)
 	}
@@ -107,7 +107,7 @@ func (waitlistDB *waitlistDB) List(ctx context.Context) ([]waitlist.Item, error)
 
 	for rows.Next() {
 		var item waitlist.Item
-		err = rows.Scan(&item.TokenID, &item.CardID, &item.Wallet, &value, &item.Password, &item.WalletType)
+		err = rows.Scan(&item.TokenID, &item.CardID, &item.Wallet, &item.CasperWallet, &value, &item.Password, &item.WalletType)
 		if err != nil {
 			return waitList, ErrWaitlist.Wrap(err)
 		}
