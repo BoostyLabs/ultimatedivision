@@ -31,9 +31,9 @@ type waitlistDB struct {
 
 // Create creates item of wait list in the database.
 func (waitlistDB *waitlistDB) Create(ctx context.Context, item waitlist.Item) error {
-	query := `INSERT INTO waitlist(card_id, wallet_address, value, password, wallet_type) VALUES($1,$2,$3,$4,$5)`
+	query := `INSERT INTO waitlist(card_id, wallet_address, casper_wallet_address, value, password, wallet_type) VALUES($1,$2,$3,$4,$5,$6)`
 
-	_, err := waitlistDB.conn.ExecContext(ctx, query, item.CardID, item.Wallet, item.Value.Bytes(), "", item.WalletType)
+	_, err := waitlistDB.conn.ExecContext(ctx, query, item.CardID, item.Wallet, item.CasperWallet, item.Value.Bytes(), "", item.WalletType)
 	return ErrWaitlist.Wrap(err)
 }
 
@@ -141,7 +141,7 @@ func (waitlistDB *waitlistDB) ListWithoutPassword(ctx context.Context) ([]waitli
 	var waitListWithoutPassword []waitlist.Item
 	for rows.Next() {
 		var item waitlist.Item
-		if err = rows.Scan(&item.TokenID, &item.CardID, &item.Wallet, &value, &item.Password, &item.WalletType); err != nil {
+		if err = rows.Scan(&item.TokenID, &item.CardID, &item.Wallet, &item.CasperWallet, &value, &item.Password, &item.WalletType); err != nil {
 			return nil, ErrWaitlist.Wrap(err)
 		}
 		item.Value.SetBytes(value)

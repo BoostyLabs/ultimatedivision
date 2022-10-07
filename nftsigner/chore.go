@@ -34,7 +34,6 @@ type ChoreConfig struct {
 	NFTCreateContractAddress   common.Address          `json:"nftCreateContractAddress"`
 	VelasSmartContractAddress  common.Address          `json:"velasSmartContractAddress"`
 	CasperSmartContractAddress string                  `json:"casperSmartContractAddress"`
-	PrivateKeyCasper           evmsignature.PrivateKey `json:"privateKeyCasper"`
 }
 
 // Chore requests for unsigned nft tokens and sign all of them .
@@ -62,7 +61,6 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		if err != nil {
 			return ChoreError.Wrap(err)
 		}
-
 		privateKeyECDSA, err := crypto.HexToECDSA(string(chore.config.PrivateKey))
 		if err != nil {
 			return ChoreError.Wrap(err)
@@ -81,32 +79,29 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			case users.WalletTypeVelas:
 				smartContract = chore.config.VelasSmartContractAddress
 			case users.WalletTypeCasper:
-				privateKeyECDSA, err = crypto.HexToECDSA(string(chore.config.PrivateKeyCasper))
-				if err != nil {
-					return ChoreError.Wrap(err)
-				}
 				casperContract = chore.config.CasperSmartContractAddress
 			}
 
-			if token.Value.Cmp(big.NewInt(0)) <= 0 {
-				if casperContract != "" {
-					signature, err = GenerateCasperSignature(Address(token.Wallet.String()),
-						smartContract.String(), token.TokenID, privateKeyECDSA)
-					if err != nil {
-						return ChoreError.Wrap(err)
-					}
-				} else {
+			if casperContract != "" {
+				signature, err = GenerateCasperSignature(token.CasperWallet,
+					casperContract, token.TokenID, privateKeyECDSA)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
+			} else {
+				if token.Value.Cmp(big.NewInt(0)) <= 0 {
 					signature, err = evmsignature.GenerateSignatureWithValue(evmsignature.Address(token.Wallet.String()),
 						evmsignature.Address(smartContract.String()), token.TokenID, privateKeyECDSA)
 					if err != nil {
 						return ChoreError.Wrap(err)
 					}
-				}
-			} else {
-				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(token.Wallet.String()),
-					evmsignature.Address(smartContract.String()), &token.Value, token.TokenID, privateKeyECDSA)
-				if err != nil {
-					return ChoreError.Wrap(err)
+				} else {
+
+					signature, err = evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(token.Wallet.String()),
+						evmsignature.Address(smartContract.String()), &token.Value, token.TokenID, privateKeyECDSA)
+					if err != nil {
+						return ChoreError.Wrap(err)
+					}
 				}
 			}
 
@@ -120,18 +115,15 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 }
 
 // GenerateCasperSignature generates casper signature for user's wallet with value.
-func GenerateCasperSignature(addressWallet Address, addressContract string, value int64, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
+func GenerateCasperSignature(addressWallet string, addressContract string, value int64, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
 	var values [][]byte
-	if err := addressWallet.IsValidAddress(); err != nil {
-		return "", ChoreError.Wrap(err)
-	}
 
-	addressWalletByte, err := hex.DecodeString(string(addressWallet)[evmsignature.LengthHexPrefix:])
+	addressWalletByte, err := hex.DecodeString(addressWallet)
 	if err != nil {
 		return "", ChoreError.Wrap(err)
 	}
 
-	addressContractByte, err := hex.DecodeString(string(addressContract)[evmsignature.LengthHexPrefix:])
+	addressContractByte, err := hex.DecodeString(addressContract)
 	if err != nil {
 		return "", ChoreError.Wrap(err)
 	}
@@ -156,12 +148,4 @@ func GenerateCasperSignature(addressWallet Address, addressContract string, valu
 	signature, err := evmsignature.ReformSignature(signatureByte)
 
 	return signature, ChoreError.Wrap(err)
-}
-
-// IsValidAddress checks if the address is valid.
-func (address Address) IsValidAddress() error {
-	if !common.IsHexAddress(string(address)) {
-		return ChoreError.New("")
-	}
-	return nil
 }
