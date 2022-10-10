@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from 'react';
 
-import startOpening from '@static/img/StorePage/BoxContent/StartOpening.gif';
-import middleOpening from '@static/img/StorePage/BoxContent/MiddleOpening.gif';
+import startOpening from '@static/img/StorePage/BoxContent/startOpening.webp';
+import middleOpening from '@static/img/StorePage/BoxContent/middleOpening.webp';
 
 export const LootboxOpeningPreparation = () => {
     const ANIMATION_LOOTBOX_START_OPENING_DELAY = 650;

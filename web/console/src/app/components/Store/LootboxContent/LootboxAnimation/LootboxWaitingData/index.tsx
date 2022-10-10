@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { LootboxOpeningPreparation } from './LootboxOpeningPreparation';
 
-import fallingBox from '@static/img/StorePage/BoxContent/fallingBox.gif';
+import fallingBox from '@static/img/StorePage/BoxContent/fallingBox.webp';
 
 export const LootboxWaitingData = () => {
     const [isFallenBox, handleFallenBox] = useState<boolean>(true);

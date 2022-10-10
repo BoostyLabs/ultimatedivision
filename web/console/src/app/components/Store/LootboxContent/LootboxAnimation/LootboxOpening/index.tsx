@@ -1,15 +1,15 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 import { RootState } from '@/app/store';
 import { Card } from '@/card';
 
-import boxOpening from '@static/img/StorePage/BoxContent/FinishOpening.gif';
-import box from '@static/img/StorePage/BoxContent/box.png';
+import boxOpening from '@static/img/StorePage/BoxContent/finishOpening.webp';
+import box from '@static/img/StorePage/BoxContent/box.webp';
 
 export const LootboxOpening: React.FC<{
     handleOpenedLootbox: Dispatch<SetStateAction<boolean>>;
