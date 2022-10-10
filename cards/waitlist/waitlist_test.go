@@ -161,7 +161,7 @@ func TestWaitList(t *testing.T) {
 		TokenID:      1,
 		CardID:       card1.ID,
 		Wallet:       common.HexToAddress("0x96216849c49358b10257cb55b28ea603c874b05e"),
-		CasperWallet: "0x96216849c49358b10257cb55b28ea603c874b05e",
+		CasperWallet: "9060c0820b5156b1620c8e3344d17f9fad5108f5dc2672f2308439e84363c88e",
 		Value:        *big.NewInt(100),
 		WalletType:   users.WalletTypeETH,
 	}
