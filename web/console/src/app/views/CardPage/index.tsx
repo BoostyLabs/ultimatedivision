@@ -28,6 +28,7 @@ import { ServicePlugin } from '@/app/plugins/service';
 import { metamaskNotifications } from '@/app/internal/notifications';
 
 import CardPageBg from '@static/img/FootballerCardPage/background.png';
+import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
 
