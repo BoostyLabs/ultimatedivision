@@ -34,6 +34,7 @@ type ChoreConfig struct {
 	NFTCreateContractAddress   common.Address          `json:"nftCreateContractAddress"`
 	VelasSmartContractAddress  common.Address          `json:"velasSmartContractAddress"`
 	CasperSmartContractAddress string                  `json:"casperSmartContractAddress"`
+	CasperTokenContract        string                  `json:"casperTokenContract"`
 }
 
 // Chore requests for unsigned nft tokens and sign all of them .
@@ -68,10 +69,13 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 
 		for _, token := range unsignedNFTs {
 			var (
-				signature      evmsignature.Signature
-				smartContract  common.Address
-				casperContract string
+				signature           evmsignature.Signature
+				smartContract       common.Address
+				casperTokenContract string
+				casperContract      string
 			)
+
+			token.TokenID = 666
 
 			switch token.WalletType {
 			case users.WalletTypeETH:
@@ -80,6 +84,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				smartContract = chore.config.VelasSmartContractAddress
 			case users.WalletTypeCasper:
 				casperContract = chore.config.CasperSmartContractAddress
+				casperTokenContract = chore.config.CasperTokenContract
 			}
 
 			if token.Value.Cmp(big.NewInt(0)) <= 0 {
@@ -99,7 +104,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			} else {
 				if casperContract != "" {
 					signature, err = GenerateCasperWithValueAndNonce(token.CasperWallet,
-						casperContract, &token.Value, token.TokenID, privateKeyECDSA)
+						casperTokenContract, &token.Value, token.TokenID, privateKeyECDSA)
 					if err != nil {
 						return ChoreError.Wrap(err)
 					}
@@ -160,6 +165,7 @@ func GenerateCasperSignature(addressWallet string, addressContract string, value
 // GenerateCasperWithValueAndNonce generates signature for user's wallet with value and nonce.
 func GenerateCasperWithValueAndNonce(addressWallet string, addressContract string, value *big.Int, nonce int64, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
 	var values [][]byte
+
 	addressWalletByte, err := hex.DecodeString(addressWallet)
 	if err != nil {
 		return "", ChoreError.Wrap(err)
