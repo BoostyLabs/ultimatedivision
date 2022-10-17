@@ -27,9 +27,9 @@
 
         &--opening {
             position: absolute;
-            width: 740px;
+            width: 720px;
             bottom: 0;
-            left: calc(50% + 3px);
+            left: calc(50%);
             transform: translateX(-50%);
         }
 
@@ -37,31 +37,23 @@
             position: absolute;
             width: 620px;
             bottom: 0;
-            left: calc(50% + 5px);
-            transform: translateX(-50%);
-        }
-
-        &--start-opening {
-            position: absolute;
-            width: 540px;
-            bottom: 0;
-            left: calc(50% + 5px);
+            left: calc(50%);
             transform: translateX(-50%);
         }
 
         &--middle-opening {
             position: absolute;
-            width: 540px;
+            width: 525px;
             bottom: 0;
-            left: calc(50% + 9px);
+            left: calc(50%);
             transform: translateX(-50%);
         }
 
         &--opened {
             position: absolute;
-            width: 410px;
-            bottom: 2px;
-            left: 50%;
+            width: 400px;
+            bottom: 0;
+            left: calc(50% - 2px);
             transform: translateX(-50%);
         }
     }
@@ -114,23 +106,19 @@
             bottom: -180px;
 
             &--opened {
-                bottom: -150px;
+                bottom: -170px;
             }
 
             &--opening {
-                bottom: -200px;
+                bottom: -170px;
             }
 
             &--falling {
-                bottom: -150px;
-            }
-
-            &--start-opening {
-                bottom: -155px;
+                bottom: -135px;
             }
 
             &--middle-opening {
-                bottom: -155px;
+                bottom: -135px;
             }
         }
     }
@@ -164,28 +152,48 @@
             bottom: -156px;
 
             &--opening {
-                width: 633px;
-                bottom: -171px;
+                width: 576px;
+                bottom: -136px;
             }
 
             &--falling {
-                width: 530px;
-                bottom: -128px;
-            }
-
-            &--start-opening {
-                width: 462px;
-                bottom: -132px;
+                width: 496px;
+                bottom: -108px;
             }
 
             &--middle-opening {
-                width: 462px;
-                bottom: -132px;
+                width: 416px;
+                bottom: -108px;
             }
 
             &--opened {
-                width: 350px;
-                bottom: -128px;
+                width: 320px;
+                bottom: -136px;
+            }
+        }
+
+        &__card {
+            width: 60%;
+
+            &__container {
+
+                &__container {
+                    @keyframes cardShowing {
+
+                        0% {
+                            opacity: 0;
+                        }
+
+                        30% {
+                            transform: translateY(290px);
+                        }
+
+                        100% {
+                            transform: scale(1.2) translateY(150px);
+                            opacity: 1;
+                        }
+                    }
+                }
             }
         }
 
@@ -204,32 +212,31 @@
 
     .box-animation {
 
+        &__card {
+            width: 55%;
+        }
+
         &__box {
             bottom: -124px;
 
             &--opening {
-                width: 506px;
-                bottom: -136px;
+                width: 501px;
+                bottom: -118px;
             }
 
             &--falling {
-                width: 424px;
-                bottom: -102px;
-            }
-
-            &--start-opening {
-                width: 369px;
-                bottom: -105px;
+                width: 431px;
+                bottom: -93px;
             }
 
             &--middle-opening {
-                width: 369px;
-                bottom: -105px;
+                width: 361px;
+                bottom: -93px;
             }
 
             &--opened {
-                width: 280px;
-                bottom: -132px;
+                width: 278px;
+                bottom: -118px;
             }
         }
 

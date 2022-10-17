@@ -50,22 +50,22 @@
 
     &__button {
         z-index: 2;
-        cursor: pointer;
-        border: none;
-        transition: box-shadow 0.3s;
         padding: 15px 87px;
-        background: #f5ff63;
-        box-shadow: 0 12px 22px rgba(0, 23, 58, 0.22);
+        border: none;
         border-radius: 10px;
-        font-family: "Orbitron", sans-serif;
+        transition: box-shadow 0.3s;
+        box-shadow: 0 12px 22px rgba(0, 23, 58, 0.22);
+        text-transform: uppercase;
         font-style: normal;
+        text-align: center;
+        font-family: "Orbitron", sans-serif;
         font-weight: 900;
         font-size: 14px;
         line-height: 18px;
-        text-align: center;
         letter-spacing: 0.12em;
-        text-transform: uppercase;
+        background: #f5ff63;
         color: #26373f;
+        cursor: pointer;
 
         &__wrapper {
             margin: 30px 0 35px;
@@ -75,15 +75,18 @@
     }
 
     &__box {
-        width: 410px;
+        width: 400px;
 
         &__wrapper {
-            position: relative;
+            position: absolute;
             width: 100%;
-            max-width: 410px;
+            max-width: 400px;
+            margin: 0 auto;
+            bottom: 0;
+            left: calc(50% - 2px);
+            transform: translate(-50%);
             display: flex;
             justify-content: center;
-            margin: 0 auto;
         }
     }
 
@@ -129,6 +132,27 @@
     }
 }
 
+@media (max-width: 1450px) {
+
+    .box-keeping {
+
+        &__card {
+            width: 150px;
+        }
+
+        &__button__wrapper {
+            margin: 0;
+        }
+
+        &__box {
+
+            &__wrapper {
+                bottom: -175px;
+            }
+        }
+    }
+}
+
 @media (max-width: $desktopBreakPoint) {
 
     .box-keeping {
@@ -149,31 +173,34 @@
         height: calc(100vh - 100px);
 
         &__wrapper {
+            height: 100%;
+            width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100%;
-            width: 100%;
         }
 
         &__box {
             position: absolute;
-            width: 410px;
+            width: 400px;
             height: auto;
-            bottom: -150px;
+            bottom: -139.5px;
 
             &__wrapper {
-                width: 410px;
+                position: relative;
+                width: 400px;
                 height: 300px;
+                margin: 0;
+                bottom: -30px;
             }
         }
 
         &__card-wrapper {
-            row-gap: 20px;
             width: 100%;
             min-height: 700px;
             grid-template-columns: repeat(2, 1fr);
             justify-content: space-between;
+            row-gap: 20px;
 
             &__card {
                 margin: 5% 0;
@@ -200,6 +227,7 @@
 
         &__button {
             width: 100%;
+            margin-top: 10px;
             padding: 10px;
         }
 
@@ -214,7 +242,7 @@
         .slick-prev,
         .slick-next {
             top: auto;
-            bottom: -70px;
+            bottom: -40px;
         }
 
         &__wrapper {
@@ -225,28 +253,31 @@
         }
 
         &__card {
-            width: 100%;
+            width: 80px;
             height: auto;
             padding: 5px;
             margin: auto;
 
             &__wrapper {
-                height: calc(100vh - 132px - 400px);
+                height: calc(100vh - 132px - 340px);
                 grid-template-rows: repeat(2, 1fr);
                 grid-template-columns: repeat(2, 1fr);
                 width: 60%;
+                margin-bottom: 50px;
             }
         }
 
         &__box {
             position: absolute;
-            width: 350px;
+            width: 320px;
+            bottom: -100px;
             height: auto;
-            bottom: -128px;
 
             &__wrapper {
                 width: 350px;
                 height: 260px;
+                margin: 0;
+                left: calc(50% - 2px);
             }
         }
     }
@@ -257,12 +288,13 @@
     .box-keeping {
 
         &__box {
-            width: 280px;
-            bottom: -132px;
+            width: 278px;
+            bottom: -87px;
 
             &__wrapper {
-                width: 280px;
+                width: 278px;
                 height: 200px;
+                left: calc(50% - 2px);
             }
         }
 

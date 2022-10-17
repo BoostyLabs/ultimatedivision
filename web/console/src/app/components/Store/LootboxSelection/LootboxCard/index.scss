@@ -378,3 +378,27 @@
         }
     }
 }
+
+@media (max-height: 800px) {
+
+    .box-card {
+
+        &__wrapper {
+            padding: 20px 20px 18px;
+        }
+
+        &--regular {
+
+            &:hover {
+                transform: translate(-25px) scale(1.05);
+            }
+        }
+
+        &--cool {
+
+            &:hover {
+                transform: translate(25px) scale(1.05);
+            }
+        }
+    }
+}

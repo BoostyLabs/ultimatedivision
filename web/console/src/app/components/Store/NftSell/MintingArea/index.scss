@@ -81,13 +81,25 @@
     }
 }
 
-@media (max-width: $tabletBreakPoint) {
+@media (max-width: 1440px) {
 
     .minting-area {
 
         &__button {
             padding: 10.5px 22px;
+            height: 48px;
+            border-radius: 9px;
+        }
+    }
+}
+
+@media (max-width: $tabletBreakPoint) {
+
+    .minting-area {
+
+        &__button {
             height: auto;
+            padding: 10.5px 22px;
         }
 
         &__timer {
