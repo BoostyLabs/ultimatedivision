@@ -4,19 +4,18 @@
 import { useEffect, useState } from 'react';
 
 import middleOpening from '@static/img/StorePage/BoxContent/MiddleOpening.webp';
-
 import fallingBox from '@static/img/StorePage/BoxContent/falling.webp';
 
 export const LootboxWaitingData = () => {
     const [isFallenBox, handleFallenBox] = useState<boolean>(true);
 
-    const ANIMATION_LOOTBOX_FALLING_DELAY = 2700;
+    const ANIMATION_LOOTBOX_FALLING_DELAY = 2400;
 
     useEffect(() => {
-        const falletLootbox = setTimeout(() => handleFallenBox(false), ANIMATION_LOOTBOX_FALLING_DELAY);
+        const fallenLootbox = setTimeout(() => handleFallenBox(false), ANIMATION_LOOTBOX_FALLING_DELAY);
 
         return () => {
-            clearTimeout(falletLootbox);
+            clearTimeout(fallenLootbox);
         };
     });
 

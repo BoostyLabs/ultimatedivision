@@ -379,7 +379,7 @@
     }
 }
 
-@media (max-height: 800px) {
+@media (min-width: $tabletBreakPoint) and (max-height: 800px) {
 
     .box-card {
 

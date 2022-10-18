@@ -43,7 +43,7 @@
 
         &--middle-opening {
             position: absolute;
-            width: 525px;
+            width: 520px;
             bottom: 0;
             left: calc(50%);
             transform: translateX(-50%);
@@ -53,7 +53,7 @@
             position: absolute;
             width: 400px;
             bottom: 0;
-            left: calc(50% - 2px);
+            left: calc(50% - 2.5px);
             transform: translateX(-50%);
         }
     }
@@ -133,13 +133,6 @@
         &__box-container {
             width: 80%;
             margin: 0 20px;
-
-            @keyframes boxHiding {
-
-                to {
-                    transform: translateY(200px);
-                }
-            }
         }
     }
 }
@@ -176,32 +169,22 @@
             width: 60%;
 
             &__container {
+                animation: cardShowing 2s 1s 1 normal forwards ease-in-out;
 
-                &__container {
-                    @keyframes cardShowing {
+                @keyframes cardShowing {
 
-                        0% {
-                            opacity: 0;
-                        }
-
-                        30% {
-                            transform: translateY(290px);
-                        }
-
-                        100% {
-                            transform: scale(1.2) translateY(150px);
-                            opacity: 1;
-                        }
+                    0% {
+                        opacity: 0;
                     }
-                }
-            }
-        }
 
-        &__box-container {
-            @keyframes boxHiding {
+                    30% {
+                        transform: translateY(200px);
+                    }
 
-                to {
-                    transform: translateY(120px);
+                    100% {
+                        transform: scale(1.2) translateY(90px);
+                        opacity: 1;
+                    }
                 }
             }
         }
@@ -211,10 +194,6 @@
 @media (max-width: 440px) {
 
     .box-animation {
-
-        &__card {
-            width: 55%;
-        }
 
         &__box {
             bottom: -124px;
@@ -237,14 +216,30 @@
             &--opened {
                 width: 278px;
                 bottom: -118px;
+                left: calc(50% - 1.5px);
             }
         }
 
-        &__box-container {
-            @keyframes boxHiding {
+        &__card {
+            width: 55%;
 
-                to {
-                    transform: translateY(120px);
+            &__container {
+                animation: cardShowing 2s 1s 1 normal forwards ease-in-out;
+
+                @keyframes cardShowing {
+
+                    0% {
+                        opacity: 0;
+                    }
+
+                    30% {
+                        transform: translateY(240px);
+                    }
+
+                    100% {
+                        transform: scale(1.2) translateY(150px);
+                        opacity: 1;
+                    }
                 }
             }
         }

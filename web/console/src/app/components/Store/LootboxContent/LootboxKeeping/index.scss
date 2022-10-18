@@ -3,20 +3,10 @@
 @import "slick-carousel/slick/slick-theme.css";
 
 .box-keeping {
-    animation: darken 1s 0 1 normal forwards;
+    position: relative;
     overflow: hidden;
-    height: calc(100vh - 100px);
-
-    @keyframes darken {
-
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
+    max-height: calc(100vh - 98px);
+    height: calc(100vh - 98px);
 
     &__wrapper {
         max-width: 1440px;
@@ -82,8 +72,8 @@
             width: 100%;
             max-width: 400px;
             margin: 0 auto;
-            bottom: 0;
-            left: calc(50% - 2px);
+            bottom: -3px;
+            left: calc(50% - 2.5px);
             transform: translate(-50%);
             display: flex;
             justify-content: center;
@@ -91,38 +81,40 @@
     }
 
     .slick-prev {
-        margin-left: 5%;
+        z-index: 10;
         width: 60px;
         height: 60px;
+        margin-left: 5%;
 
         &:before {
-            content: "";
             position: absolute;
+            content: "";
+            width: 60px;
+            height: 60px;
             left: 0;
             top: 0;
             background: url("@static/img/StorePage/BoxContent/arrow-prev.svg");
             background-size: 100%;
             background-repeat: no-repeat;
-            width: 60px;
-            height: 60px;
         }
     }
 
     .slick-next {
-        margin-right: 5%;
         width: 60px;
         height: 60px;
+        z-index: 10;
+        margin-right: 5%;
 
         &:before {
-            content: "";
             position: absolute;
+            content: "";
+            width: 60px;
+            height: 60px;
             right: 0;
             top: 0;
             background: url("@static/img/StorePage/BoxContent/arrow-next.svg");
             background-size: 100%;
             background-repeat: no-repeat;
-            width: 60px;
-            height: 60px;
         }
     }
 
@@ -140,14 +132,10 @@
             width: 150px;
         }
 
-        &__button__wrapper {
-            margin: 0;
-        }
-
         &__box {
 
             &__wrapper {
-                bottom: -175px;
+                bottom: -174px;
             }
         }
     }
@@ -170,7 +158,6 @@
 @media (max-width: 900px) {
 
     .box-keeping {
-        height: calc(100vh - 100px);
 
         &__wrapper {
             height: 100%;
@@ -184,7 +171,7 @@
             position: absolute;
             width: 400px;
             height: auto;
-            bottom: -139.5px;
+            bottom: -143px;
 
             &__wrapper {
                 position: relative;
@@ -214,21 +201,32 @@
     }
 }
 
-@media (max-width: $tabletBreakPoint) {
+@media (max-height: 800px) {
 
     .box-keeping {
-        height: calc(100vh - 132px);
+
+        &__button {
+
+            &__wrapper {
+                margin: 0;
+            }
+        }
     }
 }
 
 @media (max-width: $phoneBreakPoint) {
 
     .box-keeping {
+        height: calc(100vh - 132px);
 
         &__button {
             width: 100%;
             margin-top: 10px;
             padding: 10px;
+
+            &__wrapper {
+                margin: 0;
+            }
         }
 
         .slick-prev {
@@ -253,31 +251,55 @@
         }
 
         &__card {
-            width: 80px;
+            width: 100px;
             height: auto;
             padding: 5px;
             margin: auto;
 
             &__wrapper {
                 height: calc(100vh - 132px - 340px);
-                grid-template-rows: repeat(2, 1fr);
-                grid-template-columns: repeat(2, 1fr);
                 width: 60%;
                 margin-bottom: 50px;
+                grid-template-rows: repeat(2, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
         &__box {
             position: absolute;
             width: 320px;
-            bottom: -100px;
             height: auto;
+            bottom: -100px;
 
             &__wrapper {
                 width: 350px;
                 height: 260px;
                 margin: 0;
-                left: calc(50% - 2px);
+            }
+        }
+    }
+}
+
+@media (max-width: $phoneBreakPoint) and (max-height: 750px) {
+
+    .box-keeping {
+
+        .slick-next,
+        .slick-prev {
+            width: 50px;
+            height: 50px;
+
+            &:before {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        &__card {
+            width: 70px;
+
+            &__wrapper {
+                width: 50%;
             }
         }
     }
@@ -289,12 +311,12 @@
 
         &__box {
             width: 278px;
-            bottom: -87px;
+            bottom: -88px;
 
             &__wrapper {
                 width: 278px;
-                height: 200px;
-                left: calc(50% - 2px);
+                height: 250px;
+                left: calc(50% - 1.5px);
             }
         }
 
