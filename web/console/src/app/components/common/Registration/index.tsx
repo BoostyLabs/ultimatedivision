@@ -115,7 +115,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
         const message = await client.getNonce(address);
         const signedMessage = await ethersService.signMessage(message);
         await client.login(new SignedMessage(message, signedMessage));
-        history.push(RouteConfig.MarketPlace.path);
+        history.push(RouteConfig.Store.path);
         setLocalStorageItem('IS_LOGGINED', true);
     };
 
@@ -128,7 +128,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
 
         if (encrypted) {
             await casperService.login(message, encrypted);
-            history.push(RouteConfig.Cards.path);
+            history.push(RouteConfig.Store.path);
             window.location.reload();
         }
     };
@@ -210,7 +210,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
         <div className="registration-pop-up">
             <div className="registration-pop-up__wrapper">
                 <div className="registration-pop-up__wrapper__close" onClick={closeRegistrationPopup}>
-                    <img src={closeButton} alt="close button" />
+                    <img src={closeButton} alt="close button" className="registration-pop-up__wrapper__close__icon" />
                 </div>
                 <div className="registration-pop-up__block">
                     <div className="registration-pop-up__represent">
