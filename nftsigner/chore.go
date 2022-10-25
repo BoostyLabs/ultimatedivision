@@ -75,8 +75,6 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				casperContract      string
 			)
 
-			token.TokenID = 666
-
 			switch token.WalletType {
 			case users.WalletTypeETH:
 				smartContract = chore.config.NFTCreateContractAddress
