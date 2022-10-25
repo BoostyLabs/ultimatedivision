@@ -84,7 +84,7 @@ const Card: React.FC = () => {
 
             await velasTransactionService.sendTansaction(id);
         } catch (error: any) {
-            toast.error('Something went wrong', {
+            toast.error(error, {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
@@ -131,7 +131,7 @@ const Card: React.FC = () => {
                 break;
             }
 
-            setIsMinted(true);
+            // setIsMinted(true);
         } catch (e) {
             toast.error('Something went wrong', {
                 position: toast.POSITION.TOP_RIGHT,

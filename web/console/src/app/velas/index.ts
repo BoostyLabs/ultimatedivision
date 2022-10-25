@@ -1,3 +1,5 @@
+// Copyright (C) 2022 Creditor Corp. Group.
+// See LICENSE for copying information.
 
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
@@ -16,6 +18,7 @@ import { VelasService } from '@/app/velas/service';
 
 import { TransactionIdentificators } from '@/app/ethers';
 import { buildHash } from '@/app/internal/ethers';
+import { ABI } from './abi';
 
 /** TODO: change to real data */
 const GAS = 50000;
@@ -92,8 +95,14 @@ class VelasTransactionService {
         return await this.client.getTransaction(signature);
     }
 
+    /** Gets transaction from api */
+    setStorage(address: any): any {
+        const signer: any = this.provider.getSigner();
+        this.storage = new ethers.Contract(address.nftCreateContract.address, ABI, signer);
+    }
+
     /** Sends smart contract transaction. */
-    async sendTansaction(cardId: string,) {
+    async sendTansaction(cardId: string) {
         await this.setProvider();
         await this.getWalletAdress();
 
@@ -103,6 +112,7 @@ class VelasTransactionService {
 
         const address = await this.getTransaction(new TransactionIdentificators(this.walletAddress, cardId));
 
+        this.setStorage(address);
         /* eslint-disable */
         const data = `${address.nftCreateContract.mintWithSignatureSelector}${buildHash(40)}${buildHash(address.tokenId.toString(16))}${buildHash(60)}${buildHash(
             address.password.slice(-2)
@@ -114,18 +124,19 @@ class VelasTransactionService {
             from: this.from,
             gas: ethers.utils.hexlify(this.gas),
             gasPrice: ethers.utils.hexlify(this.gasPrice),
-            broadcast: true,
             chainId: address.nftCreateContract.chainId,
+            broadcast: true,
             csrfToken,
         };
 
         try {
-            const { signature } = await this.provider.send("eth_sendTransaction", raw);
+            const signature = await this.storage.mintWithSignature(address.password, address.tokenId)
+            
         } catch (e) {
-             toast.error('Something went wrong', {
+             toast.error(`${e}`, {
                     position: toast.POSITION.TOP_RIGHT,
                     theme: 'colored',
-                });
+             });
         }
     }
 }
