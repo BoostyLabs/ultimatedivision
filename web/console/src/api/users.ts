@@ -42,8 +42,8 @@ export class UsersClient extends APIClient {
         if (!response.ok) {
             await this.handleError(response);
         }
-        const result = await response.json();
+        const user = await response.json();
 
-        return result;
+        return new User(user);
     }
 }

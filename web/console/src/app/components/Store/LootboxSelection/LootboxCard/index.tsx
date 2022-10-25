@@ -72,8 +72,7 @@ export const LootboxCard: React.FC<{
             await dispatch(openLootbox({ id: lootBoxStats.id, type: lootBoxStats.type }));
 
             handleOpenedLootbox(true);
-        }
-        catch (error: any) {
+        } catch (error: any) {
             if (error instanceof UnauthorizedError) {
                 setIsRegistrationRequired(true);
 
