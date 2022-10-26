@@ -3,6 +3,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useParams } from 'react-router';
 import MetaMaskOnboarding from '@metamask/onboarding';
 
@@ -14,24 +16,33 @@ import { PlayerCard } from '@/app/components/common/PlayerCard';
 import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
 import { ServicePlugin } from '@/app/plugins/service';
+import { setCurrentUser } from '@/app/store/actions/users';
 import { metamaskNotifications } from '../../internal/notifications';
+
+import { UsersClient } from '@/api/users';
+import { UsersService } from '@/users/service';
+
+import CasperTransactionService from '@/casper';
 
 import CardPageBg from '@static/img/FootballerCardPage/background.png';
 import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
-import { Link } from 'react-router-dom';
 
 const Card: React.FC = () => {
     const dispatch = useDispatch();
 
     const [isMinted, setIsMinted] = useState<boolean>(false);
 
+    const user = useSelector((state: RootState) => state.usersReducer.user);
     const { card } = useSelector((state: RootState) => state.cardsReducer);
     const { id }: { id: string } = useParams();
 
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const service = ServicePlugin.create();
+
+    const usersClient = new UsersClient();
+    const usersService = new UsersService(usersClient);
 
     /** implements opening new card */
     async function openCard() {
@@ -42,8 +53,23 @@ const Card: React.FC = () => {
         }
     }
 
-    /** Mints chosed card */
-    const mint = async() => {
+    /** implements opening new card */
+    async function setUser() {
+        try {
+            await dispatch(setCurrentUser());
+        } catch (error: any) {
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    }
+
+    /** Mints chosed card with velas */
+    const velasMint = async() => { };
+
+    /** Mints chosed card with metamask */
+    const mintMetamask = async() => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 // @ts-ignore .
@@ -59,7 +85,49 @@ const Card: React.FC = () => {
         }
     };
 
+    /** Mints chosed card with casper */
+    const casperMint = async() => {
+        try {
+            const casperTransactionService = new CasperTransactionService(user.casperWallet);
+
+            await casperTransactionService.sendTransaction(id);
+        } catch (error: any) {
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    };
+
+    const mint = async() => {
+        try {
+            const user = await usersService.getUser();
+
+            switch (user.walletType) {
+            case 'velas_wallet_address':
+                velasMint();
+                break;
+            case 'wallet_address':
+                mintMetamask();
+                break;
+            case 'casper_wallet_address':
+                casperMint();
+                break;
+            default:
+                break;
+            }
+
+            setIsMinted(true);
+        } catch (e) {
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    };
+
     useEffect(() => {
+        setUser();
         openCard();
     }, []);
 
@@ -69,7 +137,7 @@ const Card: React.FC = () => {
             <div className="card__wrapper">
                 <div className="card__back">
                     <Link className="card__back__button" to="/cards">
-                        <img src={backButton} alt="back-button"className="card__back__button__image" />
+                        <img src={backButton} alt="back-button" className="card__back__button__image" />
                         Back
                     </Link>
                 </div>

@@ -1,6 +1,8 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { TransactionIdentificators } from '@/app/ethers';
+import { CasperTransactionIdentificators } from '.';
 import { CasperClient } from '../api/casper';
 
 /**
@@ -25,5 +27,9 @@ export class CasperService {
     /** sends data to login user with casper wallet */
     public async login(nonce: string, walletAddress: string): Promise<void> {
         await this.casperWallet.login(nonce, walletAddress);
+    }
+    /** Gets transaction from api */
+    public async getTransaction(signature: CasperTransactionIdentificators): Promise<any> {
+        await this.casperWallet.getTransaction(signature);
     }
 }

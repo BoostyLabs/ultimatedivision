@@ -1,6 +1,8 @@
 // Copyright (C) 2022 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { Transaction, TransactionIdentificators } from '@/app/ethers';
+import { CasperTransactionIdentificators } from '@/casper';
 import { APIClient } from '.';
 
 /**
@@ -38,5 +40,16 @@ export class CasperClient extends APIClient {
         if (!response.ok) {
             await this.handleError(response);
         }
+    }
+    /** Gets transaction from api  */
+    public async getTransaction(signature: CasperTransactionIdentificators): Promise<Transaction> {
+        const response = await this.http.post('/api/v0/nft-waitlist', JSON.stringify(signature));
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+        const transaction = await response.json();
+
+        return new Transaction(transaction.password, transaction.tokenId, transaction.nftCreateContract);
     }
 }
