@@ -9,7 +9,7 @@ export class User {
         public email: string = '',
         public id: string = '',
         public lastLogin: string = '',
-        public nickName: string = '',
+        public nickname: string = '',
         public registerDate: string = '',
         public wallet: string = '',
         public walletType: string = ''

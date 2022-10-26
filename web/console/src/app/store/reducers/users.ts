@@ -6,9 +6,7 @@ import { User } from '@/users';
 import { UsersService } from '@/users/service';
 
 import {
-    CHANGE_PASSWORD,
     LOGIN,
-    RECOVER_PASSWORD,
     SET_USER,
 } from '../actions/users';
 
@@ -31,11 +29,9 @@ export const usersReducer = (
     state = new UsersState(usersService),
     action: any = {}
 ) => {
-    const user = state.user;
-
     switch (action.type) {
     case LOGIN:
-        user.email = action.user.email;
+        state.user.email = action.user.email;
         break;
     case SET_USER:
         state.user = action.user;
