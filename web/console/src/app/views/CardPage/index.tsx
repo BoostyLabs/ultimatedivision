@@ -92,7 +92,7 @@ const Card: React.FC = () => {
 
             await casperTransactionService.sendTransaction(id);
         } catch (error: any) {
-            toast.error('Something went wrong', {
+            toast.error(`${error}`, {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });

@@ -52,4 +52,5 @@ export class CasperClient extends APIClient {
 
         return new Transaction(transaction.password, transaction.tokenId, transaction.nftCreateContract);
     }
+
 }
