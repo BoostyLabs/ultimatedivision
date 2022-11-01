@@ -90,7 +90,7 @@ const Card: React.FC = () => {
         try {
             const casperTransactionService = new CasperTransactionService(user.casperWallet);
 
-            await casperTransactionService.sendTransaction(id);
+            await casperTransactionService.mint(id);
         } catch (error: any) {
             toast.error(`${error}`, {
                 position: toast.POSITION.TOP_RIGHT,

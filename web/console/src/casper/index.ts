@@ -1,11 +1,11 @@
 // Copyright (C) 2022 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { CasperClient } from '@/api/casper';
-import { CLPublicKey, DeployUtil } from 'casper-js-sdk';
-import { CasperService } from './service';
+import { CasperNetworkClient } from '@/api/casper';
+import { CLValueBuilder, RuntimeArgs, CasperClient, Contracts, CLPublicKey, DeployUtil } from 'casper-js-sdk';
 
-const casperClient = new CasperClient();
+import { Buffer } from 'buffer';
+import { toast } from 'react-toastify';
 
 /** Desctibes parameters for transaction */
 export class CasperTransactionIdentificators {
@@ -16,13 +16,16 @@ export class CasperTransactionIdentificators {
     ) { }
 }
 
-/** CasperTransactionService describes velas transaction entity. */
+const TTL = 1800000;
+const PAYMENT_AMOUNT = 100000000;
+const GAS_PRICE = 1;
+
+/** CasperTransactionService describes casper transaction entity. */
 class CasperTransactionService {
-    private readonly amount = 10;
-    private readonly paymentAmount = 100000000;
-    private readonly gasPrice = 1;
-    private readonly ttl = 1800000;
-    private readonly client = new CasperClient();
+    private readonly paymentAmount = PAYMENT_AMOUNT;
+    private readonly gasPrice = GAS_PRICE;
+    private readonly ttl = TTL;
+    private readonly client = new CasperNetworkClient();
     public walletAddress: string = '';
 
     /** default VelasTransactionService implementation */
@@ -32,35 +35,70 @@ class CasperTransactionService {
 
     /** Gets transaction from api */
     async getTransaction(signature: CasperTransactionIdentificators): Promise<any> {
-        return this.client.getTransaction(signature)
+        return await this.client.getTransaction(signature);
     }
 
-    async sendTransaction(cardId: string) {
+    async setContractHashToBytes(contractHash: string) {
+        return await Uint8Array.from(Buffer.from(contractHash, 'hex'));
+    }
+
+    public async contractSign(
+        entryPoint:any,
+        runtimeArgs:any,
+        paymentAmount:any
+    ) {
+        const contractHashToBytes = await this.setContractHashToBytes('011d2f5eed581e3750fa3d2fd15ef782aa66a55a679346c0a339c485c78fc9fe68');
+
         try {
             const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
 
-            const nftWailist = await this.getTransaction(new CasperTransactionIdentificators(this.walletAddress, cardId));
-
             const deployParams = new DeployUtil.DeployParams(walletAddressConverted, 'casper-test', this.gasPrice, this.ttl);
 
-            // We create a public key from account-address (it is the hex representation of the public-key with an added prefix).
-            const toPublicKey = CLPublicKey.fromHex(nftWailist.nftCreateContract.address);
+            const deploy = DeployUtil.makeDeploy(
+                deployParams,
+                DeployUtil.ExecutableDeployItem.newStoredContractByHash(
+                    contractHashToBytes,
+                    entryPoint,
+                    runtimeArgs),
+                DeployUtil.standardPayment(paymentAmount)
+            );
 
-            const session = DeployUtil.ExecutableDeployItem.newTransfer(this.amount, toPublicKey, null, nftWailist.nftCreateContract.chainId);
-
-            const payment = DeployUtil.standardPayment(this.paymentAmount);
-            const deploy = DeployUtil.makeDeploy(deployParams, session, payment);
-
-            // Turn your transaction data to format JSON
             const json = DeployUtil.deployToJson(deploy);
 
+            const signature = await window.casperlabsHelper.sign(json, this.walletAddress, '011d2f5eed581e3750fa3d2fd15ef782aa66a55a679346c0a339c485c78fc9fe68');
 
-            // Sign transcation using casper-signer.
-            const signature = await window.casperlabsHelper.sign(json, this.walletAddress, nftWailist.nftCreateContract.address);
-            const deployObject = DeployUtil.deployFromJson(signature);
+            return signature;
         }
         catch (e) {
-            console.log(e)
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    }
+
+    async mint(cardId: string) {
+        try {
+            const nftWailist = await this.getTransaction(new CasperTransactionIdentificators(this.walletAddress, cardId));
+
+            window.casperlabsHelper.requestConnection();
+
+            const runtimeArgs = RuntimeArgs.fromMap({
+                signature: CLValueBuilder.string(nftWailist.password),
+                token_id: CLValueBuilder.u64(nftWailist.tokenId),
+            });
+
+            const casperClient = new CasperClient('http://3.136.227.9:7777/rpc');
+
+            const signature = await this.contractSign('claim', runtimeArgs, this.paymentAmount);
+
+            const deploy = casperClient.putDeploy(DeployUtil.deployFromJson(signature).unwrap());
+        }
+        catch (e) {
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         }
     }
 }

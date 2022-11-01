@@ -9,7 +9,7 @@ import { APIClient } from '.';
  * CasperClient is a http implementation of casper-wallet API.
  * Exposes all casper wallet related functionality.
  */
-export class CasperClient extends APIClient {
+export class CasperNetworkClient extends APIClient {
     private readonly ROOT_PATH: string = '/api/v0';
 
     /** Sends signed message and registers user */
@@ -52,5 +52,4 @@ export class CasperClient extends APIClient {
 
         return new Transaction(transaction.password, transaction.tokenId, transaction.nftCreateContract);
     }
-
 }

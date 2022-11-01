@@ -1,18 +1,17 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { TransactionIdentificators } from '@/app/ethers';
 import { CasperTransactionIdentificators } from '.';
-import { CasperClient } from '../api/casper';
+import { CasperNetworkClient } from '../api/casper';
 
 /**
  * Exposes all casper wallet related logic.
  */
-export class CasperService {
-    private readonly casperWallet: CasperClient;
+export class CasperNetworkService {
+    private readonly casperWallet: CasperNetworkClient;
 
     /** CasperService contains http implementation of casper wallet API  */
-    public constructor(casperWallet: CasperClient) {
+    public constructor(casperWallet: CasperNetworkClient) {
         this.casperWallet = casperWallet;
     }
 
