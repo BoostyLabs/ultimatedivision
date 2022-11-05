@@ -159,6 +159,14 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 					Value:             item.Value,
 					WalletType:        item.WalletType,
 				}
+			case "casper_wallet_address":
+				transaction = Transaction{
+					Password:          item.Password,
+					NFTCreateContract: NFTCreateContract(service.config.NFTCreateCasperContract),
+					TokenID:           item.TokenID,
+					Value:             item.Value,
+					WalletType:        item.WalletType,
+				}
 			default:
 				transaction = Transaction{
 					Password:          item.Password,
