@@ -15,20 +15,20 @@ var (
 	ErrContractCasper = errs.Class("contract casper controller error")
 )
 
-// contractCasper is a mvc controller that handles all contract casper related views.
-type contractCasper struct {
+// ContractCasper is a mvc controller that handles all contract casper related views.
+type ContractCasper struct {
 	log logger.Logger
 }
 
 // NewContractCasper constructor for contract.
-func NewContractCasper(log logger.Logger) *contractCasper {
-	return &contractCasper{
+func NewContractCasper(log logger.Logger) *ContractCasper {
+	return &ContractCasper{
 		log: log,
 	}
 }
 
 // BridgeIn sends transaction to bridgeIn method.
-func (contract *contractCasper) BridgeIn(w http.ResponseWriter, r *http.Request) {
+func (contract *ContractCasper) BridgeIn(w http.ResponseWriter, r *http.Request) {
 	var req contractcasper.BridgeInRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -49,7 +49,7 @@ func (contract *contractCasper) BridgeIn(w http.ResponseWriter, r *http.Request)
 }
 
 // serveError replies to the request with specific code and error message.
-func (contract *contractCasper) serveError(w http.ResponseWriter, status int, err error) {
+func (contract *ContractCasper) serveError(w http.ResponseWriter, status int, err error) {
 	w.WriteHeader(status)
 	var response struct {
 		Error string `json:"error"`

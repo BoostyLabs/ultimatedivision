@@ -19,7 +19,7 @@ var ErrContract = errs.Class("contract package")
 // BridgeInRequest describes values to initiate inbound bridge transaction.
 type BridgeInRequest struct {
 	Deploy         string
-	RpcNodeAddress string
+	RPCNodeAddress string
 }
 
 // StringNetworkAddress describes an address for some network.
@@ -86,7 +86,7 @@ func BridgeIn(ctx context.Context, req BridgeInRequest) (BridgeInResponse, error
 		Approvals: []sdk.Approval{approval},
 	}
 
-	casperClient := sdk.NewRpcClient(req.RpcNodeAddress)
+	casperClient := sdk.NewRpcClient(req.RPCNodeAddress)
 	deployResp, err := casperClient.PutDeploy(deploy)
 	if err != nil {
 		return BridgeInResponse{}, ErrContract.Wrap(err)
