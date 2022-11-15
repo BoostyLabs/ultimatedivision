@@ -103,18 +103,20 @@ class VelasTransactionService {
 
             const nonce = await this.provider.getTransactionCount(this.from, 'latest');
 
+            const transaction = await this.getTransaction(new TransactionIdentificators(this.walletAddress, cardId));
+
             const raw = {
                 nonce: ethers.utils.hexlify(nonce),
-                to: '0x3686F4923BA4AB7F5512D5549052d979add6f60a',
+                to: transaction.nftCreateContract.address,
                 from: this.from,
                 gas: ethers.utils.hexlify(this.gas),
                 gasPrice: ethers.utils.hexlify(this.gasPrice),
-                chainId: 111,
+                chainId: transaction.nftCreateContract.chainId,
                 broadcast: true,
                 /* eslint-disable */
                 csrf_token: csrfToken,
             };
-
+            
             await this.provider.send('eth_sendTransaction', raw);
         } catch (e) {
             toast.error('Something went wrong', {
