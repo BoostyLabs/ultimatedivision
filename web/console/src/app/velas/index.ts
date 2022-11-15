@@ -17,6 +17,7 @@ import { VelasClient } from '@/api/velas';
 import { VelasService } from '@/app/velas/service';
 
 import { TransactionIdentificators } from '@/app/ethers';
+import { buildHash } from '../internal/ethers';
 
 /** TODO: change to real data */
 const GAS = 50000;
@@ -105,7 +106,12 @@ class VelasTransactionService {
 
             const transaction = await this.getTransaction(new TransactionIdentificators(this.walletAddress, cardId));
 
+            /* eslint-disable */
+            const data = `${transaction.nftCreateContract.mintWithSignatureSelector}${buildHash(40)}${buildHash(transaction.tokenId.toString(16))}${buildHash(60)}${buildHash(
+                transaction.password.slice(-2))}${transaction.password.slice(0, transaction.password.length - 2)}`;
+
             const raw = {
+                data: data,
                 nonce: ethers.utils.hexlify(nonce),
                 to: transaction.nftCreateContract.address,
                 from: this.from,
@@ -116,7 +122,7 @@ class VelasTransactionService {
                 /* eslint-disable */
                 csrf_token: csrfToken,
             };
-            
+
             await this.provider.send('eth_sendTransaction', raw);
         } catch (e) {
             toast.error('Something went wrong', {
