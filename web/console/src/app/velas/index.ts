@@ -17,8 +17,6 @@ import { VelasClient } from '@/api/velas';
 import { VelasService } from '@/app/velas/service';
 
 import { TransactionIdentificators } from '@/app/ethers';
-import { buildHash } from '@/app/internal/ethers';
-import { ABI } from './abi';
 
 /** TODO: change to real data */
 const GAS = 50000;
@@ -72,7 +70,7 @@ class VelasTransactionService {
     /** default VelasTransactionService implementation */
     constructor(from: string, vaclient: string) {
         this.from = from;
-        this.vaclient= vaclient;
+        this.vaclient = vaclient;
     }
 
     /** Sets provider. */
@@ -95,48 +93,34 @@ class VelasTransactionService {
         return await this.client.getTransaction(signature);
     }
 
-    /** Gets transaction from api */
-    setStorage(address: any): any {
-        const signer: any = this.provider.getSigner();
-        this.storage = new ethers.Contract(address.nftCreateContract.address, ABI, signer);
-    }
-
     /** Sends smart contract transaction. */
     async sendTansaction(cardId: string) {
-        await this.setProvider();
-        await this.getWalletAdress();
-
-        const csrfToken = await velasService.csrfToken();
-
-        const nonce = await this.provider.getTransactionCount(this.from, 'latest');
-
-        const address = await this.getTransaction(new TransactionIdentificators(this.walletAddress, cardId));
-
-        this.setStorage(address);
-        /* eslint-disable */
-        const data = `${address.nftCreateContract.mintWithSignatureSelector}${buildHash(40)}${buildHash(address.tokenId.toString(16))}${buildHash(60)}${buildHash(
-            address.password.slice(-2)
-        )}${address.password.slice(0, address.password.length - 2)}`;
-
-        const raw = {
-            nonce: ethers.utils.hexlify(nonce),
-            to: address.nftCreateContract.address,
-            from: this.from,
-            gas: ethers.utils.hexlify(this.gas),
-            gasPrice: ethers.utils.hexlify(this.gasPrice),
-            chainId: address.nftCreateContract.chainId,
-            broadcast: true,
-            csrfToken,
-        };
-
         try {
-            const signature = await this.storage.mintWithSignature(address.password, address.tokenId)
-            
+            await this.setProvider();
+            await this.getWalletAdress();
+
+            const csrfToken = await velasService.csrfToken();
+
+            const nonce = await this.provider.getTransactionCount(this.from, 'latest');
+
+            const raw = {
+                nonce: ethers.utils.hexlify(nonce),
+                to: '0x3686F4923BA4AB7F5512D5549052d979add6f60a',
+                from: this.from,
+                gas: ethers.utils.hexlify(this.gas),
+                gasPrice: ethers.utils.hexlify(this.gasPrice),
+                chainId: 111,
+                broadcast: true,
+                /* eslint-disable */
+                csrf_token: csrfToken,
+            };
+
+            await this.provider.send('eth_sendTransaction', raw);
         } catch (e) {
-             toast.error(`${e}`, {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-             });
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
         }
     }
 }

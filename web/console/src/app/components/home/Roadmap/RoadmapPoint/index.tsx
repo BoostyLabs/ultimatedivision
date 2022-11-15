@@ -20,5 +20,3 @@ export const RoadmapPoint: React.FC<{ item: RoadmapStep }> = ({ item }) =>
             </ul>
         </div>
     </div>;
-
-

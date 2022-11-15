@@ -57,7 +57,7 @@ export class VelasClient extends APIClient {
 
     /** gets token to login user with velas wallet */
     public async csrfToken(): Promise<string> {
-        const path = 'https://velas.ultimatedivision.com/csrf';
+        const path = 'https://api-sponsor.testnet.velas.com/csrf';
         const response = await this.http.get(path);
 
         if (!response.ok) {
