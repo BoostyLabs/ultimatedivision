@@ -52,4 +52,15 @@ export class CasperNetworkClient extends APIClient {
 
         return new Transaction(transaction.password, transaction.tokenId, transaction.nftCreateContract);
     }
+    /** Gets transaction from api  */
+    public async claim(RPCNodeAddress: string, deploy: string): Promise<any> {
+        const response = await this.http.post('/api/v0/casper/bridge-in', JSON.stringify({ RPCNodeAddress, deploy }));
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+        const transaction = await response.json();
+
+        return transaction;
+    }
 }

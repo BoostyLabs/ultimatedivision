@@ -69,7 +69,7 @@ const Card: React.FC = () => {
     const velasMint = async() => { };
 
     /** Mints chosed card with metamask */
-    const mintMetamask = async() => {
+    const metamaskMint = async() => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 // @ts-ignore .
@@ -108,7 +108,7 @@ const Card: React.FC = () => {
                 velasMint();
                 break;
             case 'wallet_address':
-                mintMetamask();
+                metamaskMint();
                 break;
             case 'casper_wallet_address':
                 casperMint();
@@ -116,8 +116,6 @@ const Card: React.FC = () => {
             default:
                 break;
             }
-
-            setIsMinted(true);
         } catch (e) {
             toast.error('Something went wrong', {
                 position: toast.POSITION.TOP_RIGHT,

@@ -115,11 +115,11 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
         const message = await client.getNonce(address);
         const signedMessage = await ethersService.signMessage(message);
         await client.login(new SignedMessage(message, signedMessage));
-        history.push(RouteConfig.MarketPlace.path);
+        history.push(RouteConfig.Store.path);
         setLocalStorageItem('IS_LOGGINED', true);
     };
 
-    const loginCasper = async(publicKey: string) => {
+    const loginCasper = async(publicKey: any) => {
         const encrypt = new JSEncrypt();
         const message = await casperService.nonce(publicKey);
 
@@ -128,7 +128,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
 
         if (encrypted) {
             await casperService.login(message, encrypted);
-            history.push(RouteConfig.Cards.path);
+            history.push(RouteConfig.Store.path);
             window.location.reload();
         }
     };

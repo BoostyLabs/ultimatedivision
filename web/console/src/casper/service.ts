@@ -31,4 +31,8 @@ export class CasperNetworkService {
     public async getTransaction(signature: CasperTransactionIdentificators): Promise<any> {
         await this.casperWallet.getTransaction(signature);
     }
+    /** Gets transaction from api */
+    public async claim(RPCNodeAddress: string, deploy: string): Promise<any> {
+        await this.casperWallet.claim(RPCNodeAddress, deploy);
+    }
 }

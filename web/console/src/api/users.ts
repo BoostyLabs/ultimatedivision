@@ -34,7 +34,7 @@ export class UsersClient extends APIClient {
             await this.handleError(response);
         }
     }
-    /** Gets creds to fill velas vaclient */
+    /** Gets user */
     public async getUser(): Promise<User> {
         const path = '/api/v0/profile';
         const response = await this.http.get(path);
@@ -42,8 +42,15 @@ export class UsersClient extends APIClient {
         if (!response.ok) {
             await this.handleError(response);
         }
-        const result = await response.json();
+        const user = await response.json();
 
-        return result;
+        return new User(user.casperWallet,
+            user.email,
+            user.id,
+            user.lastLogin,
+            user.nickName,
+            user.registerDate,
+            user.wallet,
+            user.walletType);
     }
 }
