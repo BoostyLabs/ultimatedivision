@@ -90,6 +90,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 				TokenID:           item.TokenID,
 				Value:             item.Value,
 				WalletType:        item.WalletType,
+				RPCNodeAddress:    "http://136.243.187.84:7777/rpc",
 			}
 		default:
 			transaction = Transaction{
