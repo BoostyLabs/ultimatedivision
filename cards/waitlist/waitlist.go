@@ -108,7 +108,7 @@ type NFTCreateVelasContract struct {
 
 // NFTCreateCasperContract describes the meaning of the contract.
 type NFTCreateCasperContract struct {
-	Address                           common.Address   `json:"address"`
+	Address                           string           `json:"address"`
 	MintWithSignatureSelector         evmsignature.Hex `json:"mintWithSignatureSelector"`
 	MintWithSignatureAndValueSelector evmsignature.Hex `json:"mintWithSignatureAndValueSelector"`
 	ChainID                           int              `json:"chainId"`
