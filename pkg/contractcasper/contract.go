@@ -16,8 +16,8 @@ import (
 // ErrContract indicates that there was an error in the contract package.
 var ErrContract = errs.Class("contract package")
 
-// BridgeInRequest describes values to initiate inbound bridge transaction.
-type BridgeInRequest struct {
+// ClaimRequest describes values to initiate inbound claim transaction.
+type ClaimRequest struct {
 	Deploy         string
 	RPCNodeAddress string
 }
@@ -28,13 +28,13 @@ type StringNetworkAddress struct {
 	Address     string
 }
 
-// BridgeInResponse describes bridge in tx hash.
-type BridgeInResponse struct {
+// ClaimInResponse describes claim in tx hash.
+type ClaimInResponse struct {
 	Txhash string
 }
 
-// BridgeIn initiates inbound bridge transaction.
-func BridgeIn(ctx context.Context, req BridgeInRequest) (BridgeInResponse, error) {
+// Claim initiates inbound claim transaction.
+func Claim(ctx context.Context, req ClaimRequest) (ClaimInResponse, error) {
 	request := struct {
 		Deploy struct {
 			Hash      sdk.Hash                  `json:"hash"`
@@ -50,12 +50,12 @@ func BridgeIn(ctx context.Context, req BridgeInRequest) (BridgeInResponse, error
 
 	err := json.Unmarshal([]byte(req.Deploy), &request)
 	if err != nil {
-		return BridgeInResponse{}, ErrContract.Wrap(err)
+		return ClaimInResponse{}, ErrContract.Wrap(err)
 	}
 
 	pubKeyData, err := hex.DecodeString(request.Deploy.Approvals[0].Signer[2:])
 	if err != nil {
-		return BridgeInResponse{}, ErrContract.Wrap(err)
+		return ClaimInResponse{}, ErrContract.Wrap(err)
 	}
 
 	signer := keypair.PublicKey{
@@ -65,7 +65,7 @@ func BridgeIn(ctx context.Context, req BridgeInRequest) (BridgeInResponse, error
 
 	signatureData, err := hex.DecodeString(request.Deploy.Approvals[0].Signature[2:])
 	if err != nil {
-		return BridgeInResponse{}, ErrContract.Wrap(err)
+		return ClaimInResponse{}, ErrContract.Wrap(err)
 	}
 
 	signature := keypair.Signature{
@@ -89,10 +89,10 @@ func BridgeIn(ctx context.Context, req BridgeInRequest) (BridgeInResponse, error
 	casperClient := sdk.NewRpcClient(req.RPCNodeAddress)
 	deployResp, err := casperClient.PutDeploy(deploy)
 	if err != nil {
-		return BridgeInResponse{}, ErrContract.Wrap(err)
+		return ClaimInResponse{}, ErrContract.Wrap(err)
 	}
 
-	resp := BridgeInResponse{
+	resp := ClaimInResponse{
 		Txhash: deployResp.Hash,
 	}
 

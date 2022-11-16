@@ -27,16 +27,16 @@ func NewContractCasper(log logger.Logger) *ContractCasper {
 	}
 }
 
-// BridgeIn sends transaction to bridgeIn method.
-func (contract *ContractCasper) BridgeIn(w http.ResponseWriter, r *http.Request) {
-	var req contractcasper.BridgeInRequest
+// Claim sends transaction to claim method.
+func (contract *ContractCasper) Claim(w http.ResponseWriter, r *http.Request) {
+	var req contractcasper.ClaimRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		contract.serveError(w, http.StatusBadRequest, ErrContractCasper.Wrap(err))
 		return
 	}
 
-	resp, err := contractcasper.BridgeIn(r.Context(), req)
+	resp, err := contractcasper.Claim(r.Context(), req)
 	if err != nil {
 		contract.serveError(w, http.StatusInternalServerError, ErrContractCasper.Wrap(err))
 		return
