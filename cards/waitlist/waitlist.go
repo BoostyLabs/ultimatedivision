@@ -64,12 +64,13 @@ type CreateNFT struct {
 
 // Transaction entity describes values required to sent transaction.
 type Transaction struct {
-	Password          evmsignature.Signature `json:"password"`
-	NFTCreateContract NFTCreateContract      `json:"nftCreateContract"`
-	TokenID           int64                  `json:"tokenId"`
-	Value             big.Int                `json:"value"`
-	WalletType        users.WalletType       `json:"walletType"`
-	RPCNodeAddress    string                 `json:"rpcNodeAddress"`
+	Password                evmsignature.Signature  `json:"password"`
+	NFTCreateContract       NFTCreateContract       `json:"nftCreateContract"`
+	NFTCreateCasperContract NFTCreateCasperContract `json:"nftCreateCasperContract"`
+	TokenID                 int64                   `json:"tokenId"`
+	Value                   big.Int                 `json:"value"`
+	WalletType              users.WalletType        `json:"walletType"`
+	RPCNodeAddress          string                  `json:"rpcNodeAddress"`
 }
 
 // Config defines values needed by check mint nft in blockchain.
