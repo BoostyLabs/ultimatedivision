@@ -88,6 +88,7 @@ type Config struct {
 	FileStorage             storj.Config            `json:"fileStorage"`
 	Bucket                  string                  `json:"bucket"`
 	URLToAvatar             string                  `json:"urlToAvatar"`
+	RPCNodeAddress          string                  `json:"rpcNodeAddress"`
 }
 
 // NFTCreateContract describes the meaning of the contract.
