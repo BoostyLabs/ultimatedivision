@@ -120,7 +120,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	casperRouter.HandleFunc("/nonce", authController.PublicKey).Methods(http.MethodGet)
 	casperRouter.HandleFunc("/login", authController.CasperLogin).Methods(http.MethodPost)
 
-	apiRouter.HandleFunc("/casper/bridge-in", contractCasperController.BridgeIn).Methods(http.MethodPost)
+	apiRouter.HandleFunc("/casper/claim", contractCasperController.Claim).Methods(http.MethodPost)
 
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)

@@ -54,7 +54,7 @@ export class CasperNetworkClient extends APIClient {
     }
     /** Gets transaction from api  */
     public async claim(RPCNodeAddress: string, deploy: string): Promise<any> {
-        const response = await this.http.post('/api/v0/casper/bridge-in', JSON.stringify({ RPCNodeAddress, deploy }));
+        const response = await this.http.post('/api/v0/casper/claim', JSON.stringify({ RPCNodeAddress, deploy }));
 
         if (!response.ok) {
             await this.handleError(response);
