@@ -50,7 +50,13 @@ export class CasperNetworkClient extends APIClient {
         }
         const transaction = await response.json();
 
-        return new Transaction(transaction.password, transaction.tokenId, transaction.nftCreateContract);
+        return new Transaction(
+            transaction.password,
+            transaction.tokenId,
+            transaction.nftCreateContract,
+            transaction.nftCreateCasperContract,
+            transaction.rpcNodeAddress
+        );
     }
     /** Gets transaction from api  */
     public async claim(RPCNodeAddress: string, deploy: string): Promise<any> {

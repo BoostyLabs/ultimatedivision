@@ -50,9 +50,10 @@ class CasperTransactionService {
     public async contractSign(
         entryPoint:any,
         runtimeArgs:any,
-        paymentAmount:any
+        paymentAmount: any,
+        contractAddress: string
     ): Promise<any> {
-        const contractHashToBytes = await CasperTransactionService.convertContractHashToBytes('1d2f5eed581e3750fa3d2fd15ef782aa66a55a679346c0a339c485c78fc9fe68');
+        const contractHashToBytes = await CasperTransactionService.convertContractHashToBytes(contractAddress);
 
         try {
             const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
@@ -70,7 +71,7 @@ class CasperTransactionService {
 
             const json = DeployUtil.deployToJson(deploy);
 
-            const signature = await window.casperlabsHelper.sign(json, this.walletAddress, '1d2f5eed581e3750fa3d2fd15ef782aa66a55a679346c0a339c485c78fc9fe68');
+            const signature = await window.casperlabsHelper.sign(json, this.walletAddress, contractAddress);
 
             return signature;
         }
@@ -80,7 +81,8 @@ class CasperTransactionService {
                 theme: 'colored',
             });
         }
-        null;
+
+        return false;
     }
 
     /** Mints a nft */
@@ -89,23 +91,23 @@ class CasperTransactionService {
             const accountHash = CLPublicKey.fromHex(this.walletAddress).toAccountHashStr();
             const accountHashConverted = accountHash.replace(ACCOUNT_HASH_PREFIX, '');
 
-            const nftWailist = await this.getTransaction(new CasperTransactionIdentificators(accountHashConverted, cardId));
+            const nftWaitlist = await this.getTransaction(new CasperTransactionIdentificators(accountHashConverted, cardId));
 
-            const isConected= window.casperlabsHelper.isConnected();
+            const isConected = window.casperlabsHelper.isConnected();
 
             if (!isConected) {
                 window.casperlabsHelper.requestConnection();
             }
 
             const runtimeArgs = RuntimeArgs.fromMap({
-                signature: CLValueBuilder.string(nftWailist.password),
+                signature: CLValueBuilder.string(nftWaitlist.password),
                 /* eslint-disable */
-                token_id: CLValueBuilder.u64(nftWailist.tokenId),
+                token_id: CLValueBuilder.u64(nftWaitlist.tokenId),
             });
 
-            const signature = await this.contractSign('claim', runtimeArgs, this.paymentAmount);
+            const signature = await this.contractSign('claim', runtimeArgs, this.paymentAmount, nftWaitlist.nftCreateCasperContract.address);
 
-            this.client.claim('http://136.243.187.84:7777/rpc', JSON.stringify(signature));
+            this.client.claim(nftWaitlist.rpcNodeAddress, JSON.stringify(signature));
         }
         catch (e) {
             toast.error('Something went wrong', {
