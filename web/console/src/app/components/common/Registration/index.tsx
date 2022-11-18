@@ -13,7 +13,7 @@ import StorageHandler from '@/app/velas/storageHandler';
 // @ts-ignore
 import { VAClient } from '@velas/account-client';
 import { JSEncrypt } from 'jsencrypt';
-import { CLPublicKey, DeployUtil, Signer } from 'casper-js-sdk';
+import { Signer } from 'casper-js-sdk';
 
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RouteConfig } from '@/app/routes';
@@ -119,7 +119,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
         setLocalStorageItem('IS_LOGGINED', true);
     };
 
-    const loginCasper = async(publicKey: any) => {
+    const loginCasper = async(publicKey: string) => {
         const encrypt = new JSEncrypt();
         const message = await casperService.nonce(publicKey);
 

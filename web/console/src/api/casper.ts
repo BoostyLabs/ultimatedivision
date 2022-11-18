@@ -6,7 +6,7 @@ import { CasperTransactionIdentificators } from '@/casper';
 import { APIClient } from '.';
 
 /**
- * CasperClient is a http implementation of casper-wallet API.
+ * CasperNetworkClient is a http implementation of casper-wallet API.
  * Exposes all casper wallet related functionality.
  */
 export class CasperNetworkClient extends APIClient {
@@ -41,9 +41,9 @@ export class CasperNetworkClient extends APIClient {
             await this.handleError(response);
         }
     }
-    /** Gets transaction from api  */
+    /** Gets minting signature with contract address from api */
     public async getTransaction(signature: CasperTransactionIdentificators): Promise<Transaction> {
-        const response = await this.http.post('/api/v0/nft-waitlist', JSON.stringify(signature));
+        const response = await this.http.post(`${this.ROOT_PATH}/nft-waitlist`, JSON.stringify(signature));
 
         if (!response.ok) {
             await this.handleError(response);
@@ -58,15 +58,12 @@ export class CasperNetworkClient extends APIClient {
             transaction.rpcNodeAddress
         );
     }
-    /** Gets transaction from api  */
-    public async claim(RPCNodeAddress: string, deploy: string): Promise<any> {
-        const response = await this.http.post('/api/v0/casper/claim', JSON.stringify({ RPCNodeAddress, deploy }));
+    /** Sends deploy data to api */
+    public async claim(RPCNodeAddress: string, deploy: string): Promise<void> {
+        const response = await this.http.post(`${this.ROOT_PATH}/casper/claim`, JSON.stringify({ RPCNodeAddress, deploy }));
 
         if (!response.ok) {
             await this.handleError(response);
         }
-        const transaction = await response.json();
-
-        return transaction;
     }
 }

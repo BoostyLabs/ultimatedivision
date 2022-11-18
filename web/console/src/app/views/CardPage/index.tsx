@@ -17,14 +17,13 @@ import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
 import { ServicePlugin } from '@/app/plugins/service';
 import { setCurrentUser } from '@/app/store/actions/users';
-import { metamaskNotifications } from '../../internal/notifications';
+import { metamaskNotifications } from '@/app/internal/notifications';
 
 import { UsersClient } from '@/api/users';
 import { UsersService } from '@/users/service';
-
 import CasperTransactionService from '@/casper';
 
-import CardPageBg from '@static/img/FootballerCardPage/background.png';
+import CardPageBackground from '@static/img/FootballerCardPage/background.png';
 import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
@@ -173,7 +172,7 @@ const Card: React.FC = () => {
                     <FootballerCardStatsArea card={card} />
                 </div>
             </div>
-            <img src={CardPageBg} alt="background" className="card__bg" />
+            <img src={CardPageBackground} alt="background" className="card__bg" />
         </div>
     );
 };

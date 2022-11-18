@@ -3,7 +3,7 @@
 
 import { Buffer } from 'buffer';
 import { toast } from 'react-toastify';
-
+import { JsonTypes } from 'typedjson';
 import { CLValueBuilder, RuntimeArgs, CLPublicKey, DeployUtil } from 'casper-js-sdk';
 
 import { CasperNetworkClient } from '@/api/casper';
@@ -36,7 +36,7 @@ class CasperTransactionService {
         this.walletAddress = walletAddress;
     }
 
-    /** Gets transaction from api */
+    /** Gets minting signature with contract address from api */
     async getTransaction(signature: CasperTransactionIdentificators): Promise<any> {
         return await this.client.getTransaction(signature);
     }
@@ -48,11 +48,11 @@ class CasperTransactionService {
 
     /** Signs a contract */
     public async contractSign(
-        entryPoint:any,
-        runtimeArgs:any,
-        paymentAmount: any,
+        entryPoint: string,
+        runtimeArgs: RuntimeArgs,
+        paymentAmount: number,
         contractAddress: string
-    ): Promise<any> {
+    ): Promise<JsonTypes> {
         const contractHashToBytes = await CasperTransactionService.convertContractHashToBytes(contractAddress);
 
         try {
@@ -69,9 +69,10 @@ class CasperTransactionService {
                 DeployUtil.standardPayment(paymentAmount)
             );
 
-            const json = DeployUtil.deployToJson(deploy);
+            const deployJson = DeployUtil.deployToJson(deploy);
 
-            const signature = await window.casperlabsHelper.sign(json, this.walletAddress, contractAddress);
+
+            const signature = await window.casperlabsHelper.sign(deployJson, this.walletAddress, contractAddress);
 
             return signature;
         }
@@ -93,10 +94,10 @@ class CasperTransactionService {
 
             const nftWaitlist = await this.getTransaction(new CasperTransactionIdentificators(accountHashConverted, cardId));
 
-            const isConected = window.casperlabsHelper.isConnected();
+            const isConnected = window.casperlabsHelper.isConnected();
 
-            if (!isConected) {
-                window.casperlabsHelper.requestConnection();
+            if (!isConnected) {
+                await window.casperlabsHelper.requestConnection();
             }
 
             const runtimeArgs = RuntimeArgs.fromMap({
@@ -107,7 +108,7 @@ class CasperTransactionService {
 
             const signature = await this.contractSign('claim', runtimeArgs, this.paymentAmount, nftWaitlist.nftCreateCasperContract.address);
 
-            this.client.claim(nftWaitlist.rpcNodeAddress, JSON.stringify(signature));
+            await this.client.claim(nftWaitlist.rpcNodeAddress, JSON.stringify(signature));
         }
         catch (e) {
             toast.error('Something went wrong', {

@@ -27,12 +27,12 @@ export class CasperNetworkService {
     public async login(nonce: string, walletAddress: string): Promise<void> {
         await this.casperWallet.login(nonce, walletAddress);
     }
-    /** Gets transaction from api */
+    /** Gets minting signature with contract address from api */
     public async getTransaction(signature: CasperTransactionIdentificators): Promise<any> {
         await this.casperWallet.getTransaction(signature);
     }
-    /** Gets transaction from api */
-    public async claim(RPCNodeAddress: string, deploy: string): Promise<any> {
+    /** Sends deploy data to api */
+    public async claim(RPCNodeAddress: string, deploy: string): Promise<void> {
         await this.casperWallet.claim(RPCNodeAddress, deploy);
     }
 }
