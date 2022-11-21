@@ -28,6 +28,10 @@ import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
 
+const VELAS_WALLET_TYPE = 'velas_wallet_address';
+const CASPER_WALLET_TYPE = 'casper_wallet_address';
+const METAMASK_WALLET_TYPE = 'wallet_address';
+
 const Card: React.FC = () => {
     const dispatch = useDispatch();
 
@@ -102,19 +106,27 @@ const Card: React.FC = () => {
         try {
             const user = await usersService.getUser();
 
-            switch (user.walletType) {
-            case 'velas_wallet_address':
-                velasMint();
-                break;
-            case 'wallet_address':
-                metamaskMint();
-                break;
-            case 'casper_wallet_address':
-                casperMint();
-                break;
-            default:
-                break;
-            }
+            const mintingNfts = new Map();
+
+            const walletMintingTypes = [
+                {
+                    walletType: VELAS_WALLET_TYPE,
+                    mint: velasMint,
+                },
+                {
+                    walletType: CASPER_WALLET_TYPE,
+                    mint: casperMint,
+                },
+                {
+                    walletType: METAMASK_WALLET_TYPE,
+                    mint: metamaskMint,
+                },
+            ];
+
+            walletMintingTypes.forEach(walletMintingType =>
+                mintingNfts.set(walletMintingType.walletType, walletMintingType.mint));
+
+            mintingNfts.get(user.walletType)();
         } catch (e) {
             toast.error('Something went wrong', {
                 position: toast.POSITION.TOP_RIGHT,
