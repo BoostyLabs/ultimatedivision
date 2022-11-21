@@ -194,8 +194,8 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 }
 
 // GetByTokenID returns nft for wait list by token id.
-func (service *Service) GetByTokenID(ctx context.Context, TokenNumber int64) (Item, error) {
-	nft, err := service.waitList.GetByTokenID(ctx, TokenNumber)
+func (service *Service) GetByTokenID(ctx context.Context, tokenNumber int64) (Item, error) {
+	nft, err := service.waitList.GetByTokenID(ctx, tokenNumber)
 	return nft, ErrWaitlist.Wrap(err)
 }
 

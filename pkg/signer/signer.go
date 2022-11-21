@@ -25,15 +25,6 @@ type Address string
 // Signature defines signature type.
 type Signature string
 
-type NFTStoreSignature struct {
-	MethodName      string
-	WalletAddress   common.Address
-	ContractAddress common.Address
-	TokenID         int64
-	Value           *big.Int
-	PrivateKey      *ecdsa.PrivateKey
-}
-
 // GenerateSignatureWithValue generates signature for user's wallet with value.
 func GenerateSignatureWithValue(addressWallet Address, addressContract Address, value uuid.UUID, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
 	var values [][]byte
