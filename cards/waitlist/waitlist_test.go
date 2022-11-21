@@ -246,13 +246,13 @@ func TestWaitList(t *testing.T) {
 		})
 
 		t.Run("Delete sql no rows", func(t *testing.T) {
-			err := repositoryWaitList.Delete(ctx, []uuid.UUID{})
+			err := repositoryWaitList.Delete(ctx, []int64{})
 			require.Error(t, err)
 			assert.Equal(t, true, waitlist.ErrNoItem.Has(err))
 		})
 
 		t.Run("Delete", func(t *testing.T) {
-			err := repositoryWaitList.Delete(ctx, []uuid.UUID{tokenID1, tokenID2})
+			err := repositoryWaitList.Delete(ctx, []int64{item1.TokenNumber, item2.TokenNumber})
 			require.NoError(t, err)
 		})
 	})

@@ -229,6 +229,6 @@ func (service *Service) Update(ctx context.Context, tokenID uuid.UUID, password 
 }
 
 // Delete deletes nft for wait list.
-func (service *Service) Delete(ctx context.Context, tokenIDs []uuid.UUID) error {
+func (service *Service) Delete(ctx context.Context, tokenIDs []int64) error {
 	return ErrWaitlist.Wrap(service.waitList.Delete(ctx, tokenIDs))
 }
