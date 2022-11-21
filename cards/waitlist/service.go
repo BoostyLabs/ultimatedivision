@@ -194,8 +194,8 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 }
 
 // GetByTokenID returns nft for wait list by token id.
-func (service *Service) GetByTokenID(ctx context.Context, tokenID int64) (Item, error) {
-	nft, err := service.waitList.GetByTokenID(ctx, tokenID)
+func (service *Service) GetByTokenID(ctx context.Context, TokenNumber int64) (Item, error) {
+	nft, err := service.waitList.GetByTokenID(ctx, TokenNumber)
 	return nft, ErrWaitlist.Wrap(err)
 }
 
@@ -224,11 +224,11 @@ func (service *Service) ListWithoutPassword(ctx context.Context) ([]Item, error)
 }
 
 // Update updates signature to nft token.
-func (service *Service) Update(ctx context.Context, tokenID int64, password evmsignature.Signature) error {
+func (service *Service) Update(ctx context.Context, tokenID uuid.UUID, password evmsignature.Signature) error {
 	return ErrWaitlist.Wrap(service.waitList.Update(ctx, tokenID, password))
 }
 
 // Delete deletes nft for wait list.
-func (service *Service) Delete(ctx context.Context, tokenIDs []int64) error {
+func (service *Service) Delete(ctx context.Context, tokenIDs []uuid.UUID) error {
 	return ErrWaitlist.Wrap(service.waitList.Delete(ctx, tokenIDs))
 }
