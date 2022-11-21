@@ -200,7 +200,7 @@ func TestCards(t *testing.T) {
 
 	testSquadCard := clubs.SquadCard{
 		SquadID:  testSquad.ID,
-		CardID:   card1.ID,
+		Card:     card1,
 		Position: 5,
 	}
 

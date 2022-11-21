@@ -55,12 +55,6 @@ func (service *Service) Buy(ctx context.Context, createNFT waitlist.CreateNFT) (
 
 	createNFT.CardID = cardsList[randNumberCard-1].ID
 
-	setting, err := service.Get(ctx, ActiveSetting)
-	if err != nil {
-		return transaction, ErrStore.Wrap(err)
-	}
-	createNFT.Value = setting.Price
-
 	// TODO: change selector of buy method.
 	transaction, err = service.waitlist.Create(ctx, createNFT)
 	if err != nil {

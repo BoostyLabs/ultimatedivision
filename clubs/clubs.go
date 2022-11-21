@@ -102,9 +102,9 @@ type Squad struct {
 
 // SquadCard defines all cards from squad.
 type SquadCard struct {
-	SquadID  uuid.UUID `json:"squadId"`
-	CardID   uuid.UUID `json:"cardId"`
-	Position Position  `json:"position"`
+	SquadID  uuid.UUID  `json:"squadId"`
+	Card     cards.Card `json:"card"`
+	Position Position   `json:"position"`
 }
 
 // SquadSize defines number of cards in the full squad.

@@ -492,6 +492,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Matches.Service,
 			peer.Seasons.Service,
 			peer.Clubs.Service,
+			peer.Cards.Service,
 			peer.CurrencyWaitList.Service,
 			peer.Users.Service,
 		)

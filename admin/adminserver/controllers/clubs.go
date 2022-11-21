@@ -326,8 +326,8 @@ func (controller *Clubs) Add(w http.ResponseWriter, r *http.Request) {
 
 		squadCard := clubs.SquadCard{
 			Position: clubs.Position(position),
-			CardID:   cardID,
 		}
+		squadCard.Card.ID = cardID
 
 		if err = controller.clubs.AddSquadCard(ctx, club.OwnerID, squadID, squadCard); err != nil {
 			if clubs.ErrInvalidOperation.Has(err) {

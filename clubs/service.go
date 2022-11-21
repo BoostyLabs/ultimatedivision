@@ -106,7 +106,7 @@ func (service *Service) CreateSquad(ctx context.Context, clubID uuid.UUID) (uuid
 
 // AddSquadCard adds card to the squad.
 func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.UUID, newSquadCard SquadCard) error {
-	card, err := service.cards.Get(ctx, newSquadCard.CardID)
+	card, err := service.cards.Get(ctx, newSquadCard.Card.ID)
 	if err != nil {
 		return ErrClubs.Wrap(err)
 	}
@@ -137,7 +137,7 @@ func (service *Service) AddSquadCard(ctx context.Context, userID, squadID uuid.U
 			continue
 		}
 
-		err = service.clubs.DeleteSquadCard(ctx, squadID, card.CardID)
+		err = service.clubs.DeleteSquadCard(ctx, squadID, card.Card.ID)
 		if err != nil {
 			return ErrClubs.Wrap(err)
 		}
@@ -173,7 +173,7 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 	var oldPosition Position
 
 	for _, card := range squadCards {
-		if card.CardID == cardID {
+		if card.Card.ID == cardID {
 			oldPosition = card.Position
 			break
 		}
@@ -188,9 +188,14 @@ func (service *Service) UpdateCardPosition(ctx context.Context, squadID uuid.UUI
 
 	updatedCards := make([]SquadCard, 0, 2)
 
+	card, err := service.cards.Get(ctx, cardID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
 	updatedSquadCard := SquadCard{
 		SquadID:  squadID,
-		CardID:   cardID,
+		Card:     card,
 		Position: newPosition,
 	}
 
@@ -264,18 +269,18 @@ func (service *Service) ListSquadCardIDs(ctx context.Context, squadID uuid.UUID)
 }
 
 // ListSquadCards returns cards with positions from the squad.
-func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]GetSquadCard, error) {
+func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) ([]SquadCard, error) {
 	squadCardIDs, err := service.ListSquadCardIDs(ctx, squadID)
 	if err != nil {
 		return nil, ErrClubs.Wrap(err)
 	}
 
-	var squadCards []GetSquadCard
+	var squadCards []SquadCard
 	for _, squadCardID := range squadCardIDs {
-		card, err := service.cards.Get(ctx, squadCardID.CardID)
+		card, err := service.cards.Get(ctx, squadCardID.Card.ID)
 		if err != nil {
 			if cards.ErrNoCard.Has(err) {
-				squadCard := GetSquadCard{
+				squadCard := SquadCard{
 					SquadID:  squadCardID.SquadID,
 					Card:     cards.Card{},
 					Position: squadCardID.Position,
@@ -289,7 +294,7 @@ func (service *Service) ListSquadCards(ctx context.Context, squadID uuid.UUID) (
 			return squadCards, ErrClubs.Wrap(err)
 		}
 
-		squadCard := GetSquadCard{
+		squadCard := SquadCard{
 			SquadID:  squadCardID.SquadID,
 			Card:     card,
 			Position: squadCardID.Position,
@@ -337,11 +342,16 @@ func (service *Service) ChangeFormation(ctx context.Context, newFormation Format
 	}
 
 	var squadCardsWithNewPositions []SquadCard
-	for position, card := range cardsWithNewPositions {
+	for position, cardID := range cardsWithNewPositions {
+		card, err := service.cards.Get(ctx, cardID)
+		if err != nil {
+			return ErrClubs.Wrap(err)
+		}
+
 		squadCard := SquadCard{
 			Position: position,
 			SquadID:  squadID,
-			CardID:   card,
+			Card:     card,
 		}
 
 		squadCardsWithNewPositions = append(squadCardsWithNewPositions, squadCard)
@@ -419,7 +429,7 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position P
 	var index int
 
 	for _, squadCard := range squadCards {
-		card, err := service.cards.Get(ctx, squadCard.CardID)
+		card, err := service.cards.Get(ctx, squadCard.Card.ID)
 		if err != nil {
 			return card, index, ErrClubs.Wrap(err)
 		}
@@ -464,7 +474,7 @@ func (service *Service) EffectiveCardForPosition(ctx context.Context, position P
 	}
 
 	for key, v := range squadCards {
-		if v.CardID == cardCoefficients[max].ID {
+		if v.Card.ID == cardCoefficients[max].ID {
 			index = key
 		}
 	}
