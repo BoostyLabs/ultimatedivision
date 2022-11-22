@@ -39,6 +39,7 @@ type DB interface {
 // Item entity describes item of currency wait list.
 type Item struct {
 	WalletAddress common.Address         `json:"walletAddress"`
+	WalletType    string                 `json:"walleType"`
 	Value         big.Int                `json:"value"`
 	Nonce         int64                  `json:"nonce"`
 	Signature     evmsignature.Signature `json:"signature"`

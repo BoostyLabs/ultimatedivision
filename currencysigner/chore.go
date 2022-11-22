@@ -15,6 +15,7 @@ import (
 
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/udts/currencywaitlist"
+	"ultimatedivision/users"
 )
 
 // ChoreError represents nft signer chore error type.
@@ -25,6 +26,11 @@ type ChoreConfig struct {
 	RenewalInterval    time.Duration           `json:"renewalInterval"`
 	PrivateKey         evmsignature.PrivateKey `json:"privateKey"`
 	UDTContractAddress common.Address          `json:"udtContractAddress"`
+
+	NFTCreateContractAddress   common.Address `json:"nftCreateContractAddress"`
+	VelasSmartContractAddress  common.Address `json:"velasSmartContractAddress"`
+	CasperSmartContractAddress string         `json:"casperSmartContractAddress"`
+	CasperTokenContract        string         `json:"casperTokenContract"`
 }
 
 // Chore requests for unsigned nft tokens and sign all of them .
@@ -61,8 +67,37 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		}
 
 		for _, item := range unsignedItems {
-			signature, err := evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(item.WalletAddress.String()),
-				evmsignature.Address(chore.config.UDTContractAddress.String()), &item.Value, item.Nonce, privateKeyECDSA)
+
+			var (
+				signature           evmsignature.Signature
+				smartContract       evmsignature.Address
+				casperTokenContract string
+				casperContract      string
+			)
+
+			switch item.WalletType {
+			case string(users.WalletTypeETH):
+				smartContract = evmsignature.Address(chore.config.UDTContractAddress.String())
+			case string(users.WalletTypeVelas):
+				smartContract = evmsignature.Address(chore.config.VelasSmartContractAddress.String())
+			case string(users.WalletTypeCasper):
+				casperContract = chore.config.CasperSmartContractAddress
+				casperTokenContract = chore.config.CasperTokenContract
+			}
+
+			if casperContract != "" {
+				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(item.WalletAddress.String()),
+					evmsignature.Address(casperTokenContract), &item.Value, item.Nonce, privateKeyECDSA)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
+			} else {
+				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(item.WalletAddress.String()),
+					smartContract, &item.Value, item.Nonce, privateKeyECDSA)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
+			}
 
 			if err != nil {
 				return ChoreError.Wrap(err)

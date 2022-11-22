@@ -75,7 +75,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 
 	if item, err := service.GetByCardID(ctx, createNFT.CardID); item.Password != "" && err == nil {
 		switch item.WalletType {
-		case "velas_wallet_address":
+		case users.WalletTypeVelas:
 			transaction = Transaction{
 				Password:          item.Password,
 				NFTCreateContract: NFTCreateContract(service.config.NFTCreateVelasContract),
@@ -83,7 +83,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 				Value:             item.Value,
 				WalletType:        item.WalletType,
 			}
-		case "casper_wallet_address":
+		case users.WalletTypeCasper:
 			transaction = Transaction{
 				Password:                item.Password,
 				NFTCreateCasperContract: service.config.NFTCreateCasperContract,
@@ -160,7 +160,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 	for range time.NewTicker(time.Millisecond * service.config.WaitListCheckSignature).C {
 		if item, err := service.GetByCardID(ctx, createNFT.CardID); item.Password != "" && err == nil {
 			switch item.WalletType {
-			case "velas_wallet_address":
+			case users.WalletTypeVelas:
 				transaction = Transaction{
 					Password:          item.Password,
 					NFTCreateContract: NFTCreateContract(service.config.NFTCreateVelasContract),
@@ -168,7 +168,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 					Value:             item.Value,
 					WalletType:        item.WalletType,
 				}
-			case "casper_wallet_address":
+			case users.WalletTypeCasper:
 				transaction = Transaction{
 					Password:                item.Password,
 					NFTCreateCasperContract: service.config.NFTCreateCasperContract,
