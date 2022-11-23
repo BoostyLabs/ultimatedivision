@@ -1,0 +1,247 @@
+@import "@/index.scss";
+
+.box-animation {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    height: calc(100vh - 94px);
+
+    &__box-container {
+        z-index: 1;
+        position: relative;
+        width: auto;
+        margin: 0 auto;
+
+        &--opened {
+            position: relative;
+            width: 410px;
+        }
+    }
+
+    &__box {
+        position: absolute;
+        width: 700px;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+
+        &--opening {
+            position: absolute;
+            width: 720px;
+            bottom: 0;
+            left: calc(50%);
+            transform: translateX(-50%);
+        }
+
+        &--falling {
+            position: absolute;
+            width: 620px;
+            bottom: 0;
+            left: calc(50%);
+            transform: translateX(-50%);
+        }
+
+        &--middle-opening {
+            position: absolute;
+            width: 520px;
+            bottom: 0;
+            left: calc(50%);
+            transform: translateX(-50%);
+        }
+
+        &--opened {
+            position: absolute;
+            width: 400px;
+            bottom: 0;
+            left: calc(50% - 2.5px);
+            transform: translateX(-50%);
+        }
+    }
+
+    &__card {
+        width: 70%;
+        margin: 0 auto;
+
+        &__container {
+            z-index: 5;
+            max-width: 300px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            opacity: 0;
+            transform: scale(0);
+            animation: cardShowing 2s 1s 1 normal forwards ease-in-out;
+
+            @keyframes cardShowing {
+
+                0% {
+                    opacity: 0;
+                }
+
+                30% {
+                    transform: translateY(250px);
+                }
+
+                100% {
+                    transform: scale(1.2) translateY(150px);
+                    opacity: 1;
+                }
+            }
+
+            &__backlight {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
+}
+
+@media (max-width: 1450px) {
+
+    .box-animation {
+
+        &__box {
+            bottom: -180px;
+
+            &--opened {
+                bottom: -170px;
+            }
+
+            &--opening {
+                bottom: -170px;
+            }
+
+            &--falling {
+                bottom: -135px;
+            }
+
+            &--middle-opening {
+                bottom: -135px;
+            }
+        }
+    }
+}
+
+@media (max-width: $tabletBreakPoint) {
+
+    .box-animation {
+        height: calc(100vh - 132px);
+        width: 100%;
+
+        &__box-container {
+            width: 80%;
+            margin: 0 20px;
+        }
+    }
+}
+
+@media (max-width: $phoneBreakPoint) {
+
+    .box-animation {
+
+        &__box {
+            bottom: -156px;
+
+            &--opening {
+                width: 576px;
+                bottom: -136px;
+            }
+
+            &--falling {
+                width: 496px;
+                bottom: -108px;
+            }
+
+            &--middle-opening {
+                width: 416px;
+                bottom: -108px;
+            }
+
+            &--opened {
+                width: 320px;
+                bottom: -136px;
+            }
+        }
+
+        &__card {
+            width: 60%;
+
+            &__container {
+                animation: cardShowing 2s 1s 1 normal forwards ease-in-out;
+
+                @keyframes cardShowing {
+
+                    0% {
+                        opacity: 0;
+                    }
+
+                    30% {
+                        transform: translateY(200px);
+                    }
+
+                    100% {
+                        transform: scale(1.2) translateY(90px);
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 440px) {
+
+    .box-animation {
+
+        &__box {
+            bottom: -124px;
+
+            &--opening {
+                width: 501px;
+                bottom: -118px;
+            }
+
+            &--falling {
+                width: 431px;
+                bottom: -93px;
+            }
+
+            &--middle-opening {
+                width: 361px;
+                bottom: -93px;
+            }
+
+            &--opened {
+                width: 278px;
+                bottom: -118px;
+                left: calc(50% - 1.5px);
+            }
+        }
+
+        &__card {
+            width: 55%;
+
+            &__container {
+                animation: cardShowing 2s 1s 1 normal forwards ease-in-out;
+
+                @keyframes cardShowing {
+
+                    0% {
+                        opacity: 0;
+                    }
+
+                    30% {
+                        transform: translateY(240px);
+                    }
+
+                    100% {
+                        transform: scale(1.2) translateY(150px);
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+    }
+}

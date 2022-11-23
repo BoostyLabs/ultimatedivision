@@ -55,6 +55,11 @@ func TestUsers(t *testing.T) {
 		CreatedAt:    time.Now().UTC(),
 	}
 
+	velasData := users.VelasData{
+		ID:       user1.ID,
+		Response: "{\"state\": \"6kjF.1ZGips-omhQkH5o3E_h2HcFJhfA\",\"stage\": \"done\"}",
+	}
+
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
 		repository := db.Users()
 		id := uuid.New()
@@ -71,6 +76,16 @@ func TestUsers(t *testing.T) {
 			userFromDB, err := repository.Get(ctx, user1.ID)
 			require.NoError(t, err)
 			compareUsers(t, user1, userFromDB)
+		})
+
+		t.Run("setVelasData", func(t *testing.T) {
+			err := repository.SetVelasData(ctx, velasData)
+			require.NoError(t, err)
+
+			userFromDB, err := repository.GetVelasData(ctx, user1.ID)
+			require.NoError(t, err)
+			require.Equal(t, user1.ID, userFromDB.ID)
+			require.Equal(t, velasData.Response, userFromDB.Response)
 		})
 
 		t.Run("getByEmail", func(t *testing.T) {
@@ -238,6 +253,8 @@ func compareUsers(t *testing.T, user1, user2 users.User) {
 	assert.Equal(t, user1.FirstName, user2.FirstName)
 	assert.Equal(t, user1.LastName, user2.LastName)
 	assert.Equal(t, user1.Status, user2.Status)
+	assert.Equal(t, user1.CasperWallet, user2.CasperWallet)
+	assert.Equal(t, user1.WalletType, user2.WalletType)
 	assert.WithinDuration(t, user1.CreatedAt, user2.CreatedAt, 1*time.Second)
 	assert.WithinDuration(t, user1.LastLogin, user2.LastLogin, 1*time.Second)
 }

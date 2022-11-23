@@ -1,136 +1,141 @@
 @import "@/index.scss";
 
-.field-controls-area {
-    padding: 5px;
-    background: $highlightBackground;
-    border-radius: 5px;
-    font-family: "Montserrat", sans-serif;
+.field-controls {
+    position: relative;
+    height: 60px;
+    width: min-content;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+
+    &__filter {
+        display: none;
+    }
 
     &__wrapper {
         display: flex;
         flex-direction: column;
-        width: 25%;
-        max-width: 400px;
-        margin: 0 0 0 auto;
+        height: auto;
+        position: relative;
     }
 
-    .field-control-area__clubs {
+    &__settings {
         display: flex;
-        flex-direction: column;
-        border: 1px solid red;
+        flex-direction: row;
+        height: 44px;
+        padding: 11.5px 31px;
+        border: 3px solid #f5ff63;
+        border-radius: 24px;
+        box-shadow: 0 10px 14px rgba(0, 0, 0, 0.14);
+        background: rgba(255, 255, 255, 0.12);
 
-        &-name {
-            font-family: "BebasNeue", sans-serif;
-            font-style: normal;
-            font-weight: normal;
-            font-size: 48px;
-            line-height: 58px;
-            display: flex;
-            align-items: center;
-            color: #fff;
-        }
-
-        .clubs {
+        &__item {
+            overflow: hidden;
+            user-select: none;
             display: flex;
             flex-direction: row;
-            width: 100%;
-            overflow-x: scroll;
+            justify-content: center;
+            width: 154px;
 
-            .club {
+            &:not(:last-child) {
+                margin-right: 50px;
+            }
+
+            &__heading {
                 display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: background-color 0.3s;
+                text-transform: uppercase;
+                font-family: "Orbitron", sans-serif;
+                font-weight: 700;
+                font-size: 16px;
+                letter-spacing: 0.12em;
+                color: black;
+                cursor: pointer;
+            }
 
-                &__name {
-                    font-family: "BebasNeue", sans-serif;
-                    font-style: normal;
-                    font-weight: normal;
-                    font-size: 24px;
-                    line-height: 29px;
-                    color: #fff;
-                }
+            &__title {
+                margin-right: 17px;
+            }
+
+            &__image {
+                transform: rotate(0deg);
+                transition: transform 0.5s;
             }
         }
     }
 
     &__play {
-        width: 100%;
-        background: linear-gradient(
-            $fieldMainLinearGradientColor 100%,
-            $feildSecondLinearGradientColor 100%
-        );
-        height: 33px;
-        font-size: 16px;
-        font-family: "BebasNeue", sans-serif;
-        font-weight: 100;
-        border: none;
-        margin-bottom: 15px;
         cursor: pointer;
-    }
-
-    &__title {
-        margin: 24px 0 24px 24px;
-        font-family: "BebasNeue", sans-serif;
-        font-size: 32px;
-        text-transform: uppercase;
-    }
-
-    &.field-information-option &:first-child {
-        border: 1px solid red;
-    }
-}
-
-.field-control {
-
-    &__heading {
-        font-weight: 500;
-        font-size: 16px;
-        line-height: 20px;
-    }
-
-    &__list {
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 17px;
-    }
-
-    &:last-child {
+        position: absolute;
+        right: -240px;
+        width: 200px;
+        height: 44px;
         border: none;
+        border-radius: 10px;
+        box-shadow: 0 12px 14px rgba(9, 51, 82, 0.22);
+        text-transform: uppercase;
+        font-style: normal;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 900;
+        font-size: 18px;
+        letter-spacing: 0.12em;
+        background: #f5ff63;
+
+        &:disabled {
+            opacity: 0.3;
+            cursor: auto;
+        }
     }
 }
 
 @media screen and (max-width: $desktopBreakPoint) {
 
-    .field-controls-area {
+    .field-controls {
 
-        &__title {
-            font-size: 28px;
+        &__play {
+            display: none;
+        }
+
+        &-area {
+
+            &__title {
+                font-size: 28px;
+            }
         }
     }
 }
 
 @media screen and (max-width: $tabletBreakPoint) {
 
-    .field-controls-area {
-        width: 100%;
-        margin: 1% 0;
+    .field-controls {
+        margin: 0 auto;
         max-width: none;
-
-        &__wrapper {
-            width: 100%;
-            max-width: unset;
-        }
-
-        &__title {
-            font-size: 24px;
-        }
+        height: 100px;
     }
 }
 
 @media screen and (max-width: $phoneBreakPoint) {
 
-    .field-controls-area {
+    .field-controls {
+        margin-left: 22px;
 
-        &__title {
-            font-size: 24px;
+        &__settings {
+            display: none;
+        }
+
+        &__filter {
+            display: flex;
+            align-items: center;
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 23px;
+            letter-spacing: 0.06em;
+            color: #131415;
+            cursor: pointer;
         }
     }
 }

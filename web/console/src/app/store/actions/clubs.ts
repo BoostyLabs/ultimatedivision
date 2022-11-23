@@ -4,14 +4,7 @@
 import { Dispatch } from 'redux';
 
 import { CardEditIdentificators, ClubsClient } from '@/api/club';
-import {
-    Club,
-    Formations,
-    FormationsType,
-    Squad,
-    Tactic,
-    TacticsType,
-} from '@/club';
+import { Club, Formations, FormationsType, Squad, Tactic, TacticsType } from '@/club';
 import { ClubService } from '@/club/service';
 
 export const SET_CLUBS = 'SET_CLUBS';
@@ -59,16 +52,13 @@ export const setDragTarget = (index: dragParamType = DEFAULT_CARD_INDEX) => ({
     index,
 });
 
-/** shows MatchFinder component that exposes logic of searching matches */
+/** Shows MatchFinder component that exposes logic of searching matches */
 export const startSearchingMatch = (isSearchingMatch: boolean) => ({
     type: START_SEARCHING_MATCH,
     isSearchingMatch,
 });
 
-export const exchangeCards = (
-    previous: dragParamType,
-    current: dragParamType
-) => ({
+export const exchangeCards = (previous: dragParamType, current: dragParamType) => ({
     type: EXCHANGE_CARDS,
     position: {
         previous,

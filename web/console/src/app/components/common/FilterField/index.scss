@@ -1,67 +1,55 @@
-//Copyright (C) 2021 Creditor Corp. Group.
-//See LICENSE for copying information.
-
 @import "@/index.scss";
 
 .filter-field {
-    margin-top: 50px;
-    width: 100%;
+    margin: 10px auto 60px;
 
-    &__wrapper {
-        position: relative;
-
-        &:before {
-            position: absolute;
-            content: "";
-            top: 0;
-            left: 0;
-            width: 80vw;
-            height: 2px;
-            background: $marketPlaceBorderColor;
-        }
-
-        &:after {
-            position: absolute;
-            content: "";
-            bottom: 0;
-            right: 0;
-            width: 80vw;
-            height: 2px;
-            background: $marketPlaceBorderColor;
-        }
+    &__filters {
+        display: none;
     }
 
-    &__use-filters {
+    &__mobile {
         display: none;
     }
 
     &__list {
-        background-image: url("@/app/static/img/FilterField/filterShape.svg");
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        display: flex;
-        padding: 15px 40px;
-        width: 90%;
+        height: 44px;
+        width: min-content;
         margin: 0 auto;
-        list-style: none;
-        justify-content: space-around;
+        padding: 12px 30px;
+        display: flex;
         align-items: center;
+        list-style: none;
+        border: 3px solid #f5ff63;
+        border-radius: 24px;
+        box-shadow: 0 10px 14px rgba(0, 23, 58, 0.14);
+        background: rgba(255, 255, 255, 0.12);
 
         &__item {
 
-            &:first-child {
-                min-width: 160px;
+            &:not(:last-child) {
+                margin-right: 12px;
             }
 
             &__search {
-                background-color: transparent;
-                border: none;
-                width: 150px;
-                padding: 5px 10px;
-                color: white;
-                margin: 0 5px;
-                border-radius: 20px;
-                outline: none;
+                width: 154px;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                font-style: normal;
+                text-transform: lowercase;
+                font-family: "Orbitron", sans-serif;
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 20px;
+                letter-spacing: 0.12em;
+                color: #f5ff63;
+                cursor: pointer;
+
+                .filter-field__list__item__picture {
+                    margin-right: 7px;
+                }
 
                 &::placeholder {
                     color: rgb(189, 189, 189);
@@ -83,64 +71,132 @@
     }
 }
 
-@media (max-width: 1440px) {
-
-    .filter-field {
-
-        &__list {
-            padding: 15px 20px;
-            width: 96%;
-
-            &__item {
-                font-size: 13px;
-            }
-        }
-    }
-}
-
 @media (max-width: $desktopBreakPoint) {
 
     .filter-field {
 
         &__list {
-            background-image: none;
 
             &__item {
-                display: none;
+
+                &__search {
+                    width: 125px;
+                }
             }
+        }
+    }
+}
+
+@media (max-width: $tabletBreakPoint) {
+
+    .filter-field {
+        margin: 0;
+        margin-bottom: 40px;
+
+        &__list {
+            display: none;
+
+            &__item:not(:last-child) {
+                margin-right: 0;
+            }
+
+            &__item {
+
+                &__mobile-search {
+                    justify-content: flex-start;
+                    padding: 12px 36px;
+                    margin-bottom: 40px;
+                    width: 100%;
+                    text-align: left;
+                    border: 2px solid #f5ff63;
+                    box-shadow: 0 6px 12px rgba(0, 23, 58, 0.12);
+                    border-radius: 24px;
+                    background: rgba(255, 255, 255, 0.12);
+                }
+            }
+        }
+
+        &__mobile {
+            overscroll-behavior: none;
+            display: none;
+            position: fixed;
+            overflow-y: scroll;
+            width: 100vw;
+            height: 100vh;
+            z-index: 13;
+            top: 0;
+            left: 0;
+            background: $pageBackground;
+
+            &--active {
+                display: block;
+            }
+
+            &__list {
+                list-style: none;
+            }
+
+            &__content {
+                padding: 30px 32px 30px;
+            }
+
+            &__top-side {
+                position: relative;
+                margin-bottom: 42px;
+
+                &__arrow-left {
+                    z-index: 20;
+                    position: absolute;
+                    left: 5px;
+                    top: 0;
+                    cursor: pointer;
+                }
+
+                &__title {
+                    text-align: center;
+                    text-transform: uppercase;
+                    font-style: normal;
+                    font-family: "Orbitron", sans-serif;
+                    font-weight: 900;
+                    font-size: 20px;
+                    line-height: 25px;
+                    letter-spacing: 0.06em;
+                    color: #26373f;
+                }
+            }
+        }
+
+        &__filters {
+            display: block;
         }
 
         &__use-filters {
-            display: block;
-            position: absolute;
-            left: 10vw;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
 
             &__title {
-                display: inline-block;
-                height: 46px;
-                font-size: 24px;
-                color: white;
-                vertical-align: middle;
-                margin-left: 20px;
+                margin-left: 10px;
+                font-style: normal;
+                font-family: "Orbitron", sans-serif;
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 23px;
+                letter-spacing: 0.06em;
+                color: #131415;
             }
         }
+    }
+}
 
-        &__wrapper {
+@media (max-width: $phoneBreakPoint) {
 
-            &:before {
-                top: -15px;
-                left: 10vw;
-                width: 80vw;
-                height: 2px;
-                background: $marketPlaceBorderColor;
-            }
+    .filter-field {
 
-            &:after {
-                bottom: -15px;
-                right: 10vw;
-                width: 80vw;
-                height: 2px;
-                background: $marketPlaceBorderColor;
+        &__mobile {
+
+            &__content {
+                padding: 30px 16px 30px;
             }
         }
     }

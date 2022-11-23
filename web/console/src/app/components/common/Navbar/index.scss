@@ -1,18 +1,19 @@
 @import "@/index.scss";
 
 .ultimatedivision-navbar {
-    background-color: $mainBackground;
-    margin: auto 0;
+    padding: 40px 0;
     width: 100%;
-    height: 100px;
     display: flex;
     align-items: center;
     text-align: center;
     justify-content: space-between;
 
+    &__store-opening {
+        background: $pageBackground;
+    }
+
     a {
         z-index: 10;
-        margin-left: 5%;
     }
 
     &__dropdown {
@@ -20,21 +21,30 @@
     }
 
     &__list {
-        width: 60%;
+        z-index: 10;
+        width: 100%;
         display: flex;
+        justify-content: center;
         align-items: center;
-        margin: 0 5%;
 
         &__item {
             list-style: none;
-            color: $navbarSecondaryColor;
-            margin-right: 40px;
-            font-size: 24px;
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 18px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
             cursor: pointer;
 
+            &:not(:last-child) {
+                margin-right: 40px;
+            }
+
             &__active {
-                color: white;
                 text-decoration: none;
+                color: #000;
 
                 &:hover {
                     text-decoration: none;
@@ -42,8 +52,8 @@
             }
 
             .active {
-                color: $navbarHighlightColor;
                 text-decoration: none;
+                color: #f5ff63;
 
                 &:hover {
                     text-decoration: none;
@@ -51,55 +61,97 @@
             }
         }
     }
-
-    &__logo {
-        margin-left: 0%;
-    }
 }
 
 @media screen and (max-width: $tabletBreakPoint) {
 
     .ultimatedivision-navbar {
-
-        &__list {
-            width: 70%;
-
-            &__item {
-                margin-right: 20px;
-            }
-        }
-    }
-}
-
-@media screen and (max-width: $phoneBreakPoint) {
-
-    .ultimatedivision-navbar {
         position: relative;
+        padding: 0;
+
+        &--active {
+            top: 0;
+            left: 0;
+            z-index: 22;
+            flex-direction: column;
+            position: sticky;
+            overflow: hidden;
+            max-height: 100vh;
+            min-height: 100vh;
+            background: $pageBackground;
+        }
 
         &__dropdown {
             z-index: 10;
-            display: block;
-            margin: 0 5%;
+            width: 100%;
+            padding: 43px 32px 39px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            &__logo {
+                width: 130px;
+                text-decoration: none;
+                text-align: left;
+                font-weight: 800;
+                font-size: 22px;
+                line-height: 114%;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                font-family: "Wix Madefor Display", sans-serif;
+                text-shadow: 0 1.16348px 2.9087px rgba(8, 36, 80, 0.36);
+                color: white;
+
+                &__first-part {
+                    color: #f5ff63;
+                }
+            }
+
+            &__button {
+                padding: 0;
+                border: none;
+                outline: none;
+                background: none;
+                cursor: pointer;
+            }
+
+            &__menu {
+                font-style: normal;
+                font-weight: 900;
+                font-size: 18px;
+                line-height: 23px;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+            }
+
+            &--active {
+                background: $pageBackground;
+            }
         }
 
         &__list {
             display: none;
 
             &-active {
-                top: 100px;
-                flex-direction: column;
-                position: absolute;
                 z-index: 5;
                 display: block;
                 width: 100%;
                 height: 100vh;
-                background: $navbarHighlightBackgroundColor;
+                top: 100px;
+                list-style: none;
+                background: $pageBackground;
 
-                &__item {
-                    border-top: 1px solid rgba($navbarSecondaryColor, 0.2);
-                    margin: auto;
-                    padding: 25px;
-                    font-size: 32px;
+                .ultimatedivision-navbar__list__item {
+                    margin: 0 32px;
+                    padding: 22px 0;
+                    text-align: left;
+                    border-bottom: 1.4px solid rgba(black, 0.2);
+                    font-size: 16px;
+                    text-transform: uppercase;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 20px;
+                    letter-spacing: 0.06em;
 
                     &__active {
                         text-decoration: none;
@@ -110,6 +162,26 @@
                         text-decoration: none;
                         color: $navbarHighlightColor;
                     }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $phoneBreakPoint) {
+
+    .ultimatedivision-navbar {
+
+        &__dropdown {
+            padding: 43px 16px 39px;
+        }
+
+        &__list {
+
+            &-active {
+
+                .ultimatedivision-navbar__list__item {
+                    margin: 0 16px;
                 }
             }
         }

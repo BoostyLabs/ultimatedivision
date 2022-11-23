@@ -45,9 +45,11 @@ export class Service {
     /** Returns required fields for metamask login */
     public async login(message: string) {
         const signedMessage = await this.signMessage(message);
+
         return signedMessage;
     }
 
+    /** Gets nonce for metamask login */
     public async getNonce(UDTContractAddress: string, abi: any) {
         const signer = await this.provider.getSigner();
         const address = await this.getWallet();

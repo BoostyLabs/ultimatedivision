@@ -44,17 +44,19 @@ type DB interface {
 
 // Item entity describes item fot wait list nfts.
 type Item struct {
-	TokenID    int64                  `json:"tokenId"`
-	CardID     uuid.UUID              `json:"cardId"`
-	Wallet     common.Address         `json:"wallet"`
-	WalletType users.WalletType       `json:"walletType"`
-	Value      big.Int                `json:"value"`
-	Password   evmsignature.Signature `json:"password"`
+	TokenID      int64                  `json:"tokenId"`
+	CardID       uuid.UUID              `json:"cardId"`
+	Wallet       common.Address         `json:"wallet"`
+	CasperWallet string                 `json:"casperWallet"`
+	WalletType   users.WalletType       `json:"walletType"`
+	Value        big.Int                `json:"value"`
+	Password     evmsignature.Signature `json:"password"`
 }
 
 // CreateNFT describes body of request for creating nft token.
 type CreateNFT struct {
 	CardID        uuid.UUID      `json:"cardId"`
+	CasperWallet  string         `json:"casperWallet"`
 	WalletAddress common.Address `json:"walletAddress"`
 	UserID        uuid.UUID      `json:"userId"`
 	Value         big.Int        `json:"value"`
@@ -62,11 +64,13 @@ type CreateNFT struct {
 
 // Transaction entity describes values required to sent transaction.
 type Transaction struct {
-	Password          evmsignature.Signature `json:"password"`
-	NFTCreateContract NFTCreateContract      `json:"nftCreateContract"`
-	TokenID           int64                  `json:"tokenId"`
-	Value             big.Int                `json:"value"`
-	WalletType        users.WalletType       `json:"walletType"`
+	Password                evmsignature.Signature  `json:"password"`
+	NFTCreateContract       NFTCreateContract       `json:"nftCreateContract"`
+	NFTCreateCasperContract NFTCreateCasperContract `json:"nftCreateCasperContract"`
+	TokenID                 int64                   `json:"tokenId"`
+	Value                   big.Int                 `json:"value"`
+	WalletType              users.WalletType        `json:"walletType"`
+	RPCNodeAddress          string                  `json:"rpcNodeAddress"`
 }
 
 // Config defines values needed by check mint nft in blockchain.
@@ -77,16 +81,35 @@ type Config struct {
 		Address      common.Address   `json:"address"`
 		AddressEvent evmsignature.Hex `json:"addressEvent"`
 	} `json:"nftContract"`
-	NFTCreateContract NFTCreateContract `json:"nftCreateContract"`
-	AddressNodeServer string            `json:"addressNodeServer"`
-	FileStorage       storj.Config      `json:"fileStorage"`
-	Bucket            string            `json:"bucket"`
-	URLToAvatar       string            `json:"urlToAvatar"`
+	NFTCreateContract       NFTCreateContract       `json:"nftCreateContract"`
+	NFTCreateVelasContract  NFTCreateVelasContract  `json:"nftCreateVelasContract"`
+	NFTCreateCasperContract NFTCreateCasperContract `json:"nftCreateCasperContract"`
+	AddressNodeServer       string                  `json:"addressNodeServer"`
+	FileStorage             storj.Config            `json:"fileStorage"`
+	Bucket                  string                  `json:"bucket"`
+	URLToAvatar             string                  `json:"urlToAvatar"`
+	RPCNodeAddress          string                  `json:"rpcNodeAddress"`
 }
 
 // NFTCreateContract describes the meaning of the contract.
 type NFTCreateContract struct {
 	Address                           common.Address   `json:"address"`
+	MintWithSignatureSelector         evmsignature.Hex `json:"mintWithSignatureSelector"`
+	MintWithSignatureAndValueSelector evmsignature.Hex `json:"mintWithSignatureAndValueSelector"`
+	ChainID                           int              `json:"chainId"`
+}
+
+// NFTCreateVelasContract describes the meaning of the contract.
+type NFTCreateVelasContract struct {
+	Address                           common.Address   `json:"address"`
+	MintWithSignatureSelector         evmsignature.Hex `json:"mintWithSignatureSelector"`
+	MintWithSignatureAndValueSelector evmsignature.Hex `json:"mintWithSignatureAndValueSelector"`
+	ChainID                           int              `json:"chainId"`
+}
+
+// NFTCreateCasperContract describes the meaning of the contract.
+type NFTCreateCasperContract struct {
+	Address                           string           `json:"address"`
 	MintWithSignatureSelector         evmsignature.Hex `json:"mintWithSignatureSelector"`
 	MintWithSignatureAndValueSelector evmsignature.Hex `json:"mintWithSignatureAndValueSelector"`
 	ChainID                           int              `json:"chainId"`
