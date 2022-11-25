@@ -20,9 +20,9 @@ func TestSignature(t *testing.T) {
 	privateKeyECDSA, err := crypto.HexToECDSA(privateKey)
 	require.NoError(t, err)
 
-	tokenID1 := uuid.New()
+	tokenID1 := uuid.MustParse("94b94d50-d001-4f88-b7cf-1763b39044b1")
 
-	contractAddress := signer.Address("0x510D43D563A792C5F13fF2C69fFcE1f0226056BD")
+	contractAddress := signer.Address("0x7ebd9ab31b8ed6678812ce3485cd41b703a210228973a0d510e8624721b3af61")
 
 	wallet := "0x56f088767D91badc379155290c4205c7b917a36E"
 	casperWallet := "0x9060c0820b5156b1620c8e3344d17f9fad5108f5dc2672f2308439e84363c88e"
