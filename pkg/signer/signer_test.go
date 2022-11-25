@@ -25,6 +25,7 @@ func TestSignature(t *testing.T) {
 	contractAddress := signer.Address("0x510D43D563A792C5F13fF2C69fFcE1f0226056BD")
 
 	wallet := "0x56f088767D91badc379155290c4205c7b917a36E"
+	casperWallet := "0x9060c0820b5156b1620c8e3344d17f9fad5108f5dc2672f2308439e84363c88e"
 
 	value := big.Int{}
 
@@ -33,8 +34,18 @@ func TestSignature(t *testing.T) {
 		require.NoError(t, err)
 	})
 
+	t.Run("GenerateCasperSignatureWithValue", func(t *testing.T) {
+		_, err := signer.GenerateSignatureWithValue(signer.Address(casperWallet), contractAddress, tokenID1, privateKeyECDSA)
+		require.NoError(t, err)
+	})
+
 	t.Run("GenerateSignatureWithValueAndNonce", func(t *testing.T) {
 		_, err := signer.GenerateSignatureWithValueAndNonce(signer.Address(wallet), contractAddress, &value, tokenID1, privateKeyECDSA)
+		require.NoError(t, err)
+	})
+
+	t.Run("GenerateCasperSignatureWithValueAndNonce", func(t *testing.T) {
+		_, err := signer.GenerateSignatureWithValueAndNonce(signer.Address(casperWallet), contractAddress, &value, tokenID1, privateKeyECDSA)
 		require.NoError(t, err)
 	})
 

@@ -27,9 +27,7 @@ type Signature string
 // GenerateSignatureWithValue generates signature for user's wallet with value.
 func GenerateSignatureWithValue(addressWallet Address, addressContract Address, value uuid.UUID, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
 	var values [][]byte
-	if err := addressWallet.IsValidAddress(); err != nil {
-		return "", ErrCreateSignature.Wrap(err)
-	}
+	
 	if err := addressContract.IsValidAddress(); err != nil {
 		return "", ErrCreateSignature.Wrap(err)
 	}
@@ -69,9 +67,7 @@ func GenerateSignatureWithValue(addressWallet Address, addressContract Address, 
 // GenerateSignatureWithValueAndNonce generates signature for user's wallet with value and nonce.
 func GenerateSignatureWithValueAndNonce(addressWallet Address, addressContract Address, value *big.Int, nonce uuid.UUID, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
 	var values [][]byte
-	if err := addressWallet.IsValidAddress(); err != nil {
-		return "", ErrCreateSignature.Wrap(err)
-	}
+
 	if err := addressContract.IsValidAddress(); err != nil {
 		return "", ErrCreateSignature.Wrap(err)
 	}
