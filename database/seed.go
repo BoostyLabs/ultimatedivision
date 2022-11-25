@@ -290,7 +290,7 @@ func (seedDB *SeedDB) CreateSquadCards(ctx context.Context, conn *sql.DB, cardsC
 
 			squadCard := clubs.SquadCard{
 				SquadID:  squad.ID,
-				CardID:   card.ID,
+				Card:     card,
 				Position: clubs.Position(i),
 			}
 
@@ -298,11 +298,11 @@ func (seedDB *SeedDB) CreateSquadCards(ctx context.Context, conn *sql.DB, cardsC
 		}
 	}
 
-	for _, card := range squadCards {
+	for _, squadCard := range squadCards {
 		query := `INSERT INTO squad_cards(id, card_id, card_position)
 		          VALUES($1,$2,$3)`
 
-		_, err := conn.ExecContext(ctx, query, card.SquadID, card.CardID, card.Position)
+		_, err := conn.ExecContext(ctx, query, squadCard.SquadID, squadCard.Card.ID, squadCard.Position)
 		if err != nil {
 			return ErrClubs.Wrap(err)
 		}

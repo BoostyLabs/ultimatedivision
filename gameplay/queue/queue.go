@@ -13,27 +13,28 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/zeebo/errs"
 
+	"ultimatedivision/gameplay/gameengine"
 	"ultimatedivision/gameplay/matches"
 )
 
-// ErrNoClient indicated that client does not exist.
-var ErrNoClient = errs.Class("client does not exist")
+var (
+	// ErrNoClient indicated that client does not exist.
+	ErrNoClient = errs.Class("client does not exist")
+	// ErrRead indicates a read error.
+	ErrRead = errs.Class("error read from websocket")
+	// ErrWrite indicates a write error.
+	ErrWrite = errs.Class("error write to websocket")
+)
 
-// ErrRead indicates a read error.
-var ErrRead = errs.Class("error read from websocket")
-
-// ErrWrite indicates a write error.
-var ErrWrite = errs.Class("error write to websocket")
-
-// DB is exposing access to clients database.
+// DB is exposing access to queue database.
 //
 // architecture: DB
 type DB interface {
-	// Create adds client in database.
+	// Create adds client to queue in the database.
 	Create(client Client)
-	// Get returns client from database.
+	// Get returns client from the database.
 	Get(userID uuid.UUID) (Client, error)
-	// List returns clients from database.
+	// List returns clients from the database.
 	List() []Client
 	// ListNotPlayingUsers returns clients who don't play game from database.
 	ListNotPlayingUsers() []Client
@@ -85,10 +86,15 @@ type Response struct {
 
 // Config defines configuration for queue.
 type Config struct {
-	PlaceRenewalInterval time.Duration         `json:"placeRenewalInterval"`
-	WinValue             string                `json:"winValue"`
-	DrawValue            string                `json:"drawValue"`
-	UDTContract          evmsignature.Contract `json:"udtContract"`
+	PlaceRenewalInterval       time.Duration                `json:"placeRenewalInterval"`
+	WinValue                   string                       `json:"winValue"`
+	DrawValue                  string                       `json:"drawValue"`
+	UDTContract                evmsignature.Contract        `json:"udtContract"`
+	GameConfig                 gameengine.GameConfig        `json:"gameConfig"`
+	CoordinateConfig           gameengine.CoordinatesConfig `json:"coordinateConfig"`
+	MatchActionRenewalInterval time.Duration                `json:"matchActionRenewalInterval"`
+	RoundDuration              time.Duration                `json:"roundDuration"`
+	NumberOfRounds             int                          `json:"numberOfRounds"`
 }
 
 // ReadJSON reads request sent by client.
@@ -103,12 +109,34 @@ func (client *Client) ReadJSON() (Request, error) {
 	return request, nil
 }
 
+// TODO: move to api layer.
+
+// ReadActionJSON reads action request sent by client.
+func (client *Client) ReadActionJSON() ([]gameengine.MakeAction, error) {
+	var request []gameengine.MakeAction
+
+	err := client.Connection.SetReadDeadline(time.Now().Add(1 * time.Second))
+	if err != nil {
+		return []gameengine.MakeAction{}, ErrRead.Wrap(ErrQueue.Wrap(err))
+	}
+
+	if err = client.Connection.ReadJSON(&request); err != nil {
+		if !websocket.IsCloseError(err) || !websocket.IsUnexpectedCloseError(err) {
+			if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
+				return request, ErrRead.Wrap(ErrQueue.Wrap(err))
+			}
+		}
+	}
+
+	return request, nil
+}
+
 // WriteJSON writes response to client.
 func (client *Client) WriteJSON(status int, message interface{}) error {
-	if err := client.Connection.WriteJSON(Response{Status: status, Message: message}); err != nil {
-		return ErrWrite.Wrap(ErrQueue.Wrap(err))
-	}
-	return nil
+	return client.Connection.WriteJSON(Response{
+		Status:  status,
+		Message: message,
+	})
 }
 
 // WinResult entity describes values which send to user after win game.
