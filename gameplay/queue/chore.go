@@ -68,9 +68,9 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 		if len(notPlayingUsers) >= 2 {
 			pairsOfClients := DivideClients(notPlayingUsers)
 			for _, pair := range pairsOfClients {
-				go func() {
+				go func(pair []Client) {
 					err = chore.MatchPair(ctx, pair)
-				}()
+				}(pair)
 			}
 		}
 		return ChoreError.Wrap(err)
@@ -84,11 +84,11 @@ func (chore *Chore) MatchPair(ctx context.Context, pair []Client) (err error) {
 	firstClient := pair[0]
 	secondClient := pair[1]
 	if err = chore.service.UpdateIsPlaying(firstClient.UserID, true); err != nil {
-		chore.log.Error("could not update is play", ChoreError.Wrap(err))
+		chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 		return
 	}
 	if err = chore.service.UpdateIsPlaying(secondClient.UserID, true); err != nil {
-		chore.log.Error("could not update is play", ChoreError.Wrap(err))
+		chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 		return
 	}
 	if err = firstClient.WriteJSON(http.StatusOK, "do you confirm play?"); err != nil {
@@ -108,7 +108,7 @@ func (chore *Chore) MatchPair(ctx context.Context, pair []Client) (err error) {
 		notPlayingUsers := chore.service.ListNotPlayingUsers()
 		if isClientInSlice(firstClient, notPlayingUsers) {
 			if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
-				chore.log.Error("could not update is play", ChoreError.Wrap(err))
+				chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 				return
 			}
 
@@ -121,7 +121,7 @@ func (chore *Chore) MatchPair(ctx context.Context, pair []Client) (err error) {
 
 		if isClientInSlice(secondClient, notPlayingUsers) {
 			if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
-				chore.log.Error("could not update is play", ChoreError.Wrap(err))
+				chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 				return
 			}
 
@@ -150,7 +150,7 @@ func (chore *Chore) MatchPair(ctx context.Context, pair []Client) (err error) {
 		notPlayingUsers = chore.service.ListNotPlayingUsers()
 		if isClientInSlice(firstClient, notPlayingUsers) {
 			if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
-				chore.log.Error("could not update is play", ChoreError.Wrap(err))
+				chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 				return
 			}
 
@@ -163,7 +163,7 @@ func (chore *Chore) MatchPair(ctx context.Context, pair []Client) (err error) {
 
 		if isClientInSlice(secondClient, notPlayingUsers) {
 			if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
-				chore.log.Error("could not update is play", ChoreError.Wrap(err))
+				chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 				return
 			}
 
@@ -176,11 +176,11 @@ func (chore *Chore) MatchPair(ctx context.Context, pair []Client) (err error) {
 
 		if firstRequest.Action == ActionReject || secondRequest.Action == ActionReject {
 			if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
-				chore.log.Error("could not update is play", ChoreError.Wrap(err))
+				chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 				return
 			}
 			if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
-				chore.log.Error("could not update is play", ChoreError.Wrap(err))
+				chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 				return
 			}
 			if err = firstClient.WriteJSON(http.StatusOK, "you are still in search"); err != nil {
@@ -206,11 +206,11 @@ func (chore *Chore) MatchPair(ctx context.Context, pair []Client) (err error) {
 		if firstRequest.Action == ActionConfirm && secondRequest.Action == ActionConfirm {
 			if err = chore.Play(ctx, firstClient, secondClient); err != nil {
 				if err = chore.service.UpdateIsPlaying(firstClient.UserID, false); err != nil {
-					chore.log.Error("could not update is play", ChoreError.Wrap(err))
+					chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 					return
 				}
 				if err = chore.service.UpdateIsPlaying(secondClient.UserID, false); err != nil {
-					chore.log.Error("could not update is play", ChoreError.Wrap(err))
+					chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 					return
 				}
 				if err = chore.service.Finish(firstClient.UserID); err != nil {
@@ -471,7 +471,7 @@ func (chore *Chore) readRequest(client, opponent Client, requestChan chan Reques
 
 	if errors.Is(err, websocket.ErrCloseSent) {
 		if err = chore.service.UpdateIsPlaying(opponent.UserID, false); err != nil {
-			chore.log.Error("could not update is play", ChoreError.Wrap(err))
+			chore.log.Error("could not update user in game", ChoreError.Wrap(err))
 			return
 		}
 		if err := opponent.WriteJSON(http.StatusOK, "you are still in search"); err != nil {
