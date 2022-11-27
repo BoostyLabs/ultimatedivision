@@ -79,7 +79,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			case users.WalletTypeVelas:
 				smartContract = chore.config.VelasSmartContractAddress
 			case users.WalletTypeCasper:
-				casperContract = chore.config.CasperSmartContractAddress
+				casperContract = "0x" + chore.config.CasperSmartContractAddress
 				casperTokenContract = chore.config.CasperTokenContract
 				token.CasperWallet = "0x" + token.CasperWallet
 			}
@@ -101,13 +101,13 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			} else {
 				if casperContract != "" {
 					signature, err = signer.GenerateSignatureWithValueAndNonce(signer.Address(token.CasperWallet),
-						signer.Address(casperTokenContract), &token.Value, token.TokenID, privateKeyECDSA)
+						signer.Address(casperTokenContract), &token.Value, token.TokenNumber, privateKeyECDSA)
 					if err != nil {
 						return ChoreError.Wrap(err)
 					}
 				} else {
 					signature, err = signer.GenerateSignatureWithValueAndNonce(signer.Address(token.Wallet.String()),
-						signer.Address(smartContract.String()), &token.Value, token.TokenID, privateKeyECDSA)
+						signer.Address(smartContract.String()), &token.Value, token.TokenNumber, privateKeyECDSA)
 					if err != nil {
 						return ChoreError.Wrap(err)
 					}

@@ -82,7 +82,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			case string(users.WalletTypeVelas):
 				smartContract = evmsignature.Address(chore.config.VelasSmartContractAddress.String())
 			case string(users.WalletTypeCasper):
-				casperContract = chore.config.CasperSmartContractAddress
+				casperContract = "0x" + chore.config.CasperSmartContractAddress
 				casperTokenContract = chore.config.CasperTokenContract
 				casperWallet = "0x" + item.WalletAddress.String()
 			}
