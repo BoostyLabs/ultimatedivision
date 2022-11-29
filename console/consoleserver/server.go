@@ -6,7 +6,6 @@ package consoleserver
 import (
 	"context"
 	"errors"
-	"fmt"
 	"html/template"
 	"net"
 	"net/http"
@@ -228,7 +227,6 @@ func (server *Server) Run(ctx context.Context) (err error) {
 			err = nil
 		}
 
-		fmt.Println(server.server.Addr)
 		return Error.Wrap(err)
 	})
 
