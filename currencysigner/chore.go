@@ -24,14 +24,12 @@ var ChoreError = errs.Class("nft signer chore error")
 
 // ChoreConfig is the global configuration for currencysigner.
 type ChoreConfig struct {
-	RenewalInterval    time.Duration           `json:"renewalInterval"`
-	PrivateKey         evmsignature.PrivateKey `json:"privateKey"`
-	UDTContractAddress common.Address          `json:"udtContractAddress"`
-
-	NFTCreateContractAddress   common.Address `json:"nftCreateContractAddress"`
-	VelasSmartContractAddress  common.Address `json:"velasSmartContractAddress"`
-	CasperSmartContractAddress string         `json:"casperSmartContractAddress"`
-	CasperTokenContract        string         `json:"casperTokenContract"`
+	RenewalInterval            time.Duration           `json:"renewalInterval"`
+	PrivateKey                 evmsignature.PrivateKey `json:"privateKey"`
+	UDTContractAddress         common.Address          `json:"udtContractAddress"`
+	VelasSmartContractAddress  common.Address          `json:"velasSmartContractAddress"`
+	CasperSmartContractAddress string                  `json:"casperSmartContractAddress"`
+	CasperTokenContract        string                  `json:"casperTokenContract"`
 }
 
 // Chore requests for unsigned nft tokens and sign all of them .

@@ -242,18 +242,22 @@ func (usersDB *usersDB) UpdatePassword(ctx context.Context, passwordHash []byte,
 
 // UpdateWalletAddress updates wallet address in the database.
 func (usersDB *usersDB) UpdateWalletAddress(ctx context.Context, wallet common.Address, walletType users.WalletType, id uuid.UUID) error {
-	var query string
-
-	switch walletType {
-	case users.WalletTypeETH:
-		query = "UPDATE users SET wallet_address=$1, wallet_type=$2 WHERE id=$3"
-	case users.WalletTypeVelas:
-		query = "UPDATE users SET wallet_address=$1, wallet_type=$2 WHERE id=$3"
-	case users.WalletTypeCasper:
-		query = "UPDATE users SET casper_wallet_address=$1, wallet_type=$2 WHERE id=$3"
+	result, err := usersDB.conn.ExecContext(ctx, "UPDATE users SET wallet_address=$1, wallet_type=$2 WHERE id=$3", wallet, walletType, id)
+	if err != nil {
+		return ErrUsers.Wrap(err)
 	}
 
-	result, err := usersDB.conn.ExecContext(ctx, query, wallet, walletType, id)
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return users.ErrNoUser.New("user does not exist")
+	}
+
+	return ErrUsers.Wrap(err)
+}
+
+// UpdateCasperWalletAddress updates Casper wallet address in the database.
+func (usersDB *usersDB) UpdateCasperWalletAddress(ctx context.Context, wallet string, walletType users.WalletType, id uuid.UUID) error {
+	result, err := usersDB.conn.ExecContext(ctx, "UPDATE users SET casper_wallet_address=$1, wallet_type=$2 WHERE id=$3", wallet, walletType, id)
 	if err != nil {
 		return ErrUsers.Wrap(err)
 	}
