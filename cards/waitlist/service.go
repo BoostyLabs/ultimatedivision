@@ -139,13 +139,22 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 		return transaction, ErrWaitlist.Wrap(err)
 	}
 
-	if err = service.users.UpdateWalletAddress(ctx, createNFT.WalletAddress, createNFT.UserID, user.WalletType); err != nil {
-		if !users.ErrWalletAddressAlreadyInUse.Has(err) {
-			return transaction, ErrWaitlist.Wrap(err)
+	if user.WalletType == users.WalletTypeCasper {
+		if err = service.users.UpdateCasperWalletAddress(ctx, createNFT.CasperWallet, createNFT.UserID, user.WalletType); err != nil {
+			if !users.ErrWalletAddressAlreadyInUse.Has(err) {
+				return transaction, ErrWaitlist.Wrap(err)
+			}
+		}
+	} else {
+		if err = service.users.UpdateWalletAddress(ctx, createNFT.WalletAddress, createNFT.UserID, user.WalletType); err != nil {
+			if !users.ErrWalletAddressAlreadyInUse.Has(err) {
+				return transaction, ErrWaitlist.Wrap(err)
+			}
 		}
 	}
 
 	item := Item{
+		TokenID:      uuid.New(),
 		CardID:       createNFT.CardID,
 		Wallet:       createNFT.WalletAddress,
 		WalletType:   user.WalletType,
