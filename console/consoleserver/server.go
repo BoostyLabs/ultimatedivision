@@ -6,6 +6,7 @@ package consoleserver
 import (
 	"context"
 	"errors"
+	"fmt"
 	"html/template"
 	"net"
 	"net/http"
@@ -226,6 +227,8 @@ func (server *Server) Run(ctx context.Context) (err error) {
 		if isCancelled || errors.Is(err, http.ErrServerClosed) {
 			err = nil
 		}
+
+		fmt.Println(server.server.Addr)
 		return Error.Wrap(err)
 	})
 

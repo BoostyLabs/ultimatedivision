@@ -76,11 +76,11 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			)
 
 			switch item.WalletType {
-			case string(users.WalletTypeETH):
+			case users.WalletTypeETH:
 				smartContract = chore.config.UDTContractAddress
-			case string(users.WalletTypeVelas):
+			case users.WalletTypeVelas:
 				smartContract = chore.config.VelasSmartContractAddress
-			case string(users.WalletTypeCasper):
+			case users.WalletTypeCasper:
 				casperContract = chore.config.CasperSmartContractAddress
 				casperTokenContract = chore.config.CasperTokenContract
 				casperWallet = item.WalletAddress.String()

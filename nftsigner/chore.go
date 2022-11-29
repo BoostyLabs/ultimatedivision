@@ -5,6 +5,7 @@ package nftsigner
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 	"time"
 	"ultimatedivision/pkg/signer"
@@ -82,6 +83,10 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				casperContract = chore.config.CasperSmartContractAddress
 				casperTokenContract = chore.config.CasperTokenContract
 			}
+
+			fmt.Println("1", casperContract)
+			fmt.Println("2", casperTokenContract)
+			fmt.Println("3", token.CasperWallet)
 
 			if token.Value.Cmp(big.NewInt(0)) <= 0 {
 				if casperContract != "" {
