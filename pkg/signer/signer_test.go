@@ -24,15 +24,16 @@ func TestSignature(t *testing.T) {
 
 	tokenID := uuid.MustParse("94b94d50-d001-4f88-b7cf-1763b39044b1")
 
-	contractAddress := signer.Address("0xc3d2bdedf7f309e2908ecf90d0dfb44acf2a8077cf053a05779fb15bbbfdbfb9")
+	contractAddress := signer.Address("c3d2bdedf7f309e2908ecf90d0dfb44acf2a8077cf053a05779fb15bbbfdbfb9")
+	casperContractAddress := signer.Address("7238b9f78d4c88232c56a8e7609a437d3c865fff5dbb9d1f8aeab0508f1a5bc1")
 
 	wallet := "0x56f088767D91badc379155290c4205c7b917a36E"
-	casperWallet := "0x9060c0820b5156b1620c8e3344d17f9fad5108f5dc2672f2308439e84363c88e"
+	casperWallet := "9060c0820b5156b1620c8e3344d17f9fad5108f5dc2672f2308439e84363c88e"
 
-	expectedSignature := evmsignature.Signature("5603fd54241708d2c717518f94c64c1d0faea8481638655f8b1575e0583771e52451efd861a258a9ce1b13340d90a964c213586026ac2ed00fdadfaed952d78c1c")
-	expectedCasperSignature := evmsignature.Signature("ee64aa00a97ba58f17eb0aadd93b6b70e650b4b634080ba2dd9621e96e99ef83710f623d0338c3f24e9e0e4ed48e67d3b788e20c5e9feffb92623c03f88174d81b")
-	expectedNonceSignature := evmsignature.Signature("db8876e5d43be963a84ee4c86257e479bab9759bbac3eb9bf5f5d85f30b21be400c425617eb8542eaf60db9259f736fd5983fd3f9136e53ea0fe490f1e3df9011c")
-	expectedCasperNonceSignature := evmsignature.Signature("c9cac1d7d80fbc431b54fce157d7d863d52147db4f27270deb3c3bc41e1fc2482178571df8be156d656d46f9a81132173561eecd6b3313ae511312fa7e8c4fbb1b")
+	expectedSignature := evmsignature.Signature("e0a3a3bcb0de3941ed598c49d227a61e5d4e2d1eccaa554b22655882a43503ff333b3590d8032fb212bddd4ce4dea24a42006389288872dc79df30427e64610d1c")
+	expectedCasperSignature := evmsignature.Signature("41e3fb37d58cf7e5dbcb3daa11ca02ed540c7c0c01c934ba1bad76f206d8e7b57cc56738e6add643343cf61a4d1dfffada9a1580fc14d56e76aee0f29805a2d21c")
+	expectedNonceSignature := evmsignature.Signature("d1aee17e45885b5cb29a155a6303784ac0c8a840ed3135f611252540af1d8a6a5a12fac77cba974eb0e4383a74551bd516c1f3e15bdc7c583a3ea12118e38ec71b")
+	expectedCasperNonceSignature := evmsignature.Signature("79b57a49d2ba385d9dc907801f5fc5ffe0afca3759418c979022dfeb84d3607c0f9782a7c85f2a27f0f37481c0e513186ed9be5cb570c6c91225e9b94753d2501c")
 
 	value := *big.NewInt(100)
 	nonce := int64(5)
@@ -44,7 +45,7 @@ func TestSignature(t *testing.T) {
 	})
 
 	t.Run("GenerateCasperSignatureWithValue", func(t *testing.T) {
-		signature, err := signer.GenerateSignatureWithValue(signer.Address(casperWallet), contractAddress, tokenID, privateKeyECDSA)
+		signature, err := signer.GenerateCasperSignatureWithValue(signer.Address(casperWallet), casperContractAddress, tokenID, privateKeyECDSA)
 		require.NoError(t, err)
 		assert.Equal(t, expectedCasperSignature, signature)
 	})
@@ -56,7 +57,7 @@ func TestSignature(t *testing.T) {
 	})
 
 	t.Run("GenerateCasperSignatureWithValueAndNonce", func(t *testing.T) {
-		signature, err := signer.GenerateSignatureWithValueAndNonce(signer.Address(casperWallet), contractAddress, &value, nonce, privateKeyECDSA)
+		signature, err := signer.GenerateCasperSignatureWithValueAndNonce(signer.Address(casperWallet), contractAddress, &value, nonce, privateKeyECDSA)
 		require.NoError(t, err)
 		assert.Equal(t, expectedCasperNonceSignature, signature)
 	})

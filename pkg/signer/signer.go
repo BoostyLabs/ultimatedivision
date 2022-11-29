@@ -59,7 +59,42 @@ func GenerateSignatureWithValue(addressWallet Address, addressContract Address, 
 	return signature, ErrCreateSignature.Wrap(err)
 }
 
-// GenerateSignatureWithValueAndNonce generates signature for user's wallet with value and nonce.
+// GenerateCasperSignatureWithValue generates signature for user's wallet with value.
+func GenerateCasperSignatureWithValue(addressWallet Address, addressContract Address, value uuid.UUID, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
+	var values [][]byte
+	addressWalletByte, err := hex.DecodeString(string(addressWallet))
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	addressContractByte, err := hex.DecodeString(string(addressContract))
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	valueStringWithZeros := evmsignature.CreateHexStringFixedLength(fmt.Sprintf("%x", value))
+	valueByte, err := hex.DecodeString(string(valueStringWithZeros))
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	values = append(values, addressWalletByte, addressContractByte, valueByte)
+	createSignature := evmsignature.CreateSignature{
+		Values:     values,
+		PrivateKey: privateKey,
+	}
+
+	signatureByte, err := evmsignature.MakeSignature(createSignature)
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	signature, err := evmsignature.ReformSignature(signatureByte)
+
+	return signature, ErrCreateSignature.Wrap(err)
+}
+
+// GenerateSignatureWithValueAndNonce generates signature for casper user's wallet with value and nonce.
 func GenerateSignatureWithValueAndNonce(addressWallet Address, addressContract Address, value *big.Int, nonce int64, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
 	var values [][]byte
 	addressWalletByte, err := hex.DecodeString(string(addressWallet)[evmsignature.LengthHexPrefix:])
@@ -68,6 +103,47 @@ func GenerateSignatureWithValueAndNonce(addressWallet Address, addressContract A
 	}
 
 	addressContractByte, err := hex.DecodeString(string(addressContract)[evmsignature.LengthHexPrefix:])
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	valueStringWithZeros := evmsignature.CreateHexStringFixedLength(fmt.Sprintf("%x", value))
+	valueByte, err := hex.DecodeString(string(valueStringWithZeros))
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	nonceStringWithZeros := evmsignature.CreateHexStringFixedLength(fmt.Sprintf("%x", nonce))
+	nonceByte, err := hex.DecodeString(string(nonceStringWithZeros))
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	values = append(values, addressWalletByte, addressContractByte, valueByte, nonceByte)
+	createSignature := evmsignature.CreateSignature{
+		Values:     values,
+		PrivateKey: privateKey,
+	}
+
+	signatureByte, err := evmsignature.MakeSignature(createSignature)
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	signature, err := evmsignature.ReformSignature(signatureByte)
+
+	return signature, ErrCreateSignature.Wrap(err)
+}
+
+// GenerateCasperSignatureWithValueAndNonce generates signature for casper user's wallet with value and nonce.
+func GenerateCasperSignatureWithValueAndNonce(addressWallet Address, addressContract Address, value *big.Int, nonce int64, privateKey *ecdsa.PrivateKey) (evmsignature.Signature, error) {
+	var values [][]byte
+	addressWalletByte, err := hex.DecodeString(string(addressWallet))
+	if err != nil {
+		return "", ErrCreateSignature.Wrap(err)
+	}
+
+	addressContractByte, err := hex.DecodeString(string(addressContract))
 	if err != nil {
 		return "", ErrCreateSignature.Wrap(err)
 	}

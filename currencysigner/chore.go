@@ -6,6 +6,7 @@ package currencysigner
 import (
 	"context"
 	"time"
+	"ultimatedivision/pkg/signer"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
@@ -70,31 +71,31 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 
 			var (
 				signature           evmsignature.Signature
-				smartContract       evmsignature.Address
-				casperTokenContract string
+				smartContract       signer.Address
+				casperTokenContract signer.Address
 				casperContract      string
 				casperWallet        string
 			)
 
 			switch item.WalletType {
 			case string(users.WalletTypeETH):
-				smartContract = evmsignature.Address(chore.config.UDTContractAddress.String())
+				smartContract = signer.Address(chore.config.UDTContractAddress.String())
 			case string(users.WalletTypeVelas):
-				smartContract = evmsignature.Address(chore.config.VelasSmartContractAddress.String())
+				smartContract = signer.Address(chore.config.VelasSmartContractAddress.String())
 			case string(users.WalletTypeCasper):
-				casperContract = "0x" + chore.config.CasperSmartContractAddress
-				casperTokenContract = chore.config.CasperTokenContract
-				casperWallet = "0x" + item.WalletAddress.String()
+				casperContract = chore.config.CasperSmartContractAddress
+				casperTokenContract = signer.Address(chore.config.CasperTokenContract)
+				casperWallet = item.WalletAddress.String()
 			}
 
 			if casperContract != "" {
-				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(casperWallet),
-					evmsignature.Address(casperTokenContract), &item.Value, item.Nonce, privateKeyECDSA)
+				signature, err = signer.GenerateCasperSignatureWithValueAndNonce(signer.Address(casperWallet),
+					casperTokenContract, &item.Value, item.Nonce, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			} else {
-				signature, err = evmsignature.GenerateSignatureWithValueAndNonce(evmsignature.Address(item.WalletAddress.String()),
+				signature, err = signer.GenerateSignatureWithValueAndNonce(signer.Address(item.WalletAddress.String()),
 					smartContract, &item.Value, item.Nonce, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)

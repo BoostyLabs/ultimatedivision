@@ -146,6 +146,7 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 	}
 
 	item := Item{
+		TokenID:      uuid.New(),
 		CardID:       createNFT.CardID,
 		Wallet:       createNFT.WalletAddress,
 		WalletType:   user.WalletType,
