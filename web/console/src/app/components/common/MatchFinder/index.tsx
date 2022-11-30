@@ -117,6 +117,7 @@ const MatchFinder: React.FC = () => {
                     position: toast.POSITION.TOP_RIGHT,
                     theme: 'colored',
                 });
+
                 return;
             case YOU_ADDED_MESSAGE:
                 setIsMatchFound(false);
@@ -127,6 +128,7 @@ const MatchFinder: React.FC = () => {
                 setIsMatchConfirmed(false);
 
                 return;
+
             case YOU_LEAVED_MESSAGE:
                 dispatch(startSearchingMatch(false));
 
@@ -142,6 +144,7 @@ const MatchFinder: React.FC = () => {
 
                 dispatch(getMatchScore(messageEvent.message));
                 dispatch(startSearchingMatch(false));
+
 
                 /** implements redirect to match page after DELAY time.  */
                 setTimeout(() => {

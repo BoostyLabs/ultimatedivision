@@ -121,6 +121,16 @@ class CasperTransactionService {
             });
         }
     }
+    async mintUDT() {
+        try {
+        }
+        catch (e) {
+            toast.error('Something went wrong', {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
+    }
 }
 
 export default CasperTransactionService;
