@@ -91,6 +91,8 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         CREATE TABLE IF NOT EXISTS cards (
             id                BYTEA         PRIMARY KEY NOT NULL,
             player_name       VARCHAR                   NOT NULL,
+            end_time_block    TIMESTAMP WITH TIME ZONE  NOT NULL,
+            last_club_id      BYTEA,
             quality           VARCHAR                   NOT NULL,  
             height            NUMERIC(16,2)             NOT NULL,
             weight            NUMERIC(16,2)             NOT NULL,

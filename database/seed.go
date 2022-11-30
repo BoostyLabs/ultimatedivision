@@ -414,7 +414,7 @@ func ListSquadByClubID(ctx context.Context, conn *sql.DB, clubID uuid.UUID) (clu
 func (seedDB *SeedDB) CreateMatches(ctx context.Context, conn *sql.DB, matchesConfig matches.Config, cardsConfig cards.Config) error {
 	usersService := users.NewService(seedDB.users)
 	cardsService := cards.NewService(seedDB.cards, cardsConfig)
-	clubsService := clubs.NewService(seedDB.clubs, usersService, cardsService, seedDB.divisions)
+	clubsService := clubs.NewService(seedDB.clubs, usersService, cardsService, seedDB.divisions, seedDB.cards)
 	matchesService := matches.NewService(seedDB.matches, matchesConfig, clubsService, cardsService)
 
 	type player struct {
