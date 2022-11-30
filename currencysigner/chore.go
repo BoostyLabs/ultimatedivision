@@ -69,32 +69,32 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 
 			var (
 				signature           evmsignature.Signature
-				smartContract       signer.Address
-				casperTokenContract signer.Address
+				smartContract       common.Address
+				casperTokenContract string
 				casperContract      string
 				casperWallet        string
 			)
 
 			switch item.WalletType {
-			case string(users.WalletTypeETH):
-				smartContract = signer.Address(chore.config.UDTContractAddress.String())
-			case string(users.WalletTypeVelas):
-				smartContract = signer.Address(chore.config.VelasSmartContractAddress.String())
-			case string(users.WalletTypeCasper):
+			case users.WalletTypeETH:
+				smartContract = chore.config.UDTContractAddress
+			case users.WalletTypeVelas:
+				smartContract = chore.config.VelasSmartContractAddress
+			case users.WalletTypeCasper:
 				casperContract = chore.config.CasperSmartContractAddress
-				casperTokenContract = signer.Address(chore.config.CasperTokenContract)
+				casperTokenContract = chore.config.CasperTokenContract
 				casperWallet = item.WalletAddress.String()
 			}
 
 			if casperContract != "" {
 				signature, err = signer.GenerateCasperSignatureWithValueAndNonce(signer.Address(casperWallet),
-					casperTokenContract, &item.Value, item.Nonce, privateKeyECDSA)
+					signer.Address(casperTokenContract), &item.Value, item.Nonce, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
 			} else {
 				signature, err = signer.GenerateSignatureWithValueAndNonce(signer.Address(item.WalletAddress.String()),
-					smartContract, &item.Value, item.Nonce, privateKeyECDSA)
+					signer.Address(smartContract.String()), &item.Value, item.Nonce, privateKeyECDSA)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}

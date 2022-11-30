@@ -31,7 +31,7 @@ func TestCurrencycurrencywaitlist(t *testing.T) {
 
 	item2 := currencywaitlist.Item{
 		WalletAddress: common.HexToAddress("0x96216849c49358b10257cb55b28ea603c874b05e"),
-		WalletType:    string(users.WalletTypeCasper),
+		WalletType:    users.WalletTypeCasper,
 		Value:         *value,
 		Nonce:         2,
 		Signature:     "",
