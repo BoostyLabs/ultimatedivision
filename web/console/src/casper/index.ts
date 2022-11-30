@@ -8,6 +8,11 @@ import { CLValueBuilder, RuntimeArgs, CLPublicKey, DeployUtil, Signer } from 'ca
 
 import { CasperNetworkClient } from '@/api/casper';
 
+enum CasperRuntimeArgs {
+    SIGNATURE = 'signature',
+    TOKEN_ID = 'token_id'
+}
+
 /** Desctibes parameters for transaction */
 export class CasperTransactionIdentificators {
     /** Includes wallet address, and card id */
@@ -95,9 +100,8 @@ class CasperTransactionService {
             const nftWaitlist = await this.getTransaction(new CasperTransactionIdentificators(accountHashConverted, cardId));
 
             const runtimeArgs = RuntimeArgs.fromMap({
-                signature: CLValueBuilder.string(nftWaitlist.password),
-                /* eslint-disable */
-                token_id: CLValueBuilder.string(nftWaitlist.tokenId),
+                [CasperRuntimeArgs.SIGNATURE]: CLValueBuilder.string(nftWaitlist.password),
+                [CasperRuntimeArgs.TOKEN_ID]: CLValueBuilder.string(nftWaitlist.tokenId),
             });
 
             const isConnected = window.casperlabsHelper.isConnected();
