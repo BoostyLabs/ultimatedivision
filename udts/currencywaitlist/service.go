@@ -90,6 +90,12 @@ func (service *Service) GetByWalletAddressAndNonce(ctx context.Context, walletAd
 	return item, ErrCurrencyWaitlist.Wrap(err)
 }
 
+// GetNonce returns number of nonce.
+func (service *Service) GetNonce(ctx context.Context) (int64, error) {
+	nonce, err := service.currencyWaitList.GetNonce(ctx)
+	return nonce, ErrCurrencyWaitlist.Wrap(err)
+}
+
 // List returns items of currency wait list.
 func (service *Service) List(ctx context.Context) ([]Item, error) {
 	items, err := service.currencyWaitList.List(ctx)

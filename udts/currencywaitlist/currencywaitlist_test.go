@@ -55,6 +55,13 @@ func TestCurrencycurrencywaitlist(t *testing.T) {
 			compareItem(t, item, item1)
 		})
 
+		t.Run("GetNonce", func(t *testing.T) {
+			nonce, err := repositoryCurrencyWaitList.GetNonce(ctx)
+			require.NoError(t, err)
+
+			assert.Equal(t, item2.Nonce, nonce)
+		})
+
 		t.Run("List", func(t *testing.T) {
 			itemList, err := repositoryCurrencyWaitList.List(ctx)
 			require.NoError(t, err)
