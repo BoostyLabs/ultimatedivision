@@ -27,11 +27,13 @@ type DB interface {
 	GetByWalletAddressAndNonce(ctx context.Context, walletAddress common.Address, nonce int64) (Item, error)
 	// List returns items of currency waitlist from database.
 	List(ctx context.Context) ([]Item, error)
+	// GetNonce returns number of nonce. from database.
+	GetNonce(ctx context.Context) (int64, error)
 	// ListWithoutSignature returns items of currency waitlist without signature from database.
 	ListWithoutSignature(ctx context.Context) ([]Item, error)
 	// Update updates item by wallet address and nonce in the database.
 	Update(ctx context.Context, item Item) error
-	// Update updates signature of item by wallet address and nonce in the database.
+	// UpdateSignature updates signature of item by wallet address and nonce in the database.
 	UpdateSignature(ctx context.Context, signature evmsignature.Signature, walletAddress common.Address, nonce int64) error
 	// Delete deletes item of currency waitlist by wallet address and nonce in the database.
 	Delete(ctx context.Context, walletAddress common.Address, nonce int64) error

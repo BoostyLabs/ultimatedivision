@@ -438,10 +438,25 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 			}
 		}
 
-		if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value, request.Nonce); err != nil {
-			chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
-			return
+		switch request.WalletType {
+		case users.WalletTypeCasper:
+			nonce, err := chore.currencywaitlist.GetNonce(ctx)
+			if err != nil {
+				chore.log.Error("could not get nonce number from currencywaitlist", ChoreError.Wrap(err))
+				return
+			}
+			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value, nonce+1); err != nil {
+				chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
+				return
+			}
+		default:
+			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value, request.Nonce); err != nil {
+				chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
+				return
+			}
+
 		}
+
 	}
 	chore.Finish(winResult.Client, winResult.GameResult)
 }

@@ -56,6 +56,19 @@ func (currencywaitlistDB *currencywaitlistDB) GetByWalletAddressAndNonce(ctx con
 	return item, ErrCurrencyWaitlist.Wrap(err)
 }
 
+// GetNonce returns number of nonce. from database.
+func (currencywaitlistDB *currencywaitlistDB) GetNonce(ctx context.Context) (int64, error) {
+	var nonce int64
+	query := `SELECT MAX(DISTINCT nonce) FROM currency_waitlist`
+
+	err := currencywaitlistDB.conn.QueryRowContext(ctx, query).Scan(&nonce)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nonce, currencywaitlist.ErrNoItem.Wrap(err)
+	}
+
+	return nonce, ErrCurrencyWaitlist.Wrap(err)
+}
+
 // List returns items of currency waitlist from database.
 func (currencywaitlistDB *currencywaitlistDB) List(ctx context.Context) ([]currencywaitlist.Item, error) {
 	var (
