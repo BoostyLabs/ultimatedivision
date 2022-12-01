@@ -122,6 +122,7 @@ func (service *Service) CasperCreate(ctx context.Context, userID uuid.UUID, valu
 				Signature:           item.Signature,
 				CasperTokenContract: service.config.CasperTokenContract,
 				Value:               item.Value.String(),
+				Nonce:               item.Nonce,
 			}
 			break
 		}

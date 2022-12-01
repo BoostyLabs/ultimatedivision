@@ -65,6 +65,7 @@ type CasperTransaction struct {
 	Signature           evmsignature.Signature `json:"signature"`
 	CasperTokenContract evmsignature.Contract  `json:"casperTokenContract"`
 	Value               string                 `json:"value"`
+	Nonce               int64                  `json:"nonce"`
 }
 
 // Config defines values needed by mint udt tokens in blockchain.

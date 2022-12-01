@@ -405,6 +405,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	winResult.GameResult.Question = "do you allow us to take your address?"
 	winResult.GameResult.Transaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
 	winResult.GameResult.Transaction.UDTContract.Address = chore.config.UDTContract.Address
+	winResult.GameResult.CasperTransaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
 	winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.config.CasperTokenContract.Address
 	if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 		chore.log.Error("could not write json", ChoreError.Wrap(err))
