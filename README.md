@@ -264,6 +264,8 @@ For this you need to have a football command on they field
 and click play
 ![img_9.png](img_9.png)
 your command will be wait to another player, when he appears, you will be asked if you want to play a game
+
 ![img_10.png](img_10.png)
+
 press "Accept" and the game will start, after the game is over you will receive the result, if it is a win, you can collect gift tokens
 ![img_11.png](img_11.png)
