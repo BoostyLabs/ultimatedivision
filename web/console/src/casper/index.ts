@@ -13,6 +13,7 @@ enum CasperRuntimeArgs {
     TOKEN_ID = 'token_id'
 }
 
+
 /** Desctibes parameters for transaction */
 export class CasperTransactionIdentificators {
     /** Includes wallet address, and card id */
@@ -76,7 +77,6 @@ class CasperTransactionService {
 
             const deployJson = DeployUtil.deployToJson(deploy);
 
-
             const signature = await window.casperlabsHelper.sign(deployJson, this.walletAddress, contractAddress);
 
             return signature;
@@ -121,8 +121,23 @@ class CasperTransactionService {
             });
         }
     }
-    async mintUDT() {
+
+    /** Mints a token */
+    async mintUDT(transaction:any): Promise<void> {
         try {
+            const runtimeArgs = RuntimeArgs.fromMap({
+                'signature': CLValueBuilder.string(transaction.signature),
+                'value': CLValueBuilder.u256(transaction.value),
+                'nonce': CLValueBuilder.u256(transaction.nonce),
+            });
+
+            const isConnected = window.casperlabsHelper.isConnected();
+
+            if (!isConnected) {
+                await window.casperlabsHelper.requestConnection();
+            }
+
+            const signature = await this.contractSign('claim', runtimeArgs, this.paymentAmount, transaction.casperTokenContract.address);
         }
         catch (e) {
             toast.error('Something went wrong', {
