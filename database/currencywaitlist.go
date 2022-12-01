@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/zeebo/errs"

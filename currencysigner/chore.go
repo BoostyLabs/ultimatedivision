@@ -5,9 +5,7 @@ package currencysigner
 
 import (
 	"context"
-	"fmt"
 	"time"
-	"ultimatedivision/pkg/signer"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
@@ -16,6 +14,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/pkg/signer"
 	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
 )
@@ -88,8 +87,6 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			}
 
 			if casperContract != "" {
-				fmt.Println(signer.Address(casperWallet),
-					signer.Address(casperTokenContract), &item.Value, item.Nonce, privateKeyECDSA)
 				signature, err = signer.GenerateCasperSignatureWithValueAndNonce(signer.Address(casperWallet),
 					signer.Address(casperTokenContract), &item.Value, item.Nonce, privateKeyECDSA)
 				if err != nil {
