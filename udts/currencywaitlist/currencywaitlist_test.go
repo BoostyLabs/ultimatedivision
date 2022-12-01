@@ -7,7 +7,6 @@ import (
 	"context"
 	"math/big"
 	"testing"
-	"ultimatedivision/users"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
@@ -17,6 +16,7 @@ import (
 	"ultimatedivision"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/udts/currencywaitlist"
+	"ultimatedivision/users"
 )
 
 func TestCurrencycurrencywaitlist(t *testing.T) {
