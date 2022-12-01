@@ -41,6 +41,13 @@ func TestCurrencycurrencywaitlist(t *testing.T) {
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
 		repositoryCurrencyWaitList := db.CurrencyWaitList()
 
+		t.Run("GetNonce without any entries", func(t *testing.T) {
+			nonce, err := repositoryCurrencyWaitList.GetNonce(ctx)
+			require.NoError(t, err)
+
+			assert.Equal(t, int64(0), nonce)
+		})
+
 		t.Run("Create", func(t *testing.T) {
 			err := repositoryCurrencyWaitList.Create(ctx, item1)
 			require.NoError(t, err)
