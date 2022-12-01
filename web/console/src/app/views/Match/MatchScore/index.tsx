@@ -159,10 +159,9 @@ export const MatchScore: React.FC = () => {
     };
 
     const casperMint = (message: any) => {
-        console.log(message);
 
         const casperTransactionService = new CasperTransactionService(user.casperWallet);
-        casperTransactionService.mintUDT();
+        casperTransactionService.mintUDT(message);
     };
 
     const metamaskMint = (message:MatchTransaction) => {
@@ -173,7 +172,6 @@ export const MatchScore: React.FC = () => {
         queueClient.ws.onmessage = async({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
 
-            console.log(messageEvent);
             const user = await usersService.getUser();
 
             const mintingNfts = new Map();
