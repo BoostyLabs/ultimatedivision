@@ -445,8 +445,8 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 				chore.log.Error("could not get nonce number from currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
-			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value, nonce+1); err != nil {
-				chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
+			if winResult.GameResult.CasperTransaction, err = chore.currencywaitlist.CasperCreate(ctx, user.ID, *winResult.Value, nonce+1); err != nil {
+				chore.log.Error("could not create casper item of currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
 		default:

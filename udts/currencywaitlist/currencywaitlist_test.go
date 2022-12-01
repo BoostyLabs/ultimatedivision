@@ -23,10 +23,11 @@ func TestCurrencycurrencywaitlist(t *testing.T) {
 	var value = new(big.Int)
 	value.SetString("5000000000000000000", 10)
 	item1 := currencywaitlist.Item{
-		WalletAddress: common.HexToAddress("0x96216849c49358b10257cb55b28ea603c874b05e"),
-		Value:         *value,
-		Nonce:         1,
-		Signature:     "",
+		WalletAddress:       common.HexToAddress("0x96216849c49358b10257cb55b28ea603c874b05e"),
+		CasperWalletAddress: "0202b2a13f20e71016aa8bbca5fbc1cca56af4092c926490e65dcfab2168ab051c92",
+		Value:               *value,
+		Nonce:               1,
+		Signature:           "",
 	}
 
 	item2 := currencywaitlist.Item{
@@ -50,6 +51,13 @@ func TestCurrencycurrencywaitlist(t *testing.T) {
 
 		t.Run("GetByWalletAddressAndNonce", func(t *testing.T) {
 			item, err := repositoryCurrencyWaitList.GetByWalletAddressAndNonce(ctx, item1.WalletAddress, item1.Nonce)
+			require.NoError(t, err)
+
+			compareItem(t, item, item1)
+		})
+
+		t.Run("GetByCasperWalletAddressAndNonce", func(t *testing.T) {
+			item, err := repositoryCurrencyWaitList.GetByCasperWalletAddressAndNonce(ctx, item1.CasperWalletAddress, item1.Nonce)
 			require.NoError(t, err)
 
 			compareItem(t, item, item1)

@@ -92,9 +92,19 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
+
+				err = chore.currencywaitlist.UpdateCasperSignature(ctx, signature, casperWallet, item.Nonce)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
 			} else {
 				signature, err = signer.GenerateSignatureWithValueAndNonce(signer.Address(item.WalletAddress.String()),
 					signer.Address(smartContract.String()), &item.Value, item.Nonce, privateKeyECDSA)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
+
+				err = chore.currencywaitlist.UpdateSignature(ctx, signature, item.WalletAddress, item.Nonce)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
@@ -104,10 +114,6 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				return ChoreError.Wrap(err)
 			}
 
-			err = chore.currencywaitlist.UpdateSignature(ctx, signature, item.WalletAddress, item.Nonce)
-			if err != nil {
-				return ChoreError.Wrap(err)
-			}
 		}
 
 		return ChoreError.Wrap(err)
