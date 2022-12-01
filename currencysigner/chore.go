@@ -5,6 +5,7 @@ package currencysigner
 
 import (
 	"context"
+	"fmt"
 	"time"
 	"ultimatedivision/pkg/signer"
 
@@ -83,10 +84,12 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			case users.WalletTypeCasper:
 				casperContract = chore.config.CasperSmartContractAddress
 				casperTokenContract = chore.config.CasperTokenContract
-				casperWallet = item.WalletAddress.String()
+				casperWallet = item.CasperWalletAddress
 			}
 
 			if casperContract != "" {
+				fmt.Println(signer.Address(casperWallet),
+					signer.Address(casperTokenContract), &item.Value, item.Nonce, privateKeyECDSA)
 				signature, err = signer.GenerateCasperSignatureWithValueAndNonce(signer.Address(casperWallet),
 					signer.Address(casperTokenContract), &item.Value, item.Nonce, privateKeyECDSA)
 				if err != nil {

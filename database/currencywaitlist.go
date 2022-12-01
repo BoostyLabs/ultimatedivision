@@ -7,7 +7,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/zeebo/errs"
@@ -78,7 +77,7 @@ func (currencywaitlistDB *currencywaitlistDB) GetByCasperWalletAddressAndNonce(c
 // GetNonce returns number of nonce. from database.
 func (currencywaitlistDB *currencywaitlistDB) GetNonce(ctx context.Context) (int64, error) {
 	var nonce int64
-	query := `SELECT MAX(DISTINCT nonce) FROM currency_waitlist`
+	query := `SELECT NULLIF(0, MAX(DISTINCT nonce)) FROM currency_waitlist`
 
 	err := currencywaitlistDB.conn.QueryRowContext(ctx, query).Scan(&nonce)
 	if errors.Is(err, sql.ErrNoRows) {
