@@ -259,7 +259,7 @@ Casper signer will open and after that press the sign
 ![img_7.png](img_7.png)
 your card is minted!
 * * __token__:In the app, the user can win the tokens and get it by Casper(you have to run the Currency signer):
-For this you need to have a football command on they field
+For this you need to have a football team on they field
 ![img_8.png](img_8.png)
 and click play
 ![img_9.png](img_9.png)
@@ -267,5 +267,5 @@ your command will be wait to another player, when he appears, you will be asked 
 
 ![img_10.png](img_10.png)
 
-press "Accept" and the game will start, after the game is over you will receive the result, if it is a win, you can collect gift tokens
+press "Accept" and the game will start, after the game is over you will receive the result, if it is a win, you can collect your reward tokens.
 ![img_11.png](img_11.png)
