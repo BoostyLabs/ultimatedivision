@@ -461,6 +461,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 				return
 			}
 			winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.config.CasperTokenContract.Address
+			winResult.GameResult.RPCNodeAddress = chore.config.RPCNodeAddress
 		default:
 			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value, request.Nonce); err != nil {
 				chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
