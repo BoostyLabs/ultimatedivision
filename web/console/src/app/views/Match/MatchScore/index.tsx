@@ -6,20 +6,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { toast } from 'react-toastify';
 
-import coin from '@static/img/match/money.svg';
-
 import { QueueClient } from '@/api/queue';
 import { UDT_ABI } from '@/app/ethers';
 import { RootState } from '@/app/store';
 import { ServicePlugin } from '@/app/plugins/service';
 import { getCurrentQueueClient, queueActionAllowAddress, queueCasperActionAllowAddress } from '@/queue/service';
+import { setCurrentUser } from '@/app/store/actions/users';
+import CasperTransactionService from '@/casper';
+
+import coin from '@static/img/match/money.svg';
 
 import './index.scss';
-import { setCurrentUser } from '@/app/store/actions/users';
-import { UsersClient } from '@/api/users';
-import { UsersService } from '@/users/service';
-import CasperTransactionService from '@/casper';
-import { MatchTransaction } from '@/matches';
 
 const VELAS_WALLET_TYPE = 'velas_wallet_address';
 const CASPER_WALLET_TYPE = 'casper_wallet_address';
@@ -28,14 +25,10 @@ const METAMASK_WALLET_TYPE = 'wallet_address';
 export const MatchScore: React.FC = () => {
     const dispatch = useDispatch();
 
-    const usersClient = new UsersClient();
-    const usersService = new UsersService(usersClient);
-
     const [queueClient, setQueueClient] = useState<QueueClient | null>(null);
 
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const service = ServicePlugin.create();
-
 
     const { squad } = useSelector(
         (state: RootState) => state.clubsReducer.activeClub
@@ -103,10 +96,9 @@ export const MatchScore: React.FC = () => {
         }
     };
 
-    const addCasperWallet = async() => {
+    /** Adds casper wallet address for earning reward. */
+    const addCasperWallet = () => {
         try {
-            const user = await usersService.getUser();
-
             const currentQueueClient = getCurrentQueueClient();
 
             setQueueClient(currentQueueClient);
@@ -121,14 +113,12 @@ export const MatchScore: React.FC = () => {
         }
     };
 
-    const addVelasWallet = async() => {
+    /** Adds velas wallet address for earning reward. */
+    const addVelasWallet = async() => {};
 
-    };
-
+    /** Adds wallets addresses for earning reward. */
     const addWallet = async() => {
         try {
-            const user = await usersService.getUser();
-
             const mintingNfts = new Map();
 
             const walletMintingTypes = [
@@ -149,7 +139,7 @@ export const MatchScore: React.FC = () => {
             walletMintingTypes.forEach(walletMintingType =>
                 mintingNfts.set(walletMintingType.walletType, walletMintingType.mint));
 
-            mintingNfts.get(user.walletType)();
+            await mintingNfts.get(user.walletType)();
         } catch (e) {
             toast.error('Something went wrong', {
                 position: toast.POSITION.TOP_RIGHT,
@@ -158,28 +148,31 @@ export const MatchScore: React.FC = () => {
         }
     };
 
-    const casperMint = (message: any) => {
-
+    /** Mints token with casper wallet. */
+    const casperMint = async(message: any) => {
         const casperTransactionService = new CasperTransactionService(user.casperWallet);
-        casperTransactionService.mintUDT(message);
+
+        await casperTransactionService.mintUDT(message.message.casperTransaction, message.message.rpcNodeAddress);
     };
 
-    const metamaskMint = (message:MatchTransaction) => {
-        service.mintUDT(message);
+    /** Mints token with metamask wallet. */
+    const metamaskMint = async(message: any) => {
+        await service.mintUDT(message.message.transaction);
     };
+
+    /** Mints token with velas wallet. */
+    const velasMint = () => {};
 
     if (queueClient) {
         queueClient.ws.onmessage = async({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
-
-            const user = await usersService.getUser();
 
             const mintingNfts = new Map();
 
             const walletMintingTypes = [
                 {
                     walletType: VELAS_WALLET_TYPE,
-                    mint: addVelasWallet,
+                    mint: velasMint,
                 },
                 {
                     walletType: CASPER_WALLET_TYPE,
@@ -194,7 +187,7 @@ export const MatchScore: React.FC = () => {
             walletMintingTypes.forEach(walletMintingType =>
                 mintingNfts.set(walletMintingType.walletType, walletMintingType.mint));
 
-            await mintingNfts.get(user.walletType)(messageEvent.message.transaction);
+            await mintingNfts.get(user.walletType)(messageEvent);
         };
     }
 

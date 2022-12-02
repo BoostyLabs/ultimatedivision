@@ -7,12 +7,12 @@ import { JsonTypes } from 'typedjson';
 import { CLValueBuilder, RuntimeArgs, CLPublicKey, DeployUtil, Signer } from 'casper-js-sdk';
 
 import { CasperNetworkClient } from '@/api/casper';
+import { CasperMatchTransaction } from '@/matches';
 
 enum CasperRuntimeArgs {
     SIGNATURE = 'signature',
     TOKEN_ID = 'token_id'
 }
-
 
 /** Desctibes parameters for transaction */
 export class CasperTransactionIdentificators {
@@ -123,12 +123,12 @@ class CasperTransactionService {
     }
 
     /** Mints a token */
-    async mintUDT(transaction:any): Promise<void> {
+    async mintUDT(transaction: CasperMatchTransaction, rpcNodeAddress: string): Promise<void> {
         try {
             const runtimeArgs = RuntimeArgs.fromMap({
                 'signature': CLValueBuilder.string(transaction.signature),
                 'value': CLValueBuilder.u256(transaction.value),
-                'nonce': CLValueBuilder.u256(transaction.nonce),
+                'nonce': CLValueBuilder.u64(transaction.nonce),
             });
 
             const isConnected = window.casperlabsHelper.isConnected();
@@ -138,9 +138,11 @@ class CasperTransactionService {
             }
 
             const signature = await this.contractSign('claim', runtimeArgs, this.paymentAmount, transaction.casperTokenContract.address);
+
+            await this.client.claim(rpcNodeAddress, JSON.stringify(signature));
         }
         catch (e) {
-            toast.error('Something went wrong', {
+            toast.error('Invalid transactiob', {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
