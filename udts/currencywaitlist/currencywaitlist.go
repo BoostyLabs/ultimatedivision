@@ -7,11 +7,12 @@ import (
 	"context"
 	"math/big"
 	"time"
-	"ultimatedivision/users"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/users"
 )
 
 // ErrNoItem indicates that item of currency wait list does not exist.
@@ -35,6 +36,8 @@ type DB interface {
 	ListWithoutSignature(ctx context.Context) ([]Item, error)
 	// Update updates item by wallet address and nonce in the database.
 	Update(ctx context.Context, item Item) error
+	// UpdateNonceByWallet updates nonce by wallet address in the database.
+	UpdateNonceByWallet(ctx context.Context, nonce int64, casperWallet string) error
 	// UpdateSignature updates signature of item by wallet address and nonce in the database.
 	UpdateSignature(ctx context.Context, signature evmsignature.Signature, walletAddress common.Address, nonce int64) error
 	// UpdateCasperSignature updates casper signature of item by wallet address and nonce in the database.

@@ -149,6 +149,12 @@ func (service *Service) GetNonce(ctx context.Context) (int64, error) {
 	return nonce, ErrCurrencyWaitlist.Wrap(err)
 }
 
+// UpdateNonceByWallet updates number of nonce.
+func (service *Service) UpdateNonceByWallet(ctx context.Context, nonce int64, casperWallet string) error {
+	err := service.currencyWaitList.UpdateNonceByWallet(ctx, nonce, casperWallet)
+	return ErrCurrencyWaitlist.Wrap(err)
+}
+
 // List returns items of currency wait list.
 func (service *Service) List(ctx context.Context) ([]Item, error) {
 	items, err := service.currencyWaitList.List(ctx)

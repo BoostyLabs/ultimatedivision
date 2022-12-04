@@ -165,6 +165,25 @@ func (currencywaitlistDB *currencywaitlistDB) Update(ctx context.Context, item c
 	return ErrCurrencyWaitlist.Wrap(err)
 }
 
+// UpdateNonceByWallet updates item by wallet address and nonce in the database.
+func (currencywaitlistDB *currencywaitlistDB) UpdateNonceByWallet(ctx context.Context, nonce int64, casperWallet string) error {
+	query := `UPDATE currency_waitlist
+	          SET nonce = $1
+	          WHERE casper_wallet_address = $2`
+
+	result, err := currencywaitlistDB.conn.ExecContext(ctx, query, nonce, casperWallet)
+	if err != nil {
+		return ErrCurrencyWaitlist.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if err == nil && rowNum == 0 {
+		return currencywaitlist.ErrNoItem.New("item does not exist")
+	}
+
+	return ErrCurrencyWaitlist.Wrap(err)
+}
+
 // UpdateSignature updates signature of item by wallet address and nonce in the database.
 func (currencywaitlistDB *currencywaitlistDB) UpdateSignature(ctx context.Context, signature evmsignature.Signature, walletAddress common.Address, nonce int64) error {
 	query := `UPDATE currency_waitlist
