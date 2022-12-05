@@ -3,8 +3,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import MetaMaskOnboarding from '@metamask/onboarding';
 import { toast } from 'react-toastify';
+import MetaMaskOnboarding from '@metamask/onboarding';
 
 import { QueueClient } from '@/api/queue';
 import { UDT_ABI } from '@/app/ethers';
@@ -28,11 +28,10 @@ export const MatchScore: React.FC = () => {
     const [queueClient, setQueueClient] = useState<QueueClient | null>(null);
 
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
+
     const service = ServicePlugin.create();
 
-    const { squad } = useSelector(
-        (state: RootState) => state.clubsReducer.activeClub
-    );
+    const { squad } = useSelector((state: RootState) => state.clubsReducer.activeClub);
 
     const { matchResults, transaction } = useSelector((state: RootState) => state.matchesReducer);
 
@@ -48,7 +47,7 @@ export const MatchScore: React.FC = () => {
     /** Variable describes that it needs alllow to add address or forbid add adress. */
     const CONFIRM_ADD_WALLET: string = 'do you allow us to take your address?';
 
-    /** implements opening new card */
+    /** sets user info */
     async function setUser() {
         try {
             await dispatch(setCurrentUser());
@@ -119,9 +118,9 @@ export const MatchScore: React.FC = () => {
     /** Adds wallets addresses for earning reward. */
     const addWallet = async() => {
         try {
-            const mintingNfts = new Map();
+            const addingWallets = new Map();
 
-            const walletMintingTypes = [
+            const addingWalletsTypes = [
                 {
                     walletType: VELAS_WALLET_TYPE,
                     mint: addVelasWallet,
@@ -136,12 +135,12 @@ export const MatchScore: React.FC = () => {
                 },
             ];
 
-            walletMintingTypes.forEach(walletMintingType =>
-                mintingNfts.set(walletMintingType.walletType, walletMintingType.mint));
+            addingWalletsTypes.forEach(addingWalletsType =>
+                addingWallets.set(addingWalletsType.walletType, addingWalletsType.mint));
 
-            await mintingNfts.get(user.walletType)();
+            await addingWallets.get(user.walletType)();
         } catch (e) {
-            toast.error('Something went wrong', {
+            toast.error('Invalid transaction', {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
@@ -149,15 +148,15 @@ export const MatchScore: React.FC = () => {
     };
 
     /** Mints token with casper wallet. */
-    const casperMint = async(message: any) => {
+    const casperMint = async(messageEvent: any) => {
         const casperTransactionService = new CasperTransactionService(user.casperWallet);
 
-        await casperTransactionService.mintUDT(message.message.casperTransaction, message.message.rpcNodeAddress);
+        await casperTransactionService.mintUDT(messageEvent.message.casperTransaction, messageEvent.message.rpcNodeAddress);
     };
 
     /** Mints token with metamask wallet. */
-    const metamaskMint = async(message: any) => {
-        await service.mintUDT(message.message.transaction);
+    const metamaskMint = async(messageEvent: any) => {
+        await service.mintUDT(messageEvent.message.transaction);
     };
 
     /** Mints token with velas wallet. */
@@ -167,9 +166,9 @@ export const MatchScore: React.FC = () => {
         queueClient.ws.onmessage = async({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
 
-            const mintingNfts = new Map();
+            const mintingTokens = new Map();
 
-            const walletMintingTypes = [
+            const mintingTokensTypes = [
                 {
                     walletType: VELAS_WALLET_TYPE,
                     mint: velasMint,
@@ -184,13 +183,12 @@ export const MatchScore: React.FC = () => {
                 },
             ];
 
-            walletMintingTypes.forEach(walletMintingType =>
-                mintingNfts.set(walletMintingType.walletType, walletMintingType.mint));
+            mintingTokensTypes.forEach(mintingTokensType =>
+                mintingTokens.set(mintingTokensType.walletType, mintingTokensType.mint));
 
-            await mintingNfts.get(user.walletType)(messageEvent);
+            await mintingTokens.get(user.walletType)(messageEvent);
         };
     }
-
 
     useEffect(() => {
         setUser();

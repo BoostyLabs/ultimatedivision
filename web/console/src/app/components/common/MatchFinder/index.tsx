@@ -89,6 +89,7 @@ const MatchFinder: React.FC = () => {
     /** Exposes start searching match logic. */
     const startSearchMatch = () => {
         onOpenConnectionSendAction('startSearch', squad.id);
+
         /** Updates current queue client. */
         const newclient = getCurrentQueueClient();
         setQueueClient(newclient);

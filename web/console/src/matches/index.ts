@@ -48,7 +48,6 @@ export class CasperMatchTransaction {
     ) { }
 };
 
-
 /** Match exposes match domain entity. */
 export class Match {
     /** Contains of matchResults, transaction and question. */

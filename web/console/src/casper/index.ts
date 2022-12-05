@@ -142,7 +142,7 @@ class CasperTransactionService {
             await this.client.claim(rpcNodeAddress, JSON.stringify(signature));
         }
         catch (e) {
-            toast.error('Invalid transactiob', {
+            toast.error('Invalid transaction', {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
