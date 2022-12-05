@@ -132,6 +132,13 @@ func TestCurrencycurrencywaitlist(t *testing.T) {
 		t.Run("UpdateNonceByWallet", func(t *testing.T) {
 			err := repositoryCurrencyWaitList.UpdateNonceByWallet(ctx, 5, item2.CasperWalletAddress)
 			require.NoError(t, err)
+
+			item2.Nonce = 5
+			itemList, err := repositoryCurrencyWaitList.List(ctx)
+			require.NoError(t, err)
+
+			compareItemsSlice(t, itemList, []currencywaitlist.Item{item2})
+			require.NoError(t, err)
 		})
 	})
 }
