@@ -139,7 +139,7 @@ class CasperTransactionService {
 
             const signature = await this.contractSign('claim', runtimeArgs, this.paymentAmount, transaction.casperTokenContract.address);
 
-            await this.client.claim(rpcNodeAddress, JSON.stringify(signature));
+            await this.client.claim(rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
         }
         catch (e) {
             toast.error('Invalid transaction', {
