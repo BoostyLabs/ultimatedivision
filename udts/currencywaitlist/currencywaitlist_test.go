@@ -24,22 +24,30 @@ func TestCurrencycurrencywaitlist(t *testing.T) {
 	value.SetString("5000000000000000000", 10)
 	item1 := currencywaitlist.Item{
 		WalletAddress:       common.HexToAddress("0x96216849c49358b10257cb55b28ea603c874b05e"),
-		CasperWalletAddress: "0202b2a13f20e71016aa8bbca5fbc1cca56af4092c926490e65dcfab2168ab051c92",
+		CasperWalletAddress: "0202b2a13f20e71016aa8bbca5fbc1cca56af4092c926490e65dcfab2168ab051c42",
 		Value:               *value,
 		Nonce:               1,
 		Signature:           "",
 	}
 
 	item2 := currencywaitlist.Item{
-		WalletAddress: common.HexToAddress("0x96216849c49358b10257cb55b28ea603c874b05e"),
-		WalletType:    users.WalletTypeCasper,
-		Value:         *value,
-		Nonce:         2,
-		Signature:     "",
+		WalletAddress:       common.HexToAddress("0x96216849c49358b10257cb55b28ea603c874b05e"),
+		CasperWalletAddress: "0202b2a13f20e71016aa8bbca5fbc1cca56af4092c926490e65dcfab2168ab051c92",
+		WalletType:          users.WalletTypeCasper,
+		Value:               *value,
+		Nonce:               2,
+		Signature:           "",
 	}
 
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
 		repositoryCurrencyWaitList := db.CurrencyWaitList()
+
+		t.Run("GetNonce without any entries", func(t *testing.T) {
+			nonce, err := repositoryCurrencyWaitList.GetNonce(ctx)
+			require.NoError(t, err)
+
+			assert.Equal(t, int64(0), nonce)
+		})
 
 		t.Run("Create", func(t *testing.T) {
 			err := repositoryCurrencyWaitList.Create(ctx, item1)
@@ -119,6 +127,17 @@ func TestCurrencycurrencywaitlist(t *testing.T) {
 			require.NoError(t, err)
 
 			compareItemsSlice(t, itemList, []currencywaitlist.Item{item2})
+		})
+
+		t.Run("UpdateNonceByWallet", func(t *testing.T) {
+			err := repositoryCurrencyWaitList.UpdateNonceByWallet(ctx, 5, item2.CasperWalletAddress)
+
+			item2.Nonce = 5
+			itemList, err := repositoryCurrencyWaitList.List(ctx)
+			require.NoError(t, err)
+
+			compareItemsSlice(t, itemList, []currencywaitlist.Item{item2})
+			require.NoError(t, err)
 		})
 	})
 }

@@ -405,6 +405,8 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	winResult.GameResult.Question = "do you allow us to take your address?"
 	winResult.GameResult.Transaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
 	winResult.GameResult.Transaction.UDTContract.Address = chore.config.UDTContract.Address
+	winResult.GameResult.CasperTransaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
+	winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.config.CasperTokenContract.Address
 	if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 		chore.log.Error("could not write json", ChoreError.Wrap(err))
 		return
@@ -431,10 +433,19 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 			}
 		}
 
-		if err = chore.users.UpdateWalletAddress(ctx, common.HexToAddress(string(request.WalletAddress)), winResult.Client.UserID, request.WalletType); err != nil {
-			if !users.ErrWalletAddressAlreadyInUse.Has(err) {
-				chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
-				return
+		if user.WalletType == users.WalletTypeCasper {
+			if err = chore.users.UpdateCasperWalletAddress(ctx, request.CasperWallet, winResult.Client.UserID, request.WalletType); err != nil {
+				if !users.ErrWalletAddressAlreadyInUse.Has(err) {
+					chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
+					return
+				}
+			}
+		} else {
+			if err = chore.users.UpdateWalletAddress(ctx, common.HexToAddress(string(request.WalletAddress)), winResult.Client.UserID, request.WalletType); err != nil {
+				if !users.ErrWalletAddressAlreadyInUse.Has(err) {
+					chore.log.Error("could not update user's wallet address", ChoreError.Wrap(err))
+					return
+				}
 			}
 		}
 
@@ -445,10 +456,12 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 				chore.log.Error("could not get nonce number from currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
-			if winResult.GameResult.CasperTransaction, err = chore.currencywaitlist.CasperCreate(ctx, user.ID, *winResult.Value, nonce+1); err != nil {
+			if winResult.GameResult.CasperTransaction, err = chore.currencywaitlist.CasperCreate(ctx, user.ID, *winResult.Value, nonce); err != nil {
 				chore.log.Error("could not create casper item of currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
+			winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.config.CasperTokenContract.Address
+			winResult.GameResult.RPCNodeAddress = chore.config.RPCNodeAddress
 		default:
 			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value, request.Nonce); err != nil {
 				chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
@@ -456,7 +469,6 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 			}
 
 		}
-
 	}
 	chore.Finish(winResult.Client, winResult.GameResult)
 }

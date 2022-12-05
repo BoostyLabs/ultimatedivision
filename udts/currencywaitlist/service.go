@@ -122,6 +122,7 @@ func (service *Service) CasperCreate(ctx context.Context, userID uuid.UUID, valu
 				Signature:           item.Signature,
 				CasperTokenContract: service.config.CasperTokenContract,
 				Value:               item.Value.String(),
+				Nonce:               item.Nonce,
 			}
 			break
 		}
@@ -146,6 +147,12 @@ func (service *Service) GetByCasperWalletAddressAndNonce(ctx context.Context, ca
 func (service *Service) GetNonce(ctx context.Context) (int64, error) {
 	nonce, err := service.currencyWaitList.GetNonce(ctx)
 	return nonce, ErrCurrencyWaitlist.Wrap(err)
+}
+
+// UpdateNonceByWallet updates number of nonce.
+func (service *Service) UpdateNonceByWallet(ctx context.Context, nonce int64, casperWallet string) error {
+	err := service.currencyWaitList.UpdateNonceByWallet(ctx, nonce, casperWallet)
+	return ErrCurrencyWaitlist.Wrap(err)
 }
 
 // List returns items of currency wait list.

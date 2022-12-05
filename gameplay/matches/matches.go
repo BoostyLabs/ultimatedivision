@@ -147,6 +147,7 @@ type GameResult struct {
 	Transaction       currencywaitlist.Transaction       `json:"transaction"`
 	CasperTransaction currencywaitlist.CasperTransaction `json:"casperTransaction"`
 	Question          string                             `json:"question"`
+	RPCNodeAddress    string                             `json:"rpcNodeAddress"`
 }
 
 // Swap swaps match results.

@@ -83,7 +83,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			case users.WalletTypeCasper:
 				casperContract = chore.config.CasperSmartContractAddress
 				casperTokenContract = chore.config.CasperTokenContract
-				casperWallet = item.WalletAddress.String()
+				casperWallet = item.CasperWalletAddress
 			}
 
 			if casperContract != "" {
