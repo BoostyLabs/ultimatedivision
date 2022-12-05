@@ -19,14 +19,14 @@ var (
 // ContractCasper is a mvc controller that handles all contract casper related views.
 type ContractCasper struct {
 	log              logger.Logger
-	currencywaitlist *currencywaitlist.Service
+	currencyWaitlist *currencywaitlist.Service
 }
 
 // NewContractCasper constructor for contract.
-func NewContractCasper(log logger.Logger, currencywaitlist *currencywaitlist.Service) *ContractCasper {
+func NewContractCasper(log logger.Logger, currencyWaitlist *currencywaitlist.Service) *ContractCasper {
 	return &ContractCasper{
 		log:              log,
-		currencywaitlist: currencywaitlist,
+		currencyWaitlist: currencyWaitlist,
 	}
 }
 
@@ -45,16 +45,17 @@ func (contract *ContractCasper) Claim(w http.ResponseWriter, r *http.Request) {
 		contract.serveError(w, http.StatusInternalServerError, ErrContractCasper.Wrap(err))
 		return
 	}
+
 	if req.CasperWalletAddress != "" {
-		nonce, err := contract.currencywaitlist.GetNonce(ctx)
+		nonce, err := contract.currencyWaitlist.GetNonce(ctx)
 		if err != nil {
-			contract.log.Error("could not get nonce number from currencywaitlist", ErrContractCasper.Wrap(err))
+			contract.log.Error("could not get nonce number from currencyWaitlist", ErrContractCasper.Wrap(err))
 			return
 		}
 
-		err = contract.currencywaitlist.UpdateNonceByWallet(ctx, nonce, req.CasperWalletAddress)
+		err = contract.currencyWaitlist.UpdateNonceByWallet(ctx, nonce, req.CasperWalletAddress)
 		if err != nil {
-			contract.log.Error("could update nonce number in currencywaitlist", ErrContractCasper.Wrap(err))
+			contract.log.Error("could update nonce number in currencyWaitlist", ErrContractCasper.Wrap(err))
 			return
 		}
 	}
