@@ -18,9 +18,8 @@ var ErrContract = errs.Class("contract package")
 
 // ClaimRequest describes values to initiate inbound claim transaction.
 type ClaimRequest struct {
-	Deploy              string
-	RPCNodeAddress      string
-	CasperWalletAddress string
+	Deploy         string
+	RPCNodeAddress string
 }
 
 // StringNetworkAddress describes an address for some network.
