@@ -139,9 +139,6 @@ class CasperTransactionService {
                 await window.casperlabsHelper.requestConnection();
             }
 
-            console.log('transaction', transaction)
-            console.log(this.walletAddress)
-            console.log(rpcNodeAddress)
             const signature = await this.contractSign('claim', runtimeArgs, TOKEN_PAYMENT_AMOUNT, transaction.casperTokenContract.address);
 
             await this.client.claim(rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
