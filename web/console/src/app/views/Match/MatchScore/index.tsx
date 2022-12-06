@@ -109,7 +109,7 @@ export const MatchScore: React.FC = () => {
             const accountHashConverted = accountHash.replace(ACCOUNT_HASH_PREFIX, '');
 
             queueCasperActionAllowAddress(accountHashConverted, user.walletType, squad.id);
-        } 
+        }
         catch (error: any) {
             toast.error('Something went wrong', {
                 position: toast.POSITION.TOP_RIGHT,
