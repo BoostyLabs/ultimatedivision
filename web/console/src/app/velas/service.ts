@@ -3,6 +3,7 @@
 
 import { VelasClient } from '../../api/velas';
 import { VelasData } from '@/app/types/velas';
+import { TransactionIdentificators } from '../ethers';
 
 /**
  * Exposes all velas wallet related logic.
@@ -16,7 +17,7 @@ export class VelasService {
     }
 
     /** Gets transaction from api */
-    public async getTransaction(signature: any): Promise<any> {
+    public async getTransaction(signature: TransactionIdentificators): Promise<any> {
         await this.velasWallet.getTransaction(signature);
     }
 

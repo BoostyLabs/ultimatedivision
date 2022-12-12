@@ -11,7 +11,6 @@ import { UsersService } from '@/users/service';
 export const REGISTER = 'REGISTER';
 export const LOGIN = 'LOGIN';
 export const SET_USER = 'SET_USER';
-
 /** register action contains type and data for user registration */
 export const register = (user: User) => ({
     type: REGISTER,

@@ -565,6 +565,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.WaitList.Service,
 			peer.Store.Service,
 			peer.Metric.Service,
+			peer.CurrencyWaitList.Service,
 		)
 	}
 
@@ -588,11 +589,10 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
 	})
-	// TODO: commented while fixing bug with matches.
-	// group.Go(func() error {
-	// 	return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
-	// })
-	// TODO: uncomment when the Ethereum node is running.
+	group.Go(func() error {
+		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
+	})
+	// TODO: uncomment when the Ethereum node is running
 	// group.Go(func() error {
 	// 	return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
 	// })

@@ -28,6 +28,7 @@ import (
 	"ultimatedivision/seasons"
 	"ultimatedivision/store"
 	"ultimatedivision/store/lootboxes"
+	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
 	"ultimatedivision/users/userauth"
 )
@@ -71,7 +72,7 @@ type Server struct {
 // NewServer is a constructor for console web server.
 func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service,
 	marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
-	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service, metric *metrics.Metric) *Server {
+	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service, metric *metrics.Metric, currencyWaitList *currencywaitlist.Service) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -93,6 +94,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	seasonsController := controllers.NewSeasons(log, seasons)
 	waitListController := controllers.NewWaitList(log, waitList)
 	storeController := controllers.NewStore(log, store)
+	contractCasperController := controllers.NewContractCasper(log, currencyWaitList)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -118,6 +120,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	casperRouter.HandleFunc("/register", authController.CasperRegister).Methods(http.MethodPost)
 	casperRouter.HandleFunc("/nonce", authController.PublicKey).Methods(http.MethodGet)
 	casperRouter.HandleFunc("/login", authController.CasperLogin).Methods(http.MethodPost)
+
+	apiRouter.HandleFunc("/casper/claim", contractCasperController.Claim).Methods(http.MethodPost)
 
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
@@ -223,6 +227,7 @@ func (server *Server) Run(ctx context.Context) (err error) {
 		if isCancelled || errors.Is(err, http.ErrServerClosed) {
 			err = nil
 		}
+
 		return Error.Wrap(err)
 	})
 

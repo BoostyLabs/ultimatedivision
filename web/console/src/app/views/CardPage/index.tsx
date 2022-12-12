@@ -15,6 +15,7 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 
 import { UsersService } from '@/users/service';
 import { UsersClient } from '@/api/users';
+
 import { VelasClient } from '@/api/velas';
 import { VelasService } from '@/app/velas/service';
 
@@ -27,11 +28,17 @@ import VelasTransactionService from '@/app/velas';
 import { ServicePlugin } from '@/app/plugins/service';
 import { metamaskNotifications } from '@/app/internal/notifications';
 
+import CasperTransactionService from '@/casper';
+
 import CardPageBg from '@static/img/FootballerCardPage/background.png';
 import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
 
+
+const VELAS_WALLET_TYPE = 'velas_wallet_address';
+const CASPER_WALLET_TYPE = 'casper_wallet_address';
+const METAMASK_WALLET_TYPE = 'wallet_address';
 
 const Card: React.FC = () => {
     const dispatch = useDispatch();
@@ -91,8 +98,8 @@ const Card: React.FC = () => {
         }
     };
 
-    /** Mints chosed card with metamask */
-    const mintMetamask = async() => {
+    /** Mints chosed card with metamask with metamask */
+    const metamaskMint = async() => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 // @ts-ignore .
@@ -110,28 +117,43 @@ const Card: React.FC = () => {
 
     /** Mints chosed card with casper */
     const casperMint = async() => {
-        /** TODO: make casper minting */
+        try {
+            const casperTransactionService = new CasperTransactionService(user.casperWallet);
+
+            await casperTransactionService.mint(id);
+        } catch (error: any) {
+            toast.error(`${error}`, {
+                position: toast.POSITION.TOP_RIGHT,
+                theme: 'colored',
+            });
+        }
     };
 
     const mint = async() => {
         try {
             const user = await usersService.getUser();
 
-            switch (user.walletType) {
-            case 'velas_wallet_address':
-                velasMint();
-                break;
-            case 'wallet_address':
-                mintMetamask();
-                break;
-            case 'casper_wallet_address':
-                casperMint();
-                break;
-            default:
-                break;
-            }
+            const mintingNfts = new Map();
 
-            // setIsMinted(true);
+            const walletMintingTypes = [
+                {
+                    walletType: VELAS_WALLET_TYPE,
+                    mint: velasMint,
+                },
+                {
+                    walletType: CASPER_WALLET_TYPE,
+                    mint: casperMint,
+                },
+                {
+                    walletType: METAMASK_WALLET_TYPE,
+                    mint: metamaskMint,
+                },
+            ];
+
+            walletMintingTypes.forEach(walletMintingType =>
+                mintingNfts.set(walletMintingType.walletType, walletMintingType.mint));
+
+            mintingNfts.get(user.walletType)();
         } catch (e) {
             toast.error('Something went wrong', {
                 position: toast.POSITION.TOP_RIGHT,
@@ -139,6 +161,7 @@ const Card: React.FC = () => {
             });
         }
     };
+
 
     useEffect(() => {
         setUser();
