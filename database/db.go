@@ -233,8 +233,9 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             id          SERIAL PRIMARY KEY       NOT NULL,
             season_id   BYTEA                    NOT NULL,
             user_id     BYTEA                    NOT NULL, 
-            value       INTEGER                  NOT NULL, 
+            value       BYTEA                    NOT NULL, 
             wallet      VARCHAR                  NOT NULL,
+            nonce       INTEGER                  NOT NULL,
             signature   VARCHAR                  NOT NULL
         );
         CREATE TABLE IF NOT EXISTS matches (

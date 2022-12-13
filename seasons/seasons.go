@@ -25,22 +25,26 @@ var ErrNoSeason = errs.Class("season does not exist")
 type DB interface {
 	// Create creates a season and writes to the database.
 	Create(ctx context.Context, season Season) error
+	// CreateReward creates a season reward and writes to the database.
+	CreateReward(ctx context.Context, reward Reward) error
 	// EndSeason updates a status in the database when season ended.
 	EndSeason(ctx context.Context, id int) error
 	// List returns all seasons from the data base.
 	List(ctx context.Context) ([]Season, error)
 	// Get returns season by id from the data base.
 	Get(ctx context.Context, id int) (Season, error)
+	// GetUserIDByDivisionID returns user id by division id from the data base.
+	GetUserIDByDivisionID(ctx context.Context, divisionID uuid.UUID) (uuid.UUID, error)
 	// GetCurrentSeasons returns all current seasons from the data base.
 	GetCurrentSeasons(ctx context.Context) ([]Season, error)
 	// GetSeasonByDivisionID returns season by division id from the data base.
 	GetSeasonByDivisionID(ctx context.Context, divisionID uuid.UUID) (Season, error)
-	// Delete deletes a season in the database.
-	Delete(ctx context.Context, id int) error
 	// GetRewardByUserID returns user reward by id from the data base.
 	GetRewardByUserID(ctx context.Context, userID int) (Reward, error)
 	// ListRewards returns all seasons rewards from the data base.
 	ListRewards(ctx context.Context) ([]Reward, error)
+	// Delete deletes a season in the database.
+	Delete(ctx context.Context, id int) error
 }
 
 // Status defines the list of possible season statuses.
@@ -67,9 +71,11 @@ type SeasonStatistics struct {
 
 // Reward entity describes values which send to user after season ends.
 type Reward struct {
-	SeasonID  uuid.UUID              `json:"seasonID"`
+	ID        uuid.UUID              `json:"ID"`
+	SeasonID  int                    `json:"seasonID"`
 	UserID    uuid.UUID              `json:"userId"`
-	Value     *big.Int               `json:"value"`
+	Value     big.Int                `json:"value"`
+	Nonce     int64                  `json:"nonce"`
 	Wallet    string                 `json:"wallet"`
 	Signature evmsignature.Signature `json:"signature"`
 }

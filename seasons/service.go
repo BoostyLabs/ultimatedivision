@@ -66,6 +66,11 @@ func (service *Service) Create(ctx context.Context) error {
 	return nil
 }
 
+// CreateReward creates a rewards in the end of a season.
+func (service *Service) CreateReward(ctx context.Context, reward Reward) error {
+	return ErrSeasons.Wrap(service.seasons.CreateReward(ctx, reward))
+}
+
 // EndSeason changes status when season end.
 func (service *Service) EndSeason(ctx context.Context, id int) error {
 	return ErrSeasons.Wrap(service.seasons.EndSeason(ctx, id))
@@ -87,6 +92,16 @@ func (service *Service) GetCurrentSeasons(ctx context.Context) ([]Season, error)
 func (service *Service) Get(ctx context.Context, seasonID int) (Season, error) {
 	season, err := service.seasons.Get(ctx, seasonID)
 	return season, ErrSeasons.Wrap(err)
+}
+
+// GetProfile returns user profile from DB.
+func (service *Service) GetProfile(ctx context.Context, division uuid.UUID) (*users.ProfileWithWallet, error) {
+	userID, err := service.seasons.GetUserIDByDivisionID(ctx, division)
+	if err != nil {
+		return nil, ErrSeasons.Wrap(err)
+	}
+	profile, err := service.users.GetProfile(ctx, userID)
+	return profile, ErrSeasons.Wrap(err)
 }
 
 // GetRewardByUserID returns user reward by id from DB.
