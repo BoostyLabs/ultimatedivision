@@ -7,6 +7,7 @@ import (
 	"context"
 	"sort"
 	"time"
+	"ultimatedivision/users"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -28,16 +29,18 @@ type Service struct {
 	matches   *matches.Service
 	config    Config
 	clubs     *clubs.Service
+	users     *users.Service
 }
 
 // NewService is a constructor for seasons service.
-func NewService(seasons DB, config Config, divisions *divisions.Service, matches *matches.Service, clubs *clubs.Service) *Service {
+func NewService(seasons DB, config Config, divisions *divisions.Service, matches *matches.Service, clubs *clubs.Service, users *users.Service) *Service {
 	return &Service{
 		seasons:   seasons,
 		divisions: divisions,
 		config:    config,
 		matches:   matches,
 		clubs:     clubs,
+		users:     users,
 	}
 }
 
@@ -83,6 +86,12 @@ func (service *Service) GetCurrentSeasons(ctx context.Context) ([]Season, error)
 // Get returns season from DB.
 func (service *Service) Get(ctx context.Context, seasonID int) (Season, error) {
 	season, err := service.seasons.Get(ctx, seasonID)
+	return season, ErrSeasons.Wrap(err)
+}
+
+// GetRewardByUserID returns user reward by id from DB.
+func (service *Service) GetRewardByUserID(ctx context.Context, userID int) (Reward, error) {
+	season, err := service.seasons.GetRewardByUserID(ctx, userID)
 	return season, ErrSeasons.Wrap(err)
 }
 

@@ -79,6 +79,32 @@ func (seasonsDB *seasonsDB) List(ctx context.Context) ([]seasons.Season, error) 
 	return allSeasons, ErrSeasons.Wrap(rows.Err())
 }
 
+// ListRewards returns all season rewards from the data base.
+func (seasonsDB *seasonsDB) ListRewards(ctx context.Context) ([]seasons.Reward, error) {
+	query := `SELECT id, division_id, started_at, ended_at FROM seasons`
+
+	rows, err := seasonsDB.conn.QueryContext(ctx, query)
+	if err != nil {
+		return nil, ErrSeasons.Wrap(err)
+	}
+	defer func() {
+		err = errs.Combine(err, rows.Close())
+	}()
+
+	var allRewards []seasons.Reward
+	for rows.Next() {
+		var reward seasons.Reward
+		err := rows.Scan(&reward.SeasonID, &reward.UserID, &reward.Value, &reward.Wallet, &reward.Signature)
+		if err != nil {
+			return nil, ErrSeasons.Wrap(err)
+		}
+
+		allRewards = append(allRewards, reward)
+	}
+
+	return allRewards, ErrSeasons.Wrap(rows.Err())
+}
+
 // Get returns season by id from the data base.
 func (seasonsDB *seasonsDB) Get(ctx context.Context, id int) (seasons.Season, error) {
 	query := `SELECT id, division_id, started_at, ended_at FROM seasons WHERE id=$1`
@@ -96,6 +122,25 @@ func (seasonsDB *seasonsDB) Get(ctx context.Context, id int) (seasons.Season, er
 	}
 
 	return season, ErrSeasons.Wrap(err)
+}
+
+// GetRewardByUserID returns user reward by id from the data base.
+func (seasonsDB *seasonsDB) GetRewardByUserID(ctx context.Context, userID int) (seasons.Reward, error) {
+	query := `SELECT * FROM season_rewards WHERE user_id=$1`
+	var reward seasons.Reward
+
+	row := seasonsDB.conn.QueryRowContext(ctx, query, userID)
+
+	err := row.Scan(&reward.SeasonID, &reward.UserID, &reward.Value, &reward.Wallet, &reward.Signature)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return reward, seasons.ErrNoSeason.Wrap(err)
+		}
+
+		return reward, ErrSeasons.Wrap(err)
+	}
+
+	return reward, ErrSeasons.Wrap(err)
 }
 
 // GetCurrentSeasons returns all current seasons from the data base.

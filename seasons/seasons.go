@@ -5,8 +5,10 @@ package seasons
 
 import (
 	"context"
+	"math/big"
 	"time"
 
+	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
@@ -35,6 +37,10 @@ type DB interface {
 	GetSeasonByDivisionID(ctx context.Context, divisionID uuid.UUID) (Season, error)
 	// Delete deletes a season in the database.
 	Delete(ctx context.Context, id int) error
+	// GetRewardByUserID returns user reward by id from the data base.
+	GetRewardByUserID(ctx context.Context, userID int) (Reward, error)
+	// ListRewards returns all seasons rewards from the data base.
+	ListRewards(ctx context.Context) ([]Reward, error)
 }
 
 // Status defines the list of possible season statuses.
@@ -57,4 +63,13 @@ type Config struct {
 type SeasonStatistics struct {
 	Division   divisions.Division  `json:"division"`
 	Statistics []matches.Statistic `json:"statistics"`
+}
+
+// Reward entity describes values which send to user after season ends.
+type Reward struct {
+	SeasonID  uuid.UUID              `json:"seasonID"`
+	UserID    uuid.UUID              `json:"userId"`
+	Value     *big.Int               `json:"value"`
+	Wallet    string                 `json:"wallet"`
+	Signature evmsignature.Signature `json:"signature"`
 }

@@ -229,6 +229,14 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             ended_at    TIMESTAMP WITH TIME ZONE NOT NULL,
             FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE
         );
+ 		CREATE TABLE IF NOT EXISTS season_rewards(
+            id          SERIAL PRIMARY KEY       NOT NULL,
+            season_id   BYTEA                    NOT NULL,
+            user_id     BYTEA                    NOT NULL, 
+            value       INTEGER                  NOT NULL, 
+            wallet      VARCHAR                  NOT NULL,
+            signature   VARCHAR                  NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS matches (
             id           BYTEA   PRIMARY KEY                              NOT NULL,
             user1_id     BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,

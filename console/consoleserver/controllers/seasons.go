@@ -55,6 +55,30 @@ func (controller *Seasons) GetCurrentSeasons(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+// GetRewardByUserID returns returns user reward.
+func (controller *Seasons) GetRewardByUserID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+	params := mux.Vars(r)
+
+	userID, err := strconv.Atoi(params["user_id"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrSeasons.Wrap(err))
+		return
+	}
+
+	reward, err := controller.seasons.GetRewardByUserID(ctx, userID)
+	if err != nil {
+		controller.serveError(w, http.StatusInternalServerError, ErrSeasons.Wrap(err))
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(reward); err != nil {
+		controller.log.Error("failed to write json response", ErrSeasons.Wrap(err))
+		return
+	}
+}
+
 // GetAllClubsStatistics returns all clubs statistics by division.
 func (controller *Seasons) GetAllClubsStatistics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
