@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useParams } from 'react-router';
-import MetaMaskOnboarding from '@metamask/onboarding';
+import MintingService from '@/app/minting/service';
 
 import { FootballerCardIllustrationsRadar } from '@/app/components/common/Card/CardIllustrationsRadar';
 import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
@@ -15,37 +15,24 @@ import { PlayerCard } from '@/app/components/common/PlayerCard';
 
 import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
-import { ServicePlugin } from '@/app/plugins/service';
 import { setCurrentUser } from '@/app/store/actions/users';
-import { metamaskNotifications } from '@/app/internal/notifications';
-
-import { UsersClient } from '@/api/users';
-import { UsersService } from '@/users/service';
-import CasperTransactionService from '@/casper';
+import MetaMaskOnboarding from '@metamask/onboarding';
 
 import CardPageBackground from '@static/img/FootballerCardPage/background.png';
 import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
 
-const VELAS_WALLET_TYPE = 'velas_wallet_address';
-const CASPER_WALLET_TYPE = 'casper_wallet_address';
-const METAMASK_WALLET_TYPE = 'wallet_address';
-
 const Card: React.FC = () => {
     const dispatch = useDispatch();
 
     const [isMinted, setIsMinted] = useState<boolean>(false);
-
     const user = useSelector((state: RootState) => state.usersReducer.user);
+
     const { card } = useSelector((state: RootState) => state.cardsReducer);
     const { id }: { id: string } = useParams();
 
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
-    const service = ServicePlugin.create();
-
-    const usersClient = new UsersClient();
-    const usersService = new UsersService(usersClient);
 
     /** implements opening new card */
     async function openCard() {
@@ -61,78 +48,16 @@ const Card: React.FC = () => {
         try {
             await dispatch(setCurrentUser());
         } catch (error: any) {
-            toast.error('Something went wrong', {
+            toast.error(`${error.message}`, {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
         }
     }
 
-    /** Mints chosed card with velas */
-    const velasMint = async() => { };
-
-    /** Mints chosed card with metamask */
-    const metamaskMint = async() => {
-        if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-            try {
-                // @ts-ignore .
-                await window.ethereum.request({
-                    method: 'eth_requestAccounts',
-                });
-                await service.sendTransaction(id);
-            } catch (error: any) {
-                metamaskNotifications(error);
-            }
-        } else {
-            onboarding.startOnboarding();
-        }
-    };
-
-    /** Mints chosed card with casper */
-    const casperMint = async() => {
-        try {
-            const casperTransactionService = new CasperTransactionService(user.casperWalletId);
-
-            await casperTransactionService.mint(id);
-        } catch (error: any) {
-            toast.error(`${error}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
-        }
-    };
-
     const mint = async() => {
-        try {
-            const user = await usersService.getUser();
-
-            const mintingNfts = new Map();
-
-            const walletMintingTypes = [
-                {
-                    walletType: VELAS_WALLET_TYPE,
-                    mint: velasMint,
-                },
-                {
-                    walletType: CASPER_WALLET_TYPE,
-                    mint: casperMint,
-                },
-                {
-                    walletType: METAMASK_WALLET_TYPE,
-                    mint: metamaskMint,
-                },
-            ];
-
-            walletMintingTypes.forEach(walletMintingType =>
-                mintingNfts.set(walletMintingType.walletType, walletMintingType.mint));
-
-            mintingNfts.get(user.walletType)();
-        } catch (e) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
-        }
+        const mintingService = new MintingService(user, onboarding);
+        await mintingService.mintNft(id);
     };
 
     useEffect(() => {

@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { Transaction, TransactionIdentificators } from '@/app/ethers';
-import { CasperTransactionIdentificators } from '@/casper';
+import { CasperTransactionIdentificators } from '@/app/casper';
 import { APIClient } from '.';
 
 /**

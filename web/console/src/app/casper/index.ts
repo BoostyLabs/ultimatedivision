@@ -39,7 +39,7 @@ class CasperTransactionService {
     private readonly client: any = new CasperNetworkClient();
     public walletAddress: string = '';
 
-    /** default VelasTransactionService implementation */
+    /** default CasperTransactionService implementation */
     constructor(walletAddress: string) {
         this.walletAddress = walletAddress;
     }
@@ -63,34 +63,24 @@ class CasperTransactionService {
     ): Promise<JsonTypes> {
         const contractHashToBytes = await CasperTransactionService.convertContractHashToBytes(contractAddress);
 
-        try {
-            const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
+        const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
 
-            const deployParams = new DeployUtil.DeployParams(walletAddressConverted, 'casper-test', this.gasPrice, this.ttl);
+        const deployParams = new DeployUtil.DeployParams(walletAddressConverted, 'casper-test', this.gasPrice, this.ttl);
 
-            const deploy = DeployUtil.makeDeploy(
-                deployParams,
-                DeployUtil.ExecutableDeployItem.newStoredContractByHash(
-                    contractHashToBytes,
-                    entryPoint,
-                    runtimeArgs),
-                DeployUtil.standardPayment(paymentAmount)
-            );
+        const deploy = DeployUtil.makeDeploy(
+            deployParams,
+            DeployUtil.ExecutableDeployItem.newStoredContractByHash(
+                contractHashToBytes,
+                entryPoint,
+                runtimeArgs),
+            DeployUtil.standardPayment(paymentAmount)
+        );
 
-            const deployJson = DeployUtil.deployToJson(deploy);
+        const deployJson = DeployUtil.deployToJson(deploy);
 
-            const signature = await window.casperlabsHelper.sign(deployJson, this.walletAddress, contractAddress);
+        const signature = await window.casperlabsHelper.sign(deployJson, this.walletAddress, contractAddress);
 
-            return signature;
-        }
-        catch (e) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
-        }
-
-        return false;
+        return signature;
     }
 
     /** Mints a nft */
@@ -116,8 +106,8 @@ class CasperTransactionService {
 
             await this.client.claim(nftWaitlist.rpcNodeAddress, JSON.stringify(signature));
         }
-        catch (e) {
-            toast.error('Something went wrong', {
+        catch (error: any) {
+            toast.error(`${error.message}`, {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
@@ -143,8 +133,8 @@ class CasperTransactionService {
 
             await this.client.claim(rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
         }
-        catch (e) {
-            toast.error('Invalid transaction', {
+        catch (error: any) {
+            toast.error(`${error.message}`, {
                 position: toast.POSITION.TOP_RIGHT,
                 theme: 'colored',
             });
