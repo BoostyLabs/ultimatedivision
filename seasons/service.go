@@ -5,6 +5,7 @@ package seasons
 
 import (
 	"context"
+	"math/big"
 	"sort"
 	"time"
 	"ultimatedivision/users"
@@ -94,16 +95,6 @@ func (service *Service) Get(ctx context.Context, seasonID int) (Season, error) {
 	return season, ErrSeasons.Wrap(err)
 }
 
-// GetProfile returns user profile from DB.
-func (service *Service) GetProfile(ctx context.Context, division uuid.UUID) (*users.ProfileWithWallet, error) {
-	userID, err := service.seasons.GetUserIDByDivisionID(ctx, division)
-	if err != nil {
-		return nil, ErrSeasons.Wrap(err)
-	}
-	profile, err := service.users.GetProfile(ctx, userID)
-	return profile, ErrSeasons.Wrap(err)
-}
-
 // GetRewardByUserID returns user reward by id from DB.
 func (service *Service) GetRewardByUserID(ctx context.Context, userID int) (Reward, error) {
 	season, err := service.seasons.GetRewardByUserID(ctx, userID)
@@ -172,6 +163,37 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 		if err != nil {
 			return ErrSeasons.Wrap(err)
 		}
+
+		for _, statistic := range clubsStatisticsByDivision {
+			userProfile, err := service.users.GetProfile(ctx, statistic.Club.OwnerID)
+			if err != nil {
+				return ChoreError.Wrap(err)
+			}
+
+			var reward Reward
+			switch userProfile.WalletType {
+			case users.WalletTypeCasper:
+				reward = Reward{
+					UserID:    userProfile.ID,
+					Value:     *big.NewInt(10),
+					Wallet:    userProfile.CasperWallet,
+					Signature: "",
+				}
+			default:
+				reward = Reward{
+					UserID:    userProfile.ID,
+					Value:     *big.NewInt(10),
+					Wallet:    userProfile.CasperWallet,
+					Signature: "",
+				}
+			}
+
+			err = service.CreateReward(ctx, reward)
+			if err != nil {
+				return ChoreError.Wrap(err)
+			}
+		}
+
 		var percent float64
 		percent = 100 / float64(len(clubsStatisticsByDivision))
 		if percent < float64(division.PassingPercent) {

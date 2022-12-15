@@ -5,12 +5,9 @@ package seasons
 
 import (
 	"context"
-	"math/big"
 
 	"github.com/BoostyLabs/thelooper"
 	"github.com/zeebo/errs"
-
-	"ultimatedivision/users"
 )
 
 var (
@@ -49,35 +46,6 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 
 		for _, season := range seasons {
 			if season.EndedAt.IsZero() {
-				userProfile, err := chore.seasons.GetProfile(ctx, season.DivisionID)
-				if err != nil {
-					return ChoreError.Wrap(err)
-				}
-
-				var reward Reward
-				switch userProfile.WalletType {
-				case users.WalletTypeCasper:
-					reward = Reward{
-						SeasonID:  season.ID,
-						UserID:    userProfile.ID,
-						Value:     *big.NewInt(10),
-						Wallet:    userProfile.CasperWallet,
-						Signature: "",
-					}
-				default:
-					reward = Reward{
-						SeasonID:  season.ID,
-						UserID:    userProfile.ID,
-						Value:     *big.NewInt(10),
-						Wallet:    userProfile.CasperWallet,
-						Signature: "",
-					}
-				}
-
-				err = chore.seasons.CreateReward(ctx, reward)
-				if err != nil {
-					return ChoreError.Wrap(err)
-				}
 
 				err = chore.seasons.EndSeason(ctx, season.ID)
 				if err != nil {

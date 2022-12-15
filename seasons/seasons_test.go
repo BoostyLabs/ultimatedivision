@@ -15,7 +15,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"ultimatedivision"
-	"ultimatedivision/clubs"
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/divisions"
 	"ultimatedivision/seasons"
@@ -78,20 +77,10 @@ func TestSeasons(t *testing.T) {
 		CreatedAt:      time.Now().UTC(),
 	}
 
-	club := clubs.Club{
-		ID:         uuid.New(),
-		OwnerID:    user.ID,
-		Name:       "123",
-		Status:     0,
-		DivisionID: division1.ID,
-		CreatedAt:  time.Now().UTC(),
-	}
-
 	value := *big.NewInt(100)
 
 	reward := seasons.Reward{
 		ID:        uuid.New(),
-		SeasonID:  1,
 		UserID:    user.ID,
 		Value:     value,
 		Nonce:     5,
@@ -102,8 +91,6 @@ func TestSeasons(t *testing.T) {
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
 		repository := db.Seasons()
 		repositoryDivision := db.Divisions()
-		repositoryClub := db.Clubs()
-		repositoryUser := db.Users()
 
 		id := 3
 		t.Run("get sql no rows", func(t *testing.T) {
@@ -126,18 +113,6 @@ func TestSeasons(t *testing.T) {
 		t.Run("Create Reward", func(t *testing.T) {
 			err := repository.CreateReward(ctx, reward)
 			require.NoError(t, err)
-		})
-
-		t.Run("GetUserIDByDivisionID", func(t *testing.T) {
-			err := repositoryUser.Create(ctx, user)
-			require.NoError(t, err)
-
-			_, err = repositoryClub.Create(ctx, club)
-			require.NoError(t, err)
-
-			userID, err := repository.GetUserIDByDivisionID(ctx, division1.ID)
-			require.NoError(t, err)
-			assert.Equal(t, user.ID, userID)
 		})
 
 		t.Run("list", func(t *testing.T) {

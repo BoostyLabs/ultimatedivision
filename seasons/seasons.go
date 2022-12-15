@@ -33,8 +33,6 @@ type DB interface {
 	List(ctx context.Context) ([]Season, error)
 	// Get returns season by id from the data base.
 	Get(ctx context.Context, id int) (Season, error)
-	// GetUserIDByDivisionID returns user id by division id from the data base.
-	GetUserIDByDivisionID(ctx context.Context, divisionID uuid.UUID) (uuid.UUID, error)
 	// GetCurrentSeasons returns all current seasons from the data base.
 	GetCurrentSeasons(ctx context.Context) ([]Season, error)
 	// GetSeasonByDivisionID returns season by division id from the data base.
@@ -72,7 +70,6 @@ type SeasonStatistics struct {
 // Reward entity describes values which send to user after season ends.
 type Reward struct {
 	ID        uuid.UUID              `json:"ID"`
-	SeasonID  int                    `json:"seasonID"`
 	UserID    uuid.UUID              `json:"userId"`
 	Value     big.Int                `json:"value"`
 	Nonce     int64                  `json:"nonce"`

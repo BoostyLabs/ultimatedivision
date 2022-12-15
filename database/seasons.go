@@ -40,10 +40,10 @@ func (seasonsDB *seasonsDB) Create(ctx context.Context, season seasons.Season) e
 
 // CreateReward creates a season reward and writes to the database.
 func (seasonsDB *seasonsDB) CreateReward(ctx context.Context, reward seasons.Reward) error {
-	query := `INSERT INTO season_rewards(season_id, user_id, value, nonce, wallet, signature) 
+	query := `INSERT INTO season_rewards(user_id, value, nonce, wallet, signature) 
 	VALUES ($1, $2, $3, $4, $5, $6)`
 
-	_, err := seasonsDB.conn.ExecContext(ctx, query, reward.SeasonID, reward.UserID, reward.Value.Bytes(), reward.Nonce, reward.Wallet, reward.Signature)
+	_, err := seasonsDB.conn.ExecContext(ctx, query, reward.UserID, reward.Value.Bytes(), reward.Nonce, reward.Wallet, reward.Signature)
 
 	return ErrSeasons.Wrap(err)
 }
@@ -104,7 +104,7 @@ func (seasonsDB *seasonsDB) ListRewards(ctx context.Context) ([]seasons.Reward, 
 	var allRewards []seasons.Reward
 	for rows.Next() {
 		var reward seasons.Reward
-		err := rows.Scan(&reward.SeasonID, &reward.UserID, &reward.Value, &reward.Nonce, &reward.Wallet, &reward.Signature)
+		err := rows.Scan(&reward.UserID, &reward.Value, &reward.Nonce, &reward.Wallet, &reward.Signature)
 		if err != nil {
 			return nil, ErrSeasons.Wrap(err)
 		}
@@ -134,25 +134,6 @@ func (seasonsDB *seasonsDB) Get(ctx context.Context, id int) (seasons.Season, er
 	return season, ErrSeasons.Wrap(err)
 }
 
-// GetUserIDByDivisionID returns season by id from the data base.
-func (seasonsDB *seasonsDB) GetUserIDByDivisionID(ctx context.Context, divisionID uuid.UUID) (uuid.UUID, error) {
-	query := `SELECT owner_id FROM clubs WHERE division_id=$1`
-	var userID uuid.UUID
-
-	row := seasonsDB.conn.QueryRowContext(ctx, query, divisionID)
-
-	err := row.Scan(&userID)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return userID, seasons.ErrNoSeason.Wrap(err)
-		}
-
-		return userID, ErrSeasons.Wrap(err)
-	}
-
-	return userID, ErrSeasons.Wrap(err)
-}
-
 // GetRewardByUserID returns user reward by id from the data base.
 func (seasonsDB *seasonsDB) GetRewardByUserID(ctx context.Context, userID int) (seasons.Reward, error) {
 	query := `SELECT * FROM season_rewards WHERE user_id=$1`
@@ -160,7 +141,7 @@ func (seasonsDB *seasonsDB) GetRewardByUserID(ctx context.Context, userID int) (
 
 	row := seasonsDB.conn.QueryRowContext(ctx, query, userID)
 
-	err := row.Scan(&reward.SeasonID, &reward.UserID, &reward.Value, &reward.Wallet, &reward.Signature)
+	err := row.Scan(&reward.UserID, &reward.Value, &reward.Wallet, &reward.Signature)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return reward, seasons.ErrNoSeason.Wrap(err)

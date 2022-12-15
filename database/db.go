@@ -231,7 +231,6 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         );
  		CREATE TABLE IF NOT EXISTS season_rewards(
             id          SERIAL PRIMARY KEY       NOT NULL,
-            season_id   BYTEA                    NOT NULL,
             user_id     BYTEA                    NOT NULL, 
             value       BYTEA                    NOT NULL, 
             wallet      VARCHAR                  NOT NULL,
