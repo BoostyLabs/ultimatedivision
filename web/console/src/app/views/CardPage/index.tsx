@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -15,21 +15,18 @@ import { PlayerCard } from '@/app/components/common/PlayerCard';
 import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
 import { setCurrentUser } from '@/app/store/actions/users';
-import MetaMaskOnboarding from '@metamask/onboarding';
-import MintingService from '@/wallet/service';
+import WalletService from '@/wallet/service';
 
 import CardPageBackground from '@static/img/FootballerCardPage/background.png';
 import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
-import { ethers } from 'ethers';
 
 const Card: React.FC = () => {
     const dispatch = useDispatch();
 
     const [isMinted, setIsMinted] = useState<boolean>(false);
     const user = useSelector((state: RootState) => state.usersReducer.user);
-
     const { card } = useSelector((state: RootState) => state.cardsReducer);
     const { id }: { id: string } = useParams();
 
@@ -55,8 +52,8 @@ const Card: React.FC = () => {
     }
 
     const mint = async() => {
-        const mintingService = new MintingService(user);
-        await mintingService.mintNft(id);
+        const walletService = new WalletService(user);
+        await walletService.mintNft(id);
 
         setIsMinted(true);
     };

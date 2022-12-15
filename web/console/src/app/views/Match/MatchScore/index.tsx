@@ -13,7 +13,7 @@ import { RootState } from '@/app/store';
 import { ServicePlugin } from '@/app/plugins/service';
 import { getCurrentQueueClient, queueActionAllowAddress, queueCasperActionAllowAddress } from '@/queue/service';
 import { setCurrentUser } from '@/app/store/actions/users';
-import MintingService from '@/wallet/service';
+import WalletService from '@/wallet/service';
 import { walletTypes } from '@/wallet';
 
 import coin from '@static/img/match/money.svg';
@@ -147,8 +147,8 @@ export const MatchScore: React.FC = () => {
         queueClient.ws.onmessage = async({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
 
-            const mintingService = new MintingService(user);
-            await mintingService.mintToken(messageEvent);
+            const walletService = new WalletService(user);
+            await walletService.mintToken(messageEvent);
         };
     }
 
