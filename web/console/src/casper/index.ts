@@ -22,7 +22,7 @@ export class CasperTransactionIdentificators {
         public cardId: string
     ) { }
 }
-
+const CHAIN_NAME = 'casper-test';
 const ACCOUNT_HASH_PREFIX = 'account-hash-';
 
 const TTL = 1800000;
@@ -65,7 +65,7 @@ class CasperTransactionService {
 
         const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
 
-        const deployParams = new DeployUtil.DeployParams(walletAddressConverted, 'casper-test', this.gasPrice, this.ttl);
+        const deployParams = new DeployUtil.DeployParams(walletAddressConverted, CHAIN_NAME, this.gasPrice, this.ttl);
 
         const deploy = DeployUtil.makeDeploy(
             deployParams,
