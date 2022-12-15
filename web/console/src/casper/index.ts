@@ -36,7 +36,7 @@ class CasperTransactionService {
     private readonly paymentAmount: number = PAYMENT_AMOUNT;
     private readonly gasPrice: number = GAS_PRICE;
     private readonly ttl: number = TTL;
-    private readonly client: any = new CasperNetworkClient();
+    private readonly client: CasperNetworkClient = new CasperNetworkClient();
     public walletAddress: string = '';
 
     /** default CasperTransactionService implementation */

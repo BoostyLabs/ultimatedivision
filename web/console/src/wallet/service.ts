@@ -6,22 +6,24 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 import { metamaskNotifications } from '@/app/internal/notifications';
 import { ServicePlugin } from '@/app/plugins/service';
 
-import CasperTransactionService from '@/app/casper';
+import CasperTransactionService from '@/casper';
 import { User } from '@/users';
-import { walletTypes } from './';
+import { walletTypes } from '.';
+import { ethers } from 'ethers';
 
 /**
- * Exposes all minting service related logic.
+ * Exposes all wallet service related logic.
  */
-class MintingService {
-    public user: User = new User();
+class WalletService {
+    // @ts-ignore
+    public metamaskProvider = window.ethereum && new ethers.providers.Web3Provider(window.ethereum);
     public metamaskService = ServicePlugin.create();
     public onboarding = new MetaMaskOnboarding();
+    public user: User = new User();
 
     /** default MintingService implementation */
-    constructor(user: User, onboarding: MetaMaskOnboarding) {
+    constructor(user: User) {
         this.user = user;
-        this.onboarding = onboarding;
     }
 
     /** Mints chosed card with metamask */
@@ -29,7 +31,7 @@ class MintingService {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
                 // @ts-ignore .
-                await window.ethereum.request({
+                await this.metamaskProvider.request({
                     method: 'eth_requestAccounts',
                 });
                 await this.metamaskService.sendTransaction(id);
@@ -42,26 +44,26 @@ class MintingService {
     };
 
     /** Mints chosed card with casper */
-    private casperMint(id: string) {
+    private async casperMint(id: string) {
         const casperTransactionService = new CasperTransactionService(this.user.casperWalletId);
 
-        casperTransactionService.mint(id);
+        await casperTransactionService.mint(id);
     };
 
     /** Mints chosed card with velas */
     private static velasMint() { };
 
     /** Mints chosed card. */
-    public mintNft(id: string) {
+    public async mintNft(id: string) {
         switch (this.user.walletType) {
         case walletTypes.VELAS_WALLET_TYPE:
-            MintingService.velasMint();
+            await WalletService.velasMint();
             break;
         case walletTypes.CASPER_WALLET_TYPE:
-            this.casperMint(id);
+            await this.casperMint(id);
             break;
         case walletTypes.METAMASK_WALLET_TYPE:
-            this.metamaskMint(id);
+            await this.metamaskMint(id);
             break;
         default:
             break;
@@ -87,7 +89,7 @@ class MintingService {
     public mintToken(messageEvent: any) {
         switch (this.user.walletType) {
         case walletTypes.VELAS_WALLET_TYPE:
-            MintingService.velasMintToken();
+            WalletService.velasMintToken();
             break;
         case walletTypes.CASPER_WALLET_TYPE:
             this.casperMintToken(messageEvent);
@@ -101,4 +103,4 @@ class MintingService {
     };
 }
 
-export default MintingService;
+export default WalletService;

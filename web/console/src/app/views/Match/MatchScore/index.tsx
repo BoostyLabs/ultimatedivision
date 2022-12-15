@@ -8,13 +8,13 @@ import { CLPublicKey } from 'casper-js-sdk';
 import MetaMaskOnboarding from '@metamask/onboarding';
 
 import { QueueClient } from '@/api/queue';
-import { UDT_ABI } from '@/app/ethers';
+import { UDT_ABI } from '@/ethers';
 import { RootState } from '@/app/store';
 import { ServicePlugin } from '@/app/plugins/service';
 import { getCurrentQueueClient, queueActionAllowAddress, queueCasperActionAllowAddress } from '@/queue/service';
 import { setCurrentUser } from '@/app/store/actions/users';
-import MintingService from '@/app/minting/service';
-import { walletTypes } from '@/app/minting';
+import MintingService from '@/wallet/service';
+import { walletTypes } from '@/wallet';
 
 import coin from '@static/img/match/money.svg';
 
@@ -147,7 +147,7 @@ export const MatchScore: React.FC = () => {
         queueClient.ws.onmessage = async({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
 
-            const mintingService = new MintingService(user, onboarding);
+            const mintingService = new MintingService(user);
             await mintingService.mintToken(messageEvent);
         };
     }

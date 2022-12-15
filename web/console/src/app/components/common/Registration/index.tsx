@@ -20,12 +20,12 @@ import { RouteConfig } from '@/app/routes';
 import { ServicePlugin } from '@/app/plugins/service';
 import { EthersClient } from '@/api/ethers';
 import { NotFoundError } from '@/api';
-import { SignedMessage } from '@/app/ethers';
+import { SignedMessage } from '@/ethers';
 
 import { VelasClient } from '@/api/velas';
 import { VelasService } from '@/velas/service';
 import { CasperNetworkClient } from '@/api/casper';
-import { CasperNetworkService } from '@/app/casper/service';
+import { CasperNetworkService } from '@/casper/service';
 
 import representLogo from '@static/img/login/represent-logo.gif';
 import metamask from '@static/img/login/metamask-icon.svg';

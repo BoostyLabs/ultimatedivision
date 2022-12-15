@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useParams } from 'react-router';
-import MintingService from '@/app/minting/service';
 
 import { FootballerCardIllustrationsRadar } from '@/app/components/common/Card/CardIllustrationsRadar';
 import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
@@ -17,11 +16,13 @@ import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
 import { setCurrentUser } from '@/app/store/actions/users';
 import MetaMaskOnboarding from '@metamask/onboarding';
+import MintingService from '@/wallet/service';
 
 import CardPageBackground from '@static/img/FootballerCardPage/background.png';
 import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
+import { ethers } from 'ethers';
 
 const Card: React.FC = () => {
     const dispatch = useDispatch();
@@ -31,8 +32,6 @@ const Card: React.FC = () => {
 
     const { card } = useSelector((state: RootState) => state.cardsReducer);
     const { id }: { id: string } = useParams();
-
-    const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
 
     /** implements opening new card */
     async function openCard() {
@@ -56,8 +55,10 @@ const Card: React.FC = () => {
     }
 
     const mint = async() => {
-        const mintingService = new MintingService(user, onboarding);
+        const mintingService = new MintingService(user);
         await mintingService.mintNft(id);
+
+        setIsMinted(true);
     };
 
     useEffect(() => {

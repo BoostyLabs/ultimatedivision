@@ -1,8 +1,8 @@
 // Copyright (C) 2022 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Transaction, TransactionIdentificators } from '@/app/ethers';
-import { CasperTransactionIdentificators } from '@/app/casper';
+import { Transaction } from '@/ethers';
+import { CasperTransactionIdentificators } from '@/casper';
 import { APIClient } from '.';
 
 /**
