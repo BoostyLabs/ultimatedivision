@@ -3,7 +3,7 @@
 
 import { Buffer } from 'buffer';
 import { JsonTypes } from 'typedjson';
-import { CLValueBuilder, RuntimeArgs, CLPublicKey, DeployUtil, Signer } from 'casper-js-sdk';
+import { CLPublicKey, CLValueBuilder, DeployUtil, RuntimeArgs, Signer } from 'casper-js-sdk';
 
 import { CasperNetworkClient } from '@/api/casper';
 import { CasperMatchTransaction } from '@/matches';
@@ -13,6 +13,8 @@ enum CasperRuntimeArgs {
     SIGNATURE = 'signature',
     TOKEN_ID = 'token_id'
 }
+
+const chainName = 'casper-test';
 
 /** Desctibes parameters for transaction */
 export class CasperTransactionIdentificators {
@@ -65,7 +67,7 @@ class CasperTransactionService {
 
         const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
 
-        const deployParams = new DeployUtil.DeployParams(walletAddressConverted, 'casper-test', this.gasPrice, this.ttl);
+        const deployParams = new DeployUtil.DeployParams(walletAddressConverted, chainName, this.gasPrice, this.ttl);
 
         const deploy = DeployUtil.makeDeploy(
             deployParams,

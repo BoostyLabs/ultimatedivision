@@ -16,7 +16,7 @@
     "networkChanged": "Network was changed, please refresh page",
     "notEnoughBalance": "Not enough balance",
     "notFound": "not found",
-    "openMetamaskManually": "Please open metamask manually!",
+    "openMetamaskManually": "Please, open metamask manually!",
     "registrationFailed": "Registration failed!",
     "somethingWentsWrong": "Something wrong, please, try later.",
     "successfullTransaction": "Transaction successful",

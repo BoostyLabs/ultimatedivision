@@ -131,7 +131,7 @@ export const MatchScore: React.FC = () => {
                 addingWallets.set(addingWalletsType.walletType, addingWalletsType.mint));
 
             await addingWallets.get(user.walletType)();
-        } catch (error:any) {
+        } catch (error: any) {
             ToastNotifications.notify(error.message);
         }
     };

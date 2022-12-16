@@ -3,7 +3,6 @@
 
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 // @ts-ignore
 import KeyStorageHandler from '../../../../velas/keyStorageHandler';
@@ -70,7 +69,7 @@ const AuthWrapper = () => {
     const velasRegister = async(result: any, authResult: any) => {
         try {
             await velasLogin(result.userinfo.account_key_evm, authResult.access_token, authResult.expires_at);
-        } catch (error) {
+        } catch (error: any) {
             if (!(error instanceof NotFoundError)) {
                 ToastNotifications.notFound();
 
@@ -83,7 +82,7 @@ const AuthWrapper = () => {
                     authResult.expires_at
                 );
                 await velasLogin(result.userinfo.account_key_evm, authResult.access_token, authResult.expires_at);
-            } catch (error) {
+            } catch (error: any) {
                 ToastNotifications.couldNotLogInUserWithVelas();
             }
         }
@@ -124,7 +123,7 @@ const AuthWrapper = () => {
         try {
             const vaclient = await vaclientService();
             vaclient.handleRedirectCallback(processAuthResult);
-        } catch (error) {
+        } catch (error: any) {
             ToastNotifications.couldNotLogInUserWithVelas();
         }
     };

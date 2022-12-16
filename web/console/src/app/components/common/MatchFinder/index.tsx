@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
 import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
-import { onOpenConnectionSendAction, getCurrentQueueClient, queueSendAction } from '@/queue/service';
+import { getCurrentQueueClient, onOpenConnectionSendAction, queueSendAction } from '@/queue/service';
 import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
@@ -102,9 +102,9 @@ const MatchFinder: React.FC = () => {
     /** Processes queue client event messages. */
     if (queueClient) {
         queueClient.ws.onmessage = ({ data }: MessageEvent) => {
-            const messageEvent = JSON.parse(data);
+            const event = JSON.parse(data);
 
-            switch (messageEvent.message) {
+            switch (event.message) {
             case ERROR_MESSAGE:
                 ToastNotifications.notify('error message');
 
@@ -131,7 +131,7 @@ const MatchFinder: React.FC = () => {
                 setIsMatchFound(false);
                 ToastNotifications.gameFinished();
 
-                dispatch(getMatchScore(messageEvent.message));
+                dispatch(getMatchScore(event.message));
                 dispatch(startSearchingMatch(false));
 
 

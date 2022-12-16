@@ -49,7 +49,7 @@ const FootballField: React.FC = () => {
                 }
                 try {
                     await dispatch(createClubs());
-                } catch (error) {
+                } catch (error: any) {
                     ToastNotifications.couldNotCreateClub();
                 }
             }

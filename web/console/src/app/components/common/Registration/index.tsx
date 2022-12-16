@@ -130,7 +130,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
             const publicKey = await Signer.getActivePublicKey();
 
             await loginCasper(publicKey);
-        } catch (error) {
+        } catch (error: any) {
             if (!(error instanceof NotFoundError)) {
                 ToastNotifications.notFound();
 
@@ -143,7 +143,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
                 await casperService.register(publicKey);
 
                 await loginCasper(publicKey);
-            } catch (error) {
+            } catch (error: any) {
                 ToastNotifications.couldNotLogInUserWithCasper();
             }
         }
