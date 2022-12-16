@@ -48,7 +48,7 @@ const AuthWrapper = () => {
             });
 
             return vaclient;
-        } catch (error:any) {
+        } catch (error: any) {
             ToastNotifications.notify(error.message);
         }
 
