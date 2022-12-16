@@ -41,7 +41,7 @@ func (seasonsDB *seasonsDB) Create(ctx context.Context, season seasons.Season) e
 // CreateReward creates a season reward and writes to the database.
 func (seasonsDB *seasonsDB) CreateReward(ctx context.Context, reward seasons.Reward) error {
 	query := `INSERT INTO season_rewards(user_id, value, nonce, wallet, signature) 
-	VALUES ($1, $2, $3, $4, $5, $6)`
+	VALUES ($1, $2, $3, $4, $5)`
 
 	_, err := seasonsDB.conn.ExecContext(ctx, query, reward.UserID, reward.Value.Bytes(), reward.Nonce, reward.Wallet, reward.Signature)
 
