@@ -17,6 +17,7 @@ import { InternalError, NotFoundError } from '@/api';
 import { VelasClient } from '@/api/velas';
 import { VelasService } from '@/velas/service';
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
+import { ToastNotifications } from '@/notifications/service';
 
 import ulimatedivisionLogo from '@static/img/registerPage/ultimate.svg';
 
@@ -47,11 +48,8 @@ const AuthWrapper = () => {
             });
 
             return vaclient;
-        } catch (e) {
-            toast.error(`${e}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+        } catch (error:any) {
+            ToastNotifications.notify(error.message);
         }
 
         return null;
@@ -72,12 +70,9 @@ const AuthWrapper = () => {
     const velasRegister = async(result: any, authResult: any) => {
         try {
             await velasLogin(result.userinfo.account_key_evm, authResult.access_token, authResult.expires_at);
-        } catch (e) {
-            if (!(e instanceof NotFoundError)) {
-                toast.error('Something went wrong', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+        } catch (error) {
+            if (!(error instanceof NotFoundError)) {
+                ToastNotifications.notFound();
 
                 return;
             }
@@ -88,11 +83,8 @@ const AuthWrapper = () => {
                     authResult.expires_at
                 );
                 await velasLogin(result.userinfo.account_key_evm, authResult.access_token, authResult.expires_at);
-            } catch (e) {
-                toast.error('Something went wrong', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+            } catch (error) {
+                ToastNotifications.couldNotLogInUserWithVelas();
             }
         }
     };
@@ -102,43 +94,29 @@ const AuthWrapper = () => {
             const vaclient = await vaclientService();
 
             await vaclient.userinfo(authResult.access_token, async(err: any, result: any) => {
-                if (err) {
-                    toast.error('Something went wrong', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    });
-                } else {
+                if (!err) {
                     await velasRegister(result, authResult);
                 }
             });
-        } catch (error) {
+        } catch (error: any) {
             if (error instanceof InternalError) {
                 history.push(RouteConfig.Home.path);
-                toast.error('Registration failed', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+                ToastNotifications.registrationFailed();
             }
 
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.notify(error.message);
         }
     };
 
-    const processAuthResult = (e: any, authResult: any) => {
+    const processAuthResult = (error: any, authResult: any) => {
         if (authResult && authResult.access_token_payload) {
             window.history.replaceState({}, document.title, window.location.pathname);
 
             sendAuthData(authResult);
-        } else if (e) {
+        } else if (error) {
             window.history.replaceState({}, document.title, window.location.pathname);
 
-            toast.error(`${e.description}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.notify(error.message);
         }
     };
 
@@ -146,11 +124,8 @@ const AuthWrapper = () => {
         try {
             const vaclient = await vaclientService();
             vaclient.handleRedirectCallback(processAuthResult);
-        } catch (e) {
-            toast.error(`${e}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+        } catch (error) {
+            ToastNotifications.couldNotLogInUserWithVelas();
         }
     };
 

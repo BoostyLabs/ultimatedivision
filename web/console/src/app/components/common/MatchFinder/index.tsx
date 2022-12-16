@@ -4,7 +4,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 import { AutoCloseTimer } from './AutoCloseTimer';
 import { Timer } from './Timer';
@@ -15,6 +14,7 @@ import { RootState } from '@/app/store';
 import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
 import { onOpenConnectionSendAction, getCurrentQueueClient, queueSendAction } from '@/queue/service';
+import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
 
@@ -106,18 +106,11 @@ const MatchFinder: React.FC = () => {
 
             switch (messageEvent.message) {
             case ERROR_MESSAGE:
-                toast.error('error message', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+                ToastNotifications.notify('error message');
 
                 return;
             case STILL_SEARCHING_MESSAGE:
-                setIsMatchFound(false);
-                toast.error('Your game was canceled. You are still in search.', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+                ToastNotifications.gameCanceled();
 
                 return;
             case YOU_ADDED_MESSAGE:
@@ -136,12 +129,7 @@ const MatchFinder: React.FC = () => {
                 return;
             default:
                 setIsMatchFound(false);
-                toast.success(
-                    'Successfully! You will be redirected to match page',
-                    {
-                        position: toast.POSITION.TOP_RIGHT,
-                    }
-                );
+                ToastNotifications.gameFinished();
 
                 dispatch(getMatchScore(messageEvent.message));
                 dispatch(startSearchingMatch(false));
@@ -157,10 +145,7 @@ const MatchFinder: React.FC = () => {
 
     if (queueClient) {
         queueClient.ws.onerror = (event: Event) => {
-            toast.error('Something wrong, please, try later.', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.somethingWentsWrong();
         };
     }
 
