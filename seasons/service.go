@@ -8,14 +8,16 @@ import (
 	"math/big"
 	"sort"
 	"time"
-	"ultimatedivision/users"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/udts/currencywaitlist"
+	"ultimatedivision/users"
 )
 
 // ErrSeasons indicates that there was an error in the service.
@@ -68,7 +70,7 @@ func (service *Service) Create(ctx context.Context) error {
 }
 
 // CreateReward creates a rewards in the end of a season.
-func (service *Service) CreateReward(ctx context.Context, reward Reward) error {
+func (service *Service) CreateReward(ctx context.Context, reward currencywaitlist.Item) error {
 	return ErrSeasons.Wrap(service.seasons.CreateReward(ctx, reward))
 }
 
@@ -170,21 +172,25 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 				return ChoreError.Wrap(err)
 			}
 
-			var reward Reward
+			var reward currencywaitlist.Item
 			switch userProfile.WalletType {
 			case users.WalletTypeCasper:
-				reward = Reward{
-					UserID:    userProfile.ID,
-					Value:     *big.NewInt(10),
-					Wallet:    userProfile.CasperWallet,
-					Signature: "",
+				reward = currencywaitlist.Item{
+					WalletAddress:       common.Address{},
+					CasperWalletAddress: userProfile.CasperWallet,
+					WalletType:          userProfile.WalletType,
+					Value:               *big.NewInt(10),
+					Nonce:               0,
+					Signature:           "",
 				}
 			default:
-				reward = Reward{
-					UserID:    userProfile.ID,
-					Value:     *big.NewInt(10),
-					Wallet:    userProfile.CasperWallet,
-					Signature: "",
+				reward = currencywaitlist.Item{
+					WalletAddress:       userProfile.Wallet,
+					CasperWalletAddress: "",
+					WalletType:          userProfile.WalletType,
+					Value:               *big.NewInt(10),
+					Nonce:               0,
+					Signature:           "",
 				}
 			}
 

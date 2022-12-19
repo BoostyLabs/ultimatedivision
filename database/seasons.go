@@ -13,6 +13,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/seasons"
+	"ultimatedivision/udts/currencywaitlist"
 )
 
 // ensures that seasonsDB implements seasons.DB.
@@ -39,11 +40,11 @@ func (seasonsDB *seasonsDB) Create(ctx context.Context, season seasons.Season) e
 }
 
 // CreateReward creates a season reward and writes to the database.
-func (seasonsDB *seasonsDB) CreateReward(ctx context.Context, reward seasons.Reward) error {
-	query := `INSERT INTO season_rewards(user_id, value, nonce, wallet, signature) 
-	VALUES ($1, $2, $3, $4, $5)`
+func (seasonsDB *seasonsDB) CreateReward(ctx context.Context, reward currencywaitlist.Item) error {
+	query := `INSERT INTO currency_waitlist(wallet_address, casper_wallet_address, wallet_type, value, nonce, signature)
+	          VALUES($1,$2,$3,$4,$5,$6)`
 
-	_, err := seasonsDB.conn.ExecContext(ctx, query, reward.UserID, reward.Value.Bytes(), reward.Nonce, reward.Wallet, reward.Signature)
+	_, err := seasonsDB.conn.ExecContext(ctx, query, reward.WalletAddress, reward.CasperWalletAddress, reward.WalletType, reward.Value.Bytes(), reward.Nonce, reward.Signature)
 
 	return ErrSeasons.Wrap(err)
 }

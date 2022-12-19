@@ -14,6 +14,7 @@ import (
 
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/udts/currencywaitlist"
 )
 
 // ErrNoSeason indicated that season does not exist.
@@ -26,7 +27,7 @@ type DB interface {
 	// Create creates a season and writes to the database.
 	Create(ctx context.Context, season Season) error
 	// CreateReward creates a season reward and writes to the database.
-	CreateReward(ctx context.Context, reward Reward) error
+	CreateReward(ctx context.Context, reward currencywaitlist.Item) error
 	// EndSeason updates a status in the database when season ended.
 	EndSeason(ctx context.Context, id int) error
 	// List returns all seasons from the data base.
