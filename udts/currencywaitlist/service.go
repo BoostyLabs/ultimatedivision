@@ -143,12 +143,6 @@ func (service *Service) GetByCasperWalletAddressAndNonce(ctx context.Context, ca
 	return item, ErrCurrencyWaitlist.Wrap(err)
 }
 
-// GetNonceByWallet returns nonce by wallet of nonce.
-func (service *Service) GetNonceByWallet(ctx context.Context, wallet string) (int64, error) {
-	nonce, err := service.currencyWaitList.GetNonceByWallet(ctx, wallet)
-	return nonce, ErrCurrencyWaitlist.Wrap(err)
-}
-
 // GetNonce returns number of nonce.
 func (service *Service) GetNonce(ctx context.Context) (int64, error) {
 	nonce, err := service.currencyWaitList.GetNonce(ctx)
