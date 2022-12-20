@@ -172,15 +172,22 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 				return ChoreError.Wrap(err)
 			}
 
+			var nonce int64
 			var reward currencywaitlist.Item
+
 			switch userProfile.WalletType {
 			case users.WalletTypeCasper:
+				nonce, err = service.seasons.GetNonceByCasperWallet(ctx, userProfile.CasperWalletID)
+				if err != nil {
+					return ChoreError.Wrap(err)
+				}
+
 				reward = currencywaitlist.Item{
 					WalletAddress:       common.Address{},
-					CasperWalletAddress: userProfile.CasperWallet,
+					CasperWalletAddress: userProfile.CasperWalletID,
 					WalletType:          userProfile.WalletType,
 					Value:               *big.NewInt(10),
-					Nonce:               0,
+					Nonce:               nonce,
 					Signature:           "",
 				}
 			default:

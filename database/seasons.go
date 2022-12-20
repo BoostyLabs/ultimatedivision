@@ -49,6 +49,19 @@ func (seasonsDB *seasonsDB) CreateReward(ctx context.Context, reward currencywai
 	return ErrSeasons.Wrap(err)
 }
 
+// GetNonceByCasperWallet returns number of nonce by wallet from database.
+func (seasonsDB *seasonsDB) GetNonceByCasperWallet(ctx context.Context, wallet string) (int64, error) {
+	var nonce int64
+	query := `SELECT coalesce(MAX(DISTINCT nonce),0) FROM currency_waitlist WHERE casper_wallet_address = $1`
+
+	err := seasonsDB.conn.QueryRowContext(ctx, query, wallet).Scan(&nonce)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nonce, currencywaitlist.ErrNoItem.Wrap(err)
+	}
+
+	return nonce, ErrCurrencyWaitlist.Wrap(err)
+}
+
 // EndSeason updates a status in the database when season ended.
 func (seasonsDB *seasonsDB) EndSeason(ctx context.Context, id int) error {
 	db, err := seasonsDB.conn.ExecContext(ctx, "UPDATE seasons SET ended_at=$1 WHERE id=$2", time.Now().UTC(), id)
