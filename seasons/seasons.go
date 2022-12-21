@@ -36,8 +36,6 @@ type DB interface {
 	Get(ctx context.Context, id int) (Season, error)
 	// GetCurrentSeasons returns all current seasons from the data base.
 	GetCurrentSeasons(ctx context.Context) ([]Season, error)
-	// GetNonceByCasperWallet returns number of nonce by Casper wallet from database.
-	GetNonceByCasperWallet(ctx context.Context, wallet string) (int64, error)
 	// GetSeasonByDivisionID returns season by division id from the data base.
 	GetSeasonByDivisionID(ctx context.Context, divisionID uuid.UUID) (Season, error)
 	// GetRewardByUserID returns user reward by id from the data base.
@@ -78,4 +76,5 @@ type Reward struct {
 	Nonce     int64                  `json:"nonce"`
 	Wallet    string                 `json:"wallet"`
 	Signature evmsignature.Signature `json:"signature"`
+	Status    int                    `json:"status"`
 }

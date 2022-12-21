@@ -455,6 +455,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Matches.Service,
 			peer.Clubs.Service,
 			peer.Users.Service,
+			peer.CurrencyWaitList.Service,
 		)
 
 		peer.Seasons.ExpirationSeasons = seasons.NewChore(

@@ -27,23 +27,25 @@ var ErrSeasons = errs.Class("seasons service error")
 //
 // architecture: Service
 type Service struct {
-	seasons   DB
-	divisions *divisions.Service
-	matches   *matches.Service
-	config    Config
-	clubs     *clubs.Service
-	users     *users.Service
+	seasons          DB
+	divisions        *divisions.Service
+	matches          *matches.Service
+	config           Config
+	clubs            *clubs.Service
+	users            *users.Service
+	currencywaitlist *currencywaitlist.Service
 }
 
 // NewService is a constructor for seasons service.
-func NewService(seasons DB, config Config, divisions *divisions.Service, matches *matches.Service, clubs *clubs.Service, users *users.Service) *Service {
+func NewService(seasons DB, config Config, divisions *divisions.Service, matches *matches.Service, clubs *clubs.Service, users *users.Service, currencywaitlist *currencywaitlist.Service) *Service {
 	return &Service{
-		seasons:   seasons,
-		divisions: divisions,
-		config:    config,
-		matches:   matches,
-		clubs:     clubs,
-		users:     users,
+		seasons:          seasons,
+		divisions:        divisions,
+		config:           config,
+		matches:          matches,
+		clubs:            clubs,
+		users:            users,
+		currencywaitlist: currencywaitlist,
 	}
 }
 
@@ -172,12 +174,12 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 				return ChoreError.Wrap(err)
 			}
 
-			var nonce int64
 			var reward currencywaitlist.Item
 
 			switch userProfile.WalletType {
 			case users.WalletTypeCasper:
-				nonce, err = service.seasons.GetNonceByCasperWallet(ctx, userProfile.CasperWalletID)
+				var nonce int64
+				nonce, err = service.currencywaitlist.GetNonceByWallet(ctx, userProfile.CasperWalletID)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}
