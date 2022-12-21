@@ -4,13 +4,13 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { useParams } from 'react-router';
 
 import { FootballerCardIllustrationsRadar } from '@/app/components/common/Card/CardIllustrationsRadar';
 import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
 import { FootballerCardStatsArea } from '@/app/components/common/Card/CardStatsArea';
 import { PlayerCard } from '@/app/components/common/PlayerCard';
+import { ToastNotifications } from '@/notifications/service';
 
 import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
@@ -44,10 +44,7 @@ const Card: React.FC = () => {
         try {
             await dispatch(setCurrentUser());
         } catch (error: any) {
-            toast.error(`${error.message}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.couldNotGetUser();
         }
     }
 

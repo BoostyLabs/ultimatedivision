@@ -3,13 +3,13 @@
 
 import MetaMaskOnboarding from '@metamask/onboarding';
 
-import { metamaskNotifications } from '@/app/internal/notifications';
 import { ServicePlugin } from '@/app/plugins/service';
 
 import CasperTransactionService from '@/casper';
 import { User } from '@/users';
 import { walletTypes } from '.';
 import { ethers } from 'ethers';
+import { ToastNotifications } from '@/notifications/service';
 
 /**
  * Exposes all wallet service related logic.
@@ -36,7 +36,7 @@ class WalletService {
                 });
                 await this.metamaskService.sendTransaction(id);
             } catch (error: any) {
-                metamaskNotifications(error);
+                ToastNotifications.metamaskError(error);
             }
         } else {
             this.onboarding.startOnboarding();

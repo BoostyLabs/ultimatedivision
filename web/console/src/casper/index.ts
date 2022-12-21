@@ -2,12 +2,12 @@
 // See LICENSE for copying information.
 
 import { Buffer } from 'buffer';
-import { toast } from 'react-toastify';
 import { JsonTypes } from 'typedjson';
-import { CLValueBuilder, RuntimeArgs, CLPublicKey, DeployUtil, Signer } from 'casper-js-sdk';
+import { CLPublicKey, CLValueBuilder, DeployUtil, RuntimeArgs } from 'casper-js-sdk';
 
 import { CasperNetworkClient } from '@/api/casper';
 import { CasperMatchTransaction } from '@/matches';
+import { ToastNotifications } from '@/notifications/service';
 
 enum CasperRuntimeArgs {
     SIGNATURE = 'signature',
@@ -22,6 +22,7 @@ export class CasperTransactionIdentificators {
         public cardId: string
     ) { }
 }
+
 const CHAIN_NAME = 'casper-test';
 const ACCOUNT_HASH_PREFIX = 'account-hash-';
 
@@ -107,10 +108,7 @@ class CasperTransactionService {
             await this.client.claim(nftWaitlist.rpcNodeAddress, JSON.stringify(signature));
         }
         catch (error: any) {
-            toast.error(`${error.message}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.casperError(`${error.error}`);
         }
     }
 
@@ -134,10 +132,7 @@ class CasperTransactionService {
             await this.client.claim(rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
         }
         catch (error: any) {
-            toast.error(`${error.message}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.casperError(`${error.error}`);
         }
     }
 }

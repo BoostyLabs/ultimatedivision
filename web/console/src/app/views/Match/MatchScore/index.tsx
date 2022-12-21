@@ -15,6 +15,7 @@ import { getCurrentQueueClient, queueActionAllowAddress, queueCasperActionAllowA
 import { setCurrentUser } from '@/app/store/actions/users';
 import WalletService from '@/wallet/service';
 import { walletTypes } from '@/wallet';
+import { ToastNotifications } from '@/notifications/service';
 
 import coin from '@static/img/match/money.svg';
 
@@ -50,10 +51,7 @@ export const MatchScore: React.FC = () => {
         try {
             await dispatch(setCurrentUser());
         } catch (error: any) {
-            toast.error('No user', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.couldNotGetUser();
         }
     }
 
@@ -78,15 +76,7 @@ export const MatchScore: React.FC = () => {
 
                 queueActionAllowAddress(wallet, nonce);
             } catch (error: any) {
-                error.code === METAMASK_RPC_ERROR_CODE
-                    ? toast.error('Please open metamask manually!', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    })
-                    : toast.error('Something went wrong', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    });
+                ToastNotifications.metamaskError(error);
             }
         } else {
             onboarding.startOnboarding();
@@ -108,10 +98,7 @@ export const MatchScore: React.FC = () => {
             queueCasperActionAllowAddress(accountHashConverted, user.walletType, squad.id);
         }
         catch (error: any) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.couldNotAddCasperWallet();
         }
     };
 
