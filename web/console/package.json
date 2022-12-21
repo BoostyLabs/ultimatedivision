@@ -11,26 +11,30 @@
         "casper-js-sdk": "2.9.1",
         "chart.js": "3.4.1",
         "ethers": "5.5.1",
+        "jest": "26.6.0",
+        "jest-transform-stub": "2.0.0",
         "jsencrypt": "3.2.1",
         "react": "17.0.2",
         "react-chartjs-2": "3.0.3",
         "react-dom": "17.0.2",
-        "react-redux": "7.2.4",
+        "react-redux": "7.2.9",
         "react-router-dom": "5.2.0",
         "react-scripts": "4.0.3",
         "react-slick": "0.28.1",
         "react-toastify": "8.0.3",
-        "redux": "4.1.0",
-        "redux-thunk": "2.3.0",
+        "redux": "4.1.2",
+        "redux-mock-store": "1.5.4",
+        "redux-thunk": "2.4.1",
         "slick-carousel": "1.8.1",
-        "stylelint-scss": "3.21.0"
+        "stylelint-scss": "3.21.0",
+        "ts-jest": "26.4.1"
     },
     "scripts": {
         "lint": "eslint --fix --ext .ts,.tsx .",
         "start": "webpack serve --open",
         "build": "webpack --mode production",
         "dev": "webpack --mode development",
-        "test": "react-scripts test",
+        "test": "NODE_ENV=test jest",
         "eject": "react-scripts eject"
     },
     "eslintConfig": {
@@ -51,12 +55,44 @@
             "last 1 safari version"
         ]
     },
+    "jest": {
+        "automock": false,
+        "setupFiles": [
+            "./jestSetup.ts"
+        ],
+        "globals": {
+            "ts-jest": {
+                "diagnostics": false,
+                "tsConfig": "tsconfig.json"
+            },
+            "window": {}
+        },
+        "transform": {
+            "^.+\\.js$": "babel-jest",
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "moduleFileExtensions": [
+            "js",
+            "jsx",
+            "json",
+            "ts",
+            "tsx"
+        ],
+        "moduleNameMapper": {
+            "^@/(.*)$": "<rootDir>/src/$1",
+            "^.+\\.svg$": "babel-jest"
+        },
+        "collectCoverage": true,
+        "testMatch": [
+            "**/tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx)"
+        ],
+        "testURL": "http://localhost/"
+    },
     "devDependencies": {
         "@svgr/webpack": "5.5.0",
-        "@testing-library/jest-dom": "5.12.0",
         "@testing-library/react": "11.2.7",
         "@testing-library/user-event": "12.8.3",
-        "@types/jest": "26.0.23",
+        "@types/jest": "27.5.2",
         "@types/node": "15.12.5",
         "@types/react": "17.0.11",
         "@types/react-dom": "17.0.8",
@@ -64,6 +100,7 @@
         "@types/react-router-dom": "5.1.7",
         "@types/react-slick": "0.23.7",
         "@types/redux": "3.6.0",
+        "@types/redux-mock-store": "1.0.3",
         "@types/redux-thunk": "2.1.0",
         "@typescript-eslint/eslint-plugin": "4.31.1",
         "@typescript-eslint/eslint-plugin-tslint": "4.28.3",

@@ -174,6 +174,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
 
             return;
         }
+        // @ts-ignore
         await window.ethereum.request({
             method: 'eth_requestAccounts',
         });
