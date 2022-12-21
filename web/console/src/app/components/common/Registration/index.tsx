@@ -7,9 +7,9 @@ import { toast } from 'react-toastify';
 
 import MetaMaskOnboarding from '@metamask/onboarding';
 // @ts-ignore
-import KeyStorageHandler from '@/app/velas/keyStorageHandler';
+import KeyStorageHandler from '@/velas/keyStorageHandler';
 // @ts-ignore
-import StorageHandler from '@/app/velas/storageHandler';
+import StorageHandler from '@/velas/storageHandler';
 // @ts-ignore
 import { VAClient } from '@velas/account-client';
 import { JSEncrypt } from 'jsencrypt';

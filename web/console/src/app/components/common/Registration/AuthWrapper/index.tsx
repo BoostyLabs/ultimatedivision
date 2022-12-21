@@ -6,9 +6,9 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 // @ts-ignore
-import KeyStorageHandler from '../../../../velas/keyStorageHandler';
+import KeyStorageHandler from '@/velas/keyStorageHandler';
 // @ts-ignore
-import StorageHandler from '../../../../velas/storageHandler';
+import StorageHandler from '@/velas/storageHandler';
 // @ts-ignore
 import { VAClient } from '@velas/account-client';
 
