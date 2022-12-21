@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"ultimatedivision/pkg/auth"
 
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
@@ -59,15 +60,14 @@ func (controller *Seasons) GetCurrentSeasons(w http.ResponseWriter, r *http.Requ
 func (controller *Seasons) GetRewardByUserID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-	params := mux.Vars(r)
 
-	userID, err := strconv.Atoi(params["user_id"])
+	claims, err := auth.GetClaims(ctx)
 	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrSeasons.Wrap(err))
+		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
 		return
 	}
 
-	reward, err := controller.seasons.GetRewardByUserID(ctx, userID)
+	reward, err := controller.seasons.GetRewardByUserID(ctx, claims.UserID)
 	if err != nil {
 		controller.serveError(w, http.StatusInternalServerError, ErrSeasons.Wrap(err))
 		return

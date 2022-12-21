@@ -39,7 +39,7 @@ type DB interface {
 	// GetSeasonByDivisionID returns season by division id from the data base.
 	GetSeasonByDivisionID(ctx context.Context, divisionID uuid.UUID) (Season, error)
 	// GetRewardByUserID returns user reward by id from the data base.
-	GetRewardByUserID(ctx context.Context, userID int) (Reward, error)
+	GetRewardByUserID(ctx context.Context, userID uuid.UUID) (Reward, error)
 	// ListRewards returns all seasons rewards from the data base.
 	ListRewards(ctx context.Context) ([]Reward, error)
 	// Delete deletes a season in the database.

@@ -41,7 +41,7 @@ func (seasonsDB *seasonsDB) Create(ctx context.Context, season seasons.Season) e
 
 // CreateReward creates a season reward and writes to the database.
 func (seasonsDB *seasonsDB) CreateReward(ctx context.Context, reward currencywaitlist.Item) error {
-	query := `INSERT INTO currency_waitlist(wallet_address, casper_wallet_address, wallet_type, value, nonce, signature)
+	query := `INSERT INTO season_rewards(wallet_address, casper_wallet_address, wallet_type, value, nonce, signature)
 	          VALUES($1,$2,$3,$4,$5,$6)`
 
 	_, err := seasonsDB.conn.ExecContext(ctx, query, reward.WalletAddress, reward.CasperWalletAddress, reward.WalletType, reward.Value.Bytes(), reward.Nonce, reward.Signature)
@@ -136,7 +136,7 @@ func (seasonsDB *seasonsDB) Get(ctx context.Context, id int) (seasons.Season, er
 }
 
 // GetRewardByUserID returns user reward by id from the data base.
-func (seasonsDB *seasonsDB) GetRewardByUserID(ctx context.Context, userID int) (seasons.Reward, error) {
+func (seasonsDB *seasonsDB) GetRewardByUserID(ctx context.Context, userID uuid.UUID) (seasons.Reward, error) {
 	query := `SELECT * FROM season_rewards WHERE user_id=$1`
 	var reward seasons.Reward
 

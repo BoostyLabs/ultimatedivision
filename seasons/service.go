@@ -72,7 +72,11 @@ func (service *Service) Create(ctx context.Context) error {
 }
 
 // CreateReward creates a rewards in the end of a season.
-func (service *Service) CreateReward(ctx context.Context, reward currencywaitlist.Item) error {
+func (service *Service) CreateReward(ctx context.Context, userID uuid.UUID, reward currencywaitlist.Item) error {
+	_, err := service.currencywaitlist.Create(ctx, userID, reward.Value, reward.Nonce)
+	if err != nil {
+		return ErrSeasons.Wrap(err)
+	}
 	return ErrSeasons.Wrap(service.seasons.CreateReward(ctx, reward))
 }
 
@@ -100,7 +104,7 @@ func (service *Service) Get(ctx context.Context, seasonID int) (Season, error) {
 }
 
 // GetRewardByUserID returns user reward by id from DB.
-func (service *Service) GetRewardByUserID(ctx context.Context, userID int) (Reward, error) {
+func (service *Service) GetRewardByUserID(ctx context.Context, userID uuid.UUID) (Reward, error) {
 	season, err := service.seasons.GetRewardByUserID(ctx, userID)
 	return season, ErrSeasons.Wrap(err)
 }
@@ -203,7 +207,7 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 				}
 			}
 
-			err = service.CreateReward(ctx, reward)
+			err = service.CreateReward(ctx, userProfile.ID, reward)
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}
