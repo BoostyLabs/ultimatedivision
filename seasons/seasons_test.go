@@ -18,7 +18,6 @@ import (
 	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/divisions"
 	"ultimatedivision/seasons"
-	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
 )
 
@@ -80,12 +79,15 @@ func TestSeasons(t *testing.T) {
 
 	value := *big.NewInt(100)
 
-	reward := currencywaitlist.Item{
+	reward := seasons.Reward{
+		UserID:              user.ID,
+		SeasonID:            season1.ID,
 		WalletAddress:       common.Address{},
 		CasperWalletAddress: user.CasperWallet,
 		WalletType:          user.WalletType,
 		Value:               value,
 		Nonce:               0,
+		Status:              1,
 		Signature:           "",
 	}
 

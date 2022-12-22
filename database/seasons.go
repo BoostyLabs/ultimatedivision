@@ -13,7 +13,6 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/seasons"
-	"ultimatedivision/udts/currencywaitlist"
 )
 
 // ensures that seasonsDB implements seasons.DB.
@@ -40,11 +39,11 @@ func (seasonsDB *seasonsDB) Create(ctx context.Context, season seasons.Season) e
 }
 
 // CreateReward creates a season reward and writes to the database.
-func (seasonsDB *seasonsDB) CreateReward(ctx context.Context, reward currencywaitlist.Item) error {
-	query := `INSERT INTO season_rewards(wallet_address, casper_wallet_address, wallet_type, value, nonce, signature)
-	          VALUES($1,$2,$3,$4,$5,$6)`
+func (seasonsDB *seasonsDB) CreateReward(ctx context.Context, reward seasons.Reward) error {
+	query := `INSERT INTO season_rewards(user_id, season_id, status, wallet_address, casper_wallet_address, value, nonce, signature)
+	          VALUES($1,$2,$3,$4,$5,$6,$7,$8)`
 
-	_, err := seasonsDB.conn.ExecContext(ctx, query, reward.WalletAddress, reward.CasperWalletAddress, reward.WalletType, reward.Value.Bytes(), reward.Nonce, reward.Signature)
+	_, err := seasonsDB.conn.ExecContext(ctx, query, reward.UserID, reward.SeasonID, reward.Status, reward.WalletAddress, reward.CasperWalletAddress, reward.Value.Bytes(), reward.Nonce, reward.Signature)
 
 	return ErrSeasons.Wrap(err)
 }
@@ -105,7 +104,7 @@ func (seasonsDB *seasonsDB) ListRewards(ctx context.Context) ([]seasons.Reward, 
 	var allRewards []seasons.Reward
 	for rows.Next() {
 		var reward seasons.Reward
-		err := rows.Scan(&reward.UserID, &reward.Value, &reward.Nonce, &reward.Wallet, &reward.Signature)
+		err := rows.Scan(&reward.UserID, &reward.Value, &reward.Nonce, &reward.WalletAddress, &reward.CasperWalletAddress, &reward.WalletType, &reward.Signature)
 		if err != nil {
 			return nil, ErrSeasons.Wrap(err)
 		}
@@ -142,7 +141,7 @@ func (seasonsDB *seasonsDB) GetRewardByUserID(ctx context.Context, userID uuid.U
 
 	row := seasonsDB.conn.QueryRowContext(ctx, query, userID)
 
-	err := row.Scan(&reward.UserID, &reward.Value, &reward.Wallet, &reward.Signature)
+	err := row.Scan(&reward.UserID, &reward.Value, &reward.Nonce, &reward.WalletAddress, &reward.CasperWalletAddress, &reward.WalletType, &reward.Signature)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return reward, seasons.ErrNoSeason.Wrap(err)

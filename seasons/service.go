@@ -72,8 +72,8 @@ func (service *Service) Create(ctx context.Context) error {
 }
 
 // CreateReward creates a rewards in the end of a season.
-func (service *Service) CreateReward(ctx context.Context, userID uuid.UUID, reward currencywaitlist.Item) error {
-	_, err := service.currencywaitlist.Create(ctx, userID, reward.Value, reward.Nonce)
+func (service *Service) CreateReward(ctx context.Context, reward Reward) error {
+	_, err := service.currencywaitlist.Create(ctx, reward.UserID, reward.Value, reward.Nonce)
 	if err != nil {
 		return ErrSeasons.Wrap(err)
 	}
@@ -178,7 +178,7 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 				return ChoreError.Wrap(err)
 			}
 
-			var reward currencywaitlist.Item
+			var reward Reward
 
 			switch userProfile.WalletType {
 			case users.WalletTypeCasper:
@@ -188,7 +188,8 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 					return ChoreError.Wrap(err)
 				}
 
-				reward = currencywaitlist.Item{
+				reward = Reward{
+					UserID:              userProfile.ID,
 					WalletAddress:       common.Address{},
 					CasperWalletAddress: userProfile.CasperWalletID,
 					WalletType:          userProfile.WalletType,
@@ -197,7 +198,8 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 					Signature:           "",
 				}
 			default:
-				reward = currencywaitlist.Item{
+				reward = Reward{
+					UserID:              userProfile.ID,
 					WalletAddress:       userProfile.Wallet,
 					CasperWalletAddress: "",
 					WalletType:          userProfile.WalletType,
@@ -207,7 +209,7 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 				}
 			}
 
-			err = service.CreateReward(ctx, userProfile.ID, reward)
+			err = service.CreateReward(ctx, reward)
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}
