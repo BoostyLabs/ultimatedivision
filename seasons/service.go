@@ -77,6 +77,7 @@ func (service *Service) CreateReward(ctx context.Context, reward Reward) error {
 	if err != nil {
 		return ErrSeasons.Wrap(err)
 	}
+
 	return ErrSeasons.Wrap(service.seasons.CreateReward(ctx, reward))
 }
 
