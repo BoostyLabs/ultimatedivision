@@ -17,6 +17,10 @@ import realMadrid from '@static/img/divisions/realmadrid.png';
 import rectangle from '@static/img/FilterField/rectangle.svg';
 
 import './index.scss';
+import { DivisionsClient } from '@/api/divisions';
+import { DivisionsService } from '@/divisions/service';
+import CasperTransactionService from '@/casper';
+import { setCurrentUser } from '@/app/store/actions/users';
 
 const Division: React.FC = () => {
     const dispatch = useDispatch();
@@ -25,6 +29,18 @@ const Division: React.FC = () => {
         useSelector((state: RootState) => state.divisionsReducer);
 
     const [activeDivisions, setActiveDivisions] = useState<string>('10');
+
+    const user = useSelector((state: RootState) => state.usersReducer.user);
+
+      /** sets user info */
+    async function setUser() {
+        try {
+            await dispatch(setCurrentUser());
+        } catch (error: any) {
+            ToastNotifications.couldNotGetUser();
+        }
+    }
+
 
     /** Get divisions seasons statistics. */
     async function getSeasonsStatistics() {
@@ -35,6 +51,8 @@ const Division: React.FC = () => {
         }
     }
 
+    const divisionClient = new DivisionsClient();
+    const divisionService= new DivisionsService(divisionClient)
     useEffect(() => {
         getSeasonsStatistics();
     }, [activeDivisions]);
@@ -110,6 +128,17 @@ const Division: React.FC = () => {
         '10',
     ];
 
+    const signTokens = async () => {
+        const transactionData = await divisionService.getDivisionSeasonsReward();
+        const casperTransactionService = new CasperTransactionService(user.casperWallet);
+
+        console.log(transactionData)
+        // await casperTransactionService.mintUDT(messageEvent.message.casperTransaction, messageEvent.message.rpcNodeAddress);
+    }
+
+    useEffect(() => {
+        setUser();
+    }, []);
     return (
         <section className="division">
             <div className="division__titles">
@@ -165,7 +194,10 @@ const Division: React.FC = () => {
                 <h2 className="division__clubs__no-results">
                     You need to play at least 3 matches, but not more than 30
                 </h2>
-                :
+                : <>
+                    <button onClick={signTokens}>
+                        Sign
+                    </button>
                 <table className="division__clubs">
                     <thead>
                         <tr className="division__clubs__titles">
@@ -179,7 +211,8 @@ const Division: React.FC = () => {
                             )}
                         </tr>
                     </thead>
-                    <tbody>
+                        <tbody>
+                            
                         {/* TODO: Need change type of divisionClub */}
                         {seasonsStatistics.statistics.map(
                             (divisionClub: any, index: number) =>
@@ -224,7 +257,8 @@ const Division: React.FC = () => {
 
                         )}
                     </tbody>
-                </table>
+                    </table>
+                    </>
             }
         </section>
     );

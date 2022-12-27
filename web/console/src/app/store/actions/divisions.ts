@@ -9,7 +9,9 @@ import { DivisionsService } from '@/divisions/service';
 export const GET_CURRENT_DIVISION_SEASONS = 'GET_CURRENT_DIVISION_SEASONS';
 export const GET_DIVISION_SEASONS_STATISTICS =
     'GET_DIVISION_SEASONS_STATISTICS';
+
 export const SET_ACTIVE_DIVISION = 'SET_ACTIVE_DIVISION';
+export const GET_DIVISION_SEASONS_REWARD = 'GET_DIVISION_SEASONS_REWARD'
 
 /** handles gets current seasons divisions */
 export const getCurrentDivisionSeasons = (
@@ -25,6 +27,14 @@ export const getDivisionSeasonsStatistics = (
 ) => ({
     type: GET_DIVISION_SEASONS_STATISTICS,
     seasonsStatistics,
+});
+
+/** handles gets divisions matches statistics */
+export const getDivisionSeasonsReward = (
+    divisionSeasonsReward: any
+) => ({
+    type: GET_DIVISION_SEASONS_REWARD,
+    divisionSeasonsReward,
 });
 
 /** handles sets active division */
@@ -54,4 +64,11 @@ export const divisionSeasonsStatistics = (id: string) =>
         );
 
         dispatch(getDivisionSeasonsStatistics(seasonsStatistics));
+    };
+/** thunk that handles gets seasons statistics */
+export const divisionSeasonsReward = () =>
+    async function(dispatch: Dispatch) {
+        const divisionSeasonsReward = await service.getDivisionSeasonsReward();
+
+        dispatch(getDivisionSeasonsStatistics(divisionSeasonsReward));
     };

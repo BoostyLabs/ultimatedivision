@@ -27,4 +27,11 @@ export class DivisionsService {
 
         return divisionsSeasonsStatistics;
     }
+     /** handles gets divisions matches statistics */
+    public async getDivisionSeasonsReward(): Promise<any> {
+        const divisionsSeasonsReward =
+            await this.divisions.getDivisionSeasonsReward();
+
+        return divisionsSeasonsReward;
+    }
 }
