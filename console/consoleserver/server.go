@@ -180,7 +180,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	queueRouter.HandleFunc("", queueController.Create).Methods(http.MethodGet)
 
 	seasonsRouter := apiRouter.PathPrefix("/seasons").Subrouter()
-	//seasonsRouter.Use(server.withAuth)
+	seasonsRouter.Use(server.withAuth)
 	seasonsRouter.HandleFunc("/current", seasonsController.GetCurrentSeasons).Methods(http.MethodGet)
 	seasonsRouter.HandleFunc("/reward", seasonsController.GetRewardByUserID).Methods(http.MethodGet)
 	seasonsRouter.HandleFunc("/statistics/division/{divisionName}", seasonsController.GetAllClubsStatistics).Methods(http.MethodGet)

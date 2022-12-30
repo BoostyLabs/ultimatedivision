@@ -5,11 +5,11 @@ package seasons
 
 import (
 	"context"
-	"fmt"
 	"math/big"
 	"sort"
 	"time"
 
+	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -107,8 +107,6 @@ func (service *Service) GetRewardByUserID(ctx context.Context, userID uuid.UUID)
 		return RewardWithTransaction{}, ErrSeasons.Wrap(err)
 	}
 
-	fmt.Println(rewards)
-
 	var casperWalletAddress string
 	value := new(big.Int)
 	for _, reward := range rewards {
@@ -116,15 +114,10 @@ func (service *Service) GetRewardByUserID(ctx context.Context, userID uuid.UUID)
 		casperWalletAddress = reward.CasperWalletAddress
 	}
 
-	fmt.Println(value)
-	fmt.Println(casperWalletAddress)
-
 	nonce, err := service.currencywaitlist.GetNonceByWallet(ctx, casperWalletAddress)
 	if err != nil {
 		return RewardWithTransaction{}, ErrSeasons.Wrap(err)
 	}
-
-	fmt.Println(nonce)
 
 	transaction, err := service.currencywaitlist.CasperCreate(ctx, userID, *value, nonce)
 	if err != nil {
@@ -139,10 +132,10 @@ func (service *Service) GetRewardByUserID(ctx context.Context, userID uuid.UUID)
 			Status:              StatusUnPaid,
 			Value:               *value,
 		},
-		Transaction: currencywaitlist.Transaction{
-			Signature:   transaction.Signature,
-			UDTContract: transaction.CasperTokenContract,
-			Value:       transaction.Value,
+		Signature: transaction.Signature,
+		UDTContract: evmsignature.Contract{
+			Address:       transaction.CasperTokenContract.Address,
+			AddressMethod: transaction.CasperTokenContract.AddressMethod,
 		},
 	}
 

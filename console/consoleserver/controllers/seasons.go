@@ -5,14 +5,15 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
-	"github.com/zeebo/errs"
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
+	"github.com/zeebo/errs"
+
 	"ultimatedivision/divisions"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/pkg/auth"
 	"ultimatedivision/seasons"
 )
 
@@ -60,13 +61,13 @@ func (controller *Seasons) GetRewardByUserID(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 
-	//claims, err := auth.GetClaims(ctx)
-	//if err != nil {
-	//	controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
-	//	return
-	//}
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
+		return
+	}
 
-	reward, err := controller.seasons.GetRewardByUserID(ctx, uuid.MustParse("972d6155-6e33-4e3c-9b74-b7ac09c2a900"))
+	reward, err := controller.seasons.GetRewardByUserID(ctx, claims.UserID)
 	if err != nil {
 		controller.serveError(w, http.StatusInternalServerError, ErrSeasons.Wrap(err))
 		return

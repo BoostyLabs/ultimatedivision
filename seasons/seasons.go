@@ -7,15 +7,15 @@ import (
 	"context"
 	"math/big"
 	"time"
-	"ultimatedivision/udts/currencywaitlist"
-	"ultimatedivision/users"
 
+	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/users"
 )
 
 // ErrNoSeason indicated that season does not exist.
@@ -88,7 +88,9 @@ type Reward struct {
 	Value               big.Int          `json:"value"`
 }
 
+// RewardWithTransaction entity describes values reward with transaction.
 type RewardWithTransaction struct {
 	Reward
-	currencywaitlist.Transaction
+	Signature   evmsignature.Signature `json:"signature"`
+	UDTContract evmsignature.Contract  `json:"udtContract"`
 }
