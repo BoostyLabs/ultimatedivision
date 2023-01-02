@@ -9,6 +9,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -73,10 +74,6 @@ func (service *Service) Create(ctx context.Context) error {
 
 // CreateReward creates a rewards in the end of a season.
 func (service *Service) CreateReward(ctx context.Context, reward Reward) error {
-	_, err := service.currencywaitlist.Create(ctx, reward.UserID, reward.Value, reward.Nonce)
-	if err != nil {
-		return ErrSeasons.Wrap(err)
-	}
 	return ErrSeasons.Wrap(service.seasons.CreateReward(ctx, reward))
 }
 
@@ -104,9 +101,45 @@ func (service *Service) Get(ctx context.Context, seasonID int) (Season, error) {
 }
 
 // GetRewardByUserID returns user reward by id from DB.
-func (service *Service) GetRewardByUserID(ctx context.Context, userID uuid.UUID) (Reward, error) {
-	season, err := service.seasons.GetRewardByUserID(ctx, userID)
-	return season, ErrSeasons.Wrap(err)
+func (service *Service) GetRewardByUserID(ctx context.Context, userID uuid.UUID) (RewardWithTransaction, error) {
+	rewards, err := service.seasons.ListOfUnpaidRewardsByUserID(ctx, userID)
+	if err != nil {
+		return RewardWithTransaction{}, ErrSeasons.Wrap(err)
+	}
+
+	var casperWalletAddress string
+	value := new(big.Int)
+	for _, reward := range rewards {
+		value = reward.Value.Add(&reward.Value, value)
+		casperWalletAddress = reward.CasperWalletAddress
+	}
+
+	nonce, err := service.currencywaitlist.GetNonceByWallet(ctx, casperWalletAddress)
+	if err != nil {
+		return RewardWithTransaction{}, ErrSeasons.Wrap(err)
+	}
+
+	transaction, err := service.currencywaitlist.CasperCreate(ctx, userID, *value, nonce)
+	if err != nil {
+		return RewardWithTransaction{}, ErrSeasons.Wrap(err)
+	}
+
+	rewardWithTransaction := RewardWithTransaction{
+		Reward: Reward{
+			UserID:              userID,
+			CasperWalletAddress: casperWalletAddress,
+			WalletType:          users.WalletTypeCasper,
+			Status:              StatusUnPaid,
+			Value:               *value,
+		},
+		Signature: transaction.Signature,
+		UDTContract: evmsignature.Contract{
+			Address:       transaction.CasperTokenContract.Address,
+			AddressMethod: transaction.CasperTokenContract.AddressMethod,
+		},
+	}
+
+	return rewardWithTransaction, nil
 }
 
 // Delete deletes a season.
@@ -182,30 +215,24 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 
 			switch userProfile.WalletType {
 			case users.WalletTypeCasper:
-				var nonce int64
-				nonce, err = service.currencywaitlist.GetNonceByWallet(ctx, userProfile.CasperWalletID)
-				if err != nil {
-					return ChoreError.Wrap(err)
-				}
-
 				reward = Reward{
+					ID:                  uuid.New(),
 					UserID:              userProfile.ID,
 					WalletAddress:       common.Address{},
 					CasperWalletAddress: userProfile.CasperWalletID,
 					WalletType:          userProfile.WalletType,
+					Status:              StatusUnPaid,
 					Value:               *big.NewInt(10),
-					Nonce:               nonce,
-					Signature:           "",
 				}
 			default:
 				reward = Reward{
+					ID:                  uuid.New(),
 					UserID:              userProfile.ID,
 					WalletAddress:       userProfile.Wallet,
 					CasperWalletAddress: "",
 					WalletType:          userProfile.WalletType,
+					Status:              StatusUnPaid,
 					Value:               *big.NewInt(10),
-					Nonce:               0,
-					Signature:           "",
 				}
 			}
 
