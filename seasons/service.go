@@ -9,7 +9,6 @@ import (
 	"sort"
 	"time"
 
-	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -132,11 +131,11 @@ func (service *Service) GetRewardByUserID(ctx context.Context, userID uuid.UUID)
 			Status:              StatusUnPaid,
 			Value:               *value,
 		},
-		Signature: transaction.Signature,
-		UDTContract: evmsignature.Contract{
-			Address:       transaction.CasperTokenContract.Address,
-			AddressMethod: transaction.CasperTokenContract.AddressMethod,
-		},
+		Value:               value.String(),
+		Nonce:               nonce,
+		Signature:           transaction.Signature,
+		CasperTokenContract: service.config.CasperTokenContract,
+		RPCNodeAddress:      service.config.RPCNodeAddress,
 	}
 
 	return rewardWithTransaction, nil
@@ -218,6 +217,7 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 				reward = Reward{
 					ID:                  uuid.New(),
 					UserID:              userProfile.ID,
+					SeasonID:            statistic.SeasonID,
 					WalletAddress:       common.Address{},
 					CasperWalletAddress: userProfile.CasperWalletID,
 					WalletType:          userProfile.WalletType,

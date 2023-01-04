@@ -67,7 +67,9 @@ type Season struct {
 
 // Config defines configuration for seasons.
 type Config struct {
-	SeasonTime time.Duration `json:"seasonTime"`
+	SeasonTime          time.Duration         `json:"seasonTime"`
+	CasperTokenContract evmsignature.Contract `json:"casperTokenContract"`
+	RPCNodeAddress      string                `json:"rpcNodeAddress"`
 }
 
 // SeasonStatistics returns statistics of clubs in season.
@@ -91,6 +93,9 @@ type Reward struct {
 // RewardWithTransaction entity describes values reward with transaction.
 type RewardWithTransaction struct {
 	Reward
-	Signature   evmsignature.Signature `json:"signature"`
-	UDTContract evmsignature.Contract  `json:"udtContract"`
+	Nonce               int64                  `json:"nonce"`
+	Signature           evmsignature.Signature `json:"signature"`
+	Value               string                 `json:"value"`
+	CasperTokenContract evmsignature.Contract  `json:"casperTokenContract"`
+	RPCNodeAddress      string                 `json:"rpcNodeAddress"`
 }
