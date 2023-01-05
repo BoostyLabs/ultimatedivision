@@ -21,6 +21,10 @@ import './index.scss';
 
 const Division: React.FC = () => {
     const DEFAULT_SEASONS_REWARD_TOKENS_STATUS = 0;
+
+    const divisionClient = new DivisionsClient();
+    const divisionService = new DivisionsService(divisionClient);
+    
     const dispatch = useDispatch();
 
     const { currentDivisionsSeasons, seasonsStatistics, activeDivision } =
@@ -38,8 +42,6 @@ const Division: React.FC = () => {
             ToastNotifications.failedGettingSeasonStatistics();
         }
     }
-    const divisionClient = new DivisionsClient();
-    const divisionService = new DivisionsService(divisionClient);
 
     /** Get divisions seasons statistics. */
     async function getSeasonStatus() {

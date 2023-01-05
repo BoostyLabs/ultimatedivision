@@ -59,8 +59,8 @@ export class DivisionsClient extends APIClient {
             await this.handleError(response);
         }
 
-        const responseData = await response.json();
+        const seasonRewardTokenStatus = await response.json();
 
-        return responseData;
+        return seasonRewardTokenStatus;
     }
 }
