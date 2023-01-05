@@ -85,7 +85,7 @@ class WalletService {
     /** Mints token with velas wallet. */
     private static velasMintToken() { };
 
-    /** Mints token. */
+    /** Mints season token. */
     public mintToken(messageEvent: any) {
         switch (this.user.walletType) {
         case walletTypes.VELAS_WALLET_TYPE:
@@ -96,6 +96,36 @@ class WalletService {
             break;
         case walletTypes.METAMASK_WALLET_TYPE:
             this.metamaskMintToken(messageEvent);
+            break;
+        default:
+            break;
+        }
+    };
+
+    /** Mints season token with casper wallet. */
+    private casperMintSeasonToken(seasonRewardTransaction: any) {
+        const casperTransactionService = new CasperTransactionService(this.user.casperWalletId);
+
+        casperTransactionService.mintUDT(seasonRewardTransaction, seasonRewardTransaction.rpcNodeAddress);
+    };
+
+    /** Mints season token with metamask wallet. */
+    private static metamaskMintSeasonToken() {};
+
+    /** Mints season token with velas wallet. */
+    private static velasMintSeasonToken() {};
+
+    /** Mints season token. */
+    public mintSeasonToken(seasonRewardTransaction: any) {
+        switch (this.user.walletType) {
+        case walletTypes.VELAS_WALLET_TYPE:
+            WalletService.velasMintSeasonToken();
+            break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperMintSeasonToken(seasonRewardTransaction);
+            break;
+        case walletTypes.METAMASK_WALLET_TYPE:
+            WalletService.metamaskMintSeasonToken();
             break;
         default:
             break;

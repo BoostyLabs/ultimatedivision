@@ -23,6 +23,28 @@ export class CasperTransactionIdentificators {
     ) { }
 }
 
+/** Transaction describes transaction entity of match response. */
+export class CasperSeasonRewardTransaction {
+    /** Transaction contains of nonce, signature hash udtContract and value. */
+    constructor(
+        public ID: string,
+        public userId: string,
+        public seasonID: string,
+        public walletAddress: string,
+        public casperWalletAddress: string,
+        public walleType: string,
+        public status: number,
+        public nonce: number,
+        public signature: string,
+        public value: string,
+        public casperTokenContract: {
+            address: string;
+            addressMethod: string;
+        },
+        public rpcNodeAddress: string,
+    ) { }
+};
+
 const CHAIN_NAME = 'casper-test';
 const ACCOUNT_HASH_PREFIX = 'account-hash-';
 
@@ -113,7 +135,7 @@ class CasperTransactionService {
     }
 
     /** Mints a token */
-    async mintUDT(transaction: CasperMatchTransaction, rpcNodeAddress: string): Promise<void> {
+    async mintUDT(transaction: CasperMatchTransaction | CasperSeasonRewardTransaction, rpcNodeAddress: string): Promise<void> {
         try {
             const runtimeArgs = RuntimeArgs.fromMap({
                 'value': CLValueBuilder.u256(transaction.value),

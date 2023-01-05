@@ -11,7 +11,7 @@ export const GET_DIVISION_SEASONS_STATISTICS =
     'GET_DIVISION_SEASONS_STATISTICS';
 
 export const SET_ACTIVE_DIVISION = 'SET_ACTIVE_DIVISION';
-export const GET_DIVISION_SEASONS_REWARD = 'GET_DIVISION_SEASONS_REWARD'
+export const GET_DIVISION_SEASONS_REWARD = 'GET_DIVISION_SEASONS_REWARD';
 
 /** handles gets current seasons divisions */
 export const getCurrentDivisionSeasons = (
