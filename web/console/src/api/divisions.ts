@@ -49,8 +49,8 @@ export class DivisionsClient extends APIClient {
             responseData.statistics
         );
     }
-    /** gets division seasons reward status */
-    public async getSeasonsRewardStatus(): Promise<any> {
+    /** requests division seasons reward status */
+    public async seasonsRewardStatus(): Promise<number> {
         const response = await this.http.get(
             `${this.ROOT_PATH}/seasons/reward/tokens`
         );

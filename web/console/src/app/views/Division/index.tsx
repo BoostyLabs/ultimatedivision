@@ -21,10 +21,8 @@ import './index.scss';
 
 const Division: React.FC = () => {
     const DEFAULT_SEASONS_REWARD_TOKENS_STATUS = 0;
-
     const divisionClient = new DivisionsClient();
     const divisionService = new DivisionsService(divisionClient);
-    
     const dispatch = useDispatch();
 
     const { currentDivisionsSeasons, seasonsStatistics, activeDivision } =
@@ -44,9 +42,9 @@ const Division: React.FC = () => {
     }
 
     /** Get divisions seasons statistics. */
-    async function getSeasonStatus() {
+    async function seasonsRewardStatus() {
         try {
-            const seasonsRewardStatus = await divisionService.getSeasonsRewardStatus();
+            const seasonsRewardStatus = await divisionService.seasonsRewardStatus();
             setSeasonRewardStatus(seasonsRewardStatus);
         }
         catch {
@@ -130,7 +128,7 @@ const Division: React.FC = () => {
     }, [activeDivisions]);
 
     useEffect(() => {
-        getSeasonStatus();
+        seasonsRewardStatus();
     }, []);
 
     return (
