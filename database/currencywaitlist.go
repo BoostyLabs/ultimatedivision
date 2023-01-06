@@ -31,7 +31,7 @@ type currencywaitlistDB struct {
 // Create creates item of currency waitlist in the database.
 func (currencywaitlistDB *currencywaitlistDB) Create(ctx context.Context, item currencywaitlist.Item) error {
 	query := `INSERT INTO currency_waitlist(wallet_address, casper_wallet_address, casper_wallet_hash, wallet_type, value, nonce, signature)
-	          VALUES($1,$2,$3,$4,$5,$6)`
+	          VALUES($1,$2,$3,$4,$5,$6,$7)`
 
 	_, err := currencywaitlistDB.conn.ExecContext(ctx, query, item.WalletAddress, item.CasperWalletAddress, item.CasperWalletHash, item.WalletType, item.Value.Bytes(), item.Nonce, item.Signature)
 	return ErrCurrencyWaitlist.Wrap(err)
