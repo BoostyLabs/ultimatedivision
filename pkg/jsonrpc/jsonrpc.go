@@ -4,6 +4,7 @@
 package jsonrpc
 
 import (
+	"bufio"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -121,6 +122,66 @@ func Send(url string, transaction Transaction) (io.ReadCloser, error) {
 	}
 
 	return resp.Body, nil
+}
+
+// SubscribeEvents is real time events streaming from blockchain to events subscribers.
+func SubscribeEvents(addressNodeServer string, transaction Transaction) error {
+	var body io.Reader
+	req, err := http.NewRequest(http.MethodGet, addressNodeServer, body)
+	if err != nil {
+		return err
+	}
+	client := &http.Client{}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	for {
+		select {
+		case <-service.gctx.Done():
+			return nil
+		case <-ctx.Done():
+			return nil
+		default:
+		}
+
+		reader := bufio.NewReader(resp.Body)
+		rawBody, err := reader.ReadBytes('\n')
+		if err != nil {
+			return err
+		}
+
+		rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
+
+		var event Event
+		_ = json.Unmarshal(rawBody, &event)
+
+		transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
+		if len(transforms) == 0 {
+			continue
+		}
+
+		for _, transform := range transforms {
+			select {
+			case <-service.gctx.Done():
+				return nil
+			case <-ctx.Done():
+				return nil
+			default:
+			}
+
+			if transform.Key == service.config.BridgeInEventHash {
+				eventFunds, err := service.parseEventFromTransform(event, transform)
+				if err != nil {
+					return err
+				}
+
+				service.Notify(ctx, eventFunds)
+			}
+		}
+	}
 }
 
 // GetOwnersWalletAddress returns owner's wallet address.
