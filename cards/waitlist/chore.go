@@ -5,8 +5,6 @@ package waitlist
 
 import (
 	"context"
-	"encoding/hex"
-	"fmt"
 	"strconv"
 
 	"github.com/BoostyLabs/evmsignature"
@@ -17,7 +15,6 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/nfts"
-	"ultimatedivision/pkg/evetparsing"
 	"ultimatedivision/pkg/jsonrpc"
 	"ultimatedivision/users"
 )
@@ -80,42 +77,6 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 		}
 
 		for _, event := range events {
-			eventData := eventparsing.EventData{
-				Bytes: string(event.Topics[2]),
-			}
-
-			eventType, err := eventData.GetEventType()
-			if err != nil {
-				return ChoreError.Wrap(err)
-			}
-
-			tokenContractAddress, err := hex.DecodeString(eventData.GetTokenContractAddress())
-			if err != nil {
-				return ChoreError.Wrap(err)
-			}
-
-			chainName, err := eventData.GetChainName()
-			if err != nil {
-				return ChoreError.Wrap(err)
-			}
-
-			chainAddress, err := eventData.GetChainAddress()
-			if err != nil {
-				return ChoreError.Wrap(err)
-			}
-
-			amount, err := eventData.GetAmount()
-			if err != nil {
-				return ChoreError.Wrap(err)
-			}
-			amountStr := strconv.Itoa(amount)
-
-			userWalletAddress, err := hex.DecodeString(eventData.GetUserWalletAddress())
-			if err != nil {
-				return ChoreError.Wrap(err)
-			}
-
-			fmt.Println("event --> ", event)
 			fromStr := string(event.Topics[1])
 			from, _ := strconv.ParseInt(fromStr[evmsignature.LengthHexPrefix:], 16, 64)
 
@@ -145,9 +106,8 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 				}
 				continue
 			}
-			fmt.Println("1", 1)
+
 			nft, err := chore.nfts.Get(ctx, tokenID, evmsignature.ChainPolygon)
-			fmt.Println("nft", nft)
 			if err != nil {
 				return ChoreError.Wrap(err)
 			}

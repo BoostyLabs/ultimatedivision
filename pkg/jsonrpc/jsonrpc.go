@@ -72,6 +72,36 @@ type Event struct {
 	Topics           []evmsignature.Hex `json:"topics"`
 }
 
+type (
+	CasperEvent struct {
+		DeployProcessed DeployProcessed `json:"DeployProcessed"`
+	}
+
+	DeployProcessed struct {
+		DeployHash      string          `json:"deploy_hash"`
+		Account         string          `json:"account"`
+		BlockHash       string          `json:"block_hash"`
+		ExecutionResult ExecutionResult `json:"execution_result"`
+	}
+
+	ExecutionResult struct {
+		Success Success `json:"Success"`
+	}
+
+	Success struct {
+		Effect Effect `json:"effect"`
+	}
+
+	Effect struct {
+		Transforms []Transform `json:"transforms"`
+	}
+
+	Transform struct {
+		Key       string      `json:"key"`
+		Transform interface{} `json:"transform"`
+	}
+)
+
 // Version defines the list of possible json rpc version of server.
 type Version string
 
@@ -125,7 +155,7 @@ func Send(url string, transaction Transaction) (io.ReadCloser, error) {
 }
 
 // SubscribeEvents is real time events streaming from blockchain to events subscribers.
-func SubscribeEvents(addressNodeServer string, transaction Transaction) error {
+func SubscribeEvents(addressNodeServer string) error {
 	var body io.Reader
 	req, err := http.NewRequest(http.MethodGet, addressNodeServer, body)
 	if err != nil {
@@ -139,14 +169,6 @@ func SubscribeEvents(addressNodeServer string, transaction Transaction) error {
 	}
 
 	for {
-		select {
-		case <-service.gctx.Done():
-			return nil
-		case <-ctx.Done():
-			return nil
-		default:
-		}
-
 		reader := bufio.NewReader(resp.Body)
 		rawBody, err := reader.ReadBytes('\n')
 		if err != nil {
@@ -155,7 +177,7 @@ func SubscribeEvents(addressNodeServer string, transaction Transaction) error {
 
 		rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
 
-		var event Event
+		var event CasperEvent
 		_ = json.Unmarshal(rawBody, &event)
 
 		transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
@@ -164,21 +186,11 @@ func SubscribeEvents(addressNodeServer string, transaction Transaction) error {
 		}
 
 		for _, transform := range transforms {
-			select {
-			case <-service.gctx.Done():
-				return nil
-			case <-ctx.Done():
-				return nil
-			default:
-			}
-
-			if transform.Key == service.config.BridgeInEventHash {
-				eventFunds, err := service.parseEventFromTransform(event, transform)
+			if transform.Key == config.BridgeInEventHash {
+				eventFunds, err := parseEventFromTransform(event, transform)
 				if err != nil {
 					return err
 				}
-
-				service.Notify(ctx, eventFunds)
 			}
 		}
 	}
