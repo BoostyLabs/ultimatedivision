@@ -45,8 +45,8 @@ export class CasperSeasonRewardTransaction {
     ) { }
 };
 
+export const ACCOUNT_HASH_PREFIX = 'account-hash-';
 const CHAIN_NAME = 'casper-test';
-const ACCOUNT_HASH_PREFIX = 'account-hash-';
 
 const TTL = 1800000;
 const PAYMENT_AMOUNT = 50000000000;

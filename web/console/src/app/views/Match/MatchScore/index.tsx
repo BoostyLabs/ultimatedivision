@@ -92,7 +92,8 @@ export const MatchScore: React.FC = () => {
 
             setQueueClient(currentQueueClient);
 
-            const accountHash = CLPublicKey.fromHex(user.casperWalletId).toAccountHashStr();
+            const accountHash = CLPublicKey.fromHex(user.casperWallet).toAccountHashStr();
+
             const accountHashConverted = accountHash.replace(ACCOUNT_HASH_PREFIX, '');
 
             queueCasperActionAllowAddress(accountHashConverted, user.walletType, squad.id);

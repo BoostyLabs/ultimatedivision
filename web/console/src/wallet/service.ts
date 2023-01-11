@@ -77,7 +77,7 @@ class WalletService {
 
     /** Mints token with casper wallet. */
     private casperMintToken(messageEvent: any) {
-        const casperTransactionService = new CasperTransactionService(this.user.casperWalletId);
+        const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
 
         casperTransactionService.mintUDT(messageEvent.message.casperTransaction, messageEvent.message.rpcNodeAddress);
     };
@@ -104,7 +104,7 @@ class WalletService {
 
     /** Mints season token with casper wallet. */
     private casperMintSeasonToken(seasonRewardTransaction: any) {
-        const casperTransactionService = new CasperTransactionService(this.user.casperWalletId);
+        const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
 
         casperTransactionService.mintUDT(seasonRewardTransaction, seasonRewardTransaction.rpcNodeAddress);
     };
