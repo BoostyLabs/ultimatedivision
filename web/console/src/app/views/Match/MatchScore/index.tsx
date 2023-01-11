@@ -92,11 +92,7 @@ export const MatchScore: React.FC = () => {
 
             setQueueClient(currentQueueClient);
 
-            const accountHash = CLPublicKey.fromHex(user.casperWallet).toAccountHashStr();
-
-            const accountHashConverted = accountHash.replace(ACCOUNT_HASH_PREFIX, '');
-
-            queueCasperActionAllowAddress(accountHashConverted, user.walletType, squad.id);
+            queueCasperActionAllowAddress(user.casperWalletHash, user.walletType, squad.id);
         }
         catch (error: any) {
             ToastNotifications.couldNotAddCasperWallet();

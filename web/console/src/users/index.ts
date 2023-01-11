@@ -5,7 +5,7 @@
 export class User {
     /** User domain casperWallet, casperWalletId, email, id, lastLogin, nickName, registerData, wallet, walletType. */
     public constructor(
-        public casperWalletId: string = '',
+        public casperWalletHash: string = '',
         public casperWallet: string = '',
         public email: string = '',
         public id: string = '',
