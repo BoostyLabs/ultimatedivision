@@ -5,22 +5,17 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from '@/app/store';
-import {
-    divisionSeasonsStatistics,
-    setActiveDivision,
-} from '@/app/store/actions/divisions';
+import { divisionSeasonsStatistics } from '@/app/store/actions/divisions';
 import { DivisionClub } from '@/app/types/division';
 import { ToastNotifications } from '@/notifications/service';
-import { CurrentDivisionSeasons } from '@/divisions';
+import { DivisionsClient } from '@/api/divisions';
+import { DivisionsService } from '@/divisions/service';
+import { setCurrentUser } from '@/app/store/actions/users';
+import WalletService from '@/wallet/service';
 
 import realMadrid from '@static/img/divisions/realmadrid.png';
 
 import './index.scss';
-import { DivisionsClient } from '@/api/divisions';
-import { DivisionsService } from '@/divisions/service';
-import CasperTransactionService from '@/casper';
-import { setCurrentUser } from '@/app/store/actions/users';
-import WalletService from '@/wallet/service';
 
 const Division: React.FC = () => {
     const dispatch = useDispatch();
@@ -140,7 +135,6 @@ const Division: React.FC = () => {
         const walletService = new WalletService(user);
 
         await walletService.mintSeasonToken(transactionData);
-        // await casperTransactionService.mintUDT(messageEvent.message.casperTransaction, messageEvent.message.rpcNodeAddress);
     };
 
     useEffect(() => {

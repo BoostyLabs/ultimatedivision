@@ -3,7 +3,7 @@
 
 import { APIClient } from '@/api/index';
 
-import { CurrentDivisionSeasons, DivisionSeasonsStatistics } from '@/divisions';
+import { CurrentDivisionSeasons, DivisionSeasonsStatistics, SeasonRewardTransaction } from '@/divisions';
 
 /** DivisionsClient base implementation */
 export class DivisionsClient extends APIClient {
@@ -74,8 +74,22 @@ export class DivisionsClient extends APIClient {
             await this.handleError(response);
         }
 
-        const responseData = await response.json();
+        const seasonReward = await response.json();
 
-        return responseData;
+        return new SeasonRewardTransaction(
+            seasonReward.ID,
+            seasonReward.userId,
+            seasonReward.seasonID,
+            seasonReward.walletAddress,
+            seasonReward.casperWalletAddress,
+            seasonReward.CasperWalletHash,
+            seasonReward.walleType,
+            seasonReward.status,
+            seasonReward.nonce,
+            seasonReward.signature,
+            seasonReward.value,
+            seasonReward.casperTokenContract,
+            seasonReward.rpcNodeAddress
+        );
     }
 }

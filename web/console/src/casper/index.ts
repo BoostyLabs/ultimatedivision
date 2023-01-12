@@ -14,12 +14,21 @@ enum CasperRuntimeArgs {
     TOKEN_ID = 'token_id'
 }
 
-/** Desctibes parameters for transaction */
+/** Describes parameters for transaction */
 export class CasperTransactionIdentificators {
     /** Includes wallet address, and card id */
     constructor(
         public casperWallet: string,
         public cardId: string
+    ) { }
+}
+
+/** Describes parameters for casper token transaction */
+export class CasperTokenContract {
+    /** default CasperTokenContract implementation */
+    constructor(
+        public address: string = '0',
+        public addressMethod: string = ''
     ) { }
 }
 

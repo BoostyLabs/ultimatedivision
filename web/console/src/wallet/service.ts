@@ -10,6 +10,7 @@ import { User } from '@/users';
 import { walletTypes } from '.';
 import { ethers } from 'ethers';
 import { ToastNotifications } from '@/notifications/service';
+import { SeasonRewardTransaction } from '@/divisions';
 
 /**
  * Exposes all wallet service related logic.
@@ -45,7 +46,7 @@ class WalletService {
 
     /** Mints chosed card with casper */
     private async casperMint(id: string) {
-        const casperTransactionService = new CasperTransactionService(this.user.casperWalletId);
+        const casperTransactionService = new CasperTransactionService(this.user.casperWalletHash);
 
         await casperTransactionService.mint(id);
     };
@@ -110,13 +111,13 @@ class WalletService {
     };
 
     /** Mints season token with metamask wallet. */
-    private static metamaskMintSeasonToken() {};
+    private static metamaskMintSeasonToken() { };
 
     /** Mints season token with velas wallet. */
-    private static velasMintSeasonToken() {};
+    private static velasMintSeasonToken() { };
 
     /** Mints season token. */
-    public mintSeasonToken(seasonRewardTransaction: any) {
+    public mintSeasonToken(seasonRewardTransaction: SeasonRewardTransaction) {
         switch (this.user.walletType) {
         case walletTypes.VELAS_WALLET_TYPE:
             WalletService.velasMintSeasonToken();
