@@ -18,10 +18,13 @@ import realMadrid from '@static/img/divisions/realmadrid.png';
 import './index.scss';
 
 const Division: React.FC = () => {
-    const dispatch = useDispatch();
-
+    const DEFAULT_SEASONS_REWARD_TOKENS_STATUS = 0;
     const divisionClient = new DivisionsClient();
     const divisionService = new DivisionsService(divisionClient);
+
+    const dispatch = useDispatch();
+
+    const [seasonRewardStatus, setSeasonRewardStatus] = useState<number>(DEFAULT_SEASONS_REWARD_TOKENS_STATUS);
 
     const { currentDivisionsSeasons, seasonsStatistics, activeDivision } =
         useSelector((state: RootState) => state.divisionsReducer);
@@ -44,6 +47,16 @@ const Division: React.FC = () => {
         await divisionService.getSeasonStatus();
     }
 
+    /** Get divisions seasons status. */
+    async function seasonsRewardStatus() {
+        try {
+            const seasonsRewardStatus = await divisionService.seasonsRewardStatus();
+            setSeasonRewardStatus(seasonsRewardStatus);
+        }
+        catch {
+            setSeasonRewardStatus(DEFAULT_SEASONS_REWARD_TOKENS_STATUS);
+        }
+    }
 
     /** Get divisions seasons statistics. */
     async function getSeasonsStatistics() {
@@ -53,10 +66,6 @@ const Division: React.FC = () => {
             ToastNotifications.failedGettingSeasonStatistics();
         }
     }
-
-    useEffect(() => {
-        getSeasonsStatistics();
-    }, [activeDivisions]);
 
     /** TODO: replase test datas. Just for test rigth now. */
     const divisionClub: DivisionClub = {
@@ -136,9 +145,14 @@ const Division: React.FC = () => {
         await walletService.mintSeasonToken(transactionData);
     };
 
+     useEffect(() => {
+        getSeasonsStatistics();
+    }, [activeDivisions]);
+
     useEffect(() => {
         setUser();
         setSeasonStatus();
+        seasonsRewardStatus();
     }, []);
 
     return (
@@ -151,6 +165,9 @@ const Division: React.FC = () => {
                     {CLUBS_COUNT}
                     <span className="division__titles__count__text">Teams</span>
                 </span>
+                {
+                    seasonRewardStatus > DEFAULT_SEASONS_REWARD_TOKENS_STATUS && <button>Get Reward</button>
+                }
             </div>
             <div className="division__list">
                 {divisions.map((division: string, index: number) =>
@@ -198,9 +215,6 @@ const Division: React.FC = () => {
                     <h2 className="division__clubs__no-results">
                         You need to play at least 3 matches, but not more than 30
                     </h2>
-                    <button onClick={signTokens}>
-                        Sign
-                    </button>
                 </>
                 : <>
 

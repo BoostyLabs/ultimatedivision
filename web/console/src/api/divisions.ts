@@ -64,6 +64,21 @@ export class DivisionsClient extends APIClient {
         return seasonStatus;
     }
 
+    /** requests division seasons reward status */
+    public async seasonsRewardStatus(): Promise<number> {
+        const response = await this.http.get(
+            `${this.ROOT_PATH}/seasons/reward/tokens/`
+        );
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+
+        const seasonRewardTokenStatus = await response.json();
+
+        return seasonRewardTokenStatus;
+    }
+
     /** gets division seasons statistics */
     public async getDivisionSeasonsReward(): Promise<SeasonRewardTransaction> {
         const response = await this.http.get(
