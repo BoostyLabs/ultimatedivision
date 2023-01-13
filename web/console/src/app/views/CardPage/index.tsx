@@ -35,7 +35,7 @@ const Card: React.FC = () => {
         try {
             await dispatch(openUserCard(id));
         } catch (error: any) {
-            Notification
+            ToastNotifications.couldNotOpenCard();
         }
     }
     /** implements opening new card */

@@ -19,6 +19,9 @@ const NETWORK_ERROR = 'NETWORK_ERROR';
 /** Indicates that was insufficient balance in account */
 const CASPER_INSUFFICIENT_BALANCE_CODE = -32008;
 
+/** Indicates that was insufficient balance in account */
+const VELAS_INSUFFICIENT_BALANCE_CODE = 15;
+
 /** Toast notifications themes.
  * Contains colored, light and dark themes.
  */
@@ -154,6 +157,17 @@ export class ToastNotifications {
     static casperError(error: any) {
         let errorMessage = '';
         if (error.includes(CASPER_INSUFFICIENT_BALANCE_CODE)) {
+            errorMessage = toastNoficationsMessages.insufficientBalance;
+        } else {
+            errorMessage = toastNoficationsMessages.tryLater;
+        }
+        this.notify(errorMessage);
+    };
+
+    /** Handles casper errors and notifies user. */
+    static velasTransactionError(error: any) {
+        let errorMessage = '';
+        if (error.includes(VELAS_INSUFFICIENT_BALANCE_CODE)) {
             errorMessage = toastNoficationsMessages.insufficientBalance;
         } else {
             errorMessage = toastNoficationsMessages.tryLater;

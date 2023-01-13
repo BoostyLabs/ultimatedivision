@@ -17,7 +17,8 @@ import { VelasClient } from '@/api/velas';
 import { VelasService } from '@/velas/service';
 
 import { TransactionIdentificators } from '@/ethers';
-import { buildHash } from '@/app/internal/ethers'
+import { buildHash } from '@/app/internal/ethers';
+import { ToastNotifications } from '@/notifications/service';
 
 /** TODO: change to real data */
 const GAS = 50000;
@@ -29,7 +30,7 @@ const usersService = new UsersService(usersClient);
 const velasClient = new VelasClient();
 const velasService = new VelasService(velasClient);
 
-const vaclientService = async () => {
+const vaclientService = async() => {
     try {
         const creds = await velasService.vaclientCreds();
 
@@ -106,12 +107,11 @@ class VelasTransactionService {
 
             const transaction = await this.getTransaction(new TransactionIdentificators(this.walletAddress, cardId));
 
-            /* eslint-disable */
-            const data = `${transaction.nftCreateContract.mintWithSignatureSelector}${buildHash(40)}${buildHash(transaction.tokenId.toString(16))}${buildHash(60)}${buildHash(
-                transaction.password.slice(-2))}${transaction.password.slice(0, transaction.password.length - 2)}`;
+            // /* eslint-disable */
+            // const data = `${transaction.nftCreateContract.mintWithSignatureSelector}${buildHash(40)}${buildHash(transaction.tokenId.toString(16))}${buildHash(60)}${buildHash(
+            //     transaction.password.slice(-2))}${transaction.password.slice(0, transaction.password.length - 2)}`;
 
             const raw = {
-                data: data,
                 nonce: ethers.utils.hexlify(nonce),
                 to: transaction.nftCreateContract.address,
                 from: this.from,
@@ -124,11 +124,8 @@ class VelasTransactionService {
             };
 
             await this.provider.send('eth_sendTransaction', raw);
-        } catch (e) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+        } catch (error: any) {
+            ToastNotifications.velasTransactionError(error)
         }
     }
 }

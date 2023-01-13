@@ -62,24 +62,24 @@ class WalletService {
 
             await velasTransactionService.sendTansaction(id);
         } catch (error: any) {
-            ToastNotifications.notify(error)
+            ToastNotifications.notify(error);
         }
     };
 
     /** Mints chosed card. */
     public async mintNft(id: string) {
         switch (this.user.walletType) {
-            case walletTypes.VELAS_WALLET_TYPE:
-                await this.velasMint(id);
-                break;
-            case walletTypes.CASPER_WALLET_TYPE:
-                await this.casperMint(id);
-                break;
-            case walletTypes.METAMASK_WALLET_TYPE:
-                await this.metamaskMint(id);
-                break;
-            default:
-                break;
+        case walletTypes.VELAS_WALLET_TYPE:
+            await this.velasMint(id);
+            break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            await this.casperMint(id);
+            break;
+        case walletTypes.METAMASK_WALLET_TYPE:
+            await this.metamaskMint(id);
+            break;
+        default:
+            break;
         }
     }
 
@@ -101,17 +101,17 @@ class WalletService {
     /** Mints token. */
     public mintToken(messageEvent: any) {
         switch (this.user.walletType) {
-            case walletTypes.VELAS_WALLET_TYPE:
-                WalletService.velasMintToken();
-                break;
-            case walletTypes.CASPER_WALLET_TYPE:
-                this.casperMintToken(messageEvent);
-                break;
-            case walletTypes.METAMASK_WALLET_TYPE:
-                this.metamaskMintToken(messageEvent);
-                break;
-            default:
-                break;
+        case walletTypes.VELAS_WALLET_TYPE:
+            WalletService.velasMintToken();
+            break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperMintToken(messageEvent);
+            break;
+        case walletTypes.METAMASK_WALLET_TYPE:
+            this.metamaskMintToken(messageEvent);
+            break;
+        default:
+            break;
         }
     };
 }
