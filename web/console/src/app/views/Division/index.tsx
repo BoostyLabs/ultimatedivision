@@ -54,7 +54,6 @@ const Division: React.FC = () => {
         }
     }
 
-
     useEffect(() => {
         getSeasonsStatistics();
     }, [activeDivisions]);
@@ -130,7 +129,7 @@ const Division: React.FC = () => {
         '10',
     ];
 
-    const signTokens = async() => {
+    const signTokens = async () => {
         const transactionData = await divisionService.getDivisionSeasonsReward();
         const walletService = new WalletService(user);
 
@@ -197,7 +196,7 @@ const Division: React.FC = () => {
             {!seasonsStatistics.statistics ?
                 <>
                     <h2 className="division__clubs__no-results">
-                    You need to play at least 3 matches, but not more than 30
+                        You need to play at least 3 matches, but not more than 30
                     </h2>
                     <button onClick={signTokens}>
                         Sign

@@ -25,10 +25,10 @@ export class CurrentDivisionSeasons {
     ) { }
 }
 
-//* * initial name for divisions state */
+/** initial name for divisions state */
 const INITIAL_DIVISION_NAME: number = 0;
 
-//* * initial parsing percent for divisions state */
+/** initial parsing percent for divisions state */
 const INITIAL_DIVISION_PERCENT: number = 0;
 
 // TODO: statistics need rewrite (waiting for backend).
@@ -57,13 +57,13 @@ export class DivisionsState {
     ) { }
 }
 
-//* * initial status for season reward */
+/** Initial status for season reward */
 const INITIAL_SEASON_REWARD_STATUS: number = 0;
 
-//* * initial seasonId for season reward */
+/** Initial seasonId for season reward */
 const INITIAL_SEASON_REWARD_SEASON_ID: number = 0;
 
-//* * initial nonce for season reward */
+/** initial nonce for season reward */
 const INITIAL_SEASON_REWARD_NONCE: number = 0;
 
 /** Seasons reward transaction entity. */

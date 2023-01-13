@@ -26,6 +26,7 @@ import { VelasClient } from '@/api/velas';
 import { VelasService } from '@/velas/service';
 import { CasperNetworkClient } from '@/api/casper';
 import { CasperNetworkService } from '@/casper/service';
+import { ACCOUNT_HASH_PREFIX } from '@/casper';
 
 import representLogo from '@static/img/login/represent-logo.gif';
 import metamask from '@static/img/login/metamask-icon.svg';
@@ -34,7 +35,6 @@ import casper from '@static/img/login/casper-icon.svg';
 import closeButton from '@static/img/login/close-icon.svg';
 
 import './index.scss';
-import { ACCOUNT_HASH_PREFIX } from '@/casper';
 
 export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }> = ({ closeRegistrationPopup }) => {
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);

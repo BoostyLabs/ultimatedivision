@@ -3,7 +3,7 @@
 
 import { Dispatch } from 'redux';
 import { DivisionsClient } from '@/api/divisions';
-import { CurrentDivisionSeasons, DivisionSeasonsStatistics } from '@/divisions';
+import { CurrentDivisionSeasons, DivisionSeasonsStatistics, SeasonRewardTransaction } from '@/divisions';
 import { DivisionsService } from '@/divisions/service';
 
 export const GET_CURRENT_DIVISION_SEASONS = 'GET_CURRENT_DIVISION_SEASONS';
@@ -11,7 +11,6 @@ export const GET_DIVISION_SEASONS_STATISTICS =
     'GET_DIVISION_SEASONS_STATISTICS';
 
 export const SET_ACTIVE_DIVISION = 'SET_ACTIVE_DIVISION';
-export const GET_DIVISION_SEASONS_REWARD = 'GET_DIVISION_SEASONS_REWARD';
 
 /** handles gets current seasons divisions */
 export const getCurrentDivisionSeasons = (
@@ -29,14 +28,6 @@ export const getDivisionSeasonsStatistics = (
     seasonsStatistics,
 });
 
-/** handles gets divisions matches statistics */
-export const getDivisionSeasonsReward = (
-    divisionSeasonsReward: any
-) => ({
-    type: GET_DIVISION_SEASONS_REWARD,
-    divisionSeasonsReward,
-});
-
 /** handles sets active division */
 export const setActiveDivision = (activeDivision: CurrentDivisionSeasons) => ({
     type: SET_ACTIVE_DIVISION,
@@ -48,7 +39,7 @@ const service = new DivisionsService(client);
 
 /** thunk that handles gets current seasons divisions */
 export const listOfCurrentDivisionSeasons = () =>
-    async function(dispatch: Dispatch) {
+    async function (dispatch: Dispatch) {
         const currentDivisionSeasons =
             await service.getCurrentDivisionSeasons();
 
@@ -58,17 +49,10 @@ export const listOfCurrentDivisionSeasons = () =>
 
 /** thunk that handles gets seasons statistics */
 export const divisionSeasonsStatistics = (id: string) =>
-    async function(dispatch: Dispatch) {
+    async function (dispatch: Dispatch) {
         const seasonsStatistics = await service.getDivisionSeasonsStatistics(
             id
         );
 
         dispatch(getDivisionSeasonsStatistics(seasonsStatistics));
-    };
-/** thunk that handles gets seasons statistics */
-export const divisionSeasonsReward = () =>
-    async function(dispatch: Dispatch) {
-        const divisionSeasonsReward = await service.getDivisionSeasonsReward();
-
-        dispatch(getDivisionSeasonsStatistics(divisionSeasonsReward));
     };
