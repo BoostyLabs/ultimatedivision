@@ -39,7 +39,7 @@ const service = new DivisionsService(client);
 
 /** thunk that handles gets current seasons divisions */
 export const listOfCurrentDivisionSeasons = () =>
-    async function (dispatch: Dispatch) {
+    async function(dispatch: Dispatch) {
         const currentDivisionSeasons =
             await service.getCurrentDivisionSeasons();
 
@@ -49,7 +49,7 @@ export const listOfCurrentDivisionSeasons = () =>
 
 /** thunk that handles gets seasons statistics */
 export const divisionSeasonsStatistics = (id: string) =>
-    async function (dispatch: Dispatch) {
+    async function(dispatch: Dispatch) {
         const seasonsStatistics = await service.getDivisionSeasonsStatistics(
             id
         );

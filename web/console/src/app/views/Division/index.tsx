@@ -138,14 +138,14 @@ const Division: React.FC = () => {
         '10',
     ];
 
-    const signTokens = async () => {
+    const signTokens = async() => {
         const transactionData = await divisionService.getDivisionSeasonsReward();
         const walletService = new WalletService(user);
 
         await walletService.mintSeasonToken(transactionData);
     };
 
-     useEffect(() => {
+    useEffect(() => {
         getSeasonsStatistics();
     }, [activeDivisions]);
 
@@ -166,7 +166,8 @@ const Division: React.FC = () => {
                     <span className="division__titles__count__text">Teams</span>
                 </span>
                 {
-                    seasonRewardStatus > DEFAULT_SEASONS_REWARD_TOKENS_STATUS && <button>Get Reward</button>
+                    seasonRewardStatus > DEFAULT_SEASONS_REWARD_TOKENS_STATUS &&
+                        <button onClick={() => signTokens()}>Get Reward</button>
                 }
             </div>
             <div className="division__list">
