@@ -79,8 +79,10 @@ const AuthWrapper = () => {
                 await velasService.register(
                     result.userinfo.account_key_evm,
                     authResult.access_token,
-                    authResult.expires_at
+                    authResult.expires_at,
+                    JSON.stringify(authResult)
                 );
+
                 await velasLogin(result.userinfo.account_key_evm, authResult.access_token, authResult.expires_at);
             } catch (error: any) {
                 ToastNotifications.couldNotLogInUserWithVelas();
@@ -94,6 +96,9 @@ const AuthWrapper = () => {
 
             await vaclient.userinfo(authResult.access_token, async(err: any, result: any) => {
                 if (!err) {
+                    await vaclient.defaultAccount(authResult);
+                    await setLocalStorageItem('vaclient', authResult);
+                    await setLocalStorageItem('wallet', result.userinfo.account_key_evm);
                     await velasRegister(result, authResult);
                 }
             });

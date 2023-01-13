@@ -10,6 +10,8 @@ import { User } from '@/users';
 import { walletTypes } from '.';
 import { ethers } from 'ethers';
 import { ToastNotifications } from '@/notifications/service';
+import { VelasClient } from '@/api/velas';
+import VelasTransactionService from '@/velas';
 
 /**
  * Exposes all wallet service related logic.
@@ -20,6 +22,7 @@ class WalletService {
     public metamaskService = ServicePlugin.create();
     public onboarding = new MetaMaskOnboarding();
     public user: User = new User();
+    private readonly velasClient = new VelasClient();
 
     /** default MintingService implementation */
     constructor(user: User) {
@@ -51,13 +54,23 @@ class WalletService {
     };
 
     /** Mints chosed card with velas */
-    private static velasMint() { };
+    public async velasMint(id: string) {
+        try {
+            const velasData = await this.velasClient.vaclientData(this.user.id);
+
+            const velasTransactionService = new VelasTransactionService(this.user.wallet, velasData.response);
+
+            await velasTransactionService.sendTansaction(id);
+        } catch (error: any) {
+            ToastNotifications.notify(error);
+        }
+    };
 
     /** Mints chosed card. */
     public async mintNft(id: string) {
         switch (this.user.walletType) {
         case walletTypes.VELAS_WALLET_TYPE:
-            await WalletService.velasMint();
+            await this.velasMint(id);
             break;
         case walletTypes.CASPER_WALLET_TYPE:
             await this.casperMint(id);

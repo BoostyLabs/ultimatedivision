@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Creditor Corp. Group.
+// Copyright (C) 2022 Creditor Corp. Group.
 // See LICENSE for copying information.
 
 /** User describes user domain entity. */

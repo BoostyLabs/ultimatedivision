@@ -16,6 +16,7 @@ import {
 export class UsersState {
     public readonly userService: UsersService;
     public user: User = new User();
+
     /** UsersState contains service implementation of users  */
     public constructor(userService: UsersService) {
         this.userService = userService;
@@ -33,9 +34,11 @@ export const usersReducer = (
     case LOGIN:
         state.user.email = action.user.email;
         break;
+
     case SET_USER:
         state.user = action.user;
         break;
+
     default:
         break;
     };

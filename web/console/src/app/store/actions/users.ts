@@ -48,7 +48,6 @@ export const loginUser = (email: string, password: string) =>
         dispatch(login(email, password));
     };
 
-
 export const setCurrentUser = () =>
     async function(dispatch: Dispatch) {
         const user = await usersService.getUser();

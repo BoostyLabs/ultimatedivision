@@ -91,7 +91,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
             vaclient.authorize(
                 {
                     csrfToken: csrfToken,
-                    scope: 'authorization',
+                    scope: 'authorization VelasAccountProgram:Execute EVM:Execute',
                     challenge: 'some_challenge_from_backend',
                 },
                 processAuthResult
@@ -151,7 +151,6 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
     const sendConnectionRequestCasper = () => {
         Signer.sendConnectionRequest();
     };
-
     /** Login with matamask. */
     const content: () => Promise<void> = async() => {
         if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
