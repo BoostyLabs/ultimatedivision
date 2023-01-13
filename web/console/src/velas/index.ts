@@ -14,10 +14,10 @@ import { VAClient } from '@velas/account-client';
 import { UsersClient } from '@/api/users';
 import { UsersService } from '@/users/service';
 import { VelasClient } from '@/api/velas';
-import { VelasService } from '@/app/velas/service';
+import { VelasService } from '@/velas/service';
 
-import { TransactionIdentificators } from '@/app/ethers';
-import { buildHash } from '../internal/ethers';
+import { TransactionIdentificators } from '@/ethers';
+import { buildHash } from '@/app/internal/ethers'
 
 /** TODO: change to real data */
 const GAS = 50000;
@@ -29,7 +29,7 @@ const usersService = new UsersService(usersClient);
 const velasClient = new VelasClient();
 const velasService = new VelasService(velasClient);
 
-const vaclientService = async() => {
+const vaclientService = async () => {
     try {
         const creds = await velasService.vaclientCreds();
 

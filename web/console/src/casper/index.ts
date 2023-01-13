@@ -2,12 +2,12 @@
 // See LICENSE for copying information.
 
 import { Buffer } from 'buffer';
-import { toast } from 'react-toastify';
 import { JsonTypes } from 'typedjson';
-import { CLValueBuilder, RuntimeArgs, CLPublicKey, DeployUtil, Signer } from 'casper-js-sdk';
+import { CLPublicKey, CLValueBuilder, DeployUtil, RuntimeArgs } from 'casper-js-sdk';
 
 import { CasperNetworkClient } from '@/api/casper';
 import { CasperMatchTransaction } from '@/matches';
+import { ToastNotifications } from '@/notifications/service';
 
 enum CasperRuntimeArgs {
     SIGNATURE = 'signature',
@@ -23,6 +23,7 @@ export class CasperTransactionIdentificators {
     ) { }
 }
 
+const CHAIN_NAME = 'casper-test';
 const ACCOUNT_HASH_PREFIX = 'account-hash-';
 
 const TTL = 1800000;
@@ -36,10 +37,10 @@ class CasperTransactionService {
     private readonly paymentAmount: number = PAYMENT_AMOUNT;
     private readonly gasPrice: number = GAS_PRICE;
     private readonly ttl: number = TTL;
-    private readonly client: any = new CasperNetworkClient();
+    private readonly client: CasperNetworkClient = new CasperNetworkClient();
     public walletAddress: string = '';
 
-    /** default VelasTransactionService implementation */
+    /** default CasperTransactionService implementation */
     constructor(walletAddress: string) {
         this.walletAddress = walletAddress;
     }
@@ -63,34 +64,24 @@ class CasperTransactionService {
     ): Promise<JsonTypes> {
         const contractHashToBytes = await CasperTransactionService.convertContractHashToBytes(contractAddress);
 
-        try {
-            const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
+        const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
 
-            const deployParams = new DeployUtil.DeployParams(walletAddressConverted, 'casper-test', this.gasPrice, this.ttl);
+        const deployParams = new DeployUtil.DeployParams(walletAddressConverted, CHAIN_NAME, this.gasPrice, this.ttl);
 
-            const deploy = DeployUtil.makeDeploy(
-                deployParams,
-                DeployUtil.ExecutableDeployItem.newStoredContractByHash(
-                    contractHashToBytes,
-                    entryPoint,
-                    runtimeArgs),
-                DeployUtil.standardPayment(paymentAmount)
-            );
+        const deploy = DeployUtil.makeDeploy(
+            deployParams,
+            DeployUtil.ExecutableDeployItem.newStoredContractByHash(
+                contractHashToBytes,
+                entryPoint,
+                runtimeArgs),
+            DeployUtil.standardPayment(paymentAmount)
+        );
 
-            const deployJson = DeployUtil.deployToJson(deploy);
+        const deployJson = DeployUtil.deployToJson(deploy);
 
-            const signature = await window.casperlabsHelper.sign(deployJson, this.walletAddress, contractAddress);
+        const signature = await window.casperlabsHelper.sign(deployJson, this.walletAddress, contractAddress);
 
-            return signature;
-        }
-        catch (e) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
-        }
-
-        return false;
+        return signature;
     }
 
     /** Mints a nft */
@@ -116,11 +107,8 @@ class CasperTransactionService {
 
             await this.client.claim(nftWaitlist.rpcNodeAddress, JSON.stringify(signature));
         }
-        catch (e) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+        catch (error: any) {
+            ToastNotifications.casperError(`${error.error}`);
         }
     }
 
@@ -143,11 +131,8 @@ class CasperTransactionService {
 
             await this.client.claim(rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
         }
-        catch (e) {
-            toast.error('Invalid transaction', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+        catch (error: any) {
+            ToastNotifications.casperError(`${error.error}`);
         }
     }
 }

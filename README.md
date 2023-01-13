@@ -25,10 +25,12 @@ docker exec -it db createdb -U postgres ultimatedivision_test
 
 The application depends on config values that are located in the config file. (examples of configs are in the folder - configsexamples)
 
+in this place ![img_14.png](img_14.png) and in such similar places, please write the full path to your folder.
+
 ```
 go run cmd/ultimatedivision/main.go setup
-go run cmd/currencysigrer/main.go setup
-go run cmd/nftsigrer/main.go setup
+go run cmd/currencysigner/main.go setup
+go run cmd/nftsigner/main.go setup
 ```
 
 **Run the main server.**
@@ -65,14 +67,14 @@ Deployment instructions on the remote server according to the docker files in th
 
 The currency signer runs a infinite cycle with an interval of operation that monitors the records of currency waitlist in which there is no signature and if it finds them then generates a signature and sends a transaction to transfer money.
 ```
-go run cmd/currencysigrer/main.go run
+go run cmd/currencysigner/main.go run
 ```
 
 **NFT signer**
 
 The nft signer runs an infinite cycle with an interval of operation that monitors the records of waitlist in which there is no signature and if it finds them then generates a signature and sends a transaction to mint nft.
 ```
-go run cmd/nftsigrer/main.go run
+go run cmd/nftsigner/main.go run
 ```
 
 **Recommendation **
@@ -215,7 +217,6 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
    Faster that build but much larger size.
    Also contains 'watch' development mode. Automaticaly rebuilds app when code is changed.
    Runs on [localhost](http://localhost:8088).
-5. `npm run test` - runs coverage code tests with [jestSetup.ts](./web/console/jestSetup.ts) config.
 
 ## Structure
 1. __cards, clubs, divisions, gameplay, marketplace, seasons, users__ - domain entities.\
@@ -241,7 +242,7 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 ## Casper
 App uses casper blockchain:
 * __contracts__: 
-* https://testnet.cspr.live/contract/1d2f5eed581e3750fa3d2fd15ef782aa66a55a679346c0a339c485c78fc9fe68
+* https://testnet.cspr.live/contract/4ff1e5e37b8720e8049bfff88676d8e27c1037c02e1172a1006c6d2a535607da
 * https://testnet.cspr.live/contract/5aed0843516b06e4cbf56b1085c4af37035f2c9c1f18d7b0ffd7bbe96f91a3e0
 
 * __register__: To register a new user, you need to install Casper Signer on the browser (right now it's only possible on localhost).

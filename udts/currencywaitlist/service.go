@@ -103,7 +103,7 @@ func (service *Service) CasperCreate(ctx context.Context, userID uuid.UUID, valu
 		Signature:           "",
 	}
 
-	// TODO: catch dublicale error from db.
+	// TODO: catch duplicable error from db.
 	if _, err = service.currencyWaitList.GetByCasperWalletAddressAndNonce(ctx, item.CasperWalletAddress, item.Nonce); err != nil {
 		if ErrNoItem.Has(err) {
 			if err = service.currencyWaitList.Create(ctx, item); err != nil {
@@ -135,6 +135,12 @@ func (service *Service) CasperCreate(ctx context.Context, userID uuid.UUID, valu
 func (service *Service) GetByWalletAddressAndNonce(ctx context.Context, walletAddress common.Address, nonce int64) (Item, error) {
 	item, err := service.currencyWaitList.GetByWalletAddressAndNonce(ctx, walletAddress, nonce)
 	return item, ErrCurrencyWaitlist.Wrap(err)
+}
+
+// GetNonceByWallet returns number of nonce by casper wallet.
+func (service *Service) GetNonceByWallet(ctx context.Context, wallet string) (int64, error) {
+	nonce, err := service.currencyWaitList.GetNonceByWallet(ctx, wallet)
+	return nonce, ErrCurrencyWaitlist.Wrap(err)
 }
 
 // GetByCasperWalletAddressAndNonce returns item of currency wait list by casper wallet address and nonce.

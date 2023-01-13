@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { VelasClient } from '../../api/velas';
+import { VelasClient } from '@/api/velas';
 import { VelasData } from '@/app/types/velas';
 import { TransactionIdentificators } from '../ethers';
 
@@ -47,7 +47,7 @@ export class VelasService {
     }
 
     /** gets creds to fill velas vaclient */
-    public async vaclientData(userId:string): Promise<VelasData> {
+    public async vaclientData(userId: string): Promise<VelasData> {
         return await this.velasWallet.vaclientData(userId);
     }
 }

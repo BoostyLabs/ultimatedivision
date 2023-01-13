@@ -4,70 +4,38 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 import { FootballerCardIllustrationsRadar } from '@/app/components/common/Card/CardIllustrationsRadar';
 import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
 import { FootballerCardStatsArea } from '@/app/components/common/Card/CardStatsArea';
 import { PlayerCard } from '@/app/components/common/PlayerCard';
-
-import MetaMaskOnboarding from '@metamask/onboarding';
-
-import { UsersService } from '@/users/service';
-import { UsersClient } from '@/api/users';
-
-import { VelasClient } from '@/api/velas';
-import { VelasService } from '@/app/velas/service';
+import { ToastNotifications } from '@/notifications/service';
 
 import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
 import { setCurrentUser } from '@/app/store/actions/users';
 
-import VelasTransactionService from '@/app/velas';
-
-import { ServicePlugin } from '@/app/plugins/service';
-import { metamaskNotifications } from '@/app/internal/notifications';
-
-import CasperTransactionService from '@/casper';
+import WalletService from '@/wallet/service';
 
 import CardPageBg from '@static/img/FootballerCardPage/background.png';
-import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
-
-
-const VELAS_WALLET_TYPE = 'velas_wallet_address';
-const CASPER_WALLET_TYPE = 'casper_wallet_address';
-const METAMASK_WALLET_TYPE = 'wallet_address';
 
 const Card: React.FC = () => {
     const dispatch = useDispatch();
 
     const [isMinted, setIsMinted] = useState<boolean>(false);
-
     const user = useSelector((state: RootState) => state.usersReducer.user);
     const { card } = useSelector((state: RootState) => state.cardsReducer);
     const { id }: { id: string } = useParams();
-
-    const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
-
-    const service = ServicePlugin.create();
-
-    const usersClient = new UsersClient();
-    const usersService = new UsersService(usersClient);
-
-    const velasClient = new VelasClient();
-    const velasService = new VelasService(velasClient);
 
     /** implements opening new card */
     async function openCard() {
         try {
             await dispatch(openUserCard(id));
         } catch (error: any) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            Notification
         }
     }
     /** implements opening new card */
@@ -75,91 +43,15 @@ const Card: React.FC = () => {
         try {
             await dispatch(setCurrentUser());
         } catch (error: any) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.couldNotGetUser();
         }
     }
 
-    /** Mints chosed card with velas */
-    const velasMint = async() => {
-        try {
-            const velasData = await velasService.vaclientData(user.id);
-
-            const velasTransactionService = new VelasTransactionService(user.wallet, velasData.response);
-
-            await velasTransactionService.sendTansaction(id);
-        } catch (error: any) {
-            toast.error(error, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
-        }
-    };
-
-    /** Mints chosed card with metamask with metamask */
-    const metamaskMint = async() => {
-        if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-            try {
-                // @ts-ignore .
-                await window.ethereum.request({
-                    method: 'eth_requestAccounts',
-                });
-                await service.sendTransaction(id);
-            } catch (error: any) {
-                metamaskNotifications(error);
-            }
-        } else {
-            onboarding.startOnboarding();
-        }
-    };
-
-    /** Mints chosed card with casper */
-    const casperMint = async() => {
-        try {
-            const casperTransactionService = new CasperTransactionService(user.casperWallet);
-
-            await casperTransactionService.mint(id);
-        } catch (error: any) {
-            toast.error(`${error}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
-        }
-    };
-
     const mint = async() => {
-        try {
-            const user = await usersService.getUser();
+        const walletService = new WalletService(user);
+        await walletService.mintNft(id);
 
-            const mintingNfts = new Map();
-
-            const walletMintingTypes = [
-                {
-                    walletType: VELAS_WALLET_TYPE,
-                    mint: velasMint,
-                },
-                {
-                    walletType: CASPER_WALLET_TYPE,
-                    mint: casperMint,
-                },
-                {
-                    walletType: METAMASK_WALLET_TYPE,
-                    mint: metamaskMint,
-                },
-            ];
-
-            walletMintingTypes.forEach(walletMintingType =>
-                mintingNfts.set(walletMintingType.walletType, walletMintingType.mint));
-
-            mintingNfts.get(user.walletType)();
-        } catch (e) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
-        }
+        setIsMinted(true);
     };
 
 

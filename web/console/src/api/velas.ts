@@ -3,7 +3,7 @@
 
 import { VelasData } from '@/app/types/velas';
 import { APIClient } from '.';
-import { SignedMessage, Transaction, TransactionIdentificators } from '../app/ethers';
+import { SignedMessage, Transaction, TransactionIdentificators } from '@/ethers';
 
 /** Ethers api client */
 export class VelasClient extends APIClient {
@@ -22,7 +22,7 @@ export class VelasClient extends APIClient {
     }
 
     /** sends data to register user with velas wallet */
-    public async register(walletAddress: string, accessToken: string, expiresAt: any, velasData:string): Promise<void> {
+    public async register(walletAddress: string, accessToken: string, expiresAt: any, velasData: string): Promise<void> {
         const path = `${this.ROOT_PATH}/auth/velas/register`;
         const response = await this.http.post(path, JSON.stringify({ walletAddress, accessToken, expiresAt, velasData }));
 
@@ -83,7 +83,7 @@ export class VelasClient extends APIClient {
     }
 
     /** gets creds to fill velas vaclient */
-    public async vaclientData(userId:string): Promise<VelasData> {
+    public async vaclientData(userId: string): Promise<VelasData> {
         const path = `${this.ROOT_PATH}/auth/velas/register-data/${userId}`;
 
         const response = await this.http.get(path);

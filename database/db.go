@@ -80,6 +80,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             last_name             VARCHAR                  NOT NULL,
             wallet_address        BYTEA,
             casper_wallet_address VARCHAR,
+            casper_wallet_id      VARCHAR,
             wallet_type           VARCHAR,
             nonce                 BYTEA,
             public_key            VARCHAR,
@@ -227,6 +228,16 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             started_at  TIMESTAMP WITH TIME ZONE NOT NULL,
             ended_at    TIMESTAMP WITH TIME ZONE NOT NULL,
             FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE
+        );
+        CREATE TABLE IF NOT EXISTS season_rewards(
+            id                      BYTEA     PRIMARY KEY      NOT NULL,
+            season_id               INTEGER                    NOT NULL,
+            user_id                 BYTEA                      NOT NULL, 
+            wallet_address          BYTEA                      NOT NULL,
+            casper_wallet_address   VARCHAR                    NOT NULL,
+            wallet_type             VARCHAR                    NOT NULL,
+            value                   BYTEA                      NOT NULL,
+            status                  INTEGER                    NOT NULL
         );
         CREATE TABLE IF NOT EXISTS matches (
             id           BYTEA   PRIMARY KEY                              NOT NULL,

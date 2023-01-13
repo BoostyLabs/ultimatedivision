@@ -3,13 +3,12 @@
 
 import { useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 import MetaMaskOnboarding from '@metamask/onboarding';
 // @ts-ignore
-import KeyStorageHandler from '@/app/velas/keyStorageHandler';
+import KeyStorageHandler from '@/velas/keyStorageHandler';
 // @ts-ignore
-import StorageHandler from '@/app/velas/storageHandler';
+import StorageHandler from '@/velas/storageHandler';
 // @ts-ignore
 import { VAClient } from '@velas/account-client';
 import { JSEncrypt } from 'jsencrypt';
@@ -20,10 +19,11 @@ import { RouteConfig } from '@/app/routes';
 import { ServicePlugin } from '@/app/plugins/service';
 import { EthersClient } from '@/api/ethers';
 import { NotFoundError } from '@/api';
-import { SignedMessage } from '@/app/ethers';
+import { SignedMessage } from '@/ethers';
+import { ToastNotifications } from '@/notifications/service';
 
 import { VelasClient } from '@/api/velas';
-import { VelasService } from '@/app/velas/service';
+import { VelasService } from '@/velas/service';
 import { CasperNetworkClient } from '@/api/casper';
 import { CasperNetworkService } from '@/casper/service';
 
@@ -68,24 +68,18 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
             });
 
             return vaclient;
-        } catch (e) {
-            toast.error('Something went wrong', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+        } catch (error: any) {
+            ToastNotifications.notify(error.message);
         }
 
         return null;
     };
 
-    const processAuthResult = (e: any, authResult: any) => {
+    const processAuthResult = (error: any, authResult: any) => {
         if (authResult && authResult.access_token_payload) {
             window.history.replaceState({}, document.title, window.location.pathname);
-        } else if (e) {
-            toast.error(`${e.description}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+        } else if (error) {
+            ToastNotifications.notify(error.message);
         }
     };
 
@@ -103,10 +97,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
                 processAuthResult
             );
         } catch (error: any) {
-            toast.error(`${error}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.notify(error.message);
         }
     };
 
@@ -138,12 +129,9 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
             const publicKey = await Signer.getActivePublicKey();
 
             await loginCasper(publicKey);
-        } catch (error) {
+        } catch (error: any) {
             if (!(error instanceof NotFoundError)) {
-                toast.error('Something went wrong', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+                ToastNotifications.notFound();
 
                 return;
             }
@@ -154,11 +142,8 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
                 await casperService.register(publicKey);
 
                 await loginCasper(publicKey);
-            } catch (e) {
-                toast.error('Something went wrong', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+            } catch (error: any) {
+                ToastNotifications.couldNotLogInUserWithCasper();
             }
         }
     };
@@ -180,10 +165,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
             await loginMetamask();
         } catch (error: any) {
             if (!(error instanceof NotFoundError)) {
-                toast.error('Something went wrong', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+                ToastNotifications.notFound();
 
                 return;
             }
@@ -192,10 +174,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
                 await client.register(signedMessage);
                 await loginMetamask();
             } catch (error: any) {
-                toast.error('Something went wrong', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+                ToastNotifications.couldNotLogInUserWithMetamask();
             }
         }
     };
