@@ -13,6 +13,43 @@ import (
 	"github.com/zeebo/errs"
 )
 
+// Event describes event structure in casper network.
+type (
+	Event struct {
+		DeployProcessed DeployProcessed `json:"DeployProcessed"`
+	}
+
+	DeployProcessed struct {
+		DeployHash      string          `json:"deploy_hash"`
+		Account         string          `json:"account"`
+		BlockHash       string          `json:"block_hash"`
+		ExecutionResult ExecutionResult `json:"execution_result"`
+	}
+
+	ExecutionResult struct {
+		Success Success `json:"Success"`
+	}
+
+	Success struct {
+		Effect Effect `json:"effect"`
+	}
+
+	Effect struct {
+		Transforms []Transform `json:"transforms"`
+	}
+
+	Transform struct {
+		Key       string      `json:"key"`
+		Transform interface{} `json:"transform"`
+	}
+)
+
+// Casper exposes access to the casper sdk methods.
+type Casper interface {
+	// GetBlockNumberByHash returns block number by deploy hash.
+	GetBlockNumberByHash(hash string) (int, error)
+}
+
 // ErrContract indicates that there was an error in the contract package.
 var ErrContract = errs.Class("contract package")
 
@@ -98,4 +135,10 @@ func Claim(ctx context.Context, req ClaimRequest) (ClaimInResponse, error) {
 	}
 
 	return resp, nil
+}
+
+// GetBlockNumberByHash returns block number by deploy hash.
+func (r *rpcClient) GetBlockNumberByHash(hash string) (int, error) {
+	blockResp, err := r.client.GetBlockByHash(hash)
+	return blockResp.Header.Height, err
 }

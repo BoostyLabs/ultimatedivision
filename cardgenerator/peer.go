@@ -7,8 +7,10 @@ import (
 	"context"
 	"encoding/json"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strconv"
+	"syscall"
 
 	"ultimatedivision/cardgenerator/cardavatars"
 	"ultimatedivision/cards"
@@ -60,6 +62,12 @@ func New(logger logger.Logger, config Config, cardsTotal int) (peer *Peer, err e
 		cardsTotal: cardsTotal,
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	onSigInt(func() {
+		// starting graceful exit on context cancellation.
+		cancel()
+	})
+
 	{ // cards setup.
 		peer.Cards.Service = cards.NewService(
 			nil,
@@ -76,6 +84,7 @@ func New(logger logger.Logger, config Config, cardsTotal int) (peer *Peer, err e
 
 	{ // nfts setup.
 		peer.NFTs.Service = nfts.NewService(
+			ctx,
 			config.CardAvatars.NFTConfig,
 			nil,
 		)
@@ -145,4 +154,15 @@ func (peer *Peer) TestGenerate(ctx context.Context) error {
 	}
 
 	return os.WriteFile(filepath.Join(peer.Config.CardAvatars.PathToOutputJSONFile, "data-that-make-up-avatar.json"), file, 0644)
+}
+
+// onSigInt fires in SIGINT or SIGTERM event (usually CTRL+C).
+func onSigInt(onSigInt func()) {
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-done
+		onSigInt()
+	}()
 }

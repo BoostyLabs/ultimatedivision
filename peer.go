@@ -301,6 +301,9 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		Database: db,
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	{ // emails setup.
 		var sender mail2.Sender
 		if config.Console.Emails.Provider == "mock" {
@@ -369,6 +372,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 	{ // nfts setup.
 		peer.NFTs.Service = nfts.NewService(
+			ctx,
 			config.NFTs.Config,
 			peer.Database.NFTs(),
 		)
@@ -594,13 +598,13 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
-	// TODO: uncomment when the Ethereum node is running
+	// TODO: uncomment when the Ethereum node is running.
 	group.Go(func() error {
 		return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
 	})
-	group.Go(func() error {
-		return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
-	})
+	//group.Go(func() error {
+	//	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
+	//})
 	// TODO: remove it.
 	group.Go(func() error {
 		return ignoreCancel(peer.Store.StoreRenewal.Run(ctx))

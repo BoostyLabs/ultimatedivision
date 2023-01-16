@@ -4,7 +4,6 @@
 package jsonrpc
 
 import (
-	"bufio"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -72,36 +71,6 @@ type Event struct {
 	Topics           []evmsignature.Hex `json:"topics"`
 }
 
-type (
-	CasperEvent struct {
-		DeployProcessed DeployProcessed `json:"DeployProcessed"`
-	}
-
-	DeployProcessed struct {
-		DeployHash      string          `json:"deploy_hash"`
-		Account         string          `json:"account"`
-		BlockHash       string          `json:"block_hash"`
-		ExecutionResult ExecutionResult `json:"execution_result"`
-	}
-
-	ExecutionResult struct {
-		Success Success `json:"Success"`
-	}
-
-	Success struct {
-		Effect Effect `json:"effect"`
-	}
-
-	Effect struct {
-		Transforms []Transform `json:"transforms"`
-	}
-
-	Transform struct {
-		Key       string      `json:"key"`
-		Transform interface{} `json:"transform"`
-	}
-)
-
 // Version defines the list of possible json rpc version of server.
 type Version string
 
@@ -152,48 +121,6 @@ func Send(url string, transaction Transaction) (io.ReadCloser, error) {
 	}
 
 	return resp.Body, nil
-}
-
-// SubscribeEvents is real time events streaming from blockchain to events subscribers.
-func SubscribeEvents(addressNodeServer string) error {
-	var body io.Reader
-	req, err := http.NewRequest(http.MethodGet, addressNodeServer, body)
-	if err != nil {
-		return err
-	}
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-
-	for {
-		reader := bufio.NewReader(resp.Body)
-		rawBody, err := reader.ReadBytes('\n')
-		if err != nil {
-			return err
-		}
-
-		rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
-
-		var event CasperEvent
-		_ = json.Unmarshal(rawBody, &event)
-
-		transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
-		if len(transforms) == 0 {
-			continue
-		}
-
-		for _, transform := range transforms {
-			if transform.Key == config.BridgeInEventHash {
-				eventFunds, err := parseEventFromTransform(event, transform)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
 }
 
 // GetOwnersWalletAddress returns owner's wallet address.
