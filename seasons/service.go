@@ -127,6 +127,7 @@ func (service *Service) GetRewardByUserID(ctx context.Context, userID uuid.UUID)
 		Reward: Reward{
 			UserID:              userID,
 			CasperWalletAddress: user.CasperWallet,
+			CasperWalletHash:    user.CasperWalletHash,
 			WalletType:          users.WalletTypeCasper,
 			Status:              StatusUnPaid,
 			Value:               *value,
