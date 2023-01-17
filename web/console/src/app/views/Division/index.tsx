@@ -42,12 +42,7 @@ const Division: React.FC = () => {
         }
     }
 
-    /** sets user info */
-    async function setSeasonStatus() {
-        await divisionService.getSeasonStatus();
-    }
-
-    /** Get divisions seasons status. */
+    /** Get seasons reward status. */
     async function seasonsRewardStatus() {
         try {
             const seasonsRewardStatus = await divisionService.seasonsRewardStatus();
@@ -151,7 +146,6 @@ const Division: React.FC = () => {
 
     useEffect(() => {
         setUser();
-        setSeasonStatus();
         seasonsRewardStatus();
     }, []);
 
@@ -167,7 +161,7 @@ const Division: React.FC = () => {
                 </span>
                 {
                     seasonRewardStatus > DEFAULT_SEASONS_REWARD_TOKENS_STATUS &&
-                        <button onClick={() => signTokens()}>Get Reward</button>
+                        <button onClick={signTokens}>Get Reward</button>
                 }
             </div>
             <div className="division__list">
@@ -218,7 +212,6 @@ const Division: React.FC = () => {
                     </h2>
                 </>
                 : <>
-
                     <table className="division__clubs">
                         <thead>
                             <tr className="division__clubs__titles">

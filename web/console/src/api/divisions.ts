@@ -49,20 +49,6 @@ export class DivisionsClient extends APIClient {
             responseData.statistics
         );
     }
-    /** gets division seasons statistics */
-    public async getSeasonStatus(): Promise<any> {
-        const response = await this.http.get(
-            `${this.ROOT_PATH}/seasons/token`
-        );
-
-        if (!response.ok) {
-            await this.handleError(response);
-        }
-
-        const seasonStatus = await response.json();
-
-        return seasonStatus;
-    }
 
     /** requests division seasons reward status */
     public async seasonsRewardStatus(): Promise<number> {
@@ -79,7 +65,7 @@ export class DivisionsClient extends APIClient {
         return seasonRewardTokenStatus;
     }
 
-    /** gets division seasons statistics */
+    /** gets division seasons reward */
     public async getDivisionSeasonsReward(): Promise<SeasonRewardTransaction> {
         const response = await this.http.get(
             `${this.ROOT_PATH}/seasons/reward`
