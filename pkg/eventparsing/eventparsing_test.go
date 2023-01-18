@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	eventparsing "ultimatedivision/pkg/eventparsing"
+	"ultimatedivision/pkg/eventparsing"
 )
 
 func TestEventParsing(t *testing.T) {
