@@ -20,7 +20,7 @@ func TestEventParsing(t *testing.T) {
 	expectedTokenContractAddress := "3c0c1847d1c410338ab9b4ee0919c181cf26085997ff9c797e8a1ae5b02ddf23"
 	expectedChainName := "GOERLI"
 	expectedChainAddress := "3095f955da700b96215cffc9bc64ab2e69eb7dab"
-	expectedAmount := 100000
+	expectedAmount := 10520065
 	expectedUserWalletAddress := "daa2b596e0a496b04933e241e0567f2bcbecc829aa57d88cab096c28fd07dee2"
 
 	t.Run("GetEventType", func(t *testing.T) {
