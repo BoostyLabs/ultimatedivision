@@ -19,14 +19,14 @@ import (
 )
 
 func TestUsersService(t *testing.T) {
-	var password = string(1)
+	password := "12345"
 	user1 := users.User{
 		ID:               uuid.New(),
 		Email:            "1234@gmail.com",
-		PasswordHash:     []byte{1},
+		PasswordHash:     []byte(password),
 		NickName:         "qwerty",
 		FirstName:        "Oleksii",
-		LastName:         "Isakov",
+		LastName:         "Prysiazhniuk",
 		Wallet:           common.HexToAddress("0xb2cdC7EB2F9d2E629ee97BB91700622A42e688b8"),
 		CasperWallet:     "01a4db357602c3d45a2b7b68110e66440ac2a2e792cebffbce83eaefb73e65aef1",
 		CasperWalletHash: "4bfcd0ebd44c3de9d1e6556336cbb73259649b7d6b344bc1499d40652fd5781a",
