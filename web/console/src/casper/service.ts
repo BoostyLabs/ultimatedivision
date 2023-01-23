@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { CasperTransactionIdentificators } from '.';
-import { CasperNetworkClient } from '../api/casper';
+import { CasperNetworkClient } from '@/api/casper';
 
 /**
  * Exposes all casper wallet related logic.
@@ -16,8 +16,8 @@ export class CasperNetworkService {
     }
 
     /** sends data to register user with casper wallet */
-    public async register(walletAddress: string): Promise<void> {
-        await this.casperWallet.register(walletAddress);
+    public async register(walletAddress: string, accountHash: string): Promise<void> {
+        await this.casperWallet.register(walletAddress, accountHash);
     }
     /** sends address to get casper nonce to login user */
     public async nonce(address: string): Promise<string> {

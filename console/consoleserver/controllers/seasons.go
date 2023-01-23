@@ -13,6 +13,7 @@ import (
 
 	"ultimatedivision/divisions"
 	"ultimatedivision/internal/logger"
+	"ultimatedivision/pkg/auth"
 	"ultimatedivision/seasons"
 )
 
@@ -50,6 +51,52 @@ func (controller *Seasons) GetCurrentSeasons(w http.ResponseWriter, r *http.Requ
 	}
 
 	if err = json.NewEncoder(w).Encode(seasons); err != nil {
+		controller.log.Error("failed to write json response", ErrSeasons.Wrap(err))
+		return
+	}
+}
+
+// GetRewardByUserID returns returns user reward.
+func (controller *Seasons) GetRewardByUserID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
+		return
+	}
+
+	reward, err := controller.seasons.GetRewardByUserID(ctx, claims.UserID)
+	if err != nil {
+		controller.serveError(w, http.StatusInternalServerError, ErrSeasons.Wrap(err))
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(reward); err != nil {
+		controller.log.Error("failed to write json response", ErrSeasons.Wrap(err))
+		return
+	}
+}
+
+// GetValueOfTokensRewardByUserID returns returns value of tokens.
+func (controller *Seasons) GetValueOfTokensRewardByUserID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrMarketplace.Wrap(err))
+		return
+	}
+
+	valueOfTokens, err := controller.seasons.GetValueOfTokensReward(ctx, claims.UserID)
+	if err != nil {
+		controller.serveError(w, http.StatusInternalServerError, ErrSeasons.Wrap(err))
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(valueOfTokens); err != nil {
 		controller.log.Error("failed to write json response", ErrSeasons.Wrap(err))
 		return
 	}

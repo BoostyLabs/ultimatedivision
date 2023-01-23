@@ -3,7 +3,7 @@
 
 import { Buffer } from 'buffer';
 import { JsonTypes } from 'typedjson';
-import { CLPublicKey, CLValueBuilder, DeployUtil, RuntimeArgs, Signer } from 'casper-js-sdk';
+import { CLPublicKey, CLValueBuilder, DeployUtil, RuntimeArgs } from 'casper-js-sdk';
 
 import { CasperNetworkClient } from '@/api/casper';
 import { CasperMatchTransaction } from '@/matches';
@@ -14,9 +14,7 @@ enum CasperRuntimeArgs {
     TOKEN_ID = 'token_id'
 }
 
-const chainName = 'casper-test';
-
-/** Desctibes parameters for transaction */
+/** Describes parameters for transaction */
 export class CasperTransactionIdentificators {
     /** Includes wallet address, and card id */
     constructor(
@@ -25,7 +23,39 @@ export class CasperTransactionIdentificators {
     ) { }
 }
 
-const ACCOUNT_HASH_PREFIX = 'account-hash-';
+/** Describes parameters for casper token transaction */
+export class CasperTokenContract {
+    /** default CasperTokenContract implementation */
+    constructor(
+        public address: string = '0',
+        public addressMethod: string = ''
+    ) { }
+}
+
+/** Transaction describes transaction entity of match response. */
+export class CasperSeasonRewardTransaction {
+    /** Transaction contains of nonce, signature hash udtContract and value. */
+    constructor(
+        public ID: string,
+        public userId: string,
+        public seasonID: string,
+        public walletAddress: string,
+        public casperWalletAddress: string,
+        public walleType: string,
+        public status: number,
+        public nonce: number,
+        public signature: string,
+        public value: string,
+        public casperTokenContract: {
+            address: string;
+            addressMethod: string;
+        },
+        public rpcNodeAddress: string,
+    ) { }
+};
+
+export const ACCOUNT_HASH_PREFIX = 'account-hash-';
+const CHAIN_NAME = 'casper-test';
 
 const TTL = 1800000;
 const PAYMENT_AMOUNT = 50000000000;
@@ -38,10 +68,10 @@ class CasperTransactionService {
     private readonly paymentAmount: number = PAYMENT_AMOUNT;
     private readonly gasPrice: number = GAS_PRICE;
     private readonly ttl: number = TTL;
-    private readonly client: any = new CasperNetworkClient();
+    private readonly client: CasperNetworkClient = new CasperNetworkClient();
     public walletAddress: string = '';
 
-    /** default VelasTransactionService implementation */
+    /** default CasperTransactionService implementation */
     constructor(walletAddress: string) {
         this.walletAddress = walletAddress;
     }
@@ -67,7 +97,7 @@ class CasperTransactionService {
 
         const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
 
-        const deployParams = new DeployUtil.DeployParams(walletAddressConverted, chainName, this.gasPrice, this.ttl);
+        const deployParams = new DeployUtil.DeployParams(walletAddressConverted, CHAIN_NAME, this.gasPrice, this.ttl);
 
         const deploy = DeployUtil.makeDeploy(
             deployParams,
@@ -109,12 +139,12 @@ class CasperTransactionService {
             await this.client.claim(nftWaitlist.rpcNodeAddress, JSON.stringify(signature));
         }
         catch (error: any) {
-            ToastNotifications.casperError(error.error);
+            ToastNotifications.casperError(`${error.error}`);
         }
     }
 
     /** Mints a token */
-    async mintUDT(transaction: CasperMatchTransaction, rpcNodeAddress: string): Promise<void> {
+    async mintUDT(transaction: CasperMatchTransaction | CasperSeasonRewardTransaction, rpcNodeAddress: string): Promise<void> {
         try {
             const runtimeArgs = RuntimeArgs.fromMap({
                 'value': CLValueBuilder.u256(transaction.value),
@@ -133,7 +163,7 @@ class CasperTransactionService {
             await this.client.claim(rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
         }
         catch (error: any) {
-            ToastNotifications.notify(error.message);
+            ToastNotifications.casperError(`${error.error}`);
         }
     }
 }
