@@ -175,6 +175,13 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	marketplaceRouterWithAuth.HandleFunc("", marketplaceController.CreateLot).Methods(http.MethodPost)
 	marketplaceRouterWithAuth.HandleFunc("/bet", marketplaceController.PlaceBetLot).Methods(http.MethodPost)
 
+	secondaryMarketplaceRouter := router.PathPrefix("/secondary-marketplace").Subrouter()
+	secondaryMarketplaceRouter.Use(server.withAuth)
+	secondaryMarketplaceController := controllers.NewSecondaryMarketplace(log, marketplace)
+	secondaryMarketplaceRouter.HandleFunc("", secondaryMarketplaceController.Create).Methods(http.MethodPost)
+	secondaryMarketplaceRouter.HandleFunc("", secondaryMarketplaceController.ListLots).Methods(http.MethodGet)
+	secondaryMarketplaceRouter.HandleFunc("/{id}", secondaryMarketplaceController.GetLotByID).Methods(http.MethodGet)
+
 	queueRouter := apiRouter.PathPrefix("/queue").Subrouter()
 	queueRouter.Use(server.withAuth)
 	queueRouter.HandleFunc("", queueController.Create).Methods(http.MethodGet)
