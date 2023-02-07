@@ -1,3 +1,6 @@
+// Copyright (C) 2022 Creditor Corp. Group.
+// See LICENSE for copying information.
+
 module.exports = {
     injectGlobals: true,
     /** To test HTML DOM add in spec.[ts | tsx] next line:
