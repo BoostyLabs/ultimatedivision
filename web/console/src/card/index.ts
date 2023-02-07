@@ -65,12 +65,12 @@ export class CardStats {
         const STATISTIC_LOWER_BOUND_COLOR = '#FF4200';
 
         switch (true) {
-        case this.average >= STATISTIC_UPPER_BOUND:
-            return STATISTIC_UPPER_BOUND_COLOR;
-        case this.average >= STATISTIC_LOWER_BOUND:
-            return STATISTIC_MEDIUM_BOUND_COLOR;
-        default:
-            return STATISTIC_LOWER_BOUND_COLOR;
+            case this.average >= STATISTIC_UPPER_BOUND:
+                return STATISTIC_UPPER_BOUND_COLOR;
+            case this.average >= STATISTIC_LOWER_BOUND:
+                return STATISTIC_MEDIUM_BOUND_COLOR;
+            default:
+                return STATISTIC_LOWER_BOUND_COLOR;
         }
     }
 }
@@ -143,23 +143,23 @@ export class Card {
     throwing: number = DEFAULT_VALUE;
 
     /** Card fields */
-    constructor(card?: Card) {
+    constructor(card?: any) {
         Object.assign(this, card);
     }
 
     /** Returns background type and shadow type according to quality */
     get shadow() {
         switch (this.quality) {
-        case 'wood':
-            return woodShadow;
-        case 'silver':
-            return silverShadow;
-        case 'gold':
-            return goldShadow;
-        case 'diamond':
-            return diamondShadow;
-        default:
-            return woodShadow;
+            case 'wood':
+                return woodShadow;
+            case 'silver':
+                return silverShadow;
+            case 'gold':
+                return goldShadow;
+            case 'diamond':
+                return diamondShadow;
+            default:
+                return woodShadow;
         }
     }
 
@@ -182,17 +182,17 @@ export class Card {
         let color: string;
 
         switch (true) {
-        case prp >= PRICE_UPPER_BOUND:
-            color = PRICE_UPPER_BOUND_COLOR;
-            break;
-        case prp >= PRICE_MEDIUM_BOUND:
-            color = PRICE_MEDIUM_BOUND_COLOR;
-            break;
-        case prp >= PRICE_LOWER_BOUND:
-            color = PRICE_LOWER_BOUND_COLOR;
-            break;
-        default:
-            color = PRICE_DEFAULT_BOUND_COLOR;
+            case prp >= PRICE_UPPER_BOUND:
+                color = PRICE_UPPER_BOUND_COLOR;
+                break;
+            case prp >= PRICE_MEDIUM_BOUND:
+                color = PRICE_MEDIUM_BOUND_COLOR;
+                break;
+            case prp >= PRICE_LOWER_BOUND:
+                color = PRICE_LOWER_BOUND_COLOR;
+                break;
+            default:
+                color = PRICE_DEFAULT_BOUND_COLOR;
         }
 
         return {

@@ -2,20 +2,19 @@
 // See LICENSE for copying information.
 
 import configureStore from 'redux-mock-store';
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, beforeAll } from '@jest/globals';
 import { useDispatch, useSelector } from "react-redux";
 import { cleanup } from "@testing-library/react";
 
-import { UsersClient } from '@/api/users';
-import { CasperNetworkClient } from '@/api/casper';
-import { SET_USER } from '@/app/store/actions/users';
-import { User } from '@/users';
-import { UsersService } from '@/users/service';
-
-const usersClient = new UsersClient();
-const casperClient = new CasperNetworkClient();
+import { LootboxClient } from '@/api/lootboxes';
+import { LootboxService } from '@/lootbox/service';
+import { BUY_LOOTBOX } from '@/app/store/actions/lootboxes'
+import { Lootbox } from '@/lootbox';
+import { LootboxTypes } from '@/app/types/lootbox';
+import { Card } from '@/card';
 
 const mockStore = configureStore();
+const lootboxClient = new LootboxClient();
 
 const successFetchMock = async (body: any) => {
     globalThis.fetch = () =>
@@ -34,30 +33,29 @@ const failedFetchMock = async () => {
 
 const mockedGlobalFetch = globalThis.fetch;
 
-/** Mock initial networks state. */
-const initialState = {
-    usersReducer: {
-        user: [],
-        userService: new UsersService(usersClient)
-    }
-};
-
-/** Mock casper user info. */
-const MOCK_USER: User =
-    new User(
-        "330cab8f2f1a2981eb8d5f4e91ebb7d11325dca70e43a3e89d9957e884c494f0",
-        "0202def02b66279e3c4a93f484716077ae0196d78bb6e681898785bd7faceb9f7749",
-        "test@test.com",
-        "00000000-0000-0000-0000-000000000000",
-        "2021-12-17T00:31:52.437252Z",
-        "",
-        "2022-12-17T00:31:51.874508Z",
-        "0x0000000000000000000000000000000000000000",
-        "casper-wallet",
+/** Mock regular box. */
+const MOCK_REGULAR_LOOTBOX =
+    new Lootbox(
+        '00000000-0000-0000-0000-000000000000',
+        LootboxTypes['Regular Box']
     )
     ;
 
+const MOCK_REGULAR_BOX_RESPONCE = [
+    new Card(),
+    new Card(),
+    new Card(),
+    new Card(),
+    new Card(),
+]
 
+/** Mock initial networks state. */
+const initialState = {
+    lootBoxReducer: {
+        lootboxService: new LootboxService(lootboxClient),
+        lootbox: []
+    }
+};
 
 const reactRedux = { useDispatch, useSelector }
 const useDispatchMock = jest.spyOn(reactRedux, "useDispatch");
@@ -67,20 +65,20 @@ const mockDispatch = jest.fn();
 useDispatchMock.mockReturnValue(mockDispatch);
 updatedStore.dispatch = mockDispatch;
 
+
+
+
 describe('Requests user.', () => {
     beforeEach(() => {
-        successFetchMock(MOCK_USER);
+        successFetchMock(MOCK_REGULAR_BOX_RESPONCE);
     });
 
     afterEach(() => {
         globalThis.fetch = mockedGlobalFetch;
     });
 
-    it('Casper user', async () => {
-        await casperClient.register(MOCK_USER.casperWallet, MOCK_USER.casperWalletHash)
-        const user = await usersClient.getUser();
-
-        expect(user).toEqual(MOCK_USER);
+    it('Regular box', async () => {
+        lootboxClient.buy(MOCK_REGULAR_LOOTBOX)
     });
 
     describe('Failed response.', () => {
@@ -97,10 +95,10 @@ describe('Requests user.', () => {
 
         it('Must be empty user', async () => {
             try {
-                await usersClient.getUser();
+                await lootboxClient.buy(MOCK_REGULAR_LOOTBOX);
             } catch (error) {
-                mockDispatch(SET_USER, {});
-                expect(updatedStore.getState().usersReducer.user).toEqual([]);
+                mockDispatch(BUY_LOOTBOX, {});
+                expect(updatedStore.getState().lootBoxReducer.lootbox).toEqual([]);
             }
         });
     })

@@ -6,14 +6,13 @@ import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import { useDispatch, useSelector } from "react-redux";
 import { cleanup } from "@testing-library/react";
 
-import { UsersClient } from '@/api/users';
-import { CasperNetworkClient } from '@/api/casper';
-import { SET_USER } from '@/app/store/actions/users';
-import { User } from '@/users';
-import { UsersService } from '@/users/service';
+import { ClubsClient } from '@/api/club';
+import { SET_CLUBS } from '@/app/store/actions/clubs';
+import { Options } from '@/club';
 
-const usersClient = new UsersClient();
-const casperClient = new CasperNetworkClient();
+import { Card } from '@/card';
+
+const clubsClient = new ClubsClient();
 
 const mockStore = configureStore();
 
@@ -34,30 +33,44 @@ const failedFetchMock = async () => {
 
 const mockedGlobalFetch = globalThis.fetch;
 
+const DEFAULT_VALUE = 0;
+const ACTIVE_STATUS_VALUE = 1;
+
+/** Mock squad. */
+const MOCK_SQUAD = {
+    id: '22222222-0000-0000-0000-000000000000',
+    clubId: '11111111-0000-0000-0000-000000000000',
+    formation: DEFAULT_VALUE,
+    tactic: DEFAULT_VALUE,
+    captainId: '00000000-0000-0000-0000-000000000000',
+}
+
+/** Mock squad card. */
+const MOCK_SQUAD_CARD = {
+    squadId: '22222222-0000-0000-0000-000000000000',
+    card: new Card(),
+    position: DEFAULT_VALUE,
+}
+
+/** Mock club. */
+const MOCK_CLUB = {
+    id: '11111111-0000-0000-0000-000000000000',
+    name: 'Club 1',
+    createdAt: '2023-02-07T01:13:52.114Z',
+    squad: MOCK_SQUAD,
+    squadCards: [MOCK_SQUAD_CARD],
+    status: ACTIVE_STATUS_VALUE
+}
+
 /** Mock initial networks state. */
 const initialState = {
-    usersReducer: {
-        user: [],
-        userService: new UsersService(usersClient)
+    clubsReducer: {
+        clubs: [MOCK_CLUB],
+        activeClub: MOCK_CLUB,
+        options: new Options(),
+        isSearchingMatch: false,
     }
 };
-
-/** Mock casper user info. */
-const MOCK_USER: User =
-    new User(
-        "330cab8f2f1a2981eb8d5f4e91ebb7d11325dca70e43a3e89d9957e884c494f0",
-        "0202def02b66279e3c4a93f484716077ae0196d78bb6e681898785bd7faceb9f7749",
-        "test@test.com",
-        "00000000-0000-0000-0000-000000000000",
-        "2021-12-17T00:31:52.437252Z",
-        "",
-        "2022-12-17T00:31:51.874508Z",
-        "0x0000000000000000000000000000000000000000",
-        "casper-wallet",
-    )
-    ;
-
-
 
 const reactRedux = { useDispatch, useSelector }
 const useDispatchMock = jest.spyOn(reactRedux, "useDispatch");
@@ -67,20 +80,18 @@ const mockDispatch = jest.fn();
 useDispatchMock.mockReturnValue(mockDispatch);
 updatedStore.dispatch = mockDispatch;
 
-describe('Requests user.', () => {
+describe('Requests list of clubs.', () => {
     beforeEach(() => {
-        successFetchMock(MOCK_USER);
+        successFetchMock([MOCK_CLUB]);
     });
 
     afterEach(() => {
         globalThis.fetch = mockedGlobalFetch;
     });
 
-    it('Casper user', async () => {
-        await casperClient.register(MOCK_USER.casperWallet, MOCK_USER.casperWalletHash)
-        const user = await usersClient.getUser();
-
-        expect(user).toEqual(MOCK_USER);
+    it('Requests list clubs.', async () => {
+        const clubs = await clubsClient.getClubs();
+        expect(clubs).toEqual([MOCK_CLUB]);
     });
 
     describe('Failed response.', () => {
@@ -95,14 +106,13 @@ describe('Requests user.', () => {
             cleanup();
         });
 
-        it('Must be empty user', async () => {
+        it('Must be no clubs', async () => {
             try {
-                await usersClient.getUser();
+                await clubsClient.getClubs();
             } catch (error) {
-                mockDispatch(SET_USER, {});
-                expect(updatedStore.getState().usersReducer.user).toEqual([]);
+                mockDispatch(SET_CLUBS, {});
+                expect(updatedStore.getState().clubsReducer.clubs).toEqual([MOCK_CLUB]);
             }
         });
     })
 });
-

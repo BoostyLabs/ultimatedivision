@@ -20,9 +20,9 @@ class CardsState {
         public currentCardsPage: number,
         public currentFieldCardsPage: number,
     ) { };
-};
+}
 
-const page = {
+export const page = {
     offset: DEFAULT_OFFSET_VALUE,
     limit: DEFAULT_LIMIT_VALUE,
     currentPage: FIRST_PAGE,
@@ -35,24 +35,24 @@ const openedCard = new Card();
 
 export const cardsReducer = (cardsState: CardsState = new CardsState(cardsPage, openedCard, FIRST_PAGE, FIRST_PAGE), action: any = {}) => {
     switch (action.type) {
-    case GET_USER_CARDS:
-        return {
-            ...cardsState,
-            cardsPage: action.payload.cardsPage,
-            currentCardsPage: action.payload.currentPage,
-        };
-    case GET_FIELD_CARDS:
-        return {
-            ...cardsState,
-            cardsPage: action.payload.cardsPage,
-            currentFieldCardsPage: action.payload.currentPage,
-        };
-    case USER_CARD:
-        return {
-            ...cardsState,
-            card: action.card,
-        };
-    default:
-        return cardsState;
+        case GET_USER_CARDS:
+            return {
+                ...cardsState,
+                cardsPage: action.payload.cardsPage,
+                currentCardsPage: action.payload.currentPage,
+            };
+        case GET_FIELD_CARDS:
+            return {
+                ...cardsState,
+                cardsPage: action.payload.cardsPage,
+                currentFieldCardsPage: action.payload.currentPage,
+            };
+        case USER_CARD:
+            return {
+                ...cardsState,
+                card: action.card,
+            };
+        default:
+            return cardsState;
     };
 };
