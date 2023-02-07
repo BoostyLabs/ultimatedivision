@@ -102,6 +102,8 @@ const MOCK_CARD = new Card(
 
     }
 )
+const SELECTED_PAGE = 1;
+
 /** Mock cards page. */
 const MOCK_CARDS_PAGE = new CardsPage([MOCK_CARD], page);
 
@@ -142,7 +144,7 @@ describe('Requests list of cards.', () => {
     });
 
     it('Requests list of user card.', async () => {
-        const cards = await cardsClient.list(1);
+        const cards = await cardsClient.list(SELECTED_PAGE);
         expect(cards).toEqual(MOCK_CARD_LIST);
     });
 
