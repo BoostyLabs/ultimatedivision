@@ -136,3 +136,37 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 		return ChoreError.Wrap(err)
 	})
 }
+
+// RunCasperCheckMintEvent runs a task to check and create the casper nft assignment.
+func (chore *Chore) RunCasperCheckMintEvent(ctx context.Context) (err error) {
+	return chore.Loop.Run(ctx, func(ctx context.Context) error {
+		_, err := chore.waitList.SubscribeEvents(ctx)
+		if err != nil {
+			return ChoreError.Wrap(err)
+		}
+
+		//tokenID := event.EventFundsIn.Token
+
+		//if event.EventFundsOut.From.Address == "" {
+		//	nftWaitList, err := chore.waitList.GetByTokenID(ctx, tokenID)
+		//	if err != nil {
+		//		return ChoreError.Wrap(err)
+		//	}
+		//
+		//	toAddress := event.EventFundsIn.To
+		//	nft := nfts.NFT{
+		//		CardID:        nftWaitList.CardID,
+		//		Chain:         evmsignature.ChainEthereum,
+		//		TokenID:       tokenID,
+		//		WalletAddress: common.HexToAddress(toAddress),
+		//	}
+		//	if err = chore.nfts.Create(ctx, nft); err != nil {
+		//		return ChoreError.Wrap(err)
+		//	}
+		//	return ChoreError.Wrap(err)
+		//}
+
+		return ChoreError.Wrap(err)
+	})
+
+}
