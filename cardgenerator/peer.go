@@ -6,7 +6,6 @@ package cardgenerator
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -61,28 +60,28 @@ func New(logger logger.Logger, config Config, cardsTotal int) (peer *Peer, err e
 		cardsTotal: cardsTotal,
 	}
 
-	{ // cards setup
+	{ // cards setup.
 		peer.Cards.Service = cards.NewService(
 			nil,
 			config.CardAvatars.CardConfig,
 		)
 	}
 
-	{ // avatars setup
+	{ // avatars setup.
 		peer.Avatars.Service = avatars.NewService(
 			nil,
 			config.CardAvatars.AvatarConfig,
 		)
 	}
 
-	{ // nfts setup
+	{ // nfts setup.
 		peer.NFTs.Service = nfts.NewService(
 			config.CardAvatars.NFTConfig,
 			nil,
 		)
 	}
 
-	{ // avatar cards setup
+	{ // avatar cards setup.
 		peer.CardAvatars.Service = cardavatars.NewService(
 			config.CardAvatars.Config,
 			peer.Cards.Service,
@@ -125,7 +124,7 @@ func (peer *Peer) Generate(ctx context.Context) error {
 			return err
 		}
 
-		if err = ioutil.WriteFile(filepath.Join(peer.Config.CardAvatars.PathToOutputJSONFile, strconv.Itoa(i+1)+".json"), file, 0644); err != nil {
+		if err = os.WriteFile(filepath.Join(peer.Config.CardAvatars.PathToOutputJSONFile, strconv.Itoa(i+1)+".json"), file, 0644); err != nil {
 			return err
 		}
 	}
@@ -145,5 +144,5 @@ func (peer *Peer) TestGenerate(ctx context.Context) error {
 		return err
 	}
 
-	return ioutil.WriteFile(filepath.Join(peer.Config.CardAvatars.PathToOutputJSONFile, "data-that-make-up-avatar.json"), file, 0644)
+	return os.WriteFile(filepath.Join(peer.Config.CardAvatars.PathToOutputJSONFile, "data-that-make-up-avatar.json"), file, 0644)
 }

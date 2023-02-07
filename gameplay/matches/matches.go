@@ -143,9 +143,11 @@ type MatchResult struct {
 
 // GameResult entity describes values which send to user after game.
 type GameResult struct {
-	MatchResults []MatchResult                `json:"matchResults"`
-	Transaction  currencywaitlist.Transaction `json:"transaction"`
-	Question     string                       `json:"question"`
+	MatchResults      []MatchResult                      `json:"matchResults"`
+	Transaction       currencywaitlist.Transaction       `json:"transaction"`
+	CasperTransaction currencywaitlist.CasperTransaction `json:"casperTransaction"`
+	Question          string                             `json:"question"`
+	RPCNodeAddress    string                             `json:"rpcNodeAddress"`
 }
 
 // Swap swaps match results.
@@ -176,4 +178,5 @@ type Statistic struct {
 	Draws          int        `json:"draws"`
 	GoalDifference int        `json:"goalDifference"`
 	Points         int        `json:"points"`
+	SeasonID       int        `json:"season_id"`
 }

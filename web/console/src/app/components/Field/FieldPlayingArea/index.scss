@@ -1,23 +1,28 @@
 @import "@/index.scss";
 
 .playing-area {
-    max-width: 900px;
-    width: 70%;
-    height: 900px;
-    border: 6.41994px solid #fff;
+    width: 80%;
+    margin: 0 auto;
+    height: auto;
     border-radius: 10px;
-    background-image: url("@static/img/FieldPage/football_field.png");
     background-size: cover;
     background-position: center;
     cursor: default;
     position: relative;
-    margin-bottom: 5%;
 
     &__wrapper {
-        display: flex;
         width: 100%;
-        padding: 5px;
         overflow: hidden;
+    }
+
+    &__field {
+        margin: 0 auto;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__play {
+        display: none;
     }
 
     &__0,
@@ -49,66 +54,63 @@
 
         &__card,
         &__empty-card {
+            z-index: 3;
             position: absolute;
-            width: 100px;
-            height: 146px;
-            z-index: 2;
+            content: normal;
+            width: 160px;
+            height: 241.5px;
             cursor: crosshair;
 
-            &:hover {
-                transition: transform 0.3s;
-                transform: scale(1.1);
-            }
-
             &:nth-child(1) {
-                @include footballFieldCardPosition(87%, 50%);
+                @include footballFieldCardPosition(77%, 49%);
             }
 
             &:nth-child(2) {
-                @include footballFieldCardPosition(75%, 10%);
+                @include footballFieldCardPosition(62%, 28%);
             }
 
             &:nth-child(3) {
-                @include footballFieldCardPosition(80%, 30%);
+                @include footballFieldCardPosition(74%, 36.5%);
             }
 
             &:nth-child(4) {
-                @include footballFieldCardPosition(80%, 70%);
+                @include footballFieldCardPosition(74%, 61%);
             }
 
             &:nth-child(5) {
-                @include footballFieldCardPosition(75%, 90%);
+                @include footballFieldCardPosition(62%, 70%);
             }
 
             &:nth-child(6) {
-                @include footballFieldCardPosition(54%, 20%);
+                @include footballFieldCardPosition(37.5%, 31%);
             }
 
             &:nth-child(7) {
-                @include footballFieldCardPosition(60%, 40%);
+                @include footballFieldCardPosition(52%, 56%);
             }
 
             &:nth-child(8) {
-                @include footballFieldCardPosition(60%, 60%);
+                @include footballFieldCardPosition(52%, 42%);
             }
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(54%, 80%);
+                @include footballFieldCardPosition(37.5%, 66.5%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(38%, 34.5%);
+                @include footballFieldCardPosition(22%, 42%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(38%, 67%);
+                @include footballFieldCardPosition(22%, 56%);
             }
         }
 
         &__empty-card {
             background-image: url("@static/img/FieldPage/emptyCard.svg");
             background-size: contain;
-            background-position: center;
+            background-position-y: center;
+            background-position-x: center;
             background-repeat: no-repeat;
 
             &:hover {
@@ -128,27 +130,27 @@
         &__empty-card {
 
             &:nth-child(6) {
-                @include footballFieldCardPosition(62%, 40%);
+                @include footballFieldCardPosition(50%, 42%);
             }
 
             &:nth-child(7) {
-                @include footballFieldCardPosition(62%, 60%);
+                @include footballFieldCardPosition(50%, 56%);
             }
 
             &:nth-child(8) {
-                @include footballFieldCardPosition(44%, 15%);
+                @include footballFieldCardPosition(23%, 32.5%);
             }
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(39%, 35%);
+                @include footballFieldCardPosition(28%, 43.5%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(39%, 65%);
+                @include footballFieldCardPosition(28%, 54%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(44%, 85%);
+                @include footballFieldCardPosition(23%, 65%);
             }
         }
     }
@@ -160,19 +162,19 @@
         &__empty-card {
 
             &:nth-child(8) {
-                @include footballFieldCardPosition(44%, 28%);
+                @include footballFieldCardPosition(32%, 31.5%);
             }
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(44%, 72%);
+                @include footballFieldCardPosition(32%, 66.5%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(30%, 40%);
+                @include footballFieldCardPosition(20%, 41.5%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(30%, 60%);
+                @include footballFieldCardPosition(20%, 56.5%);
             }
         }
     }
@@ -188,27 +190,27 @@
         &__empty-card {
 
             &:nth-child(6) {
-                @include footballFieldCardPosition(60%, 25%);
+                @include footballFieldCardPosition(45%, 33%);
             }
 
             &:nth-child(7) {
-                @include footballFieldCardPosition(66%, 50%);
+                @include footballFieldCardPosition(55%, 49%);
             }
 
             &:nth-child(8) {
-                @include footballFieldCardPosition(60%, 75%);
+                @include footballFieldCardPosition(45%, 66%);
             }
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(44%, 50%);
+                @include footballFieldCardPosition(36%, 49%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(34%, 30%);
+                @include footballFieldCardPosition(23%, 37%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(34%, 70%);
+                @include footballFieldCardPosition(23%, 60.5%);
             }
         }
     }
@@ -220,15 +222,15 @@
         &__empty-card {
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(40%, 20%);
+                @include footballFieldCardPosition(24%, 32%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(34%, 50%);
+                @include footballFieldCardPosition(30%, 49%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(40%, 80%);
+                @include footballFieldCardPosition(24%, 66%);
             }
         }
     }
@@ -239,20 +241,28 @@
         &__card,
         &__empty-card {
 
+            &:nth-child(6) {
+                @include footballFieldCardPosition(34%, 31%);
+            }
+
+            &:nth-child(7) {
+                @include footballFieldCardPosition(56%, 42%);
+            }
+
             &:nth-child(8) {
-                @include footballFieldCardPosition(44%, 28%);
+                @include footballFieldCardPosition(56%, 55.5%);
             }
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(46%, 50%);
+                @include footballFieldCardPosition(39%, 49%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(44%, 72%);
+                @include footballFieldCardPosition(34%, 67%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(26%, 50%);
+                @include footballFieldCardPosition(20%, 49%);
             }
         }
     }
@@ -263,16 +273,28 @@
         &__card,
         &__empty-card {
 
+            &:nth-child(6) {
+                @include footballFieldCardPosition(58%, 49%);
+            }
+
+            &:nth-child(7) {
+                @include footballFieldCardPosition(53.5%, 37.5%);
+            }
+
+            &:nth-child(8) {
+                @include footballFieldCardPosition(53.5%, 60.5%);
+            }
+
             &:nth-child(9) {
-                @include footballFieldCardPosition(46%, 37%);
+                @include footballFieldCardPosition(33%, 37.5%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(46%, 63%);
+                @include footballFieldCardPosition(33%, 60.5%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(34%, 50%);
+                @include footballFieldCardPosition(29%, 49%);
             }
         }
     }
@@ -284,27 +306,27 @@
         &__empty-card {
 
             &:nth-child(6) {
-                @include footballFieldCardPosition(67%, 50%);
+                @include footballFieldCardPosition(59%, 49%);
             }
 
             &:nth-child(7) {
-                @include footballFieldCardPosition(45%, 23%);
+                @include footballFieldCardPosition(38%, 31%);
             }
 
             &:nth-child(8) {
-                @include footballFieldCardPosition(48%, 50%);
+                @include footballFieldCardPosition(42%, 49%);
             }
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(45%, 77%);
+                @include footballFieldCardPosition(38%, 66.5%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(30%, 40%);
+                @include footballFieldCardPosition(22%, 40%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(30%, 60%);
+                @include footballFieldCardPosition(22%, 57%);
             }
         }
     }
@@ -316,47 +338,47 @@
         &__empty-card {
 
             &:nth-child(1) {
-                @include footballFieldCardPosition(89%, 50%);
+                @include footballFieldCardPosition(89%, 49%);
             }
 
             &:nth-child(2) {
-                @include footballFieldCardPosition(60%, 10%);
+                @include footballFieldCardPosition(58%, 29%);
             }
 
             &:nth-child(3) {
-                @include footballFieldCardPosition(65%, 30%);
+                @include footballFieldCardPosition(65%, 39%);
             }
 
             &:nth-child(4) {
-                @include footballFieldCardPosition(70%, 50%);
+                @include footballFieldCardPosition(70%, 49%);
             }
 
             &:nth-child(5) {
-                @include footballFieldCardPosition(65%, 70%);
+                @include footballFieldCardPosition(65%, 59%);
             }
 
             &:nth-child(6) {
-                @include footballFieldCardPosition(60%, 90%);
+                @include footballFieldCardPosition(58%, 69%);
             }
 
             &:nth-child(7) {
-                @include footballFieldCardPosition(45%, 25%);
+                @include footballFieldCardPosition(40%, 38%);
             }
 
             &:nth-child(8) {
-                @include footballFieldCardPosition(50%, 50%);
+                @include footballFieldCardPosition(46%, 49%);
             }
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(45%, 75%);
+                @include footballFieldCardPosition(40%, 60%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(30%, 38%);
+                @include footballFieldCardPosition(23%, 42%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(30%, 62%);
+                @include footballFieldCardPosition(23%, 56%);
             }
         }
     }
@@ -368,27 +390,27 @@
         &__empty-card {
 
             &:nth-child(6) {
-                @include footballFieldCardPosition(50%, 15%);
+                @include footballFieldCardPosition(41%, 30%);
             }
 
             &:nth-child(7) {
-                @include footballFieldCardPosition(55%, 30%);
+                @include footballFieldCardPosition(50%, 39.5%);
             }
 
             &:nth-child(8) {
-                @include footballFieldCardPosition(60%, 50%);
+                @include footballFieldCardPosition(56%, 49%);
             }
 
             &:nth-child(9) {
-                @include footballFieldCardPosition(55%, 70%);
+                @include footballFieldCardPosition(50%, 58.5%);
             }
 
             &:nth-child(10) {
-                @include footballFieldCardPosition(50%, 85%);
+                @include footballFieldCardPosition(41%, 68%);
             }
 
             &:nth-child(11) {
-                @include footballFieldCardPosition(40%, 50%);
+                @include footballFieldCardPosition(27%, 49%);
             }
         }
     }
@@ -427,12 +449,105 @@
     }
 }
 
+@media screen and (max-width: 1450px) {
+
+    .playing-area {
+
+        &__0,
+        &__1,
+        &__2,
+        &__3,
+        &__4,
+        &__5,
+        &__6,
+        &__7,
+        &__8,
+        &__9,
+        &__10,
+        &__0-shadows,
+        &__1-shadows,
+        &__2-shadows,
+        &__3-shadows,
+        &__4-shadows,
+        &__5-shadows,
+        &__6-shadows,
+        &__7-shadows,
+        &__8-shadows,
+        &__9-shadows,
+        &__10-shadows {
+
+            &__card,
+            &__empty-card {
+                position: absolute;
+                width: 120px;
+                height: 170px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+
+    .playing-area {
+
+        &__0,
+        &__1,
+        &__2,
+        &__3,
+        &__4,
+        &__5,
+        &__6,
+        &__7,
+        &__8,
+        &__9,
+        &__10,
+        &__0-shadows,
+        &__1-shadows,
+        &__2-shadows,
+        &__3-shadows,
+        &__4-shadows,
+        &__5-shadows,
+        &__6-shadows,
+        &__7-shadows,
+        &__8-shadows,
+        &__9-shadows,
+        &__10-shadows {
+
+            &__card,
+            &__empty-card {
+                position: absolute;
+                width: 110px;
+                height: 150px;
+            }
+        }
+    }
+}
+
 @media screen and (max-width: $desktopBreakPoint) {
 
     .playing-area {
 
-        &__wrapper {
-            display: flex;
+        &__play {
+            display: block;
+            height: 44px;
+            margin: 50px auto 0;
+            width: 550px;
+            border-radius: 10px;
+            border: none;
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 900;
+            font-size: 18px;
+            letter-spacing: 0.12em;
+            box-shadow: 0 12px 14px rgba(9, 51, 82, 0.22);
+            text-transform: uppercase;
+            background: #f5ff63;
+            cursor: pointer;
+
+            &:disabled {
+                opacity: 0.3;
+                cursor: auto;
+            }
         }
 
         &__0,
@@ -461,13 +576,51 @@
             &__card,
             &__empty-card {
                 position: absolute;
+                width: 80px;
+                height: 120px;
+
+                &:nth-child(1) {
+                    @include footballFieldCardPositionDesktop(77%, 49%);
+                }
+
+                &:nth-child(2) {
+                    @include footballFieldCardPositionDesktop(62%, 28%);
+                }
+
+                &:nth-child(3) {
+                    @include footballFieldCardPositionDesktop(74%, 36.5%);
+                }
+
+                &:nth-child(4) {
+                    @include footballFieldCardPositionDesktop(74%, 61%);
+                }
+
+                &:nth-child(5) {
+                    @include footballFieldCardPositionDesktop(62%, 70%);
+                }
+
+                &:nth-child(6) {
+                    @include footballFieldCardPositionDesktop(37.5%, 31%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionDesktop(52%, 56%);
+                }
+
+                &:nth-child(8) {
+                    @include footballFieldCardPositionDesktop(52%, 42%);
+                }
+
+                &:nth-child(9) {
+                    @include footballFieldCardPositionDesktop(37.5%, 66.5%);
+                }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(36%, 36%);
+                    @include footballFieldCardPositionDesktop(22%, 42%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(36%, 64%);
+                    @include footballFieldCardPositionDesktop(22%, 56%);
                 }
             }
         }
@@ -483,27 +636,27 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPosition(60%, 40%);
+                    @include footballFieldCardPositionDesktop(50%, 42%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPosition(60%, 60%);
+                    @include footballFieldCardPositionDesktop(50%, 56%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(44%, 15%);
+                    @include footballFieldCardPositionDesktop(23%, 32.5%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(39%, 35%);
+                    @include footballFieldCardPositionDesktop(28%, 43.5%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(39%, 65%);
+                    @include footballFieldCardPositionDesktop(28%, 54%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(44%, 85%);
+                    @include footballFieldCardPositionDesktop(23%, 65%);
                 }
             }
         }
@@ -515,19 +668,19 @@
             &__empty-card {
 
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(44%, 20%);
+                    @include footballFieldCardPositionDesktop(32%, 31.5%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(44%, 80%);
+                    @include footballFieldCardPositionDesktop(32%, 66.5%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(30%, 40%);
+                    @include footballFieldCardPositionDesktop(20%, 41.5%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(30%, 60%);
+                    @include footballFieldCardPositionDesktop(20%, 56.5%);
                 }
             }
         }
@@ -543,27 +696,27 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPosition(58%, 29%);
+                    @include footballFieldCardPositionDesktop(45%, 33%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPosition(66%, 50%);
+                    @include footballFieldCardPositionDesktop(55%, 49%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(58%, 71%);
+                    @include footballFieldCardPositionDesktop(45%, 66%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(44%, 50%);
+                    @include footballFieldCardPositionDesktop(36%, 49%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(34%, 30%);
+                    @include footballFieldCardPositionDesktop(23%, 37%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(34%, 70%);
+                    @include footballFieldCardPositionDesktop(23%, 60.5%);
                 }
             }
         }
@@ -575,15 +728,15 @@
             &__empty-card {
 
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(39%, 20%);
+                    @include footballFieldCardPositionDesktop(24%, 32%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(34%, 50%);
+                    @include footballFieldCardPositionDesktop(30%, 49%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(39%, 80%);
+                    @include footballFieldCardPositionDesktop(24%, 66%);
                 }
             }
         }
@@ -595,27 +748,27 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPosition(60%, 30%);
+                    @include footballFieldCardPositionDesktop(34%, 31%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPosition(60%, 70%);
+                    @include footballFieldCardPositionDesktop(56%, 42%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(42%, 13%);
+                    @include footballFieldCardPositionDesktop(56%, 55.5%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(46%, 50%);
+                    @include footballFieldCardPositionDesktop(39%, 49%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(42%, 87%);
+                    @include footballFieldCardPositionDesktop(34%, 67%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(26%, 50%);
+                    @include footballFieldCardPositionDesktop(20%, 49%);
                 }
             }
         }
@@ -626,16 +779,28 @@
             &__card,
             &__empty-card {
 
+                &:nth-child(6) {
+                    @include footballFieldCardPositionDesktop(58%, 49%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionDesktop(53.5%, 37.5%);
+                }
+
+                &:nth-child(8) {
+                    @include footballFieldCardPositionDesktop(53.5%, 60.5%);
+                }
+
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(38%, 25%);
+                    @include footballFieldCardPositionDesktop(33%, 37.5%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(38%, 75%);
+                    @include footballFieldCardPositionDesktop(33%, 60.5%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(34%, 50%);
+                    @include footballFieldCardPositionDesktop(29%, 49%);
                 }
             }
         }
@@ -647,27 +812,27 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPosition(67%, 50%);
+                    @include footballFieldCardPositionDesktop(59%, 49%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPosition(45%, 25%);
+                    @include footballFieldCardPositionDesktop(38%, 31%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(48%, 50%);
+                    @include footballFieldCardPositionDesktop(42%, 49%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(45%, 75%);
+                    @include footballFieldCardPositionDesktop(38%, 66.5%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(28%, 40%);
+                    @include footballFieldCardPositionDesktop(22%, 40%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(28%, 60%);
+                    @include footballFieldCardPositionDesktop(22%, 57%);
                 }
             }
         }
@@ -679,47 +844,47 @@
             &__empty-card {
 
                 &:nth-child(1) {
-                    @include footballFieldCardPosition(89%, 50%);
+                    @include footballFieldCardPositionDesktop(89%, 49%);
                 }
 
                 &:nth-child(2) {
-                    @include footballFieldCardPosition(60%, 10%);
+                    @include footballFieldCardPositionDesktop(58%, 29%);
                 }
 
                 &:nth-child(3) {
-                    @include footballFieldCardPosition(65%, 30%);
+                    @include footballFieldCardPositionDesktop(65%, 39%);
                 }
 
                 &:nth-child(4) {
-                    @include footballFieldCardPosition(70%, 50%);
+                    @include footballFieldCardPositionDesktop(70%, 49%);
                 }
 
                 &:nth-child(5) {
-                    @include footballFieldCardPosition(65%, 70%);
+                    @include footballFieldCardPositionDesktop(65%, 59%);
                 }
 
                 &:nth-child(6) {
-                    @include footballFieldCardPosition(60%, 90%);
+                    @include footballFieldCardPositionDesktop(58%, 69%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPosition(45%, 25%);
+                    @include footballFieldCardPositionDesktop(40%, 38%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(50%, 50%);
+                    @include footballFieldCardPositionDesktop(46%, 49%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(45%, 75%);
+                    @include footballFieldCardPositionDesktop(40%, 60%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(28%, 40%);
+                    @include footballFieldCardPositionDesktop(23%, 42%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(28%, 60%);
+                    @include footballFieldCardPositionDesktop(23%, 56%);
                 }
             }
         }
@@ -731,31 +896,54 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPosition(50%, 10%);
+                    @include footballFieldCardPositionDesktop(41%, 30%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPosition(55%, 30%);
+                    @include footballFieldCardPositionDesktop(50%, 39.5%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(60%, 50%);
+                    @include footballFieldCardPositionDesktop(56%, 49%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(55%, 70%);
+                    @include footballFieldCardPositionDesktop(50%, 58.5%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(50%, 90%);
+                    @include footballFieldCardPositionDesktop(41%, 68%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(40%, 50%);
+                    @include footballFieldCardPositionDesktop(27%, 49%);
                 }
             }
         }
+    }
+}
 
+@media screen and (max-width: $tabletBreakPoint) {
+
+    .playing-area {
+        width: 100%;
+
+        &__play {
+            margin: 50px 32px 64px;
+            width: calc(100% - 64px);
+        }
+
+        &__0,
+        &__1,
+        &__2,
+        &__3,
+        &__4,
+        &__5,
+        &__6,
+        &__7,
+        &__8,
+        &__9,
+        &__10,
         &__0-shadows,
         &__1-shadows,
         &__2-shadows,
@@ -767,38 +955,93 @@
         &__8-shadows,
         &__9-shadows,
         &__10-shadows {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            z-index: 1;
 
-            &__shadow {
-                width: 90%;
-                position: relative;
-                top: 10px;
-                left: 4px;
-            }
-
-            &__card {
+            &__card,
+            &__empty-card {
                 position: absolute;
-                width: 100px;
-                height: 146px;
-                z-index: 1;
-                cursor: crosshair;
+                width: 65px;
+                height: 100px;
+
+                &:nth-child(1) {
+                    @include footballFieldCardPositionTablet(77%, 49%);
+                }
+
+                &:nth-child(2) {
+                    @include footballFieldCardPositionTablet(62%, 28%);
+                }
+
+                &:nth-child(3) {
+                    @include footballFieldCardPositionTablet(74%, 36.5%);
+                }
+
+                &:nth-child(4) {
+                    @include footballFieldCardPositionTablet(74%, 61%);
+                }
+
+                &:nth-child(5) {
+                    @include footballFieldCardPositionTablet(62%, 70%);
+                }
+
+                &:nth-child(6) {
+                    @include footballFieldCardPositionTablet(37.5%, 31%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionTablet(52%, 56%);
+                }
+
+                &:nth-child(8) {
+                    @include footballFieldCardPositionTablet(52%, 42%);
+                }
+
+                &:nth-child(9) {
+                    @include footballFieldCardPositionTablet(37.5%, 66.5%);
+                }
+
+                &:nth-child(10) {
+                    @include footballFieldCardPositionTablet(22%, 42%);
+                }
+
+                &:nth-child(11) {
+                    @include footballFieldCardPositionTablet(22%, 56%);
+                }
             }
         }
-    }
-}
 
-@media screen and (max-width: $tabletBreakPoint) {
+        &__2,
+        &__2-shadows,
+        &__3,
+        &__3-shadows,
+        &__6,
+        &__6-shadows {
 
-    .playing-area {
-        width: 100%;
+            &__card,
+            &__empty-card {
 
-        &__wrapper {
-            display: flex;
-            flex-direction: column;
+                &:nth-child(6) {
+                    @include footballFieldCardPositionTablet(50%, 42%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionTablet(50%, 56%);
+                }
+
+                &:nth-child(8) {
+                    @include footballFieldCardPositionTablet(23%, 32.5%);
+                }
+
+                &:nth-child(9) {
+                    @include footballFieldCardPositionTablet(28%, 43.5%);
+                }
+
+                &:nth-child(10) {
+                    @include footballFieldCardPositionTablet(28%, 54%);
+                }
+
+                &:nth-child(11) {
+                    @include footballFieldCardPositionTablet(23%, 65%);
+                }
+            }
         }
 
         &__3,
@@ -807,20 +1050,20 @@
             &__card,
             &__empty-card {
 
-                &:nth-child(6) {
-                    @include footballFieldCardPosition(59%, 40%);
-                }
-
-                &:nth-child(7) {
-                    @include footballFieldCardPosition(59%, 60%);
-                }
-
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(44%, 25%);
+                    @include footballFieldCardPositionTablet(32%, 31.5%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(44%, 75%);
+                    @include footballFieldCardPositionTablet(32%, 66.5%);
+                }
+
+                &:nth-child(10) {
+                    @include footballFieldCardPositionTablet(20%, 41.5%);
+                }
+
+                &:nth-child(11) {
+                    @include footballFieldCardPositionTablet(20%, 56.5%);
                 }
             }
         }
@@ -836,15 +1079,27 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPosition(59%, 25%);
+                    @include footballFieldCardPositionTablet(45%, 33%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPosition(65%, 50%);
+                    @include footballFieldCardPositionTablet(55%, 49%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(59%, 75%);
+                    @include footballFieldCardPositionTablet(45%, 66%);
+                }
+
+                &:nth-child(9) {
+                    @include footballFieldCardPositionTablet(36%, 49%);
+                }
+
+                &:nth-child(10) {
+                    @include footballFieldCardPositionTablet(23%, 37%);
+                }
+
+                &:nth-child(11) {
+                    @include footballFieldCardPositionTablet(23%, 60.5%);
                 }
             }
         }
@@ -855,8 +1110,16 @@
             &__card,
             &__empty-card {
 
-                &:nth-child(7) {
-                    @include footballFieldCardPosition(62%, 50%);
+                &:nth-child(9) {
+                    @include footballFieldCardPositionTablet(24%, 32%);
+                }
+
+                &:nth-child(10) {
+                    @include footballFieldCardPositionTablet(30%, 49%);
+                }
+
+                &:nth-child(11) {
+                    @include footballFieldCardPositionTablet(24%, 66%);
                 }
             }
         }
@@ -867,12 +1130,28 @@
             &__card,
             &__empty-card {
 
+                &:nth-child(6) {
+                    @include footballFieldCardPositionTablet(34%, 31%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionTablet(56%, 42%);
+                }
+
                 &:nth-child(8) {
-                    @include footballFieldCardPosition(44%, 15%);
+                    @include footballFieldCardPositionTablet(56%, 55.5%);
+                }
+
+                &:nth-child(9) {
+                    @include footballFieldCardPositionTablet(39%, 49%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(44%, 85%);
+                    @include footballFieldCardPositionTablet(34%, 67%);
+                }
+
+                &:nth-child(11) {
+                    @include footballFieldCardPositionTablet(20%, 49%);
                 }
             }
         }
@@ -883,16 +1162,28 @@
             &__card,
             &__empty-card {
 
+                &:nth-child(6) {
+                    @include footballFieldCardPositionTablet(58%, 49%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionTablet(53.5%, 37.5%);
+                }
+
+                &:nth-child(8) {
+                    @include footballFieldCardPositionTablet(53.5%, 60.5%);
+                }
+
                 &:nth-child(9) {
-                    @include footballFieldCardPosition(40%, 36%);
+                    @include footballFieldCardPositionTablet(33%, 37.5%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(40%, 64%);
+                    @include footballFieldCardPositionTablet(33%, 60.5%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(25%, 50%);
+                    @include footballFieldCardPositionTablet(29%, 49%);
                 }
             }
         }
@@ -903,12 +1194,28 @@
             &__card,
             &__empty-card {
 
+                &:nth-child(6) {
+                    @include footballFieldCardPositionTablet(59%, 49%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionTablet(38%, 31%);
+                }
+
+                &:nth-child(8) {
+                    @include footballFieldCardPositionTablet(42%, 49%);
+                }
+
+                &:nth-child(9) {
+                    @include footballFieldCardPositionTablet(38%, 66.5%);
+                }
+
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(28%, 40%);
+                    @include footballFieldCardPositionTablet(22%, 40%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(28%, 60%);
+                    @include footballFieldCardPositionTablet(22%, 57%);
                 }
             }
         }
@@ -920,15 +1227,47 @@
             &__empty-card {
 
                 &:nth-child(1) {
-                    @include footballFieldCardPosition(89%, 50%);
+                    @include footballFieldCardPositionTablet(80%, 49%);
+                }
+
+                &:nth-child(2) {
+                    @include footballFieldCardPositionTablet(52%, 29%);
+                }
+
+                &:nth-child(3) {
+                    @include footballFieldCardPositionTablet(60%, 39%);
+                }
+
+                &:nth-child(4) {
+                    @include footballFieldCardPositionTablet(65%, 49%);
+                }
+
+                &:nth-child(5) {
+                    @include footballFieldCardPositionTablet(60%, 59%);
+                }
+
+                &:nth-child(6) {
+                    @include footballFieldCardPositionTablet(52%, 69%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionTablet(40%, 38%);
+                }
+
+                &:nth-child(8) {
+                    @include footballFieldCardPositionTablet(46%, 49%);
+                }
+
+                &:nth-child(9) {
+                    @include footballFieldCardPositionTablet(40%, 60%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(30%, 40%);
+                    @include footballFieldCardPositionTablet(23%, 42%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPosition(30%, 60%);
+                    @include footballFieldCardPositionTablet(23%, 56%);
                 }
             }
         }
@@ -940,11 +1279,27 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPosition(50%, 12%);
+                    @include footballFieldCardPositionTablet(41%, 30%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionTablet(50%, 39.5%);
+                }
+
+                &:nth-child(8) {
+                    @include footballFieldCardPositionTablet(56%, 49%);
+                }
+
+                &:nth-child(9) {
+                    @include footballFieldCardPositionTablet(50%, 58.5%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPosition(50%, 88%);
+                    @include footballFieldCardPositionTablet(41%, 68%);
+                }
+
+                &:nth-child(11) {
+                    @include footballFieldCardPositionTablet(27%, 49%);
                 }
             }
         }
@@ -955,11 +1310,18 @@
 
     .playing-area {
         width: 100%;
-        height: 500px;
+        height: auto;
+        display: flex;
+        justify-content: center;
 
-        &__wrapper {
-            display: flex;
-            flex-direction: column;
+        &__field {
+            width: 150%;
+            height: auto;
+        }
+
+        &__play {
+            margin: 20px 16px 64px;
+            width: calc(100% - 32px);
         }
 
         &__0,
@@ -1019,47 +1381,47 @@
                 }
 
                 &:nth-child(1) {
-                    @include footballFieldCardPositionPhone(90%, 50%);
+                    @include footballFieldCardPositionPhone(86%, 50%);
                 }
 
                 &:nth-child(2) {
-                    @include footballFieldCardPositionPhone(75%, 10%);
+                    @include footballFieldCardPositionPhone(66%, 21%);
                 }
 
                 &:nth-child(3) {
-                    @include footballFieldCardPositionPhone(80%, 30%);
+                    @include footballFieldCardPositionPhone(74%, 38%);
                 }
 
                 &:nth-child(4) {
-                    @include footballFieldCardPositionPhone(80%, 70%);
+                    @include footballFieldCardPositionPhone(74%, 62%);
                 }
 
                 &:nth-child(5) {
-                    @include footballFieldCardPositionPhone(75%, 90%);
+                    @include footballFieldCardPositionPhone(66%, 79%);
                 }
 
                 &:nth-child(6) {
-                    @include footballFieldCardPositionPhone(54%, 20%);
+                    @include footballFieldCardPositionPhone(43%, 25%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPositionPhone(60%, 40%);
+                    @include footballFieldCardPositionPhone(55%, 35%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPositionPhone(60%, 60%);
+                    @include footballFieldCardPositionPhone(55%, 65%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(54%, 80%);
+                    @include footballFieldCardPositionPhone(43%, 75%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPositionPhone(38%, 34.5%);
+                    @include footballFieldCardPositionPhone(33%, 40%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPositionPhone(38%, 67%);
+                    @include footballFieldCardPositionPhone(33%, 60%);
                 }
             }
         }
@@ -1088,32 +1450,28 @@
             &__card,
             &__empty-card {
 
-                &:nth-child(1) {
-                    @include footballFieldCardPositionPhone(90%, 50%);
-                }
-
                 &:nth-child(6) {
-                    @include footballFieldCardPositionPhone(62%, 40%);
+                    @include footballFieldCardPositionPhone(57%, 40%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPositionPhone(62%, 60%);
+                    @include footballFieldCardPositionPhone(57%, 60%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPositionPhone(44%, 15%);
+                    @include footballFieldCardPositionPhone(35%, 30%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(39%, 35%);
+                    @include footballFieldCardPositionPhone(43%, 43%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPositionPhone(39%, 65%);
+                    @include footballFieldCardPositionPhone(43%, 57%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPositionPhone(44%, 85%);
+                    @include footballFieldCardPositionPhone(35%, 70%);
                 }
             }
         }
@@ -1125,11 +1483,11 @@
             &__empty-card {
 
                 &:nth-child(8) {
-                    @include footballFieldCardPositionPhone(44%, 25%);
+                    @include footballFieldCardPositionPhone(42%, 30%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(44%, 75%);
+                    @include footballFieldCardPositionPhone(42%, 70%);
                 }
 
                 &:nth-child(10) {
@@ -1153,27 +1511,27 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPositionPhone(60%, 25%);
+                    @include footballFieldCardPositionPhone(55%, 33%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPositionPhone(66%, 50%);
+                    @include footballFieldCardPositionPhone(65%, 50%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPositionPhone(60%, 75%);
+                    @include footballFieldCardPositionPhone(55%, 66%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(44%, 50%);
+                    @include footballFieldCardPositionPhone(45%, 50%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPositionPhone(34%, 30%);
+                    @include footballFieldCardPositionPhone(35%, 40%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPositionPhone(34%, 70%);
+                    @include footballFieldCardPositionPhone(35%, 60%);
                 }
             }
         }
@@ -1185,15 +1543,15 @@
             &__empty-card {
 
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(40%, 20%);
+                    @include footballFieldCardPositionPhone(34%, 34%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPositionPhone(34%, 50%);
+                    @include footballFieldCardPositionPhone(40%, 50%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPositionPhone(40%, 80%);
+                    @include footballFieldCardPositionPhone(34%, 66%);
                 }
             }
         }
@@ -1204,20 +1562,28 @@
             &__card,
             &__empty-card {
 
+                &:nth-child(6) {
+                    @include footballFieldCardPositionPhone(42%, 31%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionPhone(60%, 42%);
+                }
+
                 &:nth-child(8) {
-                    @include footballFieldCardPositionPhone(44%, 28%);
+                    @include footballFieldCardPositionPhone(60%, 58%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(44%, 50%);
+                    @include footballFieldCardPositionPhone(48%, 50%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPositionPhone(44%, 72%);
+                    @include footballFieldCardPositionPhone(42%, 69%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPositionPhone(26%, 50%);
+                    @include footballFieldCardPositionPhone(30%, 50%);
                 }
             }
         }
@@ -1228,16 +1594,28 @@
             &__card,
             &__empty-card {
 
+                &:nth-child(6) {
+                    @include footballFieldCardPositionPhone(63%, 50%);
+                }
+
+                &:nth-child(7) {
+                    @include footballFieldCardPositionPhone(55%, 27%);
+                }
+
+                &:nth-child(8) {
+                    @include footballFieldCardPositionPhone(55%, 73%);
+                }
+
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(46%, 40%);
+                    @include footballFieldCardPositionPhone(44%, 40%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPositionPhone(46%, 60%);
+                    @include footballFieldCardPositionPhone(44%, 60%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPositionPhone(28%, 50%);
+                    @include footballFieldCardPositionPhone(34%, 50%);
                 }
             }
         }
@@ -1249,27 +1627,27 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPositionPhone(67%, 50%);
+                    @include footballFieldCardPositionPhone(63%, 50%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPositionPhone(45%, 25%);
+                    @include footballFieldCardPositionPhone(44%, 30%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPositionPhone(48%, 50%);
+                    @include footballFieldCardPositionPhone(51%, 50%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(45%, 75%);
+                    @include footballFieldCardPositionPhone(44%, 70%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPositionPhone(30%, 40%);
+                    @include footballFieldCardPositionPhone(36%, 40%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPositionPhone(30%, 60%);
+                    @include footballFieldCardPositionPhone(36%, 60%);
                 }
             }
         }
@@ -1280,44 +1658,48 @@
             &__card,
             &__empty-card {
 
+                &:nth-child(1) {
+                    @include footballFieldCardPositionPhone(87%, 49%);
+                }
+
                 &:nth-child(2) {
-                    @include footballFieldCardPositionPhone(60%, 10%);
+                    @include footballFieldCardPositionPhone(61%, 23%);
                 }
 
                 &:nth-child(3) {
-                    @include footballFieldCardPositionPhone(65%, 30%);
+                    @include footballFieldCardPositionPhone(68%, 34%);
                 }
 
                 &:nth-child(4) {
-                    @include footballFieldCardPositionPhone(70%, 50%);
+                    @include footballFieldCardPositionPhone(75%, 50%);
                 }
 
                 &:nth-child(5) {
-                    @include footballFieldCardPositionPhone(65%, 70%);
+                    @include footballFieldCardPositionPhone(68%, 66%);
                 }
 
                 &:nth-child(6) {
-                    @include footballFieldCardPositionPhone(60%, 90%);
+                    @include footballFieldCardPositionPhone(61%, 77%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPositionPhone(45%, 25%);
+                    @include footballFieldCardPositionPhone(50%, 32%);
                 }
 
                 &:nth-child(8) {
-                    @include footballFieldCardPositionPhone(50%, 50%);
+                    @include footballFieldCardPositionPhone(56%, 50%);
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(45%, 75%);
+                    @include footballFieldCardPositionPhone(50%, 68%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPositionPhone(30%, 38%);
+                    @include footballFieldCardPositionPhone(38%, 42%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPositionPhone(30%, 62%);
+                    @include footballFieldCardPositionPhone(38%, 58%);
                 }
             }
         }
@@ -1329,11 +1711,11 @@
             &__empty-card {
 
                 &:nth-child(6) {
-                    @include footballFieldCardPositionPhone(50%, 15%);
+                    @include footballFieldCardPositionPhone(48%, 25%);
                 }
 
                 &:nth-child(7) {
-                    @include footballFieldCardPositionPhone(55%, 30%);
+                    @include footballFieldCardPositionPhone(53%, 37%);
                 }
 
                 &:nth-child(8) {
@@ -1341,15 +1723,15 @@
                 }
 
                 &:nth-child(9) {
-                    @include footballFieldCardPositionPhone(55%, 70%);
+                    @include footballFieldCardPositionPhone(53%, 63%);
                 }
 
                 &:nth-child(10) {
-                    @include footballFieldCardPositionPhone(50%, 85%);
+                    @include footballFieldCardPositionPhone(48%, 75%);
                 }
 
                 &:nth-child(11) {
-                    @include footballFieldCardPositionPhone(40%, 50%);
+                    @include footballFieldCardPositionPhone(37%, 50%);
                 }
             }
         }

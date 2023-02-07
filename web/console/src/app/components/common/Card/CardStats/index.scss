@@ -1,50 +1,94 @@
 @import "@/index.scss";
 
 .footballer-card-stats-item {
+    padding-bottom: 70px;
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin: 5% 0;
 
     &__heading {
+        margin-bottom: 40px;
         display: flex;
         justify-content: space-between;
-        font-size: 24px;
-        margin-bottom: 40px;
+        text-transform: uppercase;
+        font-family: "Orbitron", sans-serif;
+        font-style: normal;
+        font-weight: 900;
+        font-size: 22px;
+        line-height: 28px;
+        letter-spacing: 0.12em;
+
+        &__mobile-value {
+            display: none;
+        }
+
+        &-value {
+            color: #f5ff63;
+        }
     }
 
     &__diagram {
         position: relative;
         width: 100%;
-        height: 2px;
-        background-color: #5758a0;
+        height: 6px;
         bottom: 19px;
+        border-radius: 0 12px 12px 0;
+        box-shadow: 0 2px 12px rgb(0 23 58 / 16%);
+        background: rgba(255, 255, 255, 0.14);
     }
 
     &__diagram-value {
         position: absolute;
         z-index: 2;
-        height: 2px;
+        height: 6px;
         top: 0;
         left: 0;
+        border-radius: 12px 0 0 12px;
+        box-shadow: 0 2px 12px rgb(0 23 58 / 16%);
+        background: #f5ff63;
     }
 
     &__row {
+        height: 23px;
+        margin-bottom: 29px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        position: relative;
+
+        &:not(:last-child):after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            left: 0;
+            bottom: -16px;
+            background: rgba(216, 242, 255, 0.26);
+        }
     }
 
     &__row-name {
-        font-family: "Montserrat", sans-serif;
-        text-transform: capitalize;
-        color: $textColor;
         padding-right: 2px;
+        text-transform: capitalize;
+        font-style: normal;
+        font-family: "Urbanist", sans-serif;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 22px;
+        letter-spacing: 0.12em;
+        color: #344a54;
     }
 
     &__row-value {
-        padding-top: 2.5px;
+        font-style: normal;
+        text-align: center;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 900;
+        font-size: 18px;
+        line-height: 23px;
+        letter-spacing: 0.12em;
+        color: #26373f;
     }
 
     .bar {
@@ -54,19 +98,56 @@
     }
 }
 
-@media screen and (max-width: $tabletBreakPoint) {
+@media screen and (max-width: $desktopBreakPoint) {
 
     .footballer-card-stats-item {
+        padding-bottom: 0;
 
         &__heading {
+            margin-bottom: 40px;
             display: flex;
             justify-content: space-between;
-            font-size: 22px;
-            margin-bottom: 40px;
+            font-weight: 900;
+            font-size: 16px;
+            line-height: 18px;
         }
 
         &__row-name {
-            font-size: 10px;
+            font-size: 14px;
+            line-height: 17px;
+        }
+
+        &__row-value {
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 18px;
+        }
+    }
+}
+
+@media screen and (max-width: $tabletBreakPoint) {
+
+    .footballer-card-stats-item {
+        padding-bottom: 0;
+
+        &__heading {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 18px;
+        }
+
+        &__row-name {
+            font-size: 14px;
+            line-height: 17px;
+        }
+
+        &__row-value {
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 18px;
         }
     }
 }
@@ -74,16 +155,31 @@
 @media screen and (max-width: $phoneBreakPoint) {
 
     .footballer-card-stats-item {
-        margin: 5% 0;
+        gap: 0;
 
         &__heading {
-            font-size: 24px;
-            line-height: 29px;
+            margin-bottom: 20px;
+
+            &-value {
+                display: none;
+            }
+
+            &__mobile-value {
+                margin: 0 auto 22px;
+                display: block;
+                text-align: center;
+                font-style: normal;
+                font-family: "Orbitron", sans-serif;
+                font-weight: 800;
+                font-size: 12px;
+                line-height: 15px;
+                letter-spacing: 0.12em;
+                color: #f5ff63;
+            }
         }
 
-        &__row-name {
-            font-size: 14px;
-            line-height: 17px;
+        &__diagram {
+            bottom: 10px;
         }
     }
 }

@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { CardsArea } from '@components/UserCards/CardsArea';
@@ -11,23 +11,19 @@ import { FilterByStats } from '@components/common/FilterField/FilterByStats';
 import { FilterByStatus } from '@components/common/FilterField/FilterByStatus';
 import { FilterByVersion } from '@components/common/FilterField/FilterByVersion';
 import { Paginator } from '@components/common/Paginator';
-import { RegistrationPopup } from '@/app/components/common/Registration/Registration';
+import { RegistrationPopup } from '@/app/components/common/Registration';
 
 import { UnauthorizedError } from '@/api';
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RootState } from '@/app/store';
-import { listOfCards, createCardsQueryParameters, getCurrentCardsQueryParameters } from '@/app/store/actions/cards';
+import { createCardsQueryParameters, getCurrentCardsQueryParameters, listOfCards } from '@/app/store/actions/cards';
 import { CardsQueryParametersField } from '@/card';
 
 import './index.scss';
 
 const UserCards: React.FC = () => {
-    const { page } = useSelector(
-        (state: RootState) => state.cardsReducer.cardsPage
-    );
-    const { currentCardsPage } = useSelector(
-        (state: RootState) => state.cardsReducer
-    );
+    const { page } = useSelector((state: RootState) => state.cardsReducer.cardsPage);
+    const { currentCardsPage } = useSelector((state: RootState) => state.cardsReducer);
 
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
 
@@ -42,9 +38,7 @@ const UserCards: React.FC = () => {
     const DEFAULT_PAGE_INDEX: number = 1;
 
     /** Submits search by cards query parameters. */
-    const submitSearch = async(
-        queryParameters: CardsQueryParametersField[]
-    ) => {
+    const submitSearch = async(queryParameters: CardsQueryParametersField[]) => {
         createCardsQueryParameters(queryParameters);
         await dispatch(listOfCards(DEFAULT_PAGE_INDEX));
     };
@@ -70,30 +64,15 @@ const UserCards: React.FC = () => {
 
     return (
         <section className="user-cards">
-            {isRegistrationRequired &&
-                <RegistrationPopup
-                    closeRegistrationPopup={closeRegistrationPopup}
-                />
-            }
-            <h1 className="user-cards__title">MY CARDS</h1>
+            {isRegistrationRequired && <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />}
             <FilterField>
-                <FilterByVersion
-                    submitSearch={submitSearch}
-                    cardsQueryParameters={cardsQueryParameters}
-                />
-                <FilterByStats
-                    cardsQueryParameters={cardsQueryParameters}
-                    submitSearch={submitSearch}
-                />
+                <FilterByVersion submitSearch={submitSearch} cardsQueryParameters={cardsQueryParameters} />
+                <FilterByStats cardsQueryParameters={cardsQueryParameters} submitSearch={submitSearch} />
                 <FilterByPrice />
                 <FilterByStatus />
             </FilterField>
             <CardsArea />
-            <Paginator
-                getCardsOnPage={listOfCards}
-                itemsCount={page.totalCount}
-                selectedPage={currentCardsPage}
-            />
+            <Paginator getCardsOnPage={listOfCards} itemsCount={page.totalCount} selectedPage={currentCardsPage} />
         </section>
     );
 };

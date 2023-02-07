@@ -26,7 +26,7 @@ var ErrCards = errs.Class("cards service error")
 
 // Service is handling cards related logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	cards  DB
 	config Config
@@ -337,9 +337,9 @@ func (service *Service) List(ctx context.Context, cursor pagination.Cursor) (Pag
 	return cardsListPage, ErrCards.Wrap(err)
 }
 
-// ListByTypeOrdered returns cards where type is ordered from the database.
-func (service *Service) ListByTypeOrdered(ctx context.Context) ([]Card, error) {
-	cardsList, err := service.cards.ListByTypeOrdered(ctx)
+// ListByTypeNoOrdered returns cards where type is unordered from the database.
+func (service *Service) ListByTypeNoOrdered(ctx context.Context) ([]Card, error) {
+	cardsList, err := service.cards.ListByTypeUnordered(ctx)
 	return cardsList, ErrCards.Wrap(err)
 }
 
@@ -389,7 +389,7 @@ func (service *Service) ListByUserIDAndPlayerName(ctx context.Context, userID uu
 	var cardsListPage Page
 	strings.ToValidUTF8(filter.Value, "")
 
-	// TODO: add best check
+	// TODO: add best check.
 	_, err := strconv.Atoi(filter.Value)
 	if err == nil {
 		return cardsListPage, ErrInvalidFilter.New("%s %s", filter.Value, err)
@@ -410,7 +410,7 @@ func (service *Service) ListByUserIDAndPlayerName(ctx context.Context, userID uu
 func (service *Service) ListCardIDsByPlayerNameWhereActiveLot(ctx context.Context, filter Filters) ([]uuid.UUID, error) {
 	strings.ToValidUTF8(filter.Value, "")
 
-	// TODO: add best check
+	// TODO: add best check.
 	_, err := strconv.Atoi(filter.Value)
 	if err == nil {
 		return nil, ErrInvalidFilter.New("%s %s", filter.Value, err)
@@ -441,6 +441,11 @@ func (service *Service) GetCardsFromSquadCards(ctx context.Context, id uuid.UUID
 // UpdateStatus updates status of card in database.
 func (service *Service) UpdateStatus(ctx context.Context, id uuid.UUID, status Status) error {
 	return ErrCards.Wrap(service.cards.UpdateStatus(ctx, id, status))
+}
+
+// UpdateType updates type of card in the database.
+func (service *Service) UpdateType(ctx context.Context, id uuid.UUID, typeCard Type) error {
+	return ErrCards.Wrap(service.cards.UpdateType(ctx, id, typeCard))
 }
 
 // UpdateUserID updates user's id for card in database.

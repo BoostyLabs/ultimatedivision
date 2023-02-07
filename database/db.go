@@ -7,7 +7,7 @@ import (
 	"context"
 	"database/sql"
 
-	_ "github.com/lib/pq" // using postgres driver
+	_ "github.com/lib/pq" // using postgres driver.
 	"github.com/zeebo/errs"
 
 	"ultimatedivision"
@@ -71,18 +71,23 @@ func NewHub() *Hub {
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
 		`CREATE TABLE IF NOT EXISTS users (
-            id               BYTEA     PRIMARY KEY    NOT NULL,
-            email            VARCHAR                  NOT NULL,
-            email_normalized VARCHAR                  NOT NULL,
-            password_hash    BYTEA                    NOT NULL,
-            nick_name        VARCHAR                  NOT NULL,
-            first_name       VARCHAR                  NOT NULL,
-            last_name        VARCHAR                  NOT NULL,
-            wallet_address   VARCHAR,
-            nonce            BYTEA,
-            last_login       TIMESTAMP WITH TIME ZONE NOT NULL,
-            status           INTEGER                  NOT NULL,
-            created_at       TIMESTAMP WITH TIME ZONE NOT NULL
+            id                    BYTEA     PRIMARY KEY    NOT NULL,
+            email                 VARCHAR                  NOT NULL,
+            email_normalized      VARCHAR                  NOT NULL,
+            password_hash         BYTEA                    NOT NULL,
+            nick_name             VARCHAR                  NOT NULL,
+            first_name            VARCHAR                  NOT NULL,
+            last_name             VARCHAR                  NOT NULL,
+            wallet_address        BYTEA,
+            casper_wallet_address VARCHAR,
+            casper_wallet_hash    VARCHAR,
+            wallet_type           VARCHAR,
+            nonce                 BYTEA,
+            public_key            VARCHAR,
+            private_key           VARCHAR,
+            last_login            TIMESTAMP WITH TIME ZONE NOT NULL,
+            status                INTEGER                  NOT NULL,
+            created_at            TIMESTAMP WITH TIME ZONE NOT NULL
         );
         CREATE TABLE IF NOT EXISTS cards (
             id                BYTEA         PRIMARY KEY NOT NULL,
@@ -224,6 +229,16 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             ended_at    TIMESTAMP WITH TIME ZONE NOT NULL,
             FOREIGN KEY (division_id) REFERENCES divisions (id) ON DELETE CASCADE
         );
+        CREATE TABLE IF NOT EXISTS season_rewards(
+            id                      BYTEA     PRIMARY KEY      NOT NULL,
+            season_id               INTEGER                    NOT NULL,
+            user_id                 BYTEA                      NOT NULL, 
+            wallet_address          BYTEA                      NOT NULL,
+            casper_wallet_address   VARCHAR                    NOT NULL,
+            wallet_type             VARCHAR                    NOT NULL,
+            value                   BYTEA                      NOT NULL,
+            status                  INTEGER                    NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS matches (
             id           BYTEA   PRIMARY KEY                              NOT NULL,
             user1_id     BYTEA   REFERENCES users(id) ON DELETE CASCADE   NOT NULL,
@@ -242,23 +257,30 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             minute   INTEGER                                          NOT NULL
         );
         CREATE TABLE IF NOT EXISTS waitlist(
-            token_id       SERIAL                                                     NOT NULL,
-            card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
-            wallet_address VARCHAR                                                    NOT NULL,
-            value          BYTEA                                                      NOT NULL,
-            password       VARCHAR                                                    NOT NULL
+            token_id              BYTEA                                                      NOT NULL,
+            token_number          SERIAL                                                     NOT NULL,
+            card_id               BYTEA   PRIMARY KEY REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
+            wallet_address        BYTEA                                                      NOT NULL,
+            casper_wallet_address VARCHAR,
+            casper_wallet_hash    VARCHAR,
+            value                 BYTEA                                                      NOT NULL,
+            password              VARCHAR                                                    NOT NULL,
+            wallet_type           VARCHAR                                                    NOT NULL
         );
         CREATE TABLE IF NOT EXISTS nfts(
             card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) NOT NULL,
-            token_id       INTEGER                                  NOT NULL,
+            token_id       BYTEA                                    NOT NULL,
             chain          VARCHAR                                  NOT NULL,
-            wallet_address VARCHAR                                  NOT NULL
+            wallet_address BYTEA                                    NOT NULL
         );
         CREATE TABLE IF NOT EXISTS currency_waitlist(
-            wallet_address VARCHAR NOT NULL,
-            value          BYTEA   NOT NULL,
-            nonce          INTEGER NOT NULL,
-            signature      VARCHAR NOT NULL,
+            wallet_address        BYTEA   NOT NULL,
+            casper_wallet_address VARCHAR NOT NULL,
+            casper_wallet_hash    VARCHAR NOT NULL,
+            wallet_type           VARCHAR NOT NULL,
+            value                 BYTEA   NOT NULL,
+            nonce                 INTEGER NOT NULL,
+            signature             VARCHAR NOT NULL,
             PRIMARY KEY(wallet_address, nonce)
         );
         CREATE TABLE IF NOT EXISTS udts(
@@ -269,7 +291,12 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             id           INTEGER PRIMARY KEY NOT NULL,
             cards_amount INTEGER             NOT NULL,
             is_renewal   BOOLEAN             NOT NULL,
-            hour_renewal INTEGER             NOT NULL
+            hour_renewal INTEGER             NOT NULL,
+            price        BYTEA               NOT NULL
+        );
+         CREATE TABLE IF NOT EXISTS velas_register_data(
+            user_id BYTEA   PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+            response        VARCHAR                                            NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)

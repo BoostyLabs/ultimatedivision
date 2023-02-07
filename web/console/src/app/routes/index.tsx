@@ -2,13 +2,8 @@
 // See LICENSE for copying information.
 
 import { lazy } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 
-const SignIn = lazy(() => import('@/app/views/SignIn'));
-const SignUp = lazy(() => import('@/app/views/SignUp'));
-const ChangePassword = lazy(() => import('@/app/views/ChangePassword'));
-const ConfirmEmail = lazy(() => import('@/app/views/ConfirmEmail'));
-const RecoverPassword = lazy(() => import('@/app/views/RecoverPassword'));
 const MarketPlace = lazy(() => import('@/app/views/MarketPlacePage'));
 const UserCards = lazy(() => import('@/app/views/UserCards'));
 const Card = lazy(() => import('@/app/views/CardPage'));
@@ -24,6 +19,7 @@ const Home = lazy(() => import('@/app/views/Home'));
 const Navbar = lazy(() => import('@/app/components/common/Navbar'));
 const FootballGame = lazy(() => import('@/app/views/FootballGame'));
 const PlayerProfile = lazy(() => import('@/app/views/PlayerProfile'));
+const AuthWrapper = lazy(() => import('@/app/components/common/Registration/AuthWrapper'));
 
 import Summary from '@components/WhitePaper/Summary';
 import GameMechanics from '@components/WhitePaper/GameMechanics';
@@ -41,8 +37,9 @@ export class ComponentRoutes {
         public path: string,
         public component: any,
         public exact: boolean,
+        public className?: string,
         public children?: ComponentRoutes[]
-    ) {}
+    ) { }
     /** Method for creating child subroutes path */
     public with(child: ComponentRoutes, parrent: ComponentRoutes): ComponentRoutes {
         child.path = `${parrent.path}/${child.path}`;
@@ -59,6 +56,7 @@ export class ComponentRoutes {
 
 /** Route config implementation */
 export class RouteConfig {
+    public static FootballGame: ComponentRoutes = new ComponentRoutes('/game', FootballGame, true);
     public static MarketPlace: ComponentRoutes = new ComponentRoutes('/marketplace', MarketPlace, true);
     public static Lot: ComponentRoutes = new ComponentRoutes('/lot/:id', Lot, true);
     public static Card: ComponentRoutes = new ComponentRoutes('/card/:id', Card, false);
@@ -68,12 +66,11 @@ export class RouteConfig {
         Division,
         true
     );
+    public static Home: ComponentRoutes = new ComponentRoutes('/home', Home, true, 'page__home');
     public static Field: ComponentRoutes = new ComponentRoutes('/field', Field, true);
-    public static Store: ComponentRoutes = new ComponentRoutes('/store', Store, true);
+    public static Store: ComponentRoutes = new ComponentRoutes('/store', Store, true, 'page__store');
     public static Cards: ComponentRoutes = new ComponentRoutes('/cards', UserCards, true);
     public static Match: ComponentRoutes = new ComponentRoutes('/match', Match, true);
-    public static Home: ComponentRoutes = new ComponentRoutes('/home', Home, true);
-    public static FootballGame: ComponentRoutes = new ComponentRoutes('/game', FootballGame, true);
     public static PlayerProfile: ComponentRoutes = new ComponentRoutes('/player-profile', PlayerProfile, true);
     public static Whitepaper: ComponentRoutes = new ComponentRoutes('/whitepaper', WhitePaper, false);
     public static Tokenomics: ComponentRoutes = new ComponentRoutes('/tokenomics', Tokenomics, false);
@@ -119,33 +116,38 @@ export class RouteConfig {
 
 /** Route config that implements auth actions */
 export class AuthRouteConfig {
-    public static SignIn: ComponentRoutes = new ComponentRoutes('/sign-in', SignIn, true);
-    public static SignUp: ComponentRoutes = new ComponentRoutes('/sign-up', SignUp, true);
-    public static ChangePassword: ComponentRoutes = new ComponentRoutes('/change-password', ChangePassword, true);
-    public static ConfirmEmail: ComponentRoutes = new ComponentRoutes('/email/confirm', ConfirmEmail, true);
-    public static ResetPassword: ComponentRoutes = new ComponentRoutes('/reset-password', RecoverPassword, true);
-    public static Default: ComponentRoutes = new ComponentRoutes('/', RouteConfig.Home.component, true);
-    public static routes: ComponentRoutes[] = [
-        AuthRouteConfig.ConfirmEmail,
-        AuthRouteConfig.Default,
-        AuthRouteConfig.ResetPassword,
-        AuthRouteConfig.ChangePassword,
-        AuthRouteConfig.SignIn,
-        AuthRouteConfig.SignUp,
-    ];
+    public static AuthWrapper: ComponentRoutes = new ComponentRoutes('/auth-velas', AuthWrapper, true);
+    public static Default: ComponentRoutes = new ComponentRoutes('/', Home, true, 'page__home');
+
+    public static routes: ComponentRoutes[] = [AuthRouteConfig.Default, AuthRouteConfig.AuthWrapper];
 }
 
-export const Routes = () =>
-    <Switch>
-        {AuthRouteConfig.routes.map((route, index) =>
-            <Route key={index} path={route.path} component={route.component} exact={route.exact} />
-        )}
-        <Route>
-            <Navbar />
-            <MatchFinder />
-            {RouteConfig.routes.map((route, index) =>
-                <Route key={index} path={route.path} component={route.component} exact={route.exact} />
-            )}
-        </Route>
-    </Switch>;
+export const Routes = () => {
+    const FILTERED_IS_PAGE_CLASSNAME = 0;
 
+    const location = useLocation();
+    const currentLocation = location.pathname;
+
+    const pageClassName = RouteConfig.routes.filter((route, _) =>
+        route.className && route.path === currentLocation ? route.className : ''
+    )[FILTERED_IS_PAGE_CLASSNAME]?.className || AuthRouteConfig.routes.filter((route, _) =>
+        route.className && route.path === currentLocation ? route.className : ''
+    )[FILTERED_IS_PAGE_CLASSNAME]?.className;
+
+    return (
+        <div className={`page ${pageClassName ? pageClassName : ''}`}>
+            <Switch>
+                {AuthRouteConfig.routes.map((route, index) =>
+                    <Route key={index} path={route.path} component={route.component} exact={route.exact} />
+                )}
+                <Route>
+                    <Navbar />
+                    <MatchFinder />
+                    {RouteConfig.routes.map((route, index) =>
+                        <Route key={index} path={route.path} component={route.component} exact={route.exact} />
+                    )}
+                </Route>
+            </Switch>
+        </div>
+    );
+};

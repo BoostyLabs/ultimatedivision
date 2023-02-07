@@ -5,10 +5,9 @@ package users
 
 import (
 	"context"
-	"strings"
 	"time"
 
-	"github.com/BoostyLabs/evmsignature"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 )
@@ -24,7 +23,7 @@ var ErrWalletAddressAlreadyInUse = errs.Class("wallet address is already in use"
 
 // Service is handling users related logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	users DB
 }
@@ -49,8 +48,14 @@ func (service *Service) GetByEmail(ctx context.Context, email string) (User, err
 }
 
 // GetByWalletAddress returns user by wallet address from the data base.
-func (service *Service) GetByWalletAddress(ctx context.Context, walletAddress evmsignature.Address) (User, error) {
-	user, err := service.users.GetByWalletAddress(ctx, walletAddress)
+func (service *Service) GetByWalletAddress(ctx context.Context, walletAddress common.Address, walletType WalletType) (User, error) {
+	user, err := service.users.GetByWalletAddress(ctx, walletAddress.String(), walletType)
+	return user, ErrUsers.Wrap(err)
+}
+
+// GetByCasperWalletAddress returns user by Casper wallet address from the data base.
+func (service *Service) GetByCasperWalletAddress(ctx context.Context, walletAddress string, walletType WalletType) (User, error) {
+	user, err := service.users.GetByWalletAddress(ctx, walletAddress, walletType)
 	return user, ErrUsers.Wrap(err)
 }
 
@@ -92,18 +97,22 @@ func (service *Service) Update(ctx context.Context, status Status, id uuid.UUID)
 }
 
 // GetProfile returns user profile.
-func (service *Service) GetProfile(ctx context.Context, userID uuid.UUID) (*Profile, error) {
+func (service *Service) GetProfile(ctx context.Context, userID uuid.UUID) (*ProfileWithWallet, error) {
 	user, err := service.users.Get(ctx, userID)
 	if err != nil {
 		return nil, ErrUsers.Wrap(err)
 	}
 
-	return &Profile{
-		Email:     user.Email,
-		NickName:  user.NickName,
-		CreatedAt: user.CreatedAt,
-		LastLogin: user.LastLogin,
-		Wallet:    user.Wallet,
+	return &ProfileWithWallet{
+		ID:             user.ID,
+		Email:          user.Email,
+		NickName:       user.NickName,
+		CreatedAt:      user.CreatedAt,
+		LastLogin:      user.LastLogin,
+		Wallet:         user.Wallet,
+		CasperWallet:   user.CasperWallet,
+		CasperWalletID: user.CasperWalletHash,
+		WalletType:     user.WalletType,
 	}, nil
 }
 
@@ -115,33 +124,39 @@ func (service *Service) GetNickNameByID(ctx context.Context, id uuid.UUID) (stri
 }
 
 // UpdateWalletAddress updates wallet address.
-func (service *Service) UpdateWalletAddress(ctx context.Context, wallet evmsignature.Address, id uuid.UUID) error {
-	wallet = evmsignature.Address(strings.ToLower(string(wallet)))
-
-	_, err := service.GetByWalletAddress(ctx, wallet)
+func (service *Service) UpdateWalletAddress(ctx context.Context, wallet common.Address, id uuid.UUID, walletType WalletType) error {
+	_, err := service.GetByWalletAddress(ctx, wallet, walletType)
 	if err == nil {
 		return ErrWalletAddressAlreadyInUse.New("wallet address already in use")
 	}
 
-	return ErrUsers.Wrap(service.users.UpdateWalletAddress(ctx, wallet, id))
+	return ErrUsers.Wrap(service.users.UpdateWalletAddress(ctx, wallet, walletType, id))
+}
+
+// UpdateCasperWalletAddress updates Casper wallet address.
+func (service *Service) UpdateCasperWalletAddress(ctx context.Context, wallet string, id uuid.UUID, walletType WalletType) error {
+	_, err := service.GetByCasperWalletAddress(ctx, wallet, walletType)
+	if err == nil {
+		return ErrWalletAddressAlreadyInUse.New("wallet address already in use")
+	}
+
+	return ErrUsers.Wrap(service.users.UpdateCasperWalletAddress(ctx, wallet, walletType, id))
 }
 
 // ChangeWalletAddress changes wallet address.
-func (service *Service) ChangeWalletAddress(ctx context.Context, wallet evmsignature.Address, id uuid.UUID) error {
-	wallet = evmsignature.Address(strings.ToLower(string(wallet)))
-
-	user, err := service.GetByWalletAddress(ctx, wallet)
+func (service *Service) ChangeWalletAddress(ctx context.Context, wallet common.Address, id uuid.UUID) error {
+	user, err := service.GetByWalletAddress(ctx, wallet, WalletTypeETH)
 	if err != nil {
 		return ErrUsers.Wrap(err)
 	}
 	if user.ID == id {
 		return ErrUsers.New("this address is used by you")
 	}
-	emptyWallet := evmsignature.Address("")
-	err = service.users.UpdateWalletAddress(ctx, emptyWallet, user.ID)
+
+	err = service.users.UpdateWalletAddress(ctx, common.Address{}, WalletTypeETH, user.ID)
 	if err != nil {
 		return ErrUsers.Wrap(err)
 	}
 
-	return ErrUsers.Wrap(service.users.UpdateWalletAddress(ctx, wallet, id))
+	return ErrUsers.Wrap(service.users.UpdateWalletAddress(ctx, wallet, WalletTypeETH, id))
 }

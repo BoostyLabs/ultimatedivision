@@ -3,12 +3,16 @@
 
 /** User describes user domain entity. */
 export class User {
-    /** User domain entity contains email, password, nickName, firstName, lastName. */
+    /** User domain casperWallet, casperWalletHash, email, id, lastLogin, nickName, registerData, wallet, walletType. */
     public constructor(
-        public email: string,
-        public password: string,
-        public nickName: string,
-        public firstName: string,
-        public lastName: string,
+        public casperWalletHash: string = '',
+        public casperWallet: string = '',
+        public email: string = '',
+        public id: string = '',
+        public lastLogin: string = '',
+        public nickname: string = '',
+        public registerDate: string = '',
+        public wallet: string = '',
+        public walletType: string = ''
     ) { };
 };

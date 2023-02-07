@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect, useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { FilterFieldStatsArea, FilterFieldStatsAreaProps } from '@/app/components/common/FilterField/FilterFieldStatsArea';
 import { FilterByParameterWrapper } from '@/app/components/common/FilterField/FilterByParameterWrapper';
@@ -217,22 +217,21 @@ export const FilterByStats: React.FC<{
                     changeMinValue={stat.changeMinValue}
                     changeMaxValue={stat.changeMaxValue}
                 />)}
-                <div className="filter-item__dropdown-active__stats">
-                    <input
-                        value="APPLY"
-                        type="submit"
-                        className="filter-item__dropdown-active__stats__apply"
-                        onClick={handleSubmit}
-                    />
-                </div>
-                <div className="filter-item__dropdown-active__stats">
-                    <input
-                        type="submit"
-                        className="filter-item__dropdown-active__stats__clear"
-                        value="CLEAR ALL"
-                        onClick={clearStats}
-                    />
-                </div>
+
+            </div>
+            <div className="filter-item__dropdown-active__stats__buttons">
+                <input
+                    value="APPLY"
+                    type="submit"
+                    className="filter-item__dropdown-active__stats__apply"
+                    onClick={handleSubmit}
+                />
+                <input
+                    type="submit"
+                    className="filter-item__dropdown-active__stats__clear"
+                    value="CLEAR ALL"
+                    onClick={clearStats}
+                />
             </div>
         </FilterByParameterWrapper>
     );

@@ -5,43 +5,30 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { FieldControlsArea } from '@components/Field/FieldControlsArea';
-import { FootballerCard } from '@components/Field/FootballerCard';
 
 import { CardEditIdentificators } from '@/api/club';
 import { RootState } from '@/app/store';
-import { Card } from '@/card';
-import { SquadCard } from '@/club';
-import {
-    cardSelectionVisibility,
-    changeCardPosition,
-    choosePosition,
-    deleteCard,
-    setDragStart,
-    swapCards,
-} from '@/app/store/actions/clubs';
+import { Club, FormationsType, Squad, SquadCard } from '@/club';
+import { deleteCard, setDragStart, startSearchingMatch } from '@/app/store/actions/clubs';
+import { FieldCardsFromation } from './FieldCardsFormation';
+import { FieldCardsShadows } from './FieldCardsShadows';
+
+import footballField from '@static/img/FieldPage/football_field.webp';
 
 import './index.scss';
 
 export const FieldPlayingArea: React.FC = () => {
+    const EMPTY_CARD_ID = '00000000-0000-0000-0000-000000000000';
+
     const dispatch = useDispatch();
 
-    const cards = useSelector(
-        (state: RootState) => state.cardsReducer.cardsPage.cards
-    );
-    const formation = useSelector(
-        (state: RootState) => state.clubsReducer.activeClub.squad.formation
-    );
-    const dragStartIndex = useSelector(
-        (state: RootState) => state.clubsReducer.options.dragStart
-    );
-    const club = useSelector(
-        (state: RootState) => state.clubsReducer.activeClub
-    );
-    const squad = useSelector(
-        (state: RootState) => state.clubsReducer.activeClub.squad
-    );
+    const formation: FormationsType = useSelector((state: RootState) => state.clubsReducer.activeClub.squad.formation);
+    const dragStartIndex: number | null = useSelector((state: RootState) => state.clubsReducer.options.dragStart);
+    const club: Club = useSelector((state: RootState) => state.clubsReducer.activeClub);
+    const squad: Squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
+    const squadCards = useSelector((state: RootState) => state.clubsReducer.activeClub.squadCards);
 
-    const [targerCard, setTargetCard] = useState<Element | null>(null);
+    const [currentCard, setCurrentCard] = useState<Element | null>(null);
     /** MouseMove event Position */
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     /** This var created to not allow mouseUpEvent without Dragging before it */
@@ -51,11 +38,7 @@ export const FieldPlayingArea: React.FC = () => {
         x: 0,
         y: 0,
     });
-
-    const DEFAULT_VALUE = 0;
-    const X_SCROLL_POINT = 0;
-    const Y_SCROLL_POINT = 1200;
-    const DELAY = 100;
+    const [isPossibleToStartMatch, setIsPossibleToStartMatch] = useState<boolean>(true);
 
     /** Gets playing area position */
     useEffect(() => {
@@ -77,73 +60,14 @@ export const FieldPlayingArea: React.FC = () => {
         return id !== defaultId;
     }
 
-    /** Add card position, and shows card selection */
-    function handleClick(index: number, e: React.MouseEvent<HTMLDivElement>) {
-        const target = e.target as Element;
-
-        if (target.className.includes('empty')) {
-            dispatch(choosePosition(index));
-            dispatch(cardSelectionVisibility(true));
-            setTimeout(() => {
-                window.scroll(X_SCROLL_POINT, Y_SCROLL_POINT);
-            }, DELAY);
-        }
-    }
-
-    /** getting dragged card index and changing state to allow mouseUp */
-    function dragStart(
-        e: React.MouseEvent<HTMLDivElement>,
-        index: number = DEFAULT_VALUE
-    ): void {
-        handleDrag(true);
-        dispatch(setDragStart(index));
-    }
-    /** getting second drag index  and exchanging with first index*/
-    function onMouseUp(
-        e: React.MouseEvent<HTMLDivElement>,
-        index: number = DEFAULT_VALUE
-    ): void {
-        e.stopPropagation();
-        if (isDragging && dragStartIndex !== null) {
-            const cards = club.squadCards;
-            isCardDefined(cards[index].card.id)
-                ? dispatch(
-                    swapCards(
-                        new CardEditIdentificators(
-                            squad.clubId,
-                            squad.id,
-                            cards[dragStartIndex].card.id,
-                            index
-                        ),
-                        new CardEditIdentificators(
-                            squad.clubId,
-                            squad.id,
-                            cards[index].card.id,
-                            dragStartIndex
-                        )
-                    )
-                )
-                : dispatch(
-                    changeCardPosition(
-                        new CardEditIdentificators(
-                            squad.clubId,
-                            squad.id,
-                            cards[dragStartIndex].card.id,
-                            index
-                        )
-                    )
-                );
-        }
-
-        dispatch(setDragStart());
-        handleDrag(false);
-    }
-
-    /** when we release card not on target it just brings it on start position*/
-    function mouseUpOnArea(e: React.MouseEvent<HTMLInputElement>) {
-        e.stopPropagation();
-        dispatch(setDragStart());
-    }
+    /** Shows matchFinder component */
+    const showMatchFinder = () => {
+        dispatch(startSearchingMatch(true));
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    };
 
     /** deleting card when release beyond playing area */
     function removeFromArea() {
@@ -169,14 +93,22 @@ export const FieldPlayingArea: React.FC = () => {
 
         const target = e.target as Element;
 
-        if (target && target.id !== targerCard?.id) {
-            setTargetCard(target);
+        if (target && target.id !== currentCard?.id) {
+            setCurrentCard(target);
 
             return;
         }
 
-        setTargetCard(null);
+        setCurrentCard(null);
     };
+    useEffect(() => {
+        /** Function checks field cards and compare it with player cards array */
+        function isPossibleToStart() {
+            const emptyCard = squadCards.find((squadCard: SquadCard) => squadCard.card.id === EMPTY_CARD_ID);
+            emptyCard ? setIsPossibleToStartMatch(false) : setIsPossibleToStartMatch(true);
+        }
+        isPossibleToStart();
+    });
 
     return (
         <div
@@ -186,82 +118,31 @@ export const FieldPlayingArea: React.FC = () => {
             style={isDragging ? { cursor: 'not-allowed' } : {}}
             onClick={handleVisibility}
         >
-            <div className="playing-area" id="playingArea">
-                <div
-                    style={dragStartIndex ? { cursor: 'grabbing' } : {}}
-                    className={`playing-area__${formation}`}
-                    onMouseUp={mouseUpOnArea}
-                >
-                    {club.squadCards.map(
-                        (fieldCard: SquadCard, index: number) => {
-                            const isDefined = isCardDefined(fieldCard.card.id);
-                            const isDragging = dragStartIndex === index;
-
-                            return (
-                                <div
-                                    style={
-                                        isDragging
-                                            ? {
-                                                left:
-                                                      mousePosition.x -
-                                                      playingAreaPosition.x,
-                                                top:
-                                                      mousePosition.y -
-                                                      playingAreaPosition.y,
-                                                transform:
-                                                      'translate(-55%, -50%)',
-                                                zIndex: 5,
-                                                pointerEvents: 'none',
-                                            }
-                                            : undefined
-                                    }
-                                    key={index}
-                                    className={`playing-area__${formation}__${
-                                        isDefined ? 'card' : 'empty-card'
-                                    }`}
-                                    onClick={(e) => handleClick(index, e)}
-                                    onDragStart={(e) => dragStart(e, index)}
-                                    onMouseUp={(e) => onMouseUp(e, index)}
-                                    draggable={true}
-                                >
-                                    {isDefined &&
-                                        <FootballerCard
-                                            card={fieldCard.card}
-                                            index={index}
-                                            place={'PlayingArea'}
-                                            setTargetCard={setTargetCard}
-                                            targerCard={targerCard}
-                                        />
-                                    }
-                                </div>
-                            );
-                        }
-                    )}
-                </div>
-                <div className={`playing-area__${formation}-shadows`}>
-                    {club.squadCards.map(
-                        (fieldCard: SquadCard, index: number) => {
-                            const isDefined = isCardDefined(fieldCard.card.id);
-
-                            return (
-                                <div
-                                    className={`playing-area__${formation}-shadows__card`}
-                                    key={index}
-                                >
-                                    {isDefined &&
-                                        <img
-                                            src={fieldCard.card.shadow}
-                                            alt="card shadow"
-                                            className={`playing-area__${formation}-shadows__shadow`}
-                                        />
-                                    }
-                                </div>
-                            );
-                        }
-                    )}
-                </div>
-            </div>
             <FieldControlsArea />
+            <div className="playing-area" id="playingArea">
+                <FieldCardsFromation
+                    club={club}
+                    currentCard={currentCard}
+                    isCardDefined={isCardDefined}
+                    isDragging={isDragging}
+                    handleDrag={handleDrag}
+                    mousePosition={mousePosition}
+                    playingAreaPosition={playingAreaPosition}
+                    dragStartIndex={dragStartIndex}
+                    setCurrentCard={setCurrentCard}
+                />
+                <div className={`playing-area__${formation}-shadows`}>
+                    <FieldCardsShadows club={club} isCardDefined={isCardDefined} />
+                </div>
+                <img src={footballField} className="playing-area__field" alt="football field" />
+            </div>
+            <input
+                type="button"
+                value="Play"
+                className="playing-area__play"
+                onClick={showMatchFinder}
+                disabled={!isPossibleToStartMatch}
+            />
         </div>
     );
 };

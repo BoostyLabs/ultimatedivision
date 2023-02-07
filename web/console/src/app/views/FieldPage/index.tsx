@@ -3,17 +3,17 @@
 
 import { DragEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 
 import { FieldCardSelection } from '@/app/components/Field/FieldCardSelection';
 import { FieldPlayingArea } from '@/app/components/Field/FieldPlayingArea';
-import { RegistrationPopup } from '@/app/components/common/Registration/Registration';
+import { RegistrationPopup } from '@/app/components/common/Registration';
 
 import { NotFoundError, UnauthorizedError } from '@/api';
 import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 import { RootState } from '@/app/store';
 import { createClubs, deleteCard, getClubs } from '@/app/store/actions/clubs';
 import { CardEditIdentificators } from '@/api/club';
+import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
 
@@ -43,38 +43,24 @@ const FootballField: React.FC = () => {
                 }
 
                 if (!(error instanceof NotFoundError)) {
-                    toast.error('Something went wrong', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    });
+                    ToastNotifications.notFound();
 
                     return;
                 }
                 try {
                     await dispatch(createClubs());
                 } catch (error: any) {
-                    toast.error('Something went wrong', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    });
+                    ToastNotifications.couldNotCreateClub();
                 }
             }
         })();
     }, []);
 
-    const dragStartIndex = useSelector(
-        (state: RootState) => state.clubsReducer.options.dragStart
-    );
+    const dragStartIndex = useSelector((state: RootState) => state.clubsReducer.options.dragStart);
 
-    const squad = useSelector(
-        (state: RootState) => state.clubsReducer.activeClub.squad
-    );
-    const club = useSelector(
-        (state: RootState) => state.clubsReducer.activeClub
-    );
-    const cardSelectionVisibility = useSelector(
-        (state: RootState) => state.clubsReducer.options.showCardSeletion
-    );
+    const squad = useSelector((state: RootState) => state.clubsReducer.activeClub.squad);
+    const club = useSelector((state: RootState) => state.clubsReducer.activeClub);
+    const cardSelectionVisibility = useSelector((state: RootState) => state.clubsReducer.options.showCardSeletion);
 
     /** prevent default user agent action */
     function dragOverHandler(e: DragEvent<HTMLDivElement>) {
@@ -87,11 +73,7 @@ const FootballField: React.FC = () => {
             dragStartIndex !== null &&
                 dispatch(
                     deleteCard(
-                        new CardEditIdentificators(
-                            squad.clubId,
-                            squad.id,
-                            club.squadCards[dragStartIndex].card.id
-                        )
+                        new CardEditIdentificators(squad.clubId, squad.id, club.squadCards[dragStartIndex].card.id)
                     )
                 );
         }
@@ -99,21 +81,10 @@ const FootballField: React.FC = () => {
 
     return (
         <>
-            {isRegistrationRequired &&
-                <RegistrationPopup
-                    closeRegistrationPopup={closeRegistrationPopup}
-                />
-            }
-            <div
-                className="football-field"
-                onDrop={(e) => drop(e)}
-                onDragOver={(e) => dragOverHandler(e)}
-            >
-                <h1 className="football-field__title">Football Field</h1>
+            {isRegistrationRequired && <RegistrationPopup closeRegistrationPopup={closeRegistrationPopup} />}
+            <div className="football-field" onDrop={(e) => drop(e)} onDragOver={(e) => dragOverHandler(e)}>
                 <FieldPlayingArea />
-                <div className="football-field__wrapper">
-                    {cardSelectionVisibility && <FieldCardSelection />}
-                </div>
+                <div className="football-field__wrapper">{cardSelectionVisibility && <FieldCardSelection />}</div>
             </div>
         </>
     );

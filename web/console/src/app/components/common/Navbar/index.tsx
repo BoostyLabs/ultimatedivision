@@ -1,13 +1,13 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import HomeNavbar from '@components/home/HomeNavbar';
 
 import { CloseDropdownIcon, DropdownIcon } from '@/app/static/img/Navbar';
-import ultimate from '@static/img/Navbar/ultimate.svg';
+import { setScrollAble } from '@/app/internal/setScrollAble';
 
 import { RouteConfig } from '@/app/routes';
 
@@ -21,7 +21,8 @@ const Navbar: React.FC = () => {
     const location = useLocation();
 
     /** Сlass visibility for navbar items. */
-    const visibleClassName = isDropdownActive ? '-active' : '';
+    const navbarListClassName = isDropdownActive ? 'ultimatedivision-navbar__list-active' : '';
+    const navbarWrapperClassName = isDropdownActive ? 'ultimatedivision-navbar--active' : '';
 
     /** TODO: DIVISIONS will be replaced with id parameter */
     const navbarItems: Array<{ name: string; path: string }> = [
@@ -32,10 +33,22 @@ const Navbar: React.FC = () => {
         { name: 'DIVISIONS', path: RouteConfig.Division.path },
     ];
 
+    const setNavbarDropdownActivity = () => {
+        setScrollAble(false);
+        setIsDropdownActive(true);
+    };
+
+    const unsetNavbarDropdownActivity = () => {
+        setScrollAble(true);
+        setIsDropdownActive(false);
+    };
+
+    const changeNavbarDropdownActivity = () => {
+        isDropdownActive ? unsetNavbarDropdownActivity() : setNavbarDropdownActivity();
+    };
+
     useEffect(() => {
-        location.pathname === '/home'
-            ? setIsHomePath(true)
-            : setIsHomePath(false);
+        location.pathname === '/home' ? setIsHomePath(true) : setIsHomePath(false);
     }, [location]);
 
     return (
@@ -43,37 +56,31 @@ const Navbar: React.FC = () => {
             {isHomePath ?
                 <HomeNavbar />
                 :
-                <div className="ultimatedivision-navbar">
-                    <a href={RouteConfig.Home.path}>
-                        <img
-                            className="ultimatedivision-navbar__logo"
-                            src={ultimate}
-                            alt="UltimateDivision logo"
-                        />
-                    </a>
-                    <div
-                        className="ultimatedivision-navbar__dropdown"
-                        onClick={() => setIsDropdownActive(!isDropdownActive)}
-                    >
+                <div className={`ultimatedivision-navbar ${navbarWrapperClassName}`}>
+                    <div className="ultimatedivision-navbar__dropdown">
                         {isDropdownActive ?
-                            <CloseDropdownIcon />
+                            <p className="ultimatedivision-navbar__dropdown__menu">Menu</p>
                             :
-                            <DropdownIcon />
+                            <a className="ultimatedivision-navbar__dropdown__logo" href="/">
+                                <span className="ultimatedivision-navbar__dropdown__logo__first-part">Ultimate </span>
+                                division
+                            </a>
                         }
+                        <div
+                            className="ultimatedivision-home-navbar__dropdown"
+                            onClick={() => changeNavbarDropdownActivity()}
+                        >
+                            {isDropdownActive ? <CloseDropdownIcon /> : <DropdownIcon />}
+                        </div>
                     </div>
-                    <ul
-                        className={`ultimatedivision-navbar__list${visibleClassName}`}
-                    >
+                    <ul className={`ultimatedivision-navbar__list ${navbarListClassName}`}>
                         {navbarItems.map((item, index) =>
-                            <li
-                                key={index}
-                                className={`ultimatedivision-navbar__list${visibleClassName}__item`}
-                            >
+                            <li key={index} className="ultimatedivision-navbar__list__item">
                                 <NavLink
                                     key={index}
                                     to={item.path}
-                                    className={`ultimatedivision-navbar__list${visibleClassName}__item__active`}
-                                    onClick={() => setIsDropdownActive(false)}
+                                    className="ultimatedivision-navbar__list__item__active"
+                                    onClick={() => unsetNavbarDropdownActivity()}
                                 >
                                     {item.name}
                                 </NavLink>

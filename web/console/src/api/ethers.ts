@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { APIClient } from '.';
-import { SignedMessage, Transaction, TransactionIdentificators } from '@/app/ethers';
+import { SignedMessage, Transaction, TransactionIdentificators } from '@/ethers';
 
 /** Ethers api client */
 export class EthersClient extends APIClient {
@@ -17,16 +17,20 @@ export class EthersClient extends APIClient {
         }
         const transaction = await response.json();
 
-        return new Transaction(transaction.password, transaction.tokenId, transaction.contract);
+        return new Transaction(transaction.password, transaction.tokenId, transaction.nftCreateContract);
     }
 
     /** Gets message from API for sign with metamask */
     public async getNonce(walletAddress: string): Promise<string> {
-        const response = await this.http.get(`${this.ROOT_PATH}/auth/metamask/nonce?address=${walletAddress}`);
+        const walletType = 'wallet_address';
+
+        const response = await this.http.get(
+            `${this.ROOT_PATH}/auth/metamask/nonce?address=${walletAddress}&walletType=${walletType}`
+        );
 
         if (!response.ok) {
             await this.handleError(response);
-        };
+        }
 
         return await response.json();
     }
@@ -37,7 +41,7 @@ export class EthersClient extends APIClient {
 
         if (!response.ok) {
             await this.handleError(response);
-        };
+        }
     }
 
     /** Sends signed message, and logs-in */
@@ -46,6 +50,6 @@ export class EthersClient extends APIClient {
 
         if (!response.ok) {
             await this.handleError(response);
-        };
+        }
     }
 }

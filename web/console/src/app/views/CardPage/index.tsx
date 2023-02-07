@@ -1,28 +1,35 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { useParams } from 'react-router';
-import MetaMaskOnboarding from '@metamask/onboarding';
-import { toast } from 'react-toastify';
+
+import { FootballerCardIllustrationsRadar } from '@/app/components/common/Card/CardIllustrationsRadar';
+import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
+import { FootballerCardStatsArea } from '@/app/components/common/Card/CardStatsArea';
+import { PlayerCard } from '@/app/components/common/PlayerCard';
+import { ToastNotifications } from '@/notifications/service';
 
 import { RootState } from '@/app/store';
 import { openUserCard } from '@/app/store/actions/cards';
-import { FootballerCardIllustrations } from '@/app/components/common/Card/CardIllustrations';
-import { FootballerCardPrice } from '@/app/components/common/Card/CardPrice';
-import { FootballerCardStatsArea } from '@/app/components/common/Card/CardStatsArea';
-import { ServicePlugin } from '@/app/plugins/service';
+import { setCurrentUser } from '@/app/store/actions/users';
+import WalletService from '@/wallet/service';
+
+import CardPageBackground from '@static/img/FootballerCardPage/background.png';
+import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import './index.scss';
 
 const Card: React.FC = () => {
-    const [isMinted, setIsMinted] = useState<boolean>(false);
-
     const dispatch = useDispatch();
-    const { card } = useSelector((state: RootState) => state.cardsReducer);
 
+    const [isMinted, setIsMinted] = useState<boolean>(false);
+    const user = useSelector((state: RootState) => state.usersReducer.user);
+    const { card } = useSelector((state: RootState) => state.cardsReducer);
     const { id }: { id: string } = useParams();
+
     /** implements opening new card */
     async function openCard() {
         try {
@@ -31,87 +38,74 @@ const Card: React.FC = () => {
             /** TODO: it will be reworked with notification system */
         }
     }
+
+    /** sets user info */
+    async function setUser() {
+        try {
+            await dispatch(setCurrentUser());
+        } catch (error: any) {
+            ToastNotifications.couldNotGetUser();
+        }
+    }
+
+    const mint = async() => {
+        const walletService = new WalletService(user);
+        await walletService.mintNft(id);
+
+        setIsMinted(true);
+    };
+
     useEffect(() => {
+        setUser();
         openCard();
     }, []);
 
-    const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
-    const service = ServicePlugin.create();
-
-    /** Mints chosed card */
-    const mint = async() => {
-        /** Code which indicates that 'eth_requestAccounts' already processing */
-        const METAMASK_RPC_ERROR_CODE = -32002;
-        if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-            try {
-                // @ts-ignore
-                await window.ethereum.request({
-                    method: 'eth_requestAccounts',
-                });
-                await service.sendTransaction(id);
-            } catch (error: any) {
-                error.code === METAMASK_RPC_ERROR_CODE
-                    ? toast.error('Please open metamask manually!', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    })
-                    : toast.error('Something went wrong', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    });
-            }
-        } else {
-            onboarding.startOnboarding();
-        }
-    };
-
     return (
         card &&
-            <div className="card">
-                <div className="card__border">
-                    <div className="card__wrapper">
-                        <FootballerCardIllustrations card={card} />
-                        <div className="card__stats-area">
-                            <div className="card__name-wrapper">
-                                <span className="card__name">
-                                    {card.playerName}
-                                </span>
-                            </div>
-                            <div className="divider"></div>
-                            <div className="card__mint-info">
-                                <div className="card__mint-info__nft">
-                                    <span className="card__mint-info__nft-title">
-                                        NFT:
-                                    </span>
+        <div className="card">
+            <div className="card__wrapper">
+                <div className="card__back">
+                    <Link className="card__back__button" to="/cards">
+                        <img src={backButton} alt="back-button" className="card__back__button__image" />
+                        Back
+                    </Link>
+                </div>
+                <div className="card__info">
+                    <PlayerCard className="card__player" id={card.id} />
+                    <div className="card__player__info">
+                        <h2 className="card__name">{card.playerName}</h2>
+                        <div className="card__mint-info">
+                            <div className="card__mint-info__nft">
+                                <span className="card__mint-info__nft-title">NFT:</span>
+                                <div className="card__mint-info__nft__content">
                                     <span className="card__mint-info__nft-value">
                                         {isMinted ? 'minted to Polygon' : 'not minted'}
                                     </span>
                                     {!isMinted &&
-                                    <div className="card__mint-info__nft__btn">
-                                        <button
-                                            className="card__mint"
-                                            onClick={mint}
-                                        >
+                                        <button className="card__mint" onClick={mint}>
                                             Mint now
                                         </button>
-                                    </div>}
-                                </div>
-                                <div className="card__mint-info__club">
-                                    <span className="card__mint-info__club-title">
-                                        Club:
-                                    </span>
-                                    <span className="card__mint-info__club-name">
-                                        FC228
-                                    </span>
+                                    }
                                 </div>
                             </div>
+                            <div className="card__mint-info__club">
+                                <span className="card__mint-info__club-title">Club:</span>
+                                <span className="card__mint-info__club-name">FC228</span>
+                            </div>
                             <FootballerCardPrice card={card} isMinted={isMinted} />
-                            <FootballerCardStatsArea card={card} />
                         </div>
                     </div>
+                    <div className="card__illustrator-radar">
+                        <h2 className="card__illustrator-radar__title">Skills</h2>
+                        <FootballerCardIllustrationsRadar card={card} />
+                    </div>
+                </div>
+                <div className="card__stats-area">
+                    <FootballerCardStatsArea card={card} />
                 </div>
             </div>
-
+            <img src={CardPageBackground} alt="background" className="card__bg" />
+        </div>
     );
 };
 

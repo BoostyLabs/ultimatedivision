@@ -1,30 +1,42 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
-import MetaMaskOnboarding from '@metamask/onboarding';
+import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-
-import coin from '@static/img/match/money.svg';
+import { CLPublicKey } from 'casper-js-sdk';
+import MetaMaskOnboarding from '@metamask/onboarding';
 
 import { QueueClient } from '@/api/queue';
-import { UDT_ABI } from '@/app/ethers';
+import { UDT_ABI } from '@/ethers';
 import { RootState } from '@/app/store';
 import { ServicePlugin } from '@/app/plugins/service';
-import { getCurrentQueueClient, queueActionAllowAddress } from '@/queue/service';
+import { getCurrentQueueClient, queueActionAllowAddress, queueCasperActionAllowAddress } from '@/queue/service';
+import { setCurrentUser } from '@/app/store/actions/users';
+import WalletService from '@/wallet/service';
+import { walletTypes } from '@/wallet';
+import { ToastNotifications } from '@/notifications/service';
+
+import coin from '@static/img/match/money.svg';
 
 import './index.scss';
 
 export const MatchScore: React.FC = () => {
+    const dispatch = useDispatch();
+
     const [queueClient, setQueueClient] = useState<QueueClient | null>(null);
 
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
+
     const service = ServicePlugin.create();
+
+    const { squad } = useSelector((state: RootState) => state.clubsReducer.activeClub);
 
     const { matchResults, transaction } = useSelector((state: RootState) => state.matchesReducer);
 
     const { question } = useSelector((state: RootState) => state.matchesReducer);
+
+    const user = useSelector((state: RootState) => state.usersReducer.user);
 
     /** FIRST_TEAM_INDEX is variable that describes first team index in teams array. */
     const FIRST_TEAM_INDEX: number = 0;
@@ -34,13 +46,22 @@ export const MatchScore: React.FC = () => {
     /** Variable describes that it needs alllow to add address or forbid add adress. */
     const CONFIRM_ADD_WALLET: string = 'do you allow us to take your address?';
 
+    /** sets user info */
+    async function setUser() {
+        try {
+            await dispatch(setCurrentUser());
+        } catch (error: any) {
+            ToastNotifications.couldNotGetUser();
+        }
+    }
+
     /** Adds metamask wallet address for earning reward. */
-    const addWallet = async() => {
+    const addMetamaskWallet = async() => {
         /** Code which indicates that 'eth_requestAccounts' already processing */
         const METAMASK_RPC_ERROR_CODE = -32002;
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
             try {
-                // @ts-ignore
+                // @ts-ignore .
                 await window.ethereum.request({
                     method: 'eth_requestAccounts',
                 });
@@ -55,27 +76,69 @@ export const MatchScore: React.FC = () => {
 
                 queueActionAllowAddress(wallet, nonce);
             } catch (error: any) {
-                error.code === METAMASK_RPC_ERROR_CODE
-                    ? toast.error('Please open metamask manually!', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    })
-                    : toast.error('Something went wrong', {
-                        position: toast.POSITION.TOP_RIGHT,
-                        theme: 'colored',
-                    });
+                ToastNotifications.metamaskError(error);
             }
         } else {
             onboarding.startOnboarding();
         }
     };
 
+    /** Adds casper wallet address for earning reward. */
+    const addCasperWallet = () => {
+        try {
+            const ACCOUNT_HASH_PREFIX = 'account-hash-';
+
+            const currentQueueClient = getCurrentQueueClient();
+
+            setQueueClient(currentQueueClient);
+
+            queueCasperActionAllowAddress(user.casperWalletHash, user.walletType, squad.id);
+        }
+        catch (error: any) {
+            ToastNotifications.couldNotAddCasperWallet();
+        }
+    };
+
+    /** Adds velas wallet address for earning reward. */
+    const addVelasWallet = async() => { };
+
+    /** Adds wallets addresses for earning reward. */
+    const addWallet = () => {
+        const mintingTokens = new Map();
+
+        const mintingTokenTypes = [
+            {
+                walletType: walletTypes.VELAS_WALLET_TYPE,
+                mint: addVelasWallet,
+            },
+            {
+                walletType: walletTypes.CASPER_WALLET_TYPE,
+                mint: addCasperWallet,
+            },
+            {
+                walletType: walletTypes.METAMASK_WALLET_TYPE,
+                mint: addMetamaskWallet,
+            },
+        ];
+
+        mintingTokenTypes.forEach(mintingTokenType =>
+            mintingTokens.set(mintingTokenType.walletType, mintingTokenType.mint));
+
+        mintingTokens.get(user.walletType)();
+    };
+
     if (queueClient) {
-        queueClient.ws.onmessage = ({ data }: MessageEvent) => {
+        queueClient.ws.onmessage = async({ data }: MessageEvent) => {
             const messageEvent = JSON.parse(data);
-            service.mintUDT(messageEvent.message.transaction);
+
+            const walletService = new WalletService(user);
+            await walletService.mintToken(messageEvent);
         };
     }
+
+    useEffect(() => {
+        setUser();
+    }, []);
 
     return (
         <div className="match__score">

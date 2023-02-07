@@ -1,0 +1,50 @@
+@import "@/index.scss";
+
+.card-minting {
+    display: grid;
+    margin-bottom: 26px;
+    column-gap: 7px;
+    grid-template-columns: repeat(10, 1fr);
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 32px;
+        height: 48px;
+        border: 2px solid #819aff;
+        border-radius: 5px;
+    }
+
+    &__active-item {
+        border: 2px solid #736ffd;
+    }
+}
+
+@media (max-width: 1440px) {
+
+    .card-minting {
+        column-gap: 6px;
+    }
+}
+
+@media (max-width: $tabletBreakPoint) {
+
+    .card-minting {
+        margin-bottom: 26px;
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 440px) {
+
+    .card-minting {
+        column-gap: 6px;
+
+        &__item {
+            width: 25.6px;
+            height: 38.4px;
+        }
+    }
+}

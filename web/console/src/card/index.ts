@@ -1,27 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import diamond from '@static/img/MarketPlacePage/marketPlaceCardsGroup/diamond2.svg';
-import gold from '@static/img/MarketPlacePage/marketPlaceCardsGroup/gold2.svg';
-import silver from '@static/img/MarketPlacePage/marketPlaceCardsGroup/silver2.svg';
-import wood from '@static/img/MarketPlacePage/marketPlaceCardsGroup/wood2.svg';
-
 import diamondShadow from '@static/img/MarketPlacePage/marketPlaceCardsGroup/diamondShadow.svg';
 import goldShadow from '@static/img/MarketPlacePage/marketPlaceCardsGroup/goldShadow.svg';
 import silverShadow from '@static/img/MarketPlacePage/marketPlaceCardsGroup/silverShadow.svg';
 import woodShadow from '@static/img/MarketPlacePage/marketPlaceCardsGroup/woodShadow.svg';
-
-import currentBid from '@static/img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/bid.svg';
-import minimumPrice from '@static/img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/minimum.svg';
-import purchased from '@static/img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/purchased.svg';
-
-import confirmIcon from '@static/img/MarketPlacePage/MyCard/ok.svg';
-import priceGoldIcon from '@static/img/MarketPlacePage/MyCard/goldPrice.svg';
-import playerFace from '@static/img/MarketPlacePage/marketPlaceCardsGroup/player.svg';
-import priceIcon from '@static/img/MarketPlacePage/marketPlaceCardsGroup/marketPlaceFootballerCard/price.svg';
-
-import checked from '@static/img/FootballerCardPage/checked.svg';
-import star from '@static/img/FootballerCardPage/star.svg';
 
 const DEFAULT_VALUE = 0;
 /** class for our getters to get label and value while mapping */
@@ -225,7 +208,7 @@ export class Card {
     get infoBlock() {
         return [
             new CardField('name', this.playerName),
-            // TODO: at this momenty nation does not exist
+            // TODO: at this momenty nation does not exist.
             new CardField('nation', 'this.nation'),
             new CardField('skills', '5'),
             new CardField('weak foot', this.weakFoot),
@@ -233,12 +216,12 @@ export class Card {
             new CardField('foot', this.dominantFoot),
             new CardField('height', this.height),
             new CardField('nation', this.weight),
-            // TODO: at this momenty revision does not exist or it is designer mistake or it is quality
+            // TODO: at this momenty revision does not exist or it is designer mistake or it is quality.
             new CardField('revision', 'rare'),
-            // TODO: create method to convert attack and defence values into this scale
+            // TODO: create method to convert attack and defence values into this scale.
             new CardField('def. wr', 'low'),
             new CardField('arr. wr', 'high'),
-            // next fields does not exist in card at this moment
+            // next fields does not exist in card at this moment.
             new CardField('added on', '2020-09-10'),
             new CardField('origin', 'na'),
             new CardField('r. Face', 'low'),
@@ -249,8 +232,8 @@ export class Card {
 
     /** Using in diagramm area in footballerCard */
     get diagramArea() {
-        // TODO: need to get real min and max values to convert into diagram value
-        // TODO: this fields does not exist
+        // TODO: need to get real min and max values to convert into diagram value.
+        // TODO: this fields does not exist.
         return [
             new CardField('physical', DEFAULT_VALUE),
             new CardField('mental', DEFAULT_VALUE),

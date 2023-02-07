@@ -8,9 +8,11 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/subtle"
+	"strings"
 	"time"
 
 	"github.com/BoostyLabs/evmsignature"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/google/uuid"
@@ -20,6 +22,8 @@ import (
 	"ultimatedivision/console/emails"
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/pkg/auth"
+	"ultimatedivision/pkg/publicprivatekey"
+	"ultimatedivision/pkg/velas"
 	"ultimatedivision/users"
 )
 
@@ -46,21 +50,23 @@ var (
 
 // Service is handling all user authentication logic.
 //
-// architecture: Service
+// architecture: Service.
 type Service struct {
 	users        users.DB
 	signer       auth.TokenSigner
 	emailService *emails.Service
 	log          logger.Logger
+	velas        *velas.Service
 }
 
 // NewService is a constructor for user auth service.
-func NewService(users users.DB, signer auth.TokenSigner, emails *emails.Service, log logger.Logger) *Service {
+func NewService(users users.DB, signer auth.TokenSigner, emails *emails.Service, log logger.Logger, velas *velas.Service) *Service {
 	return &Service{
 		users:        users,
 		signer:       signer,
 		emailService: emails,
 		log:          log,
+		velas:        velas,
 	}
 }
 
@@ -212,7 +218,7 @@ func (service *Service) authorize(ctx context.Context, claims *auth.Claims) (err
 }
 
 // Register - registers a new user.
-func (service *Service) Register(ctx context.Context, email, password, nickName, firstName, lastName string, wallet evmsignature.Address) error {
+func (service *Service) Register(ctx context.Context, email, password, nickName, firstName, lastName string, wallet common.Address) error {
 	// check if the user email address already exists.
 	_, err := service.users.GetByEmail(ctx, email)
 	if err == nil {
@@ -235,7 +241,8 @@ func (service *Service) Register(ctx context.Context, email, password, nickName,
 		Status:       users.StatusCreated,
 		CreatedAt:    time.Now().UTC(),
 		// @TODO at the time of testing login through metamask.
-		Wallet: wallet,
+		Wallet:     wallet,
+		WalletType: users.WalletTypeETH,
 	}
 
 	err = user.EncodePass()
@@ -394,8 +401,8 @@ func (service *Service) ResetPassword(ctx context.Context, newPassword string) e
 }
 
 // Nonce creates nonce and send to metamask for login.
-func (service *Service) Nonce(ctx context.Context, address evmsignature.Address) (string, error) {
-	user, err := service.users.GetByWalletAddress(ctx, address)
+func (service *Service) Nonce(ctx context.Context, address common.Address, walletType users.WalletType) (string, error) {
+	user, err := service.users.GetByWalletAddress(ctx, address.String(), walletType)
 	if err != nil {
 		return "", Error.Wrap(err)
 	}
@@ -412,7 +419,7 @@ func (service *Service) RegisterWithMetamask(ctx context.Context, signature []by
 		return Error.Wrap(err)
 	}
 
-	_, err = service.users.GetByWalletAddress(ctx, walletAddress)
+	_, err = service.users.GetByWalletAddress(ctx, walletAddress.String(), users.WalletTypeETH)
 	if !users.ErrNoUser.Has(err) {
 		return Error.New("this user already exist")
 	}
@@ -424,12 +431,13 @@ func (service *Service) RegisterWithMetamask(ctx context.Context, signature []by
 	}
 
 	user := users.User{
-		ID:        uuid.New(),
-		Nonce:     nonce,
-		LastLogin: time.Time{},
-		Status:    users.StatusActive,
-		CreatedAt: time.Now().UTC(),
-		Wallet:    walletAddress,
+		ID:         uuid.New(),
+		Nonce:      nonce,
+		LastLogin:  time.Time{},
+		Status:     users.StatusActive,
+		CreatedAt:  time.Now().UTC(),
+		Wallet:     walletAddress,
+		WalletType: users.WalletTypeETH,
 	}
 	err = service.users.Create(ctx, user)
 	if err != nil {
@@ -446,7 +454,7 @@ func (service *Service) LoginWithMetamask(ctx context.Context, nonce string, sig
 		return "", Error.Wrap(err)
 	}
 
-	user, err := service.users.GetByWalletAddress(ctx, walletAddress)
+	user, err := service.users.GetByWalletAddress(ctx, walletAddress.String(), users.WalletTypeETH)
 	if err != nil {
 		return "", Error.Wrap(err)
 	}
@@ -490,20 +498,20 @@ func (service *Service) LoginWithMetamask(ctx context.Context, nonce string, sig
 }
 
 // recoverWalletAddress function that verifies the authenticity of the address.
-func recoverWalletAddress(message, signature []byte) (evmsignature.Address, error) {
+func recoverWalletAddress(message, signature []byte) (common.Address, error) {
 	if signature[64] != 27 && signature[64] != 28 {
-		return "", Error.New("hash is wrong")
+		return common.Address{}, Error.New("hash is wrong")
 	}
 	signature[64] -= 27
 
 	pubKey, err := crypto.SigToPub(evmsignature.SignHash(message), signature)
 	if err != nil {
-		return "", Error.Wrap(err)
+		return common.Address{}, Error.Wrap(err)
 	}
 
 	recoveredAddr := crypto.PubkeyToAddress(*pubKey)
 
-	return evmsignature.Address(recoveredAddr.String()), nil
+	return recoveredAddr, nil
 }
 
 // SendEmailForChangeEmail - sends email for change users email address.
@@ -582,4 +590,200 @@ func (service *Service) PreAuthTokenToChangeEmail(ctx context.Context, email, ne
 	}
 
 	return token, nil
+}
+
+// RegisterWithVelas creates user by credentials.
+func (service *Service) RegisterWithVelas(ctx context.Context, walletAddress common.Address) error {
+	_, err := service.users.GetByWalletAddress(ctx, walletAddress.String(), users.WalletTypeVelas)
+	if !users.ErrNoUser.Has(err) {
+		return Error.New("this user already exist")
+	}
+
+	nonce := make([]byte, 32)
+	_, err = rand.Read(nonce)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	user := users.User{
+		ID:         uuid.New(),
+		Nonce:      nonce,
+		LastLogin:  time.Time{},
+		Status:     users.StatusActive,
+		CreatedAt:  time.Now().UTC(),
+		Wallet:     walletAddress,
+		WalletType: users.WalletTypeVelas,
+	}
+	err = service.users.Create(ctx, user)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	return nil
+}
+
+// SaveVelasData save json to db while register velas user.
+func (service *Service) SaveVelasData(ctx context.Context, walletAddress common.Address, velasString string) error {
+	user, err := service.users.GetByWalletAddress(ctx, walletAddress.String(), users.WalletTypeVelas)
+	if err != nil {
+		return Error.New("can't get user by wallet")
+	}
+
+	var velasData = users.VelasData{
+		ID:       user.ID,
+		Response: velasString,
+	}
+
+	err = service.users.SetVelasData(ctx, velasData)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	return nil
+}
+
+// GetVelasData returns velas data by userId.
+func (service *Service) GetVelasData(ctx context.Context, userID uuid.UUID) (users.VelasData, error) {
+	velasData, err := service.users.GetVelasData(ctx, userID)
+	return velasData, Error.Wrap(err)
+}
+
+// LoginWithVelas authenticates user by credentials and returns login token.
+func (service *Service) LoginWithVelas(ctx context.Context, nonce string, walletAddress common.Address) (string, error) {
+	user, err := service.users.GetByWalletAddress(ctx, walletAddress.String(), users.WalletTypeVelas)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	decodeNonce, err := hexutil.Decode(nonce)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	if !bytes.Equal(decodeNonce, user.Nonce) {
+		return "", Error.New("nonce is invalid")
+	}
+
+	claims := auth.Claims{
+		UserID:    user.ID,
+		ExpiresAt: time.Now().UTC().Add(TokenExpirationTime),
+	}
+
+	token, err := service.signer.CreateToken(ctx, &claims)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	newNonce := make([]byte, 32)
+	_, err = rand.Read(newNonce)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	err = service.users.UpdateNonce(ctx, user.ID, newNonce)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	err = service.users.UpdateLastLogin(ctx, user.ID)
+	if err != nil {
+		service.log.Error("could not update last login", Error.Wrap(err))
+	}
+
+	return token, nil
+}
+
+// VelasVAClientFields returns velas va client fields.
+func (service *Service) VelasVAClientFields() velas.VAClientFields {
+	return service.velas.Get()
+}
+
+// RegisterWithCasper creates user by credentials.
+func (service *Service) RegisterWithCasper(ctx context.Context, casperWallet, casperWalletHash string) error {
+	_, err := service.users.GetByWalletAddress(ctx, casperWallet, users.WalletTypeCasper)
+	if !users.ErrNoUser.Has(err) {
+		return Error.New("this user already exist")
+	}
+
+	publicKey, privateKey, err := publicprivatekey.GeneratePublicPrivateKey()
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	user := users.User{
+		ID:               uuid.New(),
+		PublicKey:        string(publicKey),
+		PrivateKey:       string(privateKey),
+		LastLogin:        time.Time{},
+		Status:           users.StatusActive,
+		CreatedAt:        time.Now().UTC(),
+		CasperWallet:     casperWallet,
+		CasperWalletHash: casperWalletHash,
+		WalletType:       users.WalletTypeCasper,
+	}
+	err = service.users.Create(ctx, user)
+	if err != nil {
+		return Error.Wrap(err)
+	}
+
+	return nil
+}
+
+// LoginWithCasper authenticates user by credentials and returns login token.
+func (service *Service) LoginWithCasper(ctx context.Context, publicKey string, signature string) (string, error) {
+	key, err := service.users.GetByPublicKey(ctx, publicKey)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	walletAddress, err := publicprivatekey.DecryptCasperWalletAddress(signature, []byte(key.PrivateKey))
+	if err != nil {
+		return "", Error.New("invalid signature")
+	}
+
+	user, err := service.users.GetByWalletAddress(ctx, string(walletAddress), users.WalletTypeCasper)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	if !strings.EqualFold(key.PrivateKey, user.PrivateKey) {
+		return "", Error.New("nonce is invalid")
+	}
+
+	claims := auth.Claims{
+		UserID:    user.ID,
+		ExpiresAt: time.Now().UTC().Add(TokenExpirationTime),
+	}
+
+	token, err := service.signer.CreateToken(ctx, &claims)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	newPublicKey, newPrivateKey, err := publicprivatekey.GeneratePublicPrivateKey()
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	err = service.users.UpdatePublicPrivateKey(ctx, user.ID, string(newPublicKey), string(newPrivateKey))
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	err = service.users.UpdateLastLogin(ctx, user.ID)
+	if err != nil {
+		service.log.Error("could not update last login", Error.Wrap(err))
+	}
+
+	return token, nil
+}
+
+// PublicKey get public key and send to casper for login.
+func (service *Service) PublicKey(ctx context.Context, address string) (string, error) {
+	user, err := service.users.GetByWalletAddress(ctx, address, users.WalletTypeCasper)
+	if err != nil {
+		return "", Error.Wrap(err)
+	}
+
+	return user.PublicKey, nil
 }

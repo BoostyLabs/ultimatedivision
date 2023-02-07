@@ -1,127 +1,327 @@
 @import "@/index.scss";
 
 .box-card {
-    width: 600px;
-    height: 330px;
-    padding: 2px;
-    background: linear-gradient(0deg, rgb(40, 40, 70), rgb(89, 89, 148));
+    width: fit-content;
+    background: transparent;
     border-radius: 15px;
     transition: all 0.5s ease-in-out;
+    backdrop-filter: blur(88px);
+    box-shadow: 0 12px 34px rgba(0, 23, 58, 0.34);
 
-    &:hover {
-        transform: scale(1.1);
-        box-shadow: 0 0 50px rgba(199, 22, 169, 0.7);
+    &__icon {
+        width: 106px;
+        height: 93px;
+    }
+
+    &--regular {
+        justify-self: flex-end;
+        border: 4px solid #736ffd;
+
+        & .box-card__title {
+            color: #736ffd;
+        }
+
+        &:hover {
+            transform: translate(-25px) scale(1.1);
+        }
+    }
+
+    &--cool {
+        justify-self: flex-start;
+        border: 4px solid #f5ff63;
+
+        & .box-card__title {
+            color: #f5ff63;
+        }
+
+        &:hover {
+            transform: translate(25px) scale(1.1);
+        }
     }
 
     &__wrapper {
         width: 100%;
         height: 100%;
         border-radius: 14px;
-        background: $highlightBackground;
         position: relative;
         display: flex;
         gap: 20px;
-        padding: 40px;
+        padding: 30px 30px 28px;
     }
 
-    &__icon {
-        position: absolute;
-        top: -80px;
-        left: 0;
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    &:first-child {
-
-        .box-card__icon {
-            left: 35px;
-            top: -45px;
-        }
+    &__description {
+        width: 154px;
     }
 
     &__title {
-        text-align: center;
-        font-size: 38px;
-        font-weight: lighter;
-        margin: 150px 0 20px;
-        position: relative;
-
-        &:after {
-            @extend %pseudoelementsInFootballerCard;
-
-            bottom: -10px;
-            height: 2px;
-        }
+        font-family: "Orbitron", sans-serif;
+        font-style: normal;
+        font-weight: 900;
+        font-size: 24px;
+        line-height: 110%;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #704dff;
+        margin-bottom: 8px;
     }
 
     &__quantity {
-        display: flex;
-        justify-content: space-around;
-        position: relative;
+        margin-bottom: 8px;
 
-        &:after {
-            @extend %pseudoelementsInFootballerCard;
+        &-value,
+        &-label {
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 20px;
+            line-height: 30px;
+            text-align: center;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
 
-            bottom: -10px;
-            height: 2px;
+        &-label {
+            color: #26373f;
+            margin-right: 8px;
+        }
+
+        &-value {
+            color: #f5ff63;
         }
     }
 
-    &__quantity-label,
-    &__quantity-value {
-        font-size: 24px;
-    }
-
-    &__quantity-value {
-        color: $cardHighlightColor;
-    }
-
-    &__description,
     &__qualities {
-        flex-grow: 1;
+
+        &__title {
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #26373f;
+            margin-bottom: 13px;
+        }
     }
 
     &__button {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 25px;
-        padding: 8px 15px;
-        background: radial-gradient(
-            254.55% 254.55% at 50% 50%,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.8) 100%
-        ),
-            linear-gradient(180deg, #5cff79 0%, #3ccf56 100%);
-        font-weight: bold;
-        font-size: 16px;
-        border: none;
         cursor: pointer;
-        transition: box-shadow 0.3s;
-
-        &:hover {
-            box-shadow: 0 0 10px #5cff79;
-        }
-    }
-
-    &__button-value {
+        outline: none;
+        border: none;
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        column-gap: 5px;
+        padding: 8px 15px;
+        gap: 10px;
+        width: 100%;
+        height: 33px;
+        background: #f5ff63;
+        box-shadow: 0 12px 22px rgba(0, 23, 58, 0.22);
+        border-radius: 6.7px;
+
+        &-text {
+            font-family: "Orbitron", sans-serif;
+            font-style: normal;
+            font-weight: 900;
+            font-size: 14px;
+            text-align: center;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #26373f;
+        }
+
+        &-value {
+            font-family: "Urbanist", sans-serif;
+            font-style: normal;
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 17px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #26373f;
+        }
     }
 }
 
-.box-selection {
+@media (max-width: $desktopBreakPoint) {
 
     .box-card {
 
-        &:first-child {
+        &__wrapper {
+            padding: 20px 20px 18px;
+        }
+
+        &__title {
+            font-size: 20px;
+        }
+
+        &__icon {
+            width: 80px;
+            height: 73px;
+        }
+
+        &__description {
+            width: 120px;
+        }
+
+        &__quantity {
+
+            &-value,
+            &-label {
+                font-size: 16px;
+            }
+        }
+
+        &__qualities {
+
+            &__title {
+                margin-bottom: 8px;
+                font-size: 13px;
+            }
+        }
+
+        &__button {
+            padding: 6px 10px;
+
+            &-text {
+                font-size: 10px;
+            }
+
+            &-value {
+                font-size: 10px;
+            }
+        }
+    }
+}
+
+@media (max-width: $tabletBreakPoint) {
+
+    .box-card {
+
+        &__wrapper {
+            justify-content: center;
+            padding: 40px 40px 38px;
+        }
+
+        &__title {
+            font-size: 30px;
+        }
+
+        &__icon {
+            width: 130px;
+            height: 110px;
+        }
+
+        &__description {
+            width: 200px;
+        }
+
+        &--regular {
 
             &:hover {
-                box-shadow: 0 0 50px rgba(22, 113, 199, 0.7);
+                transform: none;
+            }
+        }
+
+        &--cool {
+
+            &:hover {
+                transform: none;
+            }
+        }
+
+        &__quantity {
+
+            &-value,
+            &-label {
+                font-size: 24px;
+            }
+        }
+
+        &__qualities {
+
+            &__title {
+                margin-bottom: 17px;
+                font-size: 24px;
+            }
+        }
+
+        &__button {
+            padding: 6px 10px;
+
+            &-text {
+                font-size: 16px;
+            }
+
+            &-value {
+                font-size: 16px;
+            }
+        }
+    }
+}
+
+@media (max-width: 700px) {
+
+    .box-card {
+
+        &__wrapper {
+            justify-content: center;
+            padding: 40px 40px 38px;
+        }
+
+        &__title {
+            font-size: 26px;
+        }
+
+        &__icon {
+            width: 130px;
+            height: 110px;
+        }
+
+        &__description {
+            width: 170px;
+        }
+
+        &--regular {
+
+            &:hover {
+                transform: none;
+            }
+        }
+
+        &--cool {
+
+            &:hover {
+                transform: none;
+            }
+        }
+
+        &__quantity {
+
+            &-value,
+            &-label {
+                font-size: 20px;
+            }
+        }
+
+        &__qualities {
+
+            &__title {
+                margin-bottom: 17px;
+                font-size: 20px;
+            }
+        }
+
+        &__button {
+            padding: 6px 10px;
+
+            &-text {
+                font-size: 14px;
+            }
+
+            &-value {
+                font-size: 14px;
             }
         }
     }
@@ -130,58 +330,74 @@
 @media (max-width: $phoneBreakPoint) {
 
     .box-card {
-
-        &:hover {
-            transform: scale(1);
-            box-shadow: none;
-        }
-
-        position: relative;
-        width: 100%;
-        height: 620px;
-        margin-top: 20%;
+        width: auto;
 
         &__wrapper {
-            flex-direction: column;
-            gap: 7%;
-            padding: 5%;
+            padding: 22px;
+        }
+
+        &__title {
+            font-size: 20px;
         }
 
         &__icon {
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
+            width: 80px;
+            height: 73px;
         }
 
-        &:first-child {
-
-            .box-card__icon {
-                top: -70px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
+        &__description {
+            width: 130px;
         }
 
         &__quantity {
-            display: flex;
 
-            .box-card__quantity-label {
-                width: 50%;
-                padding-left: 2%;
-                align-self: flex-end;
-                justify-self: flex-end;
+            &-value,
+            &-label {
+                font-size: 16px;
+            }
+        }
+
+        &__qualities {
+
+            &__title {
+                margin-bottom: 8px;
+                font-size: 13px;
+            }
+        }
+
+        &__button {
+            padding: 6px 10px;
+
+            &-text {
+                font-size: 10px;
             }
 
-            .box-card__quantity-value {
-                width: 50%;
-                text-align: right;
+            &-value {
+                font-size: 10px;
             }
+        }
+    }
+}
 
-            &:after {
-                @extend %pseudoelementsInFootballerCard;
+@media (min-width: $tabletBreakPoint) and (max-height: 800px) {
 
-                bottom: -10px;
-                height: 2px;
+    .box-card {
+
+        &__wrapper {
+            padding: 20px 20px 18px;
+        }
+
+        &--regular {
+
+            &:hover {
+                transform: translate(-25px) scale(1.05);
+            }
+        }
+
+        &--cool {
+
+            &:hover {
+                transform: translate(25px) scale(1.05);
             }
         }
     }

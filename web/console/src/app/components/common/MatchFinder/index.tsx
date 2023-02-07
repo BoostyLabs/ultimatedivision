@@ -1,10 +1,9 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 import { AutoCloseTimer } from './AutoCloseTimer';
 import { Timer } from './Timer';
@@ -14,7 +13,8 @@ import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
 import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
-import { onOpenConnectionSendAction, getCurrentQueueClient, queueSendAction } from '@/queue/service';
+import { getCurrentQueueClient, onOpenConnectionSendAction, queueSendAction } from '@/queue/service';
+import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
 
@@ -54,15 +54,15 @@ const MatchFinder: React.FC = () => {
     /** Variable describes that webscoket connection responsed with error. */
     const ERROR_MESSAGE: string = 'could not write to websocket';
     /** Variable describes that user still searching game. */
-    const STILL_SEARCHING_MESSAGE: string = 'you are still in search!';
+    const STILL_SEARCHING_MESSAGE: string = 'you are still in search';
     /** Variable describes that was send wrong action from user. */
     const WRONG_ACTION_MESSAGE: string = 'wrong action';
     /** Variable describes that user added to gueue. */
-    const YOU_ADDED_MESSAGE: string = 'you added!';
+    const YOU_ADDED_MESSAGE: string = 'you added';
     /** Variable describes that it needs confirm game from user. */
     const YOU_CONFIRM_PLAY_MESSAGE: string = 'do you confirm play?';
     /** Variable describes that user have leaved from searching game. */
-    const YOU_LEAVED_MESSAGE: string = 'you left!';
+    const YOU_LEAVED_MESSAGE: string = 'you left';
 
     /** Sends confirm action. */
     const confirmMatch = () => {
@@ -89,6 +89,7 @@ const MatchFinder: React.FC = () => {
     /** Exposes start searching match logic. */
     const startSearchMatch = () => {
         onOpenConnectionSendAction('startSearch', squad.id);
+
         /** Updates current queue client. */
         const newclient = getCurrentQueueClient();
         setQueueClient(newclient);
@@ -101,29 +102,15 @@ const MatchFinder: React.FC = () => {
     /** Processes queue client event messages. */
     if (queueClient) {
         queueClient.ws.onmessage = ({ data }: MessageEvent) => {
-            const messageEvent = JSON.parse(data);
+            const event = JSON.parse(data);
 
-            switch (messageEvent.message) {
+            switch (event.message) {
             case ERROR_MESSAGE:
-                toast.error('error message', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+                ToastNotifications.notify('error message');
 
                 return;
             case STILL_SEARCHING_MESSAGE:
-                setIsMatchFound(false);
-                toast.error('Your game was canceled. You are still in search.', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
-
-                return;
-            case WRONG_ACTION_MESSAGE:
-                toast.error('Something wrong, please, try later.', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    theme: 'colored',
-                });
+                ToastNotifications.gameCanceled();
 
                 return;
             case YOU_ADDED_MESSAGE:
@@ -135,21 +122,18 @@ const MatchFinder: React.FC = () => {
                 setIsMatchConfirmed(false);
 
                 return;
+
             case YOU_LEAVED_MESSAGE:
                 dispatch(startSearchingMatch(false));
 
                 return;
             default:
+                setIsMatchFound(false);
+                ToastNotifications.gameFinished();
 
-                toast.success(
-                    'Successfully! You will be redirected to match page',
-                    {
-                        position: toast.POSITION.TOP_RIGHT,
-                    }
-                );
-
-                dispatch(getMatchScore(messageEvent.message));
+                dispatch(getMatchScore(event.message));
                 dispatch(startSearchingMatch(false));
+
 
                 /** implements redirect to match page after DELAY time.  */
                 setTimeout(() => {
@@ -161,10 +145,7 @@ const MatchFinder: React.FC = () => {
 
     if (queueClient) {
         queueClient.ws.onerror = (event: Event) => {
-            toast.error('Something wrong, please, try later.', {
-                position: toast.POSITION.TOP_RIGHT,
-                theme: 'colored',
-            });
+            ToastNotifications.somethingWentsWrong();
         };
     }
 

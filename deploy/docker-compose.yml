@@ -2,7 +2,7 @@ version: "3"
 
 services:
   app:
-    container_name: UDApp
+    container_name: ultimatedivision_app
     image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division${ENVIRONMENT}:latest
     ports:
       - "8087:8087" # Forward the exposed port 5000 on the container to port 8088 on the host machine (8088:5000).
@@ -18,7 +18,7 @@ services:
       - fullstack
 
   nft_signer:
-    container_name: UDNFTSigner
+    container_name: ultimatedivision_nft_signer
     image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_nft_signer${ENVIRONMENT}:latest
     restart: unless-stopped
     volumes:
@@ -30,7 +30,7 @@ services:
       - fullstack
 
   currency_signer:
-    container_name: UDCurrencySigner
+    container_name: ultimatedivision_currency_signer
     image: ${HOST_FOR_DOCKER_IMAGE}/ultimate_division_currency_signer${ENVIRONMENT}:latest
     restart: unless-stopped
     volumes:
@@ -38,6 +38,58 @@ services:
       - ${PROJECT_CONFIGS_PATH}/currency_signer:/config
     depends_on:
       - ultimatedivision_db # This service depends on postgres. Start that first.
+    networks:
+      - fullstack
+
+  dozzle:
+    container_name: ultimatedivision_dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9999:8080"
+    networks:
+      - fullstack
+    depends_on:
+      - app
+    environment:
+      - DOZZLE_NO_ANALYTICS=true
+      - DOZZLE_USERNAME=${DOZZLE_USERNAME}
+      - DOZZLE_PASSWORD=${DOZZLE_PASSWORD}
+      - DOZZLE_KEY=true
+
+  prometheus:
+    image: prom/prometheus
+    container_name: ultimatedivision_prometheus
+    hostname: prometheus
+    restart: always
+    volumes:
+      - ${PROJECT_CONFIGS_PATH}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - fullstack
+
+  grafana:
+    image: grafana/grafana
+    container_name: ultimatedivision_grafana
+    hostname: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ${PROJECT_CONFIGS_PATH}/grafana/provisioning:/etc/grafana/provisioning
+      - ${PROJECT_DATA_PATH}/grafana:/var/lib/grafana
+    networks:
+      - fullstack
+
+  node_exporter:
+    image: prom/node-exporter
+    container_name: ultimatedivision_node_exporter
+    hostname: node-exporter
+    restart: always
+    ports:
+      - "9100:9100"
     networks:
       - fullstack
 

@@ -14,6 +14,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/users"
 )
 
 // ErrNoClient indicated that client does not exist.
@@ -49,6 +50,7 @@ type Client struct {
 	Connection *websocket.Conn
 	SquadID    uuid.UUID
 	IsPlaying  bool
+	CreatedAt  time.Time
 }
 
 // Request entity describes values sent by client.
@@ -56,6 +58,8 @@ type Request struct {
 	Action        Action               `json:"action"`
 	SquadID       uuid.UUID            `json:"squadId"`
 	WalletAddress evmsignature.Address `json:"walletAddress"`
+	CasperWallet  string               `json:"casperWallet"`
+	WalletType    users.WalletType     `json:"walletType"`
 	Nonce         int64                `json:"nonce"`
 }
 
@@ -77,6 +81,11 @@ const (
 	ActionForbidAddress Action = "forbidAddress"
 )
 
+// isValid checks is action valid.
+func (a Action) isValid() bool {
+	return a == ActionConfirm || a == ActionReject
+}
+
 // Response entity describes values sent to user.
 type Response struct {
 	Status  int         `json:"status"`
@@ -89,16 +98,19 @@ type Config struct {
 	WinValue             string                `json:"winValue"`
 	DrawValue            string                `json:"drawValue"`
 	UDTContract          evmsignature.Contract `json:"udtContract"`
+	CasperTokenContract  evmsignature.Contract `json:"casperTokenContract"`
+	RPCNodeAddress       string                `json:"rpcNodeAddress"`
 }
 
 // ReadJSON reads request sent by client.
 func (client *Client) ReadJSON() (Request, error) {
 	var request Request
 	if err := client.Connection.ReadJSON(&request); err != nil {
-		if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
-			return request, ErrWrite.Wrap(ErrQueue.Wrap(err))
+		if websocket.IsCloseError(err) || websocket.IsUnexpectedCloseError(err) {
+			if err = client.WriteJSON(http.StatusBadRequest, err.Error()); err != nil {
+				return request, ErrWrite.Wrap(ErrQueue.Wrap(err))
+			}
 		}
-		return request, ErrRead.Wrap(ErrQueue.Wrap(err))
 	}
 	return request, nil
 }
