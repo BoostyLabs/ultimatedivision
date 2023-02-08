@@ -54,8 +54,7 @@ const MOCK_USER: User =
         "2022-12-17T00:31:51.874508Z",
         "0x0000000000000000000000000000000000000000",
         "casper-wallet",
-    )
-    ;
+    );
 
 const reactRedux = { useDispatch, useSelector }
 const useDispatchMock = jest.spyOn(reactRedux, "useDispatch");

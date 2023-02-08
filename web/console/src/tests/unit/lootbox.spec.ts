@@ -65,9 +65,6 @@ const mockDispatch = jest.fn();
 useDispatchMock.mockReturnValue(mockDispatch);
 updatedStore.dispatch = mockDispatch;
 
-
-
-
 describe('Requests user.', () => {
     beforeEach(() => {
         successFetchMock(MOCK_REGULAR_BOX_RESPONCE);
@@ -103,4 +100,3 @@ describe('Requests user.', () => {
         });
     })
 });
-
