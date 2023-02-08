@@ -92,6 +92,7 @@ type Config struct {
 	URLToAvatar             string                  `json:"urlToAvatar"`
 	RPCNodeAddress          string                  `json:"rpcNodeAddress"`
 	EventNodeAddress        string                  `json:"eventNodeAddress"`
+	BridgeInEventHash       string                  `json:"bridgeInEventHash"`
 }
 
 const (

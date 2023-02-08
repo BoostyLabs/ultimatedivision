@@ -117,7 +117,7 @@ func (usersDB *usersDB) GetByWalletAddress(ctx context.Context, walletAddress st
 
 	switch walletType {
 	case users.WalletTypeCasper:
-		row = usersDB.conn.QueryRowContext(ctx, query+"casper_wallet_address=$1", walletAddress)
+		row = usersDB.conn.QueryRowContext(ctx, query+"casper_wallet_hash=$1", walletAddress)
 	case users.WalletTypeETH, users.WalletTypeVelas:
 		row = usersDB.conn.QueryRowContext(ctx, query+"wallet_address=$1", common.HexToAddress(walletAddress))
 	}

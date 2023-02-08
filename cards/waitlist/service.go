@@ -48,8 +48,6 @@ type Service struct {
 	users    *users.Service
 	nfts     *nfts.Service
 	events   *http.Client
-
-	gctx context.Context
 }
 
 // NewService is a constructor for waitlist service.
@@ -59,11 +57,7 @@ func NewService(config Config, waitList DB, cards *cards.Service, avatars *avata
 			DisableCompression: true,
 		},
 	}
-	ctx, cancel := context.WithCancel(context.Background())
-	onSigInt(func() {
-		// starting graceful exit on context cancellation.
-		cancel()
-	})
+
 	return &Service{
 		config:   config,
 		waitList: waitList,
@@ -72,7 +66,6 @@ func NewService(config Config, waitList DB, cards *cards.Service, avatars *avata
 		users:    users,
 		nfts:     nfts,
 		events:   eventsClient,
-		gctx:     ctx,
 	}
 }
 
@@ -268,96 +261,52 @@ func (service *Service) Delete(ctx context.Context, tokenIDs []int64) error {
 	return ErrWaitlist.Wrap(service.waitList.Delete(ctx, tokenIDs))
 }
 
-// SubscribeEvents is real time events streaming from blockchain to events subscribers.
-func (service *Service) SubscribeEvents(ctx context.Context) (EventVariant, error) {
+// GetEvents is real time events streaming from blockchain.
+func (service *Service) GetEvents(ctx context.Context) (EventVariant, error) {
 	var body io.Reader
+
 	req, err := http.NewRequest(http.MethodGet, service.config.EventNodeAddress, body)
 	if err != nil {
 		return EventVariant{}, ErrWaitlist.Wrap(err)
 	}
+	fmt.Println("req--->", req)
 
 	resp, err := service.events.Do(req)
 	if err != nil {
+		fmt.Println("ERROR --> ", req.Body)
+		fmt.Println("err--> ", err)
 		return EventVariant{}, ErrWaitlist.Wrap(err)
 	}
+
 	fmt.Println("resp --> ", resp)
-	for {
-		select {
-		case <-service.gctx.Done():
-			return EventVariant{}, nil
-		case <-ctx.Done():
-			return EventVariant{}, nil
-		default:
-		}
+	reader := bufio.NewReader(resp.Body)
+	rawBody, err := reader.ReadBytes('\n')
+	fmt.Println("rawBody --> ", rawBody)
+	if err != nil {
+		return EventVariant{}, ErrWaitlist.Wrap(err)
+	}
 
-		reader := bufio.NewReader(resp.Body)
-		rawBody, err := reader.ReadBytes('\n')
-		if err != nil {
-			return EventVariant{}, ErrWaitlist.Wrap(err)
-		}
+	rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
 
-		rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
+	var event contract.Event
+	_ = json.Unmarshal(rawBody, &event)
 
-		var event contract.Event
-		_ = json.Unmarshal(rawBody, &event)
-		fmt.Println("event --> ", event)
-		fmt.Println("DeployHash --> ", event.DeployProcessed.DeployHash)
-		fmt.Println("Transforms --> ", event.DeployProcessed.ExecutionResult.Success.Effect.Transforms)
-		fmt.Println("event --> ", event)
-		transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
-		//if len(transforms) == 0 {
-		//	return EventVariant{}, ErrWaitlist.Wrap(err)
-		//}
-		for _, transform := range transforms {
+	fmt.Println("event --> ", event)
+
+	transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
+	if len(transforms) == 0 {
+		return EventVariant{}, ErrWaitlist.Wrap(err)
+	}
+
+	for _, transform := range transforms {
+		if transform.Key == service.config.BridgeInEventHash {
 			eventFunds, err := service.parseEventFromTransform(event, transform)
-			fmt.Println("eventFunds-->", eventFunds)
+			fmt.Println("eventFunds --> ", eventFunds)
 			if err != nil {
 				return eventFunds, ErrWaitlist.Wrap(err)
 			}
 		}
 	}
-	//
-	//fmt.Println("EventNodeAddress--> ", service.config.EventNodeAddress)
-	//req, err := http.NewRequest(http.MethodGet, service.config.EventNodeAddress, body)
-	//if err != nil {
-	//	return EventVariant{}, ErrWaitlist.Wrap(err)
-	//}
-	//fmt.Println("req--->", req)
-	//
-	//resp, err := service.events.Do(req)
-	//if err != nil {
-	//	defer func() {
-	//		err = errs.Combine(err, resp.Body.Close())
-	//	}()
-	//	fmt.Println("2222222222222222222 --> ERRROR")
-	//	return EventVariant{}, ErrWaitlist.Wrap(err)
-	//}
-	//fmt.Println("resp --> ", resp)
-	//reader := bufio.NewReader(resp.Body)
-	//fmt.Println("reader --> ", reader)
-	//rawBody, err := reader.ReadBytes('\n')
-	//fmt.Println("rawBody --> ", rawBody)
-	//if err != nil {
-	//	return EventVariant{}, ErrWaitlist.Wrap(err)
-	//}
-	//
-	//rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
-	//
-	//var event contract.Event
-	//_ = json.Unmarshal(rawBody, &event)
-	//
-	//fmt.Println("event --> ", event)
-	//
-	//transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
-	//if len(transforms) == 0 {
-	//	return EventVariant{}, ErrWaitlist.Wrap(err)
-	//}
-	//for _, transform := range transforms {
-	//	eventFunds, err := service.parseEventFromTransform(event, transform)
-	//	if err != nil {
-	//		return eventFunds, ErrWaitlist.Wrap(err)
-	//	}
-	//}
 	return EventVariant{}, ErrWaitlist.Wrap(err)
 }
 func (service *Service) parseEventFromTransform(event contract.Event, transform contract.Transform) (EventVariant, error) {

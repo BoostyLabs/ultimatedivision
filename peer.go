@@ -599,11 +599,11 @@ func (peer *Peer) Run(ctx context.Context) error {
 	// 	return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
 	// })
 	//group.Go(func() error {
-	//	return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
+	//return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
 	//})
-	//group.Go(func() error {
-	//	return ignoreCancel(peer.WaitList.WaitListChore.RunCasperCheckMintEvent(ctx))
-	//})
+	group.Go(func() error {
+		return ignoreCancel(peer.WaitList.WaitListChore.RunCasperCheckMintEvent(ctx))
+	})
 	// TODO: remove it.
 	group.Go(func() error {
 		return ignoreCancel(peer.Store.StoreRenewal.Run(ctx))
