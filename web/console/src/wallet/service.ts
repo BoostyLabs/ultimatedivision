@@ -46,7 +46,7 @@ class WalletService {
 
     /** Mints chosed card with casper */
     private async casperMint(id: string) {
-        const casperTransactionService = new CasperTransactionService(this.user.casperWalletHash);
+        const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
 
         await casperTransactionService.mint(id);
     };
