@@ -48,6 +48,8 @@ type Service struct {
 	users    *users.Service
 	nfts     *nfts.Service
 	events   *http.Client
+
+	ctx context.Context
 }
 
 // NewService is a constructor for waitlist service.
@@ -264,46 +266,42 @@ func (service *Service) Delete(ctx context.Context, tokenIDs []int64) error {
 // GetEvents is real time events streaming from blockchain.
 func (service *Service) GetEvents(ctx context.Context) (EventVariant, error) {
 	var body io.Reader
-
 	req, err := http.NewRequest(http.MethodGet, service.config.EventNodeAddress, body)
 	if err != nil {
 		return EventVariant{}, ErrWaitlist.Wrap(err)
 	}
-	fmt.Println("req--->", req)
 
 	resp, err := service.events.Do(req)
 	if err != nil {
-		fmt.Println("ERROR --> ", req.Body)
-		fmt.Println("err--> ", err)
 		return EventVariant{}, ErrWaitlist.Wrap(err)
 	}
 
-	fmt.Println("resp --> ", resp)
-	reader := bufio.NewReader(resp.Body)
-	rawBody, err := reader.ReadBytes('\n')
-	fmt.Println("rawBody --> ", rawBody)
-	if err != nil {
-		return EventVariant{}, ErrWaitlist.Wrap(err)
-	}
+	for {
+		reader := bufio.NewReader(resp.Body)
+		rawBody, err := reader.ReadBytes('\n')
+		if err != nil {
+			return EventVariant{}, ErrWaitlist.Wrap(err)
+		}
 
-	rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
+		rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
+		var event contract.Event
+		_ = json.Unmarshal(rawBody, &event)
 
-	var event contract.Event
-	_ = json.Unmarshal(rawBody, &event)
+		transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
+		if len(transforms) == 0 {
+			continue
+		}
+		fmt.Println("service.config.BridgeInEventHash ---> ", service.config.BridgeInEventHash)
 
-	fmt.Println("event --> ", event)
-
-	transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
-	if len(transforms) == 0 {
-		return EventVariant{}, ErrWaitlist.Wrap(err)
-	}
-
-	for _, transform := range transforms {
-		if transform.Key == service.config.BridgeInEventHash {
-			eventFunds, err := service.parseEventFromTransform(event, transform)
-			fmt.Println("eventFunds --> ", eventFunds)
-			if err != nil {
-				return eventFunds, ErrWaitlist.Wrap(err)
+		for _, transform := range transforms {
+			fmt.Println("transform ---> ", transform)
+			fmt.Println("transform.Key ---> ", transform.Key)
+			if transform.Key == service.config.BridgeInEventHash {
+				eventFunds, err := service.parseEventFromTransform(event, transform)
+				fmt.Println("eventFunds ---> ", eventFunds)
+				if err != nil {
+					return eventFunds, ErrWaitlist.Wrap(err)
+				}
 			}
 		}
 	}
