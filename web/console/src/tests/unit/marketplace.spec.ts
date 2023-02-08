@@ -32,7 +32,6 @@ const failedFetchMock = async () => {
 
 const mockedGlobalFetch = globalThis.fetch;
 
-
 const SELECTED_PAGE = 1;
 const DEFAULT_VALUE = 0;
 
@@ -82,8 +81,6 @@ const initialState = {
     }
 };
 
-
-
 const reactRedux = { useDispatch, useSelector }
 const useDispatchMock = jest.spyOn(reactRedux, "useDispatch");
 const useSelectorMock = jest.spyOn(reactRedux, "useSelector");
@@ -123,7 +120,7 @@ describe('Requests getting selling cards.', () => {
                 await marketplaceClient.list(SELECTED_PAGE);
             } catch (error) {
                 mockDispatch(GET_SELLING_CARDS, {});
-                expect(updatedStore.getState().marketplaceReducer.marketplacePage).toEqual(MOCK_DIVISIONS_STATE.marketplacePage);
+                expect(updatedStore.getState().marketplaceReducer.marketplacePage).toEqual(initialState.marketplaceReducer.marketplacePage);
             }
         });
     })

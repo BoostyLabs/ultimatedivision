@@ -32,6 +32,8 @@ const failedFetchMock = async () => {
 
 const mockedGlobalFetch = globalThis.fetch;
 
+const SELECTED_PAGE = 1;
+
 /** Mock user card. */
 const MOCK_CARD = new Card(
     {
@@ -102,7 +104,6 @@ const MOCK_CARD = new Card(
 
     }
 )
-const SELECTED_PAGE = 1;
 
 /** Mock cards page. */
 const MOCK_CARDS_PAGE = new CardsPage([MOCK_CARD], page);

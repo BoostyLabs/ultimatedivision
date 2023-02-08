@@ -37,7 +37,7 @@ const mockedGlobalFetch = globalThis.fetch;
 /** Mock initial networks state. */
 const initialState = {
     usersReducer: {
-        user: [],
+        user: {},
         userService: new UsersService(usersClient)
     }
 };
@@ -56,8 +56,6 @@ const MOCK_USER: User =
         "casper-wallet",
     )
     ;
-
-
 
 const reactRedux = { useDispatch, useSelector }
 const useDispatchMock = jest.spyOn(reactRedux, "useDispatch");
@@ -100,7 +98,7 @@ describe('Requests user.', () => {
                 await usersClient.getUser();
             } catch (error) {
                 mockDispatch(SET_USER, {});
-                expect(updatedStore.getState().usersReducer.user).toEqual([]);
+                expect(updatedStore.getState().usersReducer.user).toEqual({});
             }
         });
     })

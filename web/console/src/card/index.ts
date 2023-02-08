@@ -75,6 +75,73 @@ export class CardStats {
     }
 }
 
+export interface ICard {
+    id: string;
+    playerName: string;
+    quality: string;
+    pictureType: number;
+    height: number;
+    weight: number;
+    skinColor: number;
+    hairStyle: number;
+    hairColor: number;
+    accessories: number[];
+    dominantFoot: string;
+    isTattoos: boolean;
+    status: number;
+    type: string;
+    userId: string;
+    tactics: number;
+    positioning: number;
+    composure: number;
+    aggression: number;
+    vision: number;
+    awareness: number;
+    crosses: number;
+    physique: number;
+    acceleration: number;
+    runningSpeed: number;
+    reactionSpeed: number;
+    agility: number;
+    stamina: number;
+    strength: number;
+    jumping: number;
+    balance: number;
+    technique: number;
+    dribbling: number;
+    ballControl: number;
+    weakFoot: number;
+    skillMoves: number;
+    finesse: number;
+    curve: number;
+    volleys: number;
+    shortPassing: number;
+    longPassing: number;
+    forwardPass: number;
+    offense: number;
+    finishingAbility: number;
+    shotPower: number;
+    accuracy: number;
+    distance: number;
+    penalty: number;
+    freeKicks: number
+    corners: number;
+    headingAccuracy: number;
+    defence: number;
+    offsideTrap: number;
+    sliding: number;
+    tackles: number;
+    ballFocus: number;
+    interceptions: number;
+    vigilance: number;
+    goalkeeping: number;
+    reflexes: number;
+    diving: number;
+    handling: number;
+    sweeping: number;
+    throwing: number;
+
+}
 /** Class defines with needed getters */
 export class Card {
     id: string = '00000000-0000-0000-0000-000000000000';
@@ -143,7 +210,7 @@ export class Card {
     throwing: number = DEFAULT_VALUE;
 
     /** Card fields */
-    constructor(card?: any) {
+    constructor(card?: ICard) {
         Object.assign(this, card);
     }
 

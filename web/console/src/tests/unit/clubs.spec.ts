@@ -106,7 +106,7 @@ describe('Requests list of clubs.', () => {
             cleanup();
         });
 
-        it('Must be no clubs', async () => {
+        it('Must be one club', async () => {
             try {
                 await clubsClient.getClubs();
             } catch (error) {

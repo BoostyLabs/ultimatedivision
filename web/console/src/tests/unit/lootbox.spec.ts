@@ -33,6 +33,14 @@ const failedFetchMock = async () => {
 
 const mockedGlobalFetch = globalThis.fetch;
 
+/** Mock initial networks state. */
+const initialState = {
+    lootBoxReducer: {
+        lootboxService: new LootboxService(lootboxClient),
+        lootbox: []
+    }
+};
+
 /** Mock regular box. */
 const MOCK_REGULAR_LOOTBOX =
     new Lootbox(
@@ -48,14 +56,6 @@ const MOCK_REGULAR_BOX_RESPONCE = [
     new Card(),
     new Card(),
 ]
-
-/** Mock initial networks state. */
-const initialState = {
-    lootBoxReducer: {
-        lootboxService: new LootboxService(lootboxClient),
-        lootbox: []
-    }
-};
 
 const reactRedux = { useDispatch, useSelector }
 const useDispatchMock = jest.spyOn(reactRedux, "useDispatch");
