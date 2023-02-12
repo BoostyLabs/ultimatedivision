@@ -5,9 +5,7 @@ package waitlist
 
 import (
 	"context"
-	"fmt"
 	"strconv"
-	"sync"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
@@ -36,7 +34,6 @@ type Chore struct {
 	nfts     *nfts.Service
 	users    *users.Service
 	cards    *cards.Service
-	wg       sync.WaitGroup
 }
 
 // NewChore instantiates Chore.
@@ -138,64 +135,4 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 
 		return ChoreError.Wrap(err)
 	})
-}
-
-// RunCasperCheckMintEvent runs a task to check and create the casper nft assignment.
-func (chore *Chore) RunCasperCheckMintEvent(ctx context.Context) (err error) {
-	//return chore.Loop.Run(ctx, func(ctx context.Context) error {
-
-	_, err = chore.waitList.GetEvents(ctx)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("After event find event ---> ")
-	//tokenID := event.EventFundsIn.Token
-	//tokenID := 1
-
-	//if event.EventFundsOut.From.Address == "" {
-	//	nftWaitList, err := chore.waitList.GetByTokenID(ctx, int64(tokenID))
-	//	if err != nil {
-	//		return ChoreError.Wrap(err)
-	//	}
-	//	fmt.Println("nftWaitList---> ", nftWaitList)
-	//
-	//	toAddress := common.HexToAddress(nftWaitList.CasperWalletHash)
-	//	nft := nfts.NFT{
-	//		CardID:        nftWaitList.CardID,
-	//		Chain:         evmsignature.ChainEthereum,
-	//		TokenID:       int64(tokenID),
-	//		WalletAddress: toAddress,
-	//	}
-	//
-	//	fmt.Println("CasperWalletHash---> ", nftWaitList.CasperWalletHash)
-	//
-	//	fmt.Println("nft ---> ", nft)
-	//	if err = chore.nfts.Create(ctx, nft); err != nil {
-	//		return ChoreError.Wrap(err)
-	//	}
-	//
-	//	user, err := chore.users.GetByCasperWalletAddress(ctx, nftWaitList.CasperWalletHash, users.WalletTypeCasper)
-	//	if err != nil {
-	//		if err = chore.nfts.Delete(ctx, nft.CardID); err != nil {
-	//			return ChoreError.Wrap(err)
-	//		}
-	//
-	//		if err = chore.cards.UpdateUserID(ctx, nft.CardID, uuid.Nil); err != nil {
-	//			return ChoreError.Wrap(err)
-	//		}
-	//	}
-	//	fmt.Println("user ---> ", user)
-	//
-	//	if err = chore.nfts.Update(ctx, nft); err != nil {
-	//		return ChoreError.Wrap(err)
-	//	}
-	//
-	//	if err = chore.cards.UpdateUserID(ctx, nft.CardID, user.ID); err != nil {
-	//		return ChoreError.Wrap(err)
-	//	}
-	//}
-
-	return ChoreError.Wrap(err)
-	//})
 }

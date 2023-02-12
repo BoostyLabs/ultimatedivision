@@ -6,20 +6,19 @@ package waitlist
 import (
 	"bufio"
 	"context"
+	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
 	"math/big"
 	"net/http"
-	"os"
-	"os/signal"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/BoostyLabs/evmsignature"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
@@ -48,8 +47,6 @@ type Service struct {
 	users    *users.Service
 	nfts     *nfts.Service
 	events   *http.Client
-
-	ctx context.Context
 }
 
 // NewService is a constructor for waitlist service.
@@ -273,6 +270,9 @@ func (service *Service) GetEvents(ctx context.Context) (EventVariant, error) {
 
 	resp, err := service.events.Do(req)
 	if err != nil {
+		defer func() {
+			err = errs.Combine(err, resp.Body.Close())
+		}()
 		return EventVariant{}, ErrWaitlist.Wrap(err)
 	}
 
@@ -305,8 +305,9 @@ func (service *Service) GetEvents(ctx context.Context) (EventVariant, error) {
 			}
 		}
 	}
-	return EventVariant{}, ErrWaitlist.Wrap(err)
 }
+
+// parseEventFromTransform parse all needed info from transform.
 func (service *Service) parseEventFromTransform(event contract.Event, transform contract.Transform) (EventVariant, error) {
 	transformMap, ok := transform.Transform.(map[string]interface{})
 	if !ok {
@@ -446,13 +447,52 @@ func (service *Service) parseEventFromTransform(event contract.Event, transform 
 	return eventFunds, nil
 }
 
-// onSigInt fires in SIGINT or SIGTERM event (usually CTRL+C).
-func onSigInt(onSigInt func()) {
-	done := make(chan os.Signal, 1)
-	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+// RunCasperCheckMintEvent runs a task to check and create the casper nft assignment.
+func (service *Service) RunCasperCheckMintEvent(ctx context.Context) (err error) {
+	event, err := service.GetEvents(ctx)
+	if err != nil {
+		return err
+	}
 
-	go func() {
-		<-done
-		onSigInt()
-	}()
+	tokenID := binary.BigEndian.Uint64(event.EventFundsIn.Token)
+
+	if event.EventFundsOut.From.Address == "" {
+		nftWaitList, err := service.GetByTokenID(ctx, int64(tokenID))
+		if err != nil {
+			return ChoreError.Wrap(err)
+		}
+
+		toAddress := common.HexToAddress(nftWaitList.CasperWalletHash)
+		nft := nfts.NFT{
+			CardID:        nftWaitList.CardID,
+			Chain:         evmsignature.ChainEthereum,
+			TokenID:       int64(tokenID),
+			WalletAddress: toAddress,
+		}
+
+		if err = service.nfts.Create(ctx, nft); err != nil {
+			return ChoreError.Wrap(err)
+		}
+
+		user, err := service.users.GetByCasperWalletAddress(ctx, nftWaitList.CasperWalletHash, users.WalletTypeCasper)
+		if err != nil {
+			if err = service.nfts.Delete(ctx, nft.CardID); err != nil {
+				return ChoreError.Wrap(err)
+			}
+
+			if err = service.cards.UpdateUserID(ctx, nft.CardID, uuid.Nil); err != nil {
+				return ChoreError.Wrap(err)
+			}
+		}
+
+		if err = service.nfts.Update(ctx, nft); err != nil {
+			return ChoreError.Wrap(err)
+		}
+
+		if err = service.cards.UpdateUserID(ctx, nft.CardID, user.ID); err != nil {
+			return ChoreError.Wrap(err)
+		}
+	}
+
+	return ChoreError.Wrap(err)
 }
