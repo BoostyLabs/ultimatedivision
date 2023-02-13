@@ -291,14 +291,10 @@ func (service *Service) GetEvents(ctx context.Context) (EventVariant, error) {
 		if len(transforms) == 0 {
 			continue
 		}
-		fmt.Println("service.config.BridgeInEventHash ---> ", service.config.BridgeInEventHash)
 
 		for _, transform := range transforms {
-			fmt.Println("transform ---> ", transform)
-			fmt.Println("transform.Key ---> ", transform.Key)
 			if transform.Key == service.config.BridgeInEventHash {
 				eventFunds, err := service.parseEventFromTransform(event, transform)
-				fmt.Println("eventFunds ---> ", eventFunds)
 				if err != nil {
 					return eventFunds, ErrWaitlist.Wrap(err)
 				}
@@ -333,20 +329,16 @@ func (service *Service) parseEventFromTransform(event contract.Event, transform 
 		return EventVariant{}, ErrWaitlist.Wrap(err)
 	}
 
-	fmt.Println("eventType--> ", eventType)
-
 	tokenContractAddress, err := hex.DecodeString(eventData.GetTokenContractAddress())
 	if err != nil {
 		return EventVariant{}, ErrWaitlist.Wrap(err)
 	}
 
-	fmt.Println("tokenContractAddress--> ", tokenContractAddress)
-
 	chainName, err := eventData.GetChainName()
 	if err != nil {
 		return EventVariant{}, ErrWaitlist.Wrap(err)
 	}
-	fmt.Println("chainName--> ", chainName)
+
 	chainAddress, err := eventData.GetChainAddress()
 	if err != nil {
 		return EventVariant{}, ErrWaitlist.Wrap(err)
@@ -362,8 +354,6 @@ func (service *Service) parseEventFromTransform(event contract.Event, transform 
 	if err != nil {
 		return EventVariant{}, ErrWaitlist.Wrap(err)
 	}
-
-	fmt.Println("userWalletAddress--> ", userWalletAddress)
 
 	hash, err := hex.DecodeString(event.DeployProcessed.DeployHash)
 	if err != nil {
