@@ -12,7 +12,6 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
-	contract "ultimatedivision/pkg/contractcasper"
 	"ultimatedivision/pkg/nft"
 )
 
@@ -24,16 +23,8 @@ var ErrNFTs = errs.Class("NFTs service error")
 // architecture: Service.
 type Service struct {
 	config Config
-	casper contract.Casper
 	nfts   DB
 }
-
-const (
-	// WriteCLValueKey defines that transform key is WriteCLValue. This key stores the type and data of the transforming event.
-	WriteCLValueKey string = "WriteCLValue"
-	// BytesKey defines that WriteCLValue key is bytes. This key stores data of the transforming event.
-	BytesKey string = "bytes"
-)
 
 // NewService is a constructor for NFTs service.
 func NewService(config Config, nfts DB) *Service {
