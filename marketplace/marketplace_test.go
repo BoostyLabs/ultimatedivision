@@ -22,58 +22,6 @@ import (
 )
 
 func TestMarketplace(t *testing.T) {
-	lot1 := marketplace.Lot{
-		ID:           uuid.New(),
-		ItemID:       uuid.New(),
-		Type:         marketplace.TypeCard,
-		UserID:       uuid.New(),
-		ShopperID:    uuid.New(),
-		Status:       marketplace.StatusSoldBuynow,
-		StartPrice:   *big.NewInt(500000000000000),
-		MaxPrice:     *big.NewInt(3000000000000000),
-		CurrentPrice: *big.NewInt(3000000000000000),
-		StartTime:    time.Now().UTC(),
-		EndTime:      time.Now().AddDate(0, 0, 2).UTC(),
-		Period:       2,
-	}
-
-	lot2 := marketplace.Lot{
-		ID:           uuid.New(),
-		ItemID:       uuid.New(),
-		Type:         marketplace.TypeCard,
-		UserID:       uuid.New(),
-		Status:       marketplace.StatusActive,
-		StartPrice:   *big.NewInt(500000000000000),
-		CurrentPrice: *big.NewInt(2500000000000000),
-		StartTime:    time.Now().UTC(),
-		EndTime:      time.Now().AddDate(0, 0, 1).UTC(),
-		Period:       marketplace.MinPeriod,
-	}
-
-	user1 := users.User{
-		ID:           uuid.New(),
-		Email:        "tarkovskynik@gmail.com",
-		PasswordHash: []byte{0},
-		NickName:     "Nik",
-		FirstName:    "Nikita",
-		LastName:     "Tarkovskyi",
-		LastLogin:    time.Now(),
-		Status:       0,
-		CreatedAt:    time.Now(),
-	}
-
-	user2 := users.User{
-		ID:           uuid.New(),
-		Email:        "3560876@gmail.com",
-		PasswordHash: []byte{1},
-		NickName:     "qwerty",
-		FirstName:    "Stas",
-		LastName:     "Isakov",
-		LastLogin:    time.Now(),
-		Status:       1,
-		CreatedAt:    time.Now(),
-	}
-
 	card1 := cards.Card{
 		ID:               uuid.New(),
 		PlayerName:       "Dmytro yak muk",
@@ -197,6 +145,56 @@ func TestMarketplace(t *testing.T) {
 		Throwing:         49,
 	}
 
+	lot1 := marketplace.Lot{
+		ID:           card1.ID,
+		Type:         marketplace.TypeCard,
+		UserID:       uuid.New(),
+		ShopperID:    uuid.New(),
+		Status:       marketplace.StatusSoldBuynow,
+		StartPrice:   *big.NewInt(500000000000000),
+		MaxPrice:     *big.NewInt(3000000000000000),
+		CurrentPrice: *big.NewInt(3000000000000000),
+		StartTime:    time.Now().UTC(),
+		EndTime:      time.Now().AddDate(0, 0, 2).UTC(),
+		Period:       2,
+	}
+
+	lot2 := marketplace.Lot{
+		ID:           uuid.New(),
+		Type:         marketplace.TypeCard,
+		UserID:       uuid.New(),
+		Status:       marketplace.StatusActive,
+		StartPrice:   *big.NewInt(500000000000000),
+		CurrentPrice: *big.NewInt(2500000000000000),
+		StartTime:    time.Now().UTC(),
+		EndTime:      time.Now().AddDate(0, 0, 1).UTC(),
+		Period:       marketplace.MinPeriod,
+	}
+
+	user1 := users.User{
+		ID:           uuid.New(),
+		Email:        "tarkovskynik@gmail.com",
+		PasswordHash: []byte{0},
+		NickName:     "Nik",
+		FirstName:    "Nikita",
+		LastName:     "Tarkovskyi",
+		LastLogin:    time.Now(),
+		Status:       0,
+		CreatedAt:    time.Now(),
+	}
+
+	user2 := users.User{
+		ID:           uuid.New(),
+		Email:        "3560876@gmail.com",
+		PasswordHash: []byte{1},
+		NickName:     "qwerty",
+		FirstName:    "Stas",
+		LastName:     "Isakov",
+		LastLogin:    time.Now(),
+		Status:       1,
+		CreatedAt:    time.Now(),
+	}
+
 	cursor1 := pagination.Cursor{
 		Limit: 2,
 		Page:  1,
@@ -221,7 +219,7 @@ func TestMarketplace(t *testing.T) {
 			err = repositoryCards.Create(ctx, card1)
 			require.NoError(t, err)
 
-			lot1.ItemID = card1.ID
+			lot1.ID = card1.ID
 			lot1.UserID = user1.ID
 			err = repositoryMarketplace.CreateLot(ctx, lot1)
 			require.NoError(t, err)
@@ -239,7 +237,7 @@ func TestMarketplace(t *testing.T) {
 			err = repositoryCards.Create(ctx, card2)
 			require.NoError(t, err)
 
-			lot2.ItemID = card2.ID
+			lot2.ID = card2.ID
 			lot2.UserID = user2.ID
 			err = repositoryMarketplace.CreateLot(ctx, lot2)
 			require.NoError(t, err)
@@ -345,7 +343,6 @@ func TestMarketplace(t *testing.T) {
 
 func compareLot(t *testing.T, lot1, lot2 marketplace.Lot) {
 	assert.Equal(t, lot1.ID, lot2.ID)
-	assert.Equal(t, lot1.ItemID, lot2.ItemID)
 	assert.Equal(t, lot1.Type, lot2.Type)
 	assert.Equal(t, lot1.UserID, lot2.UserID)
 	assert.Equal(t, lot1.ShopperID, lot2.ShopperID)

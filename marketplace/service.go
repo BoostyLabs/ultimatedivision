@@ -14,6 +14,7 @@ import (
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
+	"ultimatedivision/cards/nfts"
 	"ultimatedivision/pkg/pagination"
 	"ultimatedivision/users"
 )
@@ -29,15 +30,17 @@ type Service struct {
 	marketplace DB
 	users       *users.Service
 	cards       *cards.Service
+	nfts        *nfts.Service
 }
 
 // NewService is a constructor for marketplace service.
-func NewService(config Config, marketplace DB, users *users.Service, cards *cards.Service) *Service {
+func NewService(config Config, marketplace DB, users *users.Service, cards *cards.Service, nfts *nfts.Service) *Service {
 	return &Service{
 		config:      config,
 		marketplace: marketplace,
 		users:       users,
 		cards:       cards,
+		nfts:        nfts,
 	}
 }
 
@@ -79,8 +82,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 	}
 
 	lot := Lot{
-		ID:         uuid.New(),
-		ItemID:     createLot.ItemID,
+		ID:         card.ID,
 		Type:       createLot.Type,
 		UserID:     createLot.UserID,
 		Status:     StatusActive,
@@ -98,6 +100,12 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, error) {
 	lot, err := service.marketplace.GetLotByID(ctx, id)
 	return lot, ErrMarketplace.Wrap(err)
+}
+
+// GetNFTByID returns nft by id from DB.
+func (service *Service) GetNFTByID(ctx context.Context, id uuid.UUID) (nfts.NFT, error) {
+	nft, err := service.nfts.GetNFTByID(ctx, id)
+	return nft, ErrMarketplace.Wrap(err)
 }
 
 // ListActiveLots returns active lots from DB.
@@ -208,7 +216,6 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 
 		winLot := WinLot{
 			ID:        betLot.ID,
-			ItemID:    lot.ItemID,
 			Type:      TypeCard,
 			UserID:    lot.UserID,
 			ShopperID: betLot.UserID,
@@ -243,12 +250,12 @@ func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
 	// TODO: transfer money to the old cardholder from new user. If userID == shopperID not transfer mb.
 
 	if winLot.Type == TypeCard {
-		if err := service.cards.UpdateStatus(ctx, winLot.ItemID, cards.StatusActive); err != nil {
+		if err := service.cards.UpdateStatus(ctx, winLot.ID, cards.StatusActive); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
 		if winLot.UserID != winLot.ShopperID {
-			if err := service.cards.UpdateUserID(ctx, winLot.ItemID, winLot.ShopperID); err != nil {
+			if err := service.cards.UpdateUserID(ctx, winLot.ID, winLot.ShopperID); err != nil {
 				return ErrMarketplace.Wrap(err)
 			}
 		}

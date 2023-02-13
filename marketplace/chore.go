@@ -48,7 +48,6 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 
 				winLot := WinLot{
 					ID:        lot.ID,
-					ItemID:    lot.ItemID,
 					Type:      lot.Type,
 					UserID:    lot.UserID,
 					ShopperID: lot.ShopperID,
@@ -69,7 +68,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			}
 
 			if lot.Type == TypeCard {
-				if err := chore.marketplace.cards.UpdateStatus(ctx, lot.ItemID, cards.StatusActive); err != nil {
+				if err := chore.marketplace.cards.UpdateStatus(ctx, lot.ID, cards.StatusActive); err != nil {
 					return ErrMarketplace.Wrap(err)
 				}
 			}

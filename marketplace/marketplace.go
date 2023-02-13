@@ -46,7 +46,6 @@ type DB interface {
 // Lot describes lot entity.
 type Lot struct {
 	ID           uuid.UUID  `json:"id"`
-	ItemID       uuid.UUID  `json:"itemId"`
 	Type         Type       `json:"type"`
 	UserID       uuid.UUID  `json:"userId"`
 	ShopperID    uuid.UUID  `json:"shopperId"`
@@ -118,7 +117,6 @@ type BetLot struct {
 // WinLot entity that contains the values required to win the lot.
 type WinLot struct {
 	ID        uuid.UUID `json:"id"`
-	ItemID    uuid.UUID `json:"itemId"`
 	Type      Type      `json:"type"`
 	UserID    uuid.UUID `json:"userId"`
 	ShopperID uuid.UUID `json:"shopperID"`
