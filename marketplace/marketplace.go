@@ -109,7 +109,7 @@ type CreateLot struct {
 
 // BetLot entity that contains the values required to place bet the lot.
 type BetLot struct {
-	ID        uuid.UUID `json:"cardID"`
+	CardID    uuid.UUID `json:"cardId"`
 	UserID    uuid.UUID `json:"userId"`
 	BetAmount big.Int   `json:"betAmount"`
 }
@@ -143,7 +143,7 @@ func (createLot CreateLot) ValidateCreateLot() error {
 
 // ValidateBetLot check is empty fields of bet lot entity.
 func (betLot BetLot) ValidateBetLot() error {
-	if betLot.ID.String() == "" {
+	if betLot.CardID.String() == "" {
 		return ErrMarketplace.New("lot id is empty")
 	}
 

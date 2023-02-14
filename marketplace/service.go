@@ -184,7 +184,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 	}
 	// TODO: check if the user has the required amount of money.
 
-	lot, err := service.GetLotByID(ctx, betLot.ID)
+	lot, err := service.GetLotByID(ctx, betLot.CardID)
 	if err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
@@ -205,17 +205,17 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 	// TODO: update status to `hold` for new user's money.
 	// TODO: unhold old user's money if exist.
 
-	if err := service.UpdateShopperIDLot(ctx, betLot.ID, betLot.UserID); err != nil {
+	if err := service.UpdateShopperIDLot(ctx, betLot.CardID, betLot.UserID); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 
 	if (betLot.BetAmount.Cmp(&lot.MaxPrice) == 1 || betLot.BetAmount.Cmp(&lot.MaxPrice) == 0) && lot.MaxPrice.BitLen() != 0 {
-		if err = service.UpdateCurrentPriceLot(ctx, betLot.ID, lot.MaxPrice); err != nil {
+		if err = service.UpdateCurrentPriceLot(ctx, betLot.CardID, lot.MaxPrice); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
 		winLot := WinLot{
-			ID:        betLot.ID,
+			ID:        betLot.CardID,
 			Type:      TypeCard,
 			UserID:    lot.UserID,
 			ShopperID: betLot.UserID,
@@ -228,11 +228,11 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 		}
 
 	} else {
-		if err = service.UpdateCurrentPriceLot(ctx, betLot.ID, betLot.BetAmount); err != nil {
+		if err = service.UpdateCurrentPriceLot(ctx, betLot.CardID, betLot.BetAmount); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 		if lot.EndTime.Sub(time.Now().UTC()) < time.Minute {
-			if err = service.UpdateEndTimeLot(ctx, betLot.ID, time.Now().UTC().Add(time.Minute)); err != nil {
+			if err = service.UpdateEndTimeLot(ctx, betLot.CardID, time.Now().UTC().Add(time.Minute)); err != nil {
 				return ErrMarketplace.Wrap(err)
 			}
 		}

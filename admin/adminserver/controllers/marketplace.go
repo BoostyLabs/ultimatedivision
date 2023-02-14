@@ -338,7 +338,7 @@ func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Reques
 		}
 
 		betLot := marketplace.BetLot{
-			ID:        id,
+			CardID:    id,
 			UserID:    userID,
 			BetAmount: betAmount,
 		}
