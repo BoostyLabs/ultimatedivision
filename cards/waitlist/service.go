@@ -464,7 +464,7 @@ func (service *Service) RunCasperCheckMintEvent(ctx context.Context) (err error)
 			return ChoreError.Wrap(err)
 		}
 
-		user, err := service.users.GetByCasperWalletAddress(ctx, nftWaitList.CasperWalletHash, users.WalletTypeCasper)
+		user, err := service.users.GetByCasperHash(ctx, nftWaitList.CasperWalletHash, users.WalletTypeCasper)
 		if err != nil {
 			if err = service.nfts.Delete(ctx, nft.CardID); err != nil {
 				return ChoreError.Wrap(err)
