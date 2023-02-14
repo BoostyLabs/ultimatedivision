@@ -47,7 +47,7 @@ func NewService(config Config, marketplace DB, users *users.Service, cards *card
 // CreateLot add lot in DB.
 func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) error {
 	// TODO: add transaction.
-	card, err := service.cards.Get(ctx, createLot.ItemID)
+	card, err := service.cards.Get(ctx, createLot.CardID)
 	if err == nil {
 		if card.UserID != createLot.UserID {
 			return ErrMarketplace.New("it is not the user's card")
@@ -57,7 +57,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 			return ErrMarketplace.New("the card is already on sale")
 		}
 
-		if err := service.cards.UpdateStatus(ctx, createLot.ItemID, cards.StatusSale); err != nil {
+		if err := service.cards.UpdateStatus(ctx, createLot.CardID, cards.StatusSale); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
@@ -82,7 +82,7 @@ func (service *Service) CreateLot(ctx context.Context, createLot CreateLot) erro
 	}
 
 	lot := Lot{
-		ID:         card.ID,
+		CardID:     card.ID,
 		Type:       createLot.Type,
 		UserID:     createLot.UserID,
 		Status:     StatusActive,
@@ -102,9 +102,9 @@ func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, erro
 	return lot, ErrMarketplace.Wrap(err)
 }
 
-// GetNFTByID returns nft by id from DB.
-func (service *Service) GetNFTByID(ctx context.Context, id uuid.UUID) (nfts.NFT, error) {
-	nft, err := service.nfts.GetNFTByID(ctx, id)
+// GetNFTByCardID returns nft by card id from DB.
+func (service *Service) GetNFTByCardID(ctx context.Context, id uuid.UUID) (nfts.NFT, error) {
+	nft, err := service.nfts.GetNFTByCardID(ctx, id)
 	return nft, ErrMarketplace.Wrap(err)
 }
 
@@ -141,7 +141,7 @@ func (service *Service) ListActiveLotsWithFilters(ctx context.Context, filters [
 	if cursor.Page <= 0 {
 		cursor.Page = service.config.Cursor.Page
 	}
-	lotsPage, err = service.marketplace.ListActiveLotsByItemID(ctx, cardIDs, cursor)
+	lotsPage, err = service.marketplace.ListActiveLotsByCardID(ctx, cardIDs, cursor)
 	return lotsPage, ErrMarketplace.Wrap(err)
 }
 
@@ -167,7 +167,7 @@ func (service *Service) ListActiveLotsByPlayerName(ctx context.Context, filter c
 	if cursor.Page <= 0 {
 		cursor.Page = service.config.Cursor.Page
 	}
-	lotsPage, err = service.marketplace.ListActiveLotsByItemID(ctx, cardIDs, cursor)
+	lotsPage, err = service.marketplace.ListActiveLotsByCardID(ctx, cardIDs, cursor)
 	return lotsPage, ErrMarketplace.Wrap(err)
 }
 

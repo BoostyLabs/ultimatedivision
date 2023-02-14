@@ -135,7 +135,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	}
 
 	getLot := struct {
-		ID           uuid.UUID          `json:"id"`
+		CardID       uuid.UUID          `json:"cardId"`
 		Type         marketplace.Type   `json:"type"`
 		Status       marketplace.Status `json:"status"`
 		StartPrice   big.Int            `json:"startPrice"`
@@ -146,7 +146,7 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		Period       marketplace.Period `json:"period"`
 		Card         cards.Card         `json:"card"`
 	}{
-		ID:           lot.ID,
+		CardID:       lot.Card.ID,
 		Type:         lot.Type,
 		Status:       lot.Status,
 		StartPrice:   lot.StartPrice,
@@ -181,7 +181,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if _, err = controller.marketplace.GetNFTByID(ctx, createLot.ItemID); err != nil {
+	if _, err = controller.marketplace.GetNFTByCardID(ctx, createLot.CardID); err != nil {
 		controller.log.Error("there is no such NFT", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 	}

@@ -100,7 +100,7 @@ func (controller *Divisions) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Delete is an endpoint that will delete a division by ID.
+// Delete is an endpoint that will delete a division by CardID.
 func (controller *Divisions) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	params := mux.Vars(r)

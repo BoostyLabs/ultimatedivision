@@ -117,9 +117,9 @@ func (service *Service) Get(ctx context.Context, tokenID int64, chain evmsignatu
 	return nft, ErrNFTs.Wrap(err)
 }
 
-// GetNFTByID returns nft by id from database.
-func (service *Service) GetNFTByID(ctx context.Context, id uuid.UUID) (NFT, error) {
-	nft, err := service.nfts.GetNFTByID(ctx, id)
+// GetNFTByCardID returns nft by card id from database.
+func (service *Service) GetNFTByCardID(ctx context.Context, cardID uuid.UUID) (NFT, error) {
+	nft, err := service.nfts.GetNFTByCardID(ctx, cardID)
 	return nft, ErrNFTs.Wrap(err)
 }
 

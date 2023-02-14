@@ -201,7 +201,7 @@ func TestNFTs(t *testing.T) {
 		})
 
 		t.Run("Get NFT by id", func(t *testing.T) {
-			nftGet, err := repositoryNFTs.GetNFTByID(ctx, nft1.CardID)
+			nftGet, err := repositoryNFTs.GetNFTByCardID(ctx, nft1.CardID)
 			require.NoError(t, err)
 
 			compareNFTsSlice(t, []nfts.NFT{nftGet}, []nfts.NFT{nft1})

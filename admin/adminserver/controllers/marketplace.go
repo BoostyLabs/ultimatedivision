@@ -245,7 +245,7 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		}
 
 		createLot := marketplace.CreateLot{
-			ItemID:     itemID,
+			CardID:     itemID,
 			UserID:     userID,
 			StartPrice: startPrice,
 			MaxPrice:   maxPrice,

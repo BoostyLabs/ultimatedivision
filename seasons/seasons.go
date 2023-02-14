@@ -80,7 +80,7 @@ type SeasonStatistics struct {
 
 // Reward entity describes values which send to user after season ends.
 type Reward struct {
-	ID                  uuid.UUID        `json:"ID"`
+	ID                  uuid.UUID        `json:"CardID"`
 	UserID              uuid.UUID        `json:"userId"`
 	SeasonID            int              `json:"seasonID"`
 	WalletAddress       common.Address   `json:"walletAddress"`

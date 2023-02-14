@@ -58,8 +58,8 @@ func (nftsDB *nftsDB) Get(ctx context.Context, tokenID int64, chain evmsignature
 	return nft, ErrNFTs.Wrap(err)
 }
 
-// GetNFTByID returns nft by id from database.
-func (nftsDB *nftsDB) GetNFTByID(ctx context.Context, id uuid.UUID) (nfts.NFT, error) {
+// GetNFTByCardID returns nft by id from database.
+func (nftsDB *nftsDB) GetNFTByCardID(ctx context.Context, id uuid.UUID) (nfts.NFT, error) {
 	query := `
 		SELECT 
 			card_id, token_id, chain, wallet_address 

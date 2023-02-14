@@ -55,7 +55,7 @@ func (msg *Message) Bytes() []byte {
 		fmt.Fprintf(&body, "Date: %v\r\n", msg.Date)
 	}
 	if msg.ID != "" {
-		fmt.Fprintf(&body, "Message-ID: <%v>\r\n", mime.QEncoding.Encode("utf-8", msg.ID))
+		fmt.Fprintf(&body, "Message-CardID: <%v>\r\n", mime.QEncoding.Encode("utf-8", msg.ID))
 	}
 
 	switch {
