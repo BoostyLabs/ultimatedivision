@@ -6,9 +6,9 @@ package database
 import (
 	"context"
 	"database/sql"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-
 	_ "github.com/lib/pq" // using postgres driver.
 	"github.com/zeebo/errs"
 
