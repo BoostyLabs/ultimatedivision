@@ -136,7 +136,7 @@ const (
 	ThreeFiveTwo Formation = 10
 )
 
-// IsValid check that formation CardID is valid.
+// IsValid check that formation ID is valid.
 func (f Formation) IsValid() bool {
 	switch f {
 	case FourFourTwo,
