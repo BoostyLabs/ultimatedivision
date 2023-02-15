@@ -24,6 +24,7 @@ import (
 	"ultimatedivision/internal/logger"
 	"ultimatedivision/internal/metrics"
 	"ultimatedivision/marketplace"
+	"ultimatedivision/marketplace/bids"
 	"ultimatedivision/pkg/auth"
 	"ultimatedivision/seasons"
 	"ultimatedivision/store"
@@ -71,7 +72,7 @@ type Server struct {
 
 // NewServer is a constructor for console web server.
 func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service,
-	marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
+	marketplace *marketplace.Service, bids *bids.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
 	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service, metric *metrics.Metric, currencyWaitList *currencywaitlist.Service) *Server {
 	server := &Server{
 		log:         log,
@@ -90,6 +91,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	clubsController := controllers.NewClubs(log, clubs)
 	lootBoxesController := controllers.NewLootBoxes(log, lootBoxes)
 	marketplaceController := controllers.NewMarketplace(log, marketplace)
+	bidsController := controllers.NewBids(log, bids)
 	queueController := controllers.NewQueue(log, queue)
 	seasonsController := controllers.NewSeasons(log, seasons)
 	waitListController := controllers.NewWaitList(log, waitList)
@@ -174,6 +176,11 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	marketplaceRouterWithAuth.HandleFunc("/{id}", marketplaceController.GetLotByID).Methods(http.MethodGet)
 	marketplaceRouterWithAuth.HandleFunc("", marketplaceController.CreateLot).Methods(http.MethodPost)
 	marketplaceRouterWithAuth.HandleFunc("/bet", marketplaceController.PlaceBetLot).Methods(http.MethodPost)
+
+	bidsRouter := apiRouter.PathPrefix("/bids").Subrouter()
+	bidsRouter.Use(server.withAuth)
+	bidsRouter.HandleFunc("", bidsController.Bet).Methods(http.MethodPost)
+	bidsRouter.HandleFunc("/{lotId}", bidsController.ListByLotID).Methods(http.MethodGet)
 
 	queueRouter := apiRouter.PathPrefix("/queue").Subrouter()
 	queueRouter.Use(server.withAuth)
