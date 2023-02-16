@@ -7,6 +7,8 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq" // using postgres driver.
 	"github.com/zeebo/errs"
 
@@ -17,6 +19,7 @@ import (
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
+	"ultimatedivision/console/connections"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/gameplay/queue"
@@ -66,6 +69,11 @@ func NewHub() *Hub {
 	return &Hub{
 		Queue: []queue.Client{},
 	}
+}
+
+// DB entity describes hub of websocket connections.
+type DB struct {
+	connections map[uuid.UUID]*websocket.Conn
 }
 
 // CreateSchema create schema for all tables and databases.
@@ -402,4 +410,8 @@ func (db *database) UDTs() udts.DB {
 // Store provides access to accounts db.
 func (db *database) Store() store.DB {
 	return &storeDB{conn: db.conn}
+}
+
+func (db *database) Connections() connections.DB {
+	return &connectionDB{db: &DB{make(map[uuid.UUID]*websocket.Conn)}}
 }

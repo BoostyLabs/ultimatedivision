@@ -47,7 +47,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 				// TODO: unhold old user's money.
 
 				winLot := WinLot{
-					ID:        lot.CardID,
+					CardID:    lot.CardID,
 					Type:      lot.Type,
 					UserID:    lot.UserID,
 					ShopperID: lot.ShopperID,

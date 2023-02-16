@@ -169,7 +169,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLots(ctx context.Context, cursor p
 }
 
 // ListActiveLotsByCardID returns active lots from the data base by card id.
-func (marketplaceDB *marketplaceDB) ListActiveLotsByCardID(ctx context.Context, itemIds []uuid.UUID, cursor pagination.Cursor) (marketplace.Page, error) {
+func (marketplaceDB *marketplaceDB) ListActiveLotsByCardID(ctx context.Context, cardIds []uuid.UUID, cursor pagination.Cursor) (marketplace.Page, error) {
 	var (
 		startPrice   []byte
 		maxPrice     []byte
@@ -197,7 +197,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByCardID(ctx context.Context, 
 		OFFSET 
 			$4`
 
-	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, pq.Array(itemIds), cursor.Limit, offset)
+	rows, err := marketplaceDB.conn.QueryContext(ctx, query, marketplace.StatusActive, pq.Array(cardIds), cursor.Limit, offset)
 	if err != nil {
 		return lotsListPage, ErrMarketplace.Wrap(err)
 	}
@@ -227,7 +227,7 @@ func (marketplaceDB *marketplaceDB) ListActiveLotsByCardID(ctx context.Context, 
 		lots = append(lots, lot)
 	}
 
-	totalActiveCount, err := marketplaceDB.totalActiveCountWithFilters(ctx, itemIds)
+	totalActiveCount, err := marketplaceDB.totalActiveCountWithFilters(ctx, cardIds)
 	if err != nil {
 		return lotsListPage, ErrCard.Wrap(err)
 	}
