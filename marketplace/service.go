@@ -215,7 +215,7 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 		}
 
 		winLot := WinLot{
-			ID:        betLot.CardID,
+			CardID:    betLot.CardID,
 			Type:      TypeCard,
 			UserID:    lot.UserID,
 			ShopperID: betLot.UserID,
@@ -243,19 +243,19 @@ func (service *Service) PlaceBetLot(ctx context.Context, betLot BetLot) error {
 
 // WinLot changes owner of the item and transfers money.
 func (service *Service) WinLot(ctx context.Context, winLot WinLot) error {
-	if err := service.UpdateStatusLot(ctx, winLot.ID, winLot.Status); err != nil {
+	if err := service.UpdateStatusLot(ctx, winLot.CardID, winLot.Status); err != nil {
 		return ErrMarketplace.Wrap(err)
 	}
 
 	// TODO: transfer money to the old cardholder from new user. If userID == shopperID not transfer mb.
 
 	if winLot.Type == TypeCard {
-		if err := service.cards.UpdateStatus(ctx, winLot.ID, cards.StatusActive); err != nil {
+		if err := service.cards.UpdateStatus(ctx, winLot.CardID, cards.StatusActive); err != nil {
 			return ErrMarketplace.Wrap(err)
 		}
 
 		if winLot.UserID != winLot.ShopperID {
-			if err := service.cards.UpdateUserID(ctx, winLot.ID, winLot.ShopperID); err != nil {
+			if err := service.cards.UpdateUserID(ctx, winLot.CardID, winLot.ShopperID); err != nil {
 				return ErrMarketplace.Wrap(err)
 			}
 		}

@@ -30,7 +30,7 @@ type DB interface {
 	// ListActiveLots returns active lots from the data base.
 	ListActiveLots(ctx context.Context, cursor pagination.Cursor) (Page, error)
 	// ListActiveLotsByCardID returns active lots from the data base by card id.
-	ListActiveLotsByCardID(ctx context.Context, itemIds []uuid.UUID, cursor pagination.Cursor) (Page, error)
+	ListActiveLotsByCardID(ctx context.Context, cardIds []uuid.UUID, cursor pagination.Cursor) (Page, error)
 	// ListExpiredLot returns lots where end time lower than or equal to time now UTC from the data base.
 	ListExpiredLot(ctx context.Context) ([]Lot, error)
 	// UpdateShopperIDLot updates shopper id of lot in the database.
@@ -45,7 +45,7 @@ type DB interface {
 
 // Lot describes lot entity.
 type Lot struct {
-	CardID       uuid.UUID  `json:"cardID"`
+	CardID       uuid.UUID  `json:"cardId"`
 	Type         Type       `json:"type"`
 	UserID       uuid.UUID  `json:"userId"`
 	ShopperID    uuid.UUID  `json:"shopperId"`
@@ -116,7 +116,7 @@ type BetLot struct {
 
 // WinLot entity that contains the values required to win the lot.
 type WinLot struct {
-	ID        uuid.UUID `json:"id"`
+	CardID    uuid.UUID `json:"cardId"`
 	Type      Type      `json:"type"`
 	UserID    uuid.UUID `json:"userId"`
 	ShopperID uuid.UUID `json:"shopperID"`
