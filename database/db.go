@@ -6,6 +6,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"ultimatedivision/console/connections"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -403,4 +404,8 @@ func (db *database) UDTs() udts.DB {
 // Store provides access to accounts db.
 func (db *database) Store() store.DB {
 	return &storeDB{conn: db.conn}
+}
+
+func (db *database) Connections() connections.DB {
+	return &connectionDB{db: &DB{make(map[uuid.UUID]*websocket.Conn)}}
 }
