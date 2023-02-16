@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"ultimatedivision/console/connections"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -72,7 +73,8 @@ type Server struct {
 // NewServer is a constructor for console web server.
 func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service,
 	marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
-	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service, metric *metrics.Metric, currencyWaitList *currencywaitlist.Service) *Server {
+	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service, metric *metrics.Metric,
+	currencyWaitList *currencywaitlist.Service, connections *connections.Service) *Server {
 	server := &Server{
 		log:         log,
 		config:      config,
@@ -95,6 +97,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	waitListController := controllers.NewWaitList(log, waitList)
 	storeController := controllers.NewStore(log, store)
 	contractCasperController := controllers.NewContractCasper(log, currencyWaitList)
+	connectionController := controllers.NewConnections(log, connections)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authController.RegisterTemplateHandler).Methods(http.MethodGet)
@@ -122,6 +125,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	casperRouter.HandleFunc("/login", authController.CasperLogin).Methods(http.MethodPost)
 
 	apiRouter.HandleFunc("/casper/claim", contractCasperController.Claim).Methods(http.MethodPost)
+
+	apiRouter.Handle("/connection", server.withAuth(http.HandlerFunc(connectionController.Connect))).Methods(http.MethodGet)
 
 	authRouter.HandleFunc("/logout", authController.Logout).Methods(http.MethodPost)
 	authRouter.HandleFunc("/register", authController.Register).Methods(http.MethodPost)
