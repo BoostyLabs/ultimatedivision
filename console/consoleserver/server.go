@@ -10,7 +10,6 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
-	"ultimatedivision/console/connections"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -20,6 +19,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
+	"ultimatedivision/console/connections"
 	"ultimatedivision/console/consoleserver/controllers"
 	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/internal/logger"

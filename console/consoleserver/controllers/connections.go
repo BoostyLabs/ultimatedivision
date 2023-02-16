@@ -34,12 +34,12 @@ type Connections struct {
 
 // NewConnections is a constructor for connections controller.
 func NewConnections(log logger.Logger, connection *connections.Service) *Connections {
-	notificationsController := &Connections{
+	connectionsController := &Connections{
 		log:        log,
 		connection: connection,
 	}
 
-	return notificationsController
+	return connectionsController
 }
 
 // Connect is an endpoint that creates websocket connection.
