@@ -8,7 +8,6 @@ import (
 	"errors"
 	"net"
 	"net/mail"
-	"ultimatedivision/console/connections"
 
 	"github.com/zeebo/errs"
 	"golang.org/x/sync/errgroup"
@@ -21,6 +20,7 @@ import (
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
+	"ultimatedivision/console/connections"
 	"ultimatedivision/console/consoleserver"
 	"ultimatedivision/console/emails"
 	"ultimatedivision/divisions"

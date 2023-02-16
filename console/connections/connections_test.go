@@ -7,15 +7,15 @@ import (
 	"context"
 	"testing"
 	"time"
-	"ultimatedivision"
-	"ultimatedivision/database/dbtesting"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"ultimatedivision"
 	"ultimatedivision/console/connections"
+	"ultimatedivision/database/dbtesting"
 	"ultimatedivision/users"
 )
 

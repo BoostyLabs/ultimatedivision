@@ -6,7 +6,6 @@ package database
 import (
 	"context"
 	"database/sql"
-	"ultimatedivision/console/connections"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -20,6 +19,7 @@ import (
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/cards/waitlist"
 	"ultimatedivision/clubs"
+	"ultimatedivision/console/connections"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/gameplay/queue"
