@@ -299,12 +299,16 @@ type Peer struct {
 		Endpoint *adminserver.Server
 	}
 
+	// Connections web server with web UI.
+	Connections struct {
+		Service *connections.Service
+	}
+
 	// Console web server with web UI.
 	Console struct {
 		Listener     net.Listener
 		Endpoint     *consoleserver.Server
 		EmailService *emails.Service
-		Connections  *connections.Service
 	}
 }
 
@@ -356,7 +360,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	}
 
 	{ // connections setup.
-		peer.Console.Connections = connections.NewService(peer.Database.Connections())
+		peer.Connections.Service = connections.NewService(peer.Database.Connections())
 	}
 
 	{ // admins setup.
@@ -588,6 +592,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Store.Service,
 			peer.Metric.Service,
 			peer.CurrencyWaitList.Service,
+			peer.Connections.Service,
 		)
 	}
 
