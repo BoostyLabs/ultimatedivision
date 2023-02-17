@@ -16,7 +16,6 @@ import { QueueClient } from './api/queue';
 /** initial App setup */
 export function App() {
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
-
     const [queueClient, setQueueClient] = useState<QueueClient | null>(null);
 
     /** Indicates if user is logined in app. */
