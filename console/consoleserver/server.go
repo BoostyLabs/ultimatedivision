@@ -73,7 +73,7 @@ type Server struct {
 
 // NewServer is a constructor for console web server.
 func NewServer(config Config, log logger.Logger, listener net.Listener, cards *cards.Service, lootBoxes *lootboxes.Service,
-	marketplace *marketplace.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
+	marketplace *marketplace.Service, bids *bids.Service, clubs *clubs.Service, userAuth *userauth.Service, users *users.Service,
 	queue *queue.Service, seasons *seasons.Service, waitList *waitlist.Service, store *store.Service, metric *metrics.Metric,
 	currencyWaitList *currencywaitlist.Service, connections *connections.Service) *Server {
 	server := &Server{
