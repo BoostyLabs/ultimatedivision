@@ -8,14 +8,15 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"ultimatedivision/internal/logger"
-	"ultimatedivision/marketplace/bids"
-	"ultimatedivision/pkg/auth"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/zeebo/errs"
+
+	"ultimatedivision/internal/logger"
+	"ultimatedivision/marketplace/bids"
+	"ultimatedivision/pkg/auth"
 )
 
 var (
