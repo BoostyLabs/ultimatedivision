@@ -13,7 +13,7 @@ import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
 import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
-import { getCurrentQueueClient, onOpenConnectionSendAction, queueSendAction } from '@/queue/service';
+import { getCurrentQueueClient, onOpenConnectionSendAction, queueSendAction, setMatchStartEnd } from '@/queue/service';
 import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
@@ -88,6 +88,8 @@ const MatchFinder: React.FC = () => {
 
     /** Exposes start searching match logic. */
     const startSearchMatch = () => {
+        setMatchStartEnd()
+        
         onOpenConnectionSendAction('startSearch', squad.id);
 
         /** Updates current queue client. */

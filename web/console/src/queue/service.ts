@@ -44,6 +44,11 @@ export class QueueService {
     public openConnection() {
         this.queueClient.openConnection();
     };
+
+    /** Opens ws connection. */
+    public matchStartandEnd() {
+        this.queueClient.matchStartandEnd();
+    };
 };
 
 const queueService = new QueueService();
@@ -63,6 +68,11 @@ export const onOpenConnectionSendAction = (action: string, squadId: string) => {
 /** Sends action that indicates that the client allows to add address of wallet. */
 export const queueActionAllowAddress = (wallet: string, nonce: number) => {
     queueService.actionAllowAddress(wallet, nonce);
+};
+
+/** Sends action that indicates that the client allows to add address of wallet. */
+export const setMatchStartEnd = () => {
+    queueService.matchStartandEnd();
 };
 
 /** Sends action that indicates that the client allows to add address of wallet. */
