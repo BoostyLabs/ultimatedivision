@@ -7,7 +7,7 @@ import { APIClient } from '.';
  * QueueClient is a ws implementation of users API.
  * Exposes queue-related functionality.
  */
-export class WSConnectionClient extends APIClient {
+export class WebSocketClient extends APIClient {
     /** The WebSocket provides the API for creating and managing
     * a websocket connection to a server and for sending and
     * receiving data on the connection. */

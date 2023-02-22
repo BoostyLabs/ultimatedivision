@@ -1,15 +1,15 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { WSConnectionClient } from '../api/connection';
+import { WebSocketClient } from '../api/websockets';
 
 /** Exposes all queue related logic. */
-export class WSConnectionService {
-    public wsConnectionClient: WSConnectionClient = new WSConnectionClient();
+export class WebSocketService {
+    public wsConnectionClient: WebSocketClient = new WebSocketClient();
 
     /** Changes current conection client. */
     public changeWSConnectionClient() {
-        this.wsConnectionClient = new WSConnectionClient();
+        this.wsConnectionClient = new WebSocketClient();
     };
 
     /** Sends action that indicates that the client allows to add address of wallet. */
@@ -51,42 +51,42 @@ export class WSConnectionService {
     };
 };
 
-const queueService = new WSConnectionService();
+const webSocketService = new WebSocketService();
 
 /** Sends action to confirm or reject match. */
-export const queueSendAction = (action: string, squadId: string) => {
-    queueService.sendAction(action, squadId);
+export const sendAction = (action: string, squadId: string) => {
+    webSocketService.sendAction(action, squadId);
 };
 
 /** Changes current queue client, and after sends action,
  * i.e 'startSearch', 'finishSearch', on open webSocket connection. */
 export const onOpenConnectionSendAction = (action: string, squadId: string) => {
-    queueService.changeWSConnectionClient();
-    queueService.onOpenConnectionSendAction(action, squadId);
+    webSocketService.changeWSConnectionClient();
+    webSocketService.onOpenConnectionSendAction(action, squadId);
 };
 
 /** Sends action that indicates that the client allows to add address of wallet. */
-export const queueActionAllowAddress = (wallet: string, nonce: number) => {
-    queueService.actionAllowAddress(wallet, nonce);
+export const actionAllowAddress = (wallet: string, nonce: number) => {
+    webSocketService.actionAllowAddress(wallet, nonce);
 };
 
 /** Sets match queue */
 export const setMatchQueue = () => {
-    queueService.matchQueue();
+    webSocketService.matchQueue();
 };
 
 /** Sends action that indicates that the client allows to add address of wallet. */
-export const queueCasperActionAllowAddress = (wallet: string, walletType: string, squadId: string) => {
-    queueService.casperActionAllowAddress(wallet, walletType, squadId);
+export const casperActionAllowAddress = (wallet: string, walletType: string, squadId: string) => {
+    webSocketService.casperActionAllowAddress(wallet, walletType, squadId);
 };
 
 /** Sends action that indicates that the client allows to add address of wallet. */
 export const actionForbidAddress = () => {
-    queueService.actionForbidAddress();
+    webSocketService.actionForbidAddress();
 };
 
 /** Returns current queue client. */
-export const getCurrentQueueClient = () => queueService.wsConnectionClient;
+export const getCurrentWebSocketClient = () => webSocketService.wsConnectionClient;
 
 /** Opens ws connection. */
-export const onOpenConnection = () => queueService.openConnection();
+export const onOpenConnection = () => webSocketService.openConnection();
