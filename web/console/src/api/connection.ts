@@ -1,13 +1,13 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { APIClient } from ".";
+import { APIClient } from '.';
 
 /**
  * QueueClient is a ws implementation of users API.
  * Exposes queue-related functionality.
  */
-export class QueueClient extends APIClient {
+export class WSConnectionClient extends APIClient {
     /** The WebSocket provides the API for creating and managing
     * a websocket connection to a server and for sending and
     * receiving data on the connection. */
@@ -16,8 +16,8 @@ export class QueueClient extends APIClient {
 
     public ROOT_PATH: string = '/api/v0/queue';
 
-    /** implements creating lot (selling card) */
-    public async matchStartandEnd(): Promise<void> {
+    /** Sets match queue */
+    public async matchQueue(): Promise<void> {
         const path = `${this.ROOT_PATH}`;
         const response = await this.http.get(path);
 

@@ -8,12 +8,12 @@ import { useHistory } from 'react-router-dom';
 import { AutoCloseTimer } from './AutoCloseTimer';
 import { Timer } from './Timer';
 
-import { QueueClient } from '@/api/queue';
+import { WSConnectionClient } from '@/api/connection';
 import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
 import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
-import { getCurrentQueueClient, onOpenConnectionSendAction, queueSendAction, setMatchStartEnd } from '@/queue/service';
+import { getCurrentQueueClient, onOpenConnectionSendAction, queueSendAction, setMatchQueue } from '@/wsConnection/service';
 import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
@@ -26,7 +26,7 @@ const MatchFinder: React.FC = () => {
         (state: RootState) => state.clubsReducer
     );
 
-    const [queueClient, setQueueClient] = useState<QueueClient | null>(null);
+    const [queueClient, setQueueClient] = useState<WSConnectionClient | null>(null);
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -77,6 +77,8 @@ const MatchFinder: React.FC = () => {
 
     /** Canceles searching game and closes MatchFinder component. */
     const canselSearchingGame = () => {
+        setMatchQueue();
+
         onOpenConnectionSendAction('finishSearch', squad.id);
 
         /** Updates current queue client. */
@@ -88,8 +90,8 @@ const MatchFinder: React.FC = () => {
 
     /** Exposes start searching match logic. */
     const startSearchMatch = () => {
-        setMatchStartEnd()
-        
+        setMatchQueue();
+
         onOpenConnectionSendAction('startSearch', squad.id);
 
         /** Updates current queue client. */

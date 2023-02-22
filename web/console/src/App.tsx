@@ -10,13 +10,13 @@ import Preloader from '@components/common/Preloader';
 
 import { Routes } from '@/app/routes';
 import { useLocalStorage } from './app/hooks/useLocalStorage';
-import { QueueService, getCurrentQueueClient, onOpenConnection, onOpenConnectionSendAction } from './queue/service';
-import { QueueClient } from './api/queue';
+import { getCurrentQueueClient, onOpenConnection } from './wsConnection/service';
+import { WSConnectionClient } from './api/connection';
 
 /** initial App setup */
 export function App() {
     const [setLocalStorageItem, getLocalStorageItem] = useLocalStorage();
-    const [queueClient, setQueueClient] = useState<QueueClient | null>(null);
+    const [queueClient, setQueueClient] = useState<WSConnectionClient | null>(null);
 
     /** Indicates if user is logined in app. */
     // @ts-ignore .

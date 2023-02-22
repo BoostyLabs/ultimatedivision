@@ -3,15 +3,13 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-import { CLPublicKey } from 'casper-js-sdk';
 import MetaMaskOnboarding from '@metamask/onboarding';
 
-import { QueueClient } from '@/api/queue';
+import { WSConnectionClient } from '@/api/connection';
 import { UDT_ABI } from '@/ethers';
 import { RootState } from '@/app/store';
 import { ServicePlugin } from '@/app/plugins/service';
-import { getCurrentQueueClient, queueActionAllowAddress, queueCasperActionAllowAddress } from '@/queue/service';
+import { getCurrentQueueClient, queueActionAllowAddress, queueCasperActionAllowAddress } from '@/wsConnection/service';
 import { setCurrentUser } from '@/app/store/actions/users';
 import WalletService from '@/wallet/service';
 import { walletTypes } from '@/wallet';
@@ -24,7 +22,7 @@ import './index.scss';
 export const MatchScore: React.FC = () => {
     const dispatch = useDispatch();
 
-    const [queueClient, setQueueClient] = useState<QueueClient | null>(null);
+    const [queueClient, setQueueClient] = useState<WSConnectionClient | null>(null);
 
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
 
