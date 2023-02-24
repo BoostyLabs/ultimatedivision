@@ -36,10 +36,12 @@ export class WebSocketService {
     public onOpenConnectionSendAction(action: string, squadId: string): void {
         this.wsConnectionClient.onOpenConnectionSendAction(action, squadId);
     };
+
     /** Closes ws connection. */
     public close() {
         this.wsConnectionClient.close();
     };
+
     /** Opens ws connection. */
     public openConnection() {
         this.wsConnectionClient.openConnection();
