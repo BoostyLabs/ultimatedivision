@@ -13,7 +13,7 @@ import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
 import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
-import { getCurrentWebSocketClient, onOpenConnectionSendAction, sendAction, setMatchQueue } from '@/webSockets/service';
+import { getCurrentWebSocketClient, sendAction, setMatchQueue } from '@/webSockets/service';
 import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
@@ -79,7 +79,7 @@ const MatchFinder: React.FC = () => {
     const canselSearchingGame = () => {
         setMatchQueue();
 
-        onOpenConnectionSendAction('finishSearch', squad.id);
+        sendAction('finishSearch', squad.id);
 
         /** Updates current queue client. */
         const updatedClient = getCurrentWebSocketClient();
@@ -92,7 +92,7 @@ const MatchFinder: React.FC = () => {
     const startSearchMatch = () => {
         setMatchQueue();
 
-        onOpenConnectionSendAction('startSearch', squad.id);
+        sendAction('startSearch', squad.id);
 
         /** Updates current websocket client. */
         const newclient = getCurrentWebSocketClient();
