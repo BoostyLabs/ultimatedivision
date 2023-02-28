@@ -47,7 +47,7 @@ type (
 		Transform map[string]map[string][]Map `json:"transform"`
 	}
 
-	// Map describes.
+	// Map describes struct with keys and values.
 	Map struct {
 		Key   string `json:"key"`
 		Value string `json:"value"`

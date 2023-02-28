@@ -100,7 +100,7 @@ const (
 	WriteCLValueKey string = "WriteCLValue"
 	// BytesKey defines that WriteCLValue key is bytes. This key stores data of the transforming event.
 	BytesKey string = "bytes"
-	// Parsed defines that WriteCLValue key is bytes. This key stores data of the token id wallet address.
+	// Parsed defines that parsed key is bytes. This key stores data of the token id and wallet address.
 	Parsed string = "parsed"
 )
 
