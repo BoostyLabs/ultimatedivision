@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { APIClient } from '.';
+import { APIClient } from '@/api';
 
 /**
  * QueueClient is a ws implementation of users API.
