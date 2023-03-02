@@ -130,7 +130,7 @@ type NFTCreateCasperContract struct {
 
 // MintData describes the meaning of the Mint data from node.
 type MintData struct {
-	TokenID       int64  `json:"tokenID"`
+	TokenID       int64  `json:"tokenId"`
 	WalletAddress string `json:"walletAddress"`
 }
 
