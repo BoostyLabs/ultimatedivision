@@ -16,8 +16,8 @@ import (
 )
 
 var (
-	// ErrMatchmaking is an internal error type for connections controller.
-	ErrMatchmaking = errs.Class("connections controller error")
+	// ErrMatchmaking is an internal error type for matchmaking controller.
+	ErrMatchmaking = errs.Class("matchmaking controller error")
 )
 
 // Matchmaking is a mvc controller that handles all matchmaking related views.
