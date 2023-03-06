@@ -239,12 +239,6 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             amount     DECIMAL                                                             NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE                                            NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS renewal_days (
-      	    lot_id         BYTEA                                              NOT NULL,
-      	    number         DECIMAL
-		    lot_amount
-		    is_done
-      );
         CREATE TABLE IF NOT EXISTS seasons(
             id          SERIAL PRIMARY KEY       NOT NULL,
             division_id BYTEA                    NOT NULL,
