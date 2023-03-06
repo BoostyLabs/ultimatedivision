@@ -145,6 +145,10 @@ type Config struct {
 		waitlist.Config
 	} `json:"waitList"`
 
+	Bids struct {
+		bids.Config
+	} `json:"bids"`
+
 	LootBoxes struct {
 		Config lootboxes.Config `json:"lootBoxes"`
 	} `json:"lootBoxes"`
@@ -242,7 +246,8 @@ type Peer struct {
 
 	// exposes bids related logic.
 	Bids struct {
-		Service *bids.Service
+		Service   *bids.Service
+		BidsChore *bids.Chore
 	}
 
 	// exposes matches related logic.
@@ -400,6 +405,27 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Users.Service,
 			peer.Cards.Service,
 		)
+	}
+
+	{ // bids setup.
+		peer.Bids.Service = bids.NewService(
+			peer.Database.Bids(),
+			peer.Marketplace.Service,
+			peer.Cards.Service,
+			peer.Users.Service,
+		)
+
+		peer.Bids.BidsChore = bids.NewChore(
+			logger,
+			config.Bids.Config,
+			peer.Bids.Service,
+			peer.Marketplace.Service,
+			peer.Users.Service,
+			peer.Cards.Service,
+			peer.NFTs.Service,
+			peer.WaitList.Service,
+		)
+
 	}
 
 	{ // waitlist setup.
@@ -619,6 +645,10 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
+	group.Go(func() error {
+		return ignoreCancel(peer.Bids.BidsChore.Run(ctx))
+	})
+
 	// TODO: uncomment when the Ethereum node is running
 	// group.Go(func() error {
 	//	return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))
