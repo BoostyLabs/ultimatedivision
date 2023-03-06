@@ -97,6 +97,11 @@ func (chore *Chore) Run(ctx context.Context) error {
 				return nil
 			}
 
+			if err = chore.cards.UpdateUserID(ctx, currentBid.LotID, user.ID); err != nil {
+				chore.log.Error(fmt.Sprintf("could not get update user id of the card lot id equal %v in db", currentBid.LotID), ChoreError.Wrap(err))
+				return nil
+			}
+
 			nft, err := chore.nfts.GetNFTByCardID(ctx, card.ID)
 			if err != nil {
 				chore.log.Error(fmt.Sprintf("could not get nft by card id equal %v from db", card.ID), ChoreError.Wrap(err))
@@ -109,8 +114,7 @@ func (chore *Chore) Run(ctx context.Context) error {
 				nft.WalletAddress = user.Wallet
 			}
 
-			err = chore.nfts.Update(ctx, nft)
-			if err != nil {
+			if err = chore.nfts.Update(ctx, nft); err != nil {
 				chore.log.Error("could not update nft by nft data from db", ChoreError.Wrap(err))
 				return nil
 			}
