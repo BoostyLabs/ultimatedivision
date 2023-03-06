@@ -407,27 +407,6 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
-	{ // bids setup.
-		peer.Bids.Service = bids.NewService(
-			peer.Database.Bids(),
-			peer.Marketplace.Service,
-			peer.Cards.Service,
-			peer.Users.Service,
-		)
-
-		peer.Bids.BidsChore = bids.NewChore(
-			logger,
-			config.Bids.Config,
-			peer.Bids.Service,
-			peer.Marketplace.Service,
-			peer.Users.Service,
-			peer.Cards.Service,
-			peer.NFTs.Service,
-			peer.WaitList.Service,
-		)
-
-	}
-
 	{ // waitlist setup.
 		peer.WaitList.Service = waitlist.NewService(
 			config.WaitList.Config,
@@ -562,6 +541,27 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Cards.Service,
 			peer.Avatars.Service,
 		)
+	}
+
+	{ // bids setup.
+		peer.Bids.Service = bids.NewService(
+			peer.Database.Bids(),
+			peer.Marketplace.Service,
+			peer.Cards.Service,
+			peer.Users.Service,
+		)
+
+		peer.Bids.BidsChore = bids.NewChore(
+			logger,
+			config.Bids.Config,
+			peer.Bids.Service,
+			peer.Marketplace.Service,
+			peer.Users.Service,
+			peer.Cards.Service,
+			peer.NFTs.Service,
+			peer.WaitList.Service,
+		)
+
 	}
 
 	{ // admin setup.
