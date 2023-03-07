@@ -87,8 +87,6 @@ func (service *Service) Create(userID uuid.UUID) error {
 		fmt.Println(match)
 	}
 
-	fmt.Println(service.players.List())
-
 	return nil
 }
 
@@ -139,8 +137,6 @@ func (service *Service) MatchPlayer(player *Player) (*Match, error) {
 		Player1: player,
 		Player2: other,
 	}
-
-	fmt.Println("match ->>>>>", match)
 
 	resp := queue.Response{
 		Status:  http.StatusOK,
