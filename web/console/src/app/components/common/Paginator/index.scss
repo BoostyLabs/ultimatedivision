@@ -36,13 +36,27 @@
     }
 
     &__next,
+    &__previous {
+        svg path {
+            stroke: var(--highlight-color);
+        }
+    }
+
+    &__previous-not-active,
+    &__next-not-active {
+        svg path {
+            stroke: #C3DCBB;
+        }
+    }
+
+    &__next,
     &__next-not-active {
         margin-left: auto;
     }
 
     &__previous,
     &__next {
-        color: #f5ff63;
+        color: var(--highlight-color);
         cursor: pointer;
     }
 
@@ -76,8 +90,8 @@
         }
 
         &__item-active {
-            border: 1px solid #f5ff63;
-            color: #f5ff63;
+            border: 1px solid var(--highlight-color);
+            color: var(--highlight-color);
             border-radius: 50%;
         }
 
