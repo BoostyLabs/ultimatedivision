@@ -13,7 +13,7 @@ import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
 import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
-import { getCurrentWebSocketClient, sendAction, setMatchQueue } from '@/webSockets/service';
+import { getCurrentWebSocketClient, sendAction, setMatchQueue,onOpenConnectionSendAction} from '@/webSockets/service';
 import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
@@ -38,9 +38,9 @@ const MatchFinder: React.FC = () => {
     const [isMatchConfirmed, setIsMatchConfirmed] = useState<boolean>(false);
 
     /** CANCEL_GAME_DELAY_MIN is min time delay for auto cancel game. */
-    const CANCEL_GAME_DELAY_MIN: number = 29000;
+    const CANCEL_GAME_DELAY_MIN: number = 1000;
     /** CANCEL_GAME_DELAY_MAX is max time delay for auto cancel game. */
-    const CANCEL_GAME_DELAY_MAX: number = 31000;
+    const CANCEL_GAME_DELAY_MAX: number = 2000;
 
     // TODO: it will be deleted after ./gameplage/queue/chore.go solution.
     /** Returns random time delay from range for auto cancel game. */
@@ -78,8 +78,7 @@ const MatchFinder: React.FC = () => {
     /** Canceles searching game and closes MatchFinder component. */
     const canselSearchingGame = () => {
         setMatchQueue();
-
-        sendAction('finishSearch', squad.id);
+        onOpenConnectionSendAction('finishSearch', squad.id);
 
         /** Updates current queue client. */
         const updatedClient = getCurrentWebSocketClient();
@@ -92,7 +91,7 @@ const MatchFinder: React.FC = () => {
     const startSearchMatch = () => {
         setMatchQueue();
 
-        sendAction('startSearch', squad.id);
+        onOpenConnectionSendAction('startSearch', squad.id);
 
         /** Updates current websocket client. */
         const newclient = getCurrentWebSocketClient();
