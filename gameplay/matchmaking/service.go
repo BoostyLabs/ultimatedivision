@@ -115,9 +115,8 @@ func (service *Service) MatchPlayer(player *Player) (*Match, error) {
 	var other *Player
 
 	type request struct {
-		Action       queue.Action `json:"action"`
-		SquadID      uuid.UUID    `json:"squadId"`
-		playerNumber int
+		Action  queue.Action `json:"action"`
+		SquadID uuid.UUID    `json:"squadId"`
 	}
 
 	var reqPlayer1 request
@@ -182,9 +181,8 @@ func (service *Service) MatchPlayer(player *Player) (*Match, error) {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
 			return nil, nil
-		} else {
-			return nil, ErrMatchmaking.Wrap(err)
 		}
+		return nil, ErrMatchmaking.Wrap(err)
 	}
 
 	if err := match.Player2.Conn.ReadJSON(&reqPlayer2); err != nil {
@@ -202,9 +200,8 @@ func (service *Service) MatchPlayer(player *Player) (*Match, error) {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
 			return nil, nil
-		} else {
-			return nil, ErrMatchmaking.Wrap(err)
 		}
+		return nil, ErrMatchmaking.Wrap(err)
 	}
 
 	fmt.Println("Players ------>>>>", service.players.List())
