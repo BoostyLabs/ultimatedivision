@@ -38,9 +38,9 @@ const MatchFinder: React.FC = () => {
     const [isMatchConfirmed, setIsMatchConfirmed] = useState<boolean>(false);
 
     /** CANCEL_GAME_DELAY_MIN is min time delay for auto cancel game. */
-    const CANCEL_GAME_DELAY_MIN: number = 1000;
+    const CANCEL_GAME_DELAY_MIN: number = 29000;
     /** CANCEL_GAME_DELAY_MAX is max time delay for auto cancel game. */
-    const CANCEL_GAME_DELAY_MAX: number = 2000;
+    const CANCEL_GAME_DELAY_MAX: number = 31000;
 
     // TODO: it will be deleted after ./gameplage/queue/chore.go solution.
     /** Returns random time delay from range for auto cancel game. */
