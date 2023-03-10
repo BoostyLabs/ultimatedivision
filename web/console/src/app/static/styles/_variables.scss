@@ -32,13 +32,12 @@ $matchFinderSecondLinearGradientColor: #3ccf56;
 
 /* filter, active elements */
 $defaultHighlightColor: #f5ff63;
-$marketplaceHighlightColor: #CBFB00;
-
+$marketplaceHighlightColor: #cbfb00;
 
 :root {
     --highlight-color: #f5ff63;
     --text-color: black;
-    --filter-text-color: #26373F;
+    --filter-text-color: #26373f;
     --input-text-color: rgba(38, 55, 63, 0.52);
     --filter-field-mobile-bg: #9fc2fb;
     --use-filter-color: #131415;
@@ -46,7 +45,7 @@ $marketplaceHighlightColor: #CBFB00;
 }
 
 .page__marketplace {
-    --highlight-color: #CBFB00;
+    --highlight-color: #cbfb00;
     --text-color: white;
     --filter-text-color: white;
     --input-text-color: white;

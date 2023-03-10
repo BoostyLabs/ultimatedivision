@@ -32,12 +32,13 @@
         transition: transform 0.5s;
 
         svg path {
-            stroke: var(--use-filter-color)
+            stroke: var(--use-filter-color);
         }
 
         &__visible {
+
             svg path {
-                stroke: var(--highlight-color)
+                stroke: var(--highlight-color);
             }
         }
     }
@@ -111,15 +112,15 @@
             width: 160px;
             height: 30px;
 
-            & input:checked+.filter-item__dropdown-active__slider {
+            & input:checked + .filter-item__dropdown-active__slider {
                 background-color: var(--highlight-color);
             }
 
-            & input:focus+.filter-item__dropdown-active__slider {
+            & input:focus + .filter-item__dropdown-active__slider {
                 background-color: var(--highlight-color);
             }
 
-            & input:checked+.filter-item__dropdown-active__slider:before {
+            & input:checked + .filter-item__dropdown-active__slider:before {
                 -webkit-transform: translateX(15.5px);
                 -ms-transform: translateX(15.5px);
                 transform: translateX(15.5px);
@@ -161,7 +162,7 @@
 
         & #checkbox-unlocked {
 
-            &+label:nth-child(4) {
+            & + label:nth-child(4) {
                 border-bottom: unset;
             }
         }
