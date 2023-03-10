@@ -149,6 +149,10 @@ type Config struct {
 		waitlist.Config
 	} `json:"waitList"`
 
+	Bids struct {
+		bids.Config
+	} `json:"bids"`
+
 	LootBoxes struct {
 		Config lootboxes.Config `json:"lootBoxes"`
 	} `json:"lootBoxes"`
@@ -246,7 +250,8 @@ type Peer struct {
 
 	// exposes bids related logic.
 	Bids struct {
-		Service *bids.Service
+		Service   *bids.Service
+		BidsChore *bids.Chore
 	}
 
 	// exposes matches related logic.
@@ -373,7 +378,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	}
 
 	{ // matchmaking setup.
-		peer.Matchmaking.Service = matchmaking.NewService(peer.Database.Players())
+		peer.Matchmaking.Service = matchmaking.NewService(peer.Database.Players(), peer.Connections.Service)
 	}
 
 	{ // admins setup.
@@ -551,6 +556,27 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // bids setup.
+		peer.Bids.Service = bids.NewService(
+			peer.Database.Bids(),
+			peer.Marketplace.Service,
+			peer.Cards.Service,
+			peer.Users.Service,
+		)
+
+		peer.Bids.BidsChore = bids.NewChore(
+			logger,
+			config.Bids.Config,
+			peer.Bids.Service,
+			peer.Marketplace.Service,
+			peer.Users.Service,
+			peer.Cards.Service,
+			peer.NFTs.Service,
+			peer.WaitList.Service,
+		)
+
+	}
+
 	{ // admin setup.
 		peer.Admin.Listener, err = net.Listen("tcp", config.Admins.Server.Address)
 		if err != nil {
@@ -606,6 +632,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			peer.Metric.Service,
 			peer.CurrencyWaitList.Service,
 			peer.Connections.Service,
+			peer.Matchmaking.Service,
 		)
 	}
 
@@ -626,12 +653,17 @@ func (peer *Peer) Run(ctx context.Context) error {
 	group.Go(func() error {
 		return ignoreCancel(peer.Marketplace.ExpirationLotChore.Run(ctx))
 	})
-	group.Go(func() error {
-		return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
-	})
+	// TODO: now use a new service - matchmaking for the game
+	// group.Go(func() error {
+	//	return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
+	// }).
 	group.Go(func() error {
 		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
 	})
+	group.Go(func() error {
+		return ignoreCancel(peer.Bids.BidsChore.Run(ctx))
+	})
+
 	// TODO: uncomment when the Ethereum node is running
 	// group.Go(func() error {
 	//	return ignoreCancel(peer.NFTs.NFTChore.RunNFTSynchronization(ctx))

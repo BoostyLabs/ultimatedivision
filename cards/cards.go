@@ -45,7 +45,7 @@ type DB interface {
 	UpdateStatus(ctx context.Context, id uuid.UUID, status Status) error
 	// UpdateMintedStatus updates minted status of card in database.
 	UpdateMintedStatus(ctx context.Context, id uuid.UUID, status int) error
-	// UpdateStatus updates type of card in the database.
+	// UpdateType updates type of card in the database.
 	UpdateType(ctx context.Context, id uuid.UUID, typeCard Type) error
 	// UpdateUserID updates user id card in the database.
 	UpdateUserID(ctx context.Context, id, userID uuid.UUID) error
