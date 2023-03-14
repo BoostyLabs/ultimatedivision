@@ -13,7 +13,7 @@ import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
 import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
-import { getCurrentWebSocketClient, onCloseConnection, onOpenConnection, onOpenConnectionNoAction, sendAction, setMatchQueue } from '@/webSockets/service';
+import { getCurrentWebSocketClient, onOpenConnectionNoAction, sendAction, setMatchQueue } from '@/webSockets/service';
 import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
