@@ -91,4 +91,12 @@ export const actionForbidAddress = () => {
 export const getCurrentWebSocketClient = () => webSocketService.wsConnectionClient;
 
 /** Opens ws connection. */
-export const onOpenConnection = () => webSocketService.openConnection();
+export const onOpenConnection = () => {
+    webSocketService.openConnection();
+};
+
+/** Changes current queue client and opens new connection */
+export const onOpenConnectionNoAction = () => {
+    webSocketService.changeWSConnectionClient();
+    webSocketService.openConnection();
+};
