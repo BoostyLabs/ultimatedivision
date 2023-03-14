@@ -21,6 +21,13 @@
         background: #6facff;
     }
 
+    &__cards,
+    &__marketplace {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
     &__marketplace {
         background: linear-gradient(180deg, #765989 0%, #444792 97.4%);
     }
