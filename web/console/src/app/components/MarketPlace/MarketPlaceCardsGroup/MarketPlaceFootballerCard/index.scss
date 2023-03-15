@@ -111,6 +111,16 @@
     }
 }
 
+@media (max-width: $phoneBreakPoint + 200px) {
+
+    .marketplace-playerCard {
+
+        &__image {
+            width: 186px;
+        }
+    }
+}
+
 @media (max-width: $phoneBreakPoint) {
 
     .marketplace-playerCard {

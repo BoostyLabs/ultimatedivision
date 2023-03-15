@@ -34,8 +34,6 @@
     &__previous,
     &__previous-not-active {
         margin-right: auto;
-        color: #c3dcbb;
-        cursor: not-allowed;
     }
 
     &__next,
@@ -50,6 +48,8 @@
 
     &__previous-not-active,
     &__next-not-active {
+        cursor: not-allowed;
+        color: #c3dcbb;
 
         svg path {
             stroke: #c3dcbb;
