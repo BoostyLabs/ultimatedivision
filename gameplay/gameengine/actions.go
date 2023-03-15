@@ -43,6 +43,34 @@ const (
 
 // GameConfig contains config values related to game.
 type GameConfig struct {
+	LeftSide  `json:"leftSide"`
+	RightSide `json:"rightSide"`
+}
+
+type LeftSide struct {
+	Goalkeeper      int `json:"goalkeeper"`
+	LeftBack        int `json:"leftBack"`
+	CenterBackLeft  int `json:"centerBackLeft"`
+	CenterBackRight int `json:"centerBackRight"`
+	RightBack       int `json:"rightBack"`
+	LeftMid         int `json:"leftMid"`
+	CenterMidLeft   int `json:"centerMidLeft"`
+	CenterMidRight  int `json:"centerMidRight"`
+	ForwardLeft     int `json:"forwardLeft"`
+	ForwardRight    int `json:"forwardRight"`
+}
+
+type RightSide struct {
+	Goalkeeper      int `json:"goalkeeper"`
+	LeftBack        int `json:"leftBack"`
+	CenterBackLeft  int `json:"centerBackLeft"`
+	CenterBackRight int `json:"centerBackRight"`
+	RightBack       int `json:"rightBack"`
+	LeftMid         int `json:"leftMid"`
+	CenterMidLeft   int `json:"centerMidLeft"`
+	CenterMidRight  int `json:"centerMidRight"`
+	ForwardLeft     int `json:"forwardLeft"`
+	ForwardRight    int `json:"forwardRight"`
 }
 
 // CardAvailableAction defines in which position card could be placed and which action it could do there.
