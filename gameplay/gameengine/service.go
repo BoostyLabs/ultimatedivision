@@ -28,15 +28,11 @@ const (
 	maxPlace = 83
 )
 
-var (
-	top        = []int{77, 70, 63, 56, 49, 42, 35, 28, 21, 14, 7, 0}
-	bottom     = []int{6, 13, 20, 27, 34, 41, 48, 55, 62, 69, 76, 83}
-	exceptions = []int{1, 5, 78, 82}
-	moves      []int
-)
-
 // GetPlayersMoves get all player possible moves.
 func (service *Service) GetPlayersMoves(playerPlace int) ([]int, error) {
+	top := []int{77, 70, 63, 56, 49, 42, 35, 28, 21, 14, 7, 0}
+	bottom := []int{6, 13, 20, 27, 34, 41, 48, 55, 62, 69, 76, 83}
+	exceptions := []int{1, 5, 78, 82}
 
 	if playerPlace < 0 || playerPlace > 83 {
 		return []int{}, ErrGameEngine.New("player place can not be more 83 or les than 0, player place is %d", playerPlace)
@@ -62,6 +58,8 @@ func (service *Service) GetPlayersMoves(playerPlace int) ([]int, error) {
 	default:
 		stepInWidth = append(stepInWidth, playerPlace-2, playerPlace-1, playerPlace, playerPlace+1, playerPlace+2)
 	}
+
+	var moves []int
 
 	for _, w := range stepInWidth {
 		min := w - 14
