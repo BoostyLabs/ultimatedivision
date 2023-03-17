@@ -28,8 +28,8 @@ const (
 	maxPlace = 83
 )
 
-// GetPlayersMoves get all player possible moves.
-func (service *Service) GetPlayersMoves(playerPlace int) ([]int, error) {
+// GetPlayerMoves get player possible moves.
+func (service *Service) GetPlayerMoves(playerPlace int) ([]int, error) {
 	top := []int{77, 70, 63, 56, 49, 42, 35, 28, 21, 14, 7, 0}
 	bottom := []int{6, 13, 20, 27, 34, 41, 48, 55, 62, 69, 76, 83}
 	exceptions := []int{1, 5, 78, 82}
@@ -98,4 +98,13 @@ func contains(s []int, e int) bool {
 		}
 	}
 	return false
+}
+
+func removeIntersections(moves, playerPositions []int) (movesWithoutIntersections []int) {
+	for _, v := range moves {
+		if !contains(playerPositions, v) {
+			movesWithoutIntersections = append(movesWithoutIntersections, v)
+		}
+	}
+	return movesWithoutIntersections
 }
