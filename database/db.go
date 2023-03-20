@@ -85,7 +85,7 @@ type DBPlayers struct {
 // CreateSchema create schema for all tables and databases.
 func (db *database) CreateSchema(ctx context.Context) (err error) {
 	createTableQuery :=
-	`CREATE TABLE IF NOT EXISTS users (
+		`CREATE TABLE IF NOT EXISTS users (
             id                    BYTEA     PRIMARY KEY    NOT NULL,
             email                 VARCHAR                  NOT NULL,
             email_normalized      VARCHAR                  NOT NULL,
