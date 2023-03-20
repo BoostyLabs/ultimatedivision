@@ -8,6 +8,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/clubs"
 )
 
 // Action defines list of possible player action in the field.
@@ -92,4 +93,8 @@ type MatchRepresentation struct {
 	User2CardsWithPosition []CardWithPosition    `json:"user2CardsWithPosition"`
 	BallPosition           int                   `json:"ballPosition"`
 	CardAvailableAction    []CardAvailableAction `json:"cardAvailableAction"`
+	User1ClubInformation   clubs.Club            `json:"user1ClubInformation"`
+	User2ClubInformation   clubs.Club            `json:"user2ClubInformation"`
+	User1SquadInformation  clubs.Squad           `json:"user1SquadInformation"`
+	User2SquadInformation  clubs.Squad           `json:"user2SquadInformation"`
 }

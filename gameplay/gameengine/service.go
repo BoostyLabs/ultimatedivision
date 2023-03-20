@@ -116,31 +116,51 @@ func contains(s []int, e int) bool {
 }
 
 // GameInformation creates a player by user.
-func (service *Service) GameInformation(ctx context.Context, players1SquadID, players2SquadID uuid.UUID) (MatchRepresentation, error) {
+func (service *Service) GameInformation(ctx context.Context, player1SquadID, player2SquadID uuid.UUID) (MatchRepresentation, error) {
 	var cardsWithPositionPlayer1 []CardWithPosition
 	var cardsWithPositionPlayer2 []CardWithPosition
 	var cardsAvailableAction []CardAvailableAction
 
-	squadPlayer1, err := service.clubs.ListCards(ctx, players1SquadID)
+	squadCardsPlayer1, err := service.clubs.ListCards(ctx, player1SquadID)
 	if err != nil {
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
-	squadPlayer2, err := service.clubs.ListCards(ctx, players2SquadID)
+	squadCardsPlayer2, err := service.clubs.ListCards(ctx, player2SquadID)
 	if err != nil {
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
-	for _, squad := range squadPlayer1 {
-		avatar, err := service.avatars.Get(ctx, squad.Card.ID)
+	squadPlayer1, err := service.clubs.GetSquad(ctx, player1SquadID)
+	if err != nil {
+		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
+	}
+
+	squadPlayer2, err := service.clubs.GetSquad(ctx, player2SquadID)
+	if err != nil {
+		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
+	}
+
+	clubPlayer1, err := service.clubs.Get(ctx, squadPlayer1.ClubID)
+	if err != nil {
+		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
+	}
+
+	clubPlayer2, err := service.clubs.Get(ctx, squadPlayer2.ClubID)
+	if err != nil {
+		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
+	}
+
+	for _, sqCard := range squadCardsPlayer1 {
+		avatar, err := service.avatars.Get(ctx, sqCard.Card.ID)
 		if err != nil {
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
 
 		cardWithPositionPlayer := CardWithPosition{
-			Card:          squad.Card,
+			Card:          sqCard.Card,
 			Avatar:        avatar,
-			FieldPosition: service.squadPositionToFieldPositionLeftSide(squad.Position),
+			FieldPosition: service.squadPositionToFieldPositionLeftSide(sqCard.Position),
 		}
 
 		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition)
@@ -150,7 +170,7 @@ func (service *Service) GameInformation(ctx context.Context, players1SquadID, pl
 
 		cardAvailableAction := CardAvailableAction{
 			Action:        ActionMove,
-			CardID:        squad.Card.ID,
+			CardID:        sqCard.Card.ID,
 			FieldPosition: fieldPosition,
 		}
 
@@ -158,16 +178,16 @@ func (service *Service) GameInformation(ctx context.Context, players1SquadID, pl
 		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
 	}
 
-	for _, squad := range squadPlayer2 {
-		avatar, err := service.avatars.Get(ctx, squad.Card.ID)
+	for _, sqCard := range squadCardsPlayer2 {
+		avatar, err := service.avatars.Get(ctx, sqCard.Card.ID)
 		if err != nil {
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
 
 		cardWithPositionPlayer := CardWithPosition{
-			Card:          squad.Card,
+			Card:          sqCard.Card,
 			Avatar:        avatar,
-			FieldPosition: service.squadPositionToFieldPositionRightSide(squad.Position),
+			FieldPosition: service.squadPositionToFieldPositionRightSide(sqCard.Position),
 		}
 
 		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition)
@@ -177,7 +197,7 @@ func (service *Service) GameInformation(ctx context.Context, players1SquadID, pl
 
 		cardAvailableAction := CardAvailableAction{
 			Action:        ActionMove,
-			CardID:        squad.Card.ID,
+			CardID:        sqCard.Card.ID,
 			FieldPosition: fieldPosition,
 		}
 
@@ -190,6 +210,10 @@ func (service *Service) GameInformation(ctx context.Context, players1SquadID, pl
 		User2CardsWithPosition: cardsWithPositionPlayer2,
 		BallPosition:           0,
 		CardAvailableAction:    cardsAvailableAction,
+		User1ClubInformation:   clubPlayer1,
+		User2ClubInformation:   clubPlayer2,
+		User1SquadInformation:  squadPlayer1,
+		User2SquadInformation:  squadPlayer2,
 	}, nil
 }
 
