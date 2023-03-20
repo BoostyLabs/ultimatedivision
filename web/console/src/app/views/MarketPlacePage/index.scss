@@ -46,6 +46,7 @@
 @media (max-width: $tabletBreakPoint + 100px) {
 
     .marketplace {
+        width: 100%;
         padding: 0 32px 30px;
 
         .filter-field {
@@ -57,7 +58,6 @@
 @media (max-width: $phoneBreakPoint + 100px) {
 
     .marketplace {
-        width: 100%;
         padding: 0 16px 20px;
 
         .filter-field {
