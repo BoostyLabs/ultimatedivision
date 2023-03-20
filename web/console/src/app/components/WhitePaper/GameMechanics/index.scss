@@ -1,16 +1,38 @@
 .game-mechanics {
 
     &__title {
-        font-size: 40px;
-        margin-bottom: 40px;
+        margin-bottom: 24px;
+        font-family: "Orbitron", sans-serif;
+        font-style: normal;
+        font-weight: 900;
+        font-size: 34px;
+        line-height: 43px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #fff;
     }
 
     &__subtitle {
+        margin-bottom: 20px;
         font-size: 32px;
-        margin-bottom: 24px;
+        line-height: 43px;
+        font-family: "Orbitron", sans-serif;
+        font-style: normal;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #fff;
     }
 
     &__description {
-        margin-bottom: 60px;
+        margin-bottom: 43px;
+        font-size: 17px;
+        line-height: 30px;
+        font-family: "Orbitron", sans-serif;
+        font-style: normal;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #fff;
     }
 }
