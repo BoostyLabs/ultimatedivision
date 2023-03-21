@@ -25,6 +25,7 @@ import (
 	"ultimatedivision/console/emails"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/gameengine"
+	"ultimatedivision/gameplay/games"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/gameplay/matchmaking"
 	"ultimatedivision/gameplay/queue"
@@ -56,6 +57,9 @@ type DB interface {
 
 	// Cards provides access to cards db.
 	Cards() cards.DB
+
+	// Games provides access to games db.
+	Games() games.DB
 
 	// Avatars provides access to avatars db.
 	Avatars() avatars.DB
@@ -218,6 +222,11 @@ type Peer struct {
 	// exposes cards related logic.
 	Cards struct {
 		Service *cards.Service
+	}
+
+	// exposes games related logic.
+	Games struct {
+		Service *games.Service
 	}
 
 	// exposes avatars related logic.
@@ -406,6 +415,13 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 		)
 	}
 
+	{ // cards setup.
+		peer.Games.Service = games.NewService(
+			peer.Database.Games(),
+			config.Game.Config,
+		)
+	}
+
 	{ // avatars setup.
 		peer.Avatars.Service = avatars.NewService(
 			peer.Database.Avatars(),
@@ -584,7 +600,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 	}
 
 	{ // game engine setup.
-		peer.GameEngine.Service = gameengine.NewService(peer.Clubs.Service, peer.Avatars.Service, peer.Cards.Service, config.GameEngine.Config)
+		peer.GameEngine.Service = gameengine.NewService(peer.Clubs.Service, peer.Avatars.Service, peer.Cards.Service, peer.Games.Service, config.GameEngine.Config)
 	}
 
 	{ // matchmaking setup.

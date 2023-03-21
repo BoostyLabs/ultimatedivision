@@ -13,6 +13,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
+	"ultimatedivision/gameplay/games"
 )
 
 // ErrGameEngine indicates that there was an error in the service.
@@ -25,15 +26,17 @@ type Service struct {
 	clubs   *clubs.Service
 	avatars *avatars.Service
 	cards   *cards.Service
+	games   *games.Service
 	config  Config
 }
 
 // NewService is a constructor for game engine service.
-func NewService(clubs *clubs.Service, avatars *avatars.Service, cards *cards.Service, config Config) *Service {
+func NewService(clubs *clubs.Service, avatars *avatars.Service, cards *cards.Service, games *games.Service, config Config) *Service {
 	return &Service{
 		clubs:   clubs,
 		avatars: avatars,
 		cards:   cards,
+		games:   games,
 		config:  config,
 	}
 }
@@ -115,6 +118,11 @@ func contains(s []int, e int) bool {
 	return false
 }
 
+func (service *Service) Move(ctx context.Context, cardID uuid.UUID) ([]int, error) {
+	matchInfo, err := games.Service.List(ctx, cardID)
+
+}
+
 // GameInformation creates a player by user.
 func (service *Service) GameInformation(ctx context.Context, player1SquadID, player2SquadID uuid.UUID) (MatchRepresentation, error) {
 	var cardsWithPositionPlayer1 []CardWithPosition
@@ -151,6 +159,8 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
+	var matchInfo []games.Card
+
 	for _, sqCard := range squadCardsPlayer1 {
 		avatar, err := service.avatars.Get(ctx, sqCard.Card.ID)
 		if err != nil {
@@ -162,6 +172,13 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			Avatar:        avatar,
 			FieldPosition: service.squadPositionToFieldPositionLeftSide(sqCard.Position),
 		}
+
+		cardInfo := games.Card{
+			CardID:   sqCard.Card.ID,
+			Position: cardWithPositionPlayer.FieldPosition,
+		}
+
+		matchInfo = append(matchInfo, cardInfo)
 
 		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition)
 		if err != nil {
@@ -201,8 +218,25 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			FieldPosition: fieldPosition,
 		}
 
+		cardInfo := games.Card{
+			CardID:   sqCard.Card.ID,
+			Position: cardWithPositionPlayer.FieldPosition,
+		}
+
+		matchInfo = append(matchInfo, cardInfo)
+
 		cardsWithPositionPlayer2 = append(cardsWithPositionPlayer2, cardWithPositionPlayer)
 		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
+	}
+
+	matchInfo1 := games.Game{
+		MatchID: uuid.New(),
+		Cards:   matchInfo,
+	}
+
+	err = service.games.Create(ctx, matchInfo1)
+	if err != nil {
+		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
 	return MatchRepresentation{

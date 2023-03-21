@@ -7,7 +7,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
@@ -36,7 +35,7 @@ func (gamesDB *gamesDB) Create(ctx context.Context, game games.Game) error {
 	query := `INSERT INTO games(match_id, game_info)
               VALUES($1,$2)`
 
-	_, err = gamesDB.conn.ExecContext(ctx, query, game.MatchID, game.GameInfo)
+	_, err = gamesDB.conn.ExecContext(ctx, query, game.MatchID, game)
 
 	if err != nil {
 		err = tx.Rollback()
@@ -73,7 +72,7 @@ func (gamesDB *gamesDB) List(ctx context.Context) ([]games.Game, error) {
 	for rows.Next() {
 		var game games.Game
 
-		err = rows.Scan(&game.MatchID, &game.GameInfo)
+		err = rows.Scan(&game.MatchID, &game)
 		if err != nil {
 			return nil, ErrGames.Wrap(err)
 		}
@@ -94,7 +93,7 @@ func (gamesDB *gamesDB) Get(ctx context.Context, matchID uuid.UUID) (games.Game,
 
 	var game games.Game
 
-	err := row.Scan(&game.MatchID, &game.GameInfo)
+	err := row.Scan(&game.MatchID, &game)
 	if err != nil {
 		if errors.Is(sql.ErrNoRows, err) {
 			return game, games.ErrNoGames.Wrap(err)
@@ -104,6 +103,21 @@ func (gamesDB *gamesDB) Get(ctx context.Context, matchID uuid.UUID) (games.Game,
 	}
 
 	return game, nil
+}
+
+// Update updates game info in the database by match id.
+func (gamesDB *gamesDB) Update(ctx context.Context, gameInfo games.Game) error {
+	result, err := gamesDB.conn.ExecContext(ctx, "UPDATE games SET game_info=$1 WHERE match_id=$2", gameInfo.MatchID, gameInfo.Cards)
+	if err != nil {
+		return ErrGames.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return games.ErrNoGames.New("")
+	}
+
+	return ErrGames.Wrap(err)
 }
 
 // Delete deletes game by match id from db.
