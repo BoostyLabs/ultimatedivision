@@ -2,16 +2,21 @@ package gameengine_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"ultimatedivision"
+	"ultimatedivision/clubs"
 	"ultimatedivision/database/dbtesting"
+	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/gameengine"
+	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/seasons"
+	"ultimatedivision/users"
 )
 
 func TestMatches(t *testing.T) {
@@ -38,38 +43,176 @@ func TestMatches(t *testing.T) {
 		},
 	}
 
+	testUser1 := users.User{
+		ID:           uuid.New(),
+		Email:        "test@gmail.com",
+		PasswordHash: []byte{1},
+		NickName:     "testNickName",
+		FirstName:    "test",
+		LastName:     "test",
+		LastLogin:    time.Now(),
+		Status:       1,
+		CreatedAt:    time.Now(),
+	}
+
+	testUser2 := users.User{
+		ID:           uuid.New(),
+		Email:        "test@gmail.com",
+		PasswordHash: []byte{2},
+		NickName:     "testNickName",
+		FirstName:    "test",
+		LastName:     "test",
+		LastLogin:    time.Now(),
+		Status:       1,
+		CreatedAt:    time.Now(),
+	}
+
+	division1 := divisions.Division{
+		ID:             uuid.New(),
+		Name:           10,
+		PassingPercent: 10,
+		CreatedAt:      time.Now().UTC(),
+	}
+
+	season1 := seasons.Season{
+		ID:         1,
+		DivisionID: division1.ID,
+		StartedAt:  time.Now().UTC(),
+		EndedAt:    time.Time{},
+	}
+
+	testClub1 := clubs.Club{
+		ID:         uuid.New(),
+		OwnerID:    testUser1.ID,
+		Name:       testUser1.NickName,
+		DivisionID: division1.ID,
+		CreatedAt:  time.Now().UTC(),
+	}
+
+	testSquad1 := clubs.Squad{
+		ID:        uuid.New(),
+		Name:      "test squad",
+		ClubID:    testClub1.ID,
+		Tactic:    clubs.Balanced,
+		Formation: clubs.FourTwoFour,
+	}
+
+	testClub2 := clubs.Club{
+		ID:         uuid.New(),
+		OwnerID:    testUser2.ID,
+		Name:       testUser2.NickName,
+		DivisionID: division1.ID,
+		CreatedAt:  time.Now().UTC(),
+	}
+
+	testSquad2 := clubs.Squad{
+		ID:        uuid.New(),
+		Name:      "test squad",
+		ClubID:    testClub2.ID,
+		Tactic:    clubs.Balanced,
+		Formation: clubs.FourTwoFour,
+	}
+
+	testMatch := matches.Match{
+		ID:       matchID,
+		User1ID:  testUser1.ID,
+		Squad1ID: testSquad1.ID,
+		User2ID:  testUser2.ID,
+		Squad2ID: testSquad2.ID,
+		SeasonID: season1.ID,
+	}
+
 	dbtesting.Run(t, func(ctx context.Context, t *testing.T, db ultimatedivision.DB) {
 		repositoryGames := db.Games()
+
+		repositoryUsers := db.Users()
+		repositoryClubs := db.Clubs()
+		repositoryMatches := db.Matches()
+		repositoryDivisions := db.Divisions()
+		repositorySeasons := db.Seasons()
+
+		t.Run("Create", func(t *testing.T) {
+			err := repositoryUsers.Create(ctx, testUser1)
+			require.NoError(t, err)
+
+			err = repositoryUsers.Create(ctx, testUser2)
+			require.NoError(t, err)
+
+			err = repositoryDivisions.Create(ctx, division1)
+			require.NoError(t, err)
+
+			err = repositorySeasons.Create(ctx, season1)
+			require.NoError(t, err)
+
+			_, err = repositoryClubs.Create(ctx, testClub1)
+			require.NoError(t, err)
+
+			_, err = repositoryClubs.CreateSquad(ctx, testSquad1)
+			require.NoError(t, err)
+
+			_, err = repositoryClubs.Create(ctx, testClub2)
+			require.NoError(t, err)
+
+			_, err = repositoryClubs.CreateSquad(ctx, testSquad2)
+			require.NoError(t, err)
+
+			err = repositoryMatches.Create(ctx, testMatch)
+			require.NoError(t, err)
+		})
 
 		t.Run("Create", func(t *testing.T) {
 			err := repositoryGames.Create(ctx, testGame)
 			require.NoError(t, err)
 		})
+
 		t.Run("Get", func(t *testing.T) {
 			game, err := repositoryGames.Get(ctx, matchID)
-			fmt.Println("gameMatchID ---> ", game.MatchID)
-			fmt.Println("gameInfo ---> ", game.GameInfo)
 			compareGame(t, testGame, game)
 			require.NoError(t, err)
 		})
 
-		//t.Run("Create", func(t *testing.T) {
-		//	_, err := repositoryGames.List(ctx)
-		//	//compareGame(t, testGame, games)
-		//	require.NoError(t, err)
-		//})
-		//t.Run("Create", func(t *testing.T) {
-		//	err := repositoryGames.Create(ctx, testGame)
-		//	require.NoError(t, err)
-		//})
+		t.Run("Update", func(t *testing.T) {
+			testGameNew := gameengine.Game{
+				MatchID: matchID,
+				GameInfo: []gameengine.Card{
+					{
+						CardID:   card1.CardID,
+						Position: 10,
+					},
+					card2,
+					card3,
+				},
+			}
+
+			err := repositoryGames.Update(ctx, testGameNew)
+			require.NoError(t, err)
+
+			game, err := repositoryGames.Get(ctx, matchID)
+			compareGame(t, testGameNew, game)
+			require.NoError(t, err)
+		})
+
+		t.Run("Delete sql no rows", func(t *testing.T) {
+			err := repositoryGames.Delete(ctx, uuid.New())
+			require.Error(t, err)
+			assert.Equal(t, true, gameengine.ErrNoGames.Has(err))
+		})
+
+		t.Run("Delete", func(t *testing.T) {
+			err := repositoryGames.Delete(ctx, matchID)
+			require.NoError(t, err)
+
+			_, err = repositoryGames.Get(ctx, matchID)
+			require.Error(t, err)
+		})
 
 	})
 }
 
 func compareGame(t *testing.T, expectedGame, actualGame gameengine.Game) {
 	assert.Equal(t, expectedGame.MatchID, actualGame.MatchID)
-	//for i, card := range actualGame.GameInfo {
-	//	assert.Equal(t, expectedGame.GameInfo[i].CardID, card.CardID)
-	//	assert.Equal(t, expectedGame.GameInfo[i].Position, card.Position)
-	//}
+	for i, card := range actualGame.GameInfo {
+		assert.Equal(t, expectedGame.GameInfo[i].CardID, card.CardID)
+		assert.Equal(t, expectedGame.GameInfo[i].Position, card.Position)
+	}
 }

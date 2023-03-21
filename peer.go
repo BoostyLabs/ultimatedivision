@@ -57,7 +57,7 @@ type DB interface {
 	// Cards provides access to cards db.
 	Cards() cards.DB
 
-	// Games provides access to games db.
+	// Games provides access to gameengine db.
 	Games() gameengine.DB
 
 	// Avatars provides access to avatars db.

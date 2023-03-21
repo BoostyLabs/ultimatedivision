@@ -319,7 +319,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         );
 	CREATE TABLE IF NOT EXISTS games(
             match_id     BYTEA   REFERENCES matches(id) ON DELETE CASCADE NOT NULL,
-            game_info    VARCHAR                                          NOT NULL
+            game_info    JSONB                                            NOT NULL
         );
         CREATE TABLE IF NOT EXISTS velas_register_data(
             user_id BYTEA   PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE NOT NULL,
@@ -354,9 +354,9 @@ func (db *database) Cards() cards.DB {
 	return &cardsDB{conn: db.conn}
 }
 
-// Games provides access to games db.
+// Games provides access to gameengine db.
 func (db *database) Games() gameengine.DB {
-	return &gamesDB{conn: db.conn}
+	return &gameengineDB{conn: db.conn}
 }
 
 // Avatars provides access to accounts db.

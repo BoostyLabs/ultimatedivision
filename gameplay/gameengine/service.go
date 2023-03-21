@@ -121,19 +121,24 @@ func contains(s []int, e int) bool {
 }
 
 // Move get a player moves.
-func (service *Service) Move(ctx context.Context, matchID uuid.UUID) ([]int, error) {
-	_, err := service.games.Get(ctx, matchID)
+func (service *Service) Move(ctx context.Context, matchID, cardID uuid.UUID) ([]int, error) {
+	game, err := service.games.Get(ctx, matchID)
 	if err != nil {
 		return []int{}, ErrGameEngine.Wrap(err)
 	}
 
-	var _ Game
+	var moves []int
 
-	//if err := gameInfo.GameInfo.ReadJSON(&matchInfo); err != nil {
-	//
-	//}
+	for _, card := range game.GameInfo {
+		if card.CardID == cardID {
+			moves, err = service.GetCardMoves(card.Position)
+			if err != nil {
+				return []int{}, ErrGameEngine.Wrap(err)
+			}
+		}
+	}
 
-	return []int{}, nil
+	return moves, nil
 }
 
 // GameInformation creates a player by user.
