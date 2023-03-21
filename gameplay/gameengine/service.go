@@ -13,7 +13,7 @@ import (
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
 	"ultimatedivision/clubs"
-	"ultimatedivision/gameplay/games"
+	"ultimatedivision/gameplay/matches"
 )
 
 // ErrGameEngine indicates that there was an error in the service.
@@ -23,20 +23,22 @@ var ErrGameEngine = errs.Class("game engine service error")
 //
 // architecture: Service
 type Service struct {
+	games   DB
 	clubs   *clubs.Service
 	avatars *avatars.Service
 	cards   *cards.Service
-	games   *games.Service
+	matches *matches.Service
 	config  Config
 }
 
 // NewService is a constructor for game engine service.
-func NewService(clubs *clubs.Service, avatars *avatars.Service, cards *cards.Service, games *games.Service, config Config) *Service {
+func NewService(games DB, clubs *clubs.Service, avatars *avatars.Service, cards *cards.Service, matches *matches.Service, config Config) *Service {
 	return &Service{
+		games:   games,
 		clubs:   clubs,
 		avatars: avatars,
 		cards:   cards,
-		games:   games,
+		matches: matches,
 		config:  config,
 	}
 }
@@ -118,9 +120,20 @@ func contains(s []int, e int) bool {
 	return false
 }
 
-func (service *Service) Move(ctx context.Context, cardID uuid.UUID) ([]int, error) {
-	matchInfo, err := games.Service.List(ctx, cardID)
+// Move get a player moves.
+func (service *Service) Move(ctx context.Context, matchID uuid.UUID) ([]int, error) {
+	_, err := service.games.Get(ctx, matchID)
+	if err != nil {
+		return []int{}, ErrGameEngine.Wrap(err)
+	}
 
+	var _ Game
+
+	//if err := gameInfo.GameInfo.ReadJSON(&matchInfo); err != nil {
+	//
+	//}
+
+	return []int{}, nil
 }
 
 // GameInformation creates a player by user.
@@ -159,7 +172,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
-	var matchInfo []games.Card
+	var matchInfo []Card
 
 	for _, sqCard := range squadCardsPlayer1 {
 		avatar, err := service.avatars.Get(ctx, sqCard.Card.ID)
@@ -173,7 +186,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			FieldPosition: service.squadPositionToFieldPositionLeftSide(sqCard.Position),
 		}
 
-		cardInfo := games.Card{
+		cardInfo := Card{
 			CardID:   sqCard.Card.ID,
 			Position: cardWithPositionPlayer.FieldPosition,
 		}
@@ -218,7 +231,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			FieldPosition: fieldPosition,
 		}
 
-		cardInfo := games.Card{
+		cardInfo := Card{
 			CardID:   sqCard.Card.ID,
 			Position: cardWithPositionPlayer.FieldPosition,
 		}
@@ -229,12 +242,17 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
 	}
 
-	matchInfo1 := games.Game{
-		MatchID: uuid.New(),
-		Cards:   matchInfo,
+	matchID, err := service.matches.Create(ctx, player1SquadID, player2SquadID, clubPlayer1.OwnerID, clubPlayer2.OwnerID, 1)
+	if err != nil {
+		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
-	err = service.games.Create(ctx, matchInfo1)
+	matchInfoAll := Game{
+		MatchID:  matchID,
+		GameInfo: matchInfo,
+	}
+
+	err = service.games.Create(ctx, matchInfoAll)
 	if err != nil {
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}

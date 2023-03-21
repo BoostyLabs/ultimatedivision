@@ -1,7 +1,7 @@
 // Copyright (C) 2021 - 2023 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-package games
+package gameengine
 
 import (
 	"context"
@@ -22,7 +22,7 @@ type DB interface {
 	// List returns all games.
 	List(ctx context.Context) ([]Game, error)
 	// Get returns game by match id.
-	Get(ctx context.Context, gameID uuid.UUID) (Game, error)
+	Get(ctx context.Context, matchID uuid.UUID) (Game, error)
 	// Update updates game info in the database by match id.
 	Update(ctx context.Context, gameInfo Game) error
 	// Delete deletes game by match id from db.
@@ -31,16 +31,12 @@ type DB interface {
 
 // Game defines game data.
 type Game struct {
-	MatchID uuid.UUID
-	Cards   []Card
+	MatchID  uuid.UUID
+	GameInfo []Card
 }
 
 // Card defines Card with moves for game.
 type Card struct {
 	CardID   uuid.UUID `json:"cardID"`
 	Position int       `json:"position"`
-}
-
-// Config defines configuration for game.
-type Config struct {
 }

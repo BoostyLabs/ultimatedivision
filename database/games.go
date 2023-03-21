@@ -7,14 +7,15 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
-
-	"ultimatedivision/gameplay/games"
+	"ultimatedivision/gameplay/gameengine"
 )
 
 // ensures that gameDB implements game.DB.
-var _ games.DB = (*gamesDB)(nil)
+var _ gameengine.DB = (*gamesDB)(nil)
 
 // ErrGames indicates that there was an error in the database.
 var ErrGames = errs.Class("games repository error")
@@ -27,7 +28,7 @@ type gamesDB struct {
 }
 
 // Create creates game in db.
-func (gamesDB *gamesDB) Create(ctx context.Context, game games.Game) error {
+func (gamesDB *gamesDB) Create(ctx context.Context, game gameengine.Game) error {
 	tx, err := gamesDB.conn.BeginTx(ctx, nil)
 	if err != nil {
 		return ErrGames.Wrap(err)
@@ -35,7 +36,7 @@ func (gamesDB *gamesDB) Create(ctx context.Context, game games.Game) error {
 	query := `INSERT INTO games(match_id, game_info)
               VALUES($1,$2)`
 
-	_, err = gamesDB.conn.ExecContext(ctx, query, game.MatchID, game)
+	_, err = gamesDB.conn.ExecContext(ctx, query, game.MatchID, game.GameInfo)
 
 	if err != nil {
 		err = tx.Rollback()
@@ -54,7 +55,7 @@ func (gamesDB *gamesDB) Create(ctx context.Context, game games.Game) error {
 }
 
 // List returns all games.
-func (gamesDB *gamesDB) List(ctx context.Context) ([]games.Game, error) {
+func (gamesDB *gamesDB) List(ctx context.Context) ([]gameengine.Game, error) {
 	query := `SELECT match_id, game_info
               FROM games`
 
@@ -67,12 +68,12 @@ func (gamesDB *gamesDB) List(ctx context.Context) ([]games.Game, error) {
 		err = errs.Combine(err, rows.Close())
 	}()
 
-	var allGames []games.Game
+	var allGames []gameengine.Game
 
 	for rows.Next() {
-		var game games.Game
+		var game gameengine.Game
 
-		err = rows.Scan(&game.MatchID, &game)
+		err = rows.Scan(&game.MatchID, &game.GameInfo)
 		if err != nil {
 			return nil, ErrGames.Wrap(err)
 		}
@@ -84,19 +85,19 @@ func (gamesDB *gamesDB) List(ctx context.Context) ([]games.Game, error) {
 }
 
 // Get returns game by match id.
-func (gamesDB *gamesDB) Get(ctx context.Context, matchID uuid.UUID) (games.Game, error) {
+func (gamesDB *gamesDB) Get(ctx context.Context, matchID uuid.UUID) (gameengine.Game, error) {
 	query := `SELECT match_id, game_info
               FROM games
               WHERE match_id = $1`
 
 	row := gamesDB.conn.QueryRowContext(ctx, query, matchID)
+	fmt.Println("row ---> ", row)
+	var game gameengine.Game
 
-	var game games.Game
-
-	err := row.Scan(&game.MatchID, &game)
+	err := row.Scan(&game.MatchID, &game.GameInfo)
 	if err != nil {
 		if errors.Is(sql.ErrNoRows, err) {
-			return game, games.ErrNoGames.Wrap(err)
+			return game, gameengine.ErrNoGames.Wrap(err)
 		}
 
 		return game, ErrGames.Wrap(err)
@@ -106,15 +107,15 @@ func (gamesDB *gamesDB) Get(ctx context.Context, matchID uuid.UUID) (games.Game,
 }
 
 // Update updates game info in the database by match id.
-func (gamesDB *gamesDB) Update(ctx context.Context, gameInfo games.Game) error {
-	result, err := gamesDB.conn.ExecContext(ctx, "UPDATE games SET game_info=$1 WHERE match_id=$2", gameInfo.MatchID, gameInfo.Cards)
+func (gamesDB *gamesDB) Update(ctx context.Context, gameInfo gameengine.Game) error {
+	result, err := gamesDB.conn.ExecContext(ctx, "UPDATE games SET game_info=$1 WHERE match_id=$2", gameInfo.MatchID, gameInfo.GameInfo)
 	if err != nil {
 		return ErrGames.Wrap(err)
 	}
 
 	rowNum, err := result.RowsAffected()
 	if rowNum == 0 {
-		return games.ErrNoGames.New("")
+		return gameengine.ErrNoGames.New("")
 	}
 
 	return ErrGames.Wrap(err)
@@ -131,7 +132,7 @@ func (gamesDB *gamesDB) Delete(ctx context.Context, matchID uuid.UUID) error {
 	}
 	rowNum, err := result.RowsAffected()
 	if rowNum == 0 {
-		return games.ErrNoGames.New("invalid query")
+		return gameengine.ErrNoGames.New("invalid query")
 	}
 
 	return ErrGames.Wrap(err)

@@ -21,6 +21,7 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/console/connections"
 	"ultimatedivision/divisions"
+	"ultimatedivision/gameplay/gameengine"
 	"ultimatedivision/gameplay/matches"
 	"ultimatedivision/gameplay/matchmaking"
 	"ultimatedivision/gameplay/queue"
@@ -318,8 +319,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         );
 	CREATE TABLE IF NOT EXISTS games(
             match_id     BYTEA   REFERENCES matches(id) ON DELETE CASCADE NOT NULL,
-            game_info    VARCHAR                                          NOT NULL,
-	    	step_counter INTEGER                                          NOT NULL
+            game_info    VARCHAR                                          NOT NULL
         );
         CREATE TABLE IF NOT EXISTS velas_register_data(
             user_id BYTEA   PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE NOT NULL,
@@ -352,6 +352,11 @@ func (db *database) Users() users.DB {
 // Cards provides access to accounts db.
 func (db *database) Cards() cards.DB {
 	return &cardsDB{conn: db.conn}
+}
+
+// Games provides access to games db.
+func (db *database) Games() gameengine.DB {
+	return &gamesDB{conn: db.conn}
 }
 
 // Avatars provides access to accounts db.
