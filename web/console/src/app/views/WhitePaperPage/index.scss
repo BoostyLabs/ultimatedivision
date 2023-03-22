@@ -7,9 +7,9 @@
 
     &__wrapper {
         width: 70%;
-        min-height: 100vh;
+        min-height: calc(100vh - 98px);
         margin-left: 30%;
         background-color: #8db9ff;
-        padding: 100px;
+        padding: 100px 100px 0;
     }
 }
