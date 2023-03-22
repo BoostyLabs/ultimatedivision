@@ -5,6 +5,7 @@ package gameengine
 
 import (
 	"context"
+	"encoding/json"
 	"sort"
 
 	"github.com/google/uuid"
@@ -120,27 +121,68 @@ func contains(s []int, e int) bool {
 	return false
 }
 
+func removeIntersections(moves, playerPositions []int) (movesWithoutIntersections []int) {
+	for _, v := range moves {
+		if !contains(playerPositions, v) {
+			movesWithoutIntersections = append(movesWithoutIntersections, v)
+		}
+	}
+	return movesWithoutIntersections
+}
+
 // Move get a player moves.
-func (service *Service) Move(ctx context.Context, matchID uuid.UUID, card Card) ([]int, error) {
-	var moves []int
-	game, err := service.games.Get(ctx, matchID)
+func (service *Service) Move(ctx context.Context, matchID uuid.UUID, card CardIDWithPosition) ([]int, error) {
+	gameInfoJSON, err := service.games.Get(ctx, matchID)
 	if err != nil {
-		return moves, ErrGameEngine.Wrap(err)
+		return []int{}, ErrGameEngine.Wrap(err)
 	}
 
+	var game Game
+	game.MatchID = matchID
+
+	err = json.Unmarshal([]byte(gameInfoJSON), &game.GameInfo)
+	if err != nil {
+		return []int{}, ErrGameEngine.Wrap(err)
+	}
+
+	var moves []int
+	var allPositionsInUse []int
+
+	allPositionsInUse = append(allPositionsInUse, card.Position)
+
+	for _, cardWithPosition := range game.GameInfo {
+		allPositionsInUse = append(allPositionsInUse, cardWithPosition.Position)
+	}
+
+	// check whether the position we want to go to is occupied.
+	if contains(allPositionsInUse, card.Position) {
+		return moves, ErrGameEngine.New("Can not move to position, already in use")
+	}
+
+	// check, Update and get all possible moves.
 	for i, cardData := range game.GameInfo {
 		if cardData.CardID == card.CardID {
 			game.GameInfo[i].Position = card.Position
-			err = service.games.Update(ctx, game)
+
+			newGameInfoJSON, err := json.Marshal(game.GameInfo)
 			if err != nil {
 				return moves, ErrGameEngine.Wrap(err)
 			}
+
+			err = service.games.Update(ctx, matchID, string(newGameInfoJSON))
+			if err != nil {
+				return moves, ErrGameEngine.Wrap(err)
+			}
+
 			moves, err = service.GetCardMoves(card.Position)
 			if err != nil {
 				return moves, ErrGameEngine.Wrap(err)
 			}
 		}
 	}
+
+	// remove already occupied positions.
+	moves = removeIntersections(moves, allPositionsInUse)
 
 	return moves, nil
 }
@@ -181,7 +223,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
-	var matchInfo []Card
+	var matchInfo []CardIDWithPosition
 
 	for _, sqCard := range squadCardsPlayer1 {
 		avatar, err := service.avatars.Get(ctx, sqCard.Card.ID)
@@ -195,7 +237,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			FieldPosition: service.squadPositionToFieldPositionLeftSide(sqCard.Position),
 		}
 
-		cardInfo := Card{
+		cardInfo := CardIDWithPosition{
 			CardID:   sqCard.Card.ID,
 			Position: cardWithPositionPlayer.FieldPosition,
 		}
@@ -240,7 +282,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			FieldPosition: fieldPosition,
 		}
 
-		cardInfo := Card{
+		cardInfo := CardIDWithPosition{
 			CardID:   sqCard.Card.ID,
 			Position: cardWithPositionPlayer.FieldPosition,
 		}
@@ -256,12 +298,12 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
-	matchInfoAll := Game{
-		MatchID:  matchID,
-		GameInfo: matchInfo,
+	gameInfo, err := json.Marshal(matchInfo)
+	if err != nil {
+		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
-	err = service.games.Create(ctx, matchInfoAll)
+	err = service.games.Create(ctx, matchID, string(gameInfo))
 	if err != nil {
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}

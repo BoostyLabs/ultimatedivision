@@ -2,6 +2,7 @@ package gameengine_test
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 	"time"
 
@@ -21,22 +22,22 @@ import (
 
 func TestMatches(t *testing.T) {
 	matchID := uuid.New()
-	card1 := gameengine.Card{
+	card1 := gameengine.CardIDWithPosition{
 		CardID:   uuid.New(),
 		Position: 1,
 	}
-	card2 := gameengine.Card{
+	card2 := gameengine.CardIDWithPosition{
 		CardID:   uuid.New(),
 		Position: 2,
 	}
-	card3 := gameengine.Card{
+	card3 := gameengine.CardIDWithPosition{
 		CardID:   uuid.New(),
 		Position: 3,
 	}
 
 	testGame := gameengine.Game{
 		MatchID: matchID,
-		GameInfo: []gameengine.Card{
+		GameInfo: []gameengine.CardIDWithPosition{
 			card1,
 			card2,
 			card3,
@@ -161,20 +162,29 @@ func TestMatches(t *testing.T) {
 		})
 
 		t.Run("Create", func(t *testing.T) {
-			err := repositoryGames.Create(ctx, testGame)
+			gameInfo, err := json.Marshal(testGame.GameInfo)
+			require.NoError(t, err)
+
+			err = repositoryGames.Create(ctx, matchID, string(gameInfo))
 			require.NoError(t, err)
 		})
 
 		t.Run("Get", func(t *testing.T) {
-			game, err := repositoryGames.Get(ctx, matchID)
-			compareGame(t, testGame, game)
+			gameInfo, err := repositoryGames.Get(ctx, matchID)
 			require.NoError(t, err)
+
+			var game gameengine.Game
+			game.MatchID = matchID
+
+			err = json.Unmarshal([]byte(gameInfo), &game.GameInfo)
+			require.NoError(t, err)
+			compareGame(t, testGame, game)
 		})
 
 		t.Run("Update", func(t *testing.T) {
 			testGameNew := gameengine.Game{
 				MatchID: matchID,
-				GameInfo: []gameengine.Card{
+				GameInfo: []gameengine.CardIDWithPosition{
 					{
 						CardID:   card1.CardID,
 						Position: 10,
@@ -184,12 +194,21 @@ func TestMatches(t *testing.T) {
 				},
 			}
 
-			err := repositoryGames.Update(ctx, testGameNew)
+			gameInfoJSON, err := json.Marshal(testGameNew.GameInfo)
 			require.NoError(t, err)
 
-			game, err := repositoryGames.Get(ctx, matchID)
-			compareGame(t, testGameNew, game)
+			err = repositoryGames.Update(ctx, matchID, string(gameInfoJSON))
 			require.NoError(t, err)
+
+			gameInfo, err := repositoryGames.Get(ctx, matchID)
+			require.NoError(t, err)
+
+			var game gameengine.Game
+			game.MatchID = matchID
+
+			err = json.Unmarshal([]byte(gameInfo), &game.GameInfo)
+			require.NoError(t, err)
+			compareGame(t, testGameNew, game)
 		})
 
 		t.Run("Delete sql no rows", func(t *testing.T) {
