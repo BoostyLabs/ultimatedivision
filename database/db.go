@@ -163,7 +163,8 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             diving            INTEGER                   NOT NULL,
             handling          INTEGER                   NOT NULL,
             sweeping          INTEGER                   NOT NULL,
-            throwing          INTEGER                   NOT NULL
+            throwing          INTEGER                   NOT NULL,
+            is_minted         INTEGER                   NOT NULL
         );
         CREATE TABLE IF NOT EXISTS avatars (
             card_id          BYTEA   PRIMARY KEY REFERENCES cards(id) ON DELETE CASCADE NOT NULL,
@@ -315,7 +316,11 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             hour_renewal INTEGER             NOT NULL,
             price        BYTEA               NOT NULL
         );
-         CREATE TABLE IF NOT EXISTS velas_register_data(
+	CREATE TABLE IF NOT EXISTS games(
+            match_id  BYTEA   REFERENCES matches(id) ON DELETE CASCADE NOT NULL,
+            game_info VARCHAR                                          NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS velas_register_data(
             user_id BYTEA   PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE NOT NULL,
             response        VARCHAR                                            NOT NULL
         );`

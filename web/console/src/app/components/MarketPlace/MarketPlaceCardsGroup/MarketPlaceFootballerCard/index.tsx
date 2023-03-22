@@ -48,4 +48,6 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (l
         </div>;
     };
 
+    
+
 
