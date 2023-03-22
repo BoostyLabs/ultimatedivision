@@ -100,3 +100,9 @@ export const onOpenConnectionNoAction = () => {
     webSocketService.changeWSConnectionClient();
     webSocketService.openConnection();
 };
+
+/** Closes connection */
+export const onCloseConnection = () => {
+    webSocketService.close()
+};
+
