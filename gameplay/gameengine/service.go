@@ -130,7 +130,7 @@ func removeIntersections(moves, playerPositions []int) (movesWithoutIntersection
 	return movesWithoutIntersections
 }
 
-// Move get a player moves.
+// Move update card moves and get possible moves cells.
 func (service *Service) Move(ctx context.Context, matchID uuid.UUID, card CardIDWithPosition) ([]int, error) {
 	gameInfoJSON, err := service.games.Get(ctx, matchID)
 	if err != nil {

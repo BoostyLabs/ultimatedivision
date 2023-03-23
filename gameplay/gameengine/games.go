@@ -19,11 +19,11 @@ var ErrNoGames = errs.Class("game does not exist")
 type DB interface {
 	// Create creates game in db.
 	Create(ctx context.Context, matchID uuid.UUID, gameInformationInJSON string) error
-	// Get returns game by match id.
+	// Get returns game information in JSON by match id.
 	Get(ctx context.Context, matchID uuid.UUID) (string, error)
 	// Update updates game info in the database by match id.
 	Update(ctx context.Context, matchID uuid.UUID, gameInformationInJSON string) error
-	// Delete deletes game by match id from db.
+	// Delete deletes game information in JSON.
 	Delete(ctx context.Context, gameID uuid.UUID) error
 }
 
@@ -33,7 +33,7 @@ type Game struct {
 	GameInfo []CardIDWithPosition
 }
 
-// CardIDWithPosition defines Card with moves for game.
+// CardIDWithPosition defines card ID with possible moves cells for game.
 type CardIDWithPosition struct {
 	CardID   uuid.UUID `json:"cardID"`
 	Position int       `json:"position"`

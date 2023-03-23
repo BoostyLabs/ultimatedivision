@@ -54,7 +54,7 @@ func (gameengineDB *gameengineDB) Create(ctx context.Context, matchID uuid.UUID,
 	return ErrGames.Wrap(err)
 }
 
-// Get returns game by match id.
+// Get returns game information in JSON by match id.
 func (gameengineDB *gameengineDB) Get(ctx context.Context, matchID uuid.UUID) (string, error) {
 	query := `SELECT game_info
               FROM games
@@ -62,18 +62,18 @@ func (gameengineDB *gameengineDB) Get(ctx context.Context, matchID uuid.UUID) (s
 
 	row := gameengineDB.conn.QueryRowContext(ctx, query, matchID)
 
-	var gameData string
+	var gameDataInJSON string
 
-	err := row.Scan(&gameData)
+	err := row.Scan(&gameDataInJSON)
 	if err != nil {
 		if errors.Is(sql.ErrNoRows, err) {
-			return gameData, gameengine.ErrNoGames.Wrap(err)
+			return gameDataInJSON, gameengine.ErrNoGames.Wrap(err)
 		}
 
-		return gameData, ErrGames.Wrap(err)
+		return gameDataInJSON, ErrGames.Wrap(err)
 	}
 
-	return gameData, nil
+	return gameDataInJSON, nil
 }
 
 // Update updates game info in the database by match id.
@@ -91,7 +91,7 @@ func (gameengineDB *gameengineDB) Update(ctx context.Context, matchID uuid.UUID,
 	return ErrGames.Wrap(err)
 }
 
-// Delete deletes game by match id from db.
+// Delete deletes game information in JSON.
 func (gameengineDB *gameengineDB) Delete(ctx context.Context, matchID uuid.UUID) error {
 	query := `DELETE FROM games
               WHERE match_id = $1`
