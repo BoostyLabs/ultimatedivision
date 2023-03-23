@@ -13,6 +13,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: "Orbitron", sans-serif;
     background: rgba(0, 0, 0, 0.6);
 
     &__wrapper {
@@ -30,7 +31,6 @@
 
     &__title {
         margin-bottom: 31px;
-        font-family: "Orbitron", sans-serif;
         font-style: normal;
         font-weight: 900;
         font-size: 33.425px;
@@ -50,16 +50,17 @@
         width: 652px;
         height: 332px;
         padding: 71px 40px;
-        background: rgba(255, 255, 255, 0.05);
         border: 2px solid rgba(255, 255, 255, 0.15);
         box-shadow: 0 12px 22px rgba(0, 23, 58, 0.22);
         border-radius: 37px;
+        background: rgba(255, 255, 255, 0.05);
     }
 
     &__bid {
         margin-bottom: 38px;
 
         &__label {
+            bottom: -27px;
             right: 86px;
             color: rgba(255, 255, 255, 0.4);
         }
@@ -76,7 +77,6 @@
             background: rgba(0, 0, 0, 0.2);
 
             &::placeholder {
-                font-family: "Orbitron", sans-serif;
                 font-style: normal;
                 font-weight: 900;
                 font-size: 20px;
@@ -108,7 +108,6 @@
         height: 64px;
         border: 3px solid #fff;
         border-radius: 10px;
-        font-family: "Orbitron", sans-serif;
         font-style: normal;
         font-weight: 900;
         font-size: 20px;
@@ -120,17 +119,18 @@
         color: #fff;
         background: rgba(255, 255, 255, 0.1);
         cursor: pointer;
+
+        &__buy-now {
+            position: relative;
+        }
     }
 
-    &__timer {
-        display: flex;
-        align-items: center;
+    &__timer,
+    &__timer__mobile {
         width: 297px;
         height: 64px;
-        padding: 10px 13px;
         border-radius: 10px;
         border: 2px solid rgba(255, 255, 255, 0.1);
-        font-family: "Orbitron", sans-serif;
         font-style: normal;
         font-weight: 700;
         font-size: 36.4809px;
@@ -140,12 +140,30 @@
         background: rgba(255, 255, 255, 0.1);
     }
 
+    &__timer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &__mobile {
+            display: none;
+        }
+    }
+
     &__buy-now__label {
-        right: 15px;
+        position: absolute;
+        right: 50%;
+        transform: translateX(50%);
+        bottom: -50px;
         color: white;
 
         & span {
+            display: block;
             color: #cbfb00;
+        }
+
+        &__mobile {
+            display: none;
         }
     }
 
@@ -158,8 +176,6 @@
 
         &__label {
             position: absolute;
-            bottom: -27px;
-            font-family: "Orbitron", sans-serif;
             font-style: normal;
             font-weight: 900;
             font-size: 14px;
@@ -194,8 +210,6 @@
         &__buy-now {
 
             &__label {
-                bottom: -24px;
-                right: 10px;
                 font-size: 13px;
             }
         }
@@ -281,9 +295,9 @@
         &__buy-now {
 
             &__label {
-                bottom: -21px;
+                bottom: -37px;
                 font-size: 10px;
-                right: 10px;
+                line-height: 13px;
             }
         }
 
@@ -372,15 +386,6 @@
             padding: 25px 20px;
         }
 
-        &__buy-now {
-
-            &__label {
-                bottom: -21px;
-                right: 10px;
-                font-size: 10px;
-            }
-        }
-
         &__title {
             margin-bottom: 27px;
             font-size: 28px;
@@ -399,19 +404,19 @@
             width: 210px;
             height: 45px;
             padding: 6px 8px;
+            border-radius: 6.5px;
             font-weight: 700;
             line-height: 30px;
             font-size: 26px;
-            border-radius: 6.5px;
         }
 
         &__bid {
             margin-bottom: 24px;
 
             &__label {
-                font-size: 10px;
                 right: 50px;
                 bottom: -21px;
+                font-size: 10px;
             }
 
             &__input {
@@ -475,10 +480,18 @@
         }
 
         &__timer {
-            width: 191px;
-            height: 40px;
-            margin-right: 25%;
-            font-size: 23.5px;
+            display: none;
+
+            &__mobile {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 191px;
+                height: 40px;
+                padding: 0;
+                margin: 0 auto;
+                font-size: 23.5px;
+            }
         }
 
         &__bid {
@@ -492,25 +505,32 @@
         }
 
         &__buy-now {
-            flex-direction: column-reverse;
-            align-items: flex-end;
+            align-items: center;
 
             .marketplace-modal__button {
                 margin-bottom: 16.5px;
             }
 
             &__label {
-                left: 5%;
-                top: 10px;
-                width: 93px;
-                height: 27px;
-                font-weight: 700;
-                font-size: 12px;
-                line-height: 13px;
-                letter-spacing: 0.12em;
+                display: none;
 
-                span {
+                &__mobile {
                     display: block;
+                    width: 50%;
+                    height: 27px;
+                    font-size: 12px;
+                    line-height: 13px;
+                    letter-spacing: 0.12em;
+                    font-style: normal;
+                    font-weight: 700;
+                    text-align: center;
+                    text-transform: uppercase;
+                    color: white;
+
+                    & span {
+                        display: block;
+                        color: #cbfb00;
+                    }
                 }
             }
         }

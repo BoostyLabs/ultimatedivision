@@ -42,15 +42,28 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                                 {/** TODO: change to real data. */}
                                     3 : 30 : 12
                             </div>
-                            <button onClick={() => bidButton()} className="marketplace-modal__button marketplace-modal__button__buy-now">
-                                buy now
-                            </button>
-                            <div className="marketplace-modal__buy-now__label">for
-                                <span>
-                                    {lot.currentPrice} {lot.currentPrice > ONE_COIN ? 'coins' : 'coin'}
-                                </span>
+                              <div className="marketplace-modal__buy-now__label__mobile">
+                                    for
+                                    <span>
+                                        {lot.currentPrice} {lot.currentPrice > ONE_COIN ? 'coins' : 'coin'}
+                                    </span>
                             </div>
+                            <button onClick={() => buyNowButton()} className="marketplace-modal__button marketplace-modal__button__buy-now">
+                                buy now
+                                <div className="marketplace-modal__buy-now__label">
+                                    for
+                                    <span>
+                                        {lot.currentPrice} {lot.currentPrice > ONE_COIN ? 'coins' : 'coin'}
+                                    </span>
+                                </div>
+                            </button>
+                           
+                              
                         </div>
+                        <div className="marketplace-modal__timer__mobile">
+                                {/** TODO: change to real data. */}
+                                    3 : 30 : 12
+                            </div>
                     </div>
                 </div>
             </div>
