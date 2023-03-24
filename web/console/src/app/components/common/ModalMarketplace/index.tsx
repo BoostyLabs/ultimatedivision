@@ -25,10 +25,9 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                         <img src={CloseModal} alt="modal close button" className="marketplace-modal__close-button__img" />
                     </button>
                 </div>
-                <h2 className="marketplace-modal__title">{lot?.card.playerName}</h2>
+                <h2 className="marketplace-modal__title">{lot.card.playerName}</h2>
                 <div className="marketplace-modal__content">
-                    {lot?.card &&
-                        <PlayerCard id={lot.card.id} className="marketplace-modal__card" />}
+                    <PlayerCard id={lot.card.id} className="marketplace-modal__card" />
                     <div className="marketplace-modal__lot">
                         <div className="marketplace-modal__bid">
                             <input className="marketplace-modal__bid__input" placeholder="place a bid|" type="number" />
@@ -40,7 +39,7 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                         <div className="marketplace-modal__buy-now" >
                             <div className="marketplace-modal__timer">
                                 {/** TODO: change to real data. */}
-                                    3 : 30 : 12
+                                3 : 30 : 12
                             </div>
                               <div className="marketplace-modal__buy-now__label__mobile">
                                     for
@@ -56,14 +55,12 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                                         {lot.currentPrice} {lot.currentPrice > ONE_COIN ? 'coins' : 'coin'}
                                     </span>
                                 </div>
-                            </button>
-                           
-                              
+                            </button>   
                         </div>
                         <div className="marketplace-modal__timer__mobile">
-                                {/** TODO: change to real data. */}
-                                    3 : 30 : 12
-                            </div>
+                            {/** TODO: change to real data. */}
+                            3 : 30 : 12
+                        </div>
                     </div>
                 </div>
             </div>

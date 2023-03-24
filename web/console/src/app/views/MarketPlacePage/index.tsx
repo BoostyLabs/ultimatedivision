@@ -31,7 +31,6 @@ const MarketPlace: React.FC = () => {
     const { lots, page } = useSelector(
         (state: RootState) => state.marketplaceReducer.marketplacePage
     );
-
     const [currentLot, setCurrentLot] = useState<Lot>();
     const [showModal, setShowModal] = useState<boolean>(false);
 
