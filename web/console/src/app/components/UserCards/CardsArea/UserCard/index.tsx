@@ -39,7 +39,7 @@ export const UserCard: React.FC<{
         e.nativeEvent.stopImmediatePropagation();
         /** TODO: create interface for adding selling parameters */
         /* eslint-disable */
-        dispatch(createLot(new CreatedLot(card.id, 200, 200, 1)));
+        dispatch(createLot(new CreatedLot(card.id,'card', 200, 200, 1)));
         /* eslint-enable */
         setIndex(DEFAULT_INDEX);
         setVisibility(false);

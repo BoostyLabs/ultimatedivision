@@ -37,6 +37,13 @@ export const FootballerCardPrice: React.FC<{ card: Card; isMinted: boolean }> = 
             {isOpenSellPopup && <Sell setIsOpenSellPopup={setIsOpenSellPopup} />}
             {isMinted
                 ?
+                <button
+                    className="card__sell-btn"
+                    onClick={handleOpenSellPopup}
+                >
+                    <span className="card__sell-btn__text">SELL</span>
+                </button>
+                :
                 <div className="footballer-card-price">
                     {isOpenPlaceBidPopup &&
                     <PlaceBid
@@ -72,14 +79,7 @@ export const FootballerCardPrice: React.FC<{ card: Card; isMinted: boolean }> = 
                         </div>
                     </div>
                 </div>
-                :
-                <button
-                    className="card__sell-btn"
-                    // TODO: Waiting for logic from backend.
-                    // onClick={handleOpenSellPopup}
-                >
-                    <span className="card__sell-btn__text">SELL</span>
-                </button>
+
             }
         </>
     );

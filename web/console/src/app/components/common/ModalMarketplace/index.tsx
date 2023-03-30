@@ -41,11 +41,11 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                                 {/** TODO: change to real data. */}
                                 3 : 30 : 12
                             </div>
-                              <div className="marketplace-modal__buy-now__label__mobile">
+                            <div className="marketplace-modal__buy-now__label__mobile">
                                     for
-                                    <span>
-                                        {lot.currentPrice} {lot.currentPrice > ONE_COIN ? 'coins' : 'coin'}
-                                    </span>
+                                <span>
+                                    {lot.currentPrice} {lot.currentPrice > ONE_COIN ? 'coins' : 'coin'}
+                                </span>
                             </div>
                             <button onClick={() => buyNowButton()} className="marketplace-modal__button marketplace-modal__button__buy-now">
                                 buy now
@@ -55,7 +55,7 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                                         {lot.currentPrice} {lot.currentPrice > ONE_COIN ? 'coins' : 'coin'}
                                     </span>
                                 </div>
-                            </button>   
+                            </button>
                         </div>
                         <div className="marketplace-modal__timer__mobile">
                             {/** TODO: change to real data. */}

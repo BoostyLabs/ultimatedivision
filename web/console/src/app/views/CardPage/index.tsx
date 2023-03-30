@@ -25,7 +25,7 @@ import './index.scss';
 const Card: React.FC = () => {
     const dispatch = useDispatch();
 
-    const [isMinted, setIsMinted] = useState<boolean>(false);
+    const [isMinted, setIsMinted] = useState<boolean>(true);
     const user = useSelector((state: RootState) => state.usersReducer.user);
     const { card } = useSelector((state: RootState) => state.cardsReducer);
     const { id }: { id: string } = useParams();
