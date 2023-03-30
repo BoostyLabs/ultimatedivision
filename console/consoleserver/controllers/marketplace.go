@@ -181,10 +181,11 @@ func (controller *Marketplace) CreateLot(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	// TODO: remove after adding Casper contract.
 	// if _, err = controller.marketplace.GetNFTByCardID(ctx, createLot.CardID); err != nil {
 	//	controller.log.Error("there is no such NFT", ErrMarketplace.Wrap(err))
 	//	controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
-	// }.
+	// } .
 
 	createLot.UserID = claims.UserID
 
