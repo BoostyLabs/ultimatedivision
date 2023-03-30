@@ -1,11 +1,12 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
+import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from '@/app/store';
 import { createLot } from '@/app/store/actions/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
+
 import closePopup from '@static/img/FootballerCardPage/close-popup.svg';
-import { useDispatch, useSelector } from 'react-redux';
 
 import './index.scss';
 
@@ -13,13 +14,18 @@ type SellTypes = {
     setIsOpenSellPopup: (isOpenSellPopup: boolean) => void;
 };
 
+/** Mock lot creating stats */
+const MOCK_MIN_BID = 200;
+const MOCK_MAX_BID = 800;
+const MOCK_PERIOD = 1;
+
 export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
     const dispatch = useDispatch();
 
     const { card } = useSelector((state: RootState) => state.cardsReducer);
 
     const setCreatedLot= () => {
-        dispatch(createLot(new CreatedLot(card.id, 'card', 200, 200, 1)));
+        dispatch(createLot(new CreatedLot(card.id, 'card', MOCK_MIN_BID, MOCK_MAX_BID, MOCK_PERIOD)));
         setIsOpenSellPopup(false);
     };
 

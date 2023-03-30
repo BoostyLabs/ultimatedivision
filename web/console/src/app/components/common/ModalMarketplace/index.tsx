@@ -1,8 +1,10 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
+import { MarketplaceClient } from '@/api/marketplace';
+import { Marketplaces } from '@/marketplace/service';
 import { Lot } from '@/marketplace';
 import { PlayerCard } from '../PlayerCard';
 
@@ -14,9 +16,24 @@ const ONE_COIN = 1;
 
 export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetStateAction<boolean>> }> =
     ({ lot, setShowModal }) => {
+        const [cardBid, setCardBid] = useState<number>(lot.currentPrice);
+
+        const marketplaceClient = new MarketplaceClient();
+        const marketplaceService = new Marketplaces(marketplaceClient);
+
+        const bidButton = () => {
+            marketplaceService.placeBid(lot.cardId, cardBid);
+        };
+
         /** TODO: add function entity */
-        const buyNowButton = () => { };
-        const bidButton = () => { };
+        const buyNowButton = () => {};
+
+        const onChangeCardBid = (e: React.ChangeEvent<HTMLInputElement>) => {
+            Number(e.target.value) > lot.maxPrice?
+                setCardBid(lot.maxPrice)
+                :
+                setCardBid(Number(e.target.value));
+        };
 
         return <div className="marketplace-modal">
             <div className="marketplace-modal__wrapper">
@@ -30,9 +47,15 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                     <PlayerCard id={lot.card.id} className="marketplace-modal__card" />
                     <div className="marketplace-modal__lot">
                         <div className="marketplace-modal__bid">
-                            <input className="marketplace-modal__bid__input" placeholder="place a bid|" type="number" />
+                            <input className="marketplace-modal__bid__input"
+                                placeholder="place a bid|"
+                                type="number" max={lot.maxPrice}
+                                onChange={onChangeCardBid}
+                                value={cardBid}
+                            />
+
                             <button onClick={() => bidButton()} className="marketplace-modal__button marketplace-modal__button__bid">
-                                    bid
+                                bid
                             </button>
                             <span className="marketplace-modal__bid__label">or</span>
                         </div>

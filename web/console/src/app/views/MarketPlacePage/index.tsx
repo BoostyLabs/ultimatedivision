@@ -19,12 +19,11 @@ import {
     getCurrentLotsQueryParameters,
     listOfLots,
 } from '@/app/store/actions/marketplace';
-import { Card, CardsQueryParametersField } from '@/card';
+import { CardsQueryParametersField } from '@/card';
 import { Lot } from '@/marketplace';
 
 import './index.scss';
 
-const DEFAULT_VALUE = 1;
 const MarketPlace: React.FC = () => {
     const dispatch = useDispatch();
 

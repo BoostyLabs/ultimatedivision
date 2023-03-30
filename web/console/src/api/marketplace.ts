@@ -70,4 +70,14 @@ export class MarketplaceClient extends APIClient {
             await this.handleError(response);
         };
     };
+
+    /** places a bid */
+    public async placeBid(lotId: string, amount: number): Promise<void> {
+        const path = '/api/v0/bids';
+        const response = await this.http.post(path, JSON.stringify({ lotId, amount }));
+
+        if (!response.ok) {
+            await this.handleError(response);
+        };
+    };
 };
