@@ -83,7 +83,7 @@ func (controller *Cards) GetStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cardStatus, err := controller.cards.Get(ctx, id)
+	cardStatus, err := controller.cards.GetStatus(ctx, id)
 	if err != nil {
 		controller.log.Error("could not get card status", ErrCards.Wrap(err))
 		switch {

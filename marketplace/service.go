@@ -102,7 +102,7 @@ func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, erro
 	return lot, ErrMarketplace.Wrap(err)
 }
 
-// GetCurrentPriceByCardID returns lot by id from the data base.
+// GetCurrentPriceByCardID returns current price by card id from the data base.
 func (service *Service) GetCurrentPriceByCardID(ctx context.Context, cardID uuid.UUID) (big.Int, error) {
 	currentPrice, err := service.marketplace.GetCurrentPriceByCardID(ctx, cardID)
 	return currentPrice, ErrMarketplace.Wrap(err)

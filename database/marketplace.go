@@ -99,7 +99,7 @@ func (marketplaceDB *marketplaceDB) GetLotByID(ctx context.Context, id uuid.UUID
 	}
 }
 
-// GetCurrentPriceByCardID returns current_price by id from the data base.
+// GetCurrentPriceByCardID returns current price by card id from the data base.
 func (marketplaceDB *marketplaceDB) GetCurrentPriceByCardID(ctx context.Context, cardID uuid.UUID) (big.Int, error) {
 	var (
 		currentPrice    []byte
