@@ -56,8 +56,12 @@ type (
 
 // Casper exposes access to the casper sdk methods.
 type Casper interface {
+	// PutDeploy deploys a contract or sends a transaction and returns deployment hash.
+	PutDeploy(deploy sdk.Deploy) (string, error)
 	// GetBlockNumberByHash returns block number by deploy hash.
 	GetBlockNumberByHash(hash string) (int, error)
+	// GetEventsByBlockNumbers returns events for range of block numbers.
+	GetEventsByBlockNumbers(fromBlockNumber uint64, toBlockNumber uint64, bridgeInEventHash string) ([]Event, error)
 }
 
 // ClaimRequest describes values to initiate inbound claim transaction.

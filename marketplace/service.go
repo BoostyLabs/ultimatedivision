@@ -5,10 +5,16 @@ package marketplace
 
 import (
 	"context"
+	"encoding/hex"
+	"github.com/casper-ecosystem/casper-golang-sdk/keypair"
+	"github.com/casper-ecosystem/casper-golang-sdk/sdk"
+	"github.com/casper-ecosystem/casper-golang-sdk/serialization"
+	"github.com/casper-ecosystem/casper-golang-sdk/types"
 	"math/big"
 	"strconv"
 	"strings"
 	"time"
+	contract "ultimatedivision/pkg/contractcasper"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -31,6 +37,7 @@ type Service struct {
 	users       *users.Service
 	cards       *cards.Service
 	nfts        *nfts.Service
+	contract    *contract.Casper
 }
 
 // NewService is a constructor for marketplace service.
@@ -294,4 +301,177 @@ func (service *Service) UpdateEndTimeLot(ctx context.Context, id uuid.UUID, endT
 // Delete deletes lot in the database.
 func (service *Service) Delete(ctx context.Context, cardID uuid.UUID) error {
 	return ErrMarketplace.Wrap(service.marketplace.Delete(ctx, cardID))
+}
+
+// PublicKey returns public key for specific network.
+func PublicKey(ctx context.Context, networkId string) ([]byte, error) {
+}
+
+// BridgeOut initiates outbound bridge transaction.
+func (service *Service) BridgeOut(ctx context.Context, req TokenOutRequest) ([]byte, error) {
+	respPubKey, err := PublicKey(ctx, TypeCasper)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	publicKey := keypair.PublicKey{
+		Tag:        keypair.KeyTagEd25519,
+		PubKeyData: respPubKey,
+	}
+
+	standardPayment := new(big.Int).SetUint64(service.config.GasLimit)
+
+	deployParams := sdk.NewDeployParams(publicKey, strings.ToLower(service.config.ChainName.String()), nil, 0)
+	payment := sdk.StandardPayment(standardPayment)
+
+	// token contract.
+	tokenContractFixedBytes := types.FixedByteArray(req.Token)
+	tokenContract := types.CLValue{
+		Type:      types.CLTypeByteArray,
+		ByteArray: &tokenContractFixedBytes,
+	}
+	tokenContractBytes, err := serialization.Marshal(tokenContract)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	// amount.
+	amount := types.CLValue{
+		Type: types.CLTypeU256,
+		U256: req.Amount,
+	}
+	amountBytes, err := serialization.Marshal(amount)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	// transaction_id.
+	transactionID := types.CLValue{
+		Type: types.CLTypeU256,
+		U256: req.TransactionID,
+	}
+	transactionIDBytes, err := serialization.Marshal(transactionID)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	//  source chain.
+	sourceChain := types.CLValue{
+		Type:   types.CLTypeString,
+		String: &req.From.NetworkName,
+	}
+	sourceChainBytes, err := serialization.Marshal(sourceChain)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	// source address.
+	sourceAddress := types.CLValue{
+		Type:   types.CLTypeString,
+		String: &req.From.Address,
+	}
+	sourceAddressBytes, err := serialization.Marshal(sourceAddress)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	// recipient.
+	var recipientHashBytes [32]byte
+	copy(recipientHashBytes[:], req.To)
+
+	recipient := types.CLValue{
+		Type: types.CLTypeKey,
+		Key: &types.Key{
+			Type:    types.KeyTypeAccount,
+			Account: recipientHashBytes,
+		},
+	}
+	recipientBytes, err := serialization.Marshal(recipient)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	args := map[string]sdk.Value{
+		"token_contract": {
+			IsOptional:  false,
+			Tag:         types.CLTypeByteArray,
+			StringBytes: hex.EncodeToString(tokenContractBytes),
+		},
+		"amount": {
+			Tag:         types.CLTypeU256,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(amountBytes),
+		},
+		"transaction_id": {
+			Tag:         types.CLTypeU256,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(transactionIDBytes),
+		},
+		"source_chain": {
+			Tag:         types.CLTypeString,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(sourceChainBytes),
+		},
+		"source_address": {
+			Tag:         types.CLTypeString,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(sourceAddressBytes),
+		},
+		"recipient": {
+			Tag:         types.CLTypeKey,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(recipientBytes),
+		},
+	}
+
+	keyOrder := []string{
+		"token_contract",
+		"amount",
+		"transaction_id",
+		"source_chain",
+		"source_address",
+		"recipient",
+	}
+	runtimeArgs := sdk.NewRunTimeArgs(args, keyOrder)
+
+	contractHexBytes, err := hex.DecodeString(service.config.BridgeContractAddress)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	var contractHashBytes [32]byte
+	copy(contractHashBytes[:], contractHexBytes)
+	session := sdk.NewStoredContractByHash(contractHashBytes, "bridge_out", *runtimeArgs)
+
+	deploy := sdk.MakeDeploy(deployParams, payment, session)
+
+	reqSign := SignRequest{
+		NetworkId: TypeCasper,
+		Data:      deploy.Hash,
+	}
+	signature, err := service.bridge.Sign(ctx, reqSign)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	signatureKeypair := keypair.Signature{
+		Tag:           keypair.KeyTagEd25519,
+		SignatureData: signature,
+	}
+
+	approval := sdk.Approval{
+		Signer:    publicKey,
+		Signature: signatureKeypair,
+	}
+
+	deploy.Approvals = append(deploy.Approvals, approval)
+
+	hash, err := service.contract.PutDeploy(*deploy)
+	if err != nil {
+		return nil, ErrMarketplace.Wrap(err)
+	}
+
+	txHash, err := hex.DecodeString(hash)
+
+	return txHash, ErrMarketplace.Wrap(err)
 }

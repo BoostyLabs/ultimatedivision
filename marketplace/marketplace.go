@@ -45,6 +45,24 @@ type DB interface {
 	Delete(ctx context.Context, cardID uuid.UUID) error
 }
 
+// TypeCasper describes Casper network.
+const TypeCasper Type = "NT_CASPER"
+
+// Bridge describes communication between Connector and Bridge.
+type Bridge interface {
+	// Sign returns signed data for specific network.
+	Sign(ctx context.Context, req SignRequest) ([]byte, error)
+	// PublicKey returns public key for specific network.
+	PublicKey(ctx context.Context, networkId string) ([]byte, error)
+}
+
+// SignRequest describes request for data signing.
+type SignRequest struct {
+	NetworkId string
+	Data      []byte
+	DataType  string
+}
+
 // Lot describes lot entity.
 type Lot struct {
 	CardID       uuid.UUID  `json:"cardId"`
@@ -97,6 +115,7 @@ const (
 type Config struct {
 	LotRenewalInterval time.Duration `json:"lotRenewalInterval"`
 	pagination.Cursor  `json:"cursor"`
+	GasLimit           uint64 `json:"GAS_LIMIT"`
 }
 
 // CreateLot entity that contains the values required to create the lot.
@@ -172,4 +191,24 @@ type ResponsePlaceBetLot struct {
 type Page struct {
 	Lots []Lot           `json:"lots"`
 	Page pagination.Page `json:"page"`
+}
+
+// TokenOutRequest describes values to initiate outbound bridge transaction.
+type TokenOutRequest struct {
+	Amount        *big.Int
+	Token         []byte
+	To            []byte
+	From          Address
+	TransactionID *big.Int
+}
+
+// Address stores network name with its address.
+type Address struct {
+	NetworkName string `json:"networkName,omitempty"`
+	Address     string `json:"address,omitempty"`
+}
+
+// TokenOutResponse describes hash of transaction after outbound bridge transaction was initiated.
+type TokenOutResponse struct {
+	Txhash []byte
 }
