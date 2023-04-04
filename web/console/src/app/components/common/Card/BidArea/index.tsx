@@ -2,19 +2,23 @@
 // See LICENSE for copying information.
 
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
-import { Lot } from '@/marketplace';
 import { PlaceBid } from '@components/common/Card/popUps/PlaceBid';
+import { MarketplaceTimer } from '@/app/components/MarketPlace/MarketplaceTimer';
+import { RootState } from '@/app/store';
 
 import './index.scss';
 
 /** Initial bid value. */
 const INITIAL_BID: number = 0;
 
-export const BidArea: React.FC<{ lot: Lot }> = (lot) => {
+export const BidArea= () => {
+    const { lot } = useSelector((state: RootState) => state.marketplaceReducer);
+
     const [isOpenPlaceBidPopup, setIsOpenPlaceBidPopup] = useState<boolean>(false);
     const [cardBid, setCardBid] = useState<number>(INITIAL_BID);
-    const [currentCardBid, setCurrentCardBid] = useState<number>(lot.lot.currentPrice);
+    const [currentCardBid, setCurrentCardBid] = useState<number>(INITIAL_BID);
 
     /** Handle opening of a place bids pop-up. */
     const handleOpenPlaceBidPopup = () => {
@@ -42,7 +46,7 @@ export const BidArea: React.FC<{ lot: Lot }> = (lot) => {
                     <span className="auction-title">
                         Auction expires in:
                     </span>
-                    <span className="auction-expire-time">22:12:03</span>
+                    <MarketplaceTimer lot={lot} className="auction-expire-time"/>
                 </div>
             </div>
             <div className="footballer-card-price__buttons">

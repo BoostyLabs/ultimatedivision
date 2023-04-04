@@ -7,6 +7,7 @@ import { MarketplaceClient } from '@/api/marketplace';
 import { Marketplaces } from '@/marketplace/service';
 import { Lot } from '@/marketplace';
 import { PlayerCard } from '../PlayerCard';
+import { MarketplaceTimer } from '../../MarketPlace/MarketplaceTimer';
 
 import CloseModal from '@/app/static/img/MarketPlacePage/marketplaceModal/close.svg';
 
@@ -60,10 +61,7 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                             <span className="marketplace-modal__bid__label">or</span>
                         </div>
                         <div className="marketplace-modal__buy-now" >
-                            <div className="marketplace-modal__timer">
-                                {/** TODO: change to real data. */}
-                                3 : 30 : 12
-                            </div>
+                            <MarketplaceTimer lot={lot} className="marketplace-modal__timer"/>
                             <div className="marketplace-modal__buy-now__label__mobile">
                                     for
                                 <span>
@@ -81,8 +79,7 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                             </button>
                         </div>
                         <div className="marketplace-modal__timer__mobile">
-                            {/** TODO: change to real data. */}
-                            3 : 30 : 12
+                            <MarketplaceTimer lot={lot} className="marketplace-modal__timer"/>
                         </div>
                     </div>
                 </div>

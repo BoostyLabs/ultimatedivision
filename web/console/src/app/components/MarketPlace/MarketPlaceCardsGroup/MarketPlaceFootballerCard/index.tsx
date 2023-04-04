@@ -1,11 +1,13 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { Link } from 'react-router-dom';
+
 import { PlayerCard } from '@components/common/PlayerCard';
 import { Lot } from '@/marketplace';
+import { MarketplaceTimer } from '../../MarketplaceTimer';
 
 import './index.scss';
-import { Link } from 'react-router-dom';
 
 const ONE_COIN = 1;
 
@@ -47,10 +49,7 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (l
                         Buy now
                 </button>
             </div>
-            {/** TODO: change to real data. */}
-            <div className="marketplace-playerCard__timer">
-                    3 : 10 : 15
-            </div>
+            <MarketplaceTimer lot={lot} className="marketplace-playerCard__timer" />
         </div>;
     };
 

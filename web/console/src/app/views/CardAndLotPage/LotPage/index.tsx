@@ -20,12 +20,12 @@ import '../index.scss';
 
 const Lot: React.FC = () => {
     const dispatch = useDispatch();
-    const { card } = useSelector((state: RootState) => state.marketplaceReducer);
+    const { lot } = useSelector((state: RootState) => state.marketplaceReducer);
 
     const { id }: { id: string } = useParams();
 
     /** implements opening new card */
-    async function openCard() {
+    async function openLot() {
         try {
             await dispatch(openMarketplaceCard(id));
         } catch (error: any) {
@@ -34,11 +34,11 @@ const Lot: React.FC = () => {
     };
 
     useEffect(() => {
-        openCard();
+        openLot();
     }, []);
 
     return (
-        card &&
+        lot &&
         <div className="lot">
             <div className="lot__wrapper">
                 <div className="lot__back">
@@ -48,9 +48,9 @@ const Lot: React.FC = () => {
                     </Link>
                 </div>
                 <div className="lot__info">
-                    <PlayerCard className="lot__player" id={card.id} />
+                    <PlayerCard className="lot__player" id={lot.card.id} />
                     <div className="lot__player__info">
-                        <h2 className="lot__name">{card.playerName}</h2>
+                        <h2 className="lot__name">{lot.card.playerName}</h2>
                         <div className="lot__mint-info">
                             <div className="lot__mint-info__nft">
                                 <span className="lot__mint-info__nft-title">NFT:</span>
@@ -64,16 +64,16 @@ const Lot: React.FC = () => {
                                 <span className="lot__mint-info__club-title">Club:</span>
                                 <span className="lot__mint-info__club-name">FC228</span>
                             </div>
-                            <BidArea lot={card} />
+                            <BidArea />
                         </div>
                     </div>
                     <div className="lot__illustrator-radar">
                         <h2 className="lot__illustrator-radar__title">Skills</h2>
-                        <FootballerCardIllustrationsRadar card={card} />
+                        <FootballerCardIllustrationsRadar card={lot.card} />
                     </div>
                 </div>
                 <div className="lot__stats-area">
-                    <FootballerCardStatsArea card={card} />
+                    <FootballerCardStatsArea card={lot.card} />
                 </div>
             </div>
             <img src={CardPageBackground} alt="background" className="lot__bg" />
