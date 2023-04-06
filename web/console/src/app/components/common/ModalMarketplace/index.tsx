@@ -78,9 +78,7 @@ export const ModalMarketPlace: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                                 </div>
                             </button>
                         </div>
-                        <div className="marketplace-modal__timer__mobile">
-                            <MarketplaceTimer lot={lot} className="marketplace-modal__timer"/>
-                        </div>
+                        <MarketplaceTimer lot={lot} className="marketplace-modal__timer__mobile"/>
                     </div>
                 </div>
             </div>

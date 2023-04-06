@@ -9,7 +9,7 @@ const DEFAULT_TIME_VALUE = 0;
 const HOURS = 24;
 const MINUTES_AND_SECONDS = 60;
 const INTERVAL = 1000;
-const CONVERT_TIME_VALUE = 1000;
+const CONVERT_MILLISECONDS = 1000;
 
 export const MarketplaceTimer: React.FC<{ lot: Lot; className?: string }> = ({ lot, className }) => {
     const [hours, setHours] = useState(DEFAULT_TIME_VALUE);
@@ -19,9 +19,9 @@ export const MarketplaceTimer: React.FC<{ lot: Lot; className?: string }> = ({ l
     const getTime = (deadline: string) => {
         const time = Date.parse(deadline) - Date.now();
 
-        setHours(Math.floor(time / (CONVERT_TIME_VALUE * MINUTES_AND_SECONDS * MINUTES_AND_SECONDS) % HOURS));
-        setMinutes(Math.floor(time / CONVERT_TIME_VALUE / MINUTES_AND_SECONDS % MINUTES_AND_SECONDS));
-        setSeconds(Math.floor(time / CONVERT_TIME_VALUE % MINUTES_AND_SECONDS));
+        setHours(Math.floor(time / (CONVERT_MILLISECONDS * MINUTES_AND_SECONDS * MINUTES_AND_SECONDS) % HOURS));
+        setMinutes(Math.floor(time / CONVERT_MILLISECONDS / MINUTES_AND_SECONDS % MINUTES_AND_SECONDS));
+        setSeconds(Math.floor(time / CONVERT_MILLISECONDS % MINUTES_AND_SECONDS));
     };
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export const MarketplaceTimer: React.FC<{ lot: Lot; className?: string }> = ({ l
     }, [lot]);
 
     return (
-        <div className={`${className ? className: ''}`}>
+        <div className={`${className ? className : ''}`}>
             {hours} : {minutes} : {seconds}
         </div>
     );
