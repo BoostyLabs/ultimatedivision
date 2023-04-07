@@ -162,9 +162,9 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		CardID       uuid.UUID          `json:"cardId"`
 		Type         marketplace.Type   `json:"type"`
 		Status       marketplace.Status `json:"status"`
-		StartPrice   int64              `json:"startPrice"`
-		MaxPrice     int64              `json:"maxPrice"`
-		CurrentPrice int64              `json:"currentPrice"`
+		StartPrice   float64            `json:"startPrice"`
+		MaxPrice     float64            `json:"maxPrice"`
+		CurrentPrice float64            `json:"currentPrice"`
 		StartTime    time.Time          `json:"startTime"`
 		EndTime      time.Time          `json:"endTime"`
 		Period       marketplace.Period `json:"period"`
@@ -173,9 +173,9 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		CardID:       lot.Card.ID,
 		Type:         lot.Type,
 		Status:       lot.Status,
-		StartPrice:   lot.StartPrice.Int64(),
-		MaxPrice:     lot.MaxPrice.Int64(),
-		CurrentPrice: lot.CurrentPrice.Int64(),
+		StartPrice:   evmsignature.WeiBigToEthereumFloat(&lot.StartPrice),
+		MaxPrice:     evmsignature.WeiBigToEthereumFloat(&lot.MaxPrice),
+		CurrentPrice: evmsignature.WeiBigToEthereumFloat(&lot.CurrentPrice),
 		StartTime:    lot.StartTime,
 		EndTime:      lot.EndTime,
 		Period:       lot.Period,
