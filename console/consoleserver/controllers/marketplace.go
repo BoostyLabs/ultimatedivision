@@ -5,6 +5,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -173,9 +174,9 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 		CardID:       lot.Card.ID,
 		Type:         lot.Type,
 		Status:       lot.Status,
-		StartPrice:   evmsignature.WeiBigToEthereumFloat(&lot.StartPrice),
-		MaxPrice:     evmsignature.WeiBigToEthereumFloat(&lot.MaxPrice),
-		CurrentPrice: evmsignature.WeiBigToEthereumFloat(&lot.CurrentPrice),
+		StartPrice:   roundFloat(evmsignature.WeiBigToEthereumFloat(&lot.StartPrice), 3),
+		MaxPrice:     roundFloat(evmsignature.WeiBigToEthereumFloat(&lot.MaxPrice), 3),
+		CurrentPrice: roundFloat(evmsignature.WeiBigToEthereumFloat(&lot.CurrentPrice), 3),
 		StartTime:    lot.StartTime,
 		EndTime:      lot.EndTime,
 		Period:       lot.Period,
@@ -266,4 +267,10 @@ func (controller *Marketplace) serveError(w http.ResponseWriter, status int, err
 	if err = json.NewEncoder(w).Encode(response); err != nil {
 		controller.log.Error("failed to write json error response", ErrMarketplace.Wrap(err))
 	}
+}
+
+// roundFloat floating-point rounding function.
+func roundFloat(val float64, precision uint) float64 {
+	ratio := math.Pow(10, float64(precision))
+	return math.Round(val*ratio) / ratio
 }
