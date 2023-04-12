@@ -5,13 +5,13 @@ import { Link } from 'react-router-dom';
 
 import { PlayerCard } from '@components/common/PlayerCard';
 import { Lot } from '@/marketplace';
-import { MarketplaceTimer } from '../../MarketplaceTimer';
+import { MarketplaceTimer } from '@components/MarketPlace/MarketplaceTimer';
 
 import './index.scss';
 
 const ONE_COIN = 1;
 
-export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (lot: Lot) => void; place?: string}> =
+export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (lot: Lot) => void; place?: string }> =
     ({ lot, handleShowModal }) => {
         /** TODO: add function entity */
         const buyNowButton = () => { };
@@ -34,8 +34,8 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (l
                         {lot.maxPrice} {lot.maxPrice > ONE_COIN ? 'coins' : 'coin'}
                     </span>
                 </div>
-                <button className="marketplace-playerCard__button" onClick={() => handleShowModal(lot) }>
-                        Bid
+                <button className="marketplace-playerCard__button" onClick={() => handleShowModal(lot)}>
+                    Bid
                 </button>
             </div>
             <div className="marketplace-playerCard__info">
@@ -46,7 +46,7 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (l
                     </span>
                 </div>
                 <button className="marketplace-playerCard__button" onClick={() => buyNowButton()}>
-                        Buy now
+                    Buy now
                 </button>
             </div>
             <MarketplaceTimer lot={lot} className="marketplace-playerCard__timer" />

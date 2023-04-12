@@ -56,7 +56,7 @@ const Lot: React.FC = () => {
                                 <span className="lot__mint-info__nft-title">NFT:</span>
                                 <div className="lot__mint-info__nft__content">
                                     <span className="lot__mint-info__nft-value">
-                                         'minted to Polygon'
+                                        'minted to Polygon'
                                     </span>
                                 </div>
                             </div>

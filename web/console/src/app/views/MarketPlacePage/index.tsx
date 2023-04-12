@@ -11,7 +11,7 @@ import { FilterByStatus } from '@components/common/FilterField/FilterByStatus';
 import { FilterByVersion } from '@components/common/FilterField/FilterByVersion';
 import { Paginator } from '@components/common/Paginator';
 import { MarketPlaceCardsGroup } from '@components/MarketPlace/MarketPlaceCardsGroup';
-import { ModalMarketPlace } from '@/app/components/common/ModalMarketplace';
+import { MarketPlaceModal } from '@/app/components/MarketPlace/MarketplaceModal';
 
 import { RootState } from '@/app/store';
 import {
@@ -53,7 +53,7 @@ const MarketPlace: React.FC = () => {
 
     return (
         <>
-            {showModal && currentLot && <ModalMarketPlace lot={currentLot} setShowModal={setShowModal} />}
+            {showModal && currentLot && <MarketPlaceModal lot={currentLot} setShowModal={setShowModal} />}
             <section className="marketplace" >
                 <FilterField>
                     <FilterByVersion
