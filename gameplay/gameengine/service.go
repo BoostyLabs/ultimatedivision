@@ -283,6 +283,15 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 	var matchInfo []CardIDWithPosition
 
 	for _, sqCard := range squadCardsPlayer1 {
+		fieldPosition := service.squadPositionToFieldPositionLeftSide(sqCard.Position)
+
+		if ballPosition < fieldPosition {
+			ballPosition = fieldPosition
+		}
+
+	}
+
+	for _, sqCard := range squadCardsPlayer1 {
 		avatar, err := service.avatars.Get(ctx, sqCard.Card.ID)
 		if err != nil {
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
@@ -294,18 +303,19 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			FieldPosition: service.squadPositionToFieldPositionLeftSide(sqCard.Position),
 		}
 
-		if ballPosition < cardWithPositionPlayer.FieldPosition {
-			ballPosition = cardWithPositionPlayer.FieldPosition
-		}
-
 		cardInfo := CardIDWithPosition{
 			CardID:   sqCard.Card.ID,
 			Position: cardWithPositionPlayer.FieldPosition,
 		}
 
 		matchInfo = append(matchInfo, cardInfo)
-		isThreeSteps := true
-		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition, isThreeSteps)
+
+		isCardFast := false
+		if sqCard.Card.RunningSpeed > 80 && cardInfo.Position == ballPosition || sqCard.Card.RunningSpeed > 70 {
+			isCardFast = true
+		}
+
+		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition, isCardFast)
 		if err != nil {
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
@@ -331,8 +341,13 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			Avatar:        avatar,
 			FieldPosition: service.squadPositionToFieldPositionRightSide(sqCard.Position),
 		}
-		isThreeSteps := true
-		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition, isThreeSteps)
+
+		isCardFast := false
+		if sqCard.Card.RunningSpeed > 70 {
+			isCardFast = true
+		}
+
+		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition, isCardFast)
 		if err != nil {
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
