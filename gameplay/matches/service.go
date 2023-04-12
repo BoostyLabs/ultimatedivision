@@ -5,11 +5,10 @@ package matches
 
 import (
 	"context"
-	"math/rand"
-	"time"
-
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
+	"math/rand"
+	"time"
 
 	"ultimatedivision/cards"
 	"ultimatedivision/clubs"
