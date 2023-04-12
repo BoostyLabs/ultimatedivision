@@ -402,9 +402,13 @@ func (service *Service) GameLogicByAction(ctx context.Context, matchID uuid.UUID
 
 	switch action {
 	case ActionMove:
+		isCardFast := false
 		if hasBall && card.RunningSpeed > 80 || !hasBall && card.RunningSpeed > 70 {
-			return service.Move(ctx, matchID, cardIDWithPosition, true)
+			isCardFast = true
 		}
+		return service.Move(ctx, matchID, cardIDWithPosition, isCardFast)
+	case ActionPass:
+
 	}
 
 	return CardAvailableAction{}, nil
