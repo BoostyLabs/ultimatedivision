@@ -384,7 +384,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
 
-		passOptions, err := service.GetCardPasses(leftSidePositions, fieldPosition)
+		passOptions, err := service.GetCardPasses(rightSidePositions, fieldPosition)
 		if err != nil {
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
