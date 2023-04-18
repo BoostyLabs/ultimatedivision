@@ -59,7 +59,7 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 	top1 := []int{71, 64, 57, 50, 43, 36, 29, 22, 15}
 	top2 := []int{72, 65, 58, 51, 44, 37, 30, 23, 16, 9, 2, 79}
 
-	exceptions := []int{1, 5, 78, 82}
+	exceptions := []int{1, 5, 78, 82, 8}
 
 	if cardPlace < minPlace || cardPlace > maxPlace {
 		return []int{}, ErrGameEngine.New("player place can not be more 83 or les than 0, player place is %d", cardPlace)
@@ -90,9 +90,6 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 			stepInWidth = append(stepInWidth, cardPlace-3, cardPlace-2, cardPlace-1, cardPlace, cardPlace+1, cardPlace+2)
 
 		case contains(exceptions, cardPlace):
-			stepInWidth = append(stepInWidth, cardPlace-1, cardPlace, cardPlace+1, cardPlace+2, cardPlace+3)
-
-		case cardPlace == 8:
 			stepInWidth = append(stepInWidth, cardPlace-1, cardPlace, cardPlace+1, cardPlace+2, cardPlace+3)
 
 		case cardPlace == 12:
@@ -141,6 +138,25 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 	moves = removeMax(moves, maxPlace)
 
 	return moves, nil
+}
+
+// IsInterrupted check if pass is interrupted.
+func (service *Service) IsInterrupted(shortPassing, interceptions int) bool {
+	if shortPassing > interceptions {
+		return true
+	}
+	return false
+}
+
+// GetCardPasses get all field cells possible to pass.
+func (service *Service) GetCardPasses(teamPositions, availablePassCells []int) ([]int, error) {
+	var availablePasses []int
+	for _, teammatePosition := range teamPositions {
+		if contains(availablePassCells, teammatePosition) {
+			availablePasses = append(availablePasses, teammatePosition)
+		}
+	}
+	return availablePasses, nil
 }
 
 func removeMin(l []int, min int) []int {
@@ -281,6 +297,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 	}
 
 	var matchInfo []CardIDWithPosition
+	var leftSidePositions []int
 
 	for _, sqCard := range squadCardsPlayer1 {
 		fieldPosition := service.squadPositionToFieldPositionLeftSide(sqCard.Position)
@@ -289,6 +306,15 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			ballPosition = fieldPosition
 		}
 
+		leftSidePositions = append(leftSidePositions, fieldPosition)
+	}
+
+	var rightSidePositions []int
+
+	for _, sqCard := range squadCardsPlayer2 {
+		fieldPosition := service.squadPositionToFieldPositionRightSide(sqCard.Position)
+
+		rightSidePositions = append(rightSidePositions, fieldPosition)
 	}
 
 	for _, sqCard := range squadCardsPlayer1 {
@@ -320,10 +346,16 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
 
+		passOptions, err := service.GetCardPasses(leftSidePositions, fieldPosition)
+		if err != nil {
+			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
+		}
+
 		cardAvailableAction := CardAvailableAction{
 			Action:        ActionMove,
 			CardID:        sqCard.Card.ID,
 			FieldPosition: fieldPosition,
+			PassOptions:   passOptions,
 		}
 
 		cardsWithPositionPlayer1 = append(cardsWithPositionPlayer1, cardWithPositionPlayer)
@@ -352,10 +384,16 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
 
+		passOptions, err := service.GetCardPasses(leftSidePositions, fieldPosition)
+		if err != nil {
+			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
+		}
+
 		cardAvailableAction := CardAvailableAction{
 			Action:        ActionMove,
 			CardID:        sqCard.Card.ID,
 			FieldPosition: fieldPosition,
+			PassOptions:   passOptions,
 		}
 
 		cardInfo := CardIDWithPosition{
