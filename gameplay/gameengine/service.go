@@ -355,11 +355,16 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			Action:        ActionMove,
 			CardID:        sqCard.Card.ID,
 			FieldPosition: fieldPosition,
-			PassOptions:   passOptions,
+		}
+
+		cardAvailablePasses := CardAvailableAction{
+			Action:        ActionPass,
+			CardID:        sqCard.Card.ID,
+			FieldPosition: passOptions,
 		}
 
 		cardsWithPositionPlayer1 = append(cardsWithPositionPlayer1, cardWithPositionPlayer)
-		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
+		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction, cardAvailablePasses)
 	}
 
 	for _, sqCard := range squadCardsPlayer2 {
@@ -378,7 +383,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		if sqCard.Card.RunningSpeed > 70 {
 			isCardFast = true
 		}
-
+		cardWithPositionPlayer.FieldPosition = 9
 		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition, isCardFast)
 		if err != nil {
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
@@ -393,7 +398,12 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			Action:        ActionMove,
 			CardID:        sqCard.Card.ID,
 			FieldPosition: fieldPosition,
-			PassOptions:   passOptions,
+		}
+
+		cardAvailablePasses := CardAvailableAction{
+			Action:        ActionPass,
+			CardID:        sqCard.Card.ID,
+			FieldPosition: passOptions,
 		}
 
 		cardInfo := CardIDWithPosition{
@@ -404,7 +414,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		matchInfo = append(matchInfo, cardInfo)
 
 		cardsWithPositionPlayer2 = append(cardsWithPositionPlayer2, cardWithPositionPlayer)
-		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
+		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction, cardAvailablePasses)
 	}
 
 	matchID, err := service.matches.CreateMatchID(ctx, player1SquadID, player2SquadID, clubPlayer1.OwnerID, clubPlayer2.OwnerID, 1)

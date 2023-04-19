@@ -78,7 +78,6 @@ type CardAvailableAction struct {
 	Action        Action    `json:"action"`
 	CardID        uuid.UUID `json:"cardId"`
 	FieldPosition []int     `json:"fieldPosition"`
-	PassOptions   []int     `json:"passOptions"`
 }
 
 // CardWithPosition defines card with position in the field.
