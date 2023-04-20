@@ -210,6 +210,8 @@ func ballBounce(position int) int {
 	ballCells = removeMin(ballCells, minPlace)
 	ballCells = removeMax(ballCells, maxPlace)
 
+	ballCells = removePosition(ballCells, position)
+
 	// Seed the random number generator with the current time.
 	rand.Seed(time.Now().UnixNano())
 
@@ -220,6 +222,16 @@ func ballBounce(position int) int {
 	randomElement := ballCells[randomIndex]
 
 	return randomElement
+}
+
+func removePosition(arr []int, position int) []int {
+	for i, v := range arr {
+		if v == position {
+			arr = append(arr[:i], arr[i+1:]...)
+			break
+		}
+	}
+	return arr
 }
 
 func removeMin(l []int, min int) []int {
