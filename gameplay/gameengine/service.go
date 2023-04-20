@@ -166,7 +166,6 @@ func (service *Service) GetCardPasses(teamPositions, availablePassCells []int) [
 
 // GivePass get info about pass and return final ball cell.
 func (service *Service) GivePass(passWay []int, passReceiverStats CardWithPosition, passGiverCard, passReceiverCard cards.Card, opponentsWithPosition []CardWithPosition) int {
-	var passPosition int
 	for _, opponent := range opponentsWithPosition {
 		if contains(passWay, opponent.FieldPosition) {
 			if opponent.Card.Interceptions > passGiverCard.ShortPassing {
@@ -176,11 +175,10 @@ func (service *Service) GivePass(passWay []int, passReceiverStats CardWithPositi
 	}
 	if passReceiverCard.BallControl > 10 {
 		return passReceiverStats.FieldPosition
-	} else {
-		return ballBounce(passReceiverStats.FieldPosition)
 	}
 
-	return passPosition
+	return ballBounce(passReceiverStats.FieldPosition)
+
 }
 
 // ballBounce calculates the position of the ball bounce.
@@ -328,8 +326,6 @@ func (service *Service) Move(ctx context.Context, matchID uuid.UUID, card CardID
 func (service *Service) GameInformation(ctx context.Context, player1SquadID, player2SquadID uuid.UUID) (MatchRepresentation, error) {
 	var cardsWithPositionPlayer1 []CardWithPosition
 	var cardsWithPositionPlayer2 []CardWithPosition
-	var cardsWithPositionLeftPlayer []CardWithPosition
-	var cardsWithPositionRightPlayer []CardWithPosition
 	var cardsAvailableAction []CardAvailableAction
 	var ballPosition int
 
@@ -374,13 +370,6 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		}
 
 		leftSidePositions = append(leftSidePositions, fieldPosition)
-
-		cardWithPositionLeftPlayer := CardWithPosition{
-			Card:          sqCard.Card,
-			FieldPosition: fieldPosition,
-		}
-
-		cardsWithPositionLeftPlayer = append(cardsWithPositionLeftPlayer, cardWithPositionLeftPlayer)
 	}
 
 	var rightSidePositions []int
@@ -389,13 +378,6 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		fieldPosition := service.squadPositionToFieldPositionRightSide(sqCard.Position)
 
 		rightSidePositions = append(rightSidePositions, fieldPosition)
-
-		cardWithPositionRightPlayer := CardWithPosition{
-			Card:          sqCard.Card,
-			FieldPosition: fieldPosition,
-		}
-
-		cardsWithPositionRightPlayer = append(cardsWithPositionRightPlayer, cardWithPositionRightPlayer)
 	}
 
 	for _, sqCard := range squadCardsPlayer1 {
