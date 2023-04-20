@@ -405,7 +405,21 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 
 		matchInfo = append(matchInfo, cardInfo)
 
-		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
+		if cardInfo.Position == ballPosition {
+			passOptions, err := service.GetCardPasses(rightSidePositions, fieldPosition)
+			if err != nil {
+				return MatchRepresentation{}, ErrGameEngine.Wrap(err)
+			}
+			cardAvailablePasses := CardAvailableAction{
+				Action:        ActionPass,
+				CardID:        sqCard.Card.ID,
+				FieldPosition: passOptions,
+			}
+			cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction, cardAvailablePasses)
+		} else {
+			cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
+		}
+
 		cardsWithPositionPlayer2 = append(cardsWithPositionPlayer2, cardWithPositionPlayer)
 	}
 
