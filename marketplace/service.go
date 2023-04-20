@@ -103,9 +103,13 @@ func (service *Service) GetLotByID(ctx context.Context, id uuid.UUID) (Lot, erro
 }
 
 // GetLotEndTimeByID returns lot end time by id from DB.
-func (service *Service) GetLotEndTimeByID(ctx context.Context, id uuid.UUID) (time.Time, error) {
+func (service *Service) GetLotEndTimeByID(ctx context.Context, id uuid.UUID) (bool, error) {
 	endTime, err := service.marketplace.GetLotEndTimeByID(ctx, id)
-	return endTime, ErrMarketplace.Wrap(err)
+	if time.Now().UTC().After(endTime) {
+		return true, ErrMarketplace.Wrap(err)
+	}
+
+	return false, ErrMarketplace.Wrap(err)
 }
 
 // GetCurrentPriceByCardID returns current price by card id from the data base.

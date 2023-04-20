@@ -189,8 +189,8 @@ func (controller *Marketplace) GetLotByID(w http.ResponseWriter, r *http.Request
 	}
 }
 
-// GetLotEndTimeByID is an endpoint that returns lot end time by id.
-func (controller *Marketplace) GetLotEndTimeByID(w http.ResponseWriter, r *http.Request) {
+// IsExpired is an endpoint that returns lot end time by id.
+func (controller *Marketplace) IsExpired(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
 	vars := mux.Vars(r)
@@ -201,7 +201,7 @@ func (controller *Marketplace) GetLotEndTimeByID(w http.ResponseWriter, r *http.
 		return
 	}
 
-	endTime, err := controller.marketplace.GetLotEndTimeByID(ctx, id)
+	isExpired, err := controller.marketplace.GetLotEndTimeByID(ctx, id)
 	if err != nil {
 		controller.log.Error("could not get lot end time by id", ErrMarketplace.Wrap(err))
 		switch {
@@ -213,7 +213,7 @@ func (controller *Marketplace) GetLotEndTimeByID(w http.ResponseWriter, r *http.
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(endTime); err != nil {
+	if err = json.NewEncoder(w).Encode(isExpired); err != nil {
 		controller.log.Error("failed to write json response", ErrMarketplace.Wrap(err))
 		return
 	}
