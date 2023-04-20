@@ -346,25 +346,28 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
 
-		passOptions, err := service.GetCardPasses(leftSidePositions, fieldPosition)
-		if err != nil {
-			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
-		}
-
 		cardAvailableAction := CardAvailableAction{
 			Action:        ActionMove,
 			CardID:        sqCard.Card.ID,
 			FieldPosition: fieldPosition,
 		}
 
-		cardAvailablePasses := CardAvailableAction{
-			Action:        ActionPass,
-			CardID:        sqCard.Card.ID,
-			FieldPosition: passOptions,
+		if cardInfo.Position == ballPosition {
+			passOptions, err := service.GetCardPasses(leftSidePositions, fieldPosition)
+			if err != nil {
+				return MatchRepresentation{}, ErrGameEngine.Wrap(err)
+			}
+			cardAvailablePasses := CardAvailableAction{
+				Action:        ActionPass,
+				CardID:        sqCard.Card.ID,
+				FieldPosition: passOptions,
+			}
+			cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction, cardAvailablePasses)
+		} else {
+			cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
 		}
 
 		cardsWithPositionPlayer1 = append(cardsWithPositionPlayer1, cardWithPositionPlayer)
-		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction, cardAvailablePasses)
 	}
 
 	for _, sqCard := range squadCardsPlayer2 {
@@ -389,21 +392,10 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 		}
 
-		passOptions, err := service.GetCardPasses(rightSidePositions, fieldPosition)
-		if err != nil {
-			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
-		}
-
 		cardAvailableAction := CardAvailableAction{
 			Action:        ActionMove,
 			CardID:        sqCard.Card.ID,
 			FieldPosition: fieldPosition,
-		}
-
-		cardAvailablePasses := CardAvailableAction{
-			Action:        ActionPass,
-			CardID:        sqCard.Card.ID,
-			FieldPosition: passOptions,
 		}
 
 		cardInfo := CardIDWithPosition{
@@ -413,8 +405,8 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 
 		matchInfo = append(matchInfo, cardInfo)
 
+		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
 		cardsWithPositionPlayer2 = append(cardsWithPositionPlayer2, cardWithPositionPlayer)
-		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction, cardAvailablePasses)
 	}
 
 	matchID, err := service.matches.CreateMatchID(ctx, player1SquadID, player2SquadID, clubPlayer1.OwnerID, clubPlayer2.OwnerID, 1)
