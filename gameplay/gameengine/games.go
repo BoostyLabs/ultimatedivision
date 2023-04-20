@@ -44,3 +44,4 @@ type CardIDsWithPositionWithBallPosition struct {
 	CardIDsWithPosition []CardIDWithPosition `json:"cardIdsWithPosition"`
 	BallPosition        int                  `json:"ballPosition"`
 }
+z
