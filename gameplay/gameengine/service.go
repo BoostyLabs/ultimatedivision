@@ -153,7 +153,6 @@ func (service *Service) GetCardPasses(teamPositions, availablePassCells []int) [
 			availablePasses = append(availablePasses, teammatePosition)
 		}
 	}
-  
 	return availablePasses
 }
 
@@ -171,7 +170,6 @@ func (service *Service) GivePass(passWay []int, passReceiverStats CardWithPositi
 	}
 
 	return ballBounce(passReceiverStats.FieldPosition)
-
 }
 
 // ballBounce calculates the position of the ball bounce.
