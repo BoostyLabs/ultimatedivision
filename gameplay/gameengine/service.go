@@ -153,6 +153,7 @@ func (service *Service) GetCardPasses(teamPositions, availablePassCells []int) [
 			availablePasses = append(availablePasses, teammatePosition)
 		}
 	}
+  
 	return availablePasses
 }
 
