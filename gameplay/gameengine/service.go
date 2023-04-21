@@ -140,14 +140,6 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 	return moves, nil
 }
 
-// IsInterrupted check if pass is interrupted.
-func (service *Service) IsInterrupted(shortPassing, interceptions int) bool {
-	if shortPassing > interceptions {
-		return true
-	}
-	return false
-}
-
 // GetCardPasses get all field cells possible to pass.
 func (service *Service) GetCardPasses(teamPositions, availablePassCells []int) ([]int, error) {
 	var availablePasses []int
@@ -386,7 +378,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		if sqCard.Card.RunningSpeed > 70 {
 			isCardFast = true
 		}
-		cardWithPositionPlayer.FieldPosition = 9
+
 		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition, isCardFast)
 		if err != nil {
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
