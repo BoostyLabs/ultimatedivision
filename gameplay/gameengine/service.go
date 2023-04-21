@@ -145,14 +145,6 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 	return moves, nil
 }
 
-// IsInterrupted check if pass is interrupted.
-func (service *Service) IsInterrupted(shortPassing, interceptions int) bool {
-	if shortPassing > interceptions {
-		return true
-	}
-	return false
-}
-
 // GetCardPasses get all field cells possible to pass.
 func (service *Service) GetCardPasses(teamPositions, availablePassCells []int) []int {
 	var availablePasses []int
