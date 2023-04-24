@@ -46,4 +46,9 @@ export class Marketplaces {
     public async placeBid(lotId: string, amount: number): Promise<void> {
         return await this.marketplace.placeBid(lotId, amount);
     };
+
+    /** places a bid */
+    public async endTime(lotId: string): Promise<boolean> {
+        return await this.marketplace.endTime(lotId);
+    };
 };

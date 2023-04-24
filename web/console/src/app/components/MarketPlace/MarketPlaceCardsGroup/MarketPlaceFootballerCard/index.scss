@@ -15,6 +15,10 @@
     display: flex;
     flex-direction: column;
 
+    &--no-display {
+        display: none;
+    }
+
     &__button {
         width: 84px;
         padding: 10px 0;

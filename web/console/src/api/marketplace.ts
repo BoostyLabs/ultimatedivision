@@ -80,4 +80,18 @@ export class MarketplaceClient extends APIClient {
             await this.handleError(response);
         };
     };
+
+    /** marketplace lot end time */
+    public async endTime(lotId: string): Promise<boolean> {
+        const path = `${this.ROOT_PATH}/end-time/${lotId}`;
+        const response = await this.http.get(path);
+
+        if (!response.ok) {
+            await this.handleError(response);
+        };
+
+        const lotEndTime = await response.json();
+
+        return lotEndTime;
+    };
 };

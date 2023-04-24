@@ -37,6 +37,7 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
 
         /** TODO: add function entity */
         const buyNowButton = () => { };
+        const [isEndTime, setIsEndTime] = useState(false);
 
         return <div className="marketplace-modal">
             <div className="marketplace-modal__wrapper">
@@ -63,7 +64,9 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                             <span className="marketplace-modal__bid__label">or</span>
                         </div>
                         <div className="marketplace-modal__buy-now" >
-                            <MarketplaceTimer lot={lot} className="marketplace-modal__timer" />
+                            {isEndTime ? <div className="marketplace-modal__timer">0 : 0 : 0 </div> :
+                                <MarketplaceTimer setIsEndTime={setIsEndTime} isEndTime={isEndTime} lot={lot} className="marketplace-modal__timer" />
+                            }
                             <div className="marketplace-modal__buy-now__label__mobile">
                                 for
                                 <span>
@@ -80,7 +83,8 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                                 </div>
                             </button>
                         </div>
-                        <MarketplaceTimer lot={lot} className="marketplace-modal__timer__mobile" />
+                        {isEndTime ? <div className="marketplace-modal__timer__mobile">0 : 0 : 0 </div> :
+                            <MarketplaceTimer setIsEndTime={setIsEndTime} isEndTime={isEndTime} lot={lot} className="marketplace-modal__timer__mobile" />}
                     </div>
                 </div>
             </div>

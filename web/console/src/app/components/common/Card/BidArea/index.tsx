@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { PlaceBid } from '@components/common/Card/popUps/PlaceBid';
@@ -13,12 +13,13 @@ import './index.scss';
 /** Initial bid value. */
 const INITIAL_BID: number = 0;
 
-export const BidArea= () => {
+export const BidArea = () => {
     const { lot } = useSelector((state: RootState) => state.marketplaceReducer);
 
     const [isOpenPlaceBidPopup, setIsOpenPlaceBidPopup] = useState<boolean>(false);
     const [cardBid, setCardBid] = useState<number>(INITIAL_BID);
     const [currentCardBid, setCurrentCardBid] = useState<number>(INITIAL_BID);
+    const [isEndTime, setIsEndTime] = useState(false);
 
     /** Handle opening of a place bids pop-up. */
     const handleOpenPlaceBidPopup = () => {
@@ -46,7 +47,9 @@ export const BidArea= () => {
                     <span className="auction-title">
                         Auction expires in:
                     </span>
-                    <MarketplaceTimer lot={lot} className="auction-expire-time"/>
+                    {isEndTime ?
+                        <div className="auction-expire-time"> 0 : 0 : 0 </div> :
+                        <MarketplaceTimer lot={lot} setIsEndTime={setIsEndTime} isEndTime={isEndTime} className="auction-expire-time" />}
                 </div>
             </div>
             <div className="footballer-card-price__buttons">

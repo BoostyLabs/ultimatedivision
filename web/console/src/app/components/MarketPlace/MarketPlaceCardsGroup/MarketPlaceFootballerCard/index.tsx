@@ -1,6 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { PlayerCard } from '@components/common/PlayerCard';
@@ -16,8 +17,10 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (l
         /** TODO: add function entity */
         const buyNowButton = () => { };
         const bidButton = () => { };
+        const [isEndTime, setIsEndTime] = useState(false);
 
-        return <div className="marketplace-playerCard" onClick={() => bidButton()}>
+        return <div className="marketplace-playerCard"
+            onClick={() => bidButton()}>
             <Link
                 className="marketplace-playerCard__link"
                 to={`/lot/${lot.cardId}`}
@@ -49,7 +52,11 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (l
                     Buy now
                 </button>
             </div>
-            <MarketplaceTimer lot={lot} className="marketplace-playerCard__timer" />
+            {isEndTime ?
+                <div className="marketplace-playerCard__timer">0 : 0 : 0</div> :
+                <MarketplaceTimer lot={lot} setIsEndTime={setIsEndTime} isEndTime={isEndTime} className="marketplace-playerCard__timer" />
+            }
+
         </div>;
     };
 

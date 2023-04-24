@@ -33,7 +33,7 @@ export const createLotsQueryParameters = (queryParameters: CardsQueryParametersF
 };
 
 /** thunk for creating user cards list */
-export const listOfLots = (selectedPage: number) => async function (dispatch: Dispatch) {
+export const listOfLots = (selectedPage: number) => async function(dispatch: Dispatch) {
     const marketplace = await marketplaces.list(selectedPage);
     const lots = marketplace.lots;
     const page = marketplace.page;
@@ -41,12 +41,12 @@ export const listOfLots = (selectedPage: number) => async function (dispatch: Di
     dispatch(getLots({ lots, page }));
 };
 
-export const createLot = (lot: CreatedLot) => async function (dispatch: Dispatch) {
+export const createLot = (lot: CreatedLot) => async function(dispatch: Dispatch) {
     await marketplaces.createLot(lot);
 };
 
 /** thunk for opening fotballerCardPage with reload possibility */
-export const openMarketplaceCard = (id: string) => async function (dispatch: Dispatch) {
+export const openMarketplaceCard = (id: string) => async function(dispatch: Dispatch) {
     const lot = await marketplaces.getLotById(id);
 
     dispatch(marketplaceCard(lot));
