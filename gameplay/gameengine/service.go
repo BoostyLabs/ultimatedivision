@@ -172,6 +172,35 @@ func (service *Service) GivePass(passWay []int, passReceiverStats CardWithPositi
 	return ballBounce(passReceiverStats.FieldPosition)
 }
 
+// PowerShot get result of the power shot.
+func (service *Service) PowerShot(passWay []int, passReceiverStats CardWithPosition, goalKeeper, powerShotProvider cards.Card, opponentsWithPosition []CardWithPosition) int {
+	for _, opponent := range opponentsWithPosition {
+		if contains(passWay, opponent.FieldPosition) {
+			if opponent.Card.ReactionSpeed/2 > powerShotProvider.ShortPassing {
+				return ballBounce(passReceiverStats.FieldPosition)
+			}
+		}
+	}
+	if powerShotProvider.Accuracy < 20 {
+		return service.GoalKick(1)
+	}
+	if powerShotProvider.Accuracy/2 > goalKeeper.Reflexes {
+		return service.Goal(1)
+	}
+	return 1
+}
+
+// GoalKick get all field cells possible to goal kick.
+func (service *Service) GoalKick(something int) int {
+
+	return 0
+
+} // Goal returns start position after goal.
+func (service *Service) Goal(something int) int {
+
+	return 0
+}
+
 // ballBounce calculates the position of the ball bounce.
 func ballBounce(position int) int {
 	var bounceBall []int
