@@ -6,7 +6,9 @@ package gameengine
 import (
 	"context"
 	"encoding/json"
+	"math/rand"
 	"sort"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -19,6 +21,11 @@ import (
 
 // ErrGameEngine indicates that there was an error in the service.
 var ErrGameEngine = errs.Class("game engine service error")
+
+var (
+	topLine    = []int{77, 70, 63, 56, 49, 42, 35, 28, 21, 14, 7, 0}
+	bottomLine = []int{6, 13, 20, 27, 34, 41, 48, 55, 62, 69, 76, 83}
+)
 
 // Service is handling clubs related logic.
 //
@@ -51,15 +58,13 @@ const (
 
 // GetCardMoves get all card possible moves.
 func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, error) {
-	bottom := []int{6, 13, 20, 27, 34, 41, 48, 55, 62, 69, 76, 83}
 	bottom1 := []int{82, 75, 68, 61, 54, 47, 40, 33, 26, 19, 12, 5}
 	bottom2 := []int{81, 74, 67, 60, 53, 46, 39, 32, 25, 18, 11, 4}
 
-	top := []int{77, 70, 63, 56, 49, 42, 35, 28, 21, 14, 7, 0}
 	top1 := []int{71, 64, 57, 50, 43, 36, 29, 22, 15}
 	top2 := []int{72, 65, 58, 51, 44, 37, 30, 23, 16, 9, 2, 79}
 
-	exceptions := []int{1, 5, 78, 82}
+	exceptions := []int{1, 5, 78, 82, 8}
 
 	if cardPlace < minPlace || cardPlace > maxPlace {
 		return []int{}, ErrGameEngine.New("player place can not be more 83 or les than 0, player place is %d", cardPlace)
@@ -71,7 +76,7 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 	if isThreeSteps == true {
 
 		switch {
-		case contains(top, cardPlace):
+		case contains(topLine, cardPlace):
 			stepInWidth = append(stepInWidth, cardPlace, cardPlace+1, cardPlace+2, cardPlace+3)
 
 		case contains(top1, cardPlace):
@@ -80,7 +85,7 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 		case contains(top2, cardPlace):
 			stepInWidth = append(stepInWidth, cardPlace-2, cardPlace-1, cardPlace, cardPlace+1, cardPlace+2, cardPlace+3)
 
-		case contains(bottom, cardPlace):
+		case contains(bottomLine, cardPlace):
 			stepInWidth = append(stepInWidth, cardPlace-3, cardPlace-2, cardPlace-1, cardPlace)
 
 		case contains(bottom1, cardPlace):
@@ -90,9 +95,6 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 			stepInWidth = append(stepInWidth, cardPlace-3, cardPlace-2, cardPlace-1, cardPlace, cardPlace+1, cardPlace+2)
 
 		case contains(exceptions, cardPlace):
-			stepInWidth = append(stepInWidth, cardPlace-1, cardPlace, cardPlace+1, cardPlace+2, cardPlace+3)
-
-		case cardPlace == 8:
 			stepInWidth = append(stepInWidth, cardPlace-1, cardPlace, cardPlace+1, cardPlace+2, cardPlace+3)
 
 		case cardPlace == 12:
@@ -110,10 +112,10 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 
 	} else {
 		switch {
-		case contains(top, cardPlace):
+		case contains(topLine, cardPlace):
 			stepInWidth = append(stepInWidth, cardPlace, cardPlace+1, cardPlace+2)
 
-		case contains(bottom, cardPlace):
+		case contains(bottomLine, cardPlace):
 			stepInWidth = append(stepInWidth, cardPlace-2, cardPlace-1, cardPlace)
 
 		case contains(exceptions, cardPlace):
@@ -141,6 +143,86 @@ func (service *Service) GetCardMoves(cardPlace int, isThreeSteps bool) ([]int, e
 	moves = removeMax(moves, maxPlace)
 
 	return moves, nil
+}
+
+// GetCardPasses get all field cells possible to pass.
+func (service *Service) GetCardPasses(teamPositions, availablePassCells []int) []int {
+	var availablePasses []int
+	for _, teammatePosition := range teamPositions {
+		if contains(availablePassCells, teammatePosition) {
+			availablePasses = append(availablePasses, teammatePosition)
+		}
+	}
+	return availablePasses
+}
+
+// GivePass get info about pass and return final ball cell.
+func (service *Service) GivePass(passWay []int, passReceiverStats CardWithPosition, passGiverCard, passReceiverCard cards.Card, opponentsWithPosition []CardWithPosition) int {
+	for _, opponent := range opponentsWithPosition {
+		if contains(passWay, opponent.FieldPosition) {
+			if opponent.Card.Interceptions > passGiverCard.ShortPassing {
+				return opponent.FieldPosition
+			}
+		}
+	}
+	if passReceiverCard.BallControl > 10 {
+		return passReceiverStats.FieldPosition
+	}
+
+	return ballBounce(passReceiverStats.FieldPosition)
+}
+
+// ballBounce calculates the position of the ball bounce.
+func ballBounce(position int) int {
+	var bounceBall []int
+
+	switch {
+	case contains(topLine, position):
+		bounceBall = append(bounceBall, position, position+1)
+
+	case contains(bottomLine, position):
+		bounceBall = append(bounceBall, position-1, position)
+
+	case position == 8:
+		bounceBall = append(bounceBall, position-1, position, position+1)
+
+	case position == 12:
+		bounceBall = append(bounceBall, position-1, position)
+	default:
+		bounceBall = append(bounceBall, position-1, position, position+1)
+	}
+
+	var ballCells []int
+
+	for _, i2 := range bounceBall {
+		ballCells = append(ballCells, i2+7, i2-7, i2)
+	}
+	sort.Ints(ballCells)
+	ballCells = removeMin(ballCells, minPlace)
+	ballCells = removeMax(ballCells, maxPlace)
+
+	ballCells = removePosition(ballCells, position)
+
+	// Seed the random number generator with the current time.
+	rand.Seed(time.Now().UnixNano())
+
+	// Generate a random index within the range of the array.
+	randomIndex := rand.Intn(len(ballCells))
+
+	// Retrieve the element at the random index.
+	randomElement := ballCells[randomIndex]
+
+	return randomElement
+}
+
+func removePosition(arr []int, position int) []int {
+	for i, v := range arr {
+		if v == position {
+			arr = append(arr[:i], arr[i+1:]...)
+			break
+		}
+	}
+	return arr
 }
 
 func removeMin(l []int, min int) []int {
@@ -281,6 +363,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 	}
 
 	var matchInfo []CardIDWithPosition
+	var leftSidePositions []int
 
 	for _, sqCard := range squadCardsPlayer1 {
 		fieldPosition := service.squadPositionToFieldPositionLeftSide(sqCard.Position)
@@ -289,6 +372,15 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			ballPosition = fieldPosition
 		}
 
+		leftSidePositions = append(leftSidePositions, fieldPosition)
+	}
+
+	var rightSidePositions []int
+
+	for _, sqCard := range squadCardsPlayer2 {
+		fieldPosition := service.squadPositionToFieldPositionRightSide(sqCard.Position)
+
+		rightSidePositions = append(rightSidePositions, fieldPosition)
 	}
 
 	for _, sqCard := range squadCardsPlayer1 {
@@ -326,8 +418,20 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 			FieldPosition: fieldPosition,
 		}
 
+		if cardInfo.Position == ballPosition {
+			passOptions := service.GetCardPasses(leftSidePositions, fieldPosition)
+
+			cardAvailablePasses := CardAvailableAction{
+				Action:        ActionPass,
+				CardID:        sqCard.Card.ID,
+				FieldPosition: passOptions,
+			}
+			cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction, cardAvailablePasses)
+		} else {
+			cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
+		}
+
 		cardsWithPositionPlayer1 = append(cardsWithPositionPlayer1, cardWithPositionPlayer)
-		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
 	}
 
 	for _, sqCard := range squadCardsPlayer2 {
@@ -346,7 +450,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		if sqCard.Card.RunningSpeed > 70 {
 			isCardFast = true
 		}
-
+		cardWithPositionPlayer.FieldPosition = 9
 		fieldPosition, err := service.GetCardMoves(cardWithPositionPlayer.FieldPosition, isCardFast)
 		if err != nil {
 			return MatchRepresentation{}, ErrGameEngine.Wrap(err)
@@ -365,8 +469,20 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 
 		matchInfo = append(matchInfo, cardInfo)
 
+		if cardInfo.Position == ballPosition {
+			passOptions := service.GetCardPasses(rightSidePositions, fieldPosition)
+
+			cardAvailablePasses := CardAvailableAction{
+				Action:        ActionPass,
+				CardID:        sqCard.Card.ID,
+				FieldPosition: passOptions,
+			}
+			cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction, cardAvailablePasses)
+		} else {
+			cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
+		}
+
 		cardsWithPositionPlayer2 = append(cardsWithPositionPlayer2, cardWithPositionPlayer)
-		cardsAvailableAction = append(cardsAvailableAction, cardAvailableAction)
 	}
 
 	matchID, err := service.matches.CreateMatchID(ctx, player1SquadID, player2SquadID, clubPlayer1.OwnerID, clubPlayer2.OwnerID, 1)
