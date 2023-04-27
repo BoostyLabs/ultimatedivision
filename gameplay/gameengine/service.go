@@ -215,6 +215,22 @@ func ballBounce(position int) int {
 	return randomElement
 }
 
+// whoWon randomly check who won.
+func whoWon(cardStat, opponentStat int) bool {
+	// Seed the random number generator with the current time.
+	rand.Seed(time.Now().UnixNano())
+
+	cardStatRandom := rand.Intn(cardStat)
+	opponentStatRandom := rand.Intn(opponentStat)
+
+	if cardStatRandom > opponentStatRandom {
+		return true
+	}
+
+	return false
+}
+
+// removePosition remove current position from all positions array.
 func removePosition(arr []int, position int) []int {
 	for i, v := range arr {
 		if v == position {
