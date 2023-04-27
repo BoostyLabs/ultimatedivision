@@ -165,7 +165,7 @@ func (service *Service) GivePass(passWay []int, passReceiverStats CardWithPositi
 			}
 		}
 	}
-	if passReceiverCard.BallControl > 10 {
+	if whoWon(passReceiverCard.BallControl, 10) {
 		return passReceiverStats.FieldPosition
 	}
 
