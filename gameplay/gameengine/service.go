@@ -211,20 +211,15 @@ func (service *Service) TeamListWithStats(ctx context.Context, allCards []CardID
 }
 
 // GivePass get info about pass and return final ball cell.
-func (service *Service) GivePass(ctx context.Context, passWay []int, matchID uuid.UUID, passGiverCard CardIDWithPosition, isCardFast bool) (int, error) {
-	var ballPosition int
-	yourCards, opponentCards, err := service.TeamsList(ctx, matchID, passGiverCard.CardID)
-	if err != nil {
-		return ballPosition, ErrGameEngine.Wrap(err)
-	}
-	for _, opponent := range opponentCards {
-		if contains(passWay, opponent.Position) {
+func (service *Service) GivePass(passWay []int, passReceiverStats CardWithPosition, passGiverCard, passReceiverCard cards.Card, opponentsWithPosition []CardWithPosition) int {
+	for _, opponent := range opponentsWithPosition {
+		if contains(passWay, opponent.FieldPosition) {
 			if opponent.Card.Interceptions > passGiverCard.ShortPassing {
 				return opponent.FieldPosition
 			}
 		}
 	}
-	if passReceiverCard.BallControl > 10 {
+	if whoWon(passReceiverCard.BallControl, 10) {
 		return passReceiverStats.FieldPosition
 	}
 
@@ -232,47 +227,22 @@ func (service *Service) GivePass(ctx context.Context, passWay []int, matchID uui
 }
 
 // PowerShot get result of the power shot.
-func (service *Service) PowerShot(ctx context.Context, ballWay []int, matchID uuid.UUID, powerShotProvider CardIDWithPosition, goalKeeper, opponentsWithPosition []CardWithPosition) (int, error) {
-
+func (service *Service) PowerShot(passWay []int, passReceiverStats CardWithPosition, goalKeeper, powerShotProvider cards.Card, opponentsWithPosition []CardWithPosition) int {
 	var ballPosition int
-	gameInfoJSON, err := service.games.Get(ctx, matchID)
-	if err != nil {
-		return ballPosition, ErrGameEngine.Wrap(err)
-	}
-
-	var game Game
-	game.MatchID = matchID
-
-	err = json.Unmarshal([]byte(gameInfoJSON), &game.GameInfo)
-	if err != nil {
-		return ballPosition, ErrGameEngine.Wrap(err)
-	}
-
-	var opponentTeam string
-	for _, card := range game.GameInfo {
-		if card.CardID == powerShotProvider.CardID {
-			if card.Team == Player1 {
-				opponentTeam = Player2
-			}
-			opponentTeam = Player1
-		}
-	}
-
 	for _, opponent := range opponentsWithPosition {
-		if contains(ballWay, opponent.FieldPosition) {
-			if opponent.Card.ReactionSpeed/2 > powerShotProvider.ShortPassing {
-				return ballBounce(opponent.FieldPosition), nil
+		if contains(passWay, opponent.FieldPosition) {
+			if whoWon(opponent.Card.ReactionSpeed/2, powerShotProvider.ShortPassing) {
+				return ballBounce(passReceiverStats.FieldPosition)
 			}
 		}
 	}
-	if powerShotProvider.Accuracy < 20 {
-		return service.GoalKick(1), nil
+	if whoWon(powerShotProvider.Accuracy, 20) {
+		return service.GoalKick(1)
 	}
-	if powerShotProvider.Accuracy/2 > goalKeeper.Reflexes {
-		return service.Goal(1), nil
+	if whoWon(powerShotProvider.Accuracy/2, goalKeeper.Reflexes) {
+		return service.Goal(1)
 	}
-
-	return ballPosition, nil
+	return ballPosition
 }
 
 // GoalKick get all field cells possible to goal kick.
@@ -331,6 +301,22 @@ func ballBounce(position int) int {
 	return randomElement
 }
 
+// whoWon randomly check who won.
+func whoWon(cardStat, opponentStat int) bool {
+	// Seed the random number generator with the current time.
+	rand.Seed(time.Now().UnixNano())
+
+	cardStatRandom := rand.Intn(cardStat)
+	opponentStatRandom := rand.Intn(opponentStat)
+
+	if cardStatRandom > opponentStatRandom {
+		return true
+	}
+
+	return false
+}
+
+// removePosition remove current position from all positions array.
 func removePosition(arr []int, position int) []int {
 	for i, v := range arr {
 		if v == position {
