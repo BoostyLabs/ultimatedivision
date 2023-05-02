@@ -428,18 +428,6 @@ func (service *Service) Move(ctx context.Context, matchID uuid.UUID, cardIDWithP
 		return ActionResult{}, ErrGameEngine.Wrap(err)
 	}
 
-	if hasBall {
-		for _, newPosition := range newPositions {
-			for _, gameInfoPosition := range game.GameInfo.CardIDsWithPosition {
-				if newPosition == gameInfoPosition.Position {
-
-				}
-			}
-		}
-		if whoWon(card.Dribbling, 10) {
-		}
-	}
-
 	isCardFast := false
 	if hasBall && card.RunningSpeed > 80 || !hasBall && card.RunningSpeed > 70 {
 		isCardFast = true
