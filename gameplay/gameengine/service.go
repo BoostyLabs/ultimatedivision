@@ -156,10 +156,69 @@ func (service *Service) GetCardPasses(teamPositions, availablePassCells []int) [
 	return availablePasses
 }
 
+// TeamsList returns teams lineups with positions.
+func (service *Service) TeamsList(ctx context.Context, matchID uuid.UUID, cardId uuid.UUID) ([]CardIDWithPosition, []CardIDWithPosition, error) {
+	var yourCards []CardIDWithPosition
+	var opponentCards []CardIDWithPosition
+
+	gameInfoJSON, err := service.games.Get(ctx, matchID)
+	if err != nil {
+		return yourCards, opponentCards, ErrGameEngine.Wrap(err)
+	}
+
+	var game Game
+	game.MatchID = matchID
+
+	err = json.Unmarshal([]byte(gameInfoJSON), &game.GameInfo)
+	if err != nil {
+		return yourCards, opponentCards, ErrGameEngine.Wrap(err)
+	}
+
+	var opponentTeam = Player1
+	for _, card := range game.GameInfo {
+		if card.CardID == cardId {
+			if card.Team == Player1 {
+				opponentTeam = Player2
+			}
+		}
+	}
+
+	for _, card := range game.GameInfo {
+		if card.Team == opponentTeam {
+			opponentCards = append(opponentCards, card)
+		} else {
+			yourCards = append(yourCards, card)
+		}
+	}
+
+	return yourCards, opponentCards, ErrGameEngine.Wrap(err)
+}
+
+// TeamListWithStats returns teams lineups with stats.
+func (service *Service) TeamListWithStats(ctx context.Context, allCards []CardIDWithPosition) ([]CardWithPosition, error) {
+	var cardsWithStatsAndPositions []CardWithPosition
+
+	for i, card := range allCards {
+		cardWIthStats, err := service.cards.Get(ctx, card.CardID)
+		if err != nil {
+			return cardsWithStatsAndPositions, ErrGameEngine.Wrap(err)
+		}
+		cardsWithStatsAndPositions[i].FieldPosition = card.Position
+		cardsWithStatsAndPositions[i].Card = cardWIthStats
+	}
+
+	return cardsWithStatsAndPositions, nil
+}
+
 // GivePass get info about pass and return final ball cell.
-func (service *Service) GivePass(passWay []int, passReceiverStats CardWithPosition, passGiverCard, passReceiverCard cards.Card, opponentsWithPosition []CardWithPosition) int {
-	for _, opponent := range opponentsWithPosition {
-		if contains(passWay, opponent.FieldPosition) {
+func (service *Service) GivePass(ctx context.Context, passWay []int, matchID uuid.UUID, passGiverCard CardIDWithPosition, isCardFast bool) (int, error) {
+	var ballPosition int
+	yourCards, opponentCards, err := service.TeamsList(ctx, matchID, passGiverCard.CardID)
+	if err != nil {
+		return ballPosition, ErrGameEngine.Wrap(err)
+	}
+	for _, opponent := range opponentCards {
+		if contains(passWay, opponent.Position) {
 			if opponent.Card.Interceptions > passGiverCard.ShortPassing {
 				return opponent.FieldPosition
 			}
@@ -173,21 +232,47 @@ func (service *Service) GivePass(passWay []int, passReceiverStats CardWithPositi
 }
 
 // PowerShot get result of the power shot.
-func (service *Service) PowerShot(passWay []int, passReceiverStats CardWithPosition, goalKeeper, powerShotProvider cards.Card, opponentsWithPosition []CardWithPosition) int {
+func (service *Service) PowerShot(ctx context.Context, ballWay []int, matchID uuid.UUID, powerShotProvider CardIDWithPosition, goalKeeper, opponentsWithPosition []CardWithPosition) (int, error) {
+
+	var ballPosition int
+	gameInfoJSON, err := service.games.Get(ctx, matchID)
+	if err != nil {
+		return ballPosition, ErrGameEngine.Wrap(err)
+	}
+
+	var game Game
+	game.MatchID = matchID
+
+	err = json.Unmarshal([]byte(gameInfoJSON), &game.GameInfo)
+	if err != nil {
+		return ballPosition, ErrGameEngine.Wrap(err)
+	}
+
+	var opponentTeam string
+	for _, card := range game.GameInfo {
+		if card.CardID == powerShotProvider.CardID {
+			if card.Team == Player1 {
+				opponentTeam = Player2
+			}
+			opponentTeam = Player1
+		}
+	}
+
 	for _, opponent := range opponentsWithPosition {
-		if contains(passWay, opponent.FieldPosition) {
+		if contains(ballWay, opponent.FieldPosition) {
 			if opponent.Card.ReactionSpeed/2 > powerShotProvider.ShortPassing {
-				return ballBounce(passReceiverStats.FieldPosition)
+				return ballBounce(opponent.FieldPosition), nil
 			}
 		}
 	}
 	if powerShotProvider.Accuracy < 20 {
-		return service.GoalKick(1)
+		return service.GoalKick(1), nil
 	}
 	if powerShotProvider.Accuracy/2 > goalKeeper.Reflexes {
-		return service.Goal(1)
+		return service.Goal(1), nil
 	}
-	return 1
+
+	return ballPosition, nil
 }
 
 // GoalKick get all field cells possible to goal kick.
@@ -195,7 +280,9 @@ func (service *Service) GoalKick(something int) int {
 
 	return 0
 
-} // Goal returns start position after goal.
+}
+
+// Goal returns start position after goal.
 func (service *Service) Goal(something int) int {
 
 	return 0
@@ -427,6 +514,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		cardInfo := CardIDWithPosition{
 			CardID:   sqCard.Card.ID,
 			Position: cardWithPositionPlayer.FieldPosition,
+			Team:     Player1,
 		}
 
 		matchInfo = append(matchInfo, cardInfo)
@@ -494,6 +582,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		cardInfo := CardIDWithPosition{
 			CardID:   sqCard.Card.ID,
 			Position: cardWithPositionPlayer.FieldPosition,
+			Team:     Player2,
 		}
 
 		matchInfo = append(matchInfo, cardInfo)
