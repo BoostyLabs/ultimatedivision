@@ -28,9 +28,9 @@ type DB interface {
 }
 
 const (
-	// Player1 describes the first player
+	// Player1 describes the first player.
 	Player1 = "player1"
-	// Player2 describes the second player
+	// Player2 describes the second player.
 	Player2 = "player2"
 )
 

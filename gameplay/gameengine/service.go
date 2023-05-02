@@ -157,7 +157,7 @@ func (service *Service) GetCardPasses(teamPositions, availablePassCells []int) [
 }
 
 // TeamsList returns teams lineups with positions.
-func (service *Service) TeamsList(ctx context.Context, matchID uuid.UUID, cardId uuid.UUID) ([]CardIDWithPosition, []CardIDWithPosition, error) {
+func (service *Service) TeamsList(ctx context.Context, matchID uuid.UUID, cardID uuid.UUID) ([]CardIDWithPosition, []CardIDWithPosition, error) {
 	var yourCards []CardIDWithPosition
 	var opponentCards []CardIDWithPosition
 
@@ -176,7 +176,7 @@ func (service *Service) TeamsList(ctx context.Context, matchID uuid.UUID, cardId
 
 	var opponentTeam = Player1
 	for _, card := range game.GameInfo {
-		if card.CardID == cardId {
+		if card.CardID == cardID {
 			if card.Team == Player1 {
 				opponentTeam = Player2
 			}
