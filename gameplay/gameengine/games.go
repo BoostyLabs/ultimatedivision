@@ -37,7 +37,7 @@ const (
 // Game defines game data.
 type Game struct {
 	MatchID  uuid.UUID
-	GameInfo []CardIDWithPosition
+	GameInfo CardIDsWithPositionWithBallPosition
 }
 
 // CardIDWithPosition defines card ID with possible moves cells for game.
