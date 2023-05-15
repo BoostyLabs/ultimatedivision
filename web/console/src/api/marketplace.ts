@@ -50,6 +50,7 @@ export class MarketplaceClient extends APIClient {
 
         return new MarketPlacePage(lotsPage.lots.map((lot: any) => new Lot(lot)), lotsPage.page);
     };
+
     /** implements opening lot */
     public async getLotById(id: string): Promise<Lot> {
         const path = `${this.ROOT_PATH}/${id}`;
@@ -61,6 +62,7 @@ export class MarketplaceClient extends APIClient {
 
         return new Lot(lot);
     };
+
     /** implements creating lot (selling card) */
     public async createLot(lot: CreatedLot): Promise<void> {
         const path = `${this.ROOT_PATH}`;

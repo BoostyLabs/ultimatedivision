@@ -40,6 +40,7 @@ export const MarketplaceTimer: React.FC<{
                 && seconds < TIME_TO_CHECK_IS_TIME_ENDED
                 && !isEndTime) {
                 const endTime = await marketplaceService.endTime(lot.cardId);
+
                 setIsEndTime(endTime);
             }
 

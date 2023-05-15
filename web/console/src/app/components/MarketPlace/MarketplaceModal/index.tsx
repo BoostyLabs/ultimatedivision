@@ -19,6 +19,7 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
     ({ lot, setShowModal }) => {
         const [cardBid, setCardBid] = useState<number>(lot.currentPrice);
         const [currentBid, setCurrentBid] = useState<number>(lot.currentPrice);
+        const [isEndTime, setIsEndTime] = useState(false);
 
         const marketplaceClient = new MarketplaceClient();
         const marketplaceService = new Marketplaces(marketplaceClient);
@@ -37,7 +38,6 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
 
         /** TODO: add function entity */
         const buyNowButton = () => { };
-        const [isEndTime, setIsEndTime] = useState(false);
 
         return <div className="marketplace-modal">
             <div className="marketplace-modal__wrapper">

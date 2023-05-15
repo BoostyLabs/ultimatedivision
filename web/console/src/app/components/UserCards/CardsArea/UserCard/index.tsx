@@ -23,10 +23,8 @@ export const UserCard: React.FC<{
     const DEFAULT_INDEX = -1;
     const dispatch = useDispatch();
     const [sellButtonVisibility, setVisibility] = useState(false);
+
     const isVisible = sellButtonVisibility && position === sellingCardIndex;
-    useEffect(() => {
-        position !== sellingCardIndex && setVisibility(false);
-    }, [sellingCardIndex]);
 
     const handleControls = (e: React.MouseEvent<HTMLInputElement>, position: number) => {
         e.preventDefault();
@@ -44,6 +42,10 @@ export const UserCard: React.FC<{
         setIndex(DEFAULT_INDEX);
         setVisibility(false);
     };
+
+    useEffect(() => {
+        position !== sellingCardIndex && setVisibility(false);
+    }, [sellingCardIndex]);
 
     return (
         <div

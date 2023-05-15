@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { PlayerCard } from '@components/common/PlayerCard';
-import { Lot } from '@/marketplace';
 import { MarketplaceTimer } from '@components/MarketPlace/MarketplaceTimer';
+import { Lot } from '@/marketplace';
 
 import './index.scss';
 
@@ -17,6 +17,7 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (l
         /** TODO: add function entity */
         const buyNowButton = () => { };
         const bidButton = () => { };
+
         const [isEndTime, setIsEndTime] = useState(false);
 
         return <div className="marketplace-playerCard"
@@ -56,7 +57,6 @@ export const MarketPlaceFootballerCard: React.FC<{ lot: Lot; handleShowModal: (l
                 <div className="marketplace-playerCard__timer">0 : 0 : 0</div> :
                 <MarketplaceTimer lot={lot} setIsEndTime={setIsEndTime} isEndTime={isEndTime} className="marketplace-playerCard__timer" />
             }
-
         </div>;
     };
 
