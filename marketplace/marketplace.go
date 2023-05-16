@@ -99,8 +99,12 @@ const (
 
 // Config defines configuration for marketplace.
 type Config struct {
-	LotRenewalInterval time.Duration `json:"lotRenewalInterval"`
-	pagination.Cursor  `json:"cursor"`
+	LotRenewalInterval     time.Duration `json:"lotRenewalInterval"`
+	pagination.Cursor      `json:"cursor"`
+	MarketplaceNFTContract struct {
+		Address string `json:"address"`
+	} `json:"marketplaceNFTContract"`
+	RPCNodeAddress string `json:"rpcNodeAddress"`
 }
 
 // CreateLot entity that contains the values required to create the lot.
