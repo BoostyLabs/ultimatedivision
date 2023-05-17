@@ -335,7 +335,6 @@ func (service *Service) RunCasperCheckMintEvent(ctx context.Context) (err error)
 	if err = service.nfts.Create(ctx, nft1); err != nil {
 		return ChoreError.Wrap(err)
 	}
-
 	//  ---------------------- .
 	event, err := service.GetNodeEvents(ctx)
 	if err != nil {
