@@ -90,7 +90,7 @@ func (chore *Chore) RunCheckMintEvent(ctx context.Context) (err error) {
 			}
 
 			if from == 0 {
-				nftWaitList, err := chore.waitList.GetByTokenID(ctx, tokenID)
+				nftWaitList, err := chore.waitList.GetByTokenNumber(ctx, tokenID)
 				if err != nil {
 					return ChoreError.Wrap(err)
 				}

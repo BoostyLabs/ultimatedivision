@@ -25,6 +25,7 @@ import (
 	"ultimatedivision/cards/nfts"
 	"ultimatedivision/internal/remotefilestorage/storj"
 	contract "ultimatedivision/pkg/contractcasper"
+	"ultimatedivision/pkg/eventparsing"
 	"ultimatedivision/pkg/imageprocessing"
 	"ultimatedivision/users"
 )
@@ -36,13 +37,14 @@ var ErrWaitlist = errs.Class("waitlist service error")
 //
 // architecture: Service
 type Service struct {
-	config   Config
-	waitList DB
-	cards    *cards.Service
-	avatars  *avatars.Service
-	users    *users.Service
-	nfts     *nfts.Service
-	events   *http.Client
+	config       Config
+	waitList     DB
+	cards        *cards.Service
+	avatars      *avatars.Service
+	users        *users.Service
+	nfts         *nfts.Service
+	events       *http.Client
+	eventparsing *eventparsing.EventData
 }
 
 // NewService is a constructor for waitlist service.
@@ -217,8 +219,14 @@ func (service *Service) Create(ctx context.Context, createNFT CreateNFT) (Transa
 }
 
 // GetByTokenID returns nft for wait list by token id.
-func (service *Service) GetByTokenID(ctx context.Context, tokenNumber int64) (Item, error) {
-	nft, err := service.waitList.GetByTokenID(ctx, tokenNumber)
+func (service *Service) GetByTokenID(ctx context.Context, tokenID uuid.UUID) (Item, error) {
+	nft, err := service.waitList.GetByTokenID(ctx, tokenID)
+	return nft, ErrWaitlist.Wrap(err)
+}
+
+// GetByTokenNumber returns nft for wait list by token id.
+func (service *Service) GetByTokenNumber(ctx context.Context, tokenNumber int64) (Item, error) {
+	nft, err := service.waitList.GetByTokenNumber(ctx, tokenNumber)
 	return nft, ErrWaitlist.Wrap(err)
 }
 
@@ -281,20 +289,54 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 
 		rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
 		var event contract.Event
+		var eventWithBytes contract.EventWithBytes
 		_ = json.Unmarshal(rawBody, &event)
+		_ = json.Unmarshal(rawBody, &eventWithBytes)
 
 		transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
 		if len(transforms) == 0 {
 			continue
 		}
 
-		var tokenID int64
+		transformsWithBytes := eventWithBytes.DeployProcessed.ExecutionResult2.Success2.Effect2.Transforms2
+		if len(transformsWithBytes) == 0 {
+			continue
+		}
+
+		var tokenID uuid.UUID
+
+		for _, transform2 := range transformsWithBytes {
+			transformMap, _ := transform2.Transform.(map[string]interface{})
+
+			writeCLValue, _ := transformMap[WriteCLValueKey].(map[string]interface{})
+			fmt.Println("writeCLValue------>", writeCLValue)
+
+			bytes, _ := writeCLValue[BytesKey].(string)
+			fmt.Println("bytes------>", bytes)
+			if len(bytes) == 170 {
+				eventData := eventparsing.EventData{
+					Bytes: bytes,
+				}
+				fmt.Println("eventData------>", eventData)
+
+				tokenID, err = eventData.GetTokenID(eventData)
+				if err != nil {
+					return MintData{}, ErrWaitlist.New("could not get token_id from event data")
+				}
+
+				fmt.Println("tokenID------->", tokenID)
+			}
+
+		}
+
+		var tokenNumber int64
 		var walletAddress string
+
 		for _, transform := range transforms {
 			for _, i2 := range transform.Transform[WriteCLValueKey][Parsed] {
 				switch i2.Key {
 				case "token_id":
-					tokenID, err = strconv.ParseInt(i2.Value, 10, 0)
+					tokenNumber, err = strconv.ParseInt(i2.Value, 10, 0)
 					if err != nil {
 						return MintData{}, ErrWaitlist.New("could not convert token_id from string to int64")
 					}
@@ -307,9 +349,10 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 			}
 		}
 
-		if tokenID != 0 && walletAddress != "" {
+		if tokenNumber != 0 && walletAddress != "" {
 			return MintData{
 				TokenID:       tokenID,
+				TokenNumber:   tokenNumber,
 				WalletAddress: walletAddress,
 			}, ErrWaitlist.Wrap(err)
 		}
@@ -318,52 +361,50 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 
 // RunCasperCheckMintEvent runs a task to check and create the casper nft assignment.
 func (service *Service) RunCasperCheckMintEvent(ctx context.Context) (err error) {
+	fmt.Println("GetNodeEvents")
 	event, err := service.GetNodeEvents(ctx)
 	if err != nil {
 		return err
 	}
 
-	if event.WalletAddress == "" {
-		nftWaitList, err := service.GetByTokenID(ctx, event.TokenID)
-		if err != nil {
+	nftWaitList, err := service.GetByTokenID(ctx, event.TokenID)
+	if err != nil {
+		return ChoreError.Wrap(err)
+	}
+
+	toAddress := common.HexToAddress(nftWaitList.CasperWalletHash)
+	nft := nfts.NFT{
+		CardID:        nftWaitList.CardID,
+		Chain:         evmsignature.ChainEthereum,
+		TokenID:       event.TokenNumber,
+		WalletAddress: toAddress,
+	}
+
+	if err = service.nfts.Create(ctx, nft); err != nil {
+		return ChoreError.Wrap(err)
+	}
+
+	user, err := service.users.GetByCasperHash(ctx, nftWaitList.CasperWalletHash)
+	if err != nil {
+		if err = service.nfts.Delete(ctx, nft.CardID); err != nil {
 			return ChoreError.Wrap(err)
 		}
 
-		toAddress := common.HexToAddress(nftWaitList.CasperWalletHash)
-		nft := nfts.NFT{
-			CardID:        nftWaitList.CardID,
-			Chain:         evmsignature.ChainEthereum,
-			TokenID:       event.TokenID,
-			WalletAddress: toAddress,
-		}
-
-		if err = service.nfts.Create(ctx, nft); err != nil {
+		if err = service.cards.UpdateUserID(ctx, nft.CardID, uuid.Nil); err != nil {
 			return ChoreError.Wrap(err)
 		}
+	}
 
-		user, err := service.users.GetByCasperHash(ctx, nftWaitList.CasperWalletHash)
-		if err != nil {
-			if err = service.nfts.Delete(ctx, nft.CardID); err != nil {
-				return ChoreError.Wrap(err)
-			}
+	if err = service.nfts.Update(ctx, nft); err != nil {
+		return ChoreError.Wrap(err)
+	}
 
-			if err = service.cards.UpdateUserID(ctx, nft.CardID, uuid.Nil); err != nil {
-				return ChoreError.Wrap(err)
-			}
-		}
+	if err = service.cards.UpdateUserID(ctx, nft.CardID, user.ID); err != nil {
+		return ChoreError.Wrap(err)
+	}
 
-		if err = service.nfts.Update(ctx, nft); err != nil {
-			return ChoreError.Wrap(err)
-		}
-
-		if err = service.cards.UpdateUserID(ctx, nft.CardID, user.ID); err != nil {
-			return ChoreError.Wrap(err)
-		}
-
-		if err = service.cards.UpdateMintedStatus(ctx, nft.CardID, cards.Minted); err != nil {
-			return ChoreError.Wrap(err)
-		}
-
+	if err = service.cards.UpdateMintedStatus(ctx, nft.CardID, cards.Minted); err != nil {
+		return ChoreError.Wrap(err)
 	}
 
 	return ChoreError.Wrap(err)
