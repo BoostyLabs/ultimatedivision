@@ -37,14 +37,13 @@ var ErrWaitlist = errs.Class("waitlist service error")
 //
 // architecture: Service
 type Service struct {
-	config       Config
-	waitList     DB
-	cards        *cards.Service
-	avatars      *avatars.Service
-	users        *users.Service
-	nfts         *nfts.Service
-	events       *http.Client
-	eventparsing *eventparsing.EventData
+	config   Config
+	waitList DB
+	cards    *cards.Service
+	avatars  *avatars.Service
+	users    *users.Service
+	nfts     *nfts.Service
+	events   *http.Client
 }
 
 // NewService is a constructor for waitlist service.

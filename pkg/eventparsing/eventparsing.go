@@ -5,9 +5,10 @@ package eventparsing
 
 import (
 	"encoding/hex"
-	"github.com/google/uuid"
 	"math/big"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 // LengthSelector defines list of all possible length selectors.
@@ -89,7 +90,9 @@ func (e *EventData) GetEventType() (int, error) {
 func (e *EventData) GetTokenContractAddress() string {
 	return e.getNextParam(0, LengthSelectorAddress.Int())
 
-} // GetTokenID returns token id from event data.
+}
+
+// GetTokenID returns token id from event data.
 func (e *EventData) GetTokenID(eventData EventData) (uuid.UUID, error) {
 	param := eventData.Bytes[SelectorTokenIDStart.Int() : SelectorTokenIDStart.Int()+LengthSelectorTokenID.Int()]
 
