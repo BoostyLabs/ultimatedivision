@@ -40,3 +40,17 @@ export class MarketPlacePage {
         }
     ) { }
 };
+
+
+/** Class defines Marketplace response */
+export class MarketCreateLotTransaction {
+    /** Includes lots and page field */
+    constructor(
+        public address: string = '',
+        public rpcNodeAddress: string = '',
+        public tokenId: string = '',
+        public minBidPrice: number = 200,
+        public auctionDuration: number = 1,
+        public price: number = 300,
+    ) { }
+};

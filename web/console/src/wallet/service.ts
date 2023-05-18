@@ -11,6 +11,7 @@ import { walletTypes } from '.';
 import { ethers } from 'ethers';
 import { ToastNotifications } from '@/notifications/service';
 import { SeasonRewardTransaction } from '@/divisions';
+import { MarketCreateLotTransaction } from '@/marketplace';
 
 /**
  * Exposes all wallet service related logic.
@@ -57,17 +58,17 @@ class WalletService {
     /** Mints chosed card. */
     public async mintNft(id: string) {
         switch (this.user.walletType) {
-        case walletTypes.VELAS_WALLET_TYPE:
-            await WalletService.velasMint();
-            break;
-        case walletTypes.CASPER_WALLET_TYPE:
-            await this.casperMint(id);
-            break;
-        case walletTypes.METAMASK_WALLET_TYPE:
-            await this.metamaskMint(id);
-            break;
-        default:
-            break;
+            case walletTypes.VELAS_WALLET_TYPE:
+                await WalletService.velasMint();
+                break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                await this.casperMint(id);
+                break;
+            case walletTypes.METAMASK_WALLET_TYPE:
+                await this.metamaskMint(id);
+                break;
+            default:
+                break;
         }
     }
 
@@ -89,17 +90,17 @@ class WalletService {
     /** Mints season token. */
     public mintToken(messageEvent: any) {
         switch (this.user.walletType) {
-        case walletTypes.VELAS_WALLET_TYPE:
-            WalletService.velasMintToken();
-            break;
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperMintToken(messageEvent);
-            break;
-        case walletTypes.METAMASK_WALLET_TYPE:
-            this.metamaskMintToken(messageEvent);
-            break;
-        default:
-            break;
+            case walletTypes.VELAS_WALLET_TYPE:
+                WalletService.velasMintToken();
+                break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperMintToken(messageEvent);
+                break;
+            case walletTypes.METAMASK_WALLET_TYPE:
+                this.metamaskMintToken(messageEvent);
+                break;
+            default:
+                break;
         }
     };
 
@@ -119,19 +120,50 @@ class WalletService {
     /** Mints season token. */
     public mintSeasonToken(seasonRewardTransaction: SeasonRewardTransaction) {
         switch (this.user.walletType) {
-        case walletTypes.VELAS_WALLET_TYPE:
-            WalletService.velasMintSeasonToken();
-            break;
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperMintSeasonToken(seasonRewardTransaction);
-            break;
-        case walletTypes.METAMASK_WALLET_TYPE:
-            WalletService.metamaskMintSeasonToken();
-            break;
-        default:
-            break;
+            case walletTypes.VELAS_WALLET_TYPE:
+                WalletService.velasMintSeasonToken();
+                break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperMintSeasonToken(seasonRewardTransaction);
+                break;
+            case walletTypes.METAMASK_WALLET_TYPE:
+                WalletService.metamaskMintSeasonToken();
+                break;
+            default:
+                break;
         }
     };
+
+    /** Mints season token with casper wallet. */
+    private casperCreateLot(transaction: MarketCreateLotTransaction) {
+        const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
+
+        casperTransactionService.createLot(transaction);
+    };
+
+    /** Mints season token with metamask wallet. */
+    private static metamaskCreateLot() { };
+
+    /** Mints season token with velas wallet. */
+    private static velasCreateLot() { };
+
+    /** Creates lot. */
+    public createLot(transaction: MarketCreateLotTransaction) {
+        switch (this.user.walletType) {
+            case walletTypes.VELAS_WALLET_TYPE:
+                WalletService.velasCreateLot();
+                break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperCreateLot(transaction);
+                break;
+            case walletTypes.METAMASK_WALLET_TYPE:
+                WalletService.metamaskCreateLot();
+                break;
+            default:
+                break;
+        }
+    };
+
 }
 
 export default WalletService;
