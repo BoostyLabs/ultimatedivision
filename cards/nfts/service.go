@@ -124,7 +124,7 @@ func (service *Service) GetNFTByCardID(ctx context.Context, cardID uuid.UUID) (N
 }
 
 // GetNFTTokenIDbyCardID returns nft token id by card id from database.
-func (service *Service) GetNFTTokenIDbyCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error) {
+func (service *Service) GetNFTTokenIDbyCardID(ctx context.Context, cardID uuid.UUID) (int64, error) {
 	tokenID, err := service.nfts.GetNFTTokenIDbyCardID(ctx, cardID)
 	return tokenID, ErrNFTs.Wrap(err)
 }

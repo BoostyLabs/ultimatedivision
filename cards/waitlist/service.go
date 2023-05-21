@@ -318,24 +318,6 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 
 // RunCasperCheckMintEvent runs a task to check and create the casper nft assignment.
 func (service *Service) RunCasperCheckMintEvent(ctx context.Context) (err error) {
-	//  ---------------------- .
-	CardID, err := uuid.Parse("6261e16d-5a9e-4ead-9b2f-0571dfb023d7")
-	if err != nil {
-		return err
-	}
-	CasperWalletHash := "c4ae1c2cf960dce4aa88c8b0f71e4b39440f56b6b2629a304617b1b1ebe248d2"
-
-	nft1 := nfts.NFT{
-		CardID:        CardID,
-		Chain:         evmsignature.ChainEthereum,
-		TokenID:       1,
-		WalletAddress: common.HexToAddress(CasperWalletHash),
-	}
-
-	if err = service.nfts.Create(ctx, nft1); err != nil {
-		return ChoreError.Wrap(err)
-	}
-	//  ---------------------- .
 	event, err := service.GetNodeEvents(ctx)
 	if err != nil {
 		return err
