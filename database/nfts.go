@@ -80,7 +80,7 @@ func (nftsDB *nftsDB) GetNFTByCardID(ctx context.Context, id uuid.UUID) (nfts.NF
 }
 
 // GetNFTTokenIDbyCardID returns nft token id by card id from database.
-func (nftsDB *nftsDB) GetNFTTokenIDbyCardID(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
+func (nftsDB *nftsDB) GetNFTTokenIDbyCardID(ctx context.Context, id uuid.UUID) (int64, error) {
 	query := `
 		SELECT 
 			token_id
@@ -89,7 +89,7 @@ func (nftsDB *nftsDB) GetNFTTokenIDbyCardID(ctx context.Context, id uuid.UUID) (
 		WHERE 
 			card_id = $1`
 
-	var tokenID uuid.UUID
+	var tokenID int64
 	row := nftsDB.conn.QueryRowContext(ctx, query, id)
 
 	err := row.Scan(&tokenID)
