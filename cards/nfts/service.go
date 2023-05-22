@@ -112,7 +112,7 @@ func (service *Service) Generate(ctx context.Context, card cards.Card, avatarURL
 }
 
 // Get returns nft by token id and chain from database.
-func (service *Service) Get(ctx context.Context, tokenID int64, chain evmsignature.Chain) (NFT, error) {
+func (service *Service) Get(ctx context.Context, tokenID uuid.UUID, chain evmsignature.Chain) (NFT, error) {
 	nft, err := service.nfts.Get(ctx, tokenID, chain)
 	return nft, ErrNFTs.Wrap(err)
 }

@@ -38,7 +38,7 @@ func (nftsDB *nftsDB) Create(ctx context.Context, nft nfts.NFT) error {
 }
 
 // Get returns nft by token id and chain from database.
-func (nftsDB *nftsDB) Get(ctx context.Context, tokenID int64, chain evmsignature.Chain) (nfts.NFT, error) {
+func (nftsDB *nftsDB) Get(ctx context.Context, tokenID uuid.UUID, chain evmsignature.Chain) (nfts.NFT, error) {
 	query := `
 		SELECT 
 			card_id, token_id, chain, wallet_address 
