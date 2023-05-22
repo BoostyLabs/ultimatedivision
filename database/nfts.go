@@ -79,6 +79,27 @@ func (nftsDB *nftsDB) GetNFTByCardID(ctx context.Context, id uuid.UUID) (nfts.NF
 	return nft, ErrNFTs.Wrap(err)
 }
 
+// GetNFTTokenIDbyCardID returns nft token id by card id from database.
+func (nftsDB *nftsDB) GetNFTTokenIDbyCardID(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
+	query := `
+		SELECT 
+			token_id
+		FROM 
+			nfts
+		WHERE 
+			card_id = $1`
+
+	var tokenID uuid.UUID
+	row := nftsDB.conn.QueryRowContext(ctx, query, id)
+
+	err := row.Scan(&tokenID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return tokenID, nfts.ErrNoNFT.Wrap(err)
+	}
+
+	return tokenID, ErrNFTs.Wrap(err)
+}
+
 // List returns nfts from database.
 func (nftsDB *nftsDB) List(ctx context.Context) ([]nfts.NFT, error) {
 	var nftList []nfts.NFT

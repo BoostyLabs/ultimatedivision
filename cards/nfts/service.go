@@ -123,6 +123,12 @@ func (service *Service) GetNFTByCardID(ctx context.Context, cardID uuid.UUID) (N
 	return nft, ErrNFTs.Wrap(err)
 }
 
+// GetNFTTokenIDbyCardID returns nft token id by card id from database.
+func (service *Service) GetNFTTokenIDbyCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error) {
+	tokenID, err := service.nfts.GetNFTTokenIDbyCardID(ctx, cardID)
+	return tokenID, ErrNFTs.Wrap(err)
+}
+
 // List returns nfts from database.
 func (service *Service) List(ctx context.Context) ([]NFT, error) {
 	nfts, err := service.nfts.List(ctx)

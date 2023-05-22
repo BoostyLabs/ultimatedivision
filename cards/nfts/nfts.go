@@ -26,6 +26,8 @@ type DB interface {
 	Get(ctx context.Context, tokenID uuid.UUID, chain evmsignature.Chain) (NFT, error)
 	// GetNFTByCardID returns nft by card id from database.
 	GetNFTByCardID(ctx context.Context, cardID uuid.UUID) (NFT, error)
+	// GetNFTTokenIDbyCardID returns nft token id by card id from database.
+	GetNFTTokenIDbyCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error)
 	// List returns all nft token from database.
 	List(ctx context.Context) ([]NFT, error)
 	// Update updates users wallet address for nft token in the database.
@@ -40,6 +42,14 @@ type NFT struct {
 	TokenID       uuid.UUID          `json:"tokenId"`
 	Chain         evmsignature.Chain `json:"chain"`
 	WalletAddress common.Address     `json:"walletAddress"`
+}
+
+// TokenIDWithContractAddress entity describes values released nft token with address.
+type TokenIDWithContractAddress struct {
+	TokenID           uuid.UUID `json:"tokenId"`
+	Address           string    `json:"address"`
+	AddressNodeServer string    `json:"addressNodeServer"`
+	ContractHash      string    `json:"contractHash"`
 }
 
 // MaxValueGameParameter indicates that max value game parameter is 100.
