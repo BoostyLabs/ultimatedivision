@@ -178,7 +178,7 @@ class CasperTransactionService {
                 'nft_contract_hash': CLValueBuilder.string(transaction.contractHash),
                 'token_id': CLValueBuilder.string(transaction.tokenId),
                 'min_bid_price': CLValueBuilder.u256(transaction.minBidPrice),
-                'redemption_price': CLValueBuilder.u256(transaction.price),
+                'redemption_price': CLValueBuilder.u256(transaction.redemptionPrice),
                 'auction_duration': CLValueBuilder.u256(transaction.auctionDuration),
 
             });
