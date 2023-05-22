@@ -22,23 +22,24 @@ type SellTypes = {
 };
 
 /** Mock lot creating stats */
-const MOCK_MIN_BID = 200;
+const MOCK_MIN_BID = 3000;
 const MOCK_MAX_BID = 800;
-const MOCK_PERIOD = 1;
+const MOCK_PERIOD = 300000;
+const MOCK_REDEMPTION_PRRICE = 30000;
 
 export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
     const dispatch = useDispatch();
 
     const marketplaceClient = new MarketplaceClient();
     const marketplaceService = new Marketplaces(marketplaceClient);
-    
-     const user = useSelector((state: RootState) => state.usersReducer.user);
+
+    const user = useSelector((state: RootState) => state.usersReducer.user);
     const { card } = useSelector((state: RootState) => state.cardsReducer);
 
-    const setCreatedLot = async () => {
+    const setCreatedLot = async() => {
         const transactionData = await marketplaceService.lotData(card.id);
         const walletService = new WalletService(user);
-        
+
         const marketplaceLotTransaction =
             new MarketCreateLotTransaction(
                 transactionData.address,
@@ -46,10 +47,10 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
                 transactionData.tokenId,
                 transactionData.contractHash,
                 MOCK_MIN_BID,
-                MOCK_PERIOD,
+                MOCK_REDEMPTION_PRRICE,
                 MOCK_MAX_BID,
-            )
-        
+            );
+
         await walletService.createLot(marketplaceLotTransaction);
 
         dispatch(createLot(new CreatedLot(card.id, 'card', MOCK_MIN_BID, MOCK_MAX_BID, MOCK_PERIOD)));
