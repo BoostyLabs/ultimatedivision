@@ -38,12 +38,13 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
     const setCreatedLot = async () => {
         const transactionData = await marketplaceService.lotData(card.id);
         const walletService = new WalletService(user);
-
+        
         const marketplaceLotTransaction =
             new MarketCreateLotTransaction(
                 transactionData.address,
                 transactionData.addressNodeServer,
                 transactionData.tokenId,
+                transactionData.contractHash,
                 MOCK_MIN_BID,
                 MOCK_PERIOD,
                 MOCK_MAX_BID,

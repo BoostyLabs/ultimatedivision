@@ -125,16 +125,17 @@ func (service *Service) GetNFTByCardID(ctx context.Context, id uuid.UUID) (nfts.
 }
 
 // GetNFTDataByCardID returns nft data by card id from DB.
-func (service *Service) GetNFTDataByCardID(ctx context.Context, id uuid.UUID) (nfts.TokenIDWithContractAddress, error) {
+func (service *Service) GetNFTDataByCardID(ctx context.Context, cardID uuid.UUID) (nfts.TokenIDWithContractAddress, error) {
 	var lotData nfts.TokenIDWithContractAddress
 
-	tokenID, err := service.nfts.GetNFTTokenIDbyCardID(ctx, id)
+	tokenID, err := service.nfts.GetNFTTokenIDbyCardID(ctx, cardID)
 	if err != nil {
 		return lotData, ErrMarketplace.Wrap(err)
 	}
 	lotData.TokenID = tokenID
 	lotData.Address = service.config.MarketplaceNFTContract.Address
 	lotData.AddressNodeServer = service.config.RPCNodeAddress
+	lotData.ContractHash = service.config.ContractHash
 
 	return lotData, ErrMarketplace.Wrap(err)
 }

@@ -175,11 +175,11 @@ class CasperTransactionService {
     async createLot(transaction: MarketCreateLotTransaction): Promise<void> {
         try {
             const runtimeArgs = RuntimeArgs.fromMap({
-                'nft_contract_hash': CLValueBuilder.string('hash-4ff1e5e37b8720e8049bfff88676d8e27c1037c02e1172a1006c6d2a535607da'),
-                'token_id': CLValueBuilder.string('746c85ba-583c-4c45-9af7-dce858c4e121'),
-                'min_bid_price': CLValueBuilder.u256(transaction.minBidPrice),
-                'redemption_price': CLValueBuilder.u256(transaction.price),
-                'auction_duration': CLValueBuilder.u256(transaction.auctionDuration),
+                'nft_contract_hash': CLValueBuilder.string('contract-805b58313894dbef4ab184267484580fae7758d9591d6bc8da9b283cb4083cb8'),
+                'token_id': CLValueBuilder.string('3'),
+                'min_bid_price': CLValueBuilder.u256(3000),
+                'redemption_price': CLValueBuilder.u256(30000),
+                'auction_duration': CLValueBuilder.u256(300000),
 
             });
 
@@ -189,7 +189,56 @@ class CasperTransactionService {
                 await window.casperlabsHelper.requestConnection();
             }
 
-            const signature = await this.contractSign('create_listing', runtimeArgs, LOT_PAYMENT_AMOUNT, transaction.address);
+            const signature = await this.contractSign('create_listing', runtimeArgs, 40000000000, transaction.address);
+
+            await this.client.claim(transaction.rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
+        }
+        catch (error: any) {
+            ToastNotifications.casperError(`${error.error}`);
+        }
+    }
+
+    /** Accepts offer */
+    async acceptOffer(transaction: any): Promise<void> {
+        try {
+            const runtimeArgs = RuntimeArgs.fromMap({
+                'nft_contract_hash': CLValueBuilder.string('hash-4ff1e5e37b8720e8049bfff88676d8e27c1037c02e1172a1006c6d2a535607da'),
+                'token_id': CLValueBuilder.string('746c85ba-583c-4c45-9af7-dce858c4e121'),
+                'erc20_contract': CLValueBuilder.byteArray(transaction.ercContract)
+            });
+
+            const isConnected = window.casperlabsHelper.isConnected();
+
+            if (!isConnected) {
+                await window.casperlabsHelper.requestConnection();
+            }
+
+            const signature = await this.contractSign('accept_offer', runtimeArgs, LOT_PAYMENT_AMOUNT, transaction.address);
+
+            await this.client.claim(transaction.rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
+        }
+        catch (error: any) {
+            ToastNotifications.casperError(`${error.error}`);
+        }
+    }
+
+    /** Accepts offer */
+    async makeOffer(transaction: any): Promise<void> {
+        try {
+            const runtimeArgs = RuntimeArgs.fromMap({
+                'nft_contract_hash': CLValueBuilder.string('hash-4ff1e5e37b8720e8049bfff88676d8e27c1037c02e1172a1006c6d2a535607da'),
+                'token_id': CLValueBuilder.string('746c85ba-583c-4c45-9af7-dce858c4e121'),
+                'erc20_contract': CLValueBuilder.byteArray(transaction.erc20Contract),
+                'offer_price': CLValueBuilder.byteArray(transaction.ercContract)
+            });
+
+            const isConnected = window.casperlabsHelper.isConnected();
+
+            if (!isConnected) {
+                await window.casperlabsHelper.requestConnection();
+            }
+
+            const signature = await this.contractSign('accept_offer', runtimeArgs, LOT_PAYMENT_AMOUNT, transaction.address);
 
             await this.client.claim(transaction.rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
         }

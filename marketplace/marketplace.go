@@ -105,6 +105,7 @@ type Config struct {
 		Address string `json:"address"`
 	} `json:"marketplaceNFTContract"`
 	RPCNodeAddress string `json:"rpcNodeAddress"`
+	ContractHash   string `json:"contractHash"`
 }
 
 // CreateLot entity that contains the values required to create the lot.

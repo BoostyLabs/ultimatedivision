@@ -320,7 +320,7 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 // RunCasperCheckMintEvent runs a task to check and create the casper nft assignment.
 func (service *Service) RunCasperCheckMintEvent(ctx context.Context) (err error) {
 	//  ---------------------- .
-	CardID, err := uuid.Parse("3a3ac0b9-556f-4340-8596-2dc1f0a54358")
+	CardID, err := uuid.Parse("1c5cbe11-09bd-4ddd-adb0-6a4a903a28ce")
 	if err != nil {
 		log.Println(err)
 	}

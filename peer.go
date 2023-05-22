@@ -694,7 +694,7 @@ func (peer *Peer) Run(ctx context.Context) error {
 	// })
 	// group.Go(func() error {
 	// return ignoreCancel(peer.WaitList.WaitListChore.RunCheckMintEvent(ctx))
-	// })
+	// }).
 	group.Go(func() error {
 		return ignoreCancel(peer.WaitList.Service.RunCasperCheckMintEvent(ctx))
 	})

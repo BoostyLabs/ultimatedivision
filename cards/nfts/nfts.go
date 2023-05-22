@@ -49,6 +49,7 @@ type TokenIDWithContractAddress struct {
 	TokenID           int64  `json:"tokenId"`
 	Address           string `json:"address"`
 	AddressNodeServer string `json:"addressNodeServer"`
+	ContractHash      string `json:"contractHash"`
 }
 
 // MaxValueGameParameter indicates that max value game parameter is 100.

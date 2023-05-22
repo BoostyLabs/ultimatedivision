@@ -49,6 +49,7 @@ export class MarketCreateLotTransaction {
         public address: string = '',
         public rpcNodeAddress: string = '',
         public tokenId: string = '',
+        public contractHash: string = '',
         public minBidPrice: number = 200,
         public auctionDuration: number = 1,
         public price: number = 300,
