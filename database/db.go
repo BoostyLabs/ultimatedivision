@@ -292,7 +292,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         );
         CREATE TABLE IF NOT EXISTS nfts(
             card_id        BYTEA   PRIMARY KEY REFERENCES cards(id) NOT NULL,
-            token_id       INTEGER                                  NOT NULL,
+            token_id       BYTEA                                    NOT NULL,
             chain          VARCHAR                                  NOT NULL,
             wallet_address BYTEA                                    NOT NULL
         );
