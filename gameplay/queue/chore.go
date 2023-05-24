@@ -407,6 +407,14 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	winResult.GameResult.Transaction.UDTContract.Address = chore.Config.UDTContract.Address
 	winResult.GameResult.CasperTransaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
 	winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.Config.CasperTokenContract.Address
+
+	matchResult := matches.MatchResult{
+		UserID:        user.ID,
+		QuantityGoals: 0,
+		Goalscorers:   nil,
+	}
+	winResult.GameResult.MatchResults = append(winResult.GameResult.MatchResults, matchResult)
+
 	if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 		chore.log.Error("could not write json", ChoreError.Wrap(err))
 		return

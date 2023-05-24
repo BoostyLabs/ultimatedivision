@@ -219,6 +219,17 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 		player.Waiting = false
 		other.Waiting = false
 
+		resp := queue.Response{
+			Status:  http.StatusOK,
+			Message: "players found",
+		}
+		if err := match.Player1.Conn.WriteJSON(resp); err != nil {
+			return nil, ErrMatchmaking.Wrap(err)
+		}
+		if err := match.Player2.Conn.WriteJSON(resp); err != nil {
+			return nil, ErrMatchmaking.Wrap(err)
+		}
+
 		startGameInformation, err := service.gameEngine.GameInformation(ctx, match.Player1.SquadID, match.Player2.SquadID)
 		if err != nil {
 			return nil, ErrMatchmaking.Wrap(err)
