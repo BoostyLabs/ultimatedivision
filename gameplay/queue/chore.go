@@ -451,11 +451,12 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 
 		switch request.WalletType {
 		case users.WalletTypeCasper:
-			nonce, err := chore.currencywaitlist.GetNonce(ctx)
+			nonce, err := chore.currencywaitlist.GetNonceByWallet(ctx, user.CasperWallet)
 			if err != nil {
 				chore.log.Error("could not get nonce number from currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
+			nonce = nonce + 1
 			if winResult.GameResult.CasperTransaction, err = chore.currencywaitlist.CasperCreate(ctx, user.ID, *winResult.Value, nonce); err != nil {
 				chore.log.Error("could not create casper item of currencywaitlist", ChoreError.Wrap(err))
 				return
@@ -469,6 +470,11 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 			}
 
 		}
+	}
+
+	if err = winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
+		chore.log.Error("could not write json", ChoreError.Wrap(err))
+		return
 	}
 	// chore.Finish(winResult.Client, winResult.GameResult).
 }
