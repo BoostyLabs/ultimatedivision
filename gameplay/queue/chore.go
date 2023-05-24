@@ -9,6 +9,7 @@ import (
 	"math/big"
 	"net/http"
 	"sort"
+	"sync"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
@@ -361,7 +362,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			Value:      value,
 		}
 
-		go chore.FinishWithWinResult(ctx, winResult)
+		wg := sync.WaitGroup{}
+		go chore.FinishWithWinResult(ctx, winResult, &wg)
 		go chore.Finish(secondClient, secondClientResult)
 	case firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals:
 		winResult := WinResult{
@@ -370,7 +372,8 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			Value:      value,
 		}
 
-		go chore.FinishWithWinResult(ctx, winResult)
+		wg := sync.WaitGroup{}
+		go chore.FinishWithWinResult(ctx, winResult, &wg)
 		go chore.Finish(firstClient, firstClientResult)
 	default:
 		var value = new(big.Int)
@@ -381,21 +384,24 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			GameResult: firstClientResult,
 			Value:      value,
 		}
-		go chore.FinishWithWinResult(ctx, winResult)
+
+		wg := sync.WaitGroup{}
+		go chore.FinishWithWinResult(ctx, winResult, &wg)
 
 		winResult = WinResult{
 			Client:     secondClient,
 			GameResult: secondClientResult,
 			Value:      value,
 		}
-		go chore.FinishWithWinResult(ctx, winResult)
+		go chore.FinishWithWinResult(ctx, winResult, &wg)
 	}
 
 	return nil
 }
 
 // FinishWithWinResult sends win result and finishes the connection.
-func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult) {
+func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult, wg *sync.WaitGroup) {
+	defer wg.Done()
 	user, err := chore.users.Get(ctx, winResult.Client.UserID)
 	if err != nil {
 		chore.log.Error("could not get user", ChoreError.Wrap(err))
@@ -407,13 +413,6 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 	winResult.GameResult.Transaction.UDTContract.Address = chore.Config.UDTContract.Address
 	winResult.GameResult.CasperTransaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
 	winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.Config.CasperTokenContract.Address
-
-	matchResult := matches.MatchResult{
-		UserID:        user.ID,
-		QuantityGoals: 0,
-		Goalscorers:   nil,
-	}
-	winResult.GameResult.MatchResults = append(winResult.GameResult.MatchResults, matchResult)
 
 	if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 		chore.log.Error("could not write json", ChoreError.Wrap(err))

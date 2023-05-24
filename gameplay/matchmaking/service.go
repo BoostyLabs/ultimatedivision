@@ -10,6 +10,7 @@ import (
 	"math/big"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -318,15 +319,28 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			Value:      value,
 		}
 
-		service.queue.FinishWithWinResult(ctx, winResult)
-
-		winResult = queue.WinResult{
-			Client:     secondClient,
-			GameResult: matches.GameResult{},
-			Value:      value,
+		matchResultPlayer1 := matches.MatchResult{
+			UserID:        match.Player1.UserID,
+			QuantityGoals: 0,
+			Goalscorers:   nil,
 		}
+		matchResultPlayer2 := matches.MatchResult{
+			UserID:        match.Player2.UserID,
+			QuantityGoals: 0,
+			Goalscorers:   nil,
+		}
+		winResult.GameResult.MatchResults = append(winResult.GameResult.MatchResults, matchResultPlayer1, matchResultPlayer2)
 
-		service.queue.FinishWithWinResult(ctx, winResult)
+		wg := sync.WaitGroup{}
+
+		wg.Add(2)
+		go service.queue.FinishWithWinResult(ctx, winResult, &wg)
+
+		winResult.Client = secondClient
+
+		go service.queue.FinishWithWinResult(ctx, winResult, &wg)
+
+		wg.Wait()
 
 	}
 
