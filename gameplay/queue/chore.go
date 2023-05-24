@@ -33,7 +33,7 @@ var (
 //
 // architecture: Chore
 type Chore struct {
-	config           Config
+	Config           Config
 	log              logger.Logger
 	service          *Service
 	Loop             *thelooper.Loop
@@ -47,7 +47,7 @@ type Chore struct {
 // NewChore instantiates Chore.
 func NewChore(config Config, log logger.Logger, service *Service, matches *matches.Service, seasons *seasons.Service, clubs *clubs.Service, currencywaitlist *currencywaitlist.Service, users *users.Service) *Chore {
 	return &Chore{
-		config:           config,
+		Config:           config,
 		log:              log,
 		service:          service,
 		Loop:             thelooper.NewLoop(config.PlaceRenewalInterval),
@@ -351,7 +351,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 	}
 
 	var value = new(big.Int)
-	value.SetString(chore.config.WinValue, 10)
+	value.SetString(chore.Config.WinValue, 10)
 
 	switch {
 	case firstClientResult.MatchResults[0].QuantityGoals > secondClientResult.MatchResults[0].QuantityGoals:
@@ -374,7 +374,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 		go chore.Finish(firstClient, firstClientResult)
 	default:
 		var value = new(big.Int)
-		value.SetString(chore.config.DrawValue, 10)
+		value.SetString(chore.Config.DrawValue, 10)
 
 		winResult := WinResult{
 			Client:     firstClient,
@@ -404,9 +404,9 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 
 	winResult.GameResult.Question = "do you allow us to take your address?"
 	winResult.GameResult.Transaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
-	winResult.GameResult.Transaction.UDTContract.Address = chore.config.UDTContract.Address
+	winResult.GameResult.Transaction.UDTContract.Address = chore.Config.UDTContract.Address
 	winResult.GameResult.CasperTransaction.Value = evmsignature.WeiBigToEthereumBig(winResult.Value).String()
-	winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.config.CasperTokenContract.Address
+	winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.Config.CasperTokenContract.Address
 	if err := winResult.Client.WriteJSON(http.StatusOK, winResult.GameResult); err != nil {
 		chore.log.Error("could not write json", ChoreError.Wrap(err))
 		return
@@ -453,8 +453,8 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 				chore.log.Error("could not create casper item of currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
-			winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.config.CasperTokenContract.Address
-			winResult.GameResult.RPCNodeAddress = chore.config.RPCNodeAddress
+			winResult.GameResult.CasperTransaction.CasperTokenContract.Address = chore.Config.CasperTokenContract.Address
+			winResult.GameResult.RPCNodeAddress = chore.Config.RPCNodeAddress
 		default:
 			if winResult.GameResult.Transaction, err = chore.currencywaitlist.Create(ctx, user.ID, *winResult.Value, request.Nonce); err != nil {
 				chore.log.Error("could not create item of currencywaitlist", ChoreError.Wrap(err))
@@ -463,7 +463,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 
 		}
 	}
-	chore.Finish(winResult.Client, winResult.GameResult)
+	//chore.Finish(winResult.Client, winResult.GameResult)
 }
 
 // Finish sends result and finishes the connection.
