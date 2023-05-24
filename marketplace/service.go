@@ -140,6 +140,24 @@ func (service *Service) GetNFTDataByCardID(ctx context.Context, cardID uuid.UUID
 	return lotData, ErrMarketplace.Wrap(err)
 }
 
+// GetMakeOfferByCardID returns make offer data by card id from DB.
+func (service *Service) GetMakeOfferByCardID(ctx context.Context, cardID uuid.UUID) (nfts.MakeOffer, error) {
+	tokenID, err := service.nfts.GetNFTTokenIDbyCardID(ctx, cardID)
+	if err != nil {
+		return nfts.MakeOffer{}, ErrMarketplace.Wrap(err)
+	}
+
+	byteCasperTokenContract := []byte(service.config.CasperTokenContract.Address)
+
+	return nfts.MakeOffer{
+		TokenID:           tokenID,
+		Address:           service.config.MarketplaceNFTContract.Address,
+		AddressNodeServer: service.config.RPCNodeAddress,
+		ContractHash:      service.config.ContractHash,
+		TokenContractHash: byteCasperTokenContract,
+	}, ErrMarketplace.Wrap(err)
+}
+
 // ListActiveLots returns active lots from DB.
 func (service *Service) ListActiveLots(ctx context.Context, cursor pagination.Cursor) (Page, error) {
 	if cursor.Limit <= 0 {

@@ -52,6 +52,15 @@ type TokenIDWithContractAddress struct {
 	ContractHash      string    `json:"contractHash"`
 }
 
+// MakeOffer entity describes values released nft token with address.
+type MakeOffer struct {
+	TokenID           uuid.UUID `json:"tokenId"`
+	Address           string    `json:"address"`
+	AddressNodeServer string    `json:"addressNodeServer"`
+	ContractHash      string    `json:"contractHash"`
+	TokenContractHash []byte    `json:"tokenContractHash"`
+}
+
 // MaxValueGameParameter indicates that max value game parameter is 100.
 const MaxValueGameParameter = 100
 

@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"time"
 
+	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
@@ -104,8 +105,9 @@ type Config struct {
 	MarketplaceNFTContract struct {
 		Address string `json:"address"`
 	} `json:"marketplaceNFTContract"`
-	RPCNodeAddress string `json:"rpcNodeAddress"`
-	ContractHash   string `json:"contractHash"`
+	RPCNodeAddress      string                `json:"rpcNodeAddress"`
+	ContractHash        string                `json:"contractHash"`
+	CasperTokenContract evmsignature.Contract `json:"casperTokenContract"`
 }
 
 // CreateLot entity that contains the values required to create the lot.
