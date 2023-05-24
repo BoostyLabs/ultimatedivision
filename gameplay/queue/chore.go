@@ -463,7 +463,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 
 		}
 	}
-	//chore.Finish(winResult.Client, winResult.GameResult)
+	// chore.Finish(winResult.Client, winResult.GameResult).
 }
 
 // Finish sends result and finishes the connection.
