@@ -9,7 +9,6 @@ import (
 	"math/big"
 	"net/http"
 	"sort"
-	"sync"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
@@ -362,8 +361,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			Value:      value,
 		}
 
-		wg := sync.WaitGroup{}
-		go chore.FinishWithWinResult(ctx, winResult, &wg)
+		go chore.FinishWithWinResult(ctx, winResult)
 		go chore.Finish(secondClient, secondClientResult)
 	case firstClientResult.MatchResults[0].QuantityGoals < secondClientResult.MatchResults[0].QuantityGoals:
 		winResult := WinResult{
@@ -372,8 +370,7 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			Value:      value,
 		}
 
-		wg := sync.WaitGroup{}
-		go chore.FinishWithWinResult(ctx, winResult, &wg)
+		go chore.FinishWithWinResult(ctx, winResult)
 		go chore.Finish(firstClient, firstClientResult)
 	default:
 		var value = new(big.Int)
@@ -385,23 +382,22 @@ func (chore *Chore) Play(ctx context.Context, firstClient, secondClient Client) 
 			Value:      value,
 		}
 
-		wg := sync.WaitGroup{}
-		go chore.FinishWithWinResult(ctx, winResult, &wg)
+		go chore.FinishWithWinResult(ctx, winResult)
 
 		winResult = WinResult{
 			Client:     secondClient,
 			GameResult: secondClientResult,
 			Value:      value,
 		}
-		go chore.FinishWithWinResult(ctx, winResult, &wg)
+		go chore.FinishWithWinResult(ctx, winResult)
 	}
 
 	return nil
 }
 
 // FinishWithWinResult sends win result and finishes the connection.
-func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult, wg *sync.WaitGroup) {
-	defer wg.Done()
+func (chore *Chore) FinishWithWinResult(c context.Context, winResult WinResult) {
+	ctx := context.Background()
 	user, err := chore.users.Get(ctx, winResult.Client.UserID)
 	if err != nil {
 		chore.log.Error("could not get user", ChoreError.Wrap(err))
@@ -456,7 +452,7 @@ func (chore *Chore) FinishWithWinResult(ctx context.Context, winResult WinResult
 				chore.log.Error("could not get nonce number from currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
-			nonce = nonce + 1
+
 			if winResult.GameResult.CasperTransaction, err = chore.currencywaitlist.CasperCreate(ctx, user.ID, *winResult.Value, nonce); err != nil {
 				chore.log.Error("could not create casper item of currencywaitlist", ChoreError.Wrap(err))
 				return
