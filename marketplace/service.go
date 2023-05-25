@@ -147,14 +147,12 @@ func (service *Service) GetMakeOfferByCardID(ctx context.Context, cardID uuid.UU
 		return nfts.MakeOffer{}, ErrMarketplace.Wrap(err)
 	}
 
-	byteCasperTokenContract := []byte(service.config.CasperTokenContract.Address)
-
 	return nfts.MakeOffer{
 		TokenID:           tokenID,
 		Address:           service.config.MarketplaceNFTContract.Address,
 		AddressNodeServer: service.config.RPCNodeAddress,
 		ContractHash:      service.config.ContractHash,
-		TokenContractHash: byteCasperTokenContract,
+		TokenContractHash: string(service.config.CasperTokenContract.Address),
 	}, ErrMarketplace.Wrap(err)
 }
 

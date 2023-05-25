@@ -58,7 +58,7 @@ type MakeOffer struct {
 	Address           string    `json:"address"`
 	AddressNodeServer string    `json:"addressNodeServer"`
 	ContractHash      string    `json:"contractHash"`
-	TokenContractHash []byte    `json:"tokenContractHash"`
+	TokenContractHash string    `json:"tokenContractHash"`
 }
 
 // MaxValueGameParameter indicates that max value game parameter is 100.
