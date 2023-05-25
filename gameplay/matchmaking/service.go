@@ -10,7 +10,6 @@ import (
 	"math/big"
 	"net/http"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -331,17 +330,13 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 		}
 		winResult.GameResult.MatchResults = append(winResult.GameResult.MatchResults, matchResultPlayer1, matchResultPlayer2)
 
-		wg := sync.WaitGroup{}
-
-		wg.Add(2)
-		go service.queue.FinishWithWinResult(ctx, winResult, &wg)
+		go service.queue.FinishWithWinResult(ctx, winResult)
 
 		winResult.Client = secondClient
 
-		go service.queue.FinishWithWinResult(ctx, winResult, &wg)
+		go service.queue.FinishWithWinResult(ctx, winResult)
 
-		wg.Wait()
-
+		return match, nil
 	}
 
 	resp.Message = "you left"
