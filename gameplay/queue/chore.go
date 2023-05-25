@@ -448,7 +448,7 @@ func (chore *Chore) FinishWithWinResult(c context.Context, winResult WinResult) 
 		switch request.WalletType {
 		case users.WalletTypeCasper:
 			nonce, err := chore.currencywaitlist.GetNonceByWallet(ctx, user.CasperWallet)
-			if err != nil {
+			if err != nil && !currencywaitlist.ErrNoItem.Has(err) {
 				chore.log.Error("could not get nonce number from currencywaitlist", ChoreError.Wrap(err))
 				return
 			}
