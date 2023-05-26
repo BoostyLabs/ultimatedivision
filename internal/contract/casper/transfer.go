@@ -26,6 +26,16 @@ type SetSignerRequest struct {
 	Value                       string
 }
 
+// SetFinalListingRequest describes values to calls final listing method.
+type SetFinalListingRequest struct {
+	PublicKey                   keypair.PublicKey
+	ChainName                   string
+	NftContractHash             string
+	TokenID                     string
+	StandardPaymentForBridgeOut int64
+	BridgeContractPackageHash   string
+}
+
 // Transfer describes sign func to sign transaction and casper client to send transaction.
 type Transfer struct {
 	casper contract.Casper
@@ -41,30 +51,41 @@ func NewTransfer(casper contract.Casper, sign func([]byte) ([]byte, error)) *Tra
 	}
 }
 
-// SetSigner sets public key in contract to verify signature.
-func (t *Transfer) SetSigner(ctx context.Context, req SetSignerRequest) (string, error) {
+// SetFinalListing send NFT to winner.
+func (t *Transfer) SetFinalListing(ctx context.Context, req SetFinalListingRequest) (string, error) {
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
+	// ціна на газ ліміт.
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPaymentForBridgeOut))
 
-	value := types.CLValue{
+	// NFT contract hash, where we mint NFT.
+	nftContract := types.CLValue{
 		Type:   types.CLTypeString,
-		String: &req.Value,
+		String: &req.NftContractHash,
 	}
-	valueBytes, err := serialization.Marshal(value)
+	nftContractBytes, err := serialization.Marshal(nftContract)
 	if err != nil {
 		return "", err
 	}
 
+	tokenIDFromStringByteSlice := []byte("$\u0000\u0000\u0000" + req.TokenID)
+
 	args := map[string]sdk.Value{
-		"signer": {
+		"nft_contract_hash": {
 			Tag:         types.CLTypeString,
 			IsOptional:  false,
-			StringBytes: hex.EncodeToString(valueBytes),
+			StringBytes: hex.EncodeToString(nftContractBytes),
+		},
+		"token_id": {
+			Tag:         types.CLTypeString,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(tokenIDFromStringByteSlice),
 		},
 	}
-	keyOrder := []string{"signer"}
+
+	keyOrder := []string{"nft_contract_hash", "token_id"}
 	runtimeArgs := sdk.NewRunTimeArgs(args, keyOrder)
 
+	// contract that we are using.
 	contractHexBytes, err := hex.DecodeString(req.BridgeContractPackageHash)
 	if err != nil {
 		return "", err
@@ -72,7 +93,7 @@ func (t *Transfer) SetSigner(ctx context.Context, req SetSignerRequest) (string,
 
 	var contractHashBytes [32]byte
 	copy(contractHashBytes[:], contractHexBytes)
-	session := sdk.NewStoredContractByHash(contractHashBytes, "set_signer", *runtimeArgs)
+	session := sdk.NewStoredContractByHash(contractHashBytes, "final_listing", *runtimeArgs)
 
 	deploy := sdk.MakeDeploy(deployParams, payment, session)
 
