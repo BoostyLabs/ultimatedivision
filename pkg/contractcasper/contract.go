@@ -241,7 +241,6 @@ func (r *rpcClient) rpcCall(method string, params interface{}) (_ sdk.RpcRespons
 	if err != nil {
 		return sdk.RpcResponse{}, fmt.Errorf("failed to get response body: %v", err)
 	}
-
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		return sdk.RpcResponse{}, fmt.Errorf("request failed, status code - %d, response - %s", resp.StatusCode, string(b))
 	}

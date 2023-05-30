@@ -6,6 +6,7 @@ package casper
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 	"math/big"
 	"strings"
 
@@ -56,7 +57,7 @@ func (t *Transfer) SetFinalListing(ctx context.Context, req SetFinalListingReque
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
 	// ціна на газ ліміт.
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPaymentForBridgeOut))
-
+	fmt.Println("payment ------->", payment)
 	// NFT contract hash, where we mint NFT.
 	nftContract := types.CLValue{
 		Type:   types.CLTypeString,
@@ -68,7 +69,7 @@ func (t *Transfer) SetFinalListing(ctx context.Context, req SetFinalListingReque
 	}
 
 	tokenIDFromStringByteSlice := []byte("$\u0000\u0000\u0000" + req.TokenID)
-
+	fmt.Println("tokenIDFromStringByteSlice ------->", tokenIDFromStringByteSlice)
 	args := map[string]sdk.Value{
 		"nft_contract_hash": {
 			Tag:         types.CLTypeString,
@@ -81,7 +82,7 @@ func (t *Transfer) SetFinalListing(ctx context.Context, req SetFinalListingReque
 			StringBytes: hex.EncodeToString(tokenIDFromStringByteSlice),
 		},
 	}
-
+	fmt.Println("args ------->", args)
 	keyOrder := []string{"nft_contract_hash", "token_id"}
 	runtimeArgs := sdk.NewRunTimeArgs(args, keyOrder)
 
@@ -94,9 +95,9 @@ func (t *Transfer) SetFinalListing(ctx context.Context, req SetFinalListingReque
 	var contractHashBytes [32]byte
 	copy(contractHashBytes[:], contractHexBytes)
 	session := sdk.NewStoredContractByHash(contractHashBytes, "final_listing", *runtimeArgs)
-
+	fmt.Println("session ------->", payment)
 	deploy := sdk.MakeDeploy(deployParams, payment, session)
-
+	fmt.Println("deploy ------->", payment)
 	signedTx, err := t.sign(deploy.Hash)
 	if err != nil {
 		return "", err
@@ -111,11 +112,11 @@ func (t *Transfer) SetFinalListing(ctx context.Context, req SetFinalListingReque
 		Signature: signatureKeypair,
 	}
 	deploy.Approvals = append(deploy.Approvals, approval)
-
 	hash, err := t.casper.PutDeploy(*deploy)
 	if err != nil {
 		return "", err
 	}
+	fmt.Println("hash ------->", hash)
 
 	return hash, nil
 }
