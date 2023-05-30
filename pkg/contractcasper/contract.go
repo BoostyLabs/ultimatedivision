@@ -4,8 +4,14 @@
 package contract
 
 import (
+	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+
+	"github.com/pkg/errors"
 
 	"github.com/casper-ecosystem/casper-golang-sdk/keypair"
 	"github.com/casper-ecosystem/casper-golang-sdk/sdk"
@@ -108,26 +114,38 @@ type ClaimInResponse struct {
 	Txhash string
 }
 
+// RuntimeArgs describe RuntimeArgs.
 type RuntimeArgs struct {
 	KeyOrder []string
 	Args     map[interface{}]sdk.Value
 }
 
-type StoredContractByName struct {
+// StoredContractByHash describe StoredContractByHash.
+type StoredContractByHash struct {
 	Tag        sdk.ExecutableDeployItemType
-	Name       string
+	Hash       [32]byte
 	Entrypoint string
 	Args       RuntimeArgs
 }
 
+// ExecutableDeployItem describe ExecutableDeployItem.
 type ExecutableDeployItem struct {
 	Type                          sdk.ExecutableDeployItemType
 	ModuleBytes                   *sdk.ModuleBytes
-	StoredContractByHash          *sdk.StoredContractByHash
+	StoredContractByHash          *StoredContractByHash
 	StoredContractByName          *sdk.StoredContractByName
 	StoredVersionedContractByHash *sdk.StoredVersionedContractByHash
 	StoredVersionedContractByName *sdk.StoredVersionedContractByName
 	Transfer                      *sdk.Transfer
+}
+
+// Deploy describe Deploy.
+type Deploy struct {
+	Hash      sdk.Hash                  `json:"hash"`
+	Header    *sdk.DeployHeader         `json:"header"`
+	Payment   *sdk.ExecutableDeployItem `json:"payment"`
+	Session   *ExecutableDeployItem     `json:"session"`
+	Approvals []sdk.Approval            `json:"approvals"`
 }
 
 // Claim initiates inbound claim transaction.
@@ -175,16 +193,15 @@ func Claim(req ClaimRequest) (ClaimInResponse, error) {
 		Signature: signature,
 	}
 
-	deploy := sdk.Deploy{
+	deploy := Deploy{
 		Hash:      request.Deploy.Hash,
 		Header:    request.Deploy.Header,
 		Payment:   request.Deploy.Payment,
-		Session:   (*sdk.ExecutableDeployItem)(request.Deploy.Session),
+		Session:   request.Deploy.Session,
 		Approvals: []sdk.Approval{approval},
 	}
 
-	casperClient := sdk.NewRpcClient(req.RPCNodeAddress)
-	deployResp, err := casperClient.PutDeploy(deploy)
+	deployResp, err := PutDeploy(deploy, req.RPCNodeAddress)
 	if err != nil {
 		return ClaimInResponse{}, ErrContract.Wrap(err)
 	}
@@ -194,4 +211,65 @@ func Claim(req ClaimRequest) (ClaimInResponse, error) {
 	}
 
 	return resp, nil
+}
+
+// PutDeploy initiates inbound deploy transaction.
+func PutDeploy(deploy Deploy, rpcNodeAddress string) (sdk.JsonPutDeployRes, error) {
+	resp, err := rpcCall("account_put_deploy", map[string]interface{}{
+		"deploy": deploy,
+	}, rpcNodeAddress)
+
+	if err != nil {
+		return sdk.JsonPutDeployRes{}, err
+	}
+
+	var result sdk.JsonPutDeployRes
+	err = json.Unmarshal(resp.Result, &result)
+	if err != nil {
+		return sdk.JsonPutDeployRes{}, fmt.Errorf("failed to put deploy: %w", err)
+	}
+
+	return result, nil
+}
+
+// rpcCall do it casper rpc call.
+func rpcCall(method string, params interface{}, rpcNodeAddress string) (sdk.RpcResponse, error) {
+	body, err := json.Marshal(sdk.RpcRequest{
+		Version: "2.0",
+		Method:  method,
+		Params:  params,
+	})
+
+	if err != nil {
+		return sdk.RpcResponse{}, errors.Wrap(err, "failed to marshal json")
+	}
+
+	resp, err := http.Post(rpcNodeAddress, "application/json", bytes.NewReader(body))
+	if err != nil {
+		defer func() {
+			err = errs.Combine(err, resp.Body.Close())
+		}()
+		return sdk.RpcResponse{}, fmt.Errorf("failed to make request: %w", err)
+	}
+
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return sdk.RpcResponse{}, fmt.Errorf("failed to get response body: %w", err)
+	}
+
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		return sdk.RpcResponse{}, fmt.Errorf("request failed, status code - %d, response - %s", resp.StatusCode, string(b))
+	}
+
+	var rpcResponse sdk.RpcResponse
+	err = json.Unmarshal(b, &rpcResponse)
+	if err != nil {
+		return sdk.RpcResponse{}, fmt.Errorf("failed to parse response body: %w", err)
+	}
+
+	if rpcResponse.Error != nil {
+		return rpcResponse, fmt.Errorf("rpc call failed, code - %d, message - %s", rpcResponse.Error.Code, rpcResponse.Error.Message)
+	}
+
+	return rpcResponse, nil
 }
