@@ -4,7 +4,6 @@
 package contract
 
 import (
-	"context"
 	"encoding/hex"
 	"encoding/json"
 
@@ -109,14 +108,36 @@ type ClaimInResponse struct {
 	Txhash string
 }
 
+type RuntimeArgs struct {
+	KeyOrder []string
+	Args     map[interface{}]sdk.Value
+}
+
+type StoredContractByName struct {
+	Tag        sdk.ExecutableDeployItemType
+	Name       string
+	Entrypoint string
+	Args       RuntimeArgs
+}
+
+type ExecutableDeployItem struct {
+	Type                          sdk.ExecutableDeployItemType
+	ModuleBytes                   *sdk.ModuleBytes
+	StoredContractByHash          *sdk.StoredContractByHash
+	StoredContractByName          *sdk.StoredContractByName
+	StoredVersionedContractByHash *sdk.StoredVersionedContractByHash
+	StoredVersionedContractByName *sdk.StoredVersionedContractByName
+	Transfer                      *sdk.Transfer
+}
+
 // Claim initiates inbound claim transaction.
-func Claim(ctx context.Context, req ClaimRequest) (ClaimInResponse, error) {
+func Claim(req ClaimRequest) (ClaimInResponse, error) {
 	request := struct {
 		Deploy struct {
 			Hash      sdk.Hash                  `json:"hash"`
 			Header    *sdk.DeployHeader         `json:"header"`
 			Payment   *sdk.ExecutableDeployItem `json:"payment"`
-			Session   *sdk.ExecutableDeployItem `json:"session"`
+			Session   *ExecutableDeployItem     `json:"session"`
 			Approvals []struct {
 				Signer    string `json:"signer"`
 				Signature string `json:"signature"`
@@ -158,7 +179,7 @@ func Claim(ctx context.Context, req ClaimRequest) (ClaimInResponse, error) {
 		Hash:      request.Deploy.Hash,
 		Header:    request.Deploy.Header,
 		Payment:   request.Deploy.Payment,
-		Session:   request.Deploy.Session,
+		Session:   (*sdk.ExecutableDeployItem)(request.Deploy.Session),
 		Approvals: []sdk.Approval{approval},
 	}
 

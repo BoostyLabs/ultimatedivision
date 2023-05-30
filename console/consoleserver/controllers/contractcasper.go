@@ -39,7 +39,7 @@ func (contract *ContractCasper) Claim(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := contractcasper.Claim(r.Context(), req)
+	resp, err := contractcasper.Claim(req)
 	if err != nil {
 		contract.serveError(w, http.StatusInternalServerError, ErrContractCasper.Wrap(err))
 		return
