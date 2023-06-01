@@ -140,6 +140,23 @@ func (service *Service) GetNFTDataByCardID(ctx context.Context, cardID uuid.UUID
 	return lotData, ErrMarketplace.Wrap(err)
 }
 
+// GetApproveByCardID returns nft data by card id from DB.
+func (service *Service) GetApproveByCardID(ctx context.Context, cardID uuid.UUID) (nfts.TokenIDWithApproveData, error) {
+	var approveData nfts.TokenIDWithApproveData
+
+	tokenID, err := service.nfts.GetNFTTokenIDbyCardID(ctx, cardID)
+	if err != nil {
+		return approveData, ErrMarketplace.Wrap(err)
+	}
+	approveData.TokenID = tokenID.String()
+	approveData.AddressNodeServer = service.config.RPCNodeAddress
+	approveData.NFTContractHash = service.config.NFTContractHash
+	approveData.TokenContractHash = service.config.TokenContractHash
+	approveData.Amount = 1000
+
+	return approveData, ErrMarketplace.Wrap(err)
+}
+
 // ListActiveLots returns active lots from DB.
 func (service *Service) ListActiveLots(ctx context.Context, cursor pagination.Cursor) (Page, error) {
 	if cursor.Limit <= 0 {

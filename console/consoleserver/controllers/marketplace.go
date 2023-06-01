@@ -309,6 +309,30 @@ func (controller *Marketplace) GetLotData(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// GetApproveData is an endpoint that return approve data by card id.
+func (controller *Marketplace) GetApproveData(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+	vars := mux.Vars(r)
+
+	cardID, err := uuid.Parse(vars["card_id"])
+	if err != nil {
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
+		return
+	}
+
+	approveData, err := controller.marketplace.GetApproveByCardID(ctx, cardID)
+	if err != nil {
+		controller.log.Error("there is no such NFT data", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
+	}
+
+	if err = json.NewEncoder(w).Encode(approveData); err != nil {
+		controller.log.Error("failed to write json response", ErrMarketplace.Wrap(err))
+		return
+	}
+}
+
 // PlaceBetLot is an endpoint that returns lot by id.
 func (controller *Marketplace) PlaceBetLot(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
