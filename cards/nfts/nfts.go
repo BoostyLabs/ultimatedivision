@@ -57,7 +57,7 @@ type TokenIDWithApproveData struct {
 	TokenID           string `json:"tokenId"`
 	AddressNodeServer string `json:"addressNodeServer"`
 	NFTContractHash   string `json:"contractHash"`
-	TokenContractHash string `json:"contractHash"`
+	TokenContractHash string `json:"tokenContractHash"`
 	Amount            int64  `json:"amount"`
 }
 
