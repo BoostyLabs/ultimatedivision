@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"ultimatedivision/cards/nfts"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/google/uuid"
@@ -313,15 +314,27 @@ func (controller *Marketplace) GetLotData(w http.ResponseWriter, r *http.Request
 func (controller *Marketplace) GetApproveData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-	vars := mux.Vars(r)
+	queryParams := r.URL.Query()
 
-	cardID, err := uuid.Parse(vars["card_id"])
-	if err != nil {
-		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
-		return
+	var approveData nfts.TokenIDWithApproveData
+
+	cardID := queryParams.Get("card_id")
+
+	if cardID == "" {
+		approveData = controller.marketplace.GetApproveData(ctx)
+		if err := json.NewEncoder(w).Encode(approveData); err != nil {
+			controller.log.Error("failed to write json response", ErrMarketplace.Wrap(err))
+			return
+		}
 	}
 
-	approveData, err := controller.marketplace.GetApproveByCardID(ctx, cardID)
+	cardIDUuid, err := uuid.Parse(cardID)
+	if err != nil {
+		controller.log.Error("could not parse uuid from string", ErrMarketplace.Wrap(err))
+		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
+	}
+
+	approveData, err = controller.marketplace.GetApproveByCardID(ctx, cardIDUuid)
 	if err != nil {
 		controller.log.Error("there is no such NFT data", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
