@@ -108,6 +108,7 @@ type Config struct {
 	ContractHash      string `json:"contractHash"`
 	NFTContractHash   string `json:"nftContractHash"`
 	TokenContractHash string `json:"tokenContractHash"`
+	Amount            int64  `json:"amount"`
 }
 
 // CreateLot entity that contains the values required to create the lot.
