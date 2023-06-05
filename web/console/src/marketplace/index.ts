@@ -58,3 +58,16 @@ export class MarketCreateLotTransaction {
         public redemptionPrice: number = DEFAULT_REDEMPTION_PRRICE,
     ) { }
 };
+
+/** Class defines Marketplace response */
+export class BidsMakeOfferTransaction {
+    /** Includes lots and page field */
+    constructor(
+        public address: string = '',
+        public rpcNodeAddress: string = '',
+        public tokenId: string = '',
+        public contractHash: string = '',
+        public erc20Contract: any,
+        public offerPrice: number = DEFAULT_DURATION,
+    ) { }
+};

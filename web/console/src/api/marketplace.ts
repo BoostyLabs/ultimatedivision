@@ -110,4 +110,40 @@ export class MarketplaceClient extends APIClient {
 
         return lotData;
     };
+
+    /** make offer casper */
+    public async makeOffer(cardId: string): Promise<any> {
+        const path = `/api/v0/bids/make-offer/${cardId}`;
+        const response = await this.http.get(path);
+
+        if (!response.ok) {
+            await this.handleError(response);
+        };
+
+        const makeOfferData = await response.json();
+
+        return makeOfferData;
+    };
+
+    /** approve transaction casper */
+    public async approve(cardId?: string): Promise<any> {
+        let path;
+
+        if (cardId) {
+            path = `${this.ROOT_PATH}/approve?${cardId}`;
+        }
+        else {
+            path = `${this.ROOT_PATH}/approve`;
+        }
+
+        const response = await this.http.get(path);
+
+        if (!response.ok) {
+            await this.handleError(response);
+        };
+
+        const approveData = await response.json();
+
+        return approveData;
+    };
 };

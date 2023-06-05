@@ -5,13 +5,12 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { AutoCloseTimer } from './AutoCloseTimer';
-import { Timer } from './Timer';
+import { AutoCloseTimer } from '@/app/components/common/MatchFinder/AutoCloseTimer';
+import { Timer } from '@/app/components/common/MatchFinder/Timer';
 
 import { WebSocketClient } from '@/api/websockets';
 import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
-import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
 import { getCurrentWebSocketClient, onCloseConnection, onOpenConnectionNoAction, sendAction, setMatchQueue } from '@/webSockets/service';
 import { ToastNotifications } from '@/notifications/service';
@@ -63,6 +62,8 @@ const MatchFinder: React.FC = () => {
     const YOU_CONFIRM_PLAY_MESSAGE: string = 'do you confirm play?';
     /** Variable describes that user have leaved from searching game. */
     const YOU_LEAVED_MESSAGE: string = 'you left';
+    /** Variable describes that two players are connected and are ready to play game. */
+    const PLAYERS_FOUND: string = 'players found';
 
     /** Sends confirm action. */
     const confirmMatch = () => {
@@ -130,22 +131,25 @@ const MatchFinder: React.FC = () => {
             case YOU_LEAVED_MESSAGE:
                 setIsMatchFound(false);
                 dispatch(startSearchingMatch(false));
+
                 onCloseConnection();
                 onOpenConnectionNoAction();
 
                 return;
-            default:
+
+            case PLAYERS_FOUND:
                 setIsMatchFound(false);
                 ToastNotifications.gameFinished();
 
-                dispatch(getMatchScore(event.message));
                 dispatch(startSearchingMatch(false));
-
 
                 /** implements redirect to game page after DELAY time.  */
                 setTimeout(() => {
                     history.push(RouteConfig.FootballGame.path);
                 }, DELAY);
+                break;
+            default:
+                /** no actions */
             }
         };
     }

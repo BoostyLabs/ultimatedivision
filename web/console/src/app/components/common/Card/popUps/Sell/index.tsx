@@ -23,8 +23,9 @@ type SellTypes = {
 
 /** Mock lot creating stats */
 const MOCK_MIN_BID = 3000;
-const MOCK_MAX_BID = 800;
-const MOCK_PERIOD = 300000;
+const MOCK_MAX_BID = 6000;
+const MOCK_PERIOD = 2;
+const MOCK_PERIOD__TRANSACTION = 300000;
 const MOCK_REDEMPTION_PRRICE = 30000;
 
 export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
@@ -47,8 +48,8 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
                 transactionData.tokenId,
                 transactionData.contractHash,
                 MOCK_MIN_BID,
+                MOCK_PERIOD__TRANSACTION,
                 MOCK_REDEMPTION_PRRICE,
-                MOCK_MAX_BID,
             );
 
         await walletService.createLot(marketplaceLotTransaction);
@@ -71,7 +72,7 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
     }, []);
 
 
-    return(
+    return (
         <div className="pop-up__sell">
             <div className="pop-up__sell__wrapper">
                 <img
@@ -109,7 +110,7 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
                     <button className="auction-hours">24H</button>
                     <button className="auction-hours">72H</button>
                 </div>
-                <button className="pop-up__sell__btn" onClick={() => setCreatedLot() }>
+                <button className="pop-up__sell__btn" onClick={() => setCreatedLot()}>
                     <span className="pop-up__sell__btn-text">BID</span>
                 </button>
             </div>

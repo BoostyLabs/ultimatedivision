@@ -56,4 +56,14 @@ export class Marketplaces {
     public async lotData(cardId: string): Promise<any> {
         return await this.marketplace.lotData(cardId);
     };
+
+    /** returns make offer data */
+    public async makeOffer(cardId: string): Promise<any> {
+        return await this.marketplace.makeOffer(cardId);
+    };
+
+    /** returns approve transaction data */
+    public async approve(cardId?: string): Promise<any> {
+        return await this.marketplace.approve(cardId);
+    };
 };

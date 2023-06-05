@@ -15,6 +15,8 @@ import { openUserCard } from '@/app/store/actions/cards';
 import { setCurrentUser } from '@/app/store/actions/users';
 import WalletService from '@/wallet/service';
 import { Sell } from '@/app/components/common/Card/popUps/Sell';
+import { Marketplaces } from '@/marketplace/service';
+import { MarketplaceClient } from '@/api/marketplace';
 
 import CardPageBackground from '@static/img/FootballerCardPage/background.png';
 import backButton from '@static/img/FootballerCardPage/back-button.png';
@@ -31,11 +33,13 @@ const Card: React.FC = () => {
 
     const [isOpenSellPopup, setIsOpenSellPopup] = useState<boolean>(false);
 
+    const marketplaceClient = new MarketplaceClient();
+    const marketplaceService = new Marketplaces(marketplaceClient);
+
     /** Handle opening of a selles pop-up. */
     const handleOpenSellPopup = () => {
         setIsOpenSellPopup(true);
     };
-
 
     /** implements opening new card */
     async function openCard() {
@@ -60,6 +64,14 @@ const Card: React.FC = () => {
         await walletService.mintNft(id);
     };
 
+    const approve = async() => {
+        // const approveData = await marketplaceService.approve(card.id)
+
+        const walletService = new WalletService(user);
+        await walletService.approveNftMint({});
+    };
+
+
     useEffect(() => {
         setUser();
         openCard();
@@ -73,7 +85,7 @@ const Card: React.FC = () => {
                     <div className="card__back">
                         <Link className="card__back__button" to="/cards">
                             <img src={backButton} alt="back-button" className="card__back__button__image" />
-                        Back
+                            Back
                         </Link>
                     </div>
                     <div className="card__info">
@@ -88,9 +100,14 @@ const Card: React.FC = () => {
                                             {isMinted ? 'minted to Polygon' : 'not minted'}
                                         </span>
                                         {!isMinted &&
-                                        <button className="card__mint" onClick={mint}>
-                                            Mint now
-                                        </button>
+                                            <>
+                                                <button className="card__mint" onClick={mint}>
+                                                    Mint now
+                                                </button>
+                                                <button className="card__mint" onClick={approve}>
+                                                    Approve
+                                                </button>
+                                            </>
                                         }
                                     </div>
                                 </div>
