@@ -65,7 +65,7 @@ const Card: React.FC = () => {
     };
 
     const approve = async() => {
-        // const approveData = await marketplaceService.approve(card.id)
+        const approveData = await marketplaceService.approve(card.id);
 
         const walletService = new WalletService(user);
         await walletService.approveNftMint({});

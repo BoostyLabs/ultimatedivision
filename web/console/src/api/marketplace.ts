@@ -130,10 +130,10 @@ export class MarketplaceClient extends APIClient {
         let path;
 
         if (cardId) {
-            path = `${this.ROOT_PATH}/approve?${cardId}`;
+            path = `${this.ROOT_PATH}/approve?card_id=${cardId}`;
         }
         else {
-            path = `${this.ROOT_PATH}/approve`;
+            path = `${this.ROOT_PATH}/approve?card_id=`;
         }
 
         const response = await this.http.get(path);

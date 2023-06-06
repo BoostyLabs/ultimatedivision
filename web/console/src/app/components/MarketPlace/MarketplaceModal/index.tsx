@@ -48,15 +48,14 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
 
                 const walletService = new WalletService(user);
 
-                const marketplaceMakeOfferTransaction =
-                    new BidsMakeOfferTransaction(
-                        makeOfferData.address,
-                        makeOfferData.addressNodeServer,
-                        makeOfferData.tokenId,
-                        makeOfferData.contractHash,
-                        makeOfferData.tokenContractHash,
-                        cardBid
-                    );
+                const marketplaceMakeOfferTransaction = new BidsMakeOfferTransaction(
+                    makeOfferData.address,
+                    makeOfferData.addressNodeServer,
+                    makeOfferData.tokenId,
+                    makeOfferData.contractHash,
+                    makeOfferData.tokenContractHash,
+                    cardBid
+                );
 
                 await walletService.makeOffer(marketplaceMakeOfferTransaction);
 

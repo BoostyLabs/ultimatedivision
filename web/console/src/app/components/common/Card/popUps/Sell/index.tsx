@@ -38,24 +38,29 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
     const { card } = useSelector((state: RootState) => state.cardsReducer);
 
     const setCreatedLot = async() => {
-        const transactionData = await marketplaceService.lotData(card.id);
-        const walletService = new WalletService(user);
+        try {
+            const transactionData = await marketplaceService.lotData(card.id);
+            const walletService = new WalletService(user);
 
-        const marketplaceLotTransaction =
-            new MarketCreateLotTransaction(
-                transactionData.address,
-                transactionData.addressNodeServer,
-                transactionData.tokenId,
-                transactionData.contractHash,
-                MOCK_MIN_BID,
-                MOCK_PERIOD__TRANSACTION,
-                MOCK_REDEMPTION_PRRICE,
-            );
+            const marketplaceLotTransaction =
+                new MarketCreateLotTransaction(
+                    transactionData.address,
+                    transactionData.addressNodeServer,
+                    transactionData.tokenId,
+                    transactionData.contractHash,
+                    MOCK_MIN_BID,
+                    MOCK_PERIOD__TRANSACTION,
+                    MOCK_REDEMPTION_PRRICE,
+                );
 
-        await walletService.createLot(marketplaceLotTransaction);
+            await walletService.createLot(marketplaceLotTransaction);
 
-        dispatch(createLot(new CreatedLot(card.id, 'card', MOCK_MIN_BID, MOCK_MAX_BID, MOCK_PERIOD)));
-        setIsOpenSellPopup(false);
+            dispatch(createLot(new CreatedLot(card.id, 'card', MOCK_MIN_BID, MOCK_MAX_BID, MOCK_PERIOD)));
+            setIsOpenSellPopup(false);
+        }
+        catch (e) {
+            ToastNotifications.somethingWentsWrong();
+        }
     };
 
     /** sets user info */

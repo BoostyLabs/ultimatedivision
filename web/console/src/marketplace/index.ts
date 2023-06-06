@@ -67,7 +67,7 @@ export class BidsMakeOfferTransaction {
         public rpcNodeAddress: string = '',
         public tokenId: string = '',
         public contractHash: string = '',
-        public erc20Contract: any,
+        public erc20Contract: any = '',
         public offerPrice: number = DEFAULT_DURATION,
     ) { }
 };
