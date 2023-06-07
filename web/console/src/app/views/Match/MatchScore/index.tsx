@@ -14,16 +14,12 @@ import { setCurrentUser } from '@/app/store/actions/users';
 import WalletService from '@/wallet/service';
 import { walletTypes } from '@/wallet';
 import { ToastNotifications } from '@/notifications/service';
-import { MarketplaceClient } from '@/api/marketplace';
-import { Marketplaces } from '@/marketplace/service';
+import { CasperNetworkClient } from '@/api/casper';
+import { CasperNetworkService } from '@/casper/service';
 
 import coin from '@static/img/match/money.svg';
 
 import './index.scss';
-import { CasperTransactionApprove } from '@/casper/types';
-import { CasperNetworkClient } from '@/api/casper';
-import CasperTransactionService from '@/casper';
-import { CasperNetworkService } from '@/casper/service';
 
 export const MatchScore: React.FC = () => {
     const dispatch = useDispatch();

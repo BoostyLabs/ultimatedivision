@@ -1,3 +1,5 @@
+// Copyright (C) 2022 Creditor Corp. Group.
+// See LICENSE for copying information.
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
