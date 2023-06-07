@@ -194,7 +194,8 @@ func (r *rpcClient) GetBlockNumberByHash(hash string) (int, error) {
 	return blockResp.Header.Height, err
 }
 
-type JsonPutDeployRes struct {
+// JSONPutDeployRes describes result of put_deploy tx.
+type JSONPutDeployRes struct {
 	Hash string `json:"deploy_hash"`
 }
 
@@ -207,7 +208,7 @@ func (r *rpcClient) PutDeploy(deploy sdk.Deploy) (string, error) {
 		return "", err
 	}
 
-	var result JsonPutDeployRes
+	var result JSONPutDeployRes
 	err = json.Unmarshal(resp.Result, &result)
 	if err != nil {
 		return "", fmt.Errorf("failed to put deploy: %w", err)

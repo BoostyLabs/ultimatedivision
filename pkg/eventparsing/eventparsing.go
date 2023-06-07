@@ -110,7 +110,6 @@ func (e *EventData) GetTokenID(eventData EventData) (uuid.UUID, error) {
 	}
 
 	return tokenID, nil
-
 }
 
 // GetChainName returns chain name from event data.

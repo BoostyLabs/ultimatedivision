@@ -33,6 +33,7 @@ func NewTransfer(casper contract.Casper, sign func([]byte) ([]byte, error)) *Tra
 	}
 }
 
+// MintOneRequest describes values to calls MintOne method.
 type MintOneRequest struct {
 	PublicKey              keypair.PublicKey
 	ChainName              string
@@ -42,6 +43,7 @@ type MintOneRequest struct {
 	Recipient              string
 }
 
+// MintOne mints NFT for user.
 func (t *Transfer) MintOne(ctx context.Context, req MintOneRequest) (string, error) {
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
@@ -114,6 +116,7 @@ func (t *Transfer) MintOne(ctx context.Context, req MintOneRequest) (string, err
 	return hash, nil
 }
 
+// ApproveNFTRequest describes values to calls ApproveNFT method.
 type ApproveNFTRequest struct {
 	PublicKey              keypair.PublicKey
 	ChainName              string
@@ -123,6 +126,7 @@ type ApproveNFTRequest struct {
 	TokenID                string
 }
 
+// ApproveNFT approves NFT to send from one user to another.
 func (t *Transfer) ApproveNFT(ctx context.Context, req ApproveNFTRequest) (string, error) {
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
@@ -195,6 +199,7 @@ func (t *Transfer) ApproveNFT(ctx context.Context, req ApproveNFTRequest) (strin
 	return hash, nil
 }
 
+// CreateListingRequest describes values to calls CreateListing method.
 type CreateListingRequest struct {
 	PublicKey          keypair.PublicKey
 	ChainName          string
@@ -207,6 +212,7 @@ type CreateListingRequest struct {
 	AuctionDuration    *big.Int
 }
 
+// CreateListing creates listing for NFT.
 func (t *Transfer) CreateListing(ctx context.Context, req CreateListingRequest) (string, error) {
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
@@ -321,6 +327,7 @@ func (t *Transfer) CreateListing(ctx context.Context, req CreateListingRequest) 
 	return hash, nil
 }
 
+// ApproveTokensRequest describes values to calls ApproveTokens method.
 type ApproveTokensRequest struct {
 	PublicKey          keypair.PublicKey
 	ChainName          string
@@ -330,6 +337,7 @@ type ApproveTokensRequest struct {
 	Amount             *big.Int
 }
 
+// ApproveTokens approves tokens to send from one user to another.
 func (t *Transfer) ApproveTokens(ctx context.Context, req ApproveTokensRequest) (string, error) {
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
@@ -408,6 +416,7 @@ func (t *Transfer) ApproveTokens(ctx context.Context, req ApproveTokensRequest) 
 	return hash, nil
 }
 
+// MakeOfferRequest describes values to calls MakeOffer method.
 type MakeOfferRequest struct {
 	PublicKey          keypair.PublicKey
 	ChainName          string
@@ -418,6 +427,7 @@ type MakeOfferRequest struct {
 	Amount             *big.Int
 }
 
+// MakeOffer makes offer for lot.
 func (t *Transfer) MakeOffer(ctx context.Context, req MakeOfferRequest) (string, error) {
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
@@ -504,6 +514,7 @@ func (t *Transfer) MakeOffer(ctx context.Context, req MakeOfferRequest) (string,
 	return hash, nil
 }
 
+// AcceptOfferRequest describes values to calls AcceptOffer method.
 type AcceptOfferRequest struct {
 	PublicKey          keypair.PublicKey
 	ChainName          string
@@ -513,6 +524,7 @@ type AcceptOfferRequest struct {
 	TokenID            string
 }
 
+// AcceptOffer accepts offer for lot.
 func (t *Transfer) AcceptOffer(ctx context.Context, req AcceptOfferRequest) (string, error) {
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
@@ -585,6 +597,7 @@ func (t *Transfer) AcceptOffer(ctx context.Context, req AcceptOfferRequest) (str
 	return hash, nil
 }
 
+// BuyListingRequest describes values to calls BuyListing method.
 type BuyListingRequest struct {
 	PublicKey          keypair.PublicKey
 	ChainName          string
@@ -594,6 +607,7 @@ type BuyListingRequest struct {
 	TokenID            string
 }
 
+// BuyListing buys offer for lot at full price.
 func (t *Transfer) BuyListing(ctx context.Context, req BuyListingRequest) (string, error) {
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
@@ -666,6 +680,7 @@ func (t *Transfer) BuyListing(ctx context.Context, req BuyListingRequest) (strin
 	return hash, nil
 }
 
+// FinalListingRequest describes values to calls FinalListing method.
 type FinalListingRequest struct {
 	PublicKey          keypair.PublicKey
 	ChainName          string
@@ -675,6 +690,7 @@ type FinalListingRequest struct {
 	TokenID            string
 }
 
+// FinalListing finals listing for lot.
 func (t *Transfer) FinalListing(ctx context.Context, req FinalListingRequest) (string, error) {
 	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
 	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
