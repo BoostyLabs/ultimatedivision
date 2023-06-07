@@ -52,6 +52,15 @@ type TokenIDWithContractAddress struct {
 	ContractHash      string    `json:"contractHash"`
 }
 
+// TokenIDWithApproveData entity describes values released nft token with approve needed data.
+type TokenIDWithApproveData struct {
+	TokenID           string `json:"tokenId"`
+	AddressNodeServer string `json:"addressNodeServer"`
+	NFTContractHash   string `json:"contractHash"`
+	TokenContractHash string `json:"tokenContractHash"`
+	Amount            int64  `json:"amount"`
+}
+
 // MakeOffer entity describes values released nft token with address.
 type MakeOffer struct {
 	TokenID           uuid.UUID `json:"tokenId"`

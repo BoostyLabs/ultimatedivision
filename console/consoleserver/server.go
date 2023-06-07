@@ -189,6 +189,8 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	marketplaceRouterWithAuth.HandleFunc("", marketplaceController.CreateLot).Methods(http.MethodPost)
 	marketplaceRouterWithAuth.HandleFunc("/bet", marketplaceController.PlaceBetLot).Methods(http.MethodPost)
 
+	apiRouter.HandleFunc("/casper-approve", marketplaceController.GetApproveData).Methods(http.MethodGet)
+
 	bidsRouter := apiRouter.PathPrefix("/bids").Subrouter()
 	bidsRouter.Use(server.withAuth)
 	bidsRouter.HandleFunc("/make-offer/{card_id}", bidsController.GetMakeOfferData).Methods(http.MethodGet)
