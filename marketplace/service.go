@@ -158,11 +158,11 @@ func (service *Service) GetApproveByCardID(ctx context.Context, cardID string) (
 	}
 
 	approveData.AddressNodeServer = service.config.RPCNodeAddress
-	approveData.ContractAddressNFT = service.config.ContractAddressNFT
-	approveData.ContractAddressTokenReward = service.config.ContractAddressTokenReward
+	approveData.NFTContractAddress = service.config.NFTContractAddress
+	approveData.TokenRewardContractAddress = service.config.TokenRewardContractAddress
 	approveData.Amount = service.config.Amount
-	approveData.SpenderNFT = service.config.SpenderNFT
-	approveData.SpenderToken = service.config.SpenderToken
+	approveData.NFTContractPackageAddress = service.config.NFTContractPackageAddress
+	approveData.TokenContractPackageAddress = service.config.TokenContractPackageAddress
 
 	return approveData, ErrMarketplace.Wrap(err)
 }
