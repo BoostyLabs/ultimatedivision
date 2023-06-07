@@ -97,11 +97,11 @@ export class CasperNetworkClient extends APIClient {
         return new CasperTransactionApprove(
             approveData.addressNodeServer,
             approveData.amount,
-            approveData.NFTContractAddress,
-            approveData.TokenRewardContractAddress,
-            approveData.tokenID,
-            approveData.TokenContractPackageAddress,
-            approveData.NFTContractPackageAddress,
+            approveData.nftContractAddress,
+            approveData.tokenRewardContractAddress,
+            approveData.tokenId,
+            approveData.tokenContractPackageAddress,
+            approveData.nftContractPackageAddress,
         );
     };
 }

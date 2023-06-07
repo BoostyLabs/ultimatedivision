@@ -11,7 +11,7 @@ import { walletTypes } from '.';
 import { ethers } from 'ethers';
 import { ToastNotifications } from '@/notifications/service';
 import { SeasonRewardTransaction } from '@/divisions';
-import { CasperTransactionApprove, BidsMakeOfferTransaction, MarketCreateLotTransaction } from '@/casper/types';
+import { BidsMakeOfferTransaction, CasperTransactionApprove, MarketCreateLotTransaction } from '@/casper/types';
 
 /**
  * Exposes all wallet service related logic.
@@ -58,17 +58,17 @@ class WalletService {
     /** Mints chosed card. */
     public async mintNft(id: string) {
         switch (this.user.walletType) {
-            case walletTypes.VELAS_WALLET_TYPE:
-                await WalletService.velasMint();
-                break;
-            case walletTypes.CASPER_WALLET_TYPE:
-                await this.casperMint(id);
-                break;
-            case walletTypes.METAMASK_WALLET_TYPE:
-                await this.metamaskMint(id);
-                break;
-            default:
-                break;
+        case walletTypes.VELAS_WALLET_TYPE:
+            await WalletService.velasMint();
+            break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            await this.casperMint(id);
+            break;
+        case walletTypes.METAMASK_WALLET_TYPE:
+            await this.metamaskMint(id);
+            break;
+        default:
+            break;
         }
     }
 
@@ -90,17 +90,17 @@ class WalletService {
     /** Mints season token. */
     public mintToken(messageEvent: any) {
         switch (this.user.walletType) {
-            case walletTypes.VELAS_WALLET_TYPE:
-                WalletService.velasMintToken();
-                break;
-            case walletTypes.CASPER_WALLET_TYPE:
-                this.casperMintToken(messageEvent);
-                break;
-            case walletTypes.METAMASK_WALLET_TYPE:
-                this.metamaskMintToken(messageEvent);
-                break;
-            default:
-                break;
+        case walletTypes.VELAS_WALLET_TYPE:
+            WalletService.velasMintToken();
+            break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperMintToken(messageEvent);
+            break;
+        case walletTypes.METAMASK_WALLET_TYPE:
+            this.metamaskMintToken(messageEvent);
+            break;
+        default:
+            break;
         }
     };
 
@@ -114,11 +114,11 @@ class WalletService {
     /** Mints season token. */
     public mintSeasonToken(seasonRewardTransaction: SeasonRewardTransaction) {
         switch (this.user.walletType) {
-            case walletTypes.CASPER_WALLET_TYPE:
-                this.casperMintSeasonToken(seasonRewardTransaction);
-                break;
-            default:
-                break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperMintSeasonToken(seasonRewardTransaction);
+            break;
+        default:
+            break;
         }
     };
 
@@ -132,11 +132,11 @@ class WalletService {
     /** Approves minted card. */
     public approveNftMint(transaction: CasperTransactionApprove) {
         switch (this.user.walletType) {
-            case walletTypes.CASPER_WALLET_TYPE:
-                this.casperApproveNftMint(transaction);
-                break;
-            default:
-                break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperApproveNftMint(transaction);
+            break;
+        default:
+            break;
         }
     };
 
@@ -150,11 +150,11 @@ class WalletService {
     /** Approves token reward. */
     public approveTokenReward(transaction: CasperTransactionApprove) {
         switch (this.user.walletType) {
-            case walletTypes.CASPER_WALLET_TYPE:
-                this.casperApproveToken(transaction);
-                break;
-            default:
-                break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperApproveToken(transaction);
+            break;
+        default:
+            break;
         }
     };
 
@@ -168,11 +168,11 @@ class WalletService {
     /** Creates lot. */
     public createLot(transaction: MarketCreateLotTransaction) {
         switch (this.user.walletType) {
-            case walletTypes.CASPER_WALLET_TYPE:
-                this.casperCreateLot(transaction);
-                break;
-            default:
-                break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperCreateLot(transaction);
+            break;
+        default:
+            break;
         }
     };
 
@@ -186,11 +186,11 @@ class WalletService {
     /** Makes offer. */
     public makeOffer(messageEvent: any) {
         switch (this.user.walletType) {
-            case walletTypes.CASPER_WALLET_TYPE:
-                this.casperMakeOffer(messageEvent);
-                break;
-            default:
-                break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperMakeOffer(messageEvent);
+            break;
+        default:
+            break;
         }
     };
 
@@ -204,11 +204,11 @@ class WalletService {
     /** Buys listing. */
     public buyListing(transaction: any) {
         switch (this.user.walletType) {
-            case walletTypes.CASPER_WALLET_TYPE:
-                this.casperBuyListing(transaction);
-                break;
-            default:
-                break;
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperBuyListing(transaction);
+            break;
+        default:
+            break;
         }
     };
 }

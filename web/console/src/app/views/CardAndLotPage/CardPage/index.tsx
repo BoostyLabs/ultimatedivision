@@ -15,16 +15,13 @@ import { openUserCard } from '@/app/store/actions/cards';
 import { setCurrentUser } from '@/app/store/actions/users';
 import WalletService from '@/wallet/service';
 import { Sell } from '@/app/components/common/Card/popUps/Sell';
-import { Marketplaces } from '@/marketplace/service';
-import { MarketplaceClient } from '@/api/marketplace';
+import { CasperNetworkClient } from '@/api/casper';
+import { CasperNetworkService } from '@/casper/service';
 
 import CardPageBackground from '@static/img/FootballerCardPage/background.png';
 import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import '../index.scss';
-import { CasperTransactionApprove } from '@/casper/types';
-import { CasperNetworkClient } from '@/api/casper';
-import { CasperNetworkService } from '@/casper/service';
 
 const Card: React.FC = () => {
     const dispatch = useDispatch();
@@ -71,9 +68,7 @@ const Card: React.FC = () => {
         const approveData = await casperService.approve(card.id);
 
         const walletService = new WalletService(user);
-        await walletService.approveNftMint(
-            approveData
-        );
+        await walletService.approveNftMint(approveData);
     };
 
     useEffect(() => {
