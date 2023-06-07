@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { MarketplaceClient } from '@/api/marketplace';
 import { Marketplaces } from '@/marketplace/service';
-import { BidsMakeOfferTransaction, Lot } from '@/marketplace';
+import { BidsMakeOfferTransaction } from '@/casper/types';
+import { Lot } from '@/marketplace';
 import { PlayerCard } from '@components/common/PlayerCard';
 import { MarketplaceTimer } from '@components/MarketPlace/MarketplaceTimer';
 import { setCurrentUser } from '@/app/store/actions/users';
@@ -53,7 +54,6 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                     makeOfferData.addressNodeServer,
                     makeOfferData.tokenId,
                     makeOfferData.contractHash,
-                    makeOfferData.tokenContractHash,
                     cardBid
                 );
 
@@ -67,6 +67,9 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
 
         /** TODO: add function entity */
         const buyNowButton = async() => {
+            const walletService = new WalletService(user);
+
+            await walletService.buyListing({});
         };
 
 

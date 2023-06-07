@@ -2,7 +2,7 @@
 // See LICENSE for copying information.
 
 import { Transaction } from '@/ethers';
-import { CasperTransactionIdentificators } from '@/casper/types';
+import { CasperTransactionApprove, CasperTransactionIdentificators } from '@/casper/types';
 import { APIClient } from '.';
 
 /**
@@ -59,17 +59,50 @@ export class CasperNetworkClient extends APIClient {
         );
     }
     /** Sends deploy data to api */
-    public async claim(RPCNodeAddress: string, deploy: string, casperWallet?: string): Promise<void> {
+    public async sendTx(RPCNodeAddress: string, deploy: string, casperWallet?: string): Promise<void> {
         let response;
 
         if (casperWallet) {
-            response = await this.http.post(`${this.ROOT_PATH}/casper/claim`, JSON.stringify({ RPCNodeAddress, deploy, casperWallet }));
+            response = await this.http.post(`${this.ROOT_PATH}/casper/send-tx`, JSON.stringify({ RPCNodeAddress, deploy, casperWallet }));
         } else {
-            response = await this.http.post(`${this.ROOT_PATH}/casper/claim`, JSON.stringify({ RPCNodeAddress, deploy }));
+            response = await this.http.post(`${this.ROOT_PATH}/casper/send-tx`, JSON.stringify({ RPCNodeAddress, deploy }));
         }
 
         if (!response.ok) {
             throw await response.json();
         }
     }
+
+
+    /** approve transaction casper */
+    public async approve(cardId?: string): Promise<CasperTransactionApprove> {
+        let path;
+
+        if (cardId) {
+            path = `/api/v0/casper-approve?card_id=${cardId}`;
+        }
+        else {
+            path = '/api/v0/casper-approve?card_id=';
+        }
+
+        const response = await this.http.get(path);
+
+        if (!response.ok) {
+            await this.handleError(response);
+        };
+
+        const approveData = await response.json();
+
+
+        return new CasperTransactionApprove(
+            approveData.addressNodeServer,
+            approveData.amount,
+            approveData.NFTContractAddress,
+            approveData.TokenRewardContractAddress,
+            approveData.tokenID,
+            approveData.TokenContractPackageAddress,
+            approveData.NFTContractPackageAddress,
+        );
+    };
 }
+

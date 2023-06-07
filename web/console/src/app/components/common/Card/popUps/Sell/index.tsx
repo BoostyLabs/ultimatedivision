@@ -10,7 +10,7 @@ import { setCurrentUser } from '@/app/store/actions/users';
 import { ToastNotifications } from '@/notifications/service';
 import { MarketplaceClient } from '@/api/marketplace';
 import { Marketplaces } from '@/marketplace/service';
-import { MarketCreateLotTransaction } from '@/marketplace';
+import { MarketCreateLotTransaction } from '@/casper/types';
 import WalletService from '@/wallet/service';
 
 import closePopup from '@static/img/FootballerCardPage/close-popup.svg';
@@ -42,16 +42,15 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
             const transactionData = await marketplaceService.lotData(card.id);
             const walletService = new WalletService(user);
 
-            const marketplaceLotTransaction =
-                new MarketCreateLotTransaction(
-                    transactionData.address,
-                    transactionData.addressNodeServer,
-                    transactionData.tokenId,
-                    transactionData.contractHash,
-                    MOCK_MIN_BID,
-                    MOCK_PERIOD__TRANSACTION,
-                    MOCK_REDEMPTION_PRRICE,
-                );
+            const marketplaceLotTransaction = new MarketCreateLotTransaction(
+                transactionData.address,
+                transactionData.addressNodeServer,
+                transactionData.tokenId,
+                transactionData.contractHash,
+                MOCK_MIN_BID,
+                MOCK_PERIOD__TRANSACTION,
+                MOCK_REDEMPTION_PRRICE,
+            );
 
             await walletService.createLot(marketplaceLotTransaction);
 

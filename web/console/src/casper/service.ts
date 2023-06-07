@@ -32,7 +32,12 @@ export class CasperNetworkService {
         await this.casperWallet.getTransaction(signature);
     }
     /** Sends deploy data to api */
-    public async claim(RPCNodeAddress: string, deploy: string, casperWallet?: string): Promise<void> {
-        await this.casperWallet.claim(RPCNodeAddress, deploy, casperWallet);
+    public async sendTx(RPCNodeAddress: string, deploy: string, casperWallet?: string): Promise<void> {
+        await this.casperWallet.sendTx(RPCNodeAddress, deploy, casperWallet);
     }
+
+    /** returns approve transaction data */
+    public async approve(cardId?: string): Promise<any> {
+        return await this.casperWallet.approve(cardId);
+    };
 }

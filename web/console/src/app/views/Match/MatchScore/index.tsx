@@ -20,6 +20,10 @@ import { Marketplaces } from '@/marketplace/service';
 import coin from '@static/img/match/money.svg';
 
 import './index.scss';
+import { CasperTransactionApprove } from '@/casper/types';
+import { CasperNetworkClient } from '@/api/casper';
+import CasperTransactionService from '@/casper';
+import { CasperNetworkService } from '@/casper/service';
 
 export const MatchScore: React.FC = () => {
     const dispatch = useDispatch();
@@ -46,8 +50,8 @@ export const MatchScore: React.FC = () => {
     /** Variable describes that it needs alllow to add address or forbid add adress. */
     const CONFIRM_ADD_WALLET: string = 'do you allow us to take your address?';
 
-    const marketplaceClient = new MarketplaceClient();
-    const marketplaceService = new Marketplaces(marketplaceClient);
+    const casperClient = new CasperNetworkClient();
+    const casperService = new CasperNetworkService(casperClient);
 
     /** sets user info */
     async function setUser() {
@@ -129,7 +133,7 @@ export const MatchScore: React.FC = () => {
     };
 
     const approve = async() => {
-        const approveData = marketplaceService.approve();
+        const approveData = await casperService.approve();
 
         const walletService = new WalletService(user);
         await walletService.approveTokenReward(approveData);

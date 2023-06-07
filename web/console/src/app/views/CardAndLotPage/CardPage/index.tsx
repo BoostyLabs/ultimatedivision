@@ -22,6 +22,9 @@ import CardPageBackground from '@static/img/FootballerCardPage/background.png';
 import backButton from '@static/img/FootballerCardPage/back-button.png';
 
 import '../index.scss';
+import { CasperTransactionApprove } from '@/casper/types';
+import { CasperNetworkClient } from '@/api/casper';
+import { CasperNetworkService } from '@/casper/service';
 
 const Card: React.FC = () => {
     const dispatch = useDispatch();
@@ -33,8 +36,8 @@ const Card: React.FC = () => {
 
     const [isOpenSellPopup, setIsOpenSellPopup] = useState<boolean>(false);
 
-    const marketplaceClient = new MarketplaceClient();
-    const marketplaceService = new Marketplaces(marketplaceClient);
+    const casperClient = new CasperNetworkClient();
+    const casperService = new CasperNetworkService(casperClient);
 
     /** Handle opening of a selles pop-up. */
     const handleOpenSellPopup = () => {
@@ -65,12 +68,13 @@ const Card: React.FC = () => {
     };
 
     const approve = async() => {
-        const approveData = await marketplaceService.approve(card.id);
+        const approveData = await casperService.approve(card.id);
 
         const walletService = new WalletService(user);
-        await walletService.approveNftMint({});
+        await walletService.approveNftMint(
+            approveData
+        );
     };
-
 
     useEffect(() => {
         setUser();

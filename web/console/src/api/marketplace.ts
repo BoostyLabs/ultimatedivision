@@ -124,26 +124,4 @@ export class MarketplaceClient extends APIClient {
 
         return makeOfferData;
     };
-
-    /** approve transaction casper */
-    public async approve(cardId?: string): Promise<any> {
-        let path;
-
-        if (cardId) {
-            path = `${this.ROOT_PATH}/approve?card_id=${cardId}`;
-        }
-        else {
-            path = `${this.ROOT_PATH}/approve?card_id=`;
-        }
-
-        const response = await this.http.get(path);
-
-        if (!response.ok) {
-            await this.handleError(response);
-        };
-
-        const approveData = await response.json();
-
-        return approveData;
-    };
 };

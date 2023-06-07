@@ -11,7 +11,7 @@ import { walletTypes } from '.';
 import { ethers } from 'ethers';
 import { ToastNotifications } from '@/notifications/service';
 import { SeasonRewardTransaction } from '@/divisions';
-import { BidsMakeOfferTransaction, MarketCreateLotTransaction } from '@/marketplace';
+import { CasperTransactionApprove, BidsMakeOfferTransaction, MarketCreateLotTransaction } from '@/casper/types';
 
 /**
  * Exposes all wallet service related logic.
@@ -58,17 +58,17 @@ class WalletService {
     /** Mints chosed card. */
     public async mintNft(id: string) {
         switch (this.user.walletType) {
-        case walletTypes.VELAS_WALLET_TYPE:
-            await WalletService.velasMint();
-            break;
-        case walletTypes.CASPER_WALLET_TYPE:
-            await this.casperMint(id);
-            break;
-        case walletTypes.METAMASK_WALLET_TYPE:
-            await this.metamaskMint(id);
-            break;
-        default:
-            break;
+            case walletTypes.VELAS_WALLET_TYPE:
+                await WalletService.velasMint();
+                break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                await this.casperMint(id);
+                break;
+            case walletTypes.METAMASK_WALLET_TYPE:
+                await this.metamaskMint(id);
+                break;
+            default:
+                break;
         }
     }
 
@@ -90,17 +90,17 @@ class WalletService {
     /** Mints season token. */
     public mintToken(messageEvent: any) {
         switch (this.user.walletType) {
-        case walletTypes.VELAS_WALLET_TYPE:
-            WalletService.velasMintToken();
-            break;
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperMintToken(messageEvent);
-            break;
-        case walletTypes.METAMASK_WALLET_TYPE:
-            this.metamaskMintToken(messageEvent);
-            break;
-        default:
-            break;
+            case walletTypes.VELAS_WALLET_TYPE:
+                WalletService.velasMintToken();
+                break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperMintToken(messageEvent);
+                break;
+            case walletTypes.METAMASK_WALLET_TYPE:
+                this.metamaskMintToken(messageEvent);
+                break;
+            default:
+                break;
         }
     };
 
@@ -114,47 +114,47 @@ class WalletService {
     /** Mints season token. */
     public mintSeasonToken(seasonRewardTransaction: SeasonRewardTransaction) {
         switch (this.user.walletType) {
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperMintSeasonToken(seasonRewardTransaction);
-            break;
-        default:
-            break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperMintSeasonToken(seasonRewardTransaction);
+                break;
+            default:
+                break;
         }
     };
 
     /** Approves minted card with casper wallet. */
-    private casperApproveNftMint(transaction: any) {
+    private casperApproveNftMint(transaction: CasperTransactionApprove) {
         const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
 
-        casperTransactionService.approveNftMinting();
+        casperTransactionService.approveNftMinting(transaction);
     };
 
     /** Approves minted card. */
-    public approveNftMint(transaction: any) {
+    public approveNftMint(transaction: CasperTransactionApprove) {
         switch (this.user.walletType) {
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperApproveNftMint(transaction);
-            break;
-        default:
-            break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperApproveNftMint(transaction);
+                break;
+            default:
+                break;
         }
     };
 
     /** Approves token reward with casper wallet. */
-    private casperApproveToken(transaction: any) {
+    private casperApproveToken(transaction: CasperTransactionApprove) {
         const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
 
         casperTransactionService.approveTokenRevard(transaction);
     };
 
     /** Approves token reward. */
-    public approveTokenReward(transaction: any) {
+    public approveTokenReward(transaction: CasperTransactionApprove) {
         switch (this.user.walletType) {
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperApproveToken(transaction);
-            break;
-        default:
-            break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperApproveToken(transaction);
+                break;
+            default:
+                break;
         }
     };
 
@@ -168,11 +168,11 @@ class WalletService {
     /** Creates lot. */
     public createLot(transaction: MarketCreateLotTransaction) {
         switch (this.user.walletType) {
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperCreateLot(transaction);
-            break;
-        default:
-            break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperCreateLot(transaction);
+                break;
+            default:
+                break;
         }
     };
 
@@ -186,11 +186,11 @@ class WalletService {
     /** Makes offer. */
     public makeOffer(messageEvent: any) {
         switch (this.user.walletType) {
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperMakeOffer(messageEvent);
-            break;
-        default:
-            break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperMakeOffer(messageEvent);
+                break;
+            default:
+                break;
         }
     };
 
@@ -204,29 +204,11 @@ class WalletService {
     /** Buys listing. */
     public buyListing(transaction: any) {
         switch (this.user.walletType) {
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperBuyListing(transaction);
-            break;
-        default:
-            break;
-        }
-    };
-
-    /** Makes final listing with casper wallet. */
-    private casperFinalListing(transaction: any) {
-        const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
-
-        casperTransactionService.finalListing(transaction);
-    };
-
-    /** Final listing. */
-    public finalListing(transaction: any) {
-        switch (this.user.walletType) {
-        case walletTypes.CASPER_WALLET_TYPE:
-            this.casperFinalListing(transaction);
-            break;
-        default:
-            break;
+            case walletTypes.CASPER_WALLET_TYPE:
+                this.casperBuyListing(transaction);
+                break;
+            default:
+                break;
         }
     };
 }
