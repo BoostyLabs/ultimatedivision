@@ -765,6 +765,87 @@ func (t *Transfer) AcceptOffer(ctx context.Context, req AcceptOfferRequest) (str
 	return hash, nil
 }
 
+type BuyListingRequest struct {
+	PublicKey          keypair.PublicKey
+	ChainName          string
+	StandardPayment    int64
+	MarketContractHash string
+	NFTContractHash    string
+	TokenID            string
+}
+
+func (t *Transfer) BuyListing(ctx context.Context, req BuyListingRequest) (string, error) {
+	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
+	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
+
+	nftContractHash := types.CLValue{
+		Type:   types.CLTypeString,
+		String: &req.NFTContractHash,
+	}
+	nftContractHashBytes, err := serialization.Marshal(nftContractHash)
+	if err != nil {
+		return "", err
+	}
+
+	tokenID := types.CLValue{
+		Type:   types.CLTypeString,
+		String: &req.TokenID,
+	}
+	tokenIDBytes, err := serialization.Marshal(tokenID)
+	if err != nil {
+		return "", err
+	}
+
+	args := map[string]sdk.Value{
+		"nft_contract_hash": {
+			Tag:         types.CLTypeString,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(nftContractHashBytes),
+		},
+		"token_id": {
+			Tag:         types.CLTypeString,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(tokenIDBytes),
+		},
+	}
+
+	keyOrder := []string{"nft_contract_hash", "token_id"}
+	runtimeArgs := sdk.NewRunTimeArgs(args, keyOrder)
+
+	contractHexBytes, err := hex.DecodeString(req.MarketContractHash)
+	if err != nil {
+		return "", err
+	}
+
+	var contractHashBytes [32]byte
+	copy(contractHashBytes[:], contractHexBytes)
+	session := sdk.NewStoredContractByHash(contractHashBytes, "buy_listing", *runtimeArgs)
+
+	deploy := sdk.MakeDeploy(deployParams, payment, session)
+
+	signedTx, err := t.sign(deploy.Hash)
+	if err != nil {
+		return "", err
+	}
+
+	signatureKeypair := keypair.Signature{
+		Tag:           keypair.KeyTagEd25519,
+		SignatureData: signedTx,
+	}
+	approval := sdk.Approval{
+		Signer:    req.PublicKey,
+		Signature: signatureKeypair,
+	}
+	deploy.Approvals = append(deploy.Approvals, approval)
+
+	hash, err := t.casper.PutDeploy(*deploy)
+	if err != nil {
+		return "", err
+	}
+
+	return hash, nil
+}
+
 type FinalListingRequest struct {
 	PublicKey          keypair.PublicKey
 	ChainName          string

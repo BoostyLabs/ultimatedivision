@@ -242,7 +242,6 @@ func TestCasper_NftContract(t *testing.T) {
 
 func TestCasper_MarketContract(t *testing.T) {
 	t.Skip("for manual testing")
-
 	var (
 		casperNodeAddress = "http://116.202.169.210:7777/rpc"
 
@@ -307,6 +306,19 @@ func TestCasper_MarketContract(t *testing.T) {
 
 	t.Run("accept offer", func(t *testing.T) {
 		txHash, err := transfer.AcceptOffer(ctx, casper.AcceptOfferRequest{
+			PublicKey:          pair.PublicKey(),
+			ChainName:          "casper-test",
+			StandardPayment:    10000000000, // 10 CSPR.
+			MarketContractHash: marketContractHash,
+			NFTContractHash:    nftContractHash,
+			TokenID:            tokenID,
+		})
+		require.NoError(t, err)
+		require.Empty(t, txHash)
+	})
+
+	t.Run("buy listing", func(t *testing.T) {
+		txHash, err := transfer.BuyListing(ctx, casper.BuyListingRequest{
 			PublicKey:          pair.PublicKey(),
 			ChainName:          "casper-test",
 			StandardPayment:    10000000000, // 10 CSPR.
