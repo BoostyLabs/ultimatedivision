@@ -177,7 +177,7 @@ func (service *Service) GetMakeOfferByCardID(ctx context.Context, cardID uuid.UU
 		Address:           service.config.MarketplaceNFTContract.Address,
 		AddressNodeServer: service.config.RPCNodeAddress,
 		ContractHash:      service.config.ContractHash,
-		TokenContractHash: string(service.config.CasperTokenContract.Address),
+		TokenContractHash: service.config.TokenContractHash,
 	}, ErrMarketplace.Wrap(err)
 }
 
