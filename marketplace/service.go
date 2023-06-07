@@ -135,7 +135,7 @@ func (service *Service) GetNFTDataByCardID(ctx context.Context, cardID uuid.UUID
 	lotData.TokenID = tokenID
 	lotData.Address = service.config.MarketplaceNFTContract.Address
 	lotData.AddressNodeServer = service.config.RPCNodeAddress
-	lotData.ContractHash = service.config.ContractHash
+	lotData.ContractHash = service.config.NFTCreateContractHash
 
 	return lotData, ErrMarketplace.Wrap(err)
 }
@@ -176,7 +176,7 @@ func (service *Service) GetMakeOfferByCardID(ctx context.Context, cardID uuid.UU
 		TokenID:           tokenID,
 		Address:           service.config.MarketplaceNFTContract.Address,
 		AddressNodeServer: service.config.RPCNodeAddress,
-		ContractHash:      service.config.ContractHash,
+		ContractHash:      service.config.NFTCreateContractHash,
 		TokenContractHash: service.config.TokenContractHash,
 	}, ErrMarketplace.Wrap(err)
 }
