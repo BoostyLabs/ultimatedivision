@@ -54,11 +54,13 @@ type TokenIDWithContractAddress struct {
 
 // TokenIDWithApproveData entity describes values released nft token with approve needed data.
 type TokenIDWithApproveData struct {
-	TokenID           string `json:"tokenId"`
-	AddressNodeServer string `json:"addressNodeServer"`
-	NFTContractHash   string `json:"contractHash"`
-	TokenContractHash string `json:"tokenContractHash"`
-	Amount            int64  `json:"amount"`
+	TokenID                    string `json:"tokenId"`
+	AddressNodeServer          string `json:"addressNodeServer"`
+	ContractAddressNFT         string `json:"contractAddressNft"`
+	ContractAddressTokenReward string `json:"contractAddressTokenReward"`
+	Amount                     int64  `json:"amount"`
+	SpenderNFT                 string `json:"spenderNft"`
+	SpenderToken               string `json:"spenderToken"`
 }
 
 // MaxValueGameParameter indicates that max value game parameter is 100.
