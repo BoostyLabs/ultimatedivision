@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Creditor Corp. Group.
 // See LICENSE for copying information.
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { RootState } from '@/app/store';
 import { createLot } from '@/app/store/actions/marketplace';
@@ -22,14 +22,15 @@ type SellTypes = {
 };
 
 /** Mock lot creating stats */
-const MOCK_MIN_BID = 3000;
-const MOCK_MAX_BID = 6000;
+const DEFAULT_MIN_BID = 3000;
+const DEFAULT_MAX_BID = 5000;
 const MOCK_PERIOD = 2;
 const MOCK_PERIOD__TRANSACTION = 300000;
-const MOCK_REDEMPTION_PRRICE = 30000;
 
 export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
     const dispatch = useDispatch();
+    const [minBidPrice, setMinBidPrice] = useState(DEFAULT_MIN_BID);
+    const [maxBidPrice, setMaxBidPrice] = useState(DEFAULT_MAX_BID);
 
     const marketplaceClient = new MarketplaceClient();
     const marketplaceService = new Marketplaces(marketplaceClient);
@@ -42,19 +43,23 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
             const transactionData = await marketplaceService.lotData(card.id);
             const walletService = new WalletService(user);
 
+            const convertedMinBidPrice = Number(minBidPrice);
+            const convertedMaxBidPrice = Number(maxBidPrice);
+
             const marketplaceLotTransaction = new MarketCreateLotTransaction(
                 transactionData.address,
                 transactionData.addressNodeServer,
                 transactionData.tokenId,
                 transactionData.contractHash,
-                MOCK_MIN_BID,
+                convertedMinBidPrice,
                 MOCK_PERIOD__TRANSACTION,
-                MOCK_REDEMPTION_PRRICE,
+                convertedMaxBidPrice,
             );
 
             await walletService.createLot(marketplaceLotTransaction);
 
-            dispatch(createLot(new CreatedLot(card.id, 'card', MOCK_MIN_BID, MOCK_MAX_BID, MOCK_PERIOD)));
+            dispatch(createLot(new CreatedLot(card.id, 'card', convertedMinBidPrice, convertedMaxBidPrice, MOCK_PERIOD)));
+
             setIsOpenSellPopup(false);
         }
         catch (e) {
@@ -62,6 +67,13 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
         }
     };
 
+    const handleMinPriceChanges = (e: any) => {
+        setMinBidPrice(e.target.value);
+    };
+
+    const handleMaxPriceChanges = (e: any) => {
+        setMaxBidPrice(e.target.value);
+    };
     /** sets user info */
     async function setUser() {
         try {
@@ -91,21 +103,19 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
                     <input
                         className="pop-up__sell__input"
                         type="number"
-                        min={0}
-                        // TODO: Need add logic to listener and value.
-                        onChange={() => { }}
-                        value="0"
+                        min={1000}
+                        onChange={(e) => handleMinPriceChanges(e)}
+                        value={minBidPrice}
                     />
                 </div>
-                <span className="pop-up__sell__price-title">Buy Now Price</span>
+                <span className="pop-up__sell__price-title">Max Price</span>
                 <div className="pop-up__sell__price-block">
                     <input
                         className="pop-up__sell__input"
                         type="number"
-                        min={0}
-                        // TODO: Need add logic to listener and value.
-                        onChange={() => { }}
-                        value="100"
+                        max={10000}
+                        onChange={(e) => handleMaxPriceChanges(e)}
+                        value={maxBidPrice}
                     />
                 </div>
                 <span className="pop-up__sell__price-title">Auction time</span>
