@@ -141,6 +141,12 @@ func (service *Service) GetNFTDataByCardID(ctx context.Context, cardID uuid.UUID
 	return lotData, ErrMarketplace.Wrap(err)
 }
 
+// GetNFTTokenIDbyCardID returns nft token id by card id from database.
+func (service *Service) GetNFTTokenIDbyCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error) {
+	tokenID, err := service.nfts.GetNFTTokenIDbyCardID(ctx, cardID)
+	return tokenID, ErrMarketplace.Wrap(err)
+}
+
 // GetApproveByCardID returns nft data by card id from DB.
 func (service *Service) GetApproveByCardID(ctx context.Context, cardID string) (nfts.TokenIDWithApproveData, error) {
 	var approveData nfts.TokenIDWithApproveData

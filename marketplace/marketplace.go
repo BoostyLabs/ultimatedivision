@@ -113,6 +113,9 @@ type Config struct {
 	CreateListingPrefix          string `json:"createListingPrefix"`
 
 	TokenAmountForApproving int64 `json:"tokenAmountForApproving"`
+
+	PrivateOwnerAccountKey string `json:"privateOwnerAccountKey"`
+	PublicOwnerAccountKey  string `json:"publicOwnerAccountKey"`
 }
 
 // CreateLot entity that contains the values required to create the lot.
