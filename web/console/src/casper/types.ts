@@ -18,6 +18,8 @@ export const MAKE_OFFER_PAYMENT_AMOUNT = 4400000000;
 export const CREATE_LOT_PAYMENT_AMOUNT = 5700000000;
 export const APPROVE_TOKEN_PAYMENT_AMOUNT = 100000000;
 export const APPROVE_NFT_PAYMENT_AMOUNT = 2500000000;
+export const BUY_OFFER_PAYMENT_AMOUNT = 40000000000;
+export const ACCEPT_OFFER_PAYMENT_AMOUNT = 10000000000;
 
 /** Describes parameters for transaction */
 export class CasperTransactionIdentificators {
@@ -37,8 +39,8 @@ export class CasperTransactionApprove {
         public NFTContractAddress: string = '',
         public tokenRewardContractAddress: string = '',
         public tokenId: string = '',
-        public tokenContractPackageAddress: string = '',
-        public NFTContractPackageAddress: string = '',
+        public approveTokensSpender: string = '',
+        public approveNftSpender: string = '',
     ) { }
 }
 
@@ -95,6 +97,7 @@ export class BidsMakeOfferTransaction {
         public rpcNodeAddress: string = '',
         public tokenId: string = '',
         public contractHash: string = '',
+        public tokenContractHash: string = '',
         public offerPrice: number = DEFAULT_DURATION,
     ) { }
 };
@@ -107,5 +110,6 @@ export class OfferTransaction {
         public rpcNodeAddress: string = '',
         public tokenId: string = '',
         public contractHash: string = '',
+        public tokenContractHash: string = '',
     ) { }
 };

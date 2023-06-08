@@ -31,15 +31,16 @@ export const PlaceBid: React.FC<PlaceBidTypes> = ({ setIsOpenPlaceBidPopup, setC
     const handlePlaceCurrentBid = async() => {
         await marketplaceService.placeBid(lot.cardId, cardBid);
 
-        const makeOfferData = await marketplaceService.makeOffer(lot.cardId);
+        const makeOfferData = await marketplaceService.offer(lot.cardId);
 
         const walletService = new WalletService(user);
 
         const marketplaceMakeOfferTransaction = new BidsMakeOfferTransaction(
             makeOfferData.address,
-            makeOfferData.addressNodeServer,
+            makeOfferData.rpcNodeAddress,
             makeOfferData.tokenId,
             makeOfferData.contractHash,
+            makeOfferData.tokenContractHash,
             cardBid
         );
 

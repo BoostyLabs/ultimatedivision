@@ -4,6 +4,7 @@
 import { APIClient } from '@/api/index';
 import { CreatedLot } from '@/app/types/marketplace';
 import { CardsQueryParameters, CardsQueryParametersField } from '@/card';
+import { OfferTransaction } from '@/casper/types';
 import { Lot, MarketPlacePage } from '@/marketplace';
 
 /** client for marketplace of api */
@@ -112,16 +113,20 @@ export class MarketplaceClient extends APIClient {
     };
 
     /** make offer casper */
-    public async makeOffer(cardId: string): Promise<any> {
-        const path = `/api/v0/bids/make-offer/${cardId}`;
+    public async offer(cardId: string): Promise<OfferTransaction> {
+        const path = `/api/v0/bids/offer/${cardId}`;
         const response = await this.http.get(path);
 
         if (!response.ok) {
             await this.handleError(response);
         };
 
-        const makeOfferData = await response.json();
+        const offerData = await response.json();
 
-        return makeOfferData;
+        return new OfferTransaction(offerData.address,
+            offerData.addressNodeServer,
+            offerData.tokenId,
+            offerData.contractHash,
+            offerData.tokenContractHash);
     };
 };

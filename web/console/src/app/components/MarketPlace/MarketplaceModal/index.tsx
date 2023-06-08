@@ -45,15 +45,16 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
             try {
                 await marketplaceService.placeBid(lot.cardId, cardBid);
 
-                const makeOfferData = await marketplaceService.makeOffer(lot.cardId);
+                const makeOfferData = await marketplaceService.offer(lot.cardId);
 
                 const walletService = new WalletService(user);
 
                 const marketplaceMakeOfferTransaction = new BidsMakeOfferTransaction(
                     makeOfferData.address,
-                    makeOfferData.addressNodeServer,
+                    makeOfferData.rpcNodeAddress,
                     makeOfferData.tokenId,
                     makeOfferData.contractHash,
+                    makeOfferData.tokenContractHash,
                     cardBid
                 );
 
@@ -68,8 +69,9 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
         /** TODO: add function entity */
         const buyNowButton = async() => {
             const walletService = new WalletService(user);
+            const offerData = await marketplaceService.offer(lot.cardId);
 
-            await walletService.buyListing({});
+            await walletService.buyListing(offerData);
         };
 
 

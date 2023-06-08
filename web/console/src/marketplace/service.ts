@@ -5,6 +5,7 @@ import { MarketplaceClient } from '@/api/marketplace';
 import { CardsQueryParametersField } from '@/card';
 import { Lot, MarketPlacePage } from '@/marketplace';
 import { CreatedLot } from '@/app/types/marketplace';
+import { OfferTransaction } from '@/casper/types';
 
 /**
  * exposes all arketplace domain entity related logic
@@ -58,7 +59,7 @@ export class Marketplaces {
     };
 
     /** returns make offer data */
-    public async makeOffer(cardId: string): Promise<any> {
-        return await this.marketplace.makeOffer(cardId);
+    public async offer(cardId: string): Promise<OfferTransaction> {
+        return await this.marketplace.offer(cardId);
     };
 };

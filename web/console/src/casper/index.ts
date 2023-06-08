@@ -9,9 +9,11 @@ import { CasperNetworkClient } from '@/api/casper';
 import { CasperMatchTransaction } from '@/matches';
 import { ToastNotifications } from '@/notifications/service';
 import {
+    ACCEPT_OFFER_PAYMENT_AMOUNT,
     ACCOUNT_HASH_PREFIX,
     APPROVE_NFT_PAYMENT_AMOUNT,
     APPROVE_TOKEN_PAYMENT_AMOUNT,
+    BUY_OFFER_PAYMENT_AMOUNT,
     BidsMakeOfferTransaction,
     CHAIN_NAME,
     CREATE_LOT_PAYMENT_AMOUNT,
@@ -152,7 +154,7 @@ class CasperTransactionService {
         try {
             const runtimeArgs = RuntimeArgs.fromMap({
                 [CasperRuntimeArgs.TOKEN_ID]: CLValueBuilder.string(transaction.tokenId),
-                [CasperRuntimeArgs.SPENDER]: CLValueBuilder.string(transaction.NFTContractPackageAddress),
+                [CasperRuntimeArgs.SPENDER]: CLValueBuilder.string(transaction.approveNftSpender),
             });
 
             const isConnected = window.casperlabsHelper.isConnected();
@@ -175,7 +177,7 @@ class CasperTransactionService {
         try {
             const runtimeArgs = RuntimeArgs.fromMap({
                 [CasperRuntimeArgs.SPENDER]: CLValueBuilder.key(
-                    CLValueBuilder.byteArray(decodeBase16(transaction.tokenContractPackageAddress))
+                    CLValueBuilder.byteArray(decodeBase16(transaction.approveTokensSpender))
                 ),
                 [CasperRuntimeArgs.AMOUNT]: CLValueBuilder.u256(transaction.amount),
             });
@@ -236,7 +238,7 @@ class CasperTransactionService {
                 await window.casperlabsHelper.requestConnection();
             }
 
-            const signature = await this.contractSign('accept_offer', runtimeArgs, CREATE_LOT_PAYMENT_AMOUNT, transaction.address);
+            const signature = await this.contractSign('accept_offer', runtimeArgs, ACCEPT_OFFER_PAYMENT_AMOUNT, transaction.address);
 
             await this.client.sendTx(transaction.rpcNodeAddress, JSON.stringify(signature));
         }
@@ -283,7 +285,7 @@ class CasperTransactionService {
                 await window.casperlabsHelper.requestConnection();
             }
 
-            const signature = await this.contractSign('buy_listing', runtimeArgs, MAKE_OFFER_PAYMENT_AMOUNT, transaction.address);
+            const signature = await this.contractSign('buy_listing', runtimeArgs, BUY_OFFER_PAYMENT_AMOUNT, transaction.address);
 
             await this.client.sendTx(transaction.rpcNodeAddress, JSON.stringify(signature));
         }

@@ -11,7 +11,7 @@ import { walletTypes } from '.';
 import { ethers } from 'ethers';
 import { ToastNotifications } from '@/notifications/service';
 import { SeasonRewardTransaction } from '@/divisions';
-import { BidsMakeOfferTransaction, CasperTransactionApprove, MarketCreateLotTransaction } from '@/casper/types';
+import { BidsMakeOfferTransaction, CasperTransactionApprove, MarketCreateLotTransaction, OfferTransaction } from '@/casper/types';
 
 /**
  * Exposes all wallet service related logic.
@@ -195,17 +195,35 @@ class WalletService {
     };
 
     /** Buys listing with casper wallet. */
-    private casperBuyListing(transaction: any) {
+    private casperBuyListing(transaction: OfferTransaction) {
         const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
 
         casperTransactionService.buyListing(transaction);
     };
 
     /** Buys listing. */
-    public buyListing(transaction: any) {
+    public buyListing(transaction: OfferTransaction) {
         switch (this.user.walletType) {
         case walletTypes.CASPER_WALLET_TYPE:
             this.casperBuyListing(transaction);
+            break;
+        default:
+            break;
+        }
+    };
+
+    /** Buys listing with casper wallet. */
+    private casperAcceptOffer(transaction: OfferTransaction) {
+        const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
+
+        casperTransactionService.acceptOffer(transaction);
+    };
+
+    /** Buys listing. */
+    public acceptOffer(transaction: OfferTransaction) {
+        switch (this.user.walletType) {
+        case walletTypes.CASPER_WALLET_TYPE:
+            this.casperAcceptOffer(transaction);
             break;
         default:
             break;

@@ -100,8 +100,8 @@ export class CasperNetworkClient extends APIClient {
             approveData.nftContractAddress,
             approveData.tokenRewardContractAddress,
             approveData.tokenId,
-            approveData.tokenContractPackageAddress,
-            approveData.nftContractPackageAddress,
+            approveData.approveTokensSpender,
+            approveData.approveNftSpender,
         );
     };
 }
