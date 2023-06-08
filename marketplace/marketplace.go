@@ -110,8 +110,9 @@ type Config struct {
 
 	MarketContractPackageAddress string `json:"marketContractPackageAddress"`
 	NFTApprovePrefix             string `json:"nftApprovePrefix"`
+	CreateListingPrefix          string `json:"createListingPrefix"`
 
-	Amount int64 `json:"amount"`
+	TokenAmountForApproving int64 `json:"tokenAmountForApproving"`
 }
 
 // CreateLot entity that contains the values required to create the lot.
