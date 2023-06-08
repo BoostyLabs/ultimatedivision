@@ -212,14 +212,14 @@ class WalletService {
         }
     };
 
-    /** Buys listing with casper wallet. */
+    /** Accepts offer with casper wallet. */
     private casperAcceptOffer(transaction: OfferTransaction) {
         const casperTransactionService = new CasperTransactionService(this.user.casperWallet);
 
         casperTransactionService.acceptOffer(transaction);
     };
 
-    /** Buys listing. */
+    /** Accepts offer. */
     public acceptOffer(transaction: OfferTransaction) {
         switch (this.user.walletType) {
         case walletTypes.CASPER_WALLET_TYPE:

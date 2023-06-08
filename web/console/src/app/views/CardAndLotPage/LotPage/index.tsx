@@ -33,6 +33,7 @@ const Lot: React.FC = () => {
             ToastNotifications.couldNotOpenCard();
         };
     };
+
     /** sets user info */
     async function setUser() {
         try {

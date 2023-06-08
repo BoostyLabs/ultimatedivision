@@ -31,6 +31,7 @@ export const BidArea = () => {
         setIsOpenPlaceBidPopup(true);
     };
 
+    /** buys an nft */
     const buyNow = async() => {
         const walletService = new WalletService(user);
         const offerData = await marketplaceService.offer(lot.cardId);

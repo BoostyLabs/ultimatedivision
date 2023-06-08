@@ -59,11 +59,13 @@ const Card: React.FC = () => {
         }
     }
 
+    /** mints a card */
     const mint = async() => {
         const walletService = new WalletService(user);
         await walletService.mintNft(id);
     };
 
+    /** approves nft minting */
     const approve = async() => {
         const approveData = await casperService.approve(card.id);
 

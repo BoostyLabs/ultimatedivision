@@ -38,6 +38,7 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
     const user = useSelector((state: RootState) => state.usersReducer.user);
     const { card } = useSelector((state: RootState) => state.cardsReducer);
 
+    /** creates lot */
     const setCreatedLot = async() => {
         try {
             const transactionData = await marketplaceService.lotData(card.id);
@@ -67,13 +68,16 @@ export const Sell: React.FC<SellTypes> = ({ setIsOpenSellPopup }) => {
         }
     };
 
+    /** changes min price */
     const handleMinPriceChanges = (e: any) => {
         setMinBidPrice(e.target.value);
     };
 
+    /** changes max price */
     const handleMaxPriceChanges = (e: any) => {
         setMaxBidPrice(e.target.value);
     };
+
     /** sets user info */
     async function setUser() {
         try {

@@ -34,6 +34,7 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
         const marketplaceClient = new MarketplaceClient();
         const marketplaceService = new Marketplaces(marketplaceClient);
 
+        /** handle changes in card bid */
         const onChangeCardBid = (e: React.ChangeEvent<HTMLInputElement>) => {
             Number(e.target.value) > lot.maxPrice ?
                 setCardBid(lot.maxPrice)
@@ -41,6 +42,7 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
                 setCardBid(Number(e.target.value));
         };
 
+        /** makes users bid offer price */
         const bidButton = async() => {
             try {
                 await marketplaceService.placeBid(lot.cardId, cardBid);
@@ -66,7 +68,7 @@ export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetSt
             }
         };
 
-        /** TODO: add function entity */
+        /** buys a nft */
         const buyNowButton = async() => {
             const walletService = new WalletService(user);
             const offerData = await marketplaceService.offer(lot.cardId);
