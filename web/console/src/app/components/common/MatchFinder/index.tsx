@@ -5,12 +5,13 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { AutoCloseTimer } from '@/app/components/common/MatchFinder/AutoCloseTimer';
-import { Timer } from '@/app/components/common/MatchFinder/Timer';
+import { AutoCloseTimer } from './AutoCloseTimer';
+import { Timer } from './Timer';
 
 import { WebSocketClient } from '@/api/websockets';
 import { RouteConfig } from '@/app/routes';
 import { RootState } from '@/app/store';
+import { getMatchScore } from '@/app/store/actions/mathes';
 import { startSearchingMatch } from '@/app/store/actions/clubs';
 import { getCurrentWebSocketClient, onCloseConnection, onOpenConnectionNoAction, sendAction, setMatchQueue } from '@/webSockets/service';
 import { ToastNotifications } from '@/notifications/service';
@@ -62,7 +63,7 @@ const MatchFinder: React.FC = () => {
     const YOU_CONFIRM_PLAY_MESSAGE: string = 'do you confirm play?';
     /** Variable describes that user have leaved from searching game. */
     const YOU_LEAVED_MESSAGE: string = 'you left';
-    /** Variable describes that two players are connected and are ready to play game. */
+    /** Variable describes that user have leaved from searching game. */
     const PLAYERS_FOUND: string = 'players found';
 
     /** Sends confirm action. */
