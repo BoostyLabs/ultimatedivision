@@ -22,8 +22,8 @@ const ONE_COIN = 1;
 
 export const MarketPlaceModal: React.FC<{ lot: Lot; setShowModal: Dispatch<SetStateAction<boolean>> }> =
     ({ lot, setShowModal }) => {
-        const [cardBid, setCardBid] = useState<number>(lot.startPrice);
-        const [currentBid, setCurrentBid] = useState<number>(lot.startPrice);
+        const [cardBid, setCardBid] = useState<number>(lot.currentPrice);
+        const [currentBid, setCurrentBid] = useState<number>(lot.currentPrice);
 
         const [isEndTime, setIsEndTime] = useState(false);
 

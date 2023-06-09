@@ -22,8 +22,8 @@ type SellTypes = {
 };
 
 /** Mock lot creating stats */
-const DEFAULT_MIN_BID = 3000;
-const DEFAULT_MAX_BID = 5000;
+const DEFAULT_MIN_BID = 3;
+const DEFAULT_MAX_BID = 5;
 const MOCK_PERIOD = 2;
 const MOCK_PERIOD__TRANSACTION = 300000;
 
