@@ -18,8 +18,9 @@ export const MAKE_OFFER_PAYMENT_AMOUNT = 4400000000;
 export const CREATE_LOT_PAYMENT_AMOUNT = 5700000000;
 export const APPROVE_TOKEN_PAYMENT_AMOUNT = 100000000;
 export const APPROVE_NFT_PAYMENT_AMOUNT = 2500000000;
-export const BUY_OFFER_PAYMENT_AMOUNT = 40000000000;
+export const BUY_OFFER_PAYMENT_AMOUNT = 12000000000;
 export const ACCEPT_OFFER_PAYMENT_AMOUNT = 10000000000;
+export const MINT_ONE_PAYMENT_AMOUNT = 4100000000;
 
 /** Describes parameters for transaction */
 export class CasperTransactionIdentificators {

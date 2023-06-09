@@ -22,6 +22,7 @@ import {
     CasperTransactionIdentificators,
     GAS_PRICE,
     MAKE_OFFER_PAYMENT_AMOUNT,
+    MINT_ONE_PAYMENT_AMOUNT,
     MarketCreateLotTransaction,
     OfferTransaction,
     PAYMENT_AMOUNT,
@@ -116,7 +117,7 @@ class CasperTransactionService {
                 await window.casperlabsHelper.requestConnection();
             }
 
-            const signature = await this.contractSign('mint_one', runtimeArgs, this.paymentAmount, '05560ca94e73f35c5b9b8a0f8b66e56238169e60ae421fb7b71c7ac3c6c744e2');
+            const signature = await this.contractSign('mint_one', runtimeArgs, MINT_ONE_PAYMENT_AMOUNT, nftWaitlist.nftCreateCasperContract.address);
 
             await this.client.sendTx(nftWaitlist.rpcNodeAddress, JSON.stringify(signature));
         }
