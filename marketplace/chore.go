@@ -76,7 +76,7 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 			_, err = transfer.FinalListing(ctx, casper.FinalListingRequest{
 				PublicKey:          pair.PublicKey(),
 				ChainName:          "casper-test",
-				StandardPayment:    int64(lot.CurrentPrice.BitLen()),
+				StandardPayment:    10000000000,
 				MarketContractHash: chore.marketplace.config.MarketContractAddress,
 				NFTContractHash:    fmt.Sprintf("%s%s", chore.marketplace.config.NFTContractPrefix, chore.marketplace.config.NFTContractAddress),
 				TokenID:            tokenID.String(),
