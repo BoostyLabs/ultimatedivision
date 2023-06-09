@@ -10,6 +10,7 @@ import { RootState } from '@/app/store';
 import WalletService from '@/wallet/service';
 import { MarketplaceClient } from '@/api/marketplace';
 import { Marketplaces } from '@/marketplace/service';
+import { ToastNotifications } from '@/notifications/service';
 
 import './index.scss';
 
@@ -33,10 +34,14 @@ export const BidArea = () => {
 
     /** buys an nft */
     const buyNow = async() => {
-        const walletService = new WalletService(user);
-        const offerData = await marketplaceService.offer(lot.cardId);
+        try {
+            const walletService = new WalletService(user);
+            const offerData = await marketplaceService.offer(lot.cardId);
 
-        await walletService.buyListing(offerData);
+            await walletService.buyListing(offerData);
+        } catch (e) {
+            ToastNotifications.somethingWentsWrong();
+        }
     };
 
     useEffect(() => {

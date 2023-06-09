@@ -61,16 +61,25 @@ const Card: React.FC = () => {
 
     /** mints a card */
     const mint = async() => {
-        const walletService = new WalletService(user);
-        await walletService.mintNft(id);
+        try {
+            const walletService = new WalletService(user);
+            await walletService.mintNft(id);
+        }
+        catch (e: any) {
+            ToastNotifications.somethingWentsWrong();
+        }
     };
 
     /** approves nft minting */
     const approve = async() => {
-        const approveData = await casperService.approve(card.id);
+        try {
+            const approveData = await casperService.approve(card.id);
 
-        const walletService = new WalletService(user);
-        await walletService.approveNftMint(approveData);
+            const walletService = new WalletService(user);
+            await walletService.approveNftMint(approveData);
+        } catch (e: any) {
+            ToastNotifications.somethingWentsWrong();
+        }
     };
 
     useEffect(() => {
