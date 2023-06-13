@@ -167,6 +167,24 @@ func (clubsDB *clubsDB) DeleteSquadCard(ctx context.Context, squadID, cardID uui
 	return ErrClubs.Wrap(err)
 }
 
+// DeleteByCardID deletes card from squad by card id.
+func (clubsDB *clubsDB) DeleteByCardID(ctx context.Context, cardID uuid.UUID) error {
+	query := `DELETE FROM squad_cards
+              WHERE card_id = $1`
+
+	result, err := clubsDB.conn.ExecContext(ctx, query, cardID)
+	if err != nil {
+		return ErrClubs.Wrap(err)
+	}
+
+	rowNum, err := result.RowsAffected()
+	if rowNum == 0 {
+		return clubs.ErrNoSquadCard.New("squad card does not exist")
+	}
+
+	return ErrClubs.Wrap(err)
+}
+
 // ListByUserID returns clubs owned by the user.
 func (clubsDB *clubsDB) ListByUserID(ctx context.Context, userID uuid.UUID) ([]clubs.Club, error) {
 	query := `SELECT id, owner_id, club_name, status, created_at

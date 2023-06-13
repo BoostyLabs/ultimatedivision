@@ -383,10 +383,6 @@ func (service *Service) RunCasperCheckMintEvent(ctx context.Context) (err error)
 		if err = service.nfts.Delete(ctx, nft.CardID); err != nil {
 			log.Println(err)
 		}
-
-		if err = service.cards.UpdateUserID(ctx, nft.CardID, uuid.Nil); err != nil {
-			log.Println(err)
-		}
 	}
 
 	if err = service.nfts.Update(ctx, nft); err != nil {

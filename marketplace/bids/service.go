@@ -107,6 +107,11 @@ func (service *Service) GetCurrentBidByLotID(ctx context.Context, lotID uuid.UUI
 	return currentAmount, ErrBids.Wrap(err)
 }
 
+// DeleteByLotID deletes bids by lot id in the database.
+func (service *Service) DeleteByLotID(ctx context.Context, lotID uuid.UUID) error {
+	return ErrBids.Wrap(service.bids.DeleteByLotID(ctx, lotID))
+}
+
 // GetBidsAmountOnSpecificLot returns all amount of user bets on specific lot.
 func (service *Service) GetBidsAmountOnSpecificLot(ctx context.Context, userID, lotID uuid.UUID) ([]big.Int, error) {
 	amounts, err := service.bids.GetUserBidsAmountByLotID(ctx, userID, lotID)

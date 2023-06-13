@@ -577,6 +577,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 			logger,
 			config.Bids.Config,
 			peer.Bids.Service,
+			peer.Clubs.Service,
 			peer.Marketplace.Service,
 			peer.Users.Service,
 			peer.Cards.Service,

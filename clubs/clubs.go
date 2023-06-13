@@ -53,6 +53,8 @@ type DB interface {
 	AddSquadCard(ctx context.Context, squadCards SquadCard) error
 	// DeleteSquadCard deletes card from squad.
 	DeleteSquadCard(ctx context.Context, squadID, cardID uuid.UUID) error
+	// DeleteByCardID deletes card from squad by card id.
+	DeleteByCardID(ctx context.Context, cardID uuid.UUID) error
 	// UpdateTacticCaptain updates tactic and capitan in the squad.
 	UpdateTacticCaptain(ctx context.Context, squad Squad) error
 	// UpdateStatuses update statuses of users clubs.

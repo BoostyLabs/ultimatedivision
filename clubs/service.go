@@ -152,6 +152,11 @@ func (service *Service) Delete(ctx context.Context, squadID, cardID uuid.UUID) e
 	return ErrClubs.Wrap(service.clubs.DeleteSquadCard(ctx, squadID, cardID))
 }
 
+// DeleteByCardID deletes card from squad by card id.
+func (service *Service) DeleteByCardID(ctx context.Context, cardID uuid.UUID) error {
+	return ErrClubs.Wrap(service.clubs.DeleteByCardID(ctx, cardID))
+}
+
 // UpdateSquad updates tactic and captain of the squad.
 func (service *Service) UpdateSquad(ctx context.Context, squadID uuid.UUID, tactic Tactic, captainID uuid.UUID) error {
 	updatedSquad := Squad{
