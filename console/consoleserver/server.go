@@ -181,7 +181,7 @@ func NewServer(config Config, log logger.Logger, listener net.Listener, cards *c
 	marketplaceRouter := apiRouter.PathPrefix("/marketplace").Subrouter()
 	marketplaceRouter.HandleFunc("", marketplaceController.ListActiveLots).Methods(http.MethodGet)
 	marketplaceRouterWithAuth := marketplaceRouter
-	//marketplaceRouterWithAuth.Use(server.withAuth)
+	marketplaceRouterWithAuth.Use(server.withAuth)
 	marketplaceRouterWithAuth.HandleFunc("/{id}", marketplaceController.GetLotByID).Methods(http.MethodGet)
 	marketplaceRouterWithAuth.HandleFunc("/end-time/{id}", marketplaceController.IsExpired).Methods(http.MethodGet)
 	marketplaceRouterWithAuth.HandleFunc("/price/{card_id}", marketplaceController.GetCurrentPriceByCardID).Methods(http.MethodGet)
