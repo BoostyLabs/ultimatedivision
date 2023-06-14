@@ -235,11 +235,15 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			return nil, ErrMatchmaking.Wrap(err)
 		}
 
+		startGameInformation.UserSide = 1
 		resp.Message = startGameInformation
 
 		if err := match.Player1.Conn.WriteJSON(resp); err != nil {
 			return nil, ErrMatchmaking.Wrap(err)
 		}
+
+		startGameInformation.UserSide = 2
+		resp.Message = startGameInformation
 		if err := match.Player2.Conn.WriteJSON(resp); err != nil {
 			return nil, ErrMatchmaking.Wrap(err)
 		}
@@ -253,7 +257,7 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			FinalPosition int               `json:"finalPosition"`
 		}
 
-		startGameInformation.Rounds = 0
+		startGameInformation.Rounds = 14
 		for i := 1; i <= startGameInformation.Rounds; i++ {
 			var req gameRequest
 
