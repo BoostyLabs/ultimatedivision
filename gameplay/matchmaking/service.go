@@ -32,15 +32,17 @@ type Service struct {
 	connections *connections.Service
 	gameEngine  *gameengine.Service
 	queue       *queue.Chore
+	matches     *matches.Service
 }
 
 // NewService is a constructor for matchmaking service.
-func NewService(players DB, connections *connections.Service, gameEngine *gameengine.Service, queue *queue.Chore) *Service {
+func NewService(players DB, connections *connections.Service, gameEngine *gameengine.Service, queue *queue.Chore, matches *matches.Service) *Service {
 	return &Service{
 		players:     players,
 		connections: connections,
 		gameEngine:  gameEngine,
 		queue:       queue,
+		matches:     matches,
 	}
 }
 
@@ -235,11 +237,15 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			return nil, ErrMatchmaking.Wrap(err)
 		}
 
+		startGameInformation.UserSide = 1
 		resp.Message = startGameInformation
 
 		if err := match.Player1.Conn.WriteJSON(resp); err != nil {
 			return nil, ErrMatchmaking.Wrap(err)
 		}
+
+		startGameInformation.UserSide = 2
+		resp.Message = startGameInformation
 		if err := match.Player2.Conn.WriteJSON(resp); err != nil {
 			return nil, ErrMatchmaking.Wrap(err)
 		}
@@ -253,9 +259,11 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			FinalPosition int               `json:"finalPosition"`
 		}
 
-		startGameInformation.Rounds = 0
+		startGameInformation.Rounds = 14
+		var gameResults []matches.MatchGoals
 		for i := 1; i <= startGameInformation.Rounds; i++ {
 			var req gameRequest
+			var gameResult matches.MatchGoals
 
 			if err := match.Player1.Conn.ReadJSON(&req); err != nil {
 				return nil, ErrMatchmaking.Wrap(err)
@@ -289,6 +297,18 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			if err := match.Player2.Conn.WriteJSON(cardAvailableAction); err != nil {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
+
+			gameResults = append(gameResults, gameResult)
+		}
+
+		matchInfo, err := service.matches.Get(ctx, startGameInformation.MatchID)
+		if err != nil {
+			return nil, ErrMatchmaking.Wrap(err)
+		}
+
+		err = service.matches.AddGoals(ctx, matchInfo, gameResults)
+		if err != nil {
+			return nil, ErrMatchmaking.Wrap(err)
 		}
 
 		time.Sleep(time.Second * 10)
