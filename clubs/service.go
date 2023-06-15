@@ -220,6 +220,12 @@ func (service *Service) GetSquadByClubID(ctx context.Context, clubID uuid.UUID) 
 	return squad, ErrClubs.Wrap(err)
 }
 
+// GetSquadIDByCardID returns squad id by card id.
+func (service *Service) GetSquadIDByCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error) {
+	squadID, err := service.clubs.GetSquadIDByCardID(ctx, cardID)
+	return squadID, ErrClubs.Wrap(err)
+}
+
 // GetSquad returns squad.
 func (service *Service) GetSquad(ctx context.Context, squadID uuid.UUID) (Squad, error) {
 	squad, err := service.clubs.GetSquad(ctx, squadID)

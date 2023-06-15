@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"math/big"
 	"net/http"
 	"strconv"
@@ -17,7 +16,6 @@ import (
 	"time"
 
 	"github.com/BoostyLabs/evmsignature"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
@@ -352,50 +350,4 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 			}, ErrWaitlist.Wrap(err)
 		}
 	}
-}
-
-// RunCasperCheckMintEvent runs a task to check and create the casper nft assignment.
-func (service *Service) RunCasperCheckMintEvent(ctx context.Context) (err error) {
-	event, err := service.GetNodeEvents(ctx)
-	if err != nil {
-		log.Println(err)
-	}
-
-	nftWaitList, err := service.GetByTokenID(ctx, event.TokenID)
-	if err != nil {
-		log.Println(err)
-	}
-
-	toAddress := common.HexToAddress(nftWaitList.CasperWalletHash)
-	nft := nfts.NFT{
-		CardID:        nftWaitList.CardID,
-		TokenID:       event.TokenID,
-		Chain:         evmsignature.ChainEthereum,
-		WalletAddress: toAddress,
-	}
-
-	if err = service.nfts.Create(ctx, nft); err != nil {
-		log.Println(err)
-	}
-
-	user, err := service.users.GetByCasperHash(ctx, nftWaitList.CasperWalletHash)
-	if err != nil {
-		if err = service.nfts.Delete(ctx, nft.CardID); err != nil {
-			log.Println(err)
-		}
-	}
-
-	if err = service.nfts.Update(ctx, nft); err != nil {
-		log.Println(err)
-	}
-
-	if err = service.cards.UpdateUserID(ctx, nft.CardID, user.ID); err != nil {
-		log.Println(err)
-	}
-
-	if err = service.cards.UpdateMintedStatus(ctx, nft.CardID, cards.Minted); err != nil {
-		log.Println(err)
-	}
-
-	return nil
 }

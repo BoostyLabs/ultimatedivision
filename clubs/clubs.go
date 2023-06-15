@@ -41,6 +41,8 @@ type DB interface {
 	Get(ctx context.Context, clubID uuid.UUID) (Club, error)
 	// GetSquadByClubID returns squad by club id.
 	GetSquadByClubID(ctx context.Context, clubID uuid.UUID) (Squad, error)
+	// GetSquadIDByCardID returns squad by card id.
+	GetSquadIDByCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error)
 	// GetSquad returns squad.
 	GetSquad(ctx context.Context, squadID uuid.UUID) (Squad, error)
 	// GetFormation returns formation of the squad.

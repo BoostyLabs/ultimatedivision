@@ -260,6 +260,28 @@ func (clubsDB *clubsDB) GetSquadByClubID(ctx context.Context, clubID uuid.UUID) 
 	return squad, nil
 }
 
+// 	GetSquadIDByCardID returns squad from database by card id.
+func (clubsDB *clubsDB) GetSquadIDByCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error) {
+	query := `SELECT *
+			  FROM squad_cards
+			  WHERE card_id = $1`
+
+	row := clubsDB.conn.QueryRowContext(ctx, query, cardID)
+
+	var id uuid.UUID
+
+	err := row.Scan(&id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return id, clubs.ErrNoSquad.Wrap(err)
+		}
+
+		return id, ErrClubs.Wrap(err)
+	}
+
+	return id, nil
+}
+
 // GetSquad returns squad from database.
 func (clubsDB *clubsDB) GetSquad(ctx context.Context, squadID uuid.UUID) (clubs.Squad, error) {
 	query := `SELECT id, squad_name, club_id, tactic, formation, captain_id
