@@ -5,7 +5,6 @@ package waitlist
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/BoostyLabs/thelooper"
@@ -52,7 +51,6 @@ func NewChore(log logger.Logger, config Config, waitList *Service, nfts *nfts.Se
 // RunCasperCheckMintEvent runs a task to check and create the casper nft assignment.
 func (chore *Chore) RunCasperCheckMintEvent(ctx context.Context) error {
 	err := chore.loop.Run(ctx, func(ctx context.Context) error {
-		fmt.Println("RunCasperCheckMintEvent")
 		event, err := chore.waitList.GetNodeEvents(ctx)
 		if err != nil {
 			chore.log.Error("could not get node events", ChoreError.Wrap(err))

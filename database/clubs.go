@@ -262,7 +262,7 @@ func (clubsDB *clubsDB) GetSquadByClubID(ctx context.Context, clubID uuid.UUID) 
 
 // 	GetSquadIDByCardID returns squad from database by card id.
 func (clubsDB *clubsDB) GetSquadIDByCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error) {
-	query := `SELECT *
+	query := `SELECT id
 			  FROM squad_cards
 			  WHERE card_id = $1`
 

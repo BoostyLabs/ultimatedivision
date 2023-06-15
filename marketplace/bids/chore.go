@@ -9,6 +9,7 @@ import (
 
 	"github.com/BoostyLabs/thelooper"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
 	"github.com/zeebo/errs"
 
 	"ultimatedivision/cards"
@@ -65,15 +66,12 @@ func (chore *Chore) Run(ctx context.Context) error {
 		if err != nil {
 			return nil
 		}
-
 		for _, lot := range expiredLots {
 			currentBid, err := chore.bids.GetCurrentBidByLotID(ctx, lot.CardID)
 			if err != nil {
 				if !ErrNoBid.Has(err) {
 					chore.log.Error(fmt.Sprintf("could not get current bid by lot id equal %v from db", lot.CardID), ChoreError.Wrap(err))
-					return nil
 				}
-				continue
 			}
 
 			// TODO: transaction required.
@@ -88,10 +86,12 @@ func (chore *Chore) Run(ctx context.Context) error {
 				chore.log.Error(fmt.Sprintf("could not delete bids by card id equal %v in db", lot.CardID), ChoreError.Wrap(err))
 			}
 
-			_, err = chore.clubs.GetSquadIDByCardID(ctx, lot.CardID)
+			squadID, err := chore.clubs.GetSquadIDByCardID(ctx, lot.CardID)
 			if err != nil {
 				chore.log.Error(fmt.Sprintf("could not get squad by card id equal %v from db", lot.CardID), ChoreError.Wrap(err))
-			} else {
+			}
+
+			if squadID != uuid.Nil {
 				if err = chore.clubs.DeleteByCardID(ctx, lot.CardID); err != nil {
 					chore.log.Error(fmt.Sprintf("could not delete card from club by card id equal %v in db", lot.CardID), ChoreError.Wrap(err))
 				}
