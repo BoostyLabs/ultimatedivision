@@ -277,7 +277,6 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 		defer func() {
 			err = errs.Combine(err, resp.Body.Close())
 		}()
-		return MintData{}, ErrWaitlist.Wrap(err)
 	}
 
 	for {

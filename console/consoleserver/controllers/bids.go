@@ -111,13 +111,19 @@ func (controller *Bids) GetMakeOfferData(w http.ResponseWriter, r *http.Request)
 	ctx := r.Context()
 	vars := mux.Vars(r)
 
+	claims, err := auth.GetClaims(ctx)
+	if err != nil {
+		controller.serveError(w, http.StatusUnauthorized, ErrUsers.Wrap(err))
+		return
+	}
+
 	cardID, err := uuid.Parse(vars["card_id"])
 	if err != nil {
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
 		return
 	}
 
-	lotData, err := controller.bids.GetMakeOfferData(ctx, cardID)
+	lotData, err := controller.bids.GetMakeOfferData(ctx, cardID, claims.UserID)
 	if err != nil {
 		controller.log.Error("there is no such NFT data", ErrMarketplace.Wrap(err))
 		controller.serveError(w, http.StatusBadRequest, ErrMarketplace.Wrap(err))
