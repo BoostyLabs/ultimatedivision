@@ -5,10 +5,11 @@ package notifications
 
 import (
 	"context"
-	"github.com/google/uuid"
-	"github.com/zeebo/errs"
 	"math/big"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/zeebo/errs"
 )
 
 var (
