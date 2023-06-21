@@ -32,6 +32,7 @@ import (
 	"ultimatedivision/internal/metrics"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/marketplace/bids"
+	"ultimatedivision/notifications"
 	"ultimatedivision/pkg/auth"
 	mail2 "ultimatedivision/pkg/mail"
 	"ultimatedivision/pkg/velas"
@@ -53,6 +54,9 @@ type DB interface {
 
 	// Users provides access to users db.
 	Users() users.DB
+
+	// Notifications provides access to notifications db.
+	Notifications() notifications.DB
 
 	// Cards provides access to cards db.
 	Cards() cards.DB
