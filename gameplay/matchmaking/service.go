@@ -222,8 +222,8 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 		other.Waiting = false
 
 		resp := queue.Response{
-			Status:  http.StatusOK,
-			Message: "players found",
+			Status: http.StatusOK,
+			//Message: "players found",.
 		}
 		if err := match.Player1.Conn.WriteJSON(resp); err != nil {
 			return nil, ErrMatchmaking.Wrap(err)
@@ -250,6 +250,8 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 
 		startGameInformation.UserSide = 1
 		startGameResponse.GameInformation = startGameInformation
+
+		time.Sleep(time.Second * 5)
 
 		if err := match.Player1.Conn.WriteJSON(startGameResponse); err != nil {
 			return nil, ErrMatchmaking.Wrap(err)
@@ -289,6 +291,7 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 				return nil, ErrMatchmaking.Wrap(err)
 			}
 
+			cardAvailableAction.Message = "football information"
 			if err := match.Player1.Conn.WriteJSON(cardAvailableAction); err != nil {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
@@ -305,6 +308,7 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 				return nil, ErrMatchmaking.Wrap(err)
 			}
 
+			cardAvailableAction.Message = "football information"
 			if err := match.Player2.Conn.WriteJSON(cardAvailableAction); err != nil {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
