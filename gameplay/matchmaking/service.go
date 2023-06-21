@@ -248,12 +248,12 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			return nil, ErrMatchmaking.Wrap(err)
 		}
 
-		if requestStart.Match == "Game start" {
+		if requestStart.Match != "" {
 			if err = match.Player2.Conn.ReadJSON(&requestStart); err != nil {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
 
-			if requestStart.Match == "Game start" {
+			if requestStart.Match != "" {
 
 				type response struct {
 					Status          int         `json:"status"`
