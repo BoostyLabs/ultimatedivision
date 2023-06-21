@@ -223,7 +223,7 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 
 		resp := queue.Response{
 			Status: http.StatusOK,
-			//Message: "players found",
+			//Message: "players found",.
 		}
 		if err := match.Player1.Conn.WriteJSON(resp); err != nil {
 			return nil, ErrMatchmaking.Wrap(err)
