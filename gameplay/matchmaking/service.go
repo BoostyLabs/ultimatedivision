@@ -243,14 +243,20 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			Match  string       `json:"match"`
 		}
 
-		var requestStart startGameRequest
+		var requestStartForPlayer1 startGameRequest
+		var requestStartForPlayer2 startGameRequest
 
-		if err = match.Player1.Conn.ReadJSON(&requestStart); err != nil {
+		if err = match.Player1.Conn.ReadJSON(&requestStartForPlayer1); err != nil {
 			// return nil, ErrMatchmaking.Wrap(err).
 			log.Println(err)
 		}
 
-		if requestStart.Match != "" {
+		if err = match.Player2.Conn.ReadJSON(&requestStartForPlayer2); err != nil {
+			// return nil, ErrMatchmaking.Wrap(err).
+			log.Println(err)
+		}
+
+		if requestStartForPlayer1.Match != "" && requestStartForPlayer2.Match != "" {
 
 			type response struct {
 				Status          int         `json:"status"`
@@ -341,7 +347,7 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 				return nil, ErrMatchmaking.Wrap(err)
 			}
 
-			time.Sleep(time.Second * 10)
+			//time.Sleep(time.Second * 10)
 
 			var value = new(big.Int)
 			value.SetString(service.queue.Config.DrawValue, 10)
@@ -388,7 +394,6 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 
 			return match, nil
 		}
-		// }.
 	}
 
 	resp.Message = "you left"
