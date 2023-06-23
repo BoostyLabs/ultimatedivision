@@ -272,8 +272,6 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			startGameInformation.UserSide = 1
 			startGameResponse.GameInformation = startGameInformation
 
-			// time.Sleep(time.Second * 5).
-
 			if err := match.Player1.Conn.WriteJSON(startGameResponse); err != nil {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
@@ -346,8 +344,6 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			if err != nil {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
-
-			//time.Sleep(time.Second * 10)
 
 			var value = new(big.Int)
 			value.SetString(service.queue.Config.DrawValue, 10)
