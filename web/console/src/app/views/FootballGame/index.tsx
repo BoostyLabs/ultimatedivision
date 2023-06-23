@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { Unity, useUnityContext } from 'react-unity-webgl';
 
 import { WebSocketClient } from '@/api/websockets';
-import { getCurrentWebSocketClient, sendAction } from '@/webSockets/service';
+import { getCurrentWebSocketClient, sendUnityAction } from '@/webSockets/service';
 import { ToastNotifications } from '@/notifications/service';
 import { RouteConfig } from '@/app/routes';
 import { getMatchScore } from '@/app/store/actions/mathes';
@@ -20,16 +20,16 @@ const MATCH_RESULT: string = 'do you allow us to take your address?';
 const UNITY_ACTION: string = 'GoodBye';
 
 /** Describes action to send game info in WS. */
-const GAME_INFO_ACTION: string = '';
+const GAME_INFO_ACTION: string = 'send unity game information';
 
 /** Describes message of getting game info. */
 const GAME_INFO_MESSAGE: string = 'football information';
 
 /** Describes game object name in unity to send message. */
-const UNITY_GAME_OBJECT_NAME: string = 'Recive';
+const UNITY_GAME_OBJECT_NAME: string = 'Connection';
 
 /** Describes unity method name. */
-const UNITY_OBJECT_METHOD_NAME: string = 'ReactToUnityMethod';
+const UNITY_OBJECT_METHOD_NAME: string = 'ReciveMessage';
 
 const FootballGame: React.FC = () => {
     const history = useHistory();
@@ -45,7 +45,7 @@ const FootballGame: React.FC = () => {
     });
 
     const handleUnityActions = useCallback((message) => {
-        sendAction(GAME_INFO_ACTION, JSON.stringify(message));
+        sendUnityAction(GAME_INFO_ACTION, message);
     }, []);
 
     if (webSocketClient) {
@@ -59,8 +59,8 @@ const FootballGame: React.FC = () => {
 
             switch (event.message) {
             case GAME_INFO_MESSAGE:
-                sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, event.gameInformation);
-
+                sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
+                break;
             default:
             }
         };
