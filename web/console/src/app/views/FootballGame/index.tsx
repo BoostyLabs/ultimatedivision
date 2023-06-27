@@ -16,14 +16,23 @@ import './index.scss';
 /** Describes that game is over. */
 const MATCH_RESULT: string = 'do you allow us to take your address?';
 
+/** Describes unity action to get start info for game. */
+const START_UNITY_ACTION: string = 'GoodBye';
+
 /** Describes unity action to get info for game. */
-const UNITY_ACTION: string = 'GoodBye';
+const UNITY_ACTION: string = 'PlayerAction';
 
 /** Describes action to send game info in WS. */
 const GAME_INFO_ACTION: string = 'send unity game information';
 
+/** Describes action to send start game info in WS. */
+const START_GAME_INFO_ACTION: string = 'send start unity game information';
+
+/** Describes message of getting start game info. */
+const GAME_START_INFO_MESSAGE: string = 'football information';
+
 /** Describes message of getting game info. */
-const GAME_INFO_MESSAGE: string = 'football information';
+const GAME_INFO_MESSAGE: string = 'match action';
 
 /** Describes game object name in unity to send message. */
 const UNITY_GAME_OBJECT_NAME: string = 'Connection';
@@ -44,6 +53,10 @@ const FootballGame: React.FC = () => {
         codeUrl: '/static/dist/webGl/Football.wasm',
     });
 
+    const handleStartUnityAction = useCallback((message) => {
+        sendUnityAction(START_GAME_INFO_ACTION, message);
+    }, []);
+
     const handleUnityActions = useCallback((message) => {
         sendUnityAction(GAME_INFO_ACTION, message);
     }, []);
@@ -58,10 +71,13 @@ const FootballGame: React.FC = () => {
             }
 
             switch (event.message) {
-            case GAME_INFO_MESSAGE:
-                sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
-                break;
-            default:
+                case GAME_START_INFO_MESSAGE:
+                    sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
+                    break;
+                case GAME_INFO_MESSAGE:
+                    sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
+                    break;
+                default:
             }
         };
     }
@@ -79,12 +95,14 @@ const FootballGame: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        addEventListener(START_UNITY_ACTION, handleStartUnityAction);
         addEventListener(UNITY_ACTION, handleUnityActions);
 
         return () => {
-            removeEventListener(UNITY_ACTION, handleUnityActions);
+            removeEventListener(START_UNITY_ACTION, handleStartUnityAction);
+            removeEventListener(UNITY_ACTION, handleUnityActions)
         };
-    }, [addEventListener, removeEventListener, handleUnityActions]);
+    }, [addEventListener, removeEventListener, handleUnityActions, handleStartUnityAction]);
 
     return <Unity unityProvider={unityProvider} className="unity-container" />;
 };
