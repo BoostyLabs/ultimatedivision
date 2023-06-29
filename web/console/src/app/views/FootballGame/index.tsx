@@ -38,7 +38,10 @@ const GAME_INFO_MESSAGE: string = 'match action';
 const UNITY_GAME_OBJECT_NAME: string = 'Connection';
 
 /** Describes unity method name. */
-const UNITY_OBJECT_METHOD_NAME: string = 'ReciveMessage';
+const UNITY_OBJECT_METHOD_NAME: string = 'ReciveActionMessage';
+
+/** Describes unity method name. */
+const START_UNITY_OBJECT_METHOD_NAME: string = 'ReciveBaseMessage';
 
 const FootballGame: React.FC = () => {
     const history = useHistory();
@@ -71,13 +74,13 @@ const FootballGame: React.FC = () => {
             }
 
             switch (event.message) {
-                case GAME_START_INFO_MESSAGE:
-                    sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
-                    break;
-                case GAME_INFO_MESSAGE:
-                    sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
-                    break;
-                default:
+            case GAME_START_INFO_MESSAGE:
+                sendMessage(UNITY_GAME_OBJECT_NAME, START_UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
+                break;
+            case GAME_INFO_MESSAGE:
+                sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
+                break;
+            default:
             }
         };
     }
@@ -100,7 +103,7 @@ const FootballGame: React.FC = () => {
 
         return () => {
             removeEventListener(START_UNITY_ACTION, handleStartUnityAction);
-            removeEventListener(UNITY_ACTION, handleUnityActions)
+            removeEventListener(UNITY_ACTION, handleUnityActions);
         };
     }, [addEventListener, removeEventListener, handleUnityActions, handleStartUnityAction]);
 
