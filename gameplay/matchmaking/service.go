@@ -282,15 +282,6 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 				return nil, ErrMatchmaking.Wrap(err)
 			}
 
-			//type gameRequest struct {
-			//	Action        gameengine.Action `json:"action"`
-			//	CardID        uuid.UUID         `json:"CardId"`
-			//	Position      int               `json:"position"`
-			//	HasBall       bool              `json:"hasBall"`
-			//	NewPositions  []int             `json:"newPositions"`
-			//	FinalPosition int               `json:"finalPosition"`
-			//}
-
 			type Match struct {
 				Action        string    `json:"action"`
 				CardID        uuid.UUID `json:"CardId"`
@@ -299,6 +290,7 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 				NewPositions  []int     `json:"newPositions"`
 				FinalPosition int       `json:"finalPosition"`
 			}
+
 			type gameRequest struct {
 				Action string `json:"action"`
 				Match  string `json:"match"`
