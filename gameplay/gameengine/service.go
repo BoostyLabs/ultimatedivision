@@ -538,7 +538,7 @@ func (service *Service) GameInformation(ctx context.Context, player1SquadID, pla
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
 
-	clubPlayer1, err := service.clubs.Get(ctx, squadPlayer1.ClubID)
+	clubPlayer1, err := service.clubs.Get(ctx, squadPlayer1.ClubID)q
 	if err != nil {
 		return MatchRepresentation{}, ErrGameEngine.Wrap(err)
 	}
