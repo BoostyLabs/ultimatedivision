@@ -70,17 +70,17 @@ const FootballGame: React.FC = () => {
 
             if (event.message === MATCH_RESULT) {
                 dispatch(getMatchScore(event.message));
-                // history.push(RouteConfig.Match.path);
+                history.push(RouteConfig.Match.path);
             }
 
             switch (event.message) {
-            case GAME_START_INFO_MESSAGE:
-                sendMessage(UNITY_GAME_OBJECT_NAME, START_UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
-                break;
-            case GAME_INFO_MESSAGE:
-                sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
-                break;
-            default:
+                case GAME_START_INFO_MESSAGE:
+                    sendMessage(UNITY_GAME_OBJECT_NAME, START_UNITY_OBJECT_METHOD_NAME, JSON.stringify(event.gameInformation));
+                    break;
+                case GAME_INFO_MESSAGE:
+                    sendMessage(UNITY_GAME_OBJECT_NAME, UNITY_OBJECT_METHOD_NAME, JSON.stringify(event));
+                    break;
+                default:
             }
         };
     }
