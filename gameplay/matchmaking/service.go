@@ -368,6 +368,7 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 				return nil, ErrMatchmaking.Wrap(err)
 			}
 			fmt.Println("matchInfo:", matchInfo)
+			fmt.Println("gameResults:", gameResults)
 			// err = service.matches.AddGoals(ctx, matchInfo, gameResults)
 			// if err != nil {
 			//	return nil, ErrMatchmaking.Wrap(err)
