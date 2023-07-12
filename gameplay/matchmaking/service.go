@@ -299,6 +299,9 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			startGameInformation.Rounds = 4
 			var gameResults []matches.MatchGoals
 			for i := 1; i <= startGameInformation.Rounds; i++ {
+
+				fmt.Println("Round:", i)
+
 				var req gameRequest
 				var gameResult matches.MatchGoals
 
@@ -364,11 +367,12 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			if err != nil {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
-
-			err = service.matches.AddGoals(ctx, matchInfo, gameResults)
-			if err != nil {
-				return nil, ErrMatchmaking.Wrap(err)
-			}
+			fmt.Println("matchInfo:", matchInfo)
+			fmt.Println("gameResults:", gameResults)
+			// err = service.matches.AddGoals(ctx, matchInfo, gameResults)
+			// if err != nil {
+			//	return nil, ErrMatchmaking.Wrap(err)
+			// }.
 
 			var value = new(big.Int)
 			value.SetString(service.queue.Config.DrawValue, 10)
