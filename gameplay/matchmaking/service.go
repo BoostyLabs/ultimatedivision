@@ -367,12 +367,13 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 			if err != nil {
 				return nil, ErrMatchmaking.Wrap(err)
 			}
-			fmt.Println("matchInfo:", matchInfo)
-			fmt.Println("gameResults:", gameResults)
-			// err = service.matches.AddGoals(ctx, matchInfo, gameResults)
-			// if err != nil {
-			//	return nil, ErrMatchmaking.Wrap(err)
-			// }.
+
+			if gameResults != nil {
+				err = service.matches.AddGoals(ctx, matchInfo, gameResults)
+				if err != nil {
+					return nil, ErrMatchmaking.Wrap(err)
+				}
+			}
 
 			var value = new(big.Int)
 			value.SetString(service.queue.Config.DrawValue, 10)
