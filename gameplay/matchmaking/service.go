@@ -296,7 +296,7 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 				Match  string `json:"match"`
 			}
 
-			startGameInformation.Rounds = 4
+			startGameInformation.Rounds = 2
 			var gameResults []matches.MatchGoals
 			for i := 1; i <= startGameInformation.Rounds; i++ {
 
@@ -360,7 +360,9 @@ func (service *Service) MatchPlayer(ctx context.Context, player *Player) (*Match
 					return nil, ErrMatchmaking.Wrap(err)
 				}
 
-				gameResults = append(gameResults, gameResult)
+				if gameResult != (matches.MatchGoals{}) {
+					gameResults = append(gameResults, gameResult)
+				}
 			}
 
 			matchInfo, err := service.matches.Get(ctx, startGameInformation.MatchID)
