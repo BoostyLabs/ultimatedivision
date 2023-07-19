@@ -89,6 +89,7 @@ type (
 	}
 )
 
+// DeployProcessedNew describes transform data.
 type DeployProcessedNew struct {
 	DeployHash      string    `json:"deploy_hash"`
 	Account         string    `json:"account"`

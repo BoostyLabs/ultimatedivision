@@ -282,10 +282,8 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 
 		bufferSize := 32768
 
-		// Create a bufio.Reader with the specified buffer size
 		reader := bufio.NewReaderSize(resp.Body, bufferSize)
 
-		// Read the entire response body as a string
 		responseString, err := reader.ReadString('\n')
 		if err != nil {
 			fmt.Println("Error occurred:", err)
@@ -307,8 +305,8 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 		if err != nil {
 			fmt.Println("Error parsing JSON:", err)
 		}
+		var tokenID uuid.UUID
 
-		// Access and work with the parsed data
 		deployProcessed := data["DeployProcessed"]
 		for _, transform := range deployProcessed.ExecutionResult.Success.Effect.Transforms {
 
@@ -321,7 +319,7 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 				eventData := eventparsing.EventData{
 					Bytes: bytes,
 				}
-				tokenID, err := eventData.GetTokenID(eventData)
+				tokenID, err = eventData.GetTokenID(eventData)
 				fmt.Println("tokenID:", tokenID)
 				if err != nil {
 					return MintData{}, ErrWaitlist.New("could not get token_id from event data")
@@ -354,7 +352,6 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 				}
 				_, err := eventData.GetTokenID(eventData)
 				if err != nil {
-					//fmt.Println("GetTokenID ERR:")
 					return MintData{}, ErrWaitlist.New("could not get token_id from event data")
 				}
 			}
@@ -365,9 +362,7 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 			for _, i2 := range transform.Transform[WriteCLValueKey][Parsed] {
 				switch i2.Key {
 				case "token_id":
-					tokenNumber, err = strconv.ParseInt(i2.Value, 10, 0)
-					if err != nil {
-					}
+					tokenNumber, _ = strconv.ParseInt(i2.Value, 10, 0)
 				case "recipient":
 					walletAddress = strings.ReplaceAll(i2.Value, "Key::Account(", "")
 					walletAddress = strings.ReplaceAll(walletAddress, ")", "")
@@ -378,17 +373,10 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 		}
 		fmt.Println("tokenNumber:", tokenNumber)
 		fmt.Println("walletAddress:", walletAddress)
-		//if tokenNumber != 0 && walletAddress != "" {
-		//	return MintData{
-		//		TokenID:       tokenID,
-		//		TokenNumber:   tokenNumber,
-		//		WalletAddress: walletAddress,
-		//	}, ErrWaitlist.Wrap(err)
-		//}
-		//return MintData{
-		//	TokenID: tokenID,
-		//}, nil
-		return MintData{}, nil
+
+		return MintData{
+			TokenID: tokenID,
+		}, nil
 	}
 }
 
