@@ -12,7 +12,6 @@ import (
 	"log"
 	"math/big"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -279,7 +278,6 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 		}()
 	}
 	for {
-
 		bufferSize := 32768
 
 		reader := bufio.NewReaderSize(resp.Body, bufferSize)
@@ -302,9 +300,7 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 		var data map[string]contract.DeployProcessedNew
 
 		err = json.Unmarshal([]byte(rawBodyString), &data)
-		if err != nil {
-			fmt.Println("Error parsing JSON:", err)
-		}
+
 		var tokenID uuid.UUID
 
 		deployProcessed := data["DeployProcessed"]
@@ -320,59 +316,11 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 					Bytes: bytes,
 				}
 				tokenID, err = eventData.GetTokenID(eventData)
-				fmt.Println("tokenID:", tokenID)
 				if err != nil {
 					return MintData{}, ErrWaitlist.New("could not get token_id from event data")
 				}
 			}
 		}
-
-		var event contract.Event
-		var eventWithBytes contract.EventWithBytes
-		_ = json.Unmarshal(rawBody, &event)
-		_ = json.Unmarshal(rawBody, &eventWithBytes)
-
-		transforms := event.DeployProcessed.ExecutionResult.Success.Effect.Transforms
-		if len(transforms) == 0 {
-			continue
-		}
-		transformsWithBytes := eventWithBytes.DeployProcessed.ExecutionResult2.Success2.Effect2.Transforms2
-		if len(transformsWithBytes) == 0 {
-			continue
-		}
-
-		for _, transform2 := range transformsWithBytes {
-			transformMap, _ := transform2.Transform.(map[string]interface{})
-
-			writeCLValue, _ := transformMap[WriteCLValueKey].(map[string]interface{})
-			bytes, _ := writeCLValue[BytesKey].(string)
-			if len(bytes) == 170 {
-				eventData := eventparsing.EventData{
-					Bytes: bytes,
-				}
-				_, err := eventData.GetTokenID(eventData)
-				if err != nil {
-					return MintData{}, ErrWaitlist.New("could not get token_id from event data")
-				}
-			}
-		}
-		var tokenNumber int64
-		var walletAddress string
-		for _, transform := range transforms {
-			for _, i2 := range transform.Transform[WriteCLValueKey][Parsed] {
-				switch i2.Key {
-				case "token_id":
-					tokenNumber, _ = strconv.ParseInt(i2.Value, 10, 0)
-				case "recipient":
-					walletAddress = strings.ReplaceAll(i2.Value, "Key::Account(", "")
-					walletAddress = strings.ReplaceAll(walletAddress, ")", "")
-				default:
-					continue
-				}
-			}
-		}
-		fmt.Println("tokenNumber:", tokenNumber)
-		fmt.Println("walletAddress:", walletAddress)
 
 		return MintData{
 			TokenID: tokenID,
