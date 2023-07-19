@@ -278,15 +278,57 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 			err = errs.Combine(err, resp.Body.Close())
 		}()
 	}
-
 	for {
-		reader := bufio.NewReader(resp.Body)
+
+		bufferSize := 32768
+
+		// Create a bufio.Reader with the specified buffer size
+		reader := bufio.NewReaderSize(resp.Body, bufferSize)
+
+		// Read the entire response body as a string
+		responseString, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println("Error occurred:", err)
+		}
+
 		rawBody, err := reader.ReadBytes('\n')
+
 		if err != nil {
 			return MintData{}, ErrWaitlist.Wrap(err)
 		}
-
 		rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
+
+		rawBody123 := []byte(strings.Replace(responseString, "data:", "", 1))
+
+		rawBodyString := string(rawBody123)
+		var data map[string]contract.DeployProcessedNew
+
+		err = json.Unmarshal([]byte(rawBodyString), &data)
+		if err != nil {
+			fmt.Println("Error parsing JSON:", err)
+		}
+
+		// Access and work with the parsed data
+		deployProcessed := data["DeployProcessed"]
+		for _, transform := range deployProcessed.ExecutionResult.Success.Effect.Transforms {
+
+			transformMap, _ := transform.Transform.(map[string]interface{})
+
+			writeCLValue, _ := transformMap[WriteCLValueKey].(map[string]interface{})
+			bytes, _ := writeCLValue[BytesKey].(string)
+
+			if len(bytes) == 170 {
+				eventData := eventparsing.EventData{
+					Bytes: bytes,
+				}
+				tokenID, err := eventData.GetTokenID(eventData)
+				fmt.Println("tokenID:", tokenID)
+				if err != nil {
+					return MintData{}, ErrWaitlist.New("could not get token_id from event data")
+				}
+			}
+		}
+
 		var event contract.Event
 		var eventWithBytes contract.EventWithBytes
 		_ = json.Unmarshal(rawBody, &event)
@@ -296,43 +338,35 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 		if len(transforms) == 0 {
 			continue
 		}
-
 		transformsWithBytes := eventWithBytes.DeployProcessed.ExecutionResult2.Success2.Effect2.Transforms2
 		if len(transformsWithBytes) == 0 {
 			continue
 		}
 
-		var tokenID uuid.UUID
-
 		for _, transform2 := range transformsWithBytes {
 			transformMap, _ := transform2.Transform.(map[string]interface{})
 
 			writeCLValue, _ := transformMap[WriteCLValueKey].(map[string]interface{})
-
 			bytes, _ := writeCLValue[BytesKey].(string)
 			if len(bytes) == 170 {
 				eventData := eventparsing.EventData{
 					Bytes: bytes,
 				}
-
-				tokenID, err = eventData.GetTokenID(eventData)
+				_, err := eventData.GetTokenID(eventData)
 				if err != nil {
+					//fmt.Println("GetTokenID ERR:")
 					return MintData{}, ErrWaitlist.New("could not get token_id from event data")
 				}
 			}
-
 		}
-
 		var tokenNumber int64
 		var walletAddress string
-
 		for _, transform := range transforms {
 			for _, i2 := range transform.Transform[WriteCLValueKey][Parsed] {
 				switch i2.Key {
 				case "token_id":
 					tokenNumber, err = strconv.ParseInt(i2.Value, 10, 0)
 					if err != nil {
-						return MintData{}, ErrWaitlist.New("could not convert token_id from string to int64")
 					}
 				case "recipient":
 					walletAddress = strings.ReplaceAll(i2.Value, "Key::Account(", "")
@@ -342,14 +376,19 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 				}
 			}
 		}
-
-		if tokenNumber != 0 && walletAddress != "" {
-			return MintData{
-				TokenID:       tokenID,
-				TokenNumber:   tokenNumber,
-				WalletAddress: walletAddress,
-			}, ErrWaitlist.Wrap(err)
-		}
+		fmt.Println("tokenNumber:", tokenNumber)
+		fmt.Println("walletAddress:", walletAddress)
+		//if tokenNumber != 0 && walletAddress != "" {
+		//	return MintData{
+		//		TokenID:       tokenID,
+		//		TokenNumber:   tokenNumber,
+		//		WalletAddress: walletAddress,
+		//	}, ErrWaitlist.Wrap(err)
+		//}
+		//return MintData{
+		//	TokenID: tokenID,
+		//}, nil
+		return MintData{}, nil
 	}
 }
 
