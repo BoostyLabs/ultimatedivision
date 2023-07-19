@@ -309,6 +309,7 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 					Bytes: bytes,
 				}
 				tokenID, err = eventData.GetTokenID(eventData)
+				fmt.Println("tokenID:", tokenID)
 				if err != nil {
 					return MintData{}, ErrWaitlist.New("could not get token_id from event data")
 				}
