@@ -287,19 +287,12 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 			fmt.Println("Error occurred:", err)
 		}
 
-		rawBody, err := reader.ReadBytes('\n')
+		rawBody := []byte(strings.Replace(responseString, "data:", "", 1))
 
-		if err != nil {
-			return MintData{}, ErrWaitlist.Wrap(err)
-		}
-		rawBody = []byte(strings.Replace(string(rawBody), "data:", "", 1))
-
-		rawBody123 := []byte(strings.Replace(responseString, "data:", "", 1))
-
-		rawBodyString := string(rawBody123)
+		rawBodyString := string(rawBody)
 		var data map[string]contract.DeployProcessedNew
 
-		err = json.Unmarshal([]byte(rawBodyString), &data)
+		_ = json.Unmarshal([]byte(rawBodyString), &data)
 
 		var tokenID uuid.UUID
 
@@ -322,9 +315,10 @@ func (service *Service) GetNodeEvents(ctx context.Context) (MintData, error) {
 			}
 		}
 
-		return MintData{
-			TokenID: tokenID,
-		}, nil
+		if tokenID != uuid.Nil {
+			return MintData{TokenID: tokenID}, nil
+
+		}
 	}
 }
 
