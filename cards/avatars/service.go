@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"image"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -415,7 +416,7 @@ func (service *Service) GetImage(ctx context.Context, cardID uuid.UUID) ([]byte,
 	// Clean up the file path and join the validated components.
 	cleanCardID := cardID.String()
 	fileName := cleanCardID + string(imageprocessing.TypeFilePNG)
-	avatarFilePath := filepath.Join(service.config.PathToOutputAvatarsLocal, fileName)
+	avatarFilePath := path.Join(service.config.PathToOutputAvatarsLocal, fileName)
 
 	// Read the image file.
 	image, err := os.ReadFile(strconv.Quote(avatarFilePath))
