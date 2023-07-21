@@ -10,6 +10,7 @@ import (
 	"image"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -394,9 +395,15 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Avatar, erro
 	return avatar, ErrAvatar.Wrap(err)
 }
 
+// isValidCardID checks if the cardID contains only allowed characters.
+func (service *Service) isValidCardID(uuid string) bool {
+	uuidRegex := regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
+	return uuidRegex.MatchString(uuid)
+}
+
 // GetImage returns avatar image.
 func (service *Service) GetImage(ctx context.Context, cardID uuid.UUID) ([]byte, error) {
-	if cardID == uuid.Nil {
+	if cardID == uuid.Nil && service.isValidCardID(cardID.String()) {
 		return nil, errors.New("invalid cardID in GetImage")
 	}
 
