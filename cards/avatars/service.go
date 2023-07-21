@@ -30,13 +30,15 @@ var ErrAvatar = errs.Class("avatar service error")
 // architecture: Service.
 type Service struct {
 	avatars DB
+	cards   cards.Service
 	config  Config
 }
 
 // NewService is a constructor for avatars service.
-func NewService(avatars DB, config Config) *Service {
+func NewService(avatars DB, cards *cards.Service, config Config) *Service {
 	return &Service{
 		config:  config,
+		cards:   *cards,
 		avatars: avatars,
 	}
 }
@@ -396,14 +398,17 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Avatar, erro
 }
 
 // isValidCardID checks if the cardID contains only allowed characters.
-func (service *Service) isValidCardID(uuid string) bool {
+func (service *Service) isValidCardID(ctx context.Context, cardID uuid.UUID) bool {
+	if _, err := service.cards.Get(ctx, cardID); err != nil {
+		return false
+	}
 	uuidRegex := regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
-	return uuidRegex.MatchString(uuid)
+	return uuidRegex.MatchString(cardID.String())
 }
 
 // GetImage returns avatar image.
 func (service *Service) GetImage(ctx context.Context, cardID uuid.UUID) ([]byte, error) {
-	if cardID == uuid.Nil && service.isValidCardID(cardID.String()) {
+	if cardID == uuid.Nil && service.isValidCardID(ctx, cardID) {
 		return nil, errors.New("invalid cardID in GetImage")
 	}
 
