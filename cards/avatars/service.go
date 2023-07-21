@@ -11,7 +11,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"regexp"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -399,22 +398,22 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Avatar, erro
 }
 
 // isValidCardID checks if the cardID contains only allowed characters.
-func (service *Service) isValidCardID(ctx context.Context, cardID uuid.UUID) bool {
-	if _, err := service.cards.Get(ctx, cardID); err != nil {
-		return false
+func (service *Service) isValidCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error) {
+	card, err := service.cards.Get(ctx, cardID)
+	if err != nil {
+		return card.ID, nil
 	}
-	uuidRegex := regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
-	return uuidRegex.MatchString(cardID.String())
 }
 
 // GetImage returns avatar image.
 func (service *Service) GetImage(ctx context.Context, cardID uuid.UUID) ([]byte, error) {
-	if cardID == uuid.Nil && service.isValidCardID(ctx, cardID) {
+	cardIDFromDB, err := service.isValidCardID(ctx, cardID)
+	if err != nil {
 		return nil, errors.New("invalid cardID in GetImage")
 	}
 
 	// Clean up the file path and join the validated components.
-	cleanCardID := cardID.String()
+	cleanCardID := cardIDFromDB.String()
 	fileName := cleanCardID + string(imageprocessing.TypeFilePNG)
 	avatarFilePath := path.Join(service.config.PathToOutputAvatarsLocal, fileName)
 
