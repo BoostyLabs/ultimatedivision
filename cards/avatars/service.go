@@ -401,8 +401,9 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Avatar, erro
 func (service *Service) isValidCardID(ctx context.Context, cardID uuid.UUID) (uuid.UUID, error) {
 	card, err := service.cards.Get(ctx, cardID)
 	if err != nil {
-		return card.ID, nil
+		return uuid.UUID{}, ErrAvatar.Wrap(err)
 	}
+	return card.ID, nil
 }
 
 // GetImage returns avatar image.
