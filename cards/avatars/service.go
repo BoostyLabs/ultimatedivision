@@ -5,6 +5,7 @@ package avatars
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"image"
 	"os"
@@ -396,7 +397,7 @@ func (service *Service) Get(ctx context.Context, cardID uuid.UUID) (Avatar, erro
 // GetImage returns avatar image.
 func (service *Service) GetImage(ctx context.Context, cardID uuid.UUID) ([]byte, error) {
 	if cardID == uuid.Nil {
-		return nil, ErrAvatar.New("invalid cardID in GetImage")
+		return nil, errors.New("invalid cardID in GetImage")
 	}
 
 	// Clean up the file path and join the validated components.
@@ -405,9 +406,9 @@ func (service *Service) GetImage(ctx context.Context, cardID uuid.UUID) ([]byte,
 	avatarFilePath := filepath.Join(service.config.PathToOutputAvatarsLocal, fileName)
 
 	// Read the image file.
-	image, error := os.ReadFile(avatarFilePath)
-	if error != nil {
-		return nil, ErrAvatar.Wrap(error)
+	image, err := os.ReadFile(avatarFilePath)
+	if err != nil {
+		return nil, ErrAvatar.Wrap(err)
 	}
 
 	return image, nil
