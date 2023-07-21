@@ -5,6 +5,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/zeebo/errs"
@@ -51,6 +52,9 @@ func (controller *WaitList) Create(w http.ResponseWriter, r *http.Request) {
 		controller.serveError(w, http.StatusBadRequest, ErrWaitList.Wrap(err))
 		return
 	}
+
+	createNFT.CardID = uuid.MustParse(createNFT.CardID.String())
+
 	createNFT.UserID = claims.UserID
 	transaction, err := controller.waitList.Create(ctx, createNFT)
 	if err != nil {

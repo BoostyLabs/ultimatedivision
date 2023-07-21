@@ -414,12 +414,11 @@ func (service *Service) GetImage(ctx context.Context, cardID uuid.UUID) ([]byte,
 
 	// Clean up the file path and join the validated components.
 	cleanCardID := cardID.String()
-	escapedUUID := strconv.Quote(cleanCardID)
-	fileName := escapedUUID + string(imageprocessing.TypeFilePNG)
+	fileName := cleanCardID + string(imageprocessing.TypeFilePNG)
 	avatarFilePath := filepath.Join(service.config.PathToOutputAvatarsLocal, fileName)
 
 	// Read the image file.
-	image, err := os.ReadFile(avatarFilePath)
+	image, err := os.ReadFile(strconv.Quote(avatarFilePath))
 	if err != nil {
 		return nil, ErrAvatar.Wrap(err)
 	}
