@@ -37,6 +37,8 @@ import closeButton from '@static/img/login/close-icon.svg';
 import './index.scss';
 
 export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }> = ({ closeRegistrationPopup }) => {
+    //@ts-ignore
+    const casperProvider = window.CasperWalletProvider()
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const ethersService = useMemo(() => ServicePlugin.create(), []);
     const client = useMemo(() => new EthersClient(), []);
@@ -126,9 +128,9 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
         }
     };
 
-    const casperRegistration = async() => {
+    const casperRegistration = async () => {
         try {
-            const publicKey = await Signer.getActivePublicKey();
+            const publicKey = await casperProvider.getActivePublicKey();
 
             await loginCasper(publicKey);
 
@@ -141,7 +143,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
             }
 
             try {
-                const publicKey = await Signer.getActivePublicKey();
+                const publicKey = await casperProvider.getActivePublicKey();
                 const accountHash = CLPublicKey.fromHex(publicKey).toAccountHashStr();
                 const convertedAccountHash = accountHash.replace(ACCOUNT_HASH_PREFIX, '');
 
@@ -156,8 +158,9 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
         }
     };
 
-    const sendConnectionRequestCasper = () => {
-        Signer.sendConnectionRequest();
+    const sendConnectionRequestCasper = async() => {
+        await casperProvider.requestConnection();
+        await casperRegistration()
     };
 
     /** Login with matamask. */

@@ -71,6 +71,8 @@ const Card: React.FC = () => {
         try {
             const walletService = new WalletService(user);
             await walletService.mintNft(id);
+            console.log("mint");
+            
         }
         catch (e: any) {
             ToastNotifications.somethingWentsWrong();
