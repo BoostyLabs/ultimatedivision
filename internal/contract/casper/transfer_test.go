@@ -64,7 +64,7 @@ func TestCasper_NftContract(t *testing.T) {
 		txHash, err := transfer.MintOne(ctx, casper.MintOneRequest{
 			PublicKey:              pair.PublicKey(),
 			ChainName:              "casper-test",
-			StandardPayment:        4100000000, // 4.1 CSPR.
+			StandardPayment:        4400000000, // 4.4 CSPR.
 			NFTContractPackageHash: nftContractHash,
 			TokenID:                tokenID,
 			Recipient:              recipient,
