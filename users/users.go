@@ -44,7 +44,7 @@ type DB interface {
 	// UpdateCasperWalletAddress updates user's address of Casper wallet in the database.
 	UpdateCasperWalletAddress(ctx context.Context, wallet string, walletType WalletType, id uuid.UUID) error
 	// UpdateNonce updates nonce by user.
-	UpdateNonce(ctx context.Context, id uuid.UUID, nonce []byte) error
+	UpdateNonce(ctx context.Context, id uuid.UUID, nonce int64) error
 	// Delete deletes a user in the database.
 	Delete(ctx context.Context, id uuid.UUID) error
 	// GetNickNameByID returns nickname by user id from the database.
@@ -88,7 +88,7 @@ type User struct {
 	CasperWallet     string         `json:"casperWallet"`
 	CasperWalletHash string         `json:"CasperWalletHash"`
 	WalletType       WalletType     `json:"walletType"`
-	Nonce            []byte         `json:"nonce"`
+	Nonce            int64          `json:"nonce"`
 	PublicKey        string         `json:"publicKey"`
 	PrivateKey       string         `json:"privateKey"`
 	LastLogin        time.Time      `json:"lastLogin"`
