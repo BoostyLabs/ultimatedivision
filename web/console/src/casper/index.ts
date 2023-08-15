@@ -2,8 +2,7 @@
 // See LICENSE for copying information.
 
 import { Buffer } from 'buffer';
-import { JsonTypes } from 'typedjson';
-import { CLPublicKey, CLValueBuilder, DeployUtil, RuntimeArgs, decodeBase16, CasperClient } from 'casper-js-sdk';
+import { CLPublicKey, CLValueBuilder, CasperClient, DeployUtil, RuntimeArgs, decodeBase16 } from 'casper-js-sdk';
 
 import { CasperNetworkClient } from '@/api/casper';
 import { CasperMatchTransaction } from '@/matches';
@@ -46,8 +45,9 @@ enum CasperRuntimeArgs {
     AMOUNT = 'amount'
 }
 
-//@ts-ignore
-const casperProvider = window.CasperWalletProvider()
+// @ts-ignore
+const casperProvider = window.CasperWalletProvider();
+const client = new CasperClient('https://cors-anywhere.herokuapp.com/http://65.21.205.159:7777/rpc');
 
 /** CasperTransactionService describes casper transaction entity. */
 class CasperTransactionService {
@@ -78,7 +78,7 @@ class CasperTransactionService {
         runtimeArgs: RuntimeArgs,
         paymentAmount: number,
         contractAddress: string
-    ): Promise<{signature: any, deploy: DeployUtil.Deploy}> {
+    ): Promise<{signature: any; deploy: DeployUtil.Deploy}> {
         const contractHashToBytes = await CasperTransactionService.convertContractHashToBytes(contractAddress);
 
         const walletAddressConverted = CLPublicKey.fromHex(this.walletAddress);
@@ -98,7 +98,7 @@ class CasperTransactionService {
 
         const signature = await casperProvider.sign(JSON.stringify(deployJson), this.walletAddress);
 
-        return {signature, deploy};
+        return { signature, deploy };
     }
 
     /** Mints a nft */
@@ -120,25 +120,24 @@ class CasperTransactionService {
                 await casperProvider.requestConnection();
             }
 
-            const clPublicKey = CLPublicKey.fromHex(this.walletAddress)
+            const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
             const { deploy, signature } = await this.contractSign('mint_one', runtimeArgs, MINT_ONE_PAYMENT_AMOUNT, nftWaitlist.nftCreateCasperContract.address);
-
             const signedDeploy = DeployUtil.setSignature(
                 deploy,
                 signature.signature,
                 clPublicKey
             );
 
-            const cliect = new CasperClient('https://cors-anywhere.herokuapp.com/http://65.21.205.159:7777/rpc')
-            await cliect.putDeploy(signedDeploy)
+            await client.putDeploy(signedDeploy);
         }
         catch (error: any) {
             if (error.message === 'Wallet is locked.') {
                 ToastNotifications.notify('Wallet is locked.');
-                return
+
+                return;
             }
-            
-            ToastNotifications.casperError(`${error.error}`);
+
+            ToastNotifications.casperError(`${error.code}`);
         }
     }
 
@@ -151,18 +150,20 @@ class CasperTransactionService {
                 [CasperRuntimeArgs.SIGNATURE]: CLValueBuilder.string(transaction.signature),
             });
 
-            const isConnected = await casperProvider.isConnected();
+            await casperProvider.requestConnection();
 
-            if (!isConnected) {
-                await casperProvider.requestConnection();
-            }
+            const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
+            const { deploy, signature } = await this.contractSign('claim', runtimeArgs, TOKEN_PAYMENT_AMOUNT, transaction.casperTokenContract.address);
+            const signedDeploy = DeployUtil.setSignature(
+                deploy,
+                signature.signature,
+                clPublicKey
+            );
 
-            const signature = await this.contractSign('claim', runtimeArgs, TOKEN_PAYMENT_AMOUNT, transaction.casperTokenContract.address);
-
-            await this.client.sendTx(rpcNodeAddress, JSON.stringify(signature), this.walletAddress);
+            await client.putDeploy(signedDeploy);
         }
         catch (error: any) {
-            ToastNotifications.casperError(`${error.error}`);
+            ToastNotifications.casperError(`${error.code}`);
         }
     }
 
@@ -180,12 +181,18 @@ class CasperTransactionService {
                 await casperProvider.requestConnection();
             }
 
-            const signature = await this.contractSign('approve', runtimeArgs, APPROVE_NFT_PAYMENT_AMOUNT, transaction.NFTContractAddress);
+            const { signature, deploy } = await this.contractSign('approve', runtimeArgs, APPROVE_NFT_PAYMENT_AMOUNT, transaction.NFTContractAddress);
+            const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
+            const signedDeploy = DeployUtil.setSignature(
+                deploy,
+                signature.signature,
+                clPublicKey
+            );
 
-            await this.client.sendTx(transaction.addressNodeServer, JSON.stringify(signature));
+            await client.putDeploy(signedDeploy);
         }
         catch (error: any) {
-            ToastNotifications.casperError(`${error.error}`);
+            ToastNotifications.casperError(`${error.code}`);
         }
     }
 
@@ -204,16 +211,20 @@ class CasperTransactionService {
             if (!isConnected) {
                 await casperProvider.requestConnection();
             }
+            const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
+            const { signature, deploy } = await this.contractSign('approve', runtimeArgs, APPROVE_TOKEN_PAYMENT_AMOUNT, transaction.tokenRewardContractAddress);
+            const signedDeploy = DeployUtil.setSignature(
+                deploy,
+                signature.signature,
+                clPublicKey
+            );
 
-            const signature = await this.contractSign('approve', runtimeArgs, APPROVE_TOKEN_PAYMENT_AMOUNT, transaction.tokenRewardContractAddress);
-
-            await this.client.sendTx(transaction.addressNodeServer, JSON.stringify(signature), this.walletAddress);
+            await client.putDeploy(signedDeploy);
         }
         catch (error: any) {
-            ToastNotifications.casperError(`${error.error}`);
+            ToastNotifications.casperError(`${error.code}`);
         }
     }
-
 
     /** Creates a lot */
     async createLot(transaction: MarketCreateLotTransaction): Promise<void> {
@@ -232,12 +243,18 @@ class CasperTransactionService {
                 await casperProvider.requestConnection();
             }
 
-            const signature = await this.contractSign('create_listing', runtimeArgs, CREATE_LOT_PAYMENT_AMOUNT, transaction.address);
+            const { signature, deploy } = await this.contractSign('create_listing', runtimeArgs, CREATE_LOT_PAYMENT_AMOUNT, transaction.address);
+            const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
+            const signedDeploy = DeployUtil.setSignature(
+                deploy,
+                signature.signature,
+                clPublicKey
+            );
 
-            await this.client.sendTx(transaction.rpcNodeAddress, JSON.stringify(signature));
+            await client.putDeploy(signedDeploy);
         }
         catch (error: any) {
-            ToastNotifications.casperError(`${error.error}`);
+            ToastNotifications.casperError(`${error.code}`);
         }
     }
 
@@ -255,12 +272,18 @@ class CasperTransactionService {
                 await casperProvider.requestConnection();
             }
 
-            const signature = await this.contractSign('accept_offer', runtimeArgs, ACCEPT_OFFER_PAYMENT_AMOUNT, transaction.address);
+            const { signature, deploy } = await this.contractSign('accept_offer', runtimeArgs, ACCEPT_OFFER_PAYMENT_AMOUNT, transaction.address);
+            const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
+            const signedDeploy = DeployUtil.setSignature(
+                deploy,
+                signature.signature,
+                clPublicKey
+            );
 
-            await this.client.sendTx(transaction.rpcNodeAddress, JSON.stringify(signature));
+            await client.putDeploy(signedDeploy);
         }
         catch (error: any) {
-            ToastNotifications.casperError(`${error.error}`);
+            ToastNotifications.casperError(`${error.code}`);
         }
     }
 
@@ -279,12 +302,18 @@ class CasperTransactionService {
                 await casperProvider.requestConnection();
             }
 
-            const signature = await this.contractSign('make_offer', runtimeArgs, MAKE_OFFER_PAYMENT_AMOUNT, transaction.address);
+            const { signature, deploy } = await this.contractSign('make_offer', runtimeArgs, MAKE_OFFER_PAYMENT_AMOUNT, transaction.address);
+            const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
+            const signedDeploy = DeployUtil.setSignature(
+                deploy,
+                signature.signature,
+                clPublicKey
+            );
 
-            await this.client.sendTx(transaction.rpcNodeAddress, JSON.stringify(signature));
+            await client.putDeploy(signedDeploy);
         }
         catch (error: any) {
-            ToastNotifications.casperError(`${error.error}`);
+            ToastNotifications.casperError(`${error.code}`);
         }
     }
 
@@ -302,12 +331,18 @@ class CasperTransactionService {
                 await casperProvider.requestConnection();
             }
 
-            const signature = await this.contractSign('buy_listing', runtimeArgs, BUY_OFFER_PAYMENT_AMOUNT, transaction.address);
+            const { signature, deploy } = await this.contractSign('buy_listing', runtimeArgs, BUY_OFFER_PAYMENT_AMOUNT, transaction.address);
+            const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
+            const signedDeploy = DeployUtil.setSignature(
+                deploy,
+                signature.signature,
+                clPublicKey
+            );
 
-            await this.client.sendTx(transaction.rpcNodeAddress, JSON.stringify(signature));
+            await client.putDeploy(signedDeploy);
         }
         catch (error: any) {
-            ToastNotifications.casperError(`${error.error}`);
+            ToastNotifications.casperError(`${error.code}`);
         }
     }
 }
