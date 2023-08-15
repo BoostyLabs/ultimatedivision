@@ -98,7 +98,7 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
             casper_wallet_address VARCHAR,
             casper_wallet_hash    VARCHAR,
             wallet_type           VARCHAR,
-            nonce                 BYTEA,
+            nonce                 BIGINT,
             public_key            VARCHAR,
             private_key           VARCHAR,
             last_login            TIMESTAMP WITH TIME ZONE NOT NULL,

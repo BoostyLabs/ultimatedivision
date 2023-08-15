@@ -303,7 +303,7 @@ func (usersDB *usersDB) UpdateCasperWalletAddress(ctx context.Context, wallet st
 }
 
 // UpdateNonce updates nonce by user.
-func (usersDB *usersDB) UpdateNonce(ctx context.Context, id uuid.UUID, nonce []byte) error {
+func (usersDB *usersDB) UpdateNonce(ctx context.Context, id uuid.UUID, nonce int64) error {
 	result, err := usersDB.conn.ExecContext(ctx, "UPDATE users SET nonce=$1 WHERE id=$2", nonce, id)
 	if err != nil {
 		return ErrUsers.Wrap(err)
