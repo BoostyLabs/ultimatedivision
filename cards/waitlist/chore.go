@@ -76,7 +76,7 @@ func (chore *Chore) RunCasperCheckMintEvent(ctx context.Context) error {
 
 			if deploy.DeployProcessed == (sse.DeployProcessedPayload{}) ||
 				deploy.DeployProcessed.ExecutionResult == (new_casper_types.ExecutionResultStatus{}) ||
-				deploy.DeployProcessed.ExecutionResult.Success == (&new_casper_types.ExecutionResultStatusData{}) ||
+				deploy.DeployProcessed.ExecutionResult.Success == nil ||
 				reflect.DeepEqual(deploy.DeployProcessed.ExecutionResult.Success.Effect, new_casper_types.Effect{}) ||
 				deploy.DeployProcessed.ExecutionResult.Success.Effect.Transforms == nil {
 				return nil
