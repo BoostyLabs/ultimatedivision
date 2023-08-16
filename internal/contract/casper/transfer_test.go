@@ -12,10 +12,12 @@ import (
 
 	casper_ed25519 "github.com/casper-ecosystem/casper-golang-sdk/keypair/ed25519"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/require"
 
 	"ultimatedivision/internal/contract/casper"
 	contract "ultimatedivision/pkg/contractcasper"
+	"ultimatedivision/pkg/signer"
 )
 
 func TestReadPrivateKeyFromFile(t *testing.T) {
@@ -232,6 +234,62 @@ func TestCasper_TokensContract(t *testing.T) {
 			TokensContractHash: tokensContractHash,
 			Spender:            common.HexToHash(spender),
 			Amount:             amount,
+		})
+		require.NoError(t, err)
+		require.Empty(t, txHash)
+	})
+}
+
+func TestCasper_Token_Claim(t *testing.T) {
+	t.Skip("for manual testing")
+
+	var (
+		casperNodeAddress = "http://116.202.169.210:7777/rpc"
+
+		privateAccountKey = "4f0ffa6c3925d02127a9e9213c7c21215dbc288e0ee61770e6adf7752324c282"
+		publicAccountKey  = "ad794c8f3da55845a5422506b4bd01ed1ae4e57378a82216d25d7351854b563d"
+		accountHash       = "04d18b95474c8d7962a69bb386c788f1d7785b2cf3c26d9c7644516cf9652295"
+
+		tokenContractHash = "5aed0843516b06e4cbf56b1085c4af37035f2c9c1f18d7b0ffd7bbe96f91a3e0" // nft contract.
+		value             = big.NewInt(5)
+		nonce             = int64(2) // the nonce must be successively increased.
+
+		privateKey = "" // add private.
+	)
+
+	ctx := context.Background()
+	casperClient := contract.New(casperNodeAddress)
+
+	// private -----------.
+	privateAccountKeyBytes, err := hex.DecodeString(privateAccountKey)
+	require.NoError(t, err)
+	publicAccountKeyBytes, err := hex.DecodeString(publicAccountKey)
+	require.NoError(t, err)
+
+	pair := casper_ed25519.ParseKeyPair(publicAccountKeyBytes, privateAccountKeyBytes)
+
+	transfer := casper.NewTransfer(casperClient, func(b []byte) ([]byte, error) {
+		casperSignature := pair.Sign(b)
+		return casperSignature.SignatureData, nil
+	})
+
+	// for signature.
+	privateKeyECDSA, err := crypto.HexToECDSA(privateKey)
+	require.NoError(t, err)
+	// -----------.
+
+	signature, err := signer.GenerateCasperSignatureWithValueAndNonce(signer.Address(accountHash), signer.Address(tokenContractHash), value, nonce, privateKeyECDSA)
+	require.NoError(t, err)
+
+	t.Run("claim", func(t *testing.T) {
+		txHash, err := transfer.Claim(ctx, casper.ClaimRequest{
+			PublicKey:         pair.PublicKey(),
+			ChainName:         "casper-test",
+			StandardPayment:   4100000000, // 4.1 CSPR.
+			TokenContractHash: tokenContractHash,
+			Value:             value,
+			Nonce:             uint64(nonce),
+			Signature:         string(signature),
 		})
 		require.NoError(t, err)
 		require.Empty(t, txHash)
