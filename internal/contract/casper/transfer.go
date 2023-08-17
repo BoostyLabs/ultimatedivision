@@ -762,3 +762,102 @@ func (t *Transfer) FinalListing(ctx context.Context, req FinalListingRequest) (s
 
 	return hash, nil
 }
+
+// ClaimRequest describes values to calls Claim method.
+type ClaimRequest struct {
+	PublicKey         keypair.PublicKey
+	ChainName         string
+	StandardPayment   int64
+	TokenContractHash string
+	Value             *big.Int
+	Nonce             uint64
+	Signature         string
+}
+
+// Claim finals listing for lot.
+func (t *Transfer) Claim(ctx context.Context, req ClaimRequest) (string, error) {
+	deployParams := sdk.NewDeployParams(req.PublicKey, strings.ToLower(req.ChainName), nil, 0)
+	payment := sdk.StandardPayment(big.NewInt(req.StandardPayment))
+
+	value := types.CLValue{
+		Type: types.CLTypeU256,
+		U256: req.Value,
+	}
+	valueBytes, err := serialization.Marshal(value)
+	if err != nil {
+		return "", err
+	}
+
+	// the nonce must be successively increased.
+	nonce := types.CLValue{
+		Type: types.CLTypeU64,
+		U64:  &req.Nonce,
+	}
+	nonceBytes, err := serialization.Marshal(nonce)
+	if err != nil {
+		return "", err
+	}
+
+	signature := types.CLValue{
+		Type:   types.CLTypeString,
+		String: &req.Signature,
+	}
+	signatureBytes, err := serialization.Marshal(signature)
+	if err != nil {
+		return "", err
+	}
+
+	args := map[string]sdk.Value{
+		"value": {
+			Tag:         types.CLTypeU256,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(valueBytes),
+		},
+		"nonce": {
+			Tag:         types.CLTypeU64,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(nonceBytes),
+		},
+		"signature": {
+			Tag:         types.CLTypeString,
+			IsOptional:  false,
+			StringBytes: hex.EncodeToString(signatureBytes),
+		},
+	}
+
+	keyOrder := []string{"value", "nonce", "signature"}
+	runtimeArgs := sdk.NewRunTimeArgs(args, keyOrder)
+
+	contractHexBytes, err := hex.DecodeString(req.TokenContractHash)
+	if err != nil {
+		return "", err
+	}
+
+	var contractHashBytes [32]byte
+	copy(contractHashBytes[:], contractHexBytes)
+	session := sdk.NewStoredContractByHash(contractHashBytes, "claim", *runtimeArgs)
+
+	deploy := sdk.MakeDeploy(deployParams, payment, session)
+
+	signedTx, err := t.sign(deploy.Hash)
+	if err != nil {
+		return "", err
+	}
+
+	signatureKeypair := keypair.Signature{
+		Tag:           keypair.KeyTagEd25519,
+		SignatureData: signedTx,
+	}
+	approval := sdk.Approval{
+		Signer:    req.PublicKey,
+		Signature: signatureKeypair,
+	}
+	deploy.Approvals = append(deploy.Approvals, approval)
+
+	hash, err := t.casper.PutDeploy(*deploy)
+	if err != nil {
+		return "", err
+	}
+
+	return hash, nil
+}

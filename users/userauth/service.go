@@ -4,16 +4,16 @@
 package userauth
 
 import (
-	"bytes"
 	"context"
 	"crypto/rand"
 	"crypto/subtle"
+	"encoding/binary"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/BoostyLabs/evmsignature"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/google/uuid"
 	"github.com/zeebo/errs"
@@ -407,9 +407,7 @@ func (service *Service) Nonce(ctx context.Context, address common.Address, walle
 		return "", Error.Wrap(err)
 	}
 
-	nonce := hexutil.Encode(user.Nonce)
-
-	return nonce, nil
+	return strconv.Itoa(int(user.Nonce)), nil
 }
 
 // RegisterWithMetamask creates user by credentials.
@@ -430,9 +428,11 @@ func (service *Service) RegisterWithMetamask(ctx context.Context, signature []by
 		return Error.Wrap(err)
 	}
 
+	nonceUint32 := binary.BigEndian.Uint32(nonce)
+
 	user := users.User{
 		ID:         uuid.New(),
-		Nonce:      nonce,
+		Nonce:      int64(nonceUint32),
 		LastLogin:  time.Time{},
 		Status:     users.StatusActive,
 		CreatedAt:  time.Now().UTC(),
@@ -459,12 +459,7 @@ func (service *Service) LoginWithMetamask(ctx context.Context, nonce string, sig
 		return "", Error.Wrap(err)
 	}
 
-	decodeNonce, err := hexutil.Decode(nonce)
-	if err != nil {
-		return "", Error.Wrap(err)
-	}
-
-	if !bytes.Equal(decodeNonce, user.Nonce) {
+	if nonce != strconv.Itoa(int(user.Nonce)) {
 		return "", Error.New("nonce is invalid")
 	}
 
@@ -484,7 +479,9 @@ func (service *Service) LoginWithMetamask(ctx context.Context, nonce string, sig
 		return "", Error.Wrap(err)
 	}
 
-	err = service.users.UpdateNonce(ctx, user.ID, newNonce)
+	nonceUint32 := binary.BigEndian.Uint32(newNonce)
+
+	err = service.users.UpdateNonce(ctx, user.ID, int64(nonceUint32))
 	if err != nil {
 		return "", Error.Wrap(err)
 	}
@@ -605,9 +602,11 @@ func (service *Service) RegisterWithVelas(ctx context.Context, walletAddress com
 		return Error.Wrap(err)
 	}
 
+	nonceUint32 := binary.BigEndian.Uint32(nonce)
+
 	user := users.User{
 		ID:         uuid.New(),
-		Nonce:      nonce,
+		Nonce:      int64(nonceUint32),
 		LastLogin:  time.Time{},
 		Status:     users.StatusActive,
 		CreatedAt:  time.Now().UTC(),
@@ -655,12 +654,7 @@ func (service *Service) LoginWithVelas(ctx context.Context, nonce string, wallet
 		return "", Error.Wrap(err)
 	}
 
-	decodeNonce, err := hexutil.Decode(nonce)
-	if err != nil {
-		return "", Error.Wrap(err)
-	}
-
-	if !bytes.Equal(decodeNonce, user.Nonce) {
+	if nonce != strconv.Itoa(int(user.Nonce)) {
 		return "", Error.New("nonce is invalid")
 	}
 
@@ -680,7 +674,9 @@ func (service *Service) LoginWithVelas(ctx context.Context, nonce string, wallet
 		return "", Error.Wrap(err)
 	}
 
-	err = service.users.UpdateNonce(ctx, user.ID, newNonce)
+	nonceUint32 := binary.BigEndian.Uint32(newNonce)
+
+	err = service.users.UpdateNonce(ctx, user.ID, int64(nonceUint32))
 	if err != nil {
 		return "", Error.Wrap(err)
 	}
