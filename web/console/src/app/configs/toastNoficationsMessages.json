@@ -23,5 +23,6 @@
     "success": "Success",
     "transactionDenied": "Transaction denied by user",
     "tryLater": "Please, try later!",
-    "usernameUpdated": "Username has been updated."
+    "usernameUpdated": "Username has been updated.",
+    "lockedCasperWallet": "Casper Wallet is locked. Please, unlock it and try again!"
 }
