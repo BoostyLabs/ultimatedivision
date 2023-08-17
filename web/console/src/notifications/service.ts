@@ -11,6 +11,8 @@ const RPC_ERROR_CODE = -32002;
 const ALREADY_MINTED_ERROR_CODE = -32603;
 /** Error code indicates that transaction is denied. */
 const DENIED_TRANSACTION_CODE = 4001;
+/** Error code indicates that casper wallet is locked. */
+const LOCKED_CASPER_WALLET_CODE = 1;
 /** Indicates that user has insufficient funds. */
 const NOT_ENOUGH_ETH_CODE = 'INSUFFICIENT_FUNDS';
 /** Indicates that was choosen not correct network. */
@@ -153,8 +155,11 @@ export class ToastNotifications {
     /** Handles casper errors and notifies user. */
     static casperError(error: any) {
         let errorMessage = '';
-        if (error.includes(CASPER_INSUFFICIENT_BALANCE_CODE)) {
+        if (Number(error) === CASPER_INSUFFICIENT_BALANCE_CODE) {
             errorMessage = toastNoficationsMessages.insufficientBalance;
+        }
+        if (Number(error) === LOCKED_CASPER_WALLET_CODE) {
+            errorMessage = toastNoficationsMessages.lockedCasperWallet;
         } else {
             errorMessage = toastNoficationsMessages.tryLater;
         }

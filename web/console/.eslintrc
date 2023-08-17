@@ -206,7 +206,6 @@
             "error",
             2
         ],
-        "new-cap": "error",
         "no-multi-assign": "error",
         "no-multiple-empty-lines": "error",
         "no-nested-ternary": "error",

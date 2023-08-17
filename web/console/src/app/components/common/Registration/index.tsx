@@ -31,12 +31,14 @@ import { ACCOUNT_HASH_PREFIX } from '@/casper/types';
 import representLogo from '@static/img/login/represent-logo.gif';
 import metamask from '@static/img/login/metamask-icon.svg';
 import velas from '@static/img/login/velas-icon.svg';
-import casper from '@static/img/login/casper-icon.svg';
+import casper from '@static/img/login/casper.png';
 import closeButton from '@static/img/login/close-icon.svg';
 
 import './index.scss';
 
 export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }> = ({ closeRegistrationPopup }) => {
+    // @ts-ignore
+    const casperProvider = window.CasperWalletProvider();
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const ethersService = useMemo(() => ServicePlugin.create(), []);
     const client = useMemo(() => new EthersClient(), []);
@@ -128,7 +130,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
 
     const casperRegistration = async() => {
         try {
-            const publicKey = await Signer.getActivePublicKey();
+            const publicKey = await casperProvider.getActivePublicKey();
 
             await loginCasper(publicKey);
 
@@ -141,7 +143,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
             }
 
             try {
-                const publicKey = await Signer.getActivePublicKey();
+                const publicKey = await casperProvider.getActivePublicKey();
                 const accountHash = CLPublicKey.fromHex(publicKey).toAccountHashStr();
                 const convertedAccountHash = accountHash.replace(ACCOUNT_HASH_PREFIX, '');
 
@@ -156,8 +158,9 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
         }
     };
 
-    const sendConnectionRequestCasper = () => {
-        Signer.sendConnectionRequest();
+    const sendConnectionRequestCasper = async() => {
+        await casperProvider.requestConnection();
+        await casperRegistration();
     };
 
     /** Login with matamask. */
@@ -236,7 +239,7 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
                                     alt="Casper logo"
                                     className="registration-pop-up__content__block__item__logo"
                                 />
-                                <p className="registration-pop-up__content__block__item__text">Connect casper signer</p>
+                                <p className="registration-pop-up__content__block__item__text">Connect casper wallet</p>
                             </div>
                         </div>
                     </div>

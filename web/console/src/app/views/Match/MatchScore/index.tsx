@@ -135,14 +135,15 @@ export const MatchScore: React.FC = () => {
         await walletService.approveTokenReward(approveData);
     };
 
-    if (webSocketClient) {
-        webSocketClient.ws.onmessage = async({ data }: MessageEvent) => {
-            const messageEvent = JSON.parse(data);
-
-            const walletService = new WalletService(user);
-            await walletService.mintToken(messageEvent);
-        };
-    }
+    useEffect(() => {
+        if (webSocketClient) {
+            webSocketClient.ws.onmessage = async({ data }: MessageEvent) => {
+                const messageEvent = JSON.parse(data);
+                const walletService = new WalletService(user);
+                await walletService.mintToken(messageEvent);
+            };
+        }
+    }, [webSocketClient]);
 
     useEffect(() => {
         setUser();
