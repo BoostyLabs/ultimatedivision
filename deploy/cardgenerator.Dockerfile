@@ -1,5 +1,5 @@
 # BUILDER Image. Used to download all dependenices, etc
-FROM golang:1.17.4-alpine3.15 as cardgenerator_builder
+FROM golang:1.19-alpine3.15 as cardgenerator_builder
 # Changing root directory
 WORKDIR /app
 # Copy all files to root derictory
