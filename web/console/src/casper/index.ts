@@ -47,6 +47,7 @@ enum CasperRuntimeArgs {
 
 // @ts-ignore
 const casperProvider = window.CasperWalletProvider();
+// TODO: Need to move to config
 const client = new CasperClient('http://134.122.49.45:9100/http://65.21.205.159:7777/rpc');
 
 /** CasperTransactionService describes casper transaction entity. */
