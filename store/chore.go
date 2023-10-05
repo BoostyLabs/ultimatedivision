@@ -6,6 +6,7 @@ package store
 import (
 	"context"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/BoostyLabs/thelooper"
@@ -14,6 +15,7 @@ import (
 
 	"ultimatedivision/cards"
 	"ultimatedivision/cards/avatars"
+	"ultimatedivision/internal/logger"
 )
 
 var (
@@ -25,18 +27,22 @@ var (
 //
 // architecture: Chore.
 type Chore struct {
-	Loop    *thelooper.Loop
-	config  Config
+	config Config
+	log    logger.Logger
+
+	Loop *thelooper.Loop
+
 	store   *Service
 	cards   *cards.Service
 	avatars *avatars.Service
 }
 
 // NewChore instantiates Chore.
-func NewChore(config Config, store *Service, cards *cards.Service, avatars *avatars.Service) *Chore {
+func NewChore(config Config, log logger.Logger, store *Service, cards *cards.Service, avatars *avatars.Service) *Chore {
 	return &Chore{
-		Loop:    thelooper.NewLoop(config.StoreRenewalInterval),
 		config:  config,
+		log:     log,
+		Loop:    thelooper.NewLoop(config.StoreRenewalInterval),
 		store:   store,
 		cards:   cards,
 		avatars: avatars,
@@ -101,7 +107,12 @@ func (chore *Chore) Run(ctx context.Context) error {
 
 			_, err = chore.avatars.Generate(ctx, card, card.ID.String())
 			if err != nil {
-				return ChoreError.Wrap(err)
+				if !strings.Contains(err.Error(), "the number is less than or equal to zero") {
+					chore.log.Error("couldn't generate avatar", ChoreError.Wrap(err))
+					return ChoreError.Wrap(err)
+				}
+
+				chore.log.Debug("the number of avatar layers is less than or equal to zero, couldn't generate avatar")
 			}
 		}
 

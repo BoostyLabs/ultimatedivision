@@ -562,6 +562,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 		peer.Store.StoreRenewal = store.NewChore(
 			config.Store.Config,
+			peer.Log,
 			peer.Store.Service,
 			peer.Cards.Service,
 			peer.Avatars.Service,
