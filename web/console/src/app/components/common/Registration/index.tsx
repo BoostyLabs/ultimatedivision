@@ -21,6 +21,7 @@ import { EthersClient } from '@/api/ethers';
 import { NotFoundError } from '@/api';
 import { SignedMessage } from '@/ethers';
 import { ToastNotifications } from '@/notifications/service';
+import { detectBrowser, openWalletShopPage, ConcordiumWalletShopPage } from '@/app/internal/detectBrowser';
 
 import { VelasClient } from '@/api/velas';
 import { VelasService } from '@/velas/service';
@@ -131,7 +132,8 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
     const casperRegistration = async() => {
         try {
             if (!casperProvider) {
-                return
+                const browser = detectBrowser()
+                openWalletShopPage(ConcordiumWalletShopPage[browser])
             }
             
             const publicKey = await casperProvider.getActivePublicKey();
