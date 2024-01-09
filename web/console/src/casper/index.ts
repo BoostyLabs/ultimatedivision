@@ -46,7 +46,7 @@ enum CasperRuntimeArgs {
 }
 
 // @ts-ignore
-const casperProvider = window.CasperWalletProvider() && window.CasperWalletProvider();
+const casperProvider = window.CasperWalletProvider && window.CasperWalletProvider();
 const client = new CasperClient('https://cors-anywhere.herokuapp.com/http://52.35.59.254:7777/rpc');
 
 /** CasperTransactionService describes casper transaction entity. */

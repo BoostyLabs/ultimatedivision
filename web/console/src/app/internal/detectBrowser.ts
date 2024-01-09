@@ -9,6 +9,7 @@ export const detectBrowser = () => {
     } else if (navigator.userAgent.indexOf('Opera') !== NO_INDEX_FOR_BROWSER) {
         return 'Opera';
     }
+
     return '';
 };
 export const openWalletShopPage = (walletPageLink: string) => {
@@ -17,9 +18,8 @@ export const openWalletShopPage = (walletPageLink: string) => {
             walletPageLink,
             '_blank'
         );
-        return;
     }
-}
+};
 export enum CasperWalletShopPage {
     'Mozilla Firefox' = 'https://addons.mozilla.org/en-US/firefox/addon/casper-wallet/',
     'Opera' = '',
