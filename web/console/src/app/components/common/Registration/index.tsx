@@ -38,7 +38,7 @@ import './index.scss';
 
 export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }> = ({ closeRegistrationPopup }) => {
     // @ts-ignore
-    const casperProvider = window.CasperWalletProvider();
+    const casperProvider = window.CasperWalletProvider() && window.CasperWalletProvider();
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const ethersService = useMemo(() => ServicePlugin.create(), []);
     const client = useMemo(() => new EthersClient(), []);
@@ -130,6 +130,10 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
 
     const casperRegistration = async() => {
         try {
+            if (!casperProvider) {
+                return
+            }
+            
             const publicKey = await casperProvider.getActivePublicKey();
 
             await loginCasper(publicKey);
