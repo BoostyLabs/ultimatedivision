@@ -46,7 +46,7 @@ enum CasperRuntimeArgs {
 }
 
 // @ts-ignore
-const casperProvider = window.CasperWalletProvider && window.CasperWalletProvider();
+const casperProvider = window?.CasperWalletProvider && window?.CasperWalletProvider();
 const client = new CasperClient('https://cors-anywhere.herokuapp.com/http://52.35.59.254:7777/rpc');
 
 /** CasperTransactionService describes casper transaction entity. */
@@ -58,7 +58,7 @@ class CasperTransactionService {
     public walletAddress: string = '';
 
     /** default CasperTransactionService implementation */
-    constructor(walletAddress: string) {
+    constructor(walletAddress: string, public provider = casperProvider) {
         this.walletAddress = walletAddress;
     }
 
@@ -96,7 +96,7 @@ class CasperTransactionService {
 
         const deployJson = DeployUtil.deployToJson(deploy);
 
-        const signature = await casperProvider.sign(JSON.stringify(deployJson), this.walletAddress);
+        const signature = await this.provider.sign(JSON.stringify(deployJson), this.walletAddress);
 
         return { signature, deploy };
     }
@@ -114,10 +114,10 @@ class CasperTransactionService {
                 [CasperRuntimeArgs.RECIPIENT]: CLValueBuilder.string(`account-hash-${accountHashConverted}`),
             });
 
-            const isConnected = await casperProvider.isConnected();
+            const isConnected = await this.provider.isConnected();
 
             if (!isConnected) {
-                await casperProvider.requestConnection();
+                await this.provider.requestConnection();
             }
 
             const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
@@ -150,7 +150,7 @@ class CasperTransactionService {
                 [CasperRuntimeArgs.SIGNATURE]: CLValueBuilder.string(transaction.signature),
             });
 
-            await casperProvider.requestConnection();
+            await this.provider.requestConnection();
 
             const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
             const { deploy, signature } = await this.contractSign('claim', runtimeArgs, TOKEN_PAYMENT_AMOUNT, transaction.casperTokenContract.address);
@@ -175,10 +175,10 @@ class CasperTransactionService {
                 [CasperRuntimeArgs.SPENDER]: CLValueBuilder.string(transaction.approveNftSpender),
             });
 
-            const isConnected = await casperProvider.isConnected();
+            const isConnected = await this.provider.isConnected();
 
             if (!isConnected) {
-                await casperProvider.requestConnection();
+                await this.provider.requestConnection();
             }
 
             const { signature, deploy } = await this.contractSign('approve', runtimeArgs, APPROVE_NFT_PAYMENT_AMOUNT, transaction.NFTContractAddress);
@@ -206,10 +206,10 @@ class CasperTransactionService {
                 [CasperRuntimeArgs.AMOUNT]: CLValueBuilder.u256(transaction.amount),
             });
 
-            const isConnected = await casperProvider.isConnected();
+            const isConnected = await this.provider.isConnected();
 
             if (!isConnected) {
-                await casperProvider.requestConnection();
+                await this.provider.requestConnection();
             }
             const clPublicKey = CLPublicKey.fromHex(this.walletAddress);
             const { signature, deploy } = await this.contractSign('approve', runtimeArgs, APPROVE_TOKEN_PAYMENT_AMOUNT, transaction.tokenRewardContractAddress);
@@ -237,10 +237,10 @@ class CasperTransactionService {
                 [CasperRuntimeArgs.AUCTION_DURATION]: CLValueBuilder.u256(transaction.auctionDuration),
             });
 
-            const isConnected = await casperProvider.isConnected();
+            const isConnected = await this.provider.isConnected();
 
             if (!isConnected) {
-                await casperProvider.requestConnection();
+                await this.provider.requestConnection();
             }
 
             const { signature, deploy } = await this.contractSign('create_listing', runtimeArgs, CREATE_LOT_PAYMENT_AMOUNT, transaction.address);
@@ -266,10 +266,10 @@ class CasperTransactionService {
                 [CasperRuntimeArgs.TOKEN_ID]: CLValueBuilder.string(transaction.tokenId),
             });
 
-            const isConnected = await casperProvider.isConnected();
+            const isConnected = await this.provider.isConnected();
 
             if (!isConnected) {
-                await casperProvider.requestConnection();
+                await this.provider.requestConnection();
             }
 
             const { signature, deploy } = await this.contractSign('accept_offer', runtimeArgs, ACCEPT_OFFER_PAYMENT_AMOUNT, transaction.address);
@@ -296,10 +296,10 @@ class CasperTransactionService {
                 [CasperRuntimeArgs.OFFER_PRICE]: CLValueBuilder.u256(transaction.offerPrice),
             });
 
-            const isConnected = await casperProvider.isConnected();
+            const isConnected = await this.provider.isConnected();
 
             if (!isConnected) {
-                await casperProvider.requestConnection();
+                await this.provider.requestConnection();
             }
 
             const { signature, deploy } = await this.contractSign('make_offer', runtimeArgs, MAKE_OFFER_PAYMENT_AMOUNT, transaction.address);
@@ -325,10 +325,10 @@ class CasperTransactionService {
                 [CasperRuntimeArgs.TOKEN_ID]: CLValueBuilder.string(transaction.tokenId),
             });
 
-            const isConnected = await casperProvider.isConnected();
+            const isConnected = await this.provider.isConnected();
 
             if (!isConnected) {
-                await casperProvider.requestConnection();
+                await this.provider.requestConnection();
             }
 
             const { signature, deploy } = await this.contractSign('buy_listing', runtimeArgs, BUY_OFFER_PAYMENT_AMOUNT, transaction.address);
