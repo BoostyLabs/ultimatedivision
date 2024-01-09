@@ -290,13 +290,13 @@ func (server *Server) withAuth(handler http.Handler) http.Handler {
 
 		token, err := server.cookieAuth.GetToken(r)
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 
 		claims, err := server.authService.Authorize(ctx, token)
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 
