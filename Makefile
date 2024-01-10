@@ -26,7 +26,7 @@ build_dist: ## Build dist folder that needed for frontend.
 	cd web/console && npm ci && npm run build
 
 build_app: ## Build app docker image.
-	DOCKER_BUILDKIT=1 docker build -f ./deploy/ultimatedivision.Dockerfile -t $(IMAGE_APP_BACKUP) . && DOCKER_BUILDKIT=1 docker build -f ./deploy/ultimatedivision.Dockerfile -t $(IMAGE_APP_LATEST) .
+	make build_dist && DOCKER_BUILDKIT=1 docker build -f ./deploy/ultimatedivision.Dockerfile -t $(IMAGE_APP_BACKUP) . && DOCKER_BUILDKIT=1 docker build -f ./deploy/ultimatedivision.Dockerfile -t $(IMAGE_APP_LATEST) .
 
 push_app: ## Push app docker image.
 	docker push $(IMAGE_APP_BACKUP) && docker push $(IMAGE_APP_LATEST)
