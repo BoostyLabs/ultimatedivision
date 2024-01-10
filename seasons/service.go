@@ -18,6 +18,7 @@ import (
 	"ultimatedivision/clubs"
 	"ultimatedivision/divisions"
 	"ultimatedivision/gameplay/matches"
+	"ultimatedivision/internal/logger"
 	"ultimatedivision/udts/currencywaitlist"
 	"ultimatedivision/users"
 )
@@ -29,21 +30,24 @@ var ErrSeasons = errs.Class("seasons service error")
 //
 // architecture: Service
 type Service struct {
+	log    logger.Logger
+	config Config
+
 	seasons          DB
 	divisions        *divisions.Service
 	matches          *matches.Service
-	config           Config
 	clubs            *clubs.Service
 	users            *users.Service
 	currencywaitlist *currencywaitlist.Service
 }
 
 // NewService is a constructor for seasons service.
-func NewService(seasons DB, config Config, divisions *divisions.Service, matches *matches.Service, clubs *clubs.Service, users *users.Service, currencywaitlist *currencywaitlist.Service) *Service {
+func NewService(log logger.Logger, config Config, seasons DB, divisions *divisions.Service, matches *matches.Service, clubs *clubs.Service, users *users.Service, currencywaitlist *currencywaitlist.Service) *Service {
 	return &Service{
+		log:              log,
+		config:           config,
 		seasons:          seasons,
 		divisions:        divisions,
-		config:           config,
 		matches:          matches,
 		clubs:            clubs,
 		users:            users,
@@ -228,6 +232,7 @@ func (service *Service) UpdateClubsToNewDivision(ctx context.Context) error {
 		for _, statistic := range clubsStatisticsByDivision {
 			userProfile, err := service.users.GetProfile(ctx, statistic.Club.OwnerID)
 			if err != nil {
+				service.log.Error("couldn't get profile when update clubs to new division", ChoreError.Wrap(err))
 				return ChoreError.Wrap(err)
 			}
 

@@ -517,8 +517,9 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 	{ // seasons setup.
 		peer.Seasons.Service = seasons.NewService(
-			peer.Database.Seasons(),
+			logger,
 			config.Seasons.Config,
+			peer.Database.Seasons(),
 			peer.Divisions.Service,
 			peer.Matches.Service,
 			peer.Clubs.Service,
@@ -562,6 +563,7 @@ func New(logger logger.Logger, config Config, db DB) (peer *Peer, err error) {
 
 		peer.Store.StoreRenewal = store.NewChore(
 			config.Store.Config,
+			peer.Log,
 			peer.Store.Service,
 			peer.Cards.Service,
 			peer.Avatars.Service,
@@ -682,20 +684,40 @@ func (peer *Peer) Run(ctx context.Context) error {
 		return ignoreCancel(peer.Console.Endpoint.Run(ctx))
 	})
 	group.Go(func() error {
-		return ignoreCancel(peer.Marketplace.ExpirationLotChore.Run(ctx))
+		err := ignoreCancel(peer.Marketplace.ExpirationLotChore.Run(ctx))
+		if err != nil {
+			peer.Log.Error("err in expiration lot chore run method", err)
+		}
+
+		return nil
 	})
 	// TODO: now use a new service - matchmaking for the game
 	// group.Go(func() error {
 	//	return ignoreCancel(peer.Queue.PlaceChore.Run(ctx))
 	// }).
 	group.Go(func() error {
-		return ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
+		err := ignoreCancel(peer.Seasons.ExpirationSeasons.Run(ctx))
+		if err != nil {
+			peer.Log.Error("err in expiration seasons run method", err)
+		}
+
+		return nil
 	})
 	group.Go(func() error {
-		return ignoreCancel(peer.Bids.BidsChore.Run(ctx))
+		err := ignoreCancel(peer.Bids.BidsChore.Run(ctx))
+		if err != nil {
+			peer.Log.Error("err in bids chore run method", err)
+		}
+
+		return nil
 	})
 	group.Go(func() error {
-		return ignoreCancel(peer.WaitList.WaitListChore.RunCasperCheckMintEvent(ctx))
+		err := ignoreCancel(peer.WaitList.WaitListChore.RunCasperCheckMintEvent(ctx))
+		if err != nil {
+			peer.Log.Error("err in wait list chore run method", err)
+		}
+
+		return nil
 	})
 
 	// TODO: uncomment when the Ethereum node is running
@@ -708,7 +730,12 @@ func (peer *Peer) Run(ctx context.Context) error {
 	// })
 	// TODO: remove it.
 	group.Go(func() error {
-		return ignoreCancel(peer.Store.StoreRenewal.Run(ctx))
+		err := ignoreCancel(peer.Store.StoreRenewal.Run(ctx))
+		if err != nil {
+			peer.Log.Error("err in store renewal run method", err)
+		}
+
+		return nil
 	})
 
 	return group.Wait()

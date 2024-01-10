@@ -21,6 +21,7 @@ import { EthersClient } from '@/api/ethers';
 import { NotFoundError } from '@/api';
 import { SignedMessage } from '@/ethers';
 import { ToastNotifications } from '@/notifications/service';
+import { ConcordiumWalletShopPage, detectBrowser, openWalletShopPage } from '@/app/internal/detectBrowser';
 
 import { VelasClient } from '@/api/velas';
 import { VelasService } from '@/velas/service';
@@ -38,7 +39,7 @@ import './index.scss';
 
 export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }> = ({ closeRegistrationPopup }) => {
     // @ts-ignore
-    const casperProvider = window.CasperWalletProvider();
+    const casperProvider = window?.CasperWalletProvider && window?.CasperWalletProvider();
     const onboarding = useMemo(() => new MetaMaskOnboarding(), []);
     const ethersService = useMemo(() => ServicePlugin.create(), []);
     const client = useMemo(() => new EthersClient(), []);
@@ -130,6 +131,11 @@ export const RegistrationPopup: React.FC<{ closeRegistrationPopup: () => void }>
 
     const casperRegistration = async() => {
         try {
+            if (!casperProvider) {
+                const browser = detectBrowser();
+                openWalletShopPage(ConcordiumWalletShopPage[browser]);
+            }
+
             const publicKey = await casperProvider.getActivePublicKey();
 
             await loginCasper(publicKey);
