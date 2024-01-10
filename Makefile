@@ -45,8 +45,8 @@ push_currency_signer: ## Push currency_signer docker image.
 
 docker: ## Build and push all docker images.
 	make build_app push_app \
-		 build_nft_signer push_nft_signer \
-		 build_currency_signer push_currency_signer
+	     build_nft_signer push_nft_signer \
+	     build_currency_signer push_currency_signer
 
 run_local: ## Build and run app locally.
 	make build_dist && cd deploy/local && docker-compose up
