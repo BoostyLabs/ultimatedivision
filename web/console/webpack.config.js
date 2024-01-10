@@ -7,6 +7,7 @@ const StylelintPlugin = require("stylelint-webpack-plugin");
 const zlib = require("zlib");
 const CompressionPlugin = require("compression-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const { SwcMinifyWebpackPlugin } = require('swc-minify-webpack-plugin');
 
 const PRODUCTION_PLUGINS = [
     new HtmlWebpackPlugin({
@@ -63,6 +64,7 @@ const OPTIMISATION = {
         chunks: "all",
     },
     minimize: true,
+    minimizer: [new SwcMinifyWebpackPlugin()],
 };
 
 // const IMAGE_COMPRESSION = [
