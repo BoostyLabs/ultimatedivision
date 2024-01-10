@@ -128,30 +128,31 @@ export class ToastNotifications {
     static metamaskError(error: any) {
         let errorMessage = '';
         switch (error.code) {
-        case RPC_ERROR_CODE:
-            errorMessage = toastNoficationsMessages.openMetamaskManually;
-            break;
-        case DENIED_TRANSACTION_CODE:
-            errorMessage = toastNoficationsMessages.transactionDenied;
-            break;
-        case NOT_ENOUGH_ETH_CODE:
-            errorMessage = toastNoficationsMessages.notEnoughBalance;
-            break;
-        case NETWORK_ERROR:
-            errorMessage = toastNoficationsMessages.networkChanged;
-            break;
-        case ALREADY_MINTED_ERROR_CODE:
-            errorMessage = toastNoficationsMessages.cardIsMinted;
-            break;
-        default:
-            errorMessage = toastNoficationsMessages.tryLater;
-            break;
+            case RPC_ERROR_CODE:
+                errorMessage = toastNoficationsMessages.openMetamaskManually;
+                break;
+            case DENIED_TRANSACTION_CODE:
+                errorMessage = toastNoficationsMessages.transactionDenied;
+                break;
+            case NOT_ENOUGH_ETH_CODE:
+                errorMessage = toastNoficationsMessages.notEnoughBalance;
+                break;
+            case NETWORK_ERROR:
+                errorMessage = toastNoficationsMessages.networkChanged;
+                break;
+            case ALREADY_MINTED_ERROR_CODE:
+                errorMessage = toastNoficationsMessages.cardIsMinted;
+                break;
+            default:
+                errorMessage = toastNoficationsMessages.tryLater;
+                break;
         }
         this.notify(errorMessage);
     };
 
     /** Handles casper errors and notifies user. */
     static casperError(error: any) {
+        console.log(error)
         let errorMessage = '';
         if (error.includes(CASPER_INSUFFICIENT_BALANCE_CODE)) {
             errorMessage = toastNoficationsMessages.insufficientBalance;
