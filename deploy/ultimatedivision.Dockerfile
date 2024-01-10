@@ -18,5 +18,6 @@ RUN apk add --update nodejs npm
 COPY --from=builder /app/main .
 COPY --from=builder /app/web/admin ./web/admin
 COPY --from=builder /app/web/console/dist ./web/console/dist
+COPY --from=builder /app/assets ./assets
 # Ports openining
 EXPOSE 8087 8088
