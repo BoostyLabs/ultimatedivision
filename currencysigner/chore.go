@@ -56,8 +56,6 @@ func (chore *Chore) Run(ctx context.Context) (err error) {
 	chore.log.Debug("start currency signer")
 
 	return chore.Loop.Run(ctx, func(ctx context.Context) error {
-		chore.log.Debug("into loop currency signer")
-
 		unsignedItems, err := chore.currencywaitlist.ListWithoutSignature(ctx)
 		if err != nil {
 			return ChoreError.Wrap(err)
