@@ -90,7 +90,7 @@ func TestCasper_NftContract(t *testing.T) {
 }
 
 func TestCasper_MarketContract(t *testing.T) {
-	t.Skip("for manual testing")
+	t.Skip("for manual testing ")
 
 	var (
 		casperNodeAddress = "http://116.202.169.210:7777/rpc"
