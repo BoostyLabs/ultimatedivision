@@ -154,8 +154,6 @@ export class ToastNotifications {
 
     /** Handles casper errors and notifies user. */
     static casperError(error: any) {
-        console.log("debug error:", error);
-        
         let errorMessage = '';
         if (Number(error) === CASPER_INSUFFICIENT_BALANCE_CODE) {
             errorMessage = toastNoficationsMessages.insufficientBalance;
