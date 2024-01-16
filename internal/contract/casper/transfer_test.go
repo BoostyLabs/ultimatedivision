@@ -250,9 +250,9 @@ func TestCasper_Token_Claim(t *testing.T) {
 		publicAccountKey  = "ad794c8f3da55845a5422506b4bd01ed1ae4e57378a82216d25d7351854b563d"
 		accountHash       = "04d18b95474c8d7962a69bb386c788f1d7785b2cf3c26d9c7644516cf9652295"
 
-		tokenContractHash = "5aed0843516b06e4cbf56b1085c4af37035f2c9c1f18d7b0ffd7bbe96f91a3e0" // nft contract.
+		tokenContractHash = "5aed0843516b06e4cbf56b1085c4af37035f2c9c1f18d7b0ffd7bbe96f91a3e0"
 		value             = big.NewInt(5)
-		nonce             = int64(2) // the nonce must be successively increased.
+		nonce             = int64(4) // the nonce must be successively increased + save last nonce.
 
 		privateKey = "" // add private.
 	)

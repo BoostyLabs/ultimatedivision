@@ -25,7 +25,7 @@ import (
 )
 
 // AuthError is a internal error for auth controller.
-var AuthError = errs.Class("auth controller error1111")
+var AuthError = errs.Class("auth controller error")
 
 // AuthTemplates holds all auth related templates.
 type AuthTemplates struct {
