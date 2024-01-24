@@ -1,11 +1,14 @@
-
 ## How to run?
 
-**Before starting the project, you should make certain preparations.
-Different operating systems require different steps:**
+Before starting the project, you should make certain preparations.
+Different operating systems require different steps:
 
-##Linux:
+## Linux:
 **Installing Golang (Go):**
+
+Golang is our backend language.
+
+We are using version 1.19. You can download it from the official website [Golang](https://go.dev/dl/), and install it according to the official [instructions](https://go.dev/doc/install.) or follow our:
 
 1. Open the terminal.
 
@@ -32,13 +35,17 @@ go version
 ```
 
 **Installing npm (Node.js Package Manager):**
+1. Install node. Current node version: [v18.16.1](https://nodejs.org/ja/blog/release/v18.16.1/).
+2. Install npm. Current npm version: [9.5.1](https://www.npmjs.com/package/npm/v/9.5.1).
+
+### Our instructions:
 
 1. Open the terminal.
 
 2. Install Node.js along with npm from the official Node.js website by running the following commands:
 
 ```
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 Verify the npm installation:
@@ -107,17 +114,9 @@ npm -v
 ```
 Now you should have Golang and npm installed on your respective operating systems, and you're ready to start!
 
-**Installing.**
-
-Golang is our backend language.
-
-We are using version 1.17.4. You can download it from the official website [GoLang](https://go.dev/dl/), and install it according to the official [instructions](https://go.dev/doc/install.)
-
-**Database.**
+## Database:
 
 For our project we use a relational database PostgreSQL, version 12.11 which you can download by following the link from the official [website](https://www.postgresql.org/download/) or you can run your database in a Docker container.
-
-**Docker.**
 
 For isolated installation of databases and servers we need a Docker, version 20.10.16 or higher, you can download it at official [website](https://docs.docker.com/engine/install/)
 
@@ -129,9 +128,10 @@ docker exec -it db createdb -U postgres ultimatedivisiondb_test
 
 ## Config
 
-The application depends on config values that are located in the config file. (examples of configs are in the folder - configsexamples)
+The application depends on config values that are located in the config file. 
+The easiest way is to request an archive with ready-made configs and slightly replace the values for yourself. Another option is to fill in an empty config frame and write your own values from scratch. Examples of configs are in the folder - `configsexamples`.
 
-These actions will create a config file. 
+These actions will create a config files:
 ```
 go run cmd/ultimatedivision/main.go setup
 go run cmd/currencysigner/main.go setup
@@ -139,27 +139,37 @@ go run cmd/nftsigner/main.go setup
 ```
 Go to that config file and edit the necessary files.
 
-**For example for MacOS system you need to put config files in:**
+**For example for Ubuntu system you need to put config files in:**
+```
+/home/<YOUR-USER>/.local/share/ultimatedivision/
+```
+
+**For MacOS:**
 ```
 /Users/<YOUR-USER>/Library/ApplicationSupport/Ultimatedivision/
 ```
 
-in this place ![img_14.png](img_14.png) and in such similar places, please write the full path to your folder.
+All values that have a path to files, such as `staticDir` and `pathToNamesDataset`, should be replaced with their own paths!!!
 
+## Run servers:
 
-
-**Run the main server.**
-
-From the web/console directory at the root of the project read topic Web/console Initial web setup
+### Main server
 
 You can run it with the command in root of the project:
 ```
 go run cmd/ultimatedivision/main.go run
 ```
+
+### Web server
+
+From the `web/console` directory at the root of the project:
+1. Run command `npm ci`. Uses to get and install dependencies only depend on [package-lock.json](./web/console/package-lock.json).
+2. `npm run dev` - runs app with [webpack.config.js](./web/console/webpack.config.js) on 'development' mode.
+
 After this you can open console on localhost:8088 and admin panel on localhost:8087
 
 
-**Mini servers.**
+### Mini servers
 
 To make shure that all services are running we need to start Currency signer with spesific command.
 In general, we use private mini-servers when we work with signing something with a private key to protect personal data from hackers.
@@ -176,14 +186,14 @@ Brief information about them:
 You will find commands for local startup under the server description.
 Deployment instructions on the remote server according to the docker files in the `deploy` directory.
 
-**Currency signer**
+#### Currency signer
 
 The currency signer runs a infinite cycle with an interval of operation that monitors the records of currency waitlist in which there is no signature and if it finds them then generates a signature and sends a transaction to transfer money.
 ```
 go run cmd/currencysigner/main.go run
 ```
 
-**NFT signer**
+#### NFT signer
 
 To make shure that all services are running we need to start NFT signer with spesific command.
 
@@ -192,8 +202,92 @@ The nft signer runs an infinite cycle with an interval of operation that monitor
 go run cmd/nftsigner/main.go run
 ```
 
-**Recommendation **
+#### Recommendation
+
 Access to the server shouldn't be direct. We recommend organizing access to the server through VPN + SSH key.
+
+
+## Work flow with Casper
+
+* __Contracts__: 
+* https://testnet.cspr.live/contract/05560ca94e73f35c5b9b8a0f8b66e56238169e60ae421fb7b71c7ac3c6c744e2 - nft
+* https://testnet.cspr.live/contract/feed638f60f5a2840656d86e0e51dc62c092e79d980ba8dc281387dbb8f80c42 - marketplace
+* https://testnet.cspr.live/contract/5aed0843516b06e4cbf56b1085c4af37035f2c9c1f18d7b0ffd7bbe96f91a3e0 - erc20 tokens
+
+* __register__: To register a new user, you need to install Casper Wallet on the browser
+
+![img.png](./doc/images/img.png)
+
+enter your password or create new account and press to connect
+
+![img_1.png](./doc/images/img_1.png)
+
+* __mint__: In the app, the user can mint the card using Casper blockchain. 
+For this, you need to register with Casper Wallet and then go to the store where you can open the loot box and get a card (you have to run the NFT signer):
+
+![img_2.png](./doc/images/img_2.png)
+
+open loot box and get your cards
+
+![img_3.png](./doc/images/img_3.png)
+
+click keep all and go to cards menu
+
+![img_4.png](./doc/images/img_4.png)
+
+select the card you want to mint
+
+![img_15.png](./doc/images/img_15.png)
+
+and press mint
+
+![img_12.png](./doc/images/img_12.png)
+
+Casper Wallet will open and after that press the sign
+
+![img_12.png](./doc/images/img_12.png)
+
+your card is minted!
+If you want your card add to marketplace you must approve it
+
+![img_16.png](./doc/images/img_16.png)
+
+* __token__: In the app, the user can win the tokens and get it by Casper(you have to run the Currency Wallet):
+For this you need to have a football team on they field. If you play game locally, you should create 2 separate accounts in 2 browsers.
+
+![img_8.png](./doc/images/img_8.png)
+
+and click play
+
+![img_9.png](./doc/images/img_9.png)
+
+your command will be wait to another player, when he appears, you will be asked if you want to play a game
+
+![img_10.png](./doc/images/img_10.png)
+
+press "Accept" and the game will start, after the game is over you will receive the result, if it is a win, you can collect your reward tokens.
+
+![img_17.png](./doc/images/img_17.png)
+![img_18.png](./doc/images/img_18.png)
+
+And after you must approve these tokens for use it in marketplace
+
+![img_19.png](./doc/images/img_19.png)
+
+* __Marketplace__: In the app, the user can sell NFT by Casper. For this you need to have minted and approved nft card and press sell it
+
+![img_20.png](./doc/images/img_20.png)
+![img_21.png](./doc/images/img_21.png)
+![img_22.png](./doc/images/img_22.png)
+
+and press sign
+Your card on marketplace!
+
+![img_23.png](./doc/images/img_23.png)
+
+After this, another player can bid or buy now
+
+![img_24.png](./doc/images/img_24.png)
 
 ## Tests
 
@@ -313,27 +407,7 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-# web/console
-
-## Initial web setup
-1. Install node. Current node version: [v18.16.1](https://nodejs.org/ja/blog/release/v18.16.1/).
-2. Install npm. Current npm version: [9.5.1](https://www.npmjs.com/package/npm/v/9.5.1).
-3. Run command `npm ci`. Uses to get and install dependencies only depend on [package-lock.json](./web/console/package-lock.json).
-
-## Commands:
-1. `npm run lint` - runs eslint checks with [.eslintrc config](./web/console/.eslintrc).
-2. `npm run start` - runs app without server on [localhost](http://localhost:3000).
-3. `npm run build` - runs app with webpack.config.json on 'production' mode on [localhost](http://localhost:8088).
-   Builds the app for production to the `dist` folder.
-   It correctly bundles React in production mode and optimizes the build for the best performance.
-   Also, automatically runs style lint rules with [.stylelintrc config](./web/console/.stylelintrc).
-4. `npm run dev` - runs app with [webpack.config.js](./web/console/webpack.config.js) on 'development' mode.
-   Builds the app for development to the `dist` folder.
-   Faster that build but much larger size.
-   Also contains 'watch' development mode. Automaticaly rebuilds app when code is changed.
-   Runs on [localhost](http://localhost:8088).
-
-## Structure
+## Frontend project structure:
 1. __cards, clubs, divisions, gameplay, marketplace, seasons, users__ - domain entities.\
    Each folder contains domain entities and services.\
    Each entity service serves and calls _API http/ws_ requests.
@@ -354,57 +428,15 @@ func (auth *Auth) Register(w http.ResponseWriter, r *http.Request) {
 * __plugins__: contains ethers web3 provider
 * __configs__: UI constants
 
-## Casper
-App uses casper blockchain:
-* __contracts__: 
-* https://testnet.cspr.live/contract/05560ca94e73f35c5b9b8a0f8b66e56238169e60ae421fb7b71c7ac3c6c744e2 - nft
-* https://testnet.cspr.live/contract/feed638f60f5a2840656d86e0e51dc62c092e79d980ba8dc281387dbb8f80c42 - marketplace
-* https://testnet.cspr.live/contract/5aed0843516b06e4cbf56b1085c4af37035f2c9c1f18d7b0ffd7bbe96f91a3e0 - erc20 tokens
-
-* __register__: To register a new user, you need to install Casper Signer on the browser (right now it's only possible on localhost).
-![img.png](img.png)
-enter your password or create new account and press to connect
-![img_1.png](img_1.png)
-* __mint__: In the app, the user can mint the card using Casper blockchain. 
-For this, you need to register with Casper Signer and then go to the store where you can open the loot box and get a card (you have to run the NFT signer):
-![img_2.png](img_2.png)
-open loot box and get your cards
-![img_3.png](img_3.png)
-click keep all and go to cards menu
-![img_4.png](img_4.png)
-select the card you want to mint
-![img_15.png](img_15.png)
-and press mint
-![img_12.png](img_12.png)
-Casper signer will open and after that press the sign
-![img_12.png](img_12.png)
-your card is minted!
-If you want your card add to marketplace you must approve it
-![img_16.png](img_16.png)
-* * __token__:In the app, the user can win the tokens and get it by Casper(you have to run the Currency signer):
-For this you need to have a football team on they field
-![img_8.png](img_8.png)
-and click play
-![img_9.png](img_9.png)
-your command will be wait to another player, when he appears, you will be asked if you want to play a game
-
-![img_10.png](img_10.png)
-
-press "Accept" and the game will start, after the game is over you will receive the result, if it is a win, you can collect your reward tokens.
-![img_17.png](img_17.png)
-![img_18.png](img_18.png)
-And after you must approve these tokens for use it in marketplace
-![img_19.png](img_19.png)
-* * __Marketplace__:In the app, the user can sell NFT by Casper:
-    For this you need to have minted and approved nft card and press sell it  
-![img_20.png](img_20.png)
-![img_21.png](img_21.png)
-![img_22.png](img_22.png)
-and press sign
-
-Your card on marketplace!
-![img_23.png](img_23.png)
-
-After this, another player can bid or buy now
-![img_24.png](img_24.png)
-
+## npm commands:
+1. `npm run lint` - runs eslint checks with [.eslintrc config](./web/console/.eslintrc).
+2. `npm run start` - runs app without server on [localhost](http://localhost:3000).
+3. `npm run build` - runs app with webpack.config.json on 'production' mode on [localhost](http://localhost:8088).
+   Builds the app for production to the `dist` folder.
+   It correctly bundles React in production mode and optimizes the build for the best performance.
+   Also, automatically runs style lint rules with [.stylelintrc config](./web/console/.stylelintrc).
+4. `npm run dev` - runs app with [webpack.config.js](./web/console/webpack.config.js) on 'development' mode.
+   Builds the app for development to the `dist` folder.
+   Faster that build but much larger size.
+   Also contains 'watch' development mode. Automaticaly rebuilds app when code is changed.
+   Runs on [localhost](http://localhost:8088).
