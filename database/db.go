@@ -27,6 +27,7 @@ import (
 	"ultimatedivision/gameplay/queue"
 	"ultimatedivision/marketplace"
 	"ultimatedivision/marketplace/bids"
+	"ultimatedivision/notifications"
 	"ultimatedivision/seasons"
 	"ultimatedivision/store"
 	"ultimatedivision/store/lootboxes"
@@ -323,6 +324,18 @@ func (db *database) CreateSchema(ctx context.Context) (err error) {
         CREATE TABLE IF NOT EXISTS velas_register_data(
             user_id BYTEA   PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE NOT NULL,
             response        VARCHAR                                            NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS notifications (
+			id                  BYTEA PRIMARY KEY                            NOT NULL,
+			user_id             BYTEA REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+			status              VARCHAR                                      NOT NULL,
+            related_object_type VARCHAR                                      NOT NULL,
+            related_object_id   BYTEA                                        NOT NULL,
+			type                VARCHAR                                      NOT NULL,
+			title               VARCHAR                                      NOT NULL,
+			message             VARCHAR                                      NOT NULL,
+            created_at          TIMESTAMP WITH TIME ZONE                     NOT NULL,
+            updated_at          TIMESTAMP WITH TIME ZONE                     NOT NULL
         );`
 
 	_, err = db.conn.ExecContext(ctx, createTableQuery)
@@ -434,4 +447,9 @@ func (db *database) Connections() connections.DB {
 
 func (db *database) Players() matchmaking.DB {
 	return &matchmakingDB{db: &DBPlayers{players: make(map[uuid.UUID]matchmaking.Player)}}
+}
+
+// Notifications provides access to accounts db.
+func (db *database) Notifications() notifications.DB {
+	return &notificationsDB{conn: db.conn}
 }
